@@ -223,6 +223,13 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
     std::call_once(onceFlag, [options = WTFMove(options)] {
         isGStreamerInitialized = false;
 
+        // USE_PLAYBIN3 is dangerous for us because its potential sneaky effect
+        // is to register the playbin3 element under the playbin namespace. We
+        // can't allow this, when we create playbin, we want playbin2, not
+        // playbin3.
+        if (g_getenv("USE_PLAYBIN3"))
+            WTFLogAlways("The USE_PLAYBIN3 variable was detected in the environment. Expect playback issues or please unset it.");
+
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
         Vector<String> parameters = options.valueOr(extractGStreamerOptionsFromCommandLine());
         char** argv = g_new0(char*, parameters.size() + 2);

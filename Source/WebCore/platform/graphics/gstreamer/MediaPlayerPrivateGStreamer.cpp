@@ -248,7 +248,7 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
 {
-    loadFull(urlString, nullptr, String());
+    loadFull(urlString, String());
 }
 
 static void setSyncOnClock(GstElement *element, bool sync)
@@ -273,8 +273,7 @@ void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
     setSyncOnClock(audioSink(), sync);
 }
 
-void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar* playbinName,
-    const String& pipelineName)
+void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const String& pipelineName)
 {
     // FIXME: This method is still called even if supportsType() returned
     // IsNotSupported. This would deserve more investigation but meanwhile make
@@ -289,7 +288,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar*
         return;
 
     if (!m_pipeline)
-        createGSTPlayBin(isMediaSource() ? "playbin" : playbinName, pipelineName);
+        createGSTPlayBin(url, pipelineName);
     syncOnClock(true);
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
@@ -335,7 +334,7 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
         (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote",
         "_0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 
-    loadFull(String("mediastream://") + stream.id(), "playbin3", pipelineName);
+    loadFull(String("mediastream://") + stream.id(), pipelineName);
     syncOnClock(false);
 
 #if USE(GSTREAMER_GL)
@@ -2362,36 +2361,30 @@ AudioSourceProvider* MediaPlayerPrivateGStreamer::audioSourceProvider()
 }
 #endif
 
-void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, const String& pipelineName)
+void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String& pipelineName)
 {
-    if (m_pipeline) {
-        if (!playbinName) {
-            GST_INFO_OBJECT(pipeline(), "Keeping same playbin as nothing forced");
-            return;
-        }
+    const gchar* playbinName = "playbin";
 
+    // MSE doesn't support playbin3. Mediastream requires playbin3. Regular
+    // playback can use playbin3 on-demand with the WEBKIT_GST_USE_PLAYBIN3
+    // environment variable.
+#if GST_CHECK_VERSION(1, 10, 0)
+    if ((!isMediaSource() && g_getenv("WEBKIT_GST_USE_PLAYBIN3")) || url.protocolIs("mediastream"))
+        playbinName = "playbin3";
+#endif
+
+    if (m_pipeline) {
         if (!g_strcmp0(GST_OBJECT_NAME(gst_element_get_factory(m_pipeline.get())), playbinName)) {
             GST_INFO_OBJECT(pipeline(), "Already using %s", playbinName);
             return;
         }
 
-        GST_INFO_OBJECT(pipeline(), "Tearing down as we need to use %s now.",
-            playbinName);
+        GST_INFO_OBJECT(pipeline(), "Tearing down as we need to use %s now.", playbinName);
         changePipelineState(GST_STATE_NULL);
         m_pipeline = nullptr;
     }
 
     ASSERT(!m_pipeline);
-
-#if GST_CHECK_VERSION(1, 10, 0)
-    if (g_getenv("USE_PLAYBIN3"))
-        playbinName = "playbin3";
-#else
-    playbinName = "playbin";
-#endif
-
-    if (!playbinName)
-        playbinName = "playbin";
 
     m_isLegacyPlaybin = !g_strcmp0(playbinName, "playbin");
 
