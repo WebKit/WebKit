@@ -28,6 +28,7 @@
 
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 
+#import "AccessibilitySupportSPI.h"
 #import "WebProcessPool.h"
 
 #if PLATFORM(MAC)

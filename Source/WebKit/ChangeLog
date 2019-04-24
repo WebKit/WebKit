@@ -1,3 +1,10 @@
+2019-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        Fix build due to missing SPI declaration of kAXSFullKeyboardAccessEnabledNotification
+
+        * UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm: Import
+        AccessibilitySupportSPI.h.
+
 2019-04-24  Chris Dumez  <cdumez@apple.com>
 
         URL set by document.open() is communicated with the WebPageProxy but not the WebFrameProxy
