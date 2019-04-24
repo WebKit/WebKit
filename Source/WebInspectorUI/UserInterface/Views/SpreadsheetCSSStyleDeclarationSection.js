@@ -391,6 +391,9 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     _handleMouseDown(event)
     {
+        if (event.button !== 0)
+            return;
+
         this._wasEditing = this._propertiesEditor.editing || document.activeElement === this._selectorElement;
 
         let propertyElement = event.target.closest(".property");
