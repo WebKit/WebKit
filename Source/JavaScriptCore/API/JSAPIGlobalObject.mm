@@ -36,6 +36,7 @@
 #import "JSContextInternal.h"
 #import "JSInternalPromise.h"
 #import "JSInternalPromiseDeferred.h"
+#import "JSModuleLoader.h"
 #import "JSNativeStdFunction.h"
 #import "JSPromiseDeferred.h"
 #import "JSScriptInternal.h"
@@ -61,7 +62,7 @@ const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
     &moduleLoaderResolve, // moduleLoaderResolve
     &moduleLoaderFetch, // moduleLoaderFetch
     &moduleLoaderCreateImportMetaProperties, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
+    moduleLoaderEvaluate, // moduleLoaderEvaluate
     nullptr, // promiseRejectionTracker
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
@@ -232,6 +233,33 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
+}
+
+JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader* moduleLoader, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
+    id <JSModuleLoaderDelegate> moduleLoaderDelegate = [context moduleLoaderDelegate];
+    NSURL *url = nil;
+
+    if ([moduleLoaderDelegate respondsToSelector:@selector(willEvaluateModule:)] || [moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)]) {
+        String moduleKey = key.toWTFString(exec);
+        RETURN_IF_EXCEPTION(scope, { });
+        url = [NSURL URLWithString:static_cast<NSString *>(moduleKey)];
+    }
+
+    if ([moduleLoaderDelegate respondsToSelector:@selector(willEvaluateModule:)])
+        [moduleLoaderDelegate willEvaluateModule:url];
+
+    scope.release();
+    JSValue result = moduleLoader->evaluateNonVirtual(exec, key, moduleRecordValue, scriptFetcher);
+
+    if ([moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)])
+        [moduleLoaderDelegate didEvaluateModule:url];
+
+    return result;
 }
 
 JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *script)

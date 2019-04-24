@@ -49,6 +49,18 @@
  */
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject;
 
+@optional
+
+/*! @abstract This is called before the module with "key" is evaluated.
+ @param key The module key for the module that is about to be evaluated.
+ */
+- (void)willEvaluateModule:(NSURL *)key;
+
+/*! @abstract This is called after the module with "key" is evaluated.
+ @param key The module key for the module that was just evaluated.
+ */
+- (void)didEvaluateModule:(NSURL *)key;
+
 @end
 
 @interface JSContext(Private)

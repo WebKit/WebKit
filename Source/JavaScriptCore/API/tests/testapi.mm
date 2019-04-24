@@ -1827,6 +1827,11 @@ typedef void (^FetchBlock)(JSContext *, JSValue *, JSValue *, JSValue *);
 
 + (instancetype)contextWithBlockForFetch:(FetchBlock)block;
 
+@property unsigned willEvaluateModuleCallCount;
+@property unsigned didEvaluateModuleCallCount;
+@property BOOL sawBarJS;
+@property BOOL sawFooJS;
+
 @end
 
 @implementation JSContextFetchDelegate {
@@ -1836,6 +1841,10 @@ typedef void (^FetchBlock)(JSContext *, JSValue *, JSValue *, JSValue *);
 + (instancetype)contextWithBlockForFetch:(FetchBlock)block
 {
     auto *result = [[JSContextFetchDelegate alloc] init];
+    result.willEvaluateModuleCallCount = 0;
+    result.didEvaluateModuleCallCount = 0;
+    result.sawBarJS = NO;
+    result.sawFooJS = NO;
     result->m_fetchBlock = block;
     return result;
 }
@@ -1843,6 +1852,18 @@ typedef void (^FetchBlock)(JSContext *, JSValue *, JSValue *, JSValue *);
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
 {
     m_fetchBlock(context, identifier, resolve, reject);
+}
+
+- (void)willEvaluateModule:(NSURL *)url
+{
+    self.willEvaluateModuleCallCount += 1;
+    self.sawBarJS |= [url isEqual:[NSURL URLWithString:@"file:///directory/bar.js"]];
+}
+
+- (void)didEvaluateModule:(NSURL *)url
+{
+    self.didEvaluateModuleCallCount += 1;
+    self.sawFooJS |= [url isEqual:[NSURL URLWithString:@"file:///foo.js"]];
 }
 
 @end
@@ -1898,6 +1919,10 @@ static void testFetch()
         JSValue *promise = [context evaluateScript:@"import('./bar.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
         JSValue *null = [JSValue valueWithNullInContext:context];
         checkModuleCodeRan(context, promise, null);
+        checkResult(@"Context should call willEvaluateModule: twice", context.willEvaluateModuleCallCount == 2);
+        checkResult(@"Context should call didEvaluateModule: twice", context.didEvaluateModuleCallCount == 2);
+        checkResult(@"Context should see bar.js url", !!context.sawBarJS);
+        checkResult(@"Context should see foo.js url", !!context.sawFooJS);
     }
 }
 
@@ -1926,6 +1951,8 @@ static void testFetchWithTwoCycle()
         JSValue *promise = [context evaluateScript:@"import('./bar.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
         JSValue *null = [JSValue valueWithNullInContext:context];
         checkModuleCodeRan(context, promise, null);
+        checkResult(@"Context should call willEvaluateModule: twice", context.willEvaluateModuleCallCount == 2);
+        checkResult(@"Context should call didEvaluateModule: twice", context.didEvaluateModuleCallCount == 2);
     }
 }
 
@@ -1962,6 +1989,10 @@ static void testFetchWithThreeCycle()
         JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
         JSValue *null = [JSValue valueWithNullInContext:context];
         checkModuleCodeRan(context, promise, null);
+        checkResult(@"Context should call willEvaluateModule: three times", context.willEvaluateModuleCallCount == 3);
+        checkResult(@"Context should call didEvaluateModule: three times", context.didEvaluateModuleCallCount == 3);
+        checkResult(@"Context should see bar.js url", !!context.sawBarJS);
+        checkResult(@"Context should see foo.js url", !!context.sawFooJS);
     }
 }
 
@@ -1983,6 +2014,10 @@ static void testLoaderResolvesAbsoluteScriptURL()
         JSValue *promise = [context evaluateScript:@"import('/directory/bar.js');"];
         JSValue *null = [JSValue valueWithNullInContext:context];
         checkModuleCodeRan(context, promise, null);
+        checkResult(@"Context should call willEvaluateModule: once", context.willEvaluateModuleCallCount == 1);
+        checkResult(@"Context should call didEvaluateModule: once", context.didEvaluateModuleCallCount == 1);
+        checkResult(@"Context should see bar.js url", !!context.sawBarJS);
+        checkResult(@"Context should not see foo.js url", !context.sawFooJS);
     }
 }
 
@@ -1995,6 +2030,10 @@ static void testLoaderRejectsNilScriptURL()
         context.moduleLoaderDelegate = context;
         JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');"];
         checkModuleWasRejected(context, promise);
+        checkResult(@"Context should call willEvaluateModule: zero times", context.willEvaluateModuleCallCount == 0);
+        checkResult(@"Context should call didEvaluateModule: zero times", context.didEvaluateModuleCallCount == 0);
+        checkResult(@"Context should not see bar.js url", !context.sawBarJS);
+        checkResult(@"Context should not see foo.js url", !context.sawFooJS);
     }
 }
 

@@ -340,6 +340,11 @@ JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRec
     if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
         return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, this, key, moduleRecordValue, scriptFetcher);
 
+    return evaluateNonVirtual(exec, key, moduleRecordValue, scriptFetcher);
+}
+
+JSValue JSModuleLoader::evaluateNonVirtual(ExecState* exec, JSValue, JSValue moduleRecordValue, JSValue)
+{
     if (auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(exec->vm(), moduleRecordValue))
         return moduleRecord->evaluate(exec);
     return jsUndefined();
