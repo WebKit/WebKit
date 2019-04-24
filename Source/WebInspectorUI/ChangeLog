@@ -1,3 +1,24 @@
+2019-04-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: importing a HAR with an active detail view shows no content
+        https://bugs.webkit.org/show_bug.cgi?id=197223
+
+        Reviewed by Timothy Hatcher.
+
+        When hiding the detail view, we force a `layout` of the Network table, which causes the
+        cached row count to be set to `0`, which prevents the `reloadDataAddedToEndOnly` from
+        rendering anything since the `WI.Table` thinks it has no rows.
+
+        Given that all of the users of `WI.Table` are backed by an array, we don't need to cache the
+        number of rows since `.length` is an extremely cheap operation. In turn, this guarantees
+        that we are always rendering with an accurate value.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.get numberOfRows):
+        (WI.Table.prototype.reloadData):
+        (WI.Table.prototype._removeRows):
+
 2019-04-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r238168): Network: preserve log doesn't show main frame main resource changes
