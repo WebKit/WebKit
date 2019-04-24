@@ -1,5 +1,23 @@
 2019-04-23  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r238168): Network: preserve log doesn't show main frame main resource changes
+        https://bugs.webkit.org/show_bug.cgi?id=197220
+        <rdar://problem/49960464>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype._addCollection):
+        (WI.NetworkTableContentView.prototype._resetCollection): Added.
+        (WI.NetworkTableContentView.prototype._changeCollection):
+        (WI.NetworkTableContentView.prototype._mainResourceDidChange):
+        We want to add the frame's main resource in the case that it's the main frame, but we also
+        want to clear the main collection of data (e.g. if viewing an imported HAR).
+        Drive-by: `_groupByDOMNodeNavigationItem` was renamed in a previous patch.
+
+2019-04-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Network: support drag/drop for importing
         https://bugs.webkit.org/show_bug.cgi?id=197221
 

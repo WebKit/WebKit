@@ -306,12 +306,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     reset()
     {
         this._runForMainCollection((collection) => {
-            collection.entries = [];
-            collection.filteredEntries = [];
-            collection.pendingInsertions = [];
-            collection.pendingUpdates = [];
-            collection.waterfallStartTime = NaN;
-            collection.waterfallEndTime = NaN;
+            this._resetCollection(collection);
         });
 
         for (let detailView of this._detailViewMap.values())
@@ -526,18 +521,20 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _addCollection()
     {
-        let collection = {
-            entries: [],
-            filteredEntries: [],
-            pendingInsertions: [],
-            pendingUpdates: [],
-            waterfallStartTime: NaN,
-            waterfallEndTime: NaN,
-        };
-
+        let collection = {};
+        this._resetCollection(collection);
         this._collections.push(collection);
-
         return collection;
+    }
+
+    _resetCollection(collection)
+    {
+        collection.entries = [];
+        collection.filteredEntries = [];
+        collection.pendingInsertions = [];
+        collection.pendingUpdates = [];
+        collection.waterfallStartTime = NaN;
+        collection.waterfallEndTime = NaN;
     }
 
     _setActiveCollection(collection)
@@ -586,7 +583,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let isMain = collection === this._mainCollection;
         this._checkboxesNavigationItemGroup.hidden = !isMain;
-        this._groupByDOMNodeNavigationItem.hidden = !isMain;
+        this._groupMediaRequestsByDOMNodeNavigationItem.hidden = !isMain;
         this._clearNetworkItemsNavigationItem.enabled = isMain;
         this._collectionsPathNavigationItem.components = [this._pathComponentsMap.get(collection)];
 
@@ -1588,13 +1585,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _mainResourceDidChange(event)
     {
-        let frame = event.target;
-        if (!frame.isMainFrame() || !WI.settings.clearNetworkOnNavigate.value)
-            return;
-
-        this.reset();
-
         this._runForMainCollection((collection) => {
+            let frame = event.target;
+            if (frame.isMainFrame() && WI.settings.clearNetworkOnNavigate.value)
+                this._resetCollection(collection);
+
             if (this._transitioningPageTarget) {
                 this._transitioningPageTarget = false;
                 this._needsInitialPopulate = true;
