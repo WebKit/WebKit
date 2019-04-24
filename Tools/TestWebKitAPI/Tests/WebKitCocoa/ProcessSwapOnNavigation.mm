@@ -5914,8 +5914,8 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     auto uiDelegate = adoptNS([[GetUserMediaUIDelegate alloc] init]);
     [webView setUIDelegate: uiDelegate.get()];
 
-    auto request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/getUserMedia.html"]]);
-    [webView loadRequest:request.get()];
+    auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/getUserMedia.html"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -5924,8 +5924,8 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
 
     auto pid1 = [webView _webProcessIdentifier];
 
-    request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.org/test.html"]]);
-    [webView loadRequest:request.get()];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.org/test.html"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -5980,8 +5980,8 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    auto request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/page-overlay"]]);
-    [webView loadRequest:request.get()];
+    auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/page-overlay"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -5994,8 +5994,8 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
     EXPECT_TRUE(hasOverlay([webView layer]));
 #endif
 
-    request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/page-overlay"]]);
-    [webView loadRequest:request.get()];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/page-overlay"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;

@@ -1,3 +1,14 @@
+2019-04-24  Chris Dumez  <cdumez@apple.com>
+
+        Fix flaky crashes in a couple of PSON API tests
+        https://bugs.webkit.org/show_bug.cgi?id=197239
+
+        Reviewed by Tim Horton.
+
+        Do not adopt the NSURLRequest returned by [NSURLRequest requestWithURL:].
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to control the renderTreeAsText output by setting options on testRunner
