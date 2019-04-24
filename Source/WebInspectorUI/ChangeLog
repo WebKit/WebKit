@@ -1,5 +1,22 @@
 2019-04-23  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Network: support drag/drop for importing
+        https://bugs.webkit.org/show_bug.cgi?id=197221
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.prototype.async.handleFileDrop): Added.
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.processHAR): Added.
+        (WI.NetworkTableContentView.prototype._importHAR):
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.async readText):
+        Only `await` if the result is a `Promise`.
+
+2019-04-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: null is not an object (evaluating 'this.ownerDocument.frameIdentifier')
         https://bugs.webkit.org/show_bug.cgi?id=196420
         <rdar://problem/49444205>

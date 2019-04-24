@@ -144,7 +144,7 @@ WI.FileUtilities = class FileUtilities {
             }
 
             let promise = callback(result);
-            if (promise)
+            if (promise instanceof Promise)
                 await promise;
         }
     }

@@ -1242,6 +1242,23 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._waterfallPopover.resize();
     }
 
+    processHAR(result)
+    {
+        let resources = WI.networkManager.processHAR(result);
+        if (!resources)
+            return;
+
+        let importedCollection = this._addCollection();
+
+        let displayName = WI.UIString("Imported - %s").format(result.filename);
+        this._addCollectionPathComponent(importedCollection, displayName, "network-har-icon");
+
+        this._changeCollection(importedCollection);
+
+        for (let resource of resources)
+            this._insertResourceAndReloadTable(resource);
+    }
+
     handleClearShortcut(event)
     {
         if (!this._isShowingMainCollection())
@@ -2135,21 +2152,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _importHAR()
     {
-        WI.FileUtilities.importJSON((result) => {
-            let resources = WI.networkManager.processHAR(result);
-            if (!resources)
-                return;
-
-            let importedCollection = this._addCollection();
-
-            let displayName = WI.UIString("Imported - %s").format(result.filename);
-            this._addCollectionPathComponent(importedCollection, displayName, "network-har-icon");
-
-            this._changeCollection(importedCollection);
-
-            for (let resource of resources)
-                this._insertResourceAndReloadTable(resource);
-        });
+        WI.FileUtilities.importJSON((result) => this.processHAR(result));
     }
 
     _waterfallPopoverContent()

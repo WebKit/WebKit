@@ -83,6 +83,11 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         super.closed();
     }
 
+    async handleFileDrop(files)
+    {
+        await WI.FileUtilities.readJSON(files, (result) => this._networkTableContentView.processHAR(result));
+    }
+
     // Public
 
     get contentBrowser() { return this._contentBrowser; }
