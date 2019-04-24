@@ -60,9 +60,15 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @end
 
 @interface LSAppLink ()
+#if HAVE(APP_LINKS_WITH_ISENABLED)
++ (NSArray<LSAppLink *> *)appLinksWithURL:(NSURL *)aURL limit:(NSUInteger)limit error:(NSError **)outError;
+- (void)openWithCompletionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
+@property (nonatomic, getter=isEnabled) BOOL enabled;
+#else
 + (void)getAppLinkWithURL:(NSURL *)aURL completionHandler:(LSAppLinkCompletionHandler)completionHandler;
-+ (void)openWithURL:(NSURL *)aURL completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
 - (void)openInWebBrowser:(BOOL)inWebBrowser setAppropriateOpenStrategyAndWebBrowserState:(NSDictionary<NSString *, id> *)state completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
+#endif
++ (void)openWithURL:(NSURL *)aURL completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
 @property (readonly, strong) LSApplicationProxy *targetApplicationProxy;
 @end
 #endif
