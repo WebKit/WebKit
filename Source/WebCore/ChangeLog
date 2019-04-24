@@ -1,3 +1,35 @@
+2019-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Do not use the global _WKContentChange in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=196286
+        <rdar://problem/49364417>
+
+        Reviewed by Simon Fraser.
+
+        By reporting WKContentIndeterminateChange in sendMouseMoveEvent enables us to remove the global _WKContentChange state.
+        Using _WKContentChange is fine as long as only the observed frame reports content change during the synthetic click event.
+        In case of multiple frames, we should really consult the local state instead.
+        Unfortunately sendMouseMoveEvent has no access to the observed Document object so we can't really identify the observed content change.
+        WKContentIndeterminateChange triggers asynchronous decision making at the callsite and in the callback we have access
+        to the active Document/ContentChangeObverver object and can report the correct state.
+        This is inline with current WebKit(WK2) behaviour.
+
+        Manually tested with a WebKitLegacy test app.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::setHasNoChangeState):
+        (WebCore::ContentChangeObserver::setHasIndeterminateState):
+        (WebCore::ContentChangeObserver::setHasVisibleChangeState):
+        (WebCore::ContentChangeObserver::setObservedContentState): Deleted.
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow sendMouseMoveEvent:contentChange:]):
+        * platform/ios/wak/WKContentObservation.cpp: Removed.
+        * platform/ios/wak/WKContentObservation.h:
+
 2019-04-24  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][GStreamer] Flaky ASSERTION FAILED: m_lock.isHeld() in TextureMapperPlatformLayerProxy

@@ -361,8 +361,10 @@ static id<OrientationProvider> gOrientationProvider;
     WebThreadRun(^{
         [self sendEvent:anEvent];
 
-        if (aContentChange)
-            *aContentChange = WKObservedContentChange();
+        if (aContentChange) {
+            // We always make the decision asynchronously. See EventHandler::mouseMoved.
+            *aContentChange = WKContentIndeterminateChange;
+        }
     });
 }
 

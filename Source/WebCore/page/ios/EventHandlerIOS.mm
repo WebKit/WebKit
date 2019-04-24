@@ -487,7 +487,7 @@ void EventHandler::mouseMoved(WebEvent *event)
 {
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
-    if (!m_frame.view() || m_mousePressed || m_sendingEventToSubview)
+    if (!m_frame.document() || !m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -500,6 +500,10 @@ void EventHandler::mouseMoved(WebEvent *event)
         event.wasHandled = mouseMoved(currentPlatformMouseEvent());
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document.updateStyleIfNeeded();
+        callOnMainThread([protectedFrame = makeRef(m_frame)] {
+            if (auto* document = protectedFrame->document())
+                document->page()->chrome().client().observedContentChange(*document->frame());
+        });
     }
 
     END_BLOCK_OBJC_EXCEPTIONS;

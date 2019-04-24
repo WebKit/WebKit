@@ -39,9 +39,6 @@ typedef enum
     WKContentIndeterminateChange    = 1
 }   WKContentChange;
 
-WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
-WEBCORE_EXPORT void WKSetObservedContentChange(WKContentChange);
-
 #ifdef __cplusplus
 }
 #endif

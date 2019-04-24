@@ -154,9 +154,9 @@ private:
     void stopObservingPendingActivities();
     void reset();
 
-    void setHasNoChangeState() { setObservedContentState(WKContentNoChange); }
-    void setHasIndeterminateState() { setObservedContentState(WKContentIndeterminateChange); }
-    void setHasVisibleChangeState() { setObservedContentState(WKContentVisibilityChange); } 
+    void setHasNoChangeState() { m_observedContentState = WKContentNoChange; }
+    void setHasIndeterminateState() { m_observedContentState = WKContentIndeterminateChange; }
+    void setHasVisibleChangeState() { m_observedContentState = WKContentVisibilityChange; } 
 
     bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
@@ -170,7 +170,6 @@ private:
     bool isObservationTimeWindowActive() const { return m_contentObservationTimer.isActive(); }
 
     void completeDurationBasedContentObservation();
-    void setObservedContentState(WKContentChange);
 
     void renderTreeUpdateDidStart();
     void renderTreeUpdateDidFinish();
@@ -216,12 +215,6 @@ private:
     bool m_isObservingTransitions { false };
     bool m_isInObservedRenderTreeUpdate { false };
 };
-
-inline void ContentChangeObserver::setObservedContentState(WKContentChange observedContentChange)
-{
-    m_observedContentState = observedContentChange;
-    WKSetObservedContentChange(observedContentChange);
-}
 
 inline bool ContentChangeObserver::isObservingContentChanges() const
 {

@@ -11077,7 +11077,6 @@
 		A148329E187F508700DA63A6 /* WebCoreThreadRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThreadRun.h; sourceTree = "<group>"; };
 		A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThreadSystemInterface.cpp; sourceTree = "<group>"; };
 		A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThreadSystemInterface.h; sourceTree = "<group>"; };
-		A14832A2187F508700DA63A6 /* WKContentObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContentObservation.cpp; sourceTree = "<group>"; };
 		A14832A3187F508700DA63A6 /* WKContentObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentObservation.h; sourceTree = "<group>"; };
 		A14832A4187F508700DA63A6 /* WKGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGraphics.h; sourceTree = "<group>"; };
 		A14832A5187F508700DA63A6 /* WKGraphics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKGraphics.mm; sourceTree = "<group>"; };
@@ -22067,7 +22066,6 @@
 				A148329E187F508700DA63A6 /* WebCoreThreadRun.h */,
 				A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */,
 				A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */,
-				A14832A2187F508700DA63A6 /* WKContentObservation.cpp */,
 				A14832A3187F508700DA63A6 /* WKContentObservation.h */,
 				A14832A4187F508700DA63A6 /* WKGraphics.h */,
 				A14832A5187F508700DA63A6 /* WKGraphics.mm */,

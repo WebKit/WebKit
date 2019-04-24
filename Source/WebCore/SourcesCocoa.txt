@@ -417,7 +417,6 @@ platform/ios/wak/WAKWindow.mm
 platform/ios/wak/WebCoreThread.mm
 platform/ios/wak/WebCoreThreadRun.cpp
 platform/ios/wak/WebCoreThreadSystemInterface.cpp
-platform/ios/wak/WKContentObservation.cpp
 platform/ios/wak/WKGraphics.mm
 platform/ios/wak/WKView.mm
 
