@@ -36,6 +36,7 @@ namespace WebCore {
 static const char adClickAttributionPathPrefix[] = "/.well-known/ad-click-attribution/";
 const size_t adClickConversionDataPathSegmentSize = 2;
 const size_t adClickPriorityPathSegmentSize = 2;
+const Seconds maxAge { 24_h * 7 };
 
 bool AdClickAttribution::isValid() const
 {
@@ -91,6 +92,16 @@ Optional<Seconds> AdClickAttribution::convertAndGetEarliestTimeToSend(Conversion
     auto seconds = 24_h + Seconds(randomNumber() * (24_h).value());
     m_earliestTimeToSend = WallTime::now() + seconds;
     return seconds;
+}
+
+void AdClickAttribution::markAsExpired()
+{
+    m_timeOfAdClick = { };
+}
+
+bool AdClickAttribution::hasExpired() const
+{
+    return WallTime::now() > m_timeOfAdClick + maxAge;
 }
 
 bool AdClickAttribution::hasHigherPriorityThan(const AdClickAttribution& other) const

@@ -45,6 +45,8 @@ using Conversion = AdClickAttribution::Conversion;
 
 void AdClickAttributionManager::storeUnconverted(AdClickAttribution&& attribution)
 {
+    clearExpired();
+    
     m_unconvertedAdClickAttributionMap.set(std::make_pair(attribution.source(), attribution.destination()), WTFMove(attribution));
 }
 
@@ -55,6 +57,8 @@ void AdClickAttributionManager::startTimer(Seconds seconds)
 
 void AdClickAttributionManager::convert(const Source& source, const Destination& destination, Conversion&& conversion)
 {
+    clearExpired();
+
     if (!conversion.isValid())
         return;
 
@@ -187,6 +191,13 @@ void AdClickAttributionManager::clearForRegistrableDomain(const RegistrableDomai
     });
 }
 
+void AdClickAttributionManager::clearExpired()
+{
+    m_unconvertedAdClickAttributionMap.removeIf([](auto& keyAndValue) {
+        return keyAndValue.value.hasExpired();
+    });
+}
+
 void AdClickAttributionManager::toString(CompletionHandler<void(String)>&& completionHandler) const
 {
     if (m_unconvertedAdClickAttributionMap.isEmpty() && m_convertedAdClickAttributionMap.isEmpty())
@@ -228,6 +239,12 @@ void AdClickAttributionManager::setConversionURLForTesting(URL&& testURL)
         m_conversionBaseURLForTesting = { };
     else
         m_conversionBaseURLForTesting = WTFMove(testURL);
+}
+
+void AdClickAttributionManager::markAllUnconvertedAsExpiredForTesting()
+{
+    for (auto& attribution : m_unconvertedAdClickAttributionMap.values())
+        attribution.markAsExpired();
 }
 
 } // namespace WebKit

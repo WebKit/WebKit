@@ -1,3 +1,24 @@
+2019-04-24  John Wilander  <wilander@apple.com>
+
+        Age out unconverted Ad Click Attributions after one week.
+        https://bugs.webkit.org/show_bug.cgi?id=197238
+        <rdar://problem/50177349>
+
+        Reviewed by Chris Dumez.
+
+        This patch adds infrastructure to allow tests to expire all unconverted
+        attributions early.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::markAdClickAttributionsAsExpiredForTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::markAdClickAttributionsAsExpiredForTesting):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-04-24  Chris Dumez  <cdumez@apple.com>
 
         Fix flaky crashes in a couple of PSON API tests

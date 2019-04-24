@@ -1,3 +1,40 @@
+2019-04-24  John Wilander  <wilander@apple.com>
+
+        Age out unconverted Ad Click Attributions after one week.
+        https://bugs.webkit.org/show_bug.cgi?id=197238
+        <rdar://problem/50177349>
+
+        Reviewed by Chris Dumez.
+
+        AdClickAttributionManager::storeUnconverted() and
+        AdClickAttributionManager::convert() now start by calling the new
+        AdClickAttributionManager::clearExpired() function to remove any
+        expired, unconverted attributions before continuing.
+
+        The rest of the patch is infrastructure to allow tests to expire
+        all unconverted attributions early.
+
+        * NetworkProcess/AdClickAttributionManager.cpp:
+        (WebKit::AdClickAttributionManager::storeUnconverted):
+        (WebKit::AdClickAttributionManager::convert):
+        (WebKit::AdClickAttributionManager::clearExpired):
+        (WebKit::AdClickAttributionManager::markAllUnconvertedAsExpiredForTesting):
+        * NetworkProcess/AdClickAttributionManager.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::markAdClickAttributionsAsExpiredForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::markAdClickAttributionsAsExpiredForTesting):
+        * NetworkProcess/NetworkSession.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetAdClickAttributionConversionURLForTesting):
+        (WKPageMarkAdClickAttributionsAsExpiredForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::markAdClickAttributionsAsExpiredForTesting):
+        * UIProcess/WebPageProxy.h:
+
 2019-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Plumb the navigation's request when determining recommended compatibility mode

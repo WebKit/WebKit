@@ -2872,4 +2872,10 @@ void TestRunner::setAdClickAttributionConversionURLForTesting(JSStringRef urlStr
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::markAdClickAttributionsAsExpiredForTesting()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("MarkAdClickAttributionsAsExpiredForTesting"));
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
+}
+
 } // namespace WTR

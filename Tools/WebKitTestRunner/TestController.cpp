@@ -3627,4 +3627,11 @@ void TestController::setAdClickAttributionConversionURLForTesting(WKURLRef url)
     runUntil(callbackContext.done, noTimeout);
 }
 
+void TestController::markAdClickAttributionsAsExpiredForTesting()
+{
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageMarkAdClickAttributionsAsExpiredForTesting(m_mainWebView->page(), adClickAttributionVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
 } // namespace WTR

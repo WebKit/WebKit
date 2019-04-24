@@ -2746,9 +2746,16 @@ void WKPageSetAdClickAttributionOverrideTimerForTesting(WKPageRef page, bool val
     });
 }
 
-void WKPageSetAdClickAttributionConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetAdClickAttributionOverrideTimerForTestingFunction callback, void* callbackContext)
+void WKPageSetAdClickAttributionConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetAdClickAttributionConversionURLForTestingFunction callback, void* callbackContext)
 {
     toImpl(page)->setAdClickAttributionConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageMarkAdClickAttributionsAsExpiredForTesting(WKPageRef page, WKPageMarkAdClickAttributionsAsExpiredForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->markAdClickAttributionsAsExpiredForTesting([callbackContext, callback] () {
         callback(callbackContext);
     });
 }

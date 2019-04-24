@@ -63,11 +63,13 @@ public:
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
     void setConversionURLForTesting(URL&&);
+    void markAllUnconvertedAsExpiredForTesting();
 
 private:
     void startTimer(Seconds);
     void fireConversionRequest(const AdClickAttribution&);
     void firePendingConversionRequests();
+    void clearExpired();
 
     HashMap<std::pair<Source, Destination>, AdClickAttribution> m_unconvertedAdClickAttributionMap;
     HashMap<std::pair<Source, Destination>, AdClickAttribution> m_convertedAdClickAttributionMap;

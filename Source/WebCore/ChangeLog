@@ -1,3 +1,22 @@
+2019-04-24  John Wilander  <wilander@apple.com>
+
+        Age out unconverted Ad Click Attributions after one week.
+        https://bugs.webkit.org/show_bug.cgi?id=197238
+        <rdar://problem/50177349>
+
+        Reviewed by Chris Dumez.
+
+        This patch adds the two functions AdClickAttribution::markAsExpired()
+        and AdClickAttribution::hasExpired() which make use of the existing
+        m_timeOfAdClick member.
+
+        Test: http/tests/adClickAttribution/expired-attributions-removed.html
+
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::markAsExpired):
+        (WebCore::AdClickAttribution::hasExpired const):
+        * loader/AdClickAttribution.h:
+
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (iOS 12.2): CSS perspective property value can only be set correctly once

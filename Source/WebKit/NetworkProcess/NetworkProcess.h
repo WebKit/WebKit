@@ -330,6 +330,7 @@ public:
     void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
     void setAdClickAttributionOverrideTimerForTesting(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setAdClickAttributionConversionURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
+    void markAdClickAttributionsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 
     WebCore::StorageQuotaManager& storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
 

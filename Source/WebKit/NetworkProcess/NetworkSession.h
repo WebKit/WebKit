@@ -86,6 +86,7 @@ public:
     void clearAdClickAttributionForRegistrableDomain(WebCore::RegistrableDomain&&);
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(URL&&);
+    void markAdClickAttributionsAsExpiredForTesting();
 
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID);

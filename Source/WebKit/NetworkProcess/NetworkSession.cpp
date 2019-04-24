@@ -178,4 +178,9 @@ void NetworkSession::setAdClickAttributionConversionURLForTesting(URL&& url)
     m_adClickAttribution->setConversionURLForTesting(WTFMove(url));
 }
 
+void NetworkSession::markAdClickAttributionsAsExpiredForTesting()
+{
+    m_adClickAttribution->markAllUnconvertedAsExpiredForTesting();
+}
+
 } // namespace WebKit

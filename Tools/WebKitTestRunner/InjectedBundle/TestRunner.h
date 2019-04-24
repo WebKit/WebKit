@@ -506,6 +506,7 @@ public:
     void clearAdClickAttributionsThroughWebsiteDataRemoval();
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(JSStringRef);
+    void markAdClickAttributionsAsExpiredForTesting();
 
 private:
     TestRunner();

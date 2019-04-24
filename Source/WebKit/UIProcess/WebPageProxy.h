@@ -1507,6 +1507,7 @@ public:
     void clearAdClickAttribution(CompletionHandler<void()>&&);
     void setAdClickAttributionOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
     void setAdClickAttributionConversionURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void markAdClickAttributionsAsExpiredForTesting(CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);

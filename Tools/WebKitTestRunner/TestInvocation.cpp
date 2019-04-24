@@ -1662,7 +1662,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setAdClickAttributionConversionURLForTesting(url);
         return nullptr;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "MarkAdClickAttributionsAsExpiredForTesting")) {
+        TestController::singleton().markAdClickAttributionsAsExpiredForTesting();
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

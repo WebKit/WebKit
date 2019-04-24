@@ -8946,6 +8946,17 @@ void WebPageProxy::setAdClickAttributionConversionURLForTesting(const URL& url, 
     }
 }
 
+void WebPageProxy::markAdClickAttributionsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage()) {
+            completionHandler();
+            return;
+        }
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::MarkAdClickAttributionsAsExpiredForTesting(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    }
+}
+
 #if ENABLE(SPEECH_SYNTHESIS)
 WebPageProxy::SpeechSynthesisData& WebPageProxy::speechSynthesisData()
 {

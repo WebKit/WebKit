@@ -317,6 +317,7 @@ public:
     void clearAdClickAttributionsThroughWebsiteDataRemoval();
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(WKURLRef);
+    void markAdClickAttributionsAsExpiredForTesting();
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);

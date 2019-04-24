@@ -1,3 +1,14 @@
+2019-04-24  John Wilander  <wilander@apple.com>
+
+        Age out unconverted Ad Click Attributions after one week.
+        https://bugs.webkit.org/show_bug.cgi?id=197238
+        <rdar://problem/50177349>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/adClickAttribution/expired-attributions-removed-expected.txt: Added.
+        * http/tests/adClickAttribution/expired-attributions-removed.html: Added.
+
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (iOS 12.2): CSS perspective property value can only be set correctly once

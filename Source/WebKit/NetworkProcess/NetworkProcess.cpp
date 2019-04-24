@@ -2548,4 +2548,12 @@ void NetworkProcess::setAdClickAttributionConversionURLForTesting(PAL::SessionID
     completionHandler();
 }
 
+void NetworkProcess::markAdClickAttributionsAsExpiredForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID))
+        session->markAdClickAttributionsAsExpiredForTesting();
+
+    completionHandler();
+}
+
 } // namespace WebKit

@@ -248,6 +248,8 @@ public:
     const Source& source() const { return m_source; };
     const Destination& destination() const { return m_destination; };
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
+    WEBCORE_EXPORT void markAsExpired();
+    WEBCORE_EXPORT bool hasExpired() const;
     WEBCORE_EXPORT void markConversionAsSent();
     WEBCORE_EXPORT bool wasConversionSent() const;
 
