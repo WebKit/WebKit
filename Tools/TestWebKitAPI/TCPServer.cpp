@@ -99,9 +99,9 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
     listenForConnections(connections);
 }
 
-TCPServer::TCPServer(Function<void(SSL*)>&& secureConnectionHandler)
-    : m_connectionHandler([secureConnectionHandler = WTFMove(secureConnectionHandler)] (Socket socket) {
-
+TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler)
+{
+    auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler)] (Socket socket) {
         SSL_library_init();
 
         std::unique_ptr<SSL_CTX, deleter<SSL_CTX>> ctx(SSL_CTX_new(SSLv23_server_method()));
@@ -160,8 +160,28 @@ TCPServer::TCPServer(Function<void(SSL*)>&& secureConnectionHandler)
         ASSERT_UNUSED(acceptResult, acceptResult > 0);
         
         secureConnectionHandler(ssl.get());
-    })
-{
+    };
+
+    switch (protocol) {
+    case Protocol::HTTPS:
+        m_connectionHandler = WTFMove(startSecureConnection);
+        break;
+    case Protocol::HTTPSProxy:
+        m_connectionHandler = [startSecureConnection = WTFMove(startSecureConnection)] (Socket socket) {
+            char readBuffer[1000];
+            auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
+            EXPECT_GT(bytesRead, 0);
+            EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
+            
+            const char* responseHeader = ""
+            "HTTP/1.1 200 Connection Established\r\n"
+            "Connection: close\r\n\r\n";
+            auto bytesWritten = ::write(socket, responseHeader, strlen(responseHeader));
+            EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(responseHeader));
+            startSecureConnection(socket);
+        };
+        break;
+    }
     listenForConnections(1);
 }
 

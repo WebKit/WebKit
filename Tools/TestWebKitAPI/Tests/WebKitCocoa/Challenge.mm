@@ -238,7 +238,7 @@ namespace TestWebKitAPI {
 
 TEST(Challenge, SecIdentity)
 {
-    TCPServer server(respondWithChallengeThenOK, 1);
+    TCPServer server(respondWithChallengeThenOK);
 
     auto webView = adoptNS([WKWebView new]);
     auto delegate = adoptNS([ChallengeDelegate new]);
@@ -401,7 +401,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, ServerTrust)
 {
-    TCPServer server([] (SSL* ssl) {
+    TCPServer server(TCPServer::Protocol::HTTPS, [] (SSL* ssl) {
         char requestBuffer[1000];
         auto readResult = SSL_read(ssl, requestBuffer, sizeof(requestBuffer));
         ASSERT_UNUSED(readResult, readResult > 0);

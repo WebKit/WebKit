@@ -1,3 +1,30 @@
+2019-04-24  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit test for r239322
+        https://bugs.webkit.org/show_bug.cgi?id=197236
+
+        Reviewed by Chris Dumez.
+
+        I initially developed this as a unit test for rdar://problem/48797895 but it seems that isn't quite ready.
+        May as well add the test infrastructure which was needed before and will be needed in the future.
+
+        * TestWebKitAPI/TCPServer.cpp:
+        (TestWebKitAPI::TCPServer::TCPServer):
+        * TestWebKitAPI/TCPServer.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::downloadAtRate):
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFLinkReferrer.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm: Added.
+        (-[ProxyDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[ProxyDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNavigationResponse.mm:
+        (TEST):
+
 2019-04-24  Chris Dumez  <cdumez@apple.com>
 
         URL set by document.open() is communicated with the WebPageProxy but not the WebFrameProxy

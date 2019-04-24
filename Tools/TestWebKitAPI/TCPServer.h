@@ -43,8 +43,11 @@ public:
     using Port = uint16_t;
     static constexpr Port InvalidPort = 0;
     
-    TCPServer(Function<void(Socket)>&&, size_t connections);
-    TCPServer(Function<void(SSL*)>&&);
+    TCPServer(Function<void(Socket)>&&, size_t connections = 1);
+    enum class Protocol : bool {
+        HTTPS, HTTPSProxy
+    };
+    TCPServer(Protocol, Function<void(SSL*)>&&);
     ~TCPServer();
     
     Port port() const { return m_port; }

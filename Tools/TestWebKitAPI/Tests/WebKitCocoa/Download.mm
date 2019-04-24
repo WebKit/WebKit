@@ -863,7 +863,7 @@ void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToFo
     bool terminateServer = false;
     TCPServer server([&](int socket) {
         respondSlowly(socket, desiredKbps, terminateServer);
-    }, 1);
+    });
     
     auto webView = webViewWithDownloadMonitorSpeedMultiplier(speedMultiplier);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
