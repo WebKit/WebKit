@@ -209,6 +209,7 @@ label.tree-label {
 #intro .start-benchmark p {
     color: hsl(11, 72%, 50%);
     margin-bottom: 1em;
+    -apple-trailing-word: -apple-partially-balanced;
 }
 
 #intro .start-benchmark button {
