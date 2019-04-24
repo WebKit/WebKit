@@ -445,7 +445,8 @@ public:
     EditorState editorState(IncludePostLayoutDataHint = IncludePostLayoutDataHint::Yes) const;
     void updateEditorStateAfterLayoutIfEditabilityChanged();
 
-    String renderTreeExternalRepresentation() const;
+    // options are RenderTreeExternalRepresentationBehavior values.
+    String renderTreeExternalRepresentation(unsigned options = 0) const;
     String renderTreeExternalRepresentationForPrinting() const;
     uint64_t renderTreeSize() const;
 

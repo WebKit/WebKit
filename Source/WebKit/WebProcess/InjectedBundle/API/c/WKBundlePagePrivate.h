@@ -37,12 +37,22 @@
 extern "C" {
 #endif
 
+enum RenderTreeExternalRepresentationFlags {
+    RenderTreeShowAllLayers           = 1 << 0,
+    RenderTreeShowLayerNesting        = 1 << 1,
+    RenderTreeShowCompositedLayers    = 1 << 2,
+    RenderTreeShowOverflow            = 1 << 3,
+    RenderTreeShowSVGGeometry         = 1 << 4,
+    RenderTreeShowLayerFragments      = 1 << 5,
+};
+typedef uint32_t RenderTreeExternalRepresentationBehavior;
+
 WK_EXPORT void WKBundlePageStopLoading(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageSetDefersLoading(WKBundlePageRef page, bool defersLoading) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef page, WKStringRef commandName);
 WK_EXPORT void WKBundlePageClearMainFrameName(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);
-WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page);
+WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page, RenderTreeExternalRepresentationBehavior);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringRef commandName, WKStringRef argument);
 

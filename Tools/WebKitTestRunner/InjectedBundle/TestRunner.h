@@ -74,6 +74,9 @@ public:
     double preciseTime();
     double timeout() { return m_timeout.milliseconds(); }
 
+    void setRenderTreeDumpOptions(unsigned short);
+    unsigned renderTreeDumpOptions() const { return m_renderTreeDumpOptions; }
+
     // Other dumping.
     void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }
     void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
@@ -517,60 +520,59 @@ private:
 
     WKRetainPtr<WKURLRef> m_testURL; // Set by InjectedBundlePage once provisional load starts.
 
-    bool m_shouldDumpAllFrameScrollPositions;
-    bool m_shouldDumpBackForwardListsForAllWindows;
-
-    bool m_shouldAllowEditing;
-    bool m_shouldCloseExtraWindows;
-
-    bool m_dumpEditingCallbacks;
-    bool m_dumpStatusCallbacks;
-    bool m_dumpTitleChanges;
-    bool m_dumpPixels;
-    bool m_dumpSelectionRect;
-    bool m_dumpFullScreenCallbacks;
-    bool m_dumpProgressFinishedCallback;
-    bool m_dumpResourceLoadCallbacks;
-    bool m_dumpResourceResponseMIMETypes;
-    bool m_dumpWillCacheResponse;
-    bool m_dumpApplicationCacheDelegateCallbacks;
-    bool m_dumpDatabaseCallbacks;
-    bool m_dumpPolicyCallbacks { false };
-    bool m_disallowIncreaseForApplicationCacheQuota;
-    bool m_testRepaint;
-    bool m_testRepaintSweepHorizontally;
-    bool m_isPrinting;
-
-    bool m_willSendRequestReturnsNull;
-    bool m_willSendRequestReturnsNullOnRedirect;
-    bool m_shouldStopProvisionalFrameLoads;
     String m_willSendRequestHTTPBody;
+    WTF::Seconds m_timeout { 30_s };
 
-    bool m_policyDelegateEnabled;
-    bool m_policyDelegatePermissive;
-    
-    bool m_globalFlag;
-    bool m_customFullScreenBehavior;
+    WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
+    WKRetainPtr<WKArrayRef> m_allowedHosts;
 
-    WTF::Seconds m_timeout;
+    PlatformTimerRef m_waitToDumpWatchdogTimer;
 
-    double m_databaseDefaultQuota;
-    double m_databaseMaxQuota;
+    double m_databaseDefaultQuota { -1 };
+    double m_databaseMaxQuota { -1 };
+
+    size_t m_userMediaPermissionRequestCount { 0 };
+
+    unsigned m_renderTreeDumpOptions { 0 };
+    bool m_shouldDumpAllFrameScrollPositions { false };
+    bool m_shouldDumpBackForwardListsForAllWindows { false };
+    bool m_shouldAllowEditing { true };
+    bool m_shouldCloseExtraWindows { false };
+
+    bool m_dumpEditingCallbacks { false };
+    bool m_dumpStatusCallbacks { false };
+    bool m_dumpTitleChanges { false };
+    bool m_dumpPixels { false };
+    bool m_dumpSelectionRect { false };
+    bool m_dumpFullScreenCallbacks { false };
+    bool m_dumpProgressFinishedCallback { false };
+    bool m_dumpResourceLoadCallbacks { false };
+    bool m_dumpResourceResponseMIMETypes { false };
+    bool m_dumpWillCacheResponse { false };
+    bool m_dumpApplicationCacheDelegateCallbacks { false };
+    bool m_dumpDatabaseCallbacks { false };
+    bool m_dumpPolicyCallbacks { false };
+
+    bool m_disallowIncreaseForApplicationCacheQuota { false };
+    bool m_testRepaint { false };
+    bool m_testRepaintSweepHorizontally { false };
+    bool m_isPrinting { false };
+    bool m_willSendRequestReturnsNull { false };
+    bool m_willSendRequestReturnsNullOnRedirect { false };
+    bool m_shouldStopProvisionalFrameLoads { false };
+
+    bool m_policyDelegateEnabled { false };
+    bool m_policyDelegatePermissive { false };
+
+    bool m_globalFlag { false };
+    bool m_customFullScreenBehavior { false };
 
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
     bool m_shouldDecideResponsePolicyAfterDelay { false };
     bool m_shouldFinishAfterDownload { false };
     bool m_didCancelClientRedirect { false };
 
-    bool m_userStyleSheetEnabled;
-    WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
-
-    WKRetainPtr<WKArrayRef> m_allowedHosts;
-
-    size_t m_userMediaPermissionRequestCount { 0 };
-
-    PlatformTimerRef m_waitToDumpWatchdogTimer;
-
+    bool m_userStyleSheetEnabled { false };
     bool m_dumpAllHTTPRedirectedResponseHeaders { false };
 };
 

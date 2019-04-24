@@ -222,9 +222,9 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
     writeIfNotEmpty(ts, "end marker", svgStyle.markerEndResource());
 }
 
-static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& renderer, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
+static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& renderer, OptionSet<RenderAsTextFlag> behavior = { })
 {
-    if (behavior & RenderAsTextShowSVGGeometry) {
+    if (behavior.contains(RenderAsTextFlag::ShowSVGGeometry)) {
         if (is<RenderBox>(renderer)) {
             LayoutRect r = downcast<RenderBox>(renderer).frameRect();
             ts << " " << enclosingIntRect(r);
@@ -369,14 +369,14 @@ enum class WriteIndentOrNot {
     Yes
 };
 
-static void writeStandardPrefix(TextStream& ts, const RenderObject& object, RenderAsTextBehavior behavior, WriteIndentOrNot writeIndent = WriteIndentOrNot::Yes)
+static void writeStandardPrefix(TextStream& ts, const RenderObject& object, OptionSet<RenderAsTextFlag> behavior, WriteIndentOrNot writeIndent = WriteIndentOrNot::Yes)
 {
     if (writeIndent == WriteIndentOrNot::Yes)
         ts << indent;
 
     ts << object.renderName();
 
-    if (behavior & RenderAsTextShowAddresses)
+    if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << " " << static_cast<const void*>(&object);
 
     if (object.node())
@@ -385,7 +385,7 @@ static void writeStandardPrefix(TextStream& ts, const RenderObject& object, Rend
     writeDebugInfo(ts, object, behavior);
 }
 
-static void writeChildren(TextStream& ts, const RenderElement& parent, RenderAsTextBehavior behavior)
+static void writeChildren(TextStream& ts, const RenderElement& parent, OptionSet<RenderAsTextFlag> behavior)
 {
     TextStream::IndentScope indentScope(ts);
 
@@ -404,7 +404,7 @@ static inline void writeCommonGradientProperties(TextStream& ts, SVGSpreadMethod
         ts << " [gradientTransform=" << gradientTransform << "]";
 }
 
-void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer& resource, RenderAsTextBehavior behavior)
+void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer& resource, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, resource, behavior);
 
@@ -488,7 +488,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
     writeChildren(ts, resource, behavior);
 }
 
-void writeSVGContainer(TextStream& ts, const RenderSVGContainer& container, RenderAsTextBehavior behavior)
+void writeSVGContainer(TextStream& ts, const RenderSVGContainer& container, OptionSet<RenderAsTextFlag> behavior)
 {
     // Currently RenderSVGResourceFilterPrimitive has no meaningful output.
     if (container.isSVGResourceFilterPrimitive())
@@ -500,7 +500,7 @@ void writeSVGContainer(TextStream& ts, const RenderSVGContainer& container, Rend
     writeChildren(ts, container, behavior);
 }
 
-void write(TextStream& ts, const RenderSVGRoot& root, RenderAsTextBehavior behavior)
+void write(TextStream& ts, const RenderSVGRoot& root, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, root, behavior);
     writePositionAndStyle(ts, root, behavior);
@@ -508,7 +508,7 @@ void write(TextStream& ts, const RenderSVGRoot& root, RenderAsTextBehavior behav
     writeChildren(ts, root, behavior);
 }
 
-void writeSVGText(TextStream& ts, const RenderSVGText& text, RenderAsTextBehavior behavior)
+void writeSVGText(TextStream& ts, const RenderSVGText& text, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, text, behavior);
     writeRenderSVGTextBox(ts, text);
@@ -517,7 +517,7 @@ void writeSVGText(TextStream& ts, const RenderSVGText& text, RenderAsTextBehavio
     writeChildren(ts, text, behavior);
 }
 
-void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, RenderAsTextBehavior behavior)
+void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, text, behavior);
     ts << " " << enclosingIntRect(FloatRect(text.firstRunLocation(), text.floatLinesBoundingBox().size())) << "\n";
@@ -525,7 +525,7 @@ void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, RenderA
     writeSVGInlineTextBoxes(ts, text);
 }
 
-void writeSVGImage(TextStream& ts, const RenderSVGImage& image, RenderAsTextBehavior behavior)
+void writeSVGImage(TextStream& ts, const RenderSVGImage& image, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, image, behavior);
     writePositionAndStyle(ts, image, behavior);
@@ -533,21 +533,21 @@ void writeSVGImage(TextStream& ts, const RenderSVGImage& image, RenderAsTextBeha
     writeResources(ts, image, behavior);
 }
 
-void write(TextStream& ts, const RenderSVGShape& shape, RenderAsTextBehavior behavior)
+void write(TextStream& ts, const RenderSVGShape& shape, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, shape, behavior);
     ts << shape << "\n";
     writeResources(ts, shape, behavior);
 }
 
-void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, RenderAsTextBehavior behavior)
+void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, stop, behavior);
 
     ts << " [offset=" << stop.element().offset() << "] [color=" << stop.element().stopColorIncludingOpacity() << "]\n";
 }
 
-void writeResources(TextStream& ts, const RenderObject& renderer, RenderAsTextBehavior behavior)
+void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
     const RenderStyle& style = renderer.style();
     const SVGRenderStyle& svgStyle = style.svgStyle();

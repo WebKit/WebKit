@@ -65,37 +65,7 @@ Ref<TestRunner> TestRunner::create()
 }
 
 TestRunner::TestRunner()
-    : m_shouldDumpAllFrameScrollPositions(false)
-    , m_shouldDumpBackForwardListsForAllWindows(false)
-    , m_shouldAllowEditing(true)
-    , m_shouldCloseExtraWindows(false)
-    , m_dumpEditingCallbacks(false)
-    , m_dumpStatusCallbacks(false)
-    , m_dumpTitleChanges(false)
-    , m_dumpSelectionRect(false)
-    , m_dumpFullScreenCallbacks(false)
-    , m_dumpProgressFinishedCallback(false)
-    , m_dumpResourceLoadCallbacks(false)
-    , m_dumpResourceResponseMIMETypes(false)
-    , m_dumpWillCacheResponse(false)
-    , m_dumpApplicationCacheDelegateCallbacks(false)
-    , m_dumpDatabaseCallbacks(false)
-    , m_disallowIncreaseForApplicationCacheQuota(false)
-    , m_testRepaint(false)
-    , m_testRepaintSweepHorizontally(false)
-    , m_isPrinting(false)
-    , m_willSendRequestReturnsNull(false)
-    , m_willSendRequestReturnsNullOnRedirect(false)
-    , m_shouldStopProvisionalFrameLoads(false)
-    , m_policyDelegateEnabled(false)
-    , m_policyDelegatePermissive(false)
-    , m_globalFlag(false)
-    , m_customFullScreenBehavior(false)
-    , m_timeout(30000)
-    , m_databaseDefaultQuota(-1)
-    , m_databaseMaxQuota(-1)
-    , m_userStyleSheetEnabled(false)
-    , m_userStyleSheetLocation(adoptWK(WKStringCreateWithUTF8CString("")))
+    : m_userStyleSheetLocation(adoptWK(WKStringCreateWithUTF8CString("")))
 #if !PLATFORM(COCOA)
     , m_waitToDumpWatchdogTimer(RunLoop::main(), this, &TestRunner::waitToDumpWatchdogTimerFired)
 #endif
@@ -928,6 +898,11 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
 double TestRunner::preciseTime()
 {
     return WallTime::now().secondsSinceEpoch().seconds();
+}
+
+void TestRunner::setRenderTreeDumpOptions(unsigned short options)
+{
+    m_renderTreeDumpOptions = options;
 }
 
 void TestRunner::setUserStyleSheetEnabled(bool enabled)

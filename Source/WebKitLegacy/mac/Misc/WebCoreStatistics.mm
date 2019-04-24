@@ -269,9 +269,34 @@ using namespace WebCore;
 
 @implementation WebFrame (WebKitDebug)
 
-- (NSString *)renderTreeAsExternalRepresentationForPrinting:(BOOL)forPrinting
+- (NSString *)renderTreeAsExternalRepresentationForPrinting
 {
-    return externalRepresentation(_private->coreFrame, forPrinting ? RenderAsTextPrintingMode : RenderAsTextBehaviorNormal);
+    return externalRepresentation(_private->coreFrame, { RenderAsTextFlag::PrintingMode });
+}
+
+static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
+{
+    OptionSet<RenderAsTextFlag> flags;
+
+    if (options & WebRenderTreeAsTextShowAllLayers)
+        flags.add(RenderAsTextFlag::ShowAllLayers);
+    if (options & WebRenderTreeAsTextShowLayerNesting)
+        flags.add(RenderAsTextFlag::ShowLayerNesting);
+    if (options & WebRenderTreeAsTextShowCompositedLayers)
+        flags.add(RenderAsTextFlag::ShowCompositedLayers);
+    if (options & WebRenderTreeAsTextShowOverflow)
+        flags.add(RenderAsTextFlag::ShowOverflow);
+    if (options & WebRenderTreeAsTextShowSVGGeometry)
+        flags.add(RenderAsTextFlag::ShowSVGGeometry);
+    if (options & WebRenderTreeAsTextShowLayerFragments)
+        flags.add(RenderAsTextFlag::ShowLayerFragments);
+
+    return flags;
+}
+
+- (NSString *)renderTreeAsExternalRepresentationWithOptions:(WebRenderTreeAsTextOptions)options
+{
+    return externalRepresentation(_private->coreFrame, toRenderAsTextFlags(options));
 }
 
 - (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels

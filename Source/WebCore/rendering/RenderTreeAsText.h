@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WTF {
 class TextStream;
@@ -37,34 +38,33 @@ class Element;
 class Frame;
 class RenderObject;
 
-enum RenderAsTextBehaviorFlags {
-    RenderAsTextBehaviorNormal          = 0,
-    RenderAsTextShowAllLayers           = 1 << 0, // Dump all layers, not just those that would paint.
-    RenderAsTextShowLayerNesting        = 1 << 1, // Annotate the layer lists.
-    RenderAsTextShowCompositedLayers    = 1 << 2, // Show which layers are composited.
-    RenderAsTextShowAddresses           = 1 << 3, // Show layer and renderer addresses.
-    RenderAsTextShowIDAndClass          = 1 << 4, // Show id and class attributes
-    RenderAsTextPrintingMode            = 1 << 5, // Dump the tree in printing mode.
-    RenderAsTextDontUpdateLayout        = 1 << 6, // Don't update layout, to make it safe to call showLayerTree() from the debugger inside layout or painting code.
-    RenderAsTextShowLayoutState         = 1 << 7, // Print the various 'needs layout' bits on renderers.
-    RenderAsTextShowOverflow            = 1 << 8, // Print layout and visual overflow.
-    RenderAsTextShowSVGGeometry         = 1 << 9, // Print additional geometry for SVG objects.
-    RenderAsTextShowLayerFragments      = 1 << 10, // Print additional info about fragmented RenderLayers
+enum class RenderAsTextFlag {
+    BehaviorNormal          = 0,
+    ShowAllLayers           = 1 << 0, // Dump all layers, not just those that would paint.
+    ShowLayerNesting        = 1 << 1, // Annotate the layer lists.
+    ShowCompositedLayers    = 1 << 2, // Show which layers are composited.
+    ShowOverflow            = 1 << 3, // Print layout and visual overflow.
+    ShowSVGGeometry         = 1 << 4, // Print additional geometry for SVG objects.
+    ShowLayerFragments      = 1 << 5, // Print additional info about fragmented RenderLayers
+    ShowAddresses           = 1 << 6, // Show layer and renderer addresses.
+    ShowIDAndClass          = 1 << 7, // Show id and class attributes
+    PrintingMode            = 1 << 8, // Dump the tree in printing mode.
+    DontUpdateLayout        = 1 << 9, // Don't update layout, to make it safe to call showLayerTree() from the debugger inside layout or painting code.
+    ShowLayoutState         = 1 << 10, // Print the various 'needs layout' bits on renderers.
 };
-typedef unsigned RenderAsTextBehavior;
 
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
-WEBCORE_EXPORT String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-WEBCORE_EXPORT String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-void write(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-void writeDebugInfo(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+WEBCORE_EXPORT String externalRepresentation(Frame*, OptionSet<RenderAsTextFlag> = { });
+WEBCORE_EXPORT String externalRepresentation(Element*, OptionSet<RenderAsTextFlag> = { });
+void write(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });
+void writeDebugInfo(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });
 
 class RenderTreeAsText {
 // FIXME: This is a cheesy hack to allow easy access to RenderStyle colors.  It won't be needed if we convert
 // it to use visitedDependentColor instead. (This just involves rebaselining many results though, so for now it's
 // not being done).
 public:
-    static void writeRenderObject(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior);
+    static void writeRenderObject(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag>);
 };
 
 // Helper function shared with SVGRenderTreeAsText

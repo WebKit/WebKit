@@ -156,6 +156,9 @@ public:
     void removeAllWebNotificationPermissions();
     void simulateWebNotificationClick(JSValueRef notification);
 
+    void setRenderTreeDumpOptions(unsigned);
+    unsigned renderTreeDumpOptions() const { return m_renderTreeDumpOptions; }
+
     bool dumpAsAudio() const { return m_dumpAsAudio; }
     void setDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; }
     
@@ -405,61 +408,64 @@ private:
 
     void setGeolocationPermissionCommon(bool allow);
 
-    bool m_disallowIncreaseForApplicationCacheQuota;
-    bool m_dumpApplicationCacheDelegateCallbacks;
-    bool m_dumpAsAudio;
-    bool m_dumpAsPDF;
-    bool m_dumpAsText;
-    bool m_dumpBackForwardList;
-    bool m_dumpChildFrameScrollPositions;
-    bool m_dumpChildFramesAsText;
-    bool m_dumpDOMAsWebArchive;
-    bool m_dumpDatabaseCallbacks;
-    bool m_dumpEditingCallbacks;
-    bool m_dumpFrameLoadCallbacks;
-    bool m_dumpProgressFinishedCallback;
-    bool m_dumpUserGestureInFrameLoadCallbacks;
-    bool m_dumpHistoryDelegateCallbacks;
-    bool m_dumpResourceLoadCallbacks;
-    bool m_dumpResourceResponseMIMETypes;
-    bool m_dumpSelectionRect;
-    bool m_dumpSourceAsWebArchive;
-    bool m_dumpStatusCallbacks;
-    bool m_dumpTitleChanges;
-    bool m_dumpVisitedLinksCallback;
-    bool m_dumpWillCacheResponse;
-    bool m_generatePixelResults;
-    bool m_callCloseOnWebViews;
-    bool m_canOpenWindows;
-    bool m_closeRemainingWindowsWhenComplete;
-    bool m_newWindowsCopyBackForwardList;
-    bool m_stopProvisionalFrameLoads;
-    bool m_testOnscreen;
-    bool m_testRepaint;
-    bool m_testRepaintSweepHorizontally;
-    bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
-    bool m_willSendRequestReturnsNull;
-    bool m_willSendRequestReturnsNullOnRedirect;
-    bool m_windowIsKey;
-    bool m_alwaysAcceptCookies;
-    bool m_globalFlag;
-    bool m_isGeolocationPermissionSet;
-    bool m_geolocationPermission;
-    bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges;
-    bool m_handlesAuthenticationChallenges;
-    bool m_isPrinting;
-    bool m_useDeferredFrameLoading;
-    bool m_shouldPaintBrokenImage;
-    bool m_shouldStayOnPageAfterHandlingBeforeUnload;
+    bool m_disallowIncreaseForApplicationCacheQuota { false };
+    bool m_dumpApplicationCacheDelegateCallbacks { false };
+    bool m_dumpAsAudio { false };
+    bool m_dumpAsPDF { false };
+    bool m_dumpAsText { false };
+    bool m_dumpBackForwardList { false };
+    bool m_dumpChildFrameScrollPositions { false };
+    bool m_dumpChildFramesAsText { false };
+    bool m_dumpDOMAsWebArchive { false };
+    bool m_dumpDatabaseCallbacks { false };
+    bool m_dumpEditingCallbacks { false };
+    bool m_dumpFrameLoadCallbacks { false };
+    bool m_dumpProgressFinishedCallback { false };
+    bool m_dumpUserGestureInFrameLoadCallbacks { false };
+    bool m_dumpHistoryDelegateCallbacks { false };
+    bool m_dumpResourceLoadCallbacks { false };
+    bool m_dumpResourceResponseMIMETypes { false };
+    bool m_dumpSelectionRect { false };
+    bool m_dumpSourceAsWebArchive { false };
+    bool m_dumpStatusCallbacks { false };
+    bool m_dumpTitleChanges { false };
+    bool m_dumpVisitedLinksCallback { false };
+    bool m_dumpWillCacheResponse { false };
+    bool m_generatePixelResults { true };
+    bool m_callCloseOnWebViews { true };
+    bool m_canOpenWindows { false };
+    bool m_closeRemainingWindowsWhenComplete { true };
+    bool m_newWindowsCopyBackForwardList { false };
+    bool m_stopProvisionalFrameLoads { false };
+    bool m_testOnscreen { false };
+    bool m_testRepaint { false };
+    bool m_testRepaintSweepHorizontally { false };
+    bool m_waitToDump  { false }; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
+    bool m_willSendRequestReturnsNull { false };
+    bool m_willSendRequestReturnsNullOnRedirect { false };
+    bool m_windowIsKey { true };
+    bool m_alwaysAcceptCookies { false };
+    bool m_globalFlag { false };
+    bool m_isGeolocationPermissionSet { false };
+    bool m_geolocationPermission { false };
+    bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges { false };
+    bool m_handlesAuthenticationChallenges { false };
+    bool m_isPrinting { false };
+    bool m_useDeferredFrameLoading { false };
+    bool m_shouldPaintBrokenImage { true };
+    bool m_shouldStayOnPageAfterHandlingBeforeUnload { false };
     // FIXME 81697: This variable most likely will be removed once we have migrated the tests from fast/notifications to http/tests/notifications.
-    bool m_areLegacyWebNotificationPermissionRequestsIgnored;
-    bool m_customFullScreenBehavior;
-    bool m_hasPendingWebNotificationClick;
+    bool m_areLegacyWebNotificationPermissionRequestsIgnored { false };
+    bool m_customFullScreenBehavior { false };
+    bool m_hasPendingWebNotificationClick { false };
     bool m_dumpJSConsoleLogInStdErr { false };
     bool m_didCancelClientRedirect { false };
 
-    double m_databaseDefaultQuota;
-    double m_databaseMaxQuota;
+    double m_databaseDefaultQuota { -1 };
+    double m_databaseMaxQuota { -1 };
+
+    int m_timeout { 0 };
+    unsigned m_renderTreeDumpOptions { 0 };
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 
@@ -490,6 +496,4 @@ private:
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();
     static JSStaticFunction* staticFunctions();
-
-    int m_timeout;
 };

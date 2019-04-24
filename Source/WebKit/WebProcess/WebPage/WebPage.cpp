@@ -1128,14 +1128,34 @@ void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
         scheduleFullEditorStateUpdate();
 }
 
-String WebPage::renderTreeExternalRepresentation() const
+static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(unsigned options)
 {
-    return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);
+    OptionSet<RenderAsTextFlag> flags;
+
+    if (options & RenderTreeShowAllLayers)
+        flags.add(RenderAsTextFlag::ShowAllLayers);
+    if (options & RenderTreeShowLayerNesting)
+        flags.add(RenderAsTextFlag::ShowLayerNesting);
+    if (options & RenderTreeShowCompositedLayers)
+        flags.add(RenderAsTextFlag::ShowCompositedLayers);
+    if (options & RenderTreeShowOverflow)
+        flags.add(RenderAsTextFlag::ShowOverflow);
+    if (options & RenderTreeShowSVGGeometry)
+        flags.add(RenderAsTextFlag::ShowSVGGeometry);
+    if (options & RenderTreeShowLayerFragments)
+        flags.add(RenderAsTextFlag::ShowLayerFragments);
+
+    return flags;
+}
+
+String WebPage::renderTreeExternalRepresentation(unsigned options) const
+{
+    return externalRepresentation(m_mainFrame->coreFrame(), toRenderAsTextFlags(options));
 }
 
 String WebPage::renderTreeExternalRepresentationForPrinting() const
 {
-    return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextPrintingMode);
+    return externalRepresentation(m_mainFrame->coreFrame(), { RenderAsTextFlag::PrintingMode });
 }
 
 uint64_t WebPage::renderTreeSize() const

@@ -39,6 +39,14 @@ interface TestRunner {
     void waitUntilDownloadFinished();
     void setShouldLogDownloadCallbacks(boolean value);
 
+    const unsigned short RENDER_TREE_SHOW_ALL_LAYERS            = 1;
+    const unsigned short RENDER_TREE_SHOW_LAYER_NESTING         = 2;
+    const unsigned short RENDER_TREE_SHOW_COMPOSITED_LAYERS     = 4;
+    const unsigned short RENDER_TREE_SHOW_OVERFLOW              = 8;
+    const unsigned short RENDER_TREE_SHOW_SVG_GEOMETRY          = 16;
+    const unsigned short RENDER_TREE_SHOW_LAYER_FRAGMENTS       = 32;
+    void setRenderTreeDumpOptions(unsigned short options);
+
     // Other dumping.
     void dumpBackForwardList();
     void dumpChildFrameScrollPositions();

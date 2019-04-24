@@ -83,8 +83,18 @@
 
 @end
 
+typedef NS_OPTIONS(NSUInteger, WebRenderTreeAsTextOptions) {
+    WebRenderTreeAsTextShowAllLayers           = 1 << 0,
+    WebRenderTreeAsTextShowLayerNesting        = 1 << 1,
+    WebRenderTreeAsTextShowCompositedLayers    = 1 << 2,
+    WebRenderTreeAsTextShowOverflow            = 1 << 3,
+    WebRenderTreeAsTextShowSVGGeometry         = 1 << 4,
+    WebRenderTreeAsTextShowLayerFragments      = 1 << 5
+};
+
 @interface WebFrame (WebKitDebug)
-- (NSString *)renderTreeAsExternalRepresentationForPrinting:(BOOL)forPrinting;
+- (NSString *)renderTreeAsExternalRepresentationForPrinting;
+- (NSString *)renderTreeAsExternalRepresentationWithOptions:(WebRenderTreeAsTextOptions)options;
 - (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels;
 - (void)printToCGContext:(CGContextRef)cgContext pageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels;
 @end

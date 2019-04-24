@@ -40,17 +40,17 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class AuthenticationChallenge;
-    class DocumentLoader;
-    class Element;
-    class FloatSize;
-    class Frame;
-    class GraphicsContext;
-    class HTMLFrameOwnerElement;
-    class IntRect;
-    class Page;
-    class ResourceError;
-    class SharedBuffer;
+class AuthenticationChallenge;
+class DocumentLoader;
+class Element;
+class FloatSize;
+class Frame;
+class GraphicsContext;
+class HTMLFrameOwnerElement;
+class IntRect;
+class Page;
+class ResourceError;
+class SharedBuffer;
 }
 
 typedef const struct OpaqueJSContext* JSContextRef;
@@ -113,7 +113,7 @@ public:
 
     // IWebFramePrivate
     virtual HRESULT STDMETHODCALLTYPE unused1() { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(BOOL forPrinting, _Deref_opt_out_ BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE unused5() { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE pageNumberForElementById(_In_ BSTR id, float pageWidthInPixels, float pageHeightInPixels, _Out_ int* pageNumber);
     virtual HRESULT STDMETHODCALLTYPE numberOfPages(float pageWidthInPixels, float pageHeightInPixels, _Out_ int* pageCount);
     virtual HRESULT STDMETHODCALLTYPE scrollOffset(_Out_ SIZE*);
@@ -156,6 +156,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE unused4() { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE resumeAnimations();
     virtual HRESULT STDMETHODCALLTYPE suspendAnimations();
+    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(unsigned options, _Deref_opt_out_ BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentationForPrinting(_Deref_opt_out_ BSTR* result);
 
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding(_Out_ BOOL*);

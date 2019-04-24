@@ -108,7 +108,7 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] HDC deviceContext);
 
-    HRESULT renderTreeAsExternalRepresentation([in] BOOL forPrinting, [out, retval] BSTR* result);
+    HRESULT unused5();
 
     HRESULT suspendAnimations();
     HRESULT resumeAnimations(); 
@@ -119,4 +119,6 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT setTextDirection([in] BSTR direction);
 
+    HRESULT renderTreeAsExternalRepresentation([in] unsigned options, [out, retval] BSTR* result);
+    HRESULT renderTreeAsExternalRepresentationForPrinting([out, retval] BSTR* result);
 }

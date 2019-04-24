@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 500px;
+        }
+        
+        .overflowing {
+            width: 200px;
+            height: 250px;
+        }
+        
+        .contents {
+            position: relative;
+            z-index: 1;
+            height: 400px;
+        }
+        
+        .negative-z {
+            position: absolute;
+            width: 100px;
+            height: 50px;
+            z-index: -1;
+            border: 1px solid black;
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.setRenderTreeDumpOptions(testRunner.RENDER_TREE_SHOW_ALL_LAYERS
+                    | testRunner.RENDER_TREE_SHOW_LAYER_NESTING
+                    | testRunner.RENDER_TREE_SHOW_COMPOSITED_LAYERS
+                    | testRunner.RENDER_TREE_SHOW_OVERFLOW
+                    | testRunner.RENDER_TREE_SHOW_SVG_GEOMETRY
+                    | testRunner.RENDER_TREE_SHOW_LAYER_FRAGMENTS);
+        }
+    </script>
+</head>
+<body>
+    <div class="overflowing">
+        <div class="contents"></div>
+    </div>
+    <div class="negative-z composited"></div>
+    <div style="height: 200px">
+        <svg>
+            <rect x="10" y="20" width="100" height="100" fill="blue"/>
+        </svg>
+    </div>
+</body>
+</html>

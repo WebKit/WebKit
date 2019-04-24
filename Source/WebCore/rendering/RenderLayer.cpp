@@ -6757,7 +6757,18 @@ void showLayerTree(const WebCore::RenderLayer* layer)
     if (!layer)
         return;
 
-    WTF::String output = externalRepresentation(&layer->renderer().frame(), WebCore::RenderAsTextShowAllLayers | WebCore::RenderAsTextShowLayerNesting | WebCore::RenderAsTextShowCompositedLayers | WebCore::RenderAsTextShowAddresses | WebCore::RenderAsTextShowIDAndClass | WebCore::RenderAsTextDontUpdateLayout | WebCore::RenderAsTextShowLayoutState | WebCore::RenderAsTextShowOverflow | WebCore::RenderAsTextShowSVGGeometry | WebCore::RenderAsTextShowLayerFragments);
+    WTF::String output = externalRepresentation(&layer->renderer().frame(), {
+        WebCore::RenderAsTextFlag::ShowAllLayers,
+        WebCore::RenderAsTextFlag::ShowLayerNesting,
+        WebCore::RenderAsTextFlag::ShowCompositedLayers,
+        WebCore::RenderAsTextFlag::ShowOverflow,
+        WebCore::RenderAsTextFlag::ShowSVGGeometry,
+        WebCore::RenderAsTextFlag::ShowLayerFragments,
+        WebCore::RenderAsTextFlag::ShowAddresses,
+        WebCore::RenderAsTextFlag::ShowIDAndClass,
+        WebCore::RenderAsTextFlag::DontUpdateLayout,
+        WebCore::RenderAsTextFlag::ShowLayoutState,
+    });
     fprintf(stderr, "\n%s\n", output.utf8().data());
 }
 

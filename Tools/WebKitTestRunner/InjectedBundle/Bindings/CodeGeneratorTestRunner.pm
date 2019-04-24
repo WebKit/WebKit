@@ -81,6 +81,12 @@ sub _classRefGetter
     return $$self{codeGenerator}->WK_lcfirst(_implementationClassName($type)) . "Class";
 }
 
+sub _constantGetterFunctionName
+{
+    my ($constantName) = @_;
+    return "get".$constantName;
+}
+
 sub _parseLicenseBlock
 {
     my ($fileHandle) = @_;
@@ -274,6 +280,27 @@ EOF
 }
 
 EOF
+
+    if (my @constants = @{$interface->constants}) {
+        push(@contents, "\n// Constants\n");
+
+        foreach my $constant (@constants) {
+            $self->_includeHeaders(\%contentsIncludes, $constant->type);
+
+            my $getterName = _constantGetterFunctionName($self->_getterName($constant));
+            my $getterExpression = "impl->${getterName}()";
+            my $value = $constant->value;
+
+            push(@contents, <<EOF);
+static JSValueRef $getterName(JSContextRef context, JSObjectRef, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeNumber(context, $value);
+}
+
+EOF
+        }
+
+    }
 
     push(@contents, $self->_staticFunctionsGetterImplementation($interface), "\n");
     push(@contents, $self->_staticValuesGetterImplementation($interface));
@@ -561,17 +588,33 @@ sub _staticValuesGetterImplementation
     my $mapFunction = sub {
         return if $_->extendedAttributes->{"NoImplementation"};
 
+        my $isReadOnly = 1;
+        my $getterName;
+
+        if (ref($_) eq "IDLAttribute") {
+            $isReadOnly = $_->isReadOnly;
+            $getterName = $self->_getterName($_);
+        } elsif (ref($_) eq "IDLConstant") {
+            $getterName = _constantGetterFunctionName($self->_getterName($_));
+        }
+
         my $attributeName = $_->name;
-        my $getterName = $self->_getterName($_);
-        my $setterName = $_->isReadOnly ? "0" : $self->_setterName($_);
+
+        my $setterName = $isReadOnly ? "0" : $self->_setterName($_);
         my @attributes = qw(kJSPropertyAttributeDontDelete);
-        push(@attributes, "kJSPropertyAttributeReadOnly") if $_->isReadOnly;
+        push(@attributes, "kJSPropertyAttributeReadOnly") if $isReadOnly;
         push(@attributes, "kJSPropertyAttributeDontEnum") if $_->extendedAttributes->{"DontEnum"};
 
         return "{ \"$attributeName\", $getterName, $setterName, " . join(" | ", @attributes) . " }";
     };
 
-    return $self->_staticFunctionsOrValuesGetterImplementation($interface, "value", "{ 0, 0, 0, 0 }", $mapFunction, $interface->attributes);
+    my $attributesAndConstants = [];
+    push (@$attributesAndConstants, @{ $interface->attributes });
+    if ($interface->constants) {
+        push (@$attributesAndConstants, @{ $interface->constants });
+    }
+
+    return $self->_staticFunctionsOrValuesGetterImplementation($interface, "value", "{ 0, 0, 0, 0 }", $mapFunction, $attributesAndConstants);
 }
 
 1;

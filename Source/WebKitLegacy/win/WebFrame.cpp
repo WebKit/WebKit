@@ -856,7 +856,38 @@ HRESULT WebFrame::childFrames(_COM_Outptr_opt_ IEnumVARIANT** enumFrames)
 
 // IWebFramePrivate ------------------------------------------------------
 
-HRESULT WebFrame::renderTreeAsExternalRepresentation(BOOL forPrinting, _Deref_opt_out_ BSTR* result)
+enum WebRenderTreeAsTextOption {
+    WebRenderTreeAsTextShowAllLayers           = 1 << 0,
+    WebRenderTreeAsTextShowLayerNesting        = 1 << 1,
+    WebRenderTreeAsTextShowCompositedLayers    = 1 << 2,
+    WebRenderTreeAsTextShowOverflow            = 1 << 3,
+    WebRenderTreeAsTextShowSVGGeometry         = 1 << 4,
+    WebRenderTreeAsTextShowLayerFragments      = 1 << 5
+};
+
+typedef unsigned WebRenderTreeAsTextOptions;
+
+static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
+{
+    OptionSet<RenderAsTextFlag> flags;
+
+    if (options & WebRenderTreeAsTextShowAllLayers)
+        flags.add(RenderAsTextFlag::ShowAllLayers);
+    if (options & WebRenderTreeAsTextShowLayerNesting)
+        flags.add(RenderAsTextFlag::ShowLayerNesting);
+    if (options & WebRenderTreeAsTextShowCompositedLayers)
+        flags.add(RenderAsTextFlag::ShowCompositedLayers);
+    if (options & WebRenderTreeAsTextShowOverflow)
+        flags.add(RenderAsTextFlag::ShowOverflow);
+    if (options & WebRenderTreeAsTextShowSVGGeometry)
+        flags.add(RenderAsTextFlag::ShowSVGGeometry);
+    if (options & WebRenderTreeAsTextShowLayerFragments)
+        flags.add(RenderAsTextFlag::ShowLayerFragments);
+
+    return flags;
+}
+
+HRESULT WebFrame::renderTreeAsExternalRepresentation(unsigned options, _Deref_opt_out_ BSTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -865,7 +896,20 @@ HRESULT WebFrame::renderTreeAsExternalRepresentation(BOOL forPrinting, _Deref_op
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    *result = BString(externalRepresentation(coreFrame, forPrinting ? RenderAsTextPrintingMode : RenderAsTextBehaviorNormal)).release();
+    *result = BString(externalRepresentation(coreFrame, toRenderAsTextFlags(options))).release();
+    return S_OK;
+}
+
+HRESULT WebFrame::renderTreeAsExternalRepresentationForPrinting(_Deref_opt_out_ BSTR* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_UNEXPECTED;
+
+    *result = BString(externalRepresentation(coreFrame, { RenderAsTextFlag::PrintingMode })).release();
     return S_OK;
 }
 

@@ -716,7 +716,11 @@ void dump()
             COMPtr<IWebFramePrivate> framePrivate;
             if (FAILED(frame->QueryInterface(&framePrivate)))
                 goto fail;
-            framePrivate->renderTreeAsExternalRepresentation(::gTestRunner->isPrinting(), &resultString.GetBSTR());
+
+            if (::gTestRunner->isPrinting())
+                framePrivate->renderTreeAsExternalRepresentationForPrinting(&resultString.GetBSTR());
+            else
+                framePrivate->renderTreeAsExternalRepresentation(::gTestRunner->renderTreeDumpOptions(), &resultString.GetBSTR());
         }
 
         if (resultString.length()) {

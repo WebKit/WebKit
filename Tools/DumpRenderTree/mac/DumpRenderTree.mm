@@ -1747,8 +1747,10 @@ void dump()
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
             resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]));
             resultMimeType = @"application/x-webarchive";
-        } else
-            resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting:gTestRunner->isPrinting()];
+        } else if (gTestRunner->isPrinting())
+            resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting];
+        else
+            resultString = [mainFrame renderTreeAsExternalRepresentationWithOptions:gTestRunner->renderTreeDumpOptions()];
 
         if (resultString && !resultData)
             resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
