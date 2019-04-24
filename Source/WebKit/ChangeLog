@@ -1,3 +1,14 @@
+2019-04-24  Chris Dumez  <cdumez@apple.com>
+
+        X-Frame-Options header should be ignored when frame-ancestors CSP directive is present
+        https://bugs.webkit.org/show_bug.cgi?id=197226
+        <rdar://problem/50155649>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions):
+
 2019-04-24  Dean Jackson  <dino@apple.com>
 
         Rename _highlightLongPressCanClick and only add gesture recognizer when necessary

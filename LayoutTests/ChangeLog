@@ -1,3 +1,17 @@
+2019-04-24  Chris Dumez  <cdumez@apple.com>
+
+        X-Frame-Options header should be ignored when frame-ancestors CSP directive is present
+        https://bugs.webkit.org/show_bug.cgi?id=197226
+        <rdar://problem/50155649>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-X-Frames-Options-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-X-Frames-Options.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/frame-ancestors-self-x-frame-options-deny.pl: Added.
+
 2019-04-24  chris fleizach  <cfleizach@apple.com>
 
         AX: Remove deprecated Accessibility Object Model events

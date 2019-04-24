@@ -1,3 +1,36 @@
+2019-04-24  Chris Dumez  <cdumez@apple.com>
+
+        X-Frame-Options header should be ignored when frame-ancestors CSP directive is present
+        https://bugs.webkit.org/show_bug.cgi?id=197226
+        <rdar://problem/50155649>
+
+        Reviewed by Alex Christensen.
+
+        X-Frame-Options header should be ignored when frame-ancestors CSP directive is present:
+        - https://www.w3.org/TR/CSP3/#frame-ancestors-and-frame-options
+
+        Specification says:
+        """
+        In order to allow backwards-compatible deployment, the frame-ancestors directive _obsoletes_ the
+        X-Frame-Options header. If a resource is delivered with an policy that includes a directive named
+        frame-ancestors and whose disposition is "enforce", then the X-Frame-Options header MUST be ignored.
+        """
+
+        Gecko and Blink follow the specification, WebKit does not. As a result, page [1] is broken with
+        WebKit-only on Schwab.com. The page height is wrong and you cannot see all the ETFs as a result.
+
+        [1] https://www.schwab.com/public/schwab/investing/investment_help/investment_research/etf_research/etfs.html?&path=/Prospect/Research/etfs/overview/oneSourceETFs.asp
+
+        Test: http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-X-Frames-Options.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::overridesXFrameOptions const):
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        (WebCore::ContentSecurityPolicyDirectiveList::hasFrameAncestorsDirective const):
+
 2019-04-24  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Do not use the global _WKContentChange in WebKitLegacy

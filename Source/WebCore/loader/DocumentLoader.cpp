@@ -787,13 +787,15 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
             return;
         }
 
-        String frameOptions = response.httpHeaderFields().get(HTTPHeaderName::XFrameOptions);
-        if (!frameOptions.isNull()) {
-            if (frameLoader()->shouldInterruptLoadForXFrameOptions(frameOptions, url, identifier)) {
-                String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + frameOptions + "'.";
-                m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
-                stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
-                return;
+        if (!contentSecurityPolicy.overridesXFrameOptions()) {
+            String frameOptions = response.httpHeaderFields().get(HTTPHeaderName::XFrameOptions);
+            if (!frameOptions.isNull()) {
+                if (frameLoader()->shouldInterruptLoadForXFrameOptions(frameOptions, url, identifier)) {
+                    String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + frameOptions + "'.";
+                    m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
+                    stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
+                    return;
+                }
             }
         }
     }

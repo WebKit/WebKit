@@ -500,6 +500,18 @@ bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& u
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestor, frame);
 }
 
+bool ContentSecurityPolicy::overridesXFrameOptions() const
+{
+    // If a resource is delivered with an policy that includes a directive named frame-ancestors and whose disposition
+    // is "enforce", then the X-Frame-Options header MUST be ignored.
+    // https://www.w3.org/TR/CSP3/#frame-ancestors-and-frame-options
+    for (auto& policy : m_policies) {
+        if (!policy->isReportOnly() && policy->hasFrameAncestorsDirective())
+            return true;
+    }
+    return false;
+}
+
 bool ContentSecurityPolicy::allowFrameAncestors(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
