@@ -198,7 +198,7 @@ public:
         ASSERT(
             m_kind == BirthToFill || m_kind == Fill || m_kind == BirthToSpill || m_kind == Spill
             || m_kind == SetLocalEvent);
-        return static_cast<DataFormat>(m_dataFormat);
+        return m_dataFormat;
     }
     
     MacroAssembler::RegisterID gpr() const
@@ -262,7 +262,7 @@ private:
     
     union {
         int virtualReg;
-        uintptr_t id;
+        unsigned id;
     } m_which;
     
     // For BirthToFill, Fill:
@@ -276,7 +276,7 @@ private:
     VariableRepresentation m_representation;
     
     int8_t m_kind;
-    int8_t m_dataFormat;
+    DataFormat m_dataFormat { DataFormatNone };
 };
 
 } } // namespace JSC::DFG

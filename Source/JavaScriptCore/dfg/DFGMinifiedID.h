@@ -38,46 +38,41 @@ struct Node;
 
 class MinifiedID {
 public:
-    MinifiedID() : m_id(invalidID()) { }
-    MinifiedID(WTF::HashTableDeletedValueType) : m_id(otherInvalidID()) { }
-    explicit MinifiedID(Node* node) : m_id(bitwise_cast<uintptr_t>(node)) { }
+    MinifiedID() = default;
+    MinifiedID(WTF::HashTableDeletedValueType) : m_index(otherInvalidIndex()) { }
+    explicit MinifiedID(Node* node);
     
-    bool operator!() const { return m_id == invalidID(); }
+    bool operator!() const { return m_index == invalidIndex(); }
     
-    // This takes Graph& to remind you, that you should only be calling this method
-    // when you're in the main compilation pass (i.e. you have a graph) and not later,
-    // like during OSR exit compilation.
-    Node* node(const Graph&) const { return bitwise_cast<Node*>(m_id); }
+    bool operator==(const MinifiedID& other) const { return m_index == other.m_index; }
+    bool operator!=(const MinifiedID& other) const { return m_index != other.m_index; }
+    bool operator<(const MinifiedID& other) const { return m_index < other.m_index; }
+    bool operator>(const MinifiedID& other) const { return m_index > other.m_index; }
+    bool operator<=(const MinifiedID& other) const { return m_index <= other.m_index; }
+    bool operator>=(const MinifiedID& other) const { return m_index >= other.m_index; }
     
-    bool operator==(const MinifiedID& other) const { return m_id == other.m_id; }
-    bool operator!=(const MinifiedID& other) const { return m_id != other.m_id; }
-    bool operator<(const MinifiedID& other) const { return m_id < other.m_id; }
-    bool operator>(const MinifiedID& other) const { return m_id > other.m_id; }
-    bool operator<=(const MinifiedID& other) const { return m_id <= other.m_id; }
-    bool operator>=(const MinifiedID& other) const { return m_id >= other.m_id; }
+    unsigned hash() const { return WTF::IntHash<unsigned>::hash(m_index); }
     
-    unsigned hash() const { return WTF::IntHash<uintptr_t>::hash(m_id); }
+    void dump(PrintStream& out) const { out.print(m_index); }
     
-    void dump(PrintStream& out) const { out.print(RawPointer(reinterpret_cast<void*>(m_id))); }
+    bool isHashTableDeletedValue() const { return m_index == otherInvalidIndex(); }
     
-    bool isHashTableDeletedValue() const { return m_id == otherInvalidID(); }
-    
-    static MinifiedID fromBits(uintptr_t value)
+    static MinifiedID fromBits(unsigned value)
     {
         MinifiedID result;
-        result.m_id = value;
+        result.m_index = value;
         return result;
     }
     
-    uintptr_t bits() const { return m_id; }
+    unsigned bits() const { return m_index; }
 
 private:
     friend class MinifiedNode;
     
-    static uintptr_t invalidID() { return static_cast<uintptr_t>(static_cast<intptr_t>(-1)); }
-    static uintptr_t otherInvalidID() { return static_cast<uintptr_t>(static_cast<intptr_t>(-2)); }
+    static constexpr unsigned invalidIndex() { return static_cast<unsigned>(-1); }
+    static constexpr unsigned otherInvalidIndex() { return static_cast<unsigned>(-2); }
     
-    uintptr_t m_id;
+    unsigned m_index { invalidIndex() };
 };
 
 struct MinifiedIDHash {

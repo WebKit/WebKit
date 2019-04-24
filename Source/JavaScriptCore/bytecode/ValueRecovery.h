@@ -419,7 +419,7 @@ private:
 #endif
         int virtualReg;
         EncodedJSValue constant;
-        uintptr_t nodeID;
+        unsigned nodeID;
     } m_source;
 };
 

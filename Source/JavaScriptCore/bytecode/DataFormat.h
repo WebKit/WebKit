@@ -35,7 +35,7 @@ namespace JSC {
 // Values may be unboxed primitives (int32, double, or cell), or boxed as a JSValue.
 // For boxed values, we may know the type of boxing that has taken place.
 // (May also need bool, array, object, string types!)
-enum DataFormat {
+enum DataFormat : uint8_t {
     DataFormatNone = 0,
     DataFormatInt32 = 1,
     DataFormatInt52 = 2, // Int52's are left-shifted by 12 by default.

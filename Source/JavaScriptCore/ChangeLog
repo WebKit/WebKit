@@ -1,3 +1,45 @@
+2019-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use node index as DFG::MinifiedID
+        https://bugs.webkit.org/show_bug.cgi?id=197186
+
+        Reviewed by Saam Barati.
+
+        DFG Nodes can be identified with index if the graph is given. We should use unsigned index as a DFG::MinifiedID's underlying
+        source instead of Node* to reduce the size of VariableEvent from 16 to 12. Vector<VariableEvent> is the main data in DFG's OSR
+        tracking. It is kept after DFG compilation is done to make OSR work. We saw that this is allocated with large size in GMail.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/DataFormat.h:
+        * bytecode/ValueRecovery.h:
+        * dfg/DFGGenerationInfo.h:
+        * dfg/DFGMinifiedID.h:
+        (JSC::DFG::MinifiedID::MinifiedID):
+        (JSC::DFG::MinifiedID::operator! const):
+        (JSC::DFG::MinifiedID::operator== const):
+        (JSC::DFG::MinifiedID::operator!= const):
+        (JSC::DFG::MinifiedID::operator< const):
+        (JSC::DFG::MinifiedID::operator> const):
+        (JSC::DFG::MinifiedID::operator<= const):
+        (JSC::DFG::MinifiedID::operator>= const):
+        (JSC::DFG::MinifiedID::hash const):
+        (JSC::DFG::MinifiedID::dump const):
+        (JSC::DFG::MinifiedID::isHashTableDeletedValue const):
+        (JSC::DFG::MinifiedID::fromBits):
+        (JSC::DFG::MinifiedID::bits const):
+        (JSC::DFG::MinifiedID::invalidIndex):
+        (JSC::DFG::MinifiedID::otherInvalidIndex):
+        (JSC::DFG::MinifiedID::node const): Deleted.
+        (JSC::DFG::MinifiedID::invalidID): Deleted.
+        (JSC::DFG::MinifiedID::otherInvalidID): Deleted.
+        * dfg/DFGMinifiedIDInlines.h: Copied from Source/JavaScriptCore/dfg/DFGMinifiedNode.cpp.
+        (JSC::DFG::MinifiedID::MinifiedID):
+        * dfg/DFGMinifiedNode.cpp:
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::ValueSource):
+        * dfg/DFGVariableEvent.h:
+        (JSC::DFG::VariableEvent::dataFormat const):
+
 2019-04-23  Keith Rollin  <krollin@apple.com>
 
         Add Xcode version check for Header post-processing scripts

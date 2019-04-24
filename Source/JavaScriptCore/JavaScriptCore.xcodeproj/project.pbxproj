@@ -1783,6 +1783,7 @@
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
 		E38D999C221B78BB00D50474 /* JSNonDestructibleProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D999A221B789F00D50474 /* JSNonDestructibleProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4781,6 +4782,7 @@
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
+		E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedIDInlines.h; path = dfg/DFGMinifiedIDInlines.h; sourceTree = "<group>"; };
 		E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFromSyncIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
@@ -6002,9 +6004,9 @@
 				142D6F0713539A2800B02E86 /* MarkedBlock.h */,
 				0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */,
 				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
+				33B2A54522651D53005A0F79 /* MarkedSpace.cpp */,
 				14D2F3D9139F4BE200491031 /* MarkedSpace.h */,
 				0F7DF1301E2970D50095951B /* MarkedSpaceInlines.h */,
-				33B2A54522651D53005A0F79 /* MarkedSpace.cpp */,
 				0F660E331E0517B70031462C /* MarkingConstraint.cpp */,
 				0F660E341E0517B70031462C /* MarkingConstraint.h */,
 				0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */,
@@ -7598,6 +7600,7 @@
 				0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */,
 				0F2BDC3D1522801700CD8910 /* DFGMinifiedGraph.h */,
 				0FB4B51016B3A964003F696B /* DFGMinifiedID.h */,
+				E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */,
 				0F2BDC4C1522818300CD8910 /* DFGMinifiedNode.cpp */,
 				0F2BDC3E1522801700CD8910 /* DFGMinifiedNode.h */,
 				0F8F14311ADF090100ED792C /* DFGMovHintRemovalPhase.cpp */,
@@ -8521,7 +8524,6 @@
 				0F2C63BC1E63440C00C13839 /* AirBlockInsertionSet.h in Headers */,
 				0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */,
 				0F79C7CA1E74C93B00EB34D1 /* AirBreakCriticalEdges.h in Headers */,
-				33B2A54722653481005A0F79 /* B3ValueInlines.h in Headers */,
 				0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */,
 				0FEC85741BDACDC70080FF74 /* AirCCallSpecial.h in Headers */,
 				0FF4B4C71E8893C500DBBE86 /* AirCFG.h in Headers */,
@@ -8714,6 +8716,7 @@
 				0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */,
 				0FEC85421BDACDAC0080FF74 /* B3Validate.h in Headers */,
 				0FEC85441BDACDAC0080FF74 /* B3Value.h in Headers */,
+				33B2A54722653481005A0F79 /* B3ValueInlines.h in Headers */,
 				0F338E151BF0276C0013C88F /* B3ValueKey.h in Headers */,
 				0F338E161BF0276C0013C88F /* B3ValueKeyInlines.h in Headers */,
 				0FEC85471BDACDAC0080FF74 /* B3ValueRep.h in Headers */,
@@ -8967,6 +8970,7 @@
 				0F5874EE194FEB1200AAB2C1 /* DFGMayExit.h in Headers */,
 				0F2BDC451522801B00CD8910 /* DFGMinifiedGraph.h in Headers */,
 				0F2E892D16D02BAF009E4FD2 /* DFGMinifiedID.h in Headers */,
+				E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */,
 				0F2BDC461522802000CD8910 /* DFGMinifiedNode.h in Headers */,
 				0F8F14361ADF090100ED792C /* DFGMovHintRemovalPhase.h in Headers */,
 				0FF2CD5C1B61A4F8004955A8 /* DFGMultiGetByOffsetData.h in Headers */,
@@ -10718,6 +10722,7 @@
 				5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */,
 				5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */,
+				33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
@@ -10851,7 +10856,6 @@
 				536B310C1F71C5990037FC33 /* UnifiedSource119.cpp in Sources */,
 				536B31261F71C5990037FC33 /* UnifiedSource120.cpp in Sources */,
 				536B312D1F71C5990037FC33 /* UnifiedSource121.cpp in Sources */,
-				33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */,
 				536B31251F71C5990037FC33 /* UnifiedSource122.cpp in Sources */,
 				536B311E1F71C5990037FC33 /* UnifiedSource123.cpp in Sources */,
 				536B31141F71C5990037FC33 /* UnifiedSource124.cpp in Sources */,

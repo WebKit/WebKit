@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,36 +20,22 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DFGMinifiedNode.h"
+#pragma once
 
-#if ENABLE(DFG_JIT)
+#include "DFGMinifiedID.h"
 
-#include "DFGMinifiedIDInlines.h"
 #include "DFGNode.h"
-#include "JSCInlines.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
+namespace DFG {
 
-MinifiedNode MinifiedNode::fromNode(Node* node)
+inline MinifiedID::MinifiedID(Node* node)
+    : m_index(node->index())
 {
-    ASSERT(belongsInMinifiedGraph(node->op()));
-    MinifiedNode result;
-    result.m_id = MinifiedID(node);
-    result.m_op = node->op();
-    if (hasConstant(node->op()))
-        result.m_info = JSValue::encode(node->asJSValue());
-    else {
-        ASSERT(node->op() == PhantomDirectArguments || node->op() == PhantomClonedArguments);
-        result.m_info = bitwise_cast<uintptr_t>(node->origin.semantic.inlineCallFrame());
-    }
-    return result;
+    RELEASE_ASSERT(m_index != invalidIndex() && m_index != otherInvalidIndex());
 }
 
 } } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
-

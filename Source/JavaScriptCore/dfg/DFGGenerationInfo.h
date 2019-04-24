@@ -27,7 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGMinifiedID.h"
+#include "DFGMinifiedIDInlines.h"
 #include "DFGVariableEvent.h"
 #include "DFGVariableEventStream.h"
 #include "DataFormat.h"
