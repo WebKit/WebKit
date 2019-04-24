@@ -1,3 +1,17 @@
+2019-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244558.
+        https://bugs.webkit.org/show_bug.cgi?id=197219
+
+        Causing crashes on iOS Sim Release and Debug (Requested by
+        ShawnRoberts on #webkit).
+
+        Reverted changeset:
+
+        "Remove DeprecatedOptional"
+        https://bugs.webkit.org/show_bug.cgi?id=197161
+        https://trac.webkit.org/changeset/244558
+
 2019-04-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove DeprecatedOptional

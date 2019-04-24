@@ -47,6 +47,7 @@ set(WTF_PUBLIC_HEADERS
     DateMath.h
     DebugUtilities.h
     DeferrableRefCounted.h
+    DeprecatedOptional.h
     Deque.h
     DisallowCType.h
     Dominators.h
