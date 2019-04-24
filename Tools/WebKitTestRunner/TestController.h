@@ -314,6 +314,7 @@ public:
 
     String dumpAdClickAttribution();
     void clearAdClickAttribution();
+    void clearAdClickAttributionsThroughWebsiteDataRemoval();
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(WKURLRef);
 

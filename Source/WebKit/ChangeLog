@@ -1,3 +1,55 @@
+2019-04-23  John Wilander  <wilander@apple.com>
+
+        Remove Ad Click Attribution data when removing website data
+        https://bugs.webkit.org/show_bug.cgi?id=197215
+        <rdar://problem/47668988>
+
+        Reviewed by Chris Dumez.
+
+        This patch adds a new WebsiteDataType called AdClickAttributions and flags
+        it as owned by the network process.
+
+        The new website data type is added to the Cocoa API layer for
+        website data records management.
+
+        When either of the two WebsiteDataStore::removeData() functions calls
+        NetworkProcess::deleteWebsiteData() or
+        NetworkProcess::deleteWebsiteDataForOrigins() over IPC, the network
+        process now calls into AdClickAttributionManager::clear() and
+        AdClickAttributionManager::clearForRegistrableDomain() respectively,
+        if the website datatypes include WebsiteDataType::AdClickAttributions.
+
+        The patch removes a couple of completion handlers in NetworkSession function
+        calls are because those are not asynchronous.
+
+        * NetworkProcess/AdClickAttributionManager.cpp:
+        (WebKit::AdClickAttributionManager::clear):
+        (WebKit::AdClickAttributionManager::clearForRegistrableDomain):
+        (WebKit::AdClickAttributionManager::toString const):
+        * NetworkProcess/AdClickAttributionManager.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::clearAdClickAttribution):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::clearAdClickAttribution):
+        (WebKit::NetworkSession::clearAdClickAttributionForRegistrableDomain):
+        * NetworkProcess/NetworkSession.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::ownerProcess):
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]):
+
 2019-04-23  Tim Horton  <timothy_horton@apple.com>
 
         Return annotated text checking strings via UIWKDocumentContext

@@ -158,9 +158,14 @@ void NetworkSession::dumpAdClickAttribution(CompletionHandler<void(String)>&& co
     m_adClickAttribution->toString(WTFMove(completionHandler));
 }
 
-void NetworkSession::clearAdClickAttribution(CompletionHandler<void()>&& completionHandler)
+void NetworkSession::clearAdClickAttribution()
 {
-    m_adClickAttribution->clear(WTFMove(completionHandler));
+    m_adClickAttribution->clear();
+}
+
+void NetworkSession::clearAdClickAttributionForRegistrableDomain(WebCore::RegistrableDomain&& domain)
+{
+    m_adClickAttribution->clearForRegistrableDomain(WTFMove(domain));
 }
 
 void NetworkSession::setAdClickAttributionOverrideTimerForTesting(bool value)

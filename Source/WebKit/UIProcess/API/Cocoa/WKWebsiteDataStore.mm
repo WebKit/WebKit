@@ -202,7 +202,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     static dispatch_once_t onceToken;
     static NSSet *allWebsiteDataTypes;
     dispatch_once(&onceToken, ^ {
-        auto *privateTypes = @[_WKWebsiteDataTypeHSTSCache, _WKWebsiteDataTypeMediaKeys, _WKWebsiteDataTypeSearchFieldRecentSearches, _WKWebsiteDataTypeResourceLoadStatistics, _WKWebsiteDataTypeCredentials
+        auto *privateTypes = @[_WKWebsiteDataTypeHSTSCache, _WKWebsiteDataTypeMediaKeys, _WKWebsiteDataTypeSearchFieldRecentSearches, _WKWebsiteDataTypeResourceLoadStatistics, _WKWebsiteDataTypeCredentials, _WKWebsiteDataTypeAdClickAttributions
 #if !TARGET_OS_IPHONE
         , _WKWebsiteDataTypePlugInData
 #endif

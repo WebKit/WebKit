@@ -82,7 +82,8 @@ public:
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void convertAdClickAttribution(const WebCore::AdClickAttribution::Source&, const WebCore::AdClickAttribution::Destination&, WebCore::AdClickAttribution::Conversion&&);
     void dumpAdClickAttribution(CompletionHandler<void(String)>&&);
-    void clearAdClickAttribution(CompletionHandler<void()>&&);
+    void clearAdClickAttribution();
+    void clearAdClickAttributionForRegistrableDomain(WebCore::RegistrableDomain&&);
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(URL&&);
 

@@ -658,3 +658,12 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setMockWebAuthenticationConfiguration(WTFMove(configuration));
 #endif
 }
+
+void WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemovalFunction callback)
+{
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::AdClickAttributions;
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().removeData(dataTypes, WallTime::fromRawSeconds(0), [context, callback] {
+        callback(context);
+    });
+}
+

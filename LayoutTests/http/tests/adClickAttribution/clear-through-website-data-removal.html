@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AdClickAttributionEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests that both unconverted and converted attributions are cleared on website data removal.</div>
+<a id="targetLink">Link</a><br>
+<div id="output"></div>
+<script>
+    const path = "/adClickAttribution/clear-through-website-data-removal.html";
+    const configuration = [
+        {
+            href: "http://localhost:8000" + path + "?stepTwo",
+            adcampaignid: "3",
+            addestination: "http://localhost:8000"
+        },
+        {
+            href: "http://127.0.0.1:8000" + path + "?stepThree",
+            adcampaignid: "4",
+            addestination: "http://127.0.0.1:8000"
+        }
+    ];
+
+    prepareTest();
+
+    function configureLink(index) {
+        let linkElement = document.getElementById("targetLink");
+        linkElement.setAttribute("href", configuration[index].href);
+        linkElement.setAttribute("adcampaignid", configuration[index].adcampaignid);
+        linkElement.setAttribute("addestination", configuration[index].addestination);
+    }
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "") {
+                // First ad click 127.0.0.1 –> localhost.
+                configureLink(0);
+                activateElement("targetLink");
+            } else if (window.location.search === "?stepTwo") {
+                // Convert the first ad click with priority 4, then do a reverse ad click.
+                let imageElement = document.createElement("img");
+                imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12&priority=04";
+                imageElement.id = "pixel";
+                imageElement.onerror = function(e) {
+                    // Second ad click localhost –> 127.0.0.1.
+                    configureLink(1);
+                    activateElement("targetLink");
+                };
+                document.body.appendChild(imageElement);
+            } else if (window.location.search === "?stepThree") {
+                testRunner.clearAdClickAttributionsThroughWebsiteDataRemoval();
+                testRunner.dumpAdClickAttribution();
+                document.body.removeChild(document.getElementById("targetLink"));
+                tearDownAndFinish();
+            } else {
+                document.getElementById("output").innerText = "FAIL Unknown window.location.search == " + window.location.search + ".";
+                tearDownAndFinish();
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

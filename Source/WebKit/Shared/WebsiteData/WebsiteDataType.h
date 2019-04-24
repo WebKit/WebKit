@@ -50,6 +50,7 @@ enum class WebsiteDataType {
 #endif
     DOMCache = 1 << 15,
     DeviceIdHashSalt = 1 << 16,
+    AdClickAttributions = 1 << 17,
 };
 
 };

@@ -500,6 +500,7 @@ public:
     // Ad Click Attribution.
     void dumpAdClickAttribution();
     void clearAdClickAttribution();
+    void clearAdClickAttributionsThroughWebsiteDataRemoval();
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(JSStringRef);
 

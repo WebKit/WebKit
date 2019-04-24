@@ -57,7 +57,8 @@ public:
 
     void storeUnconverted(AdClickAttribution&&);
     void convert(const Source&, const Destination&, Conversion&&);
-    void clear(CompletionHandler<void()>&&);
+    void clear();
+    void clearForRegistrableDomain(const RegistrableDomain&);
     void toString(CompletionHandler<void(String)>&&) const;
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }

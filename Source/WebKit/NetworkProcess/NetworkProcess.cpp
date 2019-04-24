@@ -1425,6 +1425,11 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) || websiteDataTypes.contains(WebsiteDataType::DOMCache))
         clearStorageQuota(sessionID);
+
+    if (websiteDataTypes.contains(WebsiteDataType::AdClickAttributions)) {
+        if (auto* networkSession = this->networkSession(sessionID))
+            networkSession->clearAdClickAttribution();
+    }
 }
 
 static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
@@ -1465,6 +1470,13 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 #endif
 
+    if (websiteDataTypes.contains(WebsiteDataType::AdClickAttributions)) {
+        if (auto* networkSession = this->networkSession(sessionID)) {
+            for (auto& originData : originDatas)
+                networkSession->clearAdClickAttributionForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host));
+        }
+    }
+    
     auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     });
@@ -2515,7 +2527,7 @@ void NetworkProcess::dumpAdClickAttribution(PAL::SessionID sessionID, Completion
 void NetworkProcess::clearAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        return session->clearAdClickAttribution(WTFMove(completionHandler));
+        session->clearAdClickAttribution();
     
     completionHandler();
 }

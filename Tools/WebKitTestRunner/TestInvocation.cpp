@@ -1643,7 +1643,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().clearAdClickAttribution();
         return nullptr;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearAdClickAttributionsThroughWebsiteDataRemoval")) {
+        TestController::singleton().clearAdClickAttributionsThroughWebsiteDataRemoval();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetAdClickAttributionOverrideTimerForTesting")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);

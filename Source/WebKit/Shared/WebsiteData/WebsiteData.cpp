@@ -128,6 +128,8 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::DeviceIdHashSalt:
         return WebsiteDataProcessType::UI;
+    case WebsiteDataType::AdClickAttributions:
+        return WebsiteDataProcessType::Network;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

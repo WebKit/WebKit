@@ -169,12 +169,22 @@ void AdClickAttributionManager::firePendingConversionRequests()
         startTimer(nextTimeToFire);
 }
 
-void AdClickAttributionManager::clear(CompletionHandler<void()>&& completionHandler)
+void AdClickAttributionManager::clear()
 {
     m_firePendingConversionRequestsTimer.stop();
     m_unconvertedAdClickAttributionMap.clear();
     m_convertedAdClickAttributionMap.clear();
-    completionHandler();
+}
+
+void AdClickAttributionManager::clearForRegistrableDomain(const RegistrableDomain& domain)
+{
+    m_unconvertedAdClickAttributionMap.removeIf([&domain](auto& keyAndValue) {
+        return keyAndValue.key.first.registrableDomain == domain || keyAndValue.key.second.registrableDomain == domain;
+    });
+
+    m_convertedAdClickAttributionMap.removeIf([&domain](auto& keyAndValue) {
+        return keyAndValue.key.first.registrableDomain == domain || keyAndValue.key.second.registrableDomain == domain;
+    });
 }
 
 void AdClickAttributionManager::toString(CompletionHandler<void(String)>&& completionHandler) const
@@ -197,6 +207,8 @@ void AdClickAttributionManager::toString(CompletionHandler<void(String)>&& compl
 
     unsigned convertedAttributionNumber = 0;
     for (auto& attribution : m_convertedAdClickAttributionMap.values()) {
+        if (unconvertedAttributionNumber)
+            builder.append('\n');
         if (!convertedAttributionNumber)
             builder.appendLiteral("Converted Ad Click Attributions:\n");
         else

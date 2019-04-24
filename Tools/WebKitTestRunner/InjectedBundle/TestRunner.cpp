@@ -2876,6 +2876,12 @@ void TestRunner::clearAdClickAttribution()
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
 }
 
+void TestRunner::clearAdClickAttributionsThroughWebsiteDataRemoval()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("ClearAdClickAttributionsThroughWebsiteDataRemoval"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 void TestRunner::setAdClickAttributionOverrideTimerForTesting(bool value)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetAdClickAttributionOverrideTimerForTesting"));

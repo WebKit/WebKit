@@ -3605,6 +3605,14 @@ void TestController::clearAdClickAttribution()
     runUntil(callbackContext.done, noTimeout);
 }
 
+void TestController::clearAdClickAttributionsThroughWebsiteDataRemoval()
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval(dataStore, &callbackContext, adClickAttributionVoidCallback);
+    runUntil(callbackContext.done, noTimeout);
+}
+
 void TestController::setAdClickAttributionOverrideTimerForTesting(bool value)
 {
     AdClickAttributionVoidCallbackContext callbackContext(*this);
