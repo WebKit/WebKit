@@ -1,3 +1,13 @@
+2019-04-24  Brady Eidson  <beidson@apple.com>
+
+        XMLHTTPRequest POSTs to a custom WKURLSchemeHandler protocol are missing the HTTP body.
+        https://bugs.webkit.org/show_bug.cgi?id=191362
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm: Add a test that POSTs all sorts of things
+          from an XHR to a custom protocol.
+
 2019-04-24  John Wilander  <wilander@apple.com>
 
         Age out unconverted Ad Click Attributions after one week.

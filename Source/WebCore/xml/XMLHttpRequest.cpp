@@ -459,7 +459,7 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
-    if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
+    if (m_method != "GET" && m_method != "HEAD") {
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
 #if ENABLE(DASHBOARD_SUPPORT)
             if (usesDashboardBackwardCompatibilityMode())
@@ -489,7 +489,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
-    if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
+    if (!body.isNull() && m_method != "GET" && m_method != "HEAD") {
         String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
         if (contentType.isNull()) {
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -516,7 +516,17 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
-    if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
+    if (m_method != "GET" && m_method != "HEAD") {
+        if (!m_url.protocolIsInHTTPFamily()) {
+            // FIXME: We would like to support posting Blobs to non-http URLs (e.g. custom URL schemes)
+            // but because of the architecture of blob-handling that will require a fair amount of work.
+            
+            ASCIILiteral consoleMessage { "POST of a Blob to non-HTTP protocols in XMLHttpRequest.send() is currently unsupported."_s };
+            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+            
+            return createRequest();
+        }
+        
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
             const String& blobType = body.type();
             if (!blobType.isEmpty() && isValidContentType(blobType))
@@ -539,7 +549,7 @@ ExceptionOr<void> XMLHttpRequest::send(DOMFormData& body)
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
-    if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
+    if (m_method != "GET" && m_method != "HEAD") {
         m_requestEntityBody = FormData::createMultiPart(body, document());
         m_requestEntityBody->generateFiles(document());
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
@@ -566,7 +576,7 @@ ExceptionOr<void> XMLHttpRequest::sendBytesData(const void* data, size_t length)
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
-    if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
+    if (m_method != "GET" && m_method != "HEAD") {
         m_requestEntityBody = FormData::create(data, length);
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);

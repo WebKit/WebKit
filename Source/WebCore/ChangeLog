@@ -1,3 +1,23 @@
+2019-04-24  Brady Eidson  <beidson@apple.com>
+
+        XMLHTTPRequest POSTs to a custom WKURLSchemeHandler protocol are missing the HTTP body.
+        https://bugs.webkit.org/show_bug.cgi?id=191362
+
+        Reviewed by Alex Christensen.
+
+        Covered by new API tests.
+
+        In 2008 some refactoring added an HTTP(S)-only restriction to copying the form body for
+        XHRs that POST, and it added that restriction with no explanation.
+
+        We definitely want to allow that.
+
+        Blobs are broken at this time (covered by bug 197237)
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::sendBytesData):
+
 2019-04-24  John Wilander  <wilander@apple.com>
 
         Age out unconverted Ad Click Attributions after one week.

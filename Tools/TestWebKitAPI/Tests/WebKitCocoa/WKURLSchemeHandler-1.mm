@@ -27,6 +27,9 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -579,4 +582,113 @@ TEST(URLSchemeHandler, SyncXHRError)
     TestWebKitAPI::Util::run(&done);
 }
 
+static const char* xhrPostDocument = R"XHRPOSTRESOURCE(<html><head><script>
+window.onload = function()
+{
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/arraybuffer');
+        
+        var chars = [];
+        var str = "Hi there";
+        for (var i = 0; i < str.length; ++i)
+            chars.push(str.charCodeAt(i));
+
+        xhr.send(new Uint8Array(chars));
+    }
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/string');
+        xhr.send('foo=bar');
+    }
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/document');
+        xhr.send(window.document);
+    }
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/formdata');
+        
+        var formData = new FormData();
+        formData.append("foo", "baz");
+        xhr.send(formData);
+    }
+    {
+//        // FIXME: XHR posting of Blobs is currently unsupported
+//        // https://bugs.webkit.org/show_bug.cgi?id=197237
+//        var xhr = new XMLHttpRequest();
+//        xhr.open('POST', '/blob');
+//        var blob = new Blob(["Hello world!"], {type: "text/plain"});
+//        xhr.send(blob);
+    }
+};
+</script></head>
+<body>
+Hello world!
+</body></html>)XHRPOSTRESOURCE";
+
+
+TEST(URLSchemeHandler, XHRPost)
+{
+    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"xhrpost"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    static bool done;
+    static uint8_t seenTasks;
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/string"]) {
+            static bool reached;
+            EXPECT_FALSE(reached);
+            reached = true;
+            EXPECT_EQ(task.request.HTTPBody.length, 7u);
+            EXPECT_STREQ(static_cast<const char*>(task.request.HTTPBody.bytes), "foo=bar");
+        } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/arraybuffer"]) {
+            static bool reached;
+            EXPECT_FALSE(reached);
+            reached = true;
+            EXPECT_EQ(task.request.HTTPBody.length, 8u);
+            EXPECT_STREQ(static_cast<const char*>(task.request.HTTPBody.bytes), "Hi there");
+        } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/document"]) {
+            static bool reached;
+            EXPECT_FALSE(reached);
+            reached = true;
+            EXPECT_EQ(task.request.HTTPBody.length, strlen(xhrPostDocument));
+            EXPECT_STREQ(static_cast<const char*>(task.request.HTTPBody.bytes), xhrPostDocument);
+        } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/formdata"]) {
+            static bool reached;
+            EXPECT_FALSE(reached);
+            reached = true;
+            // The length of this is variable
+            auto *formDataString = [NSString stringWithUTF8String:static_cast<const char*>(task.request.HTTPBody.bytes)];
+            EXPECT_TRUE([formDataString containsString:@"Content-Disposition: form-data; name=\"foo\""]);
+            EXPECT_TRUE([formDataString containsString:@"baz"]);
+            EXPECT_TRUE([formDataString containsString:@"WebKitFormBoundary"]);
+        } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/blob"]) {
+            static bool reached;
+            EXPECT_FALSE(reached);
+            reached = true;
+            
+            // FIXME: XHR posting of Blobs is currently unsupported
+            // https://bugs.webkit.org/show_bug.cgi?id=197237
+
+            FAIL();
+        } else {
+            // We only expect one of the 5 URLs up above.
+            FAIL();
+        }
+
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didFinish];
+        
+        if (++seenTasks == 4)
+            done = true;
+    }];
+    
+    [webView loadHTMLString:[NSString stringWithUTF8String:xhrPostDocument] baseURL:[NSURL URLWithString:@"xhrpost://example/xhrtest"]];
+    TestWebKitAPI::Util::run(&done);
+}
 
