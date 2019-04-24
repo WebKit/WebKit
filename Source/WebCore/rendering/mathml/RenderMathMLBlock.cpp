@@ -252,6 +252,8 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     repainter.repaintAfterLayout();
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 
@@ -265,6 +267,7 @@ void RenderMathMLBlock::layoutInvalidMarkup(bool relayoutChildren)
     setLogicalWidth(0);
     setLogicalHeight(0);
     layoutPositionedObjects(relayoutChildren);
+    updateScrollInfoAfterLayout();
     clearNeedsLayout();
 }
 

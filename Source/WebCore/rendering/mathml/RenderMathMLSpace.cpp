@@ -81,6 +81,8 @@ void RenderMathMLSpace::layoutBlock(bool relayoutChildren, LayoutUnit)
     getSpaceHeightAndDepth(height, depth);
     setLogicalHeight(height + depth);
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 

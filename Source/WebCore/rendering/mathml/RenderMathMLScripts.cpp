@@ -461,6 +461,8 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     layoutPositionedObjects(relayoutChildren);
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 

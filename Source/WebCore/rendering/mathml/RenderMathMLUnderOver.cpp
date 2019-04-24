@@ -353,6 +353,8 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
 
     layoutPositionedObjects(relayoutChildren);
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 

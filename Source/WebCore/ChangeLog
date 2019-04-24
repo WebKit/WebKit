@@ -1,3 +1,41 @@
+2019-04-24  Frederic Wang  <fwang@igalia.com>
+
+        With async scrolling enabled, this MathML test asserts
+        https://bugs.webkit.org/show_bug.cgi?id=196123
+
+        This patch ensures that updateScrollInfoAfterLayout() is called during MathML layout. This
+        fixes assertions when async scrolling is enabled and MathML elements have non-visible overflow.
+
+        Reviewed by Rob Buis.
+
+        Test: mathml/mathml-overflow-crash.html
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::layoutBlock):
+        (WebCore::RenderMathMLBlock::layoutInvalidMarkup):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::layoutBlock):
+        * rendering/mathml/RenderMathMLMath.cpp:
+        (WebCore::RenderMathMLMath::layoutBlock):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::layoutBlock):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::layoutBlock):
+        * rendering/mathml/RenderMathMLPadded.cpp:
+        (WebCore::RenderMathMLPadded::layoutBlock):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::layoutBlock):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layoutBlock):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::layoutBlock):
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::layoutBlock):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::layoutBlock):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layoutBlock):
+
 2019-04-24  Greg V  <greg@unrelenting.technology>
 
         Fix -Wc++11-narrowing on unsigned char platforms like FreeBSD/aarch64

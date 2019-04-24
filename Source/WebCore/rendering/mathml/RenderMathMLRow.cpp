@@ -178,6 +178,8 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     layoutPositionedObjects(relayoutChildren);
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 

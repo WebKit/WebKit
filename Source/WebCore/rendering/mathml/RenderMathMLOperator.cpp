@@ -243,6 +243,8 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
             child->setLocation(child->location() + horizontalShift);
     }
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 

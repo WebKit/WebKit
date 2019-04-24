@@ -1,0 +1,121 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+  <head>
+    <title>ASSERTION with MathML elements with overflow</title>
+    <meta charset="utf-8"/>
+    <script>
+      if (window.testRunner)
+          testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+
+    <p>This test passes if it does not crash</p>
+
+    <p>
+      <math>
+        <mfenced style="overflow: auto">
+          <mtext>RenderMathMLFenced</mtext>
+        </mfenced>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mfrac style="overflow: auto">
+          <mtext>RenderMathMLFraction</mtext>
+          <mspace></mspace>
+        </mfrac>
+      </math>
+    </p>
+
+    <p>
+      <math style="overflow: auto">
+        <mtext>RenderMathMLMath</mtext>
+      </math>
+    </p>
+
+   <p>
+     <math>
+       <menclose style="overflow: auto">
+         <mtext>RenderMathMLMenclose</mtext>
+       </menclose>
+     </math>
+   </p>
+
+    <p>
+      <math>
+        <mo style="overflow: auto">|</mo>
+        <mo style="overflow: auto">RenderMathMLOperator</mo>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mpadded style="overflow: auto">
+          <mtext>RenderMathMLPadded</mtext>
+        </mpadded>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mroot style="overflow: auto">
+          <mtext>RenderMathMLRoot</mtext>
+          <mspace></mspace>
+        </mroot>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mrow style="overflow: auto">
+          <mtext>RenderMathMLRow</mtext>
+        </mrow>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <msubsup style="overflow: auto">
+          <mtext>RenderMathMLScripts</mtext>
+          <mspace></mspace>
+          <mspace></mspace>
+        </msubsup>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mspace style="overflow: auto"></mspace>
+        <mtext>RenderMathMLSpace</mtext>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mtext style="overflow: auto" mathvariant="double-struck">A</mtext>
+        <mtext style="overflow: auto">RenderMathMLToken</mtext>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <munderover style="overflow: auto">
+          <mtext>RenderMathMLUnderOver</mtext>
+          <mspace></mspace>
+          <mspace></mspace>
+        </munderover>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mfrac style="overflow: auto">
+          <mtext>RenderMathMLBlock (invalid markup)</mtext>
+        </mfrac>
+      </math>
+    </p>
+
+  </body>
+</html>

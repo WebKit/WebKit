@@ -87,6 +87,8 @@ void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogical
 
     layoutPositionedObjects(relayoutChildren);
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 

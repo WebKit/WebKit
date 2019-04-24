@@ -190,6 +190,8 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     layoutPositionedObjects(relayoutChildren);
 
+    updateScrollInfoAfterLayout();
+
     clearNeedsLayout();
 }
 
