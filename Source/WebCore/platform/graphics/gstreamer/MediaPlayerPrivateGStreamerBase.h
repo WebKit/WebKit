@@ -290,8 +290,7 @@ protected:
 #endif
 
     enum class WebKitGstVideoDecoderPlatform { ImxVPU, Video4Linux };
-
-    WebKitGstVideoDecoderPlatform m_videoDecoderPlatform;
+    Optional<WebKitGstVideoDecoderPlatform> m_videoDecoderPlatform;
 };
 
 }
