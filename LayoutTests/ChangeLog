@@ -1,3 +1,22 @@
+2019-04-24  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Calling preventDefault() when handling a pointerdown event should not prevent panning, zooming or click event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=195839
+        <rdar://problem/48946154>
+
+        Reviewed by Brent Fulgham.
+
+        Modify the existing test to check that we *have* scrolled after performing a swipe gesture and calling
+        preventDefault() while handling the pointerdown handling. We also add a new test that checks that the
+        click event is indeed dispatched when tapping on an element and calling preventDefault() while handling
+        the pointerdown event.
+
+        * pointerevents/ios/pointer-events-prevent-default-allows-click-event-expected.txt: Added.
+        * pointerevents/ios/pointer-events-prevent-default-allows-click-event.html: Added.
+        * pointerevents/ios/pointer-events-prevent-default-allows-scrolling-expected.txt: Added.
+        * pointerevents/ios/pointer-events-prevent-default-allows-scrolling.html: Renamed from LayoutTests/pointerevents/ios/pointer-events-prevent-default.html.
+        * pointerevents/ios/pointer-events-prevent-default-expected.txt: Removed.
+
 2019-04-24  Frederic Wang  <fwang@igalia.com>
 
         With async scrolling enabled, this MathML test asserts

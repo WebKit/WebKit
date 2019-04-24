@@ -158,16 +158,10 @@ bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID p
 }
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-std::pair<bool, bool> PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view)
+void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view)
 {
-    bool defaultPrevented = false;
-    bool defaultHandled = false;
-
     auto dispatchEvent = [&](const String& type) {
-        auto event = PointerEvent::create(type, platformTouchEvent, index, isPrimary, view);
-        target.dispatchEvent(event);
-        defaultPrevented |= event->defaultPrevented();
-        defaultHandled |= event->defaultHandled();
+        target.dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view));
     };
 
     auto pointerEvent = PointerEvent::create(platformTouchEvent, index, isPrimary, view);
@@ -182,8 +176,6 @@ std::pair<bool, bool> PointerCaptureController::dispatchEventForTouchAtIndex(Eve
 
     pointerEventWillBeDispatched(pointerEvent, &target);
     target.dispatchEvent(pointerEvent);
-    defaultPrevented |= pointerEvent->defaultPrevented();
-    defaultHandled |= pointerEvent->defaultHandled();
     pointerEventWasDispatched(pointerEvent);
 
     if (pointerEvent->type() == eventNames().pointerupEvent) {
@@ -193,8 +185,6 @@ std::pair<bool, bool> PointerCaptureController::dispatchEventForTouchAtIndex(Eve
         dispatchEvent(eventNames().pointeroutEvent);
         dispatchEvent(eventNames().pointerleaveEvent);
     }
-
-    return { defaultPrevented, defaultHandled };
 }
 #endif
 

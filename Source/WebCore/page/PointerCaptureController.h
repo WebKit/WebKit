@@ -49,7 +49,7 @@ public:
     void elementWasRemoved(Element&);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    std::pair<bool, bool> dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
+    void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
 #endif
 
     void touchEndedOrWasCancelledForIdentifier(PointerID);
