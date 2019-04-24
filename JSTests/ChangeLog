@@ -1,3 +1,14 @@
+2019-04-23  Saam Barati  <sbarati@apple.com>
+
+        LICM incorrectly assumes it'll never insert a node which provably OSR exits
+        https://bugs.webkit.org/show_bug.cgi?id=196721
+        <rdar://problem/49556479> 
+
+        Reviewed by Filip Pizlo.
+
+        * stress/licm-should-handle-if-a-hoist-causes-a-provable-osr-exit.js: Added.
+        (foo):
+
 2019-04-19  Saam Barati  <sbarati@apple.com>
 
         AbstractValue can represent more than int52

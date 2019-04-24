@@ -1,3 +1,34 @@
+2019-04-23  Saam Barati  <sbarati@apple.com>
+
+        LICM incorrectly assumes it'll never insert a node which provably OSR exits
+        https://bugs.webkit.org/show_bug.cgi?id=196721
+        <rdar://problem/49556479> 
+
+        Reviewed by Filip Pizlo.
+
+        Previously, we assumed LICM could never hoist code that caused us
+        to provably OSR exit. This is a bad assumption, as we may very well
+        hoist such code. Obviously hoisting such code is not ideal. We shouldn't
+        hoist something we provably know will OSR exit. However, this is super rare,
+        and the phase is written in such a way where it's easier to gracefully
+        handle this case than to prevent us from hoisting such code.
+        
+        If we wanted to ensure we never hoisted code that would provably exit, we'd
+        have to teach the phase to know when it inserted code that provably exits. I
+        saw two ways to do that:
+        1: Save and restore the AI state before actually hoisting.
+        2: Write an analysis that can determine if such a node would exit.
+        
+        (1) is bad because it costs in memory and compile time. (2) will inevitably
+        have bugs as running into this condition is rare.
+        
+        So instead of (1) or (2), I opted to have LICM gracefully handle when
+        it causes a provable exit. When we encounter this, we mark all blocks
+        in the loop as !cfaHasVisited and !cfaDidFinish.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+
 2019-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use node index as DFG::MinifiedID
