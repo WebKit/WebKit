@@ -1,3 +1,184 @@
+2019-04-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Create AVFoundationSoftLink.{h,mm} to reduce duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=197171
+        <rdar://problem/47454979>
+
+        Reviewed by Youenn Fablet.
+
+        Tests: TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::jsValueWithValueInContext):
+        (WebCore::jsValueWithAVMetadataItemInContext):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+        (WebCore::AudioSession::category const):
+        (WebCore::AudioSession::routeSharingPolicy const):
+        (WebCore::AudioSession::routingContextUID const):
+        (WebCore::AudioSession::sampleRate const):
+        (WebCore::AudioSession::bufferSize const):
+        (WebCore::AudioSession::numberOfOutputChannels const):
+        (WebCore::AudioSession::tryToSetActiveInternal):
+        (WebCore::AudioSession::preferredBufferSize const):
+        (WebCore::AudioSession::setPreferredBufferSize):
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper initWithCallback:]):
+        (-[WebMediaSessionHelper startMonitoringAirPlayRoutes]):
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::audioKind const):
+        (WebCore::AVTrackPrivateAVFObjCImpl::videoKind const):
+        (WebCore::AVTrackPrivateAVFObjCImpl::label const):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::createMix):
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.mm:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions):
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm:
+        (WebCore::AVFoundationMIMETypeCache::canDecodeType):
+        (WebCore::AVFoundationMIMETypeCache::loadMIMETypes):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::isAvailable):
+        (WebCore::CDMSessionAVContentKeySession::releaseKeys):
+        (WebCore::CDMSessionAVContentKeySession::update):
+        (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage):
+        (WebCore::CDMSessionAVContentKeySession::contentKeySession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::releaseKeys):
+        (WebCore::CDMSessionAVStreamSession::update):
+        (WebCore::CDMSessionAVStreamSession::setStreamSession):
+        (WebCore::CDMSessionAVStreamSession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::imageDecoderAssetOptions):
+        (WebCore::ImageDecoderAVFObjC::ImageDecoderAVFObjC):
+        (WebCore::ImageDecoderAVFObjC::firstEnabledTrack):
+        (WebCore::ImageDecoderAVFObjC::readSamples):
+        (SOFT_LINK_CONSTANT_MAY_FAIL): Deleted.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateAVFObjC::label const):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::label const):
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::devicePicker):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::assetCacheForPath):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCache):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+        (WebCore::determineChangedTracksFromNewTracksAndOldItems):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForLegibleMedia):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForVisualMedia):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetType const):
+        (WebCore::exernalDeviceDisplayNameForPlayer):
+        (WebCore::metadataType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (-[WebCoreAVFPullDelegate outputSequenceWasFlushed:]):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::streamSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (-[WebAVSampleBufferStatusChangeListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        (WebCore::PlatformCALayerCocoa::clone const):
+        (WebCore::PlatformCALayerCocoa::avPlayerLayer const):
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm:
+        (WebCore::validateHEVCParameters):
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        (getAVSpeechUtteranceDefaultSpeechRate):
+        (getAVSpeechUtteranceMaximumSpeechRate):
+        (-[WebSpeechSynthesisWrapper speakUtterance:]):
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        (SOFT_LINK_CONSTANT): Deleted.
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer init]):
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer setVideoGravity:]):
+        (-[WebAVPlayerLayer videoRect]):
+        (WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView):
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::jsValueWithValueInContext):
+        (WebCore::jsValueWithAVMetadataItemInContext):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::getAVFormatIDKeyWithFallback):
+        (WebCore::getAVNumberOfChannelsKeyWithFallback):
+        (WebCore::getAVSampleRateKeyWithFallback):
+        (WebCore::getAVEncoderBitRateKeyWithFallback):
+        (WebCore::MediaRecorderPrivateWriter::create):
+        (WebCore::MediaRecorderPrivateWriter::setVideoInput):
+        (WebCore::MediaRecorderPrivateWriter::setAudioInput):
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/VideoPreset.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices):
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        (-[WebCoreAudioCaptureSourceIOSListener initWithCallback:]):
+        (-[WebCoreAudioCaptureSourceIOSListener handleInterruption:]):
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::deviceIsAvailable):
+        (WebCore::AVCaptureDeviceManager::updateCachedAVCaptureDevices):
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDevices):
+        (WebCore::AVCaptureDeviceManager::isAvailable):
+        (WebCore::AVCaptureDeviceManager::~AVCaptureDeviceManager):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoPreset::create):
+        (WebCore::AVVideoPreset::AVVideoPreset):
+        (WebCore::AVVideoCaptureSource::create):
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::capabilities):
+        (WebCore::sensorOrientationFromVideoOutput):
+        (WebCore::AVVideoCaptureSource::setupSession):
+        (WebCore::AVVideoCaptureSource::frameDurationForFrameRate):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        (WebCore::AVVideoCaptureSource::generatePresets):
+        (-[WebCoreAVVideoCaptureSourceObserver addNotificationObservers]):
+        (-[WebCoreAVVideoCaptureSourceObserver captureOutput:didOutputSampleBuffer:fromConnection:]):
+
 2019-04-24  Brady Eidson  <beidson@apple.com>
 
         XMLHTTPRequest POSTs to a custom WKURLSchemeHandler protocol are missing the HTTP body.

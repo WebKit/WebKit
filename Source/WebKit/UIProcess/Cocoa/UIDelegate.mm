@@ -60,12 +60,8 @@
 #if HAVE(AUTHORIZATION_STATUS_FOR_MEDIA_TYPE)
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
-#import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(AVFoundation);
-SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice);
-SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeAudio, NSString *);
-SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *);
+#import <pal/cocoa/AVFoundationSoftLink.h>
 #endif
 
 namespace WebKit {
@@ -947,7 +943,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
             requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
             return;
         }
-        AVAuthorizationStatus cameraAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeVideo()];
+        AVAuthorizationStatus cameraAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeVideo];
         switch (cameraAuthorizationStatus) {
         case AVAuthorizationStatusAuthorized:
             requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
@@ -965,13 +961,13 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
                 requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
             });
 
-            [getAVCaptureDeviceClass() requestAccessForMediaType:getAVMediaTypeVideo() completionHandler:decisionHandler.get()];
+            [PAL::getAVCaptureDeviceClass() requestAccessForMediaType:AVMediaTypeVideo completionHandler:decisionHandler.get()];
             break;
         }
     });
 
     if (requiresAudioCapture) {
-        AVAuthorizationStatus microphoneAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeAudio()];
+        AVAuthorizationStatus microphoneAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeAudio];
         switch (microphoneAuthorizationStatus) {
         case AVAuthorizationStatusAuthorized:
             requestCameraAuthorization();
@@ -989,7 +985,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
                 requestCameraAuthorization();
             });
 
-            [getAVCaptureDeviceClass() requestAccessForMediaType:getAVMediaTypeAudio() completionHandler:decisionHandler.get()];
+            [PAL::getAVCaptureDeviceClass() requestAccessForMediaType:AVMediaTypeAudio completionHandler:decisionHandler.get()];
             break;
         }
     } else

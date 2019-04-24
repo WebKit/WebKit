@@ -32,8 +32,8 @@
 #import <wtf/PrintStream.h>
 #import <wtf/cf/TypeCastsCF.h>
 
-#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 using namespace PAL;
 

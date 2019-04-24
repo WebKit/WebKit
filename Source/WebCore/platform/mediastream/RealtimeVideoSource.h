@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MediaSample.h"
 #include "RealtimeMediaSource.h"

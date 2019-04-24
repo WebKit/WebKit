@@ -1,3 +1,16 @@
+2019-04-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Create AVFoundationSoftLink.{h,mm} to reduce duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=197171
+        <rdar://problem/47454979>
+
+        Reviewed by Youenn Fablet.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController setVideoElement:]):
+        (-[WebVideoFullscreenController windowDidExitFullscreen]):
+        (SOFT_LINK_CLASS): Deleted.
+
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to control the renderTreeAsText output by setting options on testRunner

@@ -43,7 +43,6 @@
 #import <UIKit/UIWindow.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
@@ -52,14 +51,9 @@
 
 using namespace WebCore;
 
-// Soft-linking headers must be included last since they #define functions, constants, etc.
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFT_LINK_FRAMEWORK(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
-SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResize, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResizeAspect, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResizeAspectFill, NSString *)
+#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
@@ -210,7 +204,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     self = [super init];
     if (self) {
         [self setMasksToBounds:YES];
-        _videoGravity = getAVLayerVideoGravityResizeAspect();
+        _videoGravity = AVLayerVideoGravityResizeAspect;
     }
     return self;
 }
@@ -270,13 +264,13 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     FloatRect targetVideoFrame;
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
     
-    if ([getAVLayerVideoGravityResize() isEqualToString:self.videoGravity]) {
+    if ([AVLayerVideoGravityResize isEqualToString:self.videoGravity]) {
         sourceVideoFrame = self.modelVideoLayerFrame;
         targetVideoFrame = self.bounds;
-    } else if ([getAVLayerVideoGravityResizeAspect() isEqualToString:self.videoGravity]) {
+    } else if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity]) {
         sourceVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.modelVideoLayerFrame);
         targetVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
-    } else if ([getAVLayerVideoGravityResizeAspectFill() isEqualToString:self.videoGravity]) {
+    } else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity]) {
         sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
         self.modelVideoLayerFrame = CGRectMake(0, 0, sourceVideoFrame.width(), sourceVideoFrame.height());
         if (auto* model = _fullscreenInterface->videoFullscreenModel())
@@ -328,7 +322,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 #if PLATFORM(IOSMAC)
     // FIXME<rdar://46011230>: remove this #if once this radar lands.
     if (!videoGravity)
-        videoGravity = getAVLayerVideoGravityResizeAspect();
+        videoGravity = AVLayerVideoGravityResizeAspect;
 #endif
 
     _videoGravity = videoGravity;
@@ -337,11 +331,11 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
         return;
 
     WebCore::MediaPlayerEnums::VideoGravity gravity = WebCore::MediaPlayerEnums::VideoGravityResizeAspect;
-    if (videoGravity == getAVLayerVideoGravityResize())
+    if (videoGravity == AVLayerVideoGravityResize)
         gravity = WebCore::MediaPlayerEnums::VideoGravityResize;
-    if (videoGravity == getAVLayerVideoGravityResizeAspect())
+    if (videoGravity == AVLayerVideoGravityResizeAspect)
         gravity = WebCore::MediaPlayerEnums::VideoGravityResizeAspect;
-    else if (videoGravity == getAVLayerVideoGravityResizeAspectFill())
+    else if (videoGravity == AVLayerVideoGravityResizeAspectFill)
         gravity = WebCore::MediaPlayerEnums::VideoGravityResizeAspectFill;
     else
         ASSERT_NOT_REACHED();
@@ -362,9 +356,9 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
 
-    if ([getAVLayerVideoGravityResizeAspect() isEqualToString:self.videoGravity])
+    if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity])
         return largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
-    if ([getAVLayerVideoGravityResizeAspectFill() isEqualToString:self.videoGravity])
+    if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity])
         return smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
 
     return self.bounds;
@@ -460,7 +454,7 @@ static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerV
 
     WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[playerLayerView playerLayer];
     WebAVPlayerLayer *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
-    [playerLayer setVideoGravity:getAVLayerVideoGravityResizeAspect()];
+    [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspect];
     [pipPlayerLayer setVideoSublayer:playerLayer.videoSublayer];
     [pipPlayerLayer setVideoDimensions:playerLayer.videoDimensions];
     [pipPlayerLayer setVideoGravity:playerLayer.videoGravity];
