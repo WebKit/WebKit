@@ -9,6 +9,8 @@ PASS a["wibble"] is 3
 PASS a["hick"] is 4
 PASS a["hock"] is 5
 PASS a["snood"] is 6
+PASS a["adcampaignid"] is 
+PASS a["addestination"] is 
 PASS a["charset"] is 
 PASS a["coords"] is 
 PASS a["download"] is 
@@ -45,7 +47,7 @@ PASS a["innerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["offsetTop"] is 714
+PASS a["offsetTop"] is 744
 PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
