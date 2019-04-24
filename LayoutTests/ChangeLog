@@ -1,5 +1,23 @@
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (iOS 12.2): CSS perspective property value can only be set correctly once
+        https://bugs.webkit.org/show_bug.cgi?id=197105
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/style-change/backface-visibility-change-expected.html: Added.
+        * compositing/style-change/backface-visibility-change.html: Added.
+        * compositing/style-change/perspective-change-expected.html: Added.
+        * compositing/style-change/perspective-change.html: Added.
+        * compositing/style-change/perspective-origin-change-expected.html: Added.
+        * compositing/style-change/perspective-origin-change.html: Added.
+        * compositing/style-change/transform-origin-change-expected.html: Added.
+        * compositing/style-change/transform-origin-change.html: Added.
+        * compositing/style-change/transform-style-change-expected.html: Added.
+        * compositing/style-change/transform-style-change.html: Added.
+
+2019-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         Make it possible to control the renderTreeAsText output by setting options on testRunner
         https://bugs.webkit.org/show_bug.cgi?id=197133
 

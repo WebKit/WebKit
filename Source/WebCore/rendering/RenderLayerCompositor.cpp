@@ -1414,6 +1414,19 @@ static bool styleAffectsLayerGeometry(const RenderStyle& style)
     return style.hasClip() || style.clipPath() || style.hasBorderRadius();
 }
 
+static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    return oldStyle.transform() != newStyle.transform()
+        || oldStyle.transformOriginX() != newStyle.transformOriginX()
+        || oldStyle.transformOriginY() != newStyle.transformOriginY()
+        || oldStyle.transformOriginZ() != newStyle.transformOriginZ()
+        || oldStyle.transformStyle3D() != newStyle.transformStyle3D()
+        || oldStyle.perspective() != newStyle.perspective()
+        || oldStyle.perspectiveOriginX() != newStyle.perspectiveOriginX()
+        || oldStyle.perspectiveOriginY() != newStyle.perspectiveOriginY()
+        || oldStyle.backfaceVisibility() != newStyle.backfaceVisibility();
+}
+
 void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifference::Equal)
@@ -1467,12 +1480,10 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     if (diff == StyleDifference::RecompositeLayer && layer.isComposited() && is<RenderWidget>(layer.renderer()))
         layer.setNeedsCompositingConfigurationUpdate();
 
-    if (diff >= StyleDifference::RecompositeLayer && oldStyle) {
-        if (oldStyle->transform() != newStyle.transform()) {
-            // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
-            layer.setNeedsPostLayoutCompositingUpdate();
-            layer.setNeedsCompositingGeometryUpdate();
-        }
+    if (diff >= StyleDifference::RecompositeLayer && oldStyle && recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle)) {
+        // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
+        layer.setNeedsPostLayoutCompositingUpdate();
+        layer.setNeedsCompositingGeometryUpdate();
     }
 
     if (diff >= StyleDifference::Layout) {

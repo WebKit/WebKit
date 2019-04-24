@@ -1,5 +1,27 @@
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (iOS 12.2): CSS perspective property value can only be set correctly once
+        https://bugs.webkit.org/show_bug.cgi?id=197105
+        rdar://problem/50068230
+
+        Reviewed by Zalan Bujtas.
+
+        Make sure we trigger a geometry update when style properties change that
+        result in a StyleDifference::RecompositeLayer, and which are updated on layers
+        via RenderLayerBacking::updateGeometry().
+
+        Tests: compositing/style-change/backface-visibility-change.html
+               compositing/style-change/perspective-change.html
+               compositing/style-change/perspective-origin-change.html
+               compositing/style-change/transform-origin-change.html
+               compositing/style-change/transform-style-change.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::recompositeChangeRequiresGeometryUpdate):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+
+2019-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         Make it possible to control the renderTreeAsText output by setting options on testRunner
         https://bugs.webkit.org/show_bug.cgi?id=197133
 
