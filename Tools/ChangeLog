@@ -1,3 +1,46 @@
+2019-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        [Build][GStreamer] Update to 1.16.0
+        https://bugs.webkit.org/show_bug.cgi?id=197157
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The upstreamed patches were removed and a new one was added for a
+        regression detected in the scaletempo GStreamer element. The GNOME
+        Flatpak was migrated to 3.32 and I switched a few modules to Meson
+        on the way, as it is the preferred build system now in GStreamer
+        1.16.
+
+        * flatpak/files/httpd-autogen.sh:
+        * flatpak/flatpakutils.py:
+        (FlatpakPackage.install):
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/org.webkit.CommonModules.yaml:
+        * flatpak/org.webkit.WebKit.yaml:
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/gst-plugins-bad-0001-aomenc-Add-support-for-10-12bit-decoding.patch: Removed.
+        * gstreamer/patches/gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch: Removed.
+        * gstreamer/patches/gst-plugins-bad-0003-fdkaacenc-Remove-MODE_2_1.patch: Removed.
+        * gstreamer/patches/gst-plugins-bad-0004-fdkaacdec-Use-WAV-channel-mapping-instead-of-interleave-setting.patch: Removed.
+        * gstreamer/patches/gst-plugins-bad-0005-mssdemux-fix-protection-data-double-free.patch: Removed.
+        * gstreamer/patches/gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0001-qtdemux-Detect-and-expose-CEA-608-708-Closed-Caption.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0004-qtdemux-Add-initial-support-for-AV1-demuxing.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0005-qtdemux-Extract-AV1-codec_data-and-put-it-in-the-cap.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0006-qtdemux-Recognize-more-AV1-atoms.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0013-Avoid-warning-when-reporting-about-decryptors.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-0014-pulse-Mark-default-devices-as-default.patch: Removed.
+        * gstreamer/patches/gst-plugins-good-scaletempo-Advertise-interleaved-layout-in-caps-temp.patch: Added.
+        * gstreamer/patches/gstreamer-0001-protection-Add-a-new-definition-for-unspecified-syst.patch: Removed.
+        * gstreamer/patches/gstreamer-0002-protection-Fix-the-string-to-define-unspecified-syst.patch: Removed.
+
 2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: also set the passed bg-color when receiving arguments

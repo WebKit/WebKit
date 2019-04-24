@@ -1,1 +1,2 @@
-autoreconf
+automake --add-missing
+autoreconf --install

@@ -1,9 +1,9 @@
 app-id: %(PORTNAME)s
 runtime: org.gnome.Platform
-runtime-version: "3.28"
+runtime-version: "3.32"
 # Control the exact version of the Sdk/Runtime that is being used.
-sdk-hash: 31af0c10f8e42151220a728b52df0a5c37ea8e4b033825f40c30e44d11cb31d1
-runtime-hash: 6d1d0ebbd72404c61d109307eb2240542b7ad82608bc6428bba6f3eebcfc8bf3
+sdk-hash: b3b9b1d1b19ea2bb72019428ca75c7a78455e986a0f91dddf6a29c92990cc5a7
+runtime-hash: 7c9d5592d805d0b7c212190fd8118e4c78cb8ed8f81e687858972670daccff76
 sdk: org.gnome.Sdk
 command: %(COMMAND)s
 finish-args:

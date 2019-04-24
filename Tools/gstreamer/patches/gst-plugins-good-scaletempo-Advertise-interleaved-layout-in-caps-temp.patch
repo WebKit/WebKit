@@ -1,0 +1,36 @@
+From 7be2aa6f42d89ee784d5bef1c27387bda71f2cc7 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 23 Apr 2019 10:10:01 +0100
+Subject: [PATCH] scaletempo: Advertise interleaved layout in caps templates
+
+Scaletempo doesn't support non-interleaved layout. Not explicitely stating this
+would trigger critical warnings and a caps negotiation failure when scaletempo
+is used as playbin audio-filter.
+
+Patch suggested by George Kiagiadakis <george.kiagiadakis@collabora.com>.
+
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/issues/591
+---
+ gst/audiofx/gstscaletempo.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/gst/audiofx/gstscaletempo.c b/gst/audiofx/gstscaletempo.c
+index 3a719719a..83ee8fe24 100644
+--- a/gst/audiofx/gstscaletempo.c
++++ b/gst/audiofx/gstscaletempo.c
+@@ -93,9 +93,9 @@ enum
+ 
+ #define SUPPORTED_CAPS \
+ GST_STATIC_CAPS ( \
+-    GST_AUDIO_CAPS_MAKE (GST_AUDIO_NE (F32)) "; " \
+-    GST_AUDIO_CAPS_MAKE (GST_AUDIO_NE (F64)) "; " \
+-    GST_AUDIO_CAPS_MAKE (GST_AUDIO_NE (S16)) \
++    GST_AUDIO_CAPS_MAKE (GST_AUDIO_NE (F32)) ", layout=(string)interleaved; " \
++    GST_AUDIO_CAPS_MAKE (GST_AUDIO_NE (F64)) ", layout=(string)interleaved; " \
++    GST_AUDIO_CAPS_MAKE (GST_AUDIO_NE (S16)) ", layout=(string)interleaved" \
+ )
+ 
+ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
+-- 
+2.20.1
+

@@ -133,57 +133,36 @@
   sources:
     - type: git
       url: https://gitlab.freedesktop.org/gstreamer/gstreamer.git
-      branch: 1.14.4
-    - type: patch
-      path: ../gstreamer/patches/gstreamer-0001-protection-Add-a-new-definition-for-unspecified-syst.patch
-    - type: patch
-      path: ../gstreamer/patches/gstreamer-0002-protection-Fix-the-string-to-define-unspecified-syst.patch
+      branch: 1.16.0
   config-opts:
-    - -Ddisable_gtkdoc=true
+    - -Dgtk_doc=disabled
+    - -Dintrospection=disabled
+    - -Dexamples=disabled
+    - -Dtests=disabled
 - name: gst-plugins-base
   buildsystem: meson
   sources:
     - type: git
       url: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git
-      branch: 1.14.4
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch
+      branch: 1.16.0
   config-opts:
-    - -Ddisable_gtkdoc=true
+    - -Dgtk_doc=disabled
+    - -Dintrospection=disabled
+    - -Dexamples=disabled
+    - -Dtests=disabled
 - name: gst-plugins-good
   buildsystem: meson
   sources:
     - type: git
       url: https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git
-      branch: 1.14.4
+      branch: 1.16.0
     - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0001-qtdemux-Detect-and-expose-CEA-608-708-Closed-Caption.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0004-qtdemux-Add-initial-support-for-AV1-demuxing.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0005-qtdemux-Extract-AV1-codec_data-and-put-it-in-the-cap.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0006-qtdemux-Recognize-more-AV1-atoms.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0013-Avoid-warning-when-reporting-about-decryptors.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-good-0014-pulse-Mark-default-devices-as-default.patch
+      path: ../gstreamer/patches/gst-plugins-good-scaletempo-Advertise-interleaved-layout-in-caps-temp.patch
   config-opts:
-    - -Ddisable_gtkdoc=true
+    - -Dgtk_doc=disabled
+    - -Dintrospection=disabled
+    - -Dexamples=disabled
+    - -Dgtk3=disabled
 - name: x264
   config-opts:
     - "--enable-shared"
@@ -200,26 +179,24 @@
   sources:
     - type: git
       url: https://anongit.freedesktop.org/git/gstreamer/gst-plugins-ugly
-      branch: 1.14.4
+      branch: 1.16.0
   config-opts:
-    - -Ddisable_gtkdoc=true
+    - -Dgtk_doc=disabled
 - name: gst-plugins-bad
   buildsystem: meson
   sources:
     - type: git
       url: https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git
-      branch: 1.14.4
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-bad-0001-aomenc-Add-support-for-10-12bit-decoding.patch
-    - type: patch
-      path: ../gstreamer/patches/gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch
+      branch: 1.16.0
   config-opts:
-    - -Ddisable_gtkdoc=true
+    - -Dgtk_doc=disabled
+    - -Dintrospection=disabled
+    - -Dexamples=disabled
 - name: ffmpeg
   sources:
     - type: archive
-      url: https://ffmpeg.org/releases/ffmpeg-3.4.5.tar.gz
-      sha256: 18f80cc9ca322134ed40d25d7489af954fa519b4e7e6289b7084f1b0a1cdf472
+      url: https://ffmpeg.org/releases/ffmpeg-4.0.4.tar.gz
+      sha256: 80bb685abfcdda7c9b6c9c5caf1d8dbb927858050d7377c2b8f3488c7e8a9b7f
   config-opts:
     - --enable-static
     - --enable-pic
@@ -264,16 +241,16 @@
   builddir: true
   sources:
     - type: archive
-      url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.4.tar.xz
-      sha256: dfd78591901df7853eab7e56a86c34a1b03635da0d3d56b89aa577f1897865da
+      url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.16.0.tar.xz
+      sha256: dfac119043a9cfdcacd7acde77f674ab172cf2537b5812be52f49e9cddc53d9a
   config-opts:
-    - -Ddisable_gtkdoc=true
+    - -Dgtk_doc=disabled
 
 - name: libgcrypt # Speedup libgcrypt
   sources:
     - type: git
       url: https://dev.gnupg.org/source/libgcrypt.git
-      branch: libgcrypt-1.7.6
+      branch: libgcrypt-1.8.4
     - type: patch
       path: patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch
     - type: patch

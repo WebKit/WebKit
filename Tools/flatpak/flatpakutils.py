@@ -474,7 +474,7 @@ class FlatpakPackage(FlatpakObject):
         comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + self.branch
         self.flatpak(*args, show_output=True, comment=comment)
         if self.hash:
-            args = ["update", "--commit", self.hash]
+            args = ["update", "--commit", self.hash, self.name]
             comment = "Updating to %s" % self.hash
             self.flatpak(*args, show_output=True, comment=comment)
 
@@ -768,6 +768,7 @@ class WebkitFlatpak:
                 "JavaScriptCoreUseJIT",
                 "Malloc",
                 "WAYLAND_DISPLAY",
+                "WAYLAND_SOCKET",
                 "DISPLAY",
                 "LANG",
                 "NUMBER_OF_PROCESSORS",
