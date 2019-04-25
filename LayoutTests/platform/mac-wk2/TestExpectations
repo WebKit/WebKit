@@ -946,3 +946,5 @@ webkit.org/b/195961 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjects
 webkit.org/b/195961 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html [ Pass Failure ]
 
 webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
+
+webkit.org/b/197283 fast/css-custom-paint/animate-repaint.html [ Pass Failure ]
