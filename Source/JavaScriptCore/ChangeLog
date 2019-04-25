@@ -1,3 +1,11 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix more builds after r244653
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * b3/B3Value.h:
+        There is an older system with libc++ headers that don't have std::conjunction.  Just use constexpr and && instead for the one use of it in WebKit.
+
 2019-04-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [RemoteInspector] Fix connection and target identifier types.

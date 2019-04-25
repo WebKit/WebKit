@@ -334,11 +334,11 @@ public:
     // of B3 to force them to reason about the target's offset.
     typedef int32_t OffsetType;
     template<typename Int>
-    struct IsLegalOffset : std::conjunction<
-        typename std::enable_if<std::is_integral<Int>::value>::type,
-        typename std::enable_if<std::is_signed<Int>::value>::type,
-        typename std::enable_if<sizeof(Int) <= sizeof(OffsetType)>::type
-    > { };
+    struct IsLegalOffset {
+        static constexpr bool value = std::is_integral<Int>::value
+            && std::is_signed<Int>::value
+            && sizeof(Int) <= sizeof(OffsetType);
+    };
 
 protected:
     Value* cloneImpl() const;

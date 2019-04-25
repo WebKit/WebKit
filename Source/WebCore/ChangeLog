@@ -1,3 +1,11 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix more builds after r244653
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * svg/properties/SVGValuePropertyList.h:
+        Something is preventing MSVC from seeing protected constructors from subclasses.
+
 2019-04-25  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:] never returns _WKWebsiteDataTypeCredentials
