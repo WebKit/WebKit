@@ -950,3 +950,5 @@ webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Ti
 webkit.org/b/197283 fast/css-custom-paint/animate-repaint.html [ Pass Failure ]
 
 webkit.org/b/197285 [ Debug ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ]
+
+webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass Failure ]
