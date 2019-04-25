@@ -1,3 +1,272 @@
+2019-04-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r244173. rdar://problem/28160396
+
+    Cherry-pick r243819. rdar://problem/49725678
+    
+        Remove support for -apple-trailing-word
+        https://bugs.webkit.org/show_bug.cgi?id=196525
+    
+        Reviewed by Zalan Bujtas.
+    
+        This CSS property is nonstandard and not used.
+    
+        .:
+    
+        * Source/cmake/WebKitFeatures.cmake:
+    
+        Source/JavaScriptCore:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Source/WebCore:
+    
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator TrailingWord const): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        * rendering/SimpleLineLayoutCoverage.cpp:
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutCoverage.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::commitLineBreakClear):
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::handleEndOfLine):
+        (WebCore::BreakingContext::InlineIteratorHistory::InlineIteratorHistory): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::push): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::update): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::renderer const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::offset const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::nextBreakablePosition const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::atTextParagraphSeparator const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::previousInSameNode const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::get const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::current const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::historyLength const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::moveTo): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::increment): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::clear): Deleted.
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::trailingWord const): Deleted.
+        (WebCore::RenderStyle::setTrailingWord): Deleted.
+        (WebCore::RenderStyle::initialTrailingWord): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+    
+        Source/WebCore/PAL:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Source/WebInspectorUI:
+    
+        * UserInterface/Models/CSSKeywordCompletions.js:
+    
+        Source/WebKit:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Source/WebKitLegacy/mac:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Tools:
+    
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+        LayoutTests:
+    
+        * fast/text/trailing-word-expected.html: Removed.
+        * fast/text/trailing-word.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/text/trailing-word-parse-expected.txt: Removed.
+        * platform/mac/fast/text/trailing-word-parse.html: Removed.
+        * platform/win/TestExpectations:
+    
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243819 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@244173 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-10  Alan Coon  <alancoon@apple.com>
+
+            Cherry-pick r243819. rdar://problem/49725678
+
+        Remove support for -apple-trailing-word
+        https://bugs.webkit.org/show_bug.cgi?id=196525
+
+        Reviewed by Zalan Bujtas.
+
+        This CSS property is nonstandard and not used.
+
+        .:
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+        Source/JavaScriptCore:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Source/WebCore:
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator TrailingWord const): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        * rendering/SimpleLineLayoutCoverage.cpp:
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutCoverage.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::commitLineBreakClear):
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::handleEndOfLine):
+        (WebCore::BreakingContext::InlineIteratorHistory::InlineIteratorHistory): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::push): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::update): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::renderer const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::offset const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::nextBreakablePosition const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::atTextParagraphSeparator const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::previousInSameNode const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::get const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::current const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::historyLength const): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::moveTo): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::increment): Deleted.
+        (WebCore::BreakingContext::InlineIteratorHistory::clear): Deleted.
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::trailingWord const): Deleted.
+        (WebCore::RenderStyle::setTrailingWord): Deleted.
+        (WebCore::RenderStyle::initialTrailingWord): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+
+        Source/WebCore/PAL:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Source/WebInspectorUI:
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
+        Source/WebKit:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Source/WebKitLegacy/mac:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Tools:
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
+        LayoutTests:
+
+        * fast/text/trailing-word-expected.html: Removed.
+        * fast/text/trailing-word.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/text/trailing-word-parse-expected.txt: Removed.
+        * platform/mac/fast/text/trailing-word-parse.html: Removed.
+        * platform/win/TestExpectations:
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243819 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+                Remove support for -apple-trailing-word
+                https://bugs.webkit.org/show_bug.cgi?id=196525
+
+                Reviewed by Zalan Bujtas.
+
+                This CSS property is nonstandard and not used.
+
+                * Configurations/FeatureDefines.xcconfig:
+                * css/CSSComputedStyleDeclaration.cpp:
+                (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+                * css/CSSPrimitiveValueMappings.h:
+                (WebCore::CSSPrimitiveValue::operator TrailingWord const): Deleted.
+                * css/CSSProperties.json:
+                * css/CSSValueKeywords.in:
+                * css/parser/CSSParserFastPaths.cpp:
+                (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+                (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+                * rendering/SimpleLineLayout.cpp:
+                (WebCore::SimpleLineLayout::canUseForStyle):
+                * rendering/SimpleLineLayoutCoverage.cpp:
+                (WebCore::SimpleLineLayout::printReason):
+                * rendering/SimpleLineLayoutCoverage.h:
+                * rendering/line/BreakingContext.h:
+                (WebCore::BreakingContext::BreakingContext):
+                (WebCore::BreakingContext::lineBreak):
+                (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+                (WebCore::BreakingContext::commitLineBreakClear):
+                (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+                (WebCore::BreakingContext::handleBR):
+                (WebCore::BreakingContext::handleFloat):
+                (WebCore::BreakingContext::handleText):
+                (WebCore::BreakingContext::handleEndOfLine):
+                (WebCore::BreakingContext::InlineIteratorHistory::InlineIteratorHistory): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::push): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::update): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::renderer const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::offset const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::nextBreakablePosition const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::atTextParagraphSeparator const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::previousInSameNode const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::get const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::current const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::historyLength const): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::moveTo): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::increment): Deleted.
+                (WebCore::BreakingContext::InlineIteratorHistory::clear): Deleted.
+                (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord): Deleted.
+                * rendering/style/RenderStyle.h:
+                (WebCore::RenderStyle::trailingWord const): Deleted.
+                (WebCore::RenderStyle::setTrailingWord): Deleted.
+                (WebCore::RenderStyle::initialTrailingWord): Deleted.
+                * rendering/style/RenderStyleConstants.h:
+                * rendering/style/StyleRareInheritedData.cpp:
+                (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+                (WebCore::StyleRareInheritedData::operator== const):
+                * rendering/style/StyleRareInheritedData.h:
+
 2019-04-24  Alan Coon  <alancoon@apple.com>
 
         Revert r244120. rdar://problem/50132675
