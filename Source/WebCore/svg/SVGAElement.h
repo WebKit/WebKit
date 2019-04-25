@@ -25,6 +25,7 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGURIReference.h"
+#include "SharedStringHash.h"
 
 namespace WebCore {
 
@@ -35,6 +36,8 @@ public:
 
     String target() const final { return m_target->currentValue(); }
     Ref<SVGAnimatedString>& targetAnimated() { return m_target; }
+
+    SharedStringHash visitedLinkHash() const;
 
 private:
     SVGAElement(const QualifiedName&, Document&);
@@ -63,6 +66,9 @@ private:
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };
+
+    // This is computed only once and must not be affected by subsequent URL changes.
+    mutable Optional<SharedStringHash> m_storedVisitedLinkHash;
 };
 
 } // namespace WebCore

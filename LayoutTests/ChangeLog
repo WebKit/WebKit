@@ -1,3 +1,14 @@
+2019-04-25  Antti Koivisto  <antti@apple.com>
+
+        Visited link hash should be computed only once
+        https://bugs.webkit.org/show_bug.cgi?id=197229
+        <rdar://problem/48438924>
+
+        Reviewed by Alex Christensen.
+
+        * fast/history/visited-href-mutation-expected.html: Added.
+        * fast/history/visited-href-mutation.html: Added.
+
 2019-04-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] gst_element_get_state: assertion 'GST_IS_ELEMENT (element)' failed in WebCore::MediaPlayerPrivateGStreamer::paused

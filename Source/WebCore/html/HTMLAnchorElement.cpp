@@ -68,7 +68,6 @@ HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document& doc
     : HTMLElement(tagName, document)
     , m_hasRootEditableElementForSelectionOnMouseDown(false)
     , m_wasShiftKeyDownOnMouseDown(false)
-    , m_cachedVisitedLinkHash(0)
 {
 }
 
@@ -248,7 +247,6 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
                     document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host().toString());
             }
         }
-        invalidateCachedVisitedLinkHash();
     } else if (name == nameAttr || name == titleAttr) {
         // Do nothing.
     } else if (name == relAttr) {

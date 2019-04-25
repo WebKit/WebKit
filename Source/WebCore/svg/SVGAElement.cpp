@@ -217,4 +217,12 @@ bool SVGAElement::willRespondToMouseClickEvents()
     return isLink() || SVGGraphicsElement::willRespondToMouseClickEvents(); 
 }
 
+SharedStringHash SVGAElement::visitedLinkHash() const
+{
+    ASSERT(isLink());
+    if (!m_storedVisitedLinkHash)
+        m_storedVisitedLinkHash = computeVisitedLinkHash(document().baseURL(), getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr));
+    return *m_storedVisitedLinkHash;
+}
+
 } // namespace WebCore

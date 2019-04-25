@@ -1,0 +1,49 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.keepWebHistory();
+}
+
+function setHref(testcase, url)
+{
+    testcase.style.display = "none";
+    testcase.href = url;
+    testcase.style.display = "inline";
+}
+
+function test()
+{
+    setHref(case2, "resources/not-visited.html");
+    setHref(case4, "resources/dummy.html");
+    setHref(case6, "resources/not-visited.html");
+    setHref(case8, "");
+    setHref(case10, "resources/dummy.html");
+    setHref(case11, "resources/not-visited.html");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<style>
+a:link { color: blue; }
+a:visited { color: green; }
+</style>
+</head>
+<body onload="test()">
+<div>
+<a id="case1" href="resources/dummy.html">Case 1</a>
+<a id="case2" href="resources/dummy.html">Case 2</a>
+<a id="case3" href="resources/not-visited.html">Case 3</a>
+<a id="case4" href="resources/not-visited.html">Case 4</a>
+<a id="case5" href="">Case 5</a>
+<a id="case6" href="">Case 6</a>
+<a id="case7" href="resources/not-visited.html">Case 7</a>
+<a id="case8" href="resources/not-visited.html">Case 8</a>
+<a id="case9">Case 9</a>
+<a id="case10">Case 10</a>
+<a id="case11">Case 11</a>
+</div>
+<iframe src="resources/dummy.html" style="visibility:hidden"></iframe>
+</body>

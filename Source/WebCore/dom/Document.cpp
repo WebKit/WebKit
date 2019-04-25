@@ -3184,13 +3184,6 @@ void Document::updateBaseURL()
 
     if (!m_baseURL.isValid())
         m_baseURL = URL();
-
-    if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
-        // Base URL change changes any relative visited links.
-        // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
-        for (auto& anchor : descendantsOfType<HTMLAnchorElement>(*this))
-            anchor.invalidateCachedVisitedLinkHash();
-    }
 }
 
 void Document::setBaseURLOverride(const URL& url)
