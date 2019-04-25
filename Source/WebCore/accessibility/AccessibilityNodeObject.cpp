@@ -177,8 +177,9 @@ AccessibilityObject* AccessibilityNodeObject::firstChild() const
 
     if (!firstChild)
         return nullptr;
-    
-    return axObjectCache()->getOrCreate(firstChild);
+
+    auto objectCache = axObjectCache();
+    return objectCache ? objectCache->getOrCreate(firstChild) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::lastChild() const
@@ -189,8 +190,9 @@ AccessibilityObject* AccessibilityNodeObject::lastChild() const
     Node* lastChild = node()->lastChild();
     if (!lastChild)
         return nullptr;
-    
-    return axObjectCache()->getOrCreate(lastChild);
+
+    auto objectCache = axObjectCache();
+    return objectCache ? objectCache->getOrCreate(lastChild) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::previousSibling() const
@@ -202,7 +204,8 @@ AccessibilityObject* AccessibilityNodeObject::previousSibling() const
     if (!previousSibling)
         return nullptr;
 
-    return axObjectCache()->getOrCreate(previousSibling);
+    auto objectCache = axObjectCache();
+    return objectCache ? objectCache->getOrCreate(previousSibling) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::nextSibling() const
@@ -214,7 +217,8 @@ AccessibilityObject* AccessibilityNodeObject::nextSibling() const
     if (!nextSibling)
         return nullptr;
 
-    return axObjectCache()->getOrCreate(nextSibling);
+    auto objectCache = axObjectCache();
+    return objectCache ? objectCache->getOrCreate(nextSibling) : nullptr;
 }
     
 AccessibilityObject* AccessibilityNodeObject::parentObjectIfExists() const
@@ -344,9 +348,13 @@ void AccessibilityNodeObject::addChildren()
     // The only time we add children from the DOM tree to a node with a renderer is when it's a canvas.
     if (renderer() && !m_node->hasTagName(canvasTag))
         return;
-    
+
+    auto objectCache = axObjectCache();
+    if (!objectCache)
+        return;
+
     for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
-        addChild(axObjectCache()->getOrCreate(child));
+        addChild(objectCache->getOrCreate(child));
     
     m_subtreeDirty = false;
 }
@@ -949,6 +957,8 @@ Element* AccessibilityNodeObject::anchorElement() const
         return nullptr;
 
     AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
 
     // search up the DOM tree for an anchor element
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
@@ -1096,7 +1106,9 @@ void AccessibilityNodeObject::changeValueByStep(bool increase)
 
     setValue(String::numberToStringFixedPrecision(value));
 
-    axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged);
+    auto objectCache = axObjectCache();
+    if (objectCache)
+        objectCache->postNotification(node(), AXObjectCache::AXValueChanged);
 }
 
 void AccessibilityNodeObject::changeValueByPercent(float percentChange)
@@ -1112,7 +1124,9 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
     value += step;
     setValue(String::numberToStringFixedPrecision(value));
 
-    axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged);
+    auto objectCache = axObjectCache();
+    if (objectCache)
+        objectCache->postNotification(node(), AXObjectCache::AXValueChanged);
 }
 
 bool AccessibilityNodeObject::isGenericFocusableElement() const
@@ -1273,10 +1287,14 @@ String AccessibilityNodeObject::textForLabelElement(Element* element) const
     String result = String();
     if (!is<HTMLLabelElement>(*element))
         return result;
-    
+
+    auto objectCache = axObjectCache();
+    if (!objectCache)
+        return result;
+
     HTMLLabelElement* label = downcast<HTMLLabelElement>(element);
     // Check to see if there's aria-labelledby attribute on the label element.
-    if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label))
+    if (AccessibilityObject* labelObject = objectCache->getOrCreate(label))
         result = labelObject->ariaLabeledByAttribute();
     
     return !result.isEmpty() ? result : accessibleNameForNode(label);
@@ -1291,10 +1309,11 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
     if (isLabelable()) {
         if (HTMLLabelElement* label = labelForElement(downcast<Element>(node))) {
             String innerText = textForLabelElement(label);
-            
+
+            auto objectCache = axObjectCache();
             // Only use the <label> text if there's no ARIA override.
-            if (!innerText.isEmpty() && !ariaAccessibilityDescription())
-                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, axObjectCache()->getOrCreate(label)));
+            if (objectCache && !innerText.isEmpty() && !ariaAccessibilityDescription())
+                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, objectCache->getOrCreate(label)));
             return;
         }
     }
@@ -1340,9 +1359,10 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     if (!node)
         return;
     
+    auto objectCache = axObjectCache();
     // The fieldset element derives its alternative text from the first associated legend element if one is available.
-    if (is<HTMLFieldSetElement>(*node)) {
-        AccessibilityObject* object = axObjectCache()->getOrCreate(downcast<HTMLFieldSetElement>(*node).legend());
+    if (objectCache && is<HTMLFieldSetElement>(*node)) {
+        AccessibilityObject* object = objectCache->getOrCreate(downcast<HTMLFieldSetElement>(*node).legend());
         if (object && !object->isHidden())
             textOrder.append(AccessibilityText(accessibleNameForNode(object->node()), AccessibilityTextSource::Alternative));
     }
@@ -1486,12 +1506,16 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
 {
     String ariaLabeledBy = ariaLabeledByAttribute();
     if (!ariaLabeledBy.isEmpty()) {
+        auto objectCache = axObjectCache();
+        if (!objectCache)
+            return;
+
         Vector<Element*> elements;
         ariaLabeledByElements(elements);
-        
+
         Vector<RefPtr<AccessibilityObject>> axElements;
         for (const auto& element : elements)
-            axElements.append(axObjectCache()->getOrCreate(element));
+            axElements.append(objectCache->getOrCreate(element));
         
         textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative, WTFMove(axElements)));
     }
@@ -1616,10 +1640,14 @@ String AccessibilityNodeObject::helpText() const
             if (!title.isEmpty() && description != title)
                 return title;
         }
-        
-        // Only take help text from an ancestor element if its a group or an unknown role. If help was 
+
+        auto objectCache = axObjectCache();
+        if (!objectCache)
+            return String();
+
+        // Only take help text from an ancestor element if its a group or an unknown role. If help was
         // added to those kinds of elements, it is likely it was meant for a child element.
-        if (AccessibilityObject* axObj = axObjectCache()->getOrCreate(ancestor)) {
+        if (AccessibilityObject* axObj = objectCache->getOrCreate(ancestor)) {
             if (!axObj->isGroup() && axObj->roleValue() != AccessibilityRole::Unknown)
                 break;
         }

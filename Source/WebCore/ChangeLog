@@ -1,3 +1,30 @@
+2019-04-24  Andres Gonzalez  <andresg_22@apple.com>
+
+        Flaky crash under WebCore::AXObjectCache::stopCachingComputedObjectAttributes()
+        https://bugs.webkit.org/show_bug.cgi?id=187391
+        <rdar://problem/40681396
+
+        Check for null value returned by AccessibilityObject::axObjectCache.
+
+        Reviewed by Chris Fleizach.
+
+        No need for new test since existing tests caught this problem.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::firstChild const):
+        (WebCore::AccessibilityNodeObject::lastChild const):
+        (WebCore::AccessibilityNodeObject::previousSibling const):
+        (WebCore::AccessibilityNodeObject::nextSibling const):
+        (WebCore::AccessibilityNodeObject::addChildren):
+        (WebCore::AccessibilityNodeObject::anchorElement const):
+        (WebCore::AccessibilityNodeObject::changeValueByStep):
+        (WebCore::AccessibilityNodeObject::changeValueByPercent):
+        (WebCore::AccessibilityNodeObject::textForLabelElement const):
+        (WebCore::AccessibilityNodeObject::titleElementText const):
+        (WebCore::AccessibilityNodeObject::alternativeText const):
+        (WebCore::AccessibilityNodeObject::ariaLabeledByText const):
+        (WebCore::AccessibilityNodeObject::helpText const):
+
 2019-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r242132): Nested position:sticky elements move incorrectly
