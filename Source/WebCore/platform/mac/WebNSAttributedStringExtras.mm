@@ -27,9 +27,13 @@
 #import "WebNSAttributedStringExtras.h"
 
 #if PLATFORM(IOS_FAMILY)
+#if USE(APPLE_INTERNAL_SDK)
+#import <UIKit/NSTextAttachment.h>
+#else
 enum {
     NSAttachmentCharacter = 0xfffc    /* To denote attachments. */
 };
+#endif
 #endif
 
 namespace WebCore {

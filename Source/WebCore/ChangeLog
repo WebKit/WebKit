@@ -1,5 +1,16 @@
 2019-04-25  Antti Koivisto  <antti@apple.com>
 
+        redefinition of enumerator 'NSAttachmentCharacter' with Apple internal build
+        https://bugs.webkit.org/show_bug.cgi?id=197279
+
+        Reviewed by Antoine Quint.
+
+        Try to fix the build.
+
+        * platform/mac/WebNSAttributedStringExtras.mm:
+
+2019-04-25  Antti Koivisto  <antti@apple.com>
+
         Visited link hash should be computed only once
         https://bugs.webkit.org/show_bug.cgi?id=197229
         <rdar://problem/48438924>
