@@ -533,4 +533,23 @@ void PageClientImpl::requestDOMPasteAccess(const IntRect&, const String&, Comple
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
+bool PageClientImpl::effectiveAppearanceIsDark() const
+{
+    auto* settings = gtk_widget_get_settings(m_viewWidget);
+    gboolean preferDarkTheme;
+    g_object_get(settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
+    if (preferDarkTheme)
+        return true;
+
+    GUniqueOutPtr<char> themeName;
+    g_object_get(settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
+    if (g_str_has_suffix(themeName.get(), "-dark"))
+        return true;
+
+    if (auto* themeNameEnv = g_getenv("GTK_THEME"))
+        return g_str_has_suffix(themeNameEnv, ":dark");
+
+    return false;
+}
+
 } // namespace WebKit

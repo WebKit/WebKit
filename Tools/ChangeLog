@@ -1,3 +1,15 @@
+2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Hardcoded text color in input fields
+        https://bugs.webkit.org/show_bug.cgi?id=126907
+
+        Reviewed by Michael Catanzaro.
+
+        Add dark-mode command line option to MiniBrowser.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2019-04-24  Zalan Bujtas  <zalan@apple.com>
 
         Regression (r244291): Broken API Test AutoLayoutRenderingProgressRelativeOrdering

@@ -1,3 +1,23 @@
+2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Hardcoded text color in input fields
+        https://bugs.webkit.org/show_bug.cgi?id=126907
+
+        Reviewed by Michael Catanzaro.
+
+        Implement PageClient::effectiveAppearanceIsDark() for GTK port.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::effectiveAppearanceIsDark const): Check if gtk-application-prefer-dark-theme setting is
+        enabled, or the theme name contains the -dark suffix or the GTK_THEME environment variable contains the :dark suffix.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (themeChanged): Notify the WebPageProxy that the theme has changed.
+        (webkitWebViewBaseSetToplevelOnScreenWindow): Connect to notify::gtk-application-prefer-dark-theme and notify::gtk-theme-name.
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::setUseDarkAppearance): Set gtk-application-prefer-dark-theme setting accordingly.
+
 2019-04-24  Zalan Bujtas  <zalan@apple.com>
 
         Regression (r244291): Broken API Test AutoLayoutRenderingProgressRelativeOrdering

@@ -59,6 +59,7 @@ public:
         IndeterminateProgressBar,
         ListView,
         Icon,
+        Window,
     };
     static RenderThemeWidget& getOrCreate(Type);
     static void clearCache();
@@ -231,6 +232,18 @@ public:
 
 private:
     std::unique_ptr<RenderThemeGadget> m_icon;
+};
+
+class RenderThemeWindow final : public RenderThemeWidget {
+public:
+    RenderThemeWindow();
+    ~RenderThemeWindow() = default;
+
+    RenderThemeGadget& window() const { return *m_window; }
+
+private:
+    std::unique_ptr<RenderThemeGadget> m_window;
+
 };
 
 } // namespace WebCore

@@ -52,6 +52,7 @@ static const char *contentFilter;
 static const char *cookiesFile;
 static const char *cookiesPolicy;
 static const char *proxy;
+static gboolean darkMode;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -103,6 +104,7 @@ static const GOptionEntry commandLineOptions[] =
 {
     { "bg-color", 0, 0, G_OPTION_ARG_CALLBACK, parseBackgroundColor, "Background color", NULL },
     { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
+    { "dark-mode", 'd', 0, G_OPTION_ARG_NONE, &darkMode, "Run in dark mode", NULL },
     { "session-file", 's', 0, G_OPTION_ARG_FILENAME, &sessionFile, "Session file", "FILE" },
     { "geometry", 'g', 0, G_OPTION_ARG_STRING, &geometry, "Set the size and position of the window (WIDTHxHEIGHT+X+Y)", "GEOMETRY" },
     { "full-screen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Set the window to full-screen mode", NULL },
@@ -584,6 +586,8 @@ int main(int argc, char *argv[])
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
+    if (darkMode)
+        g_object_set(gtk_widget_get_settings(GTK_WIDGET(mainWindow)), "gtk-application-prefer-dark-theme", TRUE, NULL);
     if (fullScreen)
         gtk_window_fullscreen(GTK_WINDOW(mainWindow));
     else if (geometry)

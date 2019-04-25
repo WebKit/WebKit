@@ -81,6 +81,8 @@ public:
     Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
     Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
 
+    Color disabledTextColor(const Color&, const Color&) const override;
+
     Seconds caretBlinkInterval() const override;
 
     void platformColorsDidChange() override;
@@ -167,8 +169,6 @@ private:
     bool paintMediaToggleClosedCaptionsButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 #endif
-
-    bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color&) const override;
 
     Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     Seconds animationDurationForProgressBar(RenderProgress&) const override;

@@ -1,3 +1,14 @@
+2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Hardcoded text color in input fields
+        https://bugs.webkit.org/show_bug.cgi?id=126907
+
+        Reviewed by Michael Catanzaro.
+
+        Set and expose to build HAVE_OS_DARK_MODE_SUPPORT=1.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2019-04-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use target oriented design for WebKit

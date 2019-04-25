@@ -3000,8 +3000,13 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 
 void FrameView::updateBackgroundRecursively(const Optional<Color>& backgroundColor)
 {
-#if HAVE(OS_DARK_MODE_SUPPORT) && ENABLE(DARK_MODE_CSS)
-    Color baseBackgroundColor = backgroundColor.valueOr(RenderTheme::singleton().systemColor(CSSValueAppleSystemControlBackground, styleColorOptions()));
+#if HAVE(OS_DARK_MODE_SUPPORT)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    static const auto cssValueControlBackground = CSSValueAppleSystemControlBackground;
+#else
+    static const auto cssValueControlBackground = CSSValueWindowframe;
+#endif
+    Color baseBackgroundColor = backgroundColor.valueOr(RenderTheme::singleton().systemColor(cssValueControlBackground, styleColorOptions()));
 #else
     Color baseBackgroundColor = backgroundColor.valueOr(Color::white);
 #endif

@@ -183,6 +183,8 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelFocusOutEventID { 0 };
     unsigned long toplevelWindowStateEventID { 0 };
     unsigned long toplevelWindowRealizedID { 0 };
+    unsigned long themeChangedID { 0 };
+    unsigned long applicationPreferDarkThemeID { 0 };
 
     // View State.
     OptionSet<ActivityState::Flag> activityState;
@@ -265,6 +267,11 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
     return FALSE;
 }
 
+static void themeChanged(WebKitWebViewBase* webViewBase)
+{
+    webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
+}
+
 static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
 {
     gtk_widget_realize(GTK_WIDGET(webViewBase));
@@ -298,6 +305,17 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
         g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelWindowRealizedID);
         priv->toplevelWindowRealizedID = 0;
     }
+    if (priv->themeChangedID || priv->applicationPreferDarkThemeID) {
+        auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
+        if (priv->themeChangedID) {
+            g_signal_handler_disconnect(settings, priv->themeChangedID);
+            priv->themeChangedID = 0;
+        }
+        if (priv->applicationPreferDarkThemeID) {
+            g_signal_handler_disconnect(settings, priv->applicationPreferDarkThemeID);
+            priv->applicationPreferDarkThemeID = 0;
+        }
+    }
 
     priv->toplevelOnScreenWindow = window;
 
@@ -325,6 +343,12 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
                          G_CALLBACK(toplevelWindowFocusOutEvent), webViewBase);
     priv->toplevelWindowStateEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "window-state-event", G_CALLBACK(toplevelWindowStateEvent), webViewBase);
+
+    auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
+    priv->themeChangedID =
+        g_signal_connect_swapped(settings, "notify::gtk-theme-name", G_CALLBACK(themeChanged), webViewBase);
+    priv->applicationPreferDarkThemeID =
+        g_signal_connect_swapped(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(themeChanged), webViewBase);
 
     if (gtk_widget_get_realized(GTK_WIDGET(window)))
         gtk_widget_realize(GTK_WIDGET(webViewBase));

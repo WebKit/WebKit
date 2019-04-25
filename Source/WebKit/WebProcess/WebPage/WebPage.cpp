@@ -4610,10 +4610,12 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 
 #endif
 
+#if !PLATFORM(GTK)
 void WebPage::setUseDarkAppearance(bool useDarkAppearance)
 {
     corePage()->setUseDarkAppearance(useDarkAppearance);
 }
+#endif
 
 void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 {

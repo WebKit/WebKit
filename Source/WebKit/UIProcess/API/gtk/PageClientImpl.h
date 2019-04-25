@@ -162,6 +162,8 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
+    bool effectiveAppearanceIsDark() const override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

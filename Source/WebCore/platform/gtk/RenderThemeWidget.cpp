@@ -85,6 +85,8 @@ RenderThemeWidget& RenderThemeWidget::getOrCreate(Type widgetType)
             return std::make_unique<RenderThemeListView>();
         case RenderThemeWidget::Type::Icon:
             return std::make_unique<RenderThemeIcon>();
+        case RenderThemeWidget::Type::Window:
+            return std::make_unique<RenderThemeWindow>();
         }
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -290,6 +292,11 @@ RenderThemeListView::RenderThemeListView()
 
 RenderThemeIcon::RenderThemeIcon()
     : m_icon(RenderThemeGadget::create({ RenderThemeGadget::Type::Icon, "image", { } }))
+{
+}
+
+RenderThemeWindow::RenderThemeWindow()
+    : m_window(RenderThemeGadget::create({ RenderThemeGadget::Type::Generic, "window", { "background" } }))
 {
 }
 
