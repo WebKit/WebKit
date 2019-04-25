@@ -69,7 +69,7 @@ void ScrollingTreeStickyNode::applyLayerPositions(const FloatRect& layoutViewpor
 {
     FloatRect constrainingRect;
 
-    auto* enclosingScrollingNode = enclosingScrollingNodeIncludingSelf();
+    auto* enclosingScrollingNode = parent();
     if (is<ScrollingTreeOverflowScrollingNode>(enclosingScrollingNode))
         constrainingRect = FloatRect(downcast<ScrollingTreeOverflowScrollingNode>(*enclosingScrollingNode).currentScrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
     else if (is<ScrollingTreeFrameScrollingNode>(enclosingScrollingNode))

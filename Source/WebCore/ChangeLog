@@ -1,3 +1,20 @@
+2019-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r242132): Nested position:sticky elements move incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=197255
+        rdar://problem/50137744
+
+        Reviewed by Zalan Bujtas.
+        
+        Revert to the behavior of the code before r242132, where we looked at the direct parent
+        scrolling tree node instead of walking up the ancestor chain to find an enclosing scrolling node.
+        This fixes nested sticky behavior.
+
+        Test: scrollingcoordinator/mac/nested-sticky.html
+
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::applyLayerPositions):
+
 2019-04-24  Eric Carlson  <eric.carlson@apple.com>
 
         Create AVFoundationSoftLink.{h,mm} to reduce duplicate code

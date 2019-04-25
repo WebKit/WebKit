@@ -1,3 +1,14 @@
+2019-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r242132): Nested position:sticky elements move incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=197255
+        rdar://problem/50137744
+
+        Reviewed by Zalan Bujtas.
+
+        * scrollingcoordinator/mac/nested-sticky-expected.html: Added.
+        * scrollingcoordinator/mac/nested-sticky.html: Added.
+
 2019-04-24  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK test gardening
