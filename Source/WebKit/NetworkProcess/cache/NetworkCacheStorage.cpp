@@ -349,6 +349,8 @@ void Storage::synchronize()
             m_blobFilter = WTFMove(blobFilter);
             m_approximateRecordsSize = recordsSize;
             m_synchronizationInProgress = false;
+            if (m_mode == Mode::AvoidRandomness)
+                dispatchPendingWriteOperations();
         });
 
     });
@@ -897,7 +899,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     addToRecordFilter(record.key);
 
     bool isInitialWrite = m_pendingWriteOperations.size() == 1;
-    if (!isInitialWrite)
+    if (!isInitialWrite || (m_synchronizationInProgress && m_mode == Mode::AvoidRandomness))
         return;
 
     m_writeOperationDispatchTimer.startOneShot(m_initialWriteDelay);

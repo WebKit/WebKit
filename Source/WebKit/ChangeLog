@@ -1,3 +1,21 @@
+2019-04-25  Youenn Fablet  <youenn@apple.com>
+
+        [Mac iOS WK2] Layout Test http/wpt/cache-storage/cache-quota-after-restart.any.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=197040
+        <rdar://problem/49997641>
+
+        Reviewed by Antti Koivisto.
+
+        Delay write operations in case synchronize is ongoing.
+        This is restricted to AvoidRandomness mode which is always used by CacheAPI
+        and is also used by network cache for layout tests.
+
+        Tested by cache-quota-after-restart.any.html no longer exhibiting write disk errors.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::store):
+
 2019-04-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244627.
