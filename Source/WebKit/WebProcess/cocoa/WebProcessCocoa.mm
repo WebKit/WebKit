@@ -733,10 +733,11 @@ bool WebProcess::shouldFreezeOnSuspension() const
 
     for (auto& page : m_pageMap.values()) {
         if (!page->isSuspended())
-            return false;
+            return true;
     }
 
-    return true;
+    // Since all of the pages in this process were suspended, we should not bother freezing it.
+    return false;
 }
 
 void WebProcess::updateFreezerStatus()
