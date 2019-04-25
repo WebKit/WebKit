@@ -1,5 +1,14 @@
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
+        Fix MSVC build after r244653
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * svg/properties/SVGValueProperty.h:
+        MSVC doesn't think it can access these protected constructors from subclasses.
+        Make the build work and investigate this later.
+
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
         Start using C++17
         https://bugs.webkit.org/show_bug.cgi?id=197131
 
