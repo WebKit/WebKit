@@ -1,5 +1,14 @@
 2019-04-25  Shawn Roberts  <sroberts@apple.com>
 
+        http/tests/resourceLoadStatistics/prune-statistics.html is a flaky failure on Debug testers
+        https://bugs.webkit.org/show_bug.cgi?id=197285#add_comment
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating expectations for flaky failure
+
+2019-04-25  Shawn Roberts  <sroberts@apple.com>
+
         fast/css-custom-paint/animate-repaint.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=197283
 
