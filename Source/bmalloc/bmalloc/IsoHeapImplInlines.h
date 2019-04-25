@@ -284,7 +284,7 @@ void* IsoHeapImpl<Config>::allocateFromShared(bool abortOnFailure)
     unsigned indexPlusOne = __builtin_ffs(m_usableBits);
     BASSERT(indexPlusOne);
     unsigned index = indexPlusOne - 1;
-    void* result = result = m_sharedCells[index];
+    void* result = m_sharedCells[index];
     if (result) {
         if (verbose)
             fprintf(stderr, "%p: allocated %p from shared again of size %u\n", this, result, Config::objectSize);

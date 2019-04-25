@@ -1,3 +1,11 @@
+2019-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix typo in r244481
+        https://bugs.webkit.org/show_bug.cgi?id=196837
+
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::allocateFromShared):
+
 2019-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Use StaticPerProcess' mutex as bmalloc::Heap does with PerProcess
