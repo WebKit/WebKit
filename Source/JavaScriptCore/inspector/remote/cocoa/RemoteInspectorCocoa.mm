@@ -122,7 +122,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     {
         LockHolder lock(m_mutex);
 
-        unsigned targetIdentifier = target->targetIdentifier();
+        auto targetIdentifier = target->targetIdentifier();
         if (!targetIdentifier)
             return;
 
@@ -197,7 +197,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
     m_relayConnection->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
 }
 
-void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const String& message)
+void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
     LockHolder lock(m_mutex);
 
@@ -494,7 +494,7 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(automaticallyPauseNumber, [NSNumber class]);
     BOOL automaticallyPause = automaticallyPauseNumber.boolValue;
 
-    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    TargetID targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
         return;
 
@@ -537,7 +537,7 @@ void RemoteInspector::receivedDataMessage(NSDictionary *userInfo)
     NSData *data = userInfo[WIRSocketDataKey];
     BAIL_IF_UNEXPECTED_TYPE(data, [NSData class]);
 
-    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    TargetID targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
         return;
 
@@ -557,7 +557,7 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
     NSString *connectionIdentifier = userInfo[WIRConnectionIdentifierKey];
     BAIL_IF_UNEXPECTED_TYPE(connectionIdentifier, [NSString class]);
 
-    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    TargetID targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
         return;
 
@@ -588,7 +588,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
     BAIL_IF_UNEXPECTED_TYPE(indicateEnabledNumber, [NSNumber class]);
     BOOL indicateEnabled = indicateEnabledNumber.boolValue;
 
-    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    TargetID targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
         return;
 
@@ -672,7 +672,7 @@ void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *use
     NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
     BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
 
-    unsigned targetIdentifier = targetIdentifierNumber.unsignedIntValue;
+    TargetID targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)
         return;
 

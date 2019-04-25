@@ -51,9 +51,9 @@ RemoteInspector::RemoteInspector()
     start();
 }
 
-void RemoteInspector::didClose(ClientID clientID)
+void RemoteInspector::didClose(ConnectionID id)
 {
-    if (clientID != m_clientID.value())
+    if (id != m_clientID.value())
         return;
 
     RunLoop::current().dispatch([=] {
@@ -192,7 +192,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 {
 }
 
-void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const String& message)
+void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
     LockHolder lock(m_mutex);
     if (!m_socketConnection)
@@ -261,7 +261,7 @@ void RemoteInspector::receivedCloseMessage(const Event& event)
         connectionToTarget->close();
 }
 
-void RemoteInspector::setup(unsigned targetIdentifier)
+void RemoteInspector::setup(TargetID targetIdentifier)
 {
     RemoteControllableTarget* target;
     {
@@ -284,7 +284,7 @@ void RemoteInspector::setup(unsigned targetIdentifier)
     updateHasActiveDebugSession();
 }
 
-void RemoteInspector::sendMessageToTarget(unsigned targetIdentifier, const char* message)
+void RemoteInspector::sendMessageToTarget(TargetID targetIdentifier, const char* message)
 {
     if (auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier))
         connectionToTarget->sendMessageToTarget(String::fromUTF8(message));

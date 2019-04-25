@@ -44,7 +44,7 @@ void RemoteInspectorServer::addServerConnection(PlatformSocketType identifier)
     }
 }
 
-void RemoteInspectorServer::didAccept(ClientID clientID, Socket::Domain type)
+void RemoteInspectorServer::didAccept(ConnectionID id, Socket::Domain type)
 {
     ASSERT(!isMainThread());
 
@@ -53,18 +53,18 @@ void RemoteInspectorServer::didAccept(ClientID clientID, Socket::Domain type)
             LOG_ERROR("Inspector server can accept only 1 client");
             return;
         }
-        m_clientConnection = clientID;
+        m_clientConnection = id;
     } else if (type == Socket::Domain::Local) {
         LockHolder lock(m_connectionsLock);
-        m_inspectorConnections.append(clientID);
+        m_inspectorConnections.append(id);
     }
 }
 
-void RemoteInspectorServer::didClose(ClientID clientID)
+void RemoteInspectorServer::didClose(ConnectionID id)
 {
     ASSERT(!isMainThread());
 
-    if (clientID == m_clientConnection) {
+    if (id == m_clientConnection) {
         // Connection from the remote client closed.
         callOnMainThread([this] {
             clientConnectionClosed();
@@ -73,29 +73,29 @@ void RemoteInspectorServer::didClose(ClientID clientID)
     }
 
     // Connection from WebProcess closed.
-    callOnMainThread([this, clientID] {
-        connectionClosed(clientID);
+    callOnMainThread([this, id] {
+        connectionClosed(id);
     });
 }
 
 HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorServer::dispatchMap()
 {
     static NeverDestroyed<HashMap<String, CallHandler>> dispatchMap = HashMap<String, CallHandler>({
-        {"SetTargetList"_s, static_cast<CallHandler>(&RemoteInspectorServer::setTargetList)},
-        {"SetupInspectorClient"_s, static_cast<CallHandler>(&RemoteInspectorServer::setupInspectorClient)},
-        {"Setup"_s, static_cast<CallHandler>(&RemoteInspectorServer::setup)},
-        {"FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspectorServer::close)},
-        {"SendMessageToFrontend"_s, static_cast<CallHandler>(&RemoteInspectorServer::sendMessageToFrontend)},
-        {"SendMessageToBackend"_s, static_cast<CallHandler>(&RemoteInspectorServer::sendMessageToBackend)},
+        {"SetTargetList"_s, &RemoteInspectorServer::setTargetList},
+        {"SetupInspectorClient"_s, &RemoteInspectorServer::setupInspectorClient},
+        {"Setup"_s, &RemoteInspectorServer::setup},
+        {"FrontendDidClose"_s, &RemoteInspectorServer::close},
+        {"SendMessageToFrontend"_s, &RemoteInspectorServer::sendMessageToFrontend},
+        {"SendMessageToBackend"_s, &RemoteInspectorServer::sendMessageToBackend},
     });
 
     return dispatchMap;
 }
 
-void RemoteInspectorServer::sendWebInspectorEvent(ClientID clientID, const String& event)
+void RemoteInspectorServer::sendWebInspectorEvent(ConnectionID id, const String& event)
 {
     const CString message = event.utf8();
-    m_server->send(clientID, reinterpret_cast<const uint8_t*>(message.data()), message.length());
+    m_server->send(id, reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }
 
 RemoteInspectorServer& RemoteInspectorServer::singleton()
@@ -157,7 +157,7 @@ void RemoteInspectorServer::setup(const Event& event)
     sendWebInspectorEvent(event.connectionID.value(), setupEvent->toJSONString());
 }
 
-void RemoteInspectorServer::sendCloseEvent(uint64_t connectionID, uint64_t targetID)
+void RemoteInspectorServer::sendCloseEvent(ConnectionID connectionID, TargetID targetID)
 {
     ASSERT(isMainThread());
 
@@ -186,7 +186,7 @@ void RemoteInspectorServer::clientConnectionClosed()
     m_clientConnection = WTF::nullopt;
 }
 
-void RemoteInspectorServer::connectionClosed(uint64_t clientID)
+void RemoteInspectorServer::connectionClosed(ConnectionID clientID)
 {
     ASSERT(isMainThread());
 

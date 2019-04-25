@@ -35,18 +35,18 @@ namespace Inspector {
 
 class RemoteInspectorConnectionClient : public CanMakeWeakPtr<RemoteInspectorConnectionClient> {
 public:
-    void didReceiveWebInspectorEvent(ClientID, Vector<uint8_t>&&);
-    virtual void didAccept(ClientID, Socket::Domain) { };
-    virtual void didClose(ClientID) = 0;
+    void didReceiveWebInspectorEvent(ConnectionID, Vector<uint8_t>&&);
+    virtual void didAccept(ConnectionID, Socket::Domain) { };
+    virtual void didClose(ConnectionID) = 0;
 
     struct Event {
-        ClientID clientID;
-        Optional<uint64_t> connectionID;
-        Optional<uint64_t> targetID;
+        ConnectionID clientID { };
+        Optional<ConnectionID> connectionID;
+        Optional<TargetID> targetID;
         Optional<String> message;
     };
 
-    using CallHandler = void (RemoteInspectorConnectionClient::*)(const struct Event&);
+    using CallHandler = void (RemoteInspectorConnectionClient::*)(const Event&);
     virtual HashMap<String, CallHandler>& dispatchMap() = 0;
 };
 

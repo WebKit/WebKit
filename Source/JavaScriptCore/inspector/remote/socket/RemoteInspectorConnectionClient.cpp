@@ -34,7 +34,7 @@
 
 namespace Inspector {
 
-void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ClientID clientID, Vector<uint8_t>&& data)
+void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ConnectionID clientID, Vector<uint8_t>&& data)
 {
     ASSERT(!isMainThread());
 
@@ -55,14 +55,14 @@ void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ClientID clien
     if (!messageObject->getString("event"_s, methodName))
         return;
 
-    struct Event event;
+    Event event;
     event.clientID = clientID;
 
-    uint64_t connectionID;
+    ConnectionID connectionID;
     if (messageObject->getInteger("connectionID"_s, connectionID))
         event.connectionID = connectionID;
 
-    uint64_t targetID;
+    TargetID targetID;
     if (messageObject->getInteger("targetID"_s, targetID))
         event.targetID = targetID;
 

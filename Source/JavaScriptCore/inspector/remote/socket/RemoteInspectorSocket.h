@@ -41,16 +41,16 @@
 
 namespace Inspector {
 
+using ConnectionID = uint32_t;
+
 #if OS(WINDOWS)
 
-using ClientID = unsigned;
 using PlatformSocketType = SOCKET;
 using PollingDescriptor = WSAPOLLFD;
 constexpr PlatformSocketType INVALID_SOCKET_VALUE = INVALID_SOCKET;
 
 #else
 
-using ClientID = unsigned;
 using PlatformSocketType = int;
 using PollingDescriptor = struct pollfd;
 constexpr PlatformSocketType INVALID_SOCKET_VALUE = -1;

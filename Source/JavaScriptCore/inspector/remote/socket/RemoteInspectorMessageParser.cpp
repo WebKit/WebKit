@@ -41,8 +41,8 @@ namespace Inspector {
                | <------------ size ------------> |
 */
 
-MessageParser::MessageParser(ClientID clientID, size_t bufferSize)
-    : m_clientID(clientID)
+MessageParser::MessageParser(ConnectionID id, size_t bufferSize)
+    : m_connectionID(id)
 {
     m_buffer.reserveCapacity(bufferSize);
 }
@@ -104,7 +104,7 @@ bool MessageParser::parse()
         memcpy(&dataBuffer[0], &m_buffer[sizeof(uint32_t)], dataSize);
 
         if (m_didParseMessageListener)
-            m_didParseMessageListener(m_clientID, WTFMove(dataBuffer));
+            m_didParseMessageListener(m_connectionID, WTFMove(dataBuffer));
 
         m_buffer.remove(0, messageSize);
     }

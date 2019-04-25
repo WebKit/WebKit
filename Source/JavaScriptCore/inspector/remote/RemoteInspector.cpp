@@ -44,12 +44,12 @@ void RemoteInspector::startDisabled()
     RemoteInspector::startEnabled = false;
 }
 
-unsigned RemoteInspector::nextAvailableTargetIdentifier()
+TargetID RemoteInspector::nextAvailableTargetIdentifier()
 {
-    unsigned nextValidTargetIdentifier;
+    TargetID nextValidTargetIdentifier;
     do {
         nextValidTargetIdentifier = m_nextAvailableTargetIdentifier++;
-    } while (!nextValidTargetIdentifier || nextValidTargetIdentifier == std::numeric_limits<unsigned>::max() || m_targetMap.contains(nextValidTargetIdentifier));
+    } while (!nextValidTargetIdentifier || nextValidTargetIdentifier == std::numeric_limits<TargetID>::max() || m_targetMap.contains(nextValidTargetIdentifier));
     return nextValidTargetIdentifier;
 }
 
@@ -59,7 +59,7 @@ void RemoteInspector::registerTarget(RemoteControllableTarget* target)
 
     LockHolder lock(m_mutex);
 
-    unsigned targetIdentifier = nextAvailableTargetIdentifier();
+    auto targetIdentifier = nextAvailableTargetIdentifier();
     target->setTargetIdentifier(targetIdentifier);
 
     {
@@ -82,7 +82,7 @@ void RemoteInspector::unregisterTarget(RemoteControllableTarget* target)
 
     LockHolder lock(m_mutex);
 
-    unsigned targetIdentifier = target->targetIdentifier();
+    auto targetIdentifier = target->targetIdentifier();
     if (!targetIdentifier)
         return;
 
@@ -104,7 +104,7 @@ void RemoteInspector::updateTarget(RemoteControllableTarget* target)
 
     LockHolder lock(m_mutex);
 
-    unsigned targetIdentifier = target->targetIdentifier();
+    auto targetIdentifier = target->targetIdentifier();
     if (!targetIdentifier)
         return;
 
@@ -156,7 +156,7 @@ void RemoteInspector::setClient(RemoteInspector::Client* client)
     pushListingsSoon();
 }
 
-void RemoteInspector::setupFailed(unsigned targetIdentifier)
+void RemoteInspector::setupFailed(TargetID targetIdentifier)
 {
     LockHolder lock(m_mutex);
 
@@ -170,7 +170,7 @@ void RemoteInspector::setupFailed(unsigned targetIdentifier)
     pushListingsSoon();
 }
 
-void RemoteInspector::setupCompleted(unsigned targetIdentifier)
+void RemoteInspector::setupCompleted(TargetID targetIdentifier)
 {
     LockHolder lock(m_mutex);
 
@@ -178,7 +178,7 @@ void RemoteInspector::setupCompleted(unsigned targetIdentifier)
         m_automaticInspectionPaused = false;
 }
 
-bool RemoteInspector::waitingForAutomaticInspection(unsigned)
+bool RemoteInspector::waitingForAutomaticInspection(TargetID)
 {
     // We don't take the lock to check this because we assume it will be checked repeatedly.
     return m_automaticInspectionPaused;
@@ -208,7 +208,7 @@ TargetListing RemoteInspector::listingForTarget(const RemoteControllableTarget& 
     return nullptr;
 }
 
-void RemoteInspector::updateTargetListing(unsigned targetIdentifier)
+void RemoteInspector::updateTargetListing(TargetID targetIdentifier)
 {
     auto target = m_targetMap.get(targetIdentifier);
     if (!target)

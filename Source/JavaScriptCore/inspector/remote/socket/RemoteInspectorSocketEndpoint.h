@@ -52,23 +52,23 @@ public:
     RemoteInspectorSocketEndpoint(RemoteInspectorConnectionClient*, const char*);
     ~RemoteInspectorSocketEndpoint();
 
-    Optional<ClientID> connectInet(const char* serverAddr, uint16_t serverPort);
+    Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
     bool listenInet(uint16_t port);
 
-    void send(ClientID, const uint8_t* data, size_t);
+    void send(ConnectionID, const uint8_t* data, size_t);
 
-    Optional<ClientID> createClient(PlatformSocketType fd);
+    Optional<ConnectionID> createClient(PlatformSocketType fd);
 
 protected:
-    void recvIfEnabled(ClientID);
-    void sendIfEnabled(ClientID);
+    void recvIfEnabled(ConnectionID);
+    void sendIfEnabled(ConnectionID);
     void workerThread();
     void wakeupWorkerThread();
-    void acceptInetSocketIfEnabled(ClientID);
-    bool isListening(ClientID);
+    void acceptInetSocketIfEnabled(ConnectionID);
+    bool isListening(ConnectionID);
 
     Lock m_connectionsLock;
-    HashMap<ClientID, std::unique_ptr<Socket::Connection>> m_connections;
+    HashMap<ConnectionID, std::unique_ptr<Socket::Connection>> m_connections;
 
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
     PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };

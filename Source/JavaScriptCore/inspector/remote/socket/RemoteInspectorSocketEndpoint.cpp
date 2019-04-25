@@ -69,7 +69,7 @@ void RemoteInspectorSocketEndpoint::wakeupWorkerThread()
         Socket::write(m_wakeupSendSocket, "1", 1);
 }
 
-Optional<ClientID> RemoteInspectorSocketEndpoint::connectInet(const char* serverAddress, uint16_t serverPort)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* serverAddress, uint16_t serverPort)
 {
     if (auto socket = Socket::connect(serverAddress, serverPort))
         return createClient(*socket);
@@ -86,7 +86,7 @@ bool RemoteInspectorSocketEndpoint::listenInet(uint16_t port)
     return false;
 }
 
-bool RemoteInspectorSocketEndpoint::isListening(ClientID id)
+bool RemoteInspectorSocketEndpoint::isListening(ConnectionID id)
 {
     LockHolder lock(m_connectionsLock);
     if (const auto& connection = m_connections.get(id))
@@ -100,7 +100,7 @@ void RemoteInspectorSocketEndpoint::workerThread()
 
     while (!m_shouldAbortWorkerThread) {
         Vector<PollingDescriptor> pollfds;
-        Vector<ClientID> ids;
+        Vector<ConnectionID> ids;
         {
             LockHolder lock(m_connectionsLock);
             for (const auto& connection : m_connections) {
@@ -132,14 +132,14 @@ void RemoteInspectorSocketEndpoint::workerThread()
     }
 }
 
-Optional<ClientID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket)
 {
     if (!Socket::isValid(socket))
         return WTF::nullopt;
 
     LockHolder lock(m_connectionsLock);
 
-    ClientID id;
+    ConnectionID id;
     do {
         id = cryptographicallyRandomNumber();
     } while (!id || m_connections.contains(id));
@@ -151,7 +151,7 @@ Optional<ClientID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketTyp
     connection->poll = Socket::preparePolling(socket);
     connection->socket = socket;
     connection->parser = std::make_unique<MessageParser>(id, Socket::BufferSize);
-    connection->parser->setDidParseMessageListener([this](ClientID id, Vector<uint8_t>&& data) {
+    connection->parser->setDidParseMessageListener([this](ConnectionID id, Vector<uint8_t>&& data) {
         if (m_inspectorClient)
             m_inspectorClient->didReceiveWebInspectorEvent(id, WTFMove(data));
     });
@@ -161,10 +161,10 @@ Optional<ClientID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketTyp
     return id;
 }
 
-void RemoteInspectorSocketEndpoint::recvIfEnabled(ClientID clientID)
+void RemoteInspectorSocketEndpoint::recvIfEnabled(ConnectionID id)
 {
     LockHolder lock(m_connectionsLock);
-    if (const auto& connection = m_connections.get(clientID)) {
+    if (const auto& connection = m_connections.get(id)) {
         Vector<uint8_t> recvBuffer(Socket::BufferSize);
         if (auto readSize = Socket::read(connection->socket, recvBuffer.data(), recvBuffer.size())) {
             if (*readSize > 0)
@@ -173,18 +173,18 @@ void RemoteInspectorSocketEndpoint::recvIfEnabled(ClientID clientID)
         }
 
         Socket::close(connection->socket);
-        m_connections.remove(clientID);
+        m_connections.remove(id);
 
         lock.unlockEarly();
         if (m_inspectorClient)
-            m_inspectorClient->didClose(clientID);
+            m_inspectorClient->didClose(id);
     }
 }
 
-void RemoteInspectorSocketEndpoint::sendIfEnabled(ClientID clientID)
+void RemoteInspectorSocketEndpoint::sendIfEnabled(ConnectionID id)
 {
     LockHolder lock(m_connectionsLock);
-    if (const auto& connection = m_connections.get(clientID)) {
+    if (const auto& connection = m_connections.get(id)) {
         Socket::clearWaitingWritable(connection->poll);
 
         auto& buffer = connection->sendBuffer;
@@ -206,10 +206,10 @@ void RemoteInspectorSocketEndpoint::sendIfEnabled(ClientID clientID)
     }
 }
 
-void RemoteInspectorSocketEndpoint::send(ClientID clientID, const uint8_t* data, size_t size)
+void RemoteInspectorSocketEndpoint::send(ConnectionID id, const uint8_t* data, size_t size)
 {
     LockHolder lock(m_connectionsLock);
-    if (const auto& connection = m_connections.get(clientID)) {
+    if (const auto& connection = m_connections.get(id)) {
         auto message = MessageParser::createMessage(data, size);
         if (message.isEmpty())
             return;
@@ -234,7 +234,7 @@ void RemoteInspectorSocketEndpoint::send(ClientID clientID, const uint8_t* data,
     }
 }
 
-void RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled(ClientID id)
+void RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled(ConnectionID id)
 {
     if (!isListening(id))
         return;

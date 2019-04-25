@@ -120,9 +120,9 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget()
     teardownRunLoop();
 }
 
-Optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
+Optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? Optional<unsigned>(m_target->targetIdentifier()) : WTF::nullopt;
+    return m_target ? Optional<TargetID>(m_target->targetIdentifier()) : WTF::nullopt;
 }
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const
@@ -159,7 +159,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     if (!m_target)
         return false;
 
-    unsigned targetIdentifier = this->targetIdentifier().valueOr(0);
+    auto targetIdentifier = this->targetIdentifier().valueOr(0);
     
     ref();
     dispatchAsyncOnTarget(^{
@@ -198,7 +198,7 @@ void RemoteConnectionToTarget::targetClosed()
 
 void RemoteConnectionToTarget::close()
 {
-    unsigned targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
+    auto targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
     
     ref();
     dispatchAsyncOnTarget(^{

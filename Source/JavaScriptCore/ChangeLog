@@ -1,3 +1,86 @@
+2019-04-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [RemoteInspector] Fix connection and target identifier types.
+        https://bugs.webkit.org/show_bug.cgi?id=197243
+
+        Reviewed by Ross Kirsling.
+
+        Give dedicated type for RemoteControllableTarget's identifier as Inspector::TargetID.
+
+        Also rename ClientID type used in Socket backend to ConnectionID because this is the identifier
+        socket endpoint assign to the newly created connection. The size was changed to uint32_t.
+        Enough size for managing connections.
+
+        * inspector/remote/RemoteConnectionToTarget.cpp:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::targetIdentifier const):
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::nextAvailableTargetIdentifier):
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::waitingForAutomaticInspection):
+        (Inspector::RemoteInspector::updateTargetListing):
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::targetIdentifier const):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedDidCloseMessage):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedAutomaticInspectionRejectMessage):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedCloseMessage):
+        (Inspector::RemoteInspector::setup):
+        (Inspector::RemoteInspector::sendMessageToTarget):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::didReceiveWebInspectorEvent):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        (Inspector::RemoteInspectorConnectionClient::didAccept):
+        * inspector/remote/socket/RemoteInspectorMessageParser.cpp:
+        (Inspector::MessageParser::MessageParser):
+        (Inspector::MessageParser::parse):
+        * inspector/remote/socket/RemoteInspectorMessageParser.h:
+        (Inspector::MessageParser::setDidParseMessageListener):
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::didAccept):
+        (Inspector::RemoteInspectorServer::didClose):
+        (Inspector::RemoteInspectorServer::dispatchMap):
+        (Inspector::RemoteInspectorServer::sendWebInspectorEvent):
+        (Inspector::RemoteInspectorServer::sendCloseEvent):
+        (Inspector::RemoteInspectorServer::connectionClosed):
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::didClose):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::setup):
+        (Inspector::RemoteInspector::sendMessageToTarget):
+        * inspector/remote/socket/RemoteInspectorSocket.h:
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::connectInet):
+        (Inspector::RemoteInspectorSocketEndpoint::isListening):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::sendIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::send):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++17

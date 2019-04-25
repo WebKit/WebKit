@@ -36,18 +36,18 @@ class MessageParser {
 public:
     static Vector<uint8_t> createMessage(const uint8_t*, size_t);
 
-    MessageParser(ClientID, size_t);
+    MessageParser(ConnectionID, size_t);
     void pushReceivedData(const uint8_t*, size_t);
-    void setDidParseMessageListener(Function<void(ClientID, Vector<uint8_t>)>&& listener) { m_didParseMessageListener = WTFMove(listener); }
+    void setDidParseMessageListener(Function<void(ConnectionID, Vector<uint8_t>)>&& listener) { m_didParseMessageListener = WTFMove(listener); }
 
     void clearReceivedData();
 
 private:
     bool parse();
 
-    Function<void(ClientID, Vector<uint8_t>&&)> m_didParseMessageListener;
+    Function<void(ConnectionID, Vector<uint8_t>&&)> m_didParseMessageListener;
     Vector<uint8_t> m_buffer;
-    ClientID m_clientID;
+    ConnectionID m_connectionID;
 };
 
 } // namespace Inspector

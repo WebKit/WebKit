@@ -245,7 +245,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     LockHolder lock(m_mutex);
 
     ASSERT(target);
-    unsigned targetIdentifier = target->targetIdentifier();
+    auto targetIdentifier = target->targetIdentifier();
     if (!targetIdentifier)
         return;
 
@@ -272,7 +272,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
     // FIXME: Implement automatic inspection.
 }
 
-void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const String& message)
+void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
     LockHolder lock(m_mutex);
     if (!m_dbusConnection)
@@ -291,12 +291,12 @@ void RemoteInspector::receivedGetTargetListMessage()
     pushListingsNow();
 }
 
-void RemoteInspector::receivedSetupMessage(unsigned targetIdentifier)
+void RemoteInspector::receivedSetupMessage(TargetID targetIdentifier)
 {
     setup(targetIdentifier);
 }
 
-void RemoteInspector::receivedDataMessage(unsigned targetIdentifier, const char* message)
+void RemoteInspector::receivedDataMessage(TargetID targetIdentifier, const char* message)
 {
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
@@ -308,7 +308,7 @@ void RemoteInspector::receivedDataMessage(unsigned targetIdentifier, const char*
     connectionToTarget->sendMessageToTarget(String::fromUTF8(message));
 }
 
-void RemoteInspector::receivedCloseMessage(unsigned targetIdentifier)
+void RemoteInspector::receivedCloseMessage(TargetID targetIdentifier)
 {
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
@@ -325,7 +325,7 @@ void RemoteInspector::receivedCloseMessage(unsigned targetIdentifier)
         connectionToTarget->close();
 }
 
-void RemoteInspector::setup(unsigned targetIdentifier)
+void RemoteInspector::setup(TargetID targetIdentifier)
 {
     RemoteControllableTarget* target;
     {
@@ -348,7 +348,7 @@ void RemoteInspector::setup(unsigned targetIdentifier)
     updateHasActiveDebugSession();
 }
 
-void RemoteInspector::sendMessageToTarget(unsigned targetIdentifier, const char* message)
+void RemoteInspector::sendMessageToTarget(TargetID targetIdentifier, const char* message)
 {
     if (auto connectionToTarget = m_targetConnectionMap.get(targetIdentifier))
         connectionToTarget->sendMessageToTarget(String::fromUTF8(message));

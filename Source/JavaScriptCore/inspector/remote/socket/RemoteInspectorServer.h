@@ -46,34 +46,34 @@ public:
     JS_EXPORT_PRIVATE void addServerConnection(PlatformSocketType);
 
 private:
-    void connectionClosed(uint64_t connectionID);
+    void connectionClosed(ConnectionID);
 
-    void setTargetList(const struct Event&);
-    void setupInspectorClient(const struct Event&);
-    void setup(const struct Event&);
-    void close(const struct Event&);
-    void sendMessageToFrontend(const struct Event&);
-    void sendMessageToBackend(const struct Event&);
+    void setTargetList(const Event&);
+    void setupInspectorClient(const Event&);
+    void setup(const Event&);
+    void close(const Event&);
+    void sendMessageToFrontend(const Event&);
+    void sendMessageToBackend(const Event&);
 
-    void sendCloseEvent(uint64_t connectionID, uint64_t targetID);
+    void sendCloseEvent(ConnectionID, TargetID);
     void clientConnectionClosed();
 
-    void didAccept(ClientID, Socket::Domain) override;
-    void didClose(ClientID) override;
+    void didAccept(ConnectionID, Socket::Domain) override;
+    void didClose(ConnectionID) override;
 
-    void sendWebInspectorEvent(ClientID, const String&);
+    void sendWebInspectorEvent(ConnectionID, const String&);
 
-    HashMap<String, CallHandler>& dispatchMap();
+    HashMap<String, CallHandler>& dispatchMap() override;
 
-    HashSet<std::pair<uint64_t, uint64_t>> m_inspectionTargets;
+    HashSet<std::pair<ConnectionID, TargetID>> m_inspectionTargets;
     std::unique_ptr<RemoteInspectorSocketEndpoint> m_server;
 
     // Connections to the WebProcess.
-    Vector<ClientID> m_inspectorConnections;
+    Vector<ConnectionID> m_inspectorConnections;
     Lock m_connectionsLock;
 
     // Connections from RemoteInspectorClient.
-    Optional<ClientID> m_clientConnection;
+    Optional<ConnectionID> m_clientConnection;
 };
 
 } // namespace Inspector
