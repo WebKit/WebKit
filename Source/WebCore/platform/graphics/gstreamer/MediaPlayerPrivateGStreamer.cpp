@@ -275,11 +275,8 @@ void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
 
 void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const String& pipelineName)
 {
-    // FIXME: This method is still called even if supportsType() returned
-    // IsNotSupported. This would deserve more investigation but meanwhile make
-    // sure we don't ever try to play animated gif assets.
     if (m_player->contentMIMEType() == "image/gif") {
-        loadingFailed(MediaPlayer::FormatError);
+        loadingFailed(MediaPlayer::FormatError, MediaPlayer::HaveNothing, true);
         return;
     }
 
@@ -2222,17 +2219,17 @@ void MediaPlayerPrivateGStreamer::durationChanged()
         m_player->durationChanged();
 }
 
-void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
+void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networkError, MediaPlayer::ReadyState readyState, bool forceNotifications)
 {
-    GST_WARNING("Loading failed, error: %d", error);
+    GST_WARNING("Loading failed, error: %s", convertEnumerationToString(networkError).utf8().data());
 
     m_errorOccured = true;
-    if (m_networkState != error) {
-        m_networkState = error;
+    if (forceNotifications || m_networkState != networkError) {
+        m_networkState = networkError;
         m_player->networkStateChanged();
     }
-    if (m_readyState != MediaPlayer::HaveNothing) {
-        m_readyState = MediaPlayer::HaveNothing;
+    if (forceNotifications || m_readyState != readyState) {
+        m_readyState = readyState;
         m_player->readyStateChanged();
     }
 

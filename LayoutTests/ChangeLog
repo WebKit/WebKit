@@ -1,3 +1,15 @@
+2019-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gst_element_get_state: assertion 'GST_IS_ELEMENT (element)' failed in WebCore::MediaPlayerPrivateGStreamer::paused
+        https://bugs.webkit.org/show_bug.cgi?id=196691
+
+        Reviewed by Eric Carlson.
+
+        Unflag test no longer crashing.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/replaced/border-radius-clip-expected.txt:
+
 2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Hardcoded text color in input fields

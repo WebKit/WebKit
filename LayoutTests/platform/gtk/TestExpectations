@@ -1641,8 +1641,7 @@ webkit.org/b/133866 media/media-controls-cancel-events.html [ Timeout Failure Pa
 
 webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
-# Crash is webkit.org/b/176802
-webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass Crash ]
+webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass ]
 
 webkit.org/b/134573 media/track/audio-track.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure Timeout Pass ]
