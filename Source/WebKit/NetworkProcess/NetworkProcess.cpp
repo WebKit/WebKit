@@ -2487,6 +2487,11 @@ void NetworkProcess::removeCredential(WebCore::Credential&&, WebCore::Protection
     completionHandler();
 }
 
+void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&& completionHandler)
+{
+    completionHandler(Vector<WebCore::SecurityOriginData>());
+}
+    
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }

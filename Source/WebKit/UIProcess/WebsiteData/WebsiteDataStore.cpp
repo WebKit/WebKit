@@ -44,6 +44,7 @@
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/CredentialStorage.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/OriginLock.h>
@@ -238,8 +239,8 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<W
             processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
     }
 
-    if (dataTypes.contains(WebsiteDataType::Credentials) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+    if (dataTypes.contains(WebsiteDataType::Credentials) && isNonPersistentStore)
+        processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
 
     if (dataTypes.contains(WebsiteDataType::DiskCache) && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
@@ -356,8 +357,13 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 #endif
 
             for (auto& origin : websiteData.originsWithCredentials) {
-                auto& record = m_websiteDataRecords.add(origin, WebsiteDataRecord { }).iterator->value;
-                
+                auto displayName = WebsiteDataRecord::displayNameForOrigin(WebCore::SecurityOriginData::fromURL(URL(URL(), origin)));
+                ASSERT(!displayName.isEmpty());
+
+                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
+                if (!record.displayName)
+                    record.displayName = WTFMove(displayName);
+
                 record.addOriginWithCredential(origin);
             }
 
@@ -569,6 +575,24 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
             });
         });
     }
+
+#if PLATFORM(COCOA)
+    if (dataTypes.contains(WebsiteDataType::Credentials) && isPersistent()) {
+        for (auto& processPool : processPools()) {
+            if (!processPool->networkProcess())
+                continue;
+            
+            callbackAggregator->addPendingCallback();
+            WTF::CompletionHandler<void(Vector<WebCore::SecurityOriginData>&&)> completionHandler = [callbackAggregator](Vector<WebCore::SecurityOriginData>&& origins) mutable {
+                WebsiteData websiteData;
+                for (auto& origin : origins)
+                    websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::Credentials, 0 });
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
+            };
+            processPool->networkProcess()->sendWithAsyncReply(Messages::NetworkProcess::OriginsWithPersistentCredentials(), WTFMove(completionHandler));
+        }
+    }
+#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {

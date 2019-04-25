@@ -38,4 +38,13 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& pr
     return credential ? Credential(credential) : Credential();
 }
 
+Vector<WebCore::SecurityOriginData> CredentialStorage::originsWithPersistentCredentials()
+{
+    Vector<WebCore::SecurityOriginData> origins;
+    auto allCredentials = [[NSURLCredentialStorage sharedCredentialStorage] allCredentials];
+    for (NSURLProtectionSpace* key in allCredentials.keyEnumerator)
+        origins.append(WebCore::SecurityOriginData { String(key.protocol), String(key.host), key.port });
+    return origins;
+}
+
 } // namespace WebCore

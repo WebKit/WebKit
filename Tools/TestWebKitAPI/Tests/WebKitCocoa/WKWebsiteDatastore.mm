@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,60 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TCPServer.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/text/WTFString.h>
 
 static bool readyToContinue;
+
+static RetainPtr<NSURLCredential> persistentCredential;
+static bool usePersistentCredentialStorage = false;
+
+@interface NavigationTestDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation NavigationTestDelegate {
+    bool _hasFinishedNavigation;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _hasFinishedNavigation = false;
+    
+    return self;
+}
+
+- (void)waitForDidFinishNavigation
+{
+    TestWebKitAPI::Util::run(&_hasFinishedNavigation);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    _hasFinishedNavigation = true;
+}
+
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
+{
+    static bool firstChallenge = true;
+    if (firstChallenge) {
+        firstChallenge = false;
+        persistentCredential = adoptNS([[NSURLCredential alloc] initWithUser:@"username" password:@"password" persistence:(usePersistentCredentialStorage ? NSURLCredentialPersistencePermanent: NSURLCredentialPersistenceForSession)]);
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, persistentCredential.get());
+    }
+    return completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+}
+@end
+
+namespace TestWebKitAPI {
 
 TEST(WKWebsiteDataStore, RemoveAndFetchData)
 {
@@ -61,4 +108,93 @@ TEST(WKWebsiteDataStore, RemoveEphemeralData)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+static void respondWithChallengeThenOK(int socket)
+{
+    char readBuffer[1000];
+    auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
+    EXPECT_GT(bytesRead, 0);
+    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
+    
+    const char* challengeHeader =
+    "HTTP/1.1 401 Unauthorized\r\n"
+    "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
+    "Content-Length: 0\r\n"
+    "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
+    auto bytesWritten = ::write(socket, challengeHeader, strlen(challengeHeader));
+    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(challengeHeader));
+    
+    bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
+    EXPECT_GT(bytesRead, 0);
+    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
+    
+    const char* responseHeader =
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Length: 13\r\n\r\n"
+    "Hello, World!";
+    bytesWritten = ::write(socket, responseHeader, strlen(responseHeader));
+    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(responseHeader));
+}
+    
+TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
+{
+    TCPServer server(respondWithChallengeThenOK);
+    
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    [configuration setWebsiteDataStore:websiteDataStore];
+    auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        int credentialCount = dataRecords.count;
+        ASSERT_EQ(credentialCount, 1);
+        for (WKWebsiteDataRecord *record in dataRecords)
+            ASSERT_TRUE([[record displayName] isEqualToString:@"127.0.0.1"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKWebsiteDataStore, FetchPersistentCredentials)
+{
+    TCPServer server(respondWithChallengeThenOK);
+    
+    usePersistentCredentialStorage = true;
+    auto websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+    auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        int credentialCount = dataRecords.count;
+        ASSERT_GT(credentialCount, 0);
+        bool foundExpectedRecord = false;
+        for (WKWebsiteDataRecord *record in dataRecords) {
+            auto name = [record displayName];
+            if ([name isEqualToString:@"127.0.0.1"]) {
+                foundExpectedRecord = true;
+                break;
+            }
+        }
+        EXPECT_TRUE(foundExpectedRecord);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    
+    __block bool removedCredential = false;
+    [[[webView configuration] processPool] _removeCredential:persistentCredential.get() forProtectionSpace:[[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease] completionHandler:^{
+        removedCredential = true;
+    }];
+    TestWebKitAPI::Util::run(&removedCredential);
+}
+
 }

@@ -217,6 +217,11 @@ void NetworkProcess::removeCredential(WebCore::Credential&& credential, WebCore:
     completionHandler();
 }
 
+void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&& completionHandler)
+{
+    completionHandler(WebCore::CredentialStorage::originsWithPersistentCredentials());
+}
+
 #if PLATFORM(MAC)
 void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {

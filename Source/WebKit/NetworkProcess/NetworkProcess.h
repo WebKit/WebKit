@@ -430,6 +430,8 @@ private:
 
     void removeCredential(WebCore::Credential&&, WebCore::ProtectionSpace&&, CompletionHandler<void()>&&);
 
+    void originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&&);
+    
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
     void registerURLSchemeAsLocal(const String&) const;

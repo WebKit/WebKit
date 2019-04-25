@@ -27,6 +27,7 @@
 
 #include "Credential.h"
 #include "ProtectionSpaceHash.h"
+#include "SecurityOriginData.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -45,6 +46,7 @@ public:
 
     // OS persistent storage.
     WEBCORE_EXPORT static Credential getFromPersistentStorage(const ProtectionSpace&);
+    WEBCORE_EXPORT static Vector<SecurityOriginData> originsWithPersistentCredentials();
 
     WEBCORE_EXPORT void clearCredentials();
 
