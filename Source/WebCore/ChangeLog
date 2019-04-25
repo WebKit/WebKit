@@ -1,3 +1,17 @@
+2019-04-24  Youenn Fablet  <youenn@apple.com>
+
+        Do not restart WebRTC stats timer if backend is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=197257
+        <rdar://problem/50095879>
+
+        Reviewed by Eric Carlson.
+
+        We used to stop and reschedule the stat gathering timer in case the
+        gathering delay is changing. Timer should not be rescheduled if the backend is stopped.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered):
+
 2019-04-24  Andres Gonzalez  <andresg_22@apple.com>
 
         Flaky crash under WebCore::AXObjectCache::stopCachingComputedObjectAttributes()
