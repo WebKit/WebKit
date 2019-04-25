@@ -1329,6 +1329,8 @@ webkit.org/b/196542 printing/printing-events.html [ Timeout Crash ]
 
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Pass Crash ]
 
+webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2150,6 +2152,15 @@ webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-add
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Failure Pass ]
 
 webkit.org/b/196798 media/track/track-cue-css.html [ Failure Pass ]
+
+webkit.org/b/197245 animations/remove-syncing-animation.html [ Failure Pass ]
+
+webkit.org/b/197246 editing/pasteboard/smart-paste-003-trailing-whitespace.html [ Failure Pass ]
+
+webkit.org/b/197254 imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html [ Failure Pass ]
+
+webkit.org/b/197258 imported/w3c/web-platform-tests/css/selectors/focus-display-none-001.html [ Failure Pass ]
+webkit.org/b/197258 imported/w3c/web-platform-tests/css/selectors/focus-within-display-none-001.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3804,6 +3815,21 @@ webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 webkit.org/b/116977 media/event-attributes.html [ Failure ]
 
 webkit.org/b/196541 editing/pasteboard/paste-content-with-overflow-auto-parent-across-origin.html [ Failure ]
+
+webkit.org/b/197248 fast/events/autoscroll-when-input-is-offscreen.html [ Failure ]
+webkit.org/b/197248 fast/events/autoscroll-with-software-keyboard.html [ Failure ]
+
+webkit.org/b/197251 fast/images/icon-decoding.html [ Failure ]
+webkit.org/b/197251 fast/images/reset-image-animation.html [ Failure ]
+webkit.org/b/197251 fast/images/slower-animation-than-decoding-image.html [ Failure ]
+webkit.org/b/197251 fast/images/slower-decoding-than-animation-image.html [ Failure ]
+webkit.org/b/197251 css3/shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
+webkit.org/b/197251 fast/images/animated-image-loop-count.html [ ImageOnlyFailure ]
+webkit.org/b/197251 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
+
+webkit.org/b/197252 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure ]
+
+webkit.org/b/197260 imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

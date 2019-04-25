@@ -1,3 +1,0 @@
-Test for failing EventDispatchForbiddenScope assert when moving a video with text track between documents.
-
- 

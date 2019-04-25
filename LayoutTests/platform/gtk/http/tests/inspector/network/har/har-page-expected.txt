@@ -563,13 +563,12 @@ HAR Page Test.
           "httpVersion": "<filtered>",
           "cookies": [
             {
-              "name": "same-site-implicit-strict",
-              "value": "same-site-implicit-strict",
+              "name": "same-site-ignored-because-no-value",
+              "value": "same-site-ignored-because-no-value",
               "path": "/",
               "expires": "",
               "httpOnly": false,
-              "secure": false,
-              "sameSite": "Strict"
+              "secure": false
             }
           ],
           "headers": "<filtered>",
@@ -607,8 +606,8 @@ HAR Page Test.
               "value": "http-only"
             },
             {
-              "name": "same-site-implicit-strict",
-              "value": "same-site-implicit-strict"
+              "name": "same-site-ignored-because-no-value",
+              "value": "same-site-ignored-because-no-value"
             },
             {
               "name": "same-site-strict",
@@ -634,13 +633,12 @@ HAR Page Test.
           "httpVersion": "<filtered>",
           "cookies": [
             {
-              "name": "same-site-strict-because-invalid-SameSite-value",
-              "value": "same-site-strict-because-invalid-SameSite-value",
+              "name": "same-site-ignored-because-unknown-value",
+              "value": "same-site-ignored-because-unknown-value",
               "path": "/",
               "expires": "",
               "httpOnly": false,
-              "secure": false,
-              "sameSite": "Strict"
+              "secure": false
             }
           ],
           "headers": "<filtered>",
@@ -678,16 +676,16 @@ HAR Page Test.
               "value": "http-only"
             },
             {
-              "name": "same-site-implicit-strict",
-              "value": "same-site-implicit-strict"
+              "name": "same-site-ignored-because-no-value",
+              "value": "same-site-ignored-because-no-value"
+            },
+            {
+              "name": "same-site-ignored-because-unknown-value",
+              "value": "same-site-ignored-because-unknown-value"
             },
             {
               "name": "same-site-strict",
               "value": "same-site-strict"
-            },
-            {
-              "name": "same-site-strict-because-invalid-SameSite-value",
-              "value": "same-site-strict-because-invalid-SameSite-value"
             },
             {
               "name": "simple",
