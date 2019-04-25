@@ -46,6 +46,8 @@ public:
 
     const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
 
+    void setSourceElement(WebKitWebSrc* src) { m_src = GST_ELEMENT_CAST(src); }
+
 private:
     void checkUpdateBlocksize(uint64_t bytesRead);
 
@@ -73,10 +75,29 @@ private:
 enum MainThreadSourceNotification {
     Start = 1 << 0,
     Stop = 1 << 1,
+    Dispose = 1 << 2,
 };
 
 #define WEBKIT_WEB_SRC_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SRC, WebKitWebSrcPrivate))
 struct _WebKitWebSrcPrivate {
+    ~_WebKitWebSrcPrivate()
+    {
+        if (notifier && notifier->isValid()) {
+            notifier->notifyAndWait(MainThreadSourceNotification::Dispose, [&] {
+                if (resource) {
+                    auto* client = static_cast<CachedResourceStreamingClient*>(resource->client());
+                    if (client)
+                        client->setSourceElement(nullptr);
+
+                    resource->setClient(nullptr);
+                }
+                loader = nullptr;
+            });
+            notifier->invalidate();
+            notifier = nullptr;
+        }
+    }
+
     CString originalURI;
     CString redirectedURI;
     bool keepAlive;
@@ -131,7 +152,6 @@ GST_DEBUG_CATEGORY_STATIC(webkit_web_src_debug);
 static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer ifaceData);
 
 static void webKitWebSrcDispose(GObject*);
-static void webKitWebSrcFinalize(GObject*);
 static void webKitWebSrcSetProperty(GObject*, guint propertyID, const GValue*, GParamSpec*);
 static void webKitWebSrcGetProperty(GObject*, guint propertyID, GValue*, GParamSpec*);
 static GstStateChangeReturn webKitWebSrcChangeState(GstElement*, GstStateChange);
@@ -158,7 +178,6 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     GObjectClass* oklass = G_OBJECT_CLASS(klass);
 
     oklass->dispose = webKitWebSrcDispose;
-    oklass->finalize = webKitWebSrcFinalize;
     oklass->set_property = webKitWebSrcSetProperty;
     oklass->get_property = webKitWebSrcGetProperty;
 
@@ -245,21 +264,10 @@ static void webkit_web_src_init(WebKitWebSrc* src)
 static void webKitWebSrcDispose(GObject* object)
 {
     WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC(object)->priv;
-    if (priv->notifier) {
-        priv->notifier->invalidate();
-        priv->notifier = nullptr;
-    }
-
-    GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
-}
-
-static void webKitWebSrcFinalize(GObject* object)
-{
-    WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC(object)->priv;
 
     priv->~WebKitWebSrcPrivate();
 
-    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
+    GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
 }
 
 static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* pspec)

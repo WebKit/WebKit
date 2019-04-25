@@ -1,3 +1,23 @@
+2019-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        [REGRESSION(r243197)][GStreamer] http/tests/media/clearkey/collect-webkit-media-session.html hits an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=197230
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Perform the resource loader disposal and destruction from the main
+        thread. Also ensure there's no circular reference between the
+        CachedResourceStreamingClient and WebKitWebSrc when disposing of
+        the private WebKitWebSrc storage.
+
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (_WebKitWebSrcPrivate::~_WebKitWebSrcPrivate):
+        (webkit_web_src_class_init):
+        (webKitWebSrcDispose):
+        (webKitWebSrcCloseSession):
+        (webKitWebSrcFinalize): Deleted.
+
 2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Hardcoded text color in input fields

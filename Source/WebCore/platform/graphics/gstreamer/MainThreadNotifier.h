@@ -40,6 +40,8 @@ public:
         ASSERT(!m_isValid.load());
     }
 
+    bool isValid() const { return m_isValid.load(); }
+
     template<typename F>
     void notify(T notificationType, F&& callbackFunctor)
     {
