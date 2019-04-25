@@ -33,8 +33,24 @@
 #import "Logging.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
+SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
+#define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
+
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeClosedCaption, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicLegible, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMetadataCommonKeyTitle, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
+
+#define AVPlayerItem getAVPlayerItemClass()
+#define AVMetadataItem getAVMetadataItemClass()
+#define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
+#define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
+#define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
 
 namespace WebCore {
 
@@ -85,10 +101,10 @@ AtomicString InbandTextTrackPrivateLegacyAVFObjC::label() const
 
     NSString *title = 0;
 
-    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:[[m_playerItemTrack assetTrack] commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[[m_playerItemTrack assetTrack] commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
-        NSArray *titlesForPreferredLanguages = [PAL::getAVMetadataItemClass() metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
+        NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
         if ([titlesForPreferredLanguages count])
             title = [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
 

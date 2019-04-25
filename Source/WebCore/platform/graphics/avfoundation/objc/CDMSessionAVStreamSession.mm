@@ -40,9 +40,14 @@
 #import <objc/objc-runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser);
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVStreamDataParserContentKeyRequestProtocolVersionsKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVStreamSessionContentProtectionSessionIdentifierChangedNotification, NSString *)
 
 @interface AVStreamSession : NSObject
 - (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
@@ -137,11 +142,11 @@ void CDMSessionAVStreamSession::releaseKeys()
             return;
 
         String storagePath = this->storagePath();
-        if (storagePath.isEmpty() || ![PAL::getAVStreamSessionClass() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)])
+        if (storagePath.isEmpty() || ![getAVStreamSessionClass() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)])
             return;
 
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
-        NSArray* expiredSessions = [PAL::getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
+        NSArray* expiredSessions = [getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
         for (NSData* expiredSessionData in expiredSessions) {
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
             NSString *playbackSessionIdValue = (NSString *)[expiredSession objectForKey:PlaybackSessionIdKey];
@@ -195,8 +200,8 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
 
         IGNORE_WARNINGS_BEGIN("objc-literal-conversion")
         String storagePath = this->storagePath();
-        if (!storagePath.isEmpty() && [PAL::getAVStreamSessionClass() respondsToSelector:@selector(removePendingExpiredSessionReports:withAppIdentifier:storageDirectoryAtURL:)])
-            [PAL::getAVStreamSessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
+        if (!storagePath.isEmpty() && [getAVStreamSessionClass() respondsToSelector:@selector(removePendingExpiredSessionReports:withAppIdentifier:storageDirectoryAtURL:)])
+            [getAVStreamSessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
         IGNORE_WARNINGS_END
         m_expiredSession = nullptr;
         return true;
@@ -225,7 +230,7 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
         RetainPtr<NSData> initData = adoptNS([[NSData alloc] initWithBytes:m_initData->data() length:m_initData->length()]);
 
         RetainPtr<NSDictionary> options;
-        if (!m_protocolVersions.isEmpty()) {
+        if (!m_protocolVersions.isEmpty() && canLoadAVStreamDataParserContentKeyRequestProtocolVersionsKey()) {
             RetainPtr<NSMutableArray> protocolVersionsOption = adoptNS([[NSMutableArray alloc] init]);
             for (auto& version : m_protocolVersions) {
                 if (!version)
@@ -233,7 +238,7 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
                 [protocolVersionsOption addObject:@(version)];
             }
 
-            options = @{ AVStreamDataParserContentKeyRequestProtocolVersionsKey: protocolVersionsOption.get() };
+            options = @{ getAVStreamDataParserContentKeyRequestProtocolVersionsKey(): protocolVersionsOption.get() };
         }
 
         NSError* error = nil;
@@ -275,15 +280,16 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
 
 void CDMSessionAVStreamSession::setStreamSession(AVStreamSession *streamSession)
 {
-    if (m_streamSession)
-        [[NSNotificationCenter defaultCenter] removeObserver:m_dataParserObserver.get() name:AVStreamSessionContentProtectionSessionIdentifierChangedNotification object:m_streamSession.get()];
+    if (m_streamSession && canLoadAVStreamSessionContentProtectionSessionIdentifierChangedNotification())
+        [[NSNotificationCenter defaultCenter] removeObserver:m_dataParserObserver.get() name:getAVStreamSessionContentProtectionSessionIdentifierChangedNotification() object:m_streamSession.get()];
 
     m_streamSession = streamSession;
 
     if (!m_streamSession)
         return;
 
-    [[NSNotificationCenter defaultCenter] addObserver:m_dataParserObserver.get() selector:@selector(contentProtectionSessionIdentifierChanged:) name:AVStreamSessionContentProtectionSessionIdentifierChangedNotification object:m_streamSession.get()];
+    if (canLoadAVStreamSessionContentProtectionSessionIdentifierChangedNotification())
+        [[NSNotificationCenter defaultCenter] addObserver:m_dataParserObserver.get() selector:@selector(contentProtectionSessionIdentifierChanged:) name:getAVStreamSessionContentProtectionSessionIdentifierChangedNotification() object:m_streamSession.get()];
 
     NSData* identifier = [streamSession contentProtectionSessionIdentifier];
     RetainPtr<NSString> sessionIdentifierString = identifier ? adoptNS([[NSString alloc] initWithData:identifier encoding:(NSUTF8StringEncoding)]) : nil;
@@ -309,13 +315,13 @@ RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyReleaseMessage(unsigned
     RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
 
     String storagePath = this->storagePath();
-    if (storagePath.isEmpty() || ![PAL::getAVStreamSessionClass() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)]) {
+    if (storagePath.isEmpty() || ![getAVStreamSessionClass() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)]) {
         errorCode = MediaPlayer::KeySystemNotSupported;
         systemCode = '!mor';
         return nullptr;
     }
 
-    NSArray* expiredSessions = [PAL::getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
+    NSArray* expiredSessions = [getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
     if (![expiredSessions count]) {
         LOG(Media, "CDMSessionAVStreamSession::generateKeyReleaseMessage(%p) - no expired sessions found", this);
 

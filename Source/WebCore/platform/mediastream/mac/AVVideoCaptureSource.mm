@@ -45,9 +45,55 @@
 #import <AVFoundation/AVError.h>
 #import <objc/runtime.h>
 
-#import "CoreVideoSoftLink.h"
-#import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
+#import "CoreVideoSoftLink.h"
+
+typedef AVCaptureConnection AVCaptureConnectionType;
+typedef AVCaptureDevice AVCaptureDeviceTypedef;
+typedef AVCaptureDeviceFormat AVCaptureDeviceFormatType;
+typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
+typedef AVCaptureOutput AVCaptureOutputType;
+typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
+typedef AVFrameRateRange AVFrameRateRangeType;
+typedef AVCaptureSession AVCaptureSessionType;
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS(AVFoundation, AVCaptureConnection)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureDeviceFormat)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureDeviceInput)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureOutput)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureVideoDataOutput)
+SOFT_LINK_CLASS(AVFoundation, AVFrameRateRange)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureSession)
+
+#define AVCaptureConnection getAVCaptureConnectionClass()
+#define AVCaptureDevice getAVCaptureDeviceClass()
+#define AVCaptureDeviceFormat getAVCaptureDeviceFormatClass()
+#define AVCaptureDeviceInput getAVCaptureDeviceInputClass()
+#define AVCaptureOutput getAVCaptureOutputClass()
+#define AVCaptureVideoDataOutput getAVCaptureVideoDataOutputClass()
+#define AVFrameRateRange getAVFrameRateRangeClass()
+
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *)
+
+SOFT_LINK_CONSTANT(AVFoundation, AVCaptureDeviceWasDisconnectedNotification, NSString *)
+#define AVCaptureDeviceWasDisconnectedNotification getAVCaptureDeviceWasDisconnectedNotification()
+
+#if PLATFORM(IOS_FAMILY)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionRuntimeErrorNotification, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionWasInterruptedNotification, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionInterruptionEndedNotification, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionInterruptionReasonKey, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionErrorKey, NSString *)
+
+#define AVCaptureSessionRuntimeErrorNotification getAVCaptureSessionRuntimeErrorNotification()
+#define AVCaptureSessionWasInterruptedNotification getAVCaptureSessionWasInterruptedNotification()
+#define AVCaptureSessionInterruptionEndedNotification getAVCaptureSessionInterruptionEndedNotification()
+#define AVCaptureSessionInterruptionReasonKey getAVCaptureSessionInterruptionReasonKey()
+#define AVCaptureSessionErrorKey getAVCaptureSessionErrorKey()
+#endif
 
 using namespace WebCore;
 using namespace PAL;
@@ -60,7 +106,7 @@ using namespace PAL;
 -(void)disconnect;
 -(void)addNotificationObservers;
 -(void)removeNotificationObservers;
--(void)captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection;
+-(void)captureOutput:(AVCaptureOutputType*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType*)connection;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
 #if PLATFORM(IOS_FAMILY)
 -(void)sessionRuntimeError:(NSNotification*)notification;
@@ -94,23 +140,23 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
 
 class AVVideoPreset : public VideoPreset {
 public:
-    static Ref<AVVideoPreset> create(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
+    static Ref<AVVideoPreset> create(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormatType* format)
     {
         return adoptRef(*new AVVideoPreset(size, WTFMove(frameRateRanges), format));
     }
 
-    AVVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
+    AVVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormatType* format)
         : VideoPreset(size, WTFMove(frameRateRanges), AVCapture)
         , format(format)
     {
     }
 
-    RetainPtr<AVCaptureDeviceFormat> format;
+    RetainPtr<AVCaptureDeviceFormatType> format;
 };
 
 CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt, const MediaConstraints* constraints)
 {
-    AVCaptureDevice *device = [PAL::getAVCaptureDeviceClass() deviceWithUniqueID:id];
+    AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:id];
     if (!device)
         return { };
 
@@ -124,7 +170,7 @@ CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt
     return CaptureSourceOrError(WTFMove(source));
 }
 
-AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* device, String&& id, String&& hashSalt)
+AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, String&& id, String&& hashSalt)
     : RealtimeVideoSource(device.localizedName, WTFMove(id), WTFMove(hashSalt))
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
@@ -259,7 +305,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
     capabilities.setDeviceId(hashedId());
 
-    AVCaptureDevice *videoDevice = device();
+    AVCaptureDeviceTypedef *videoDevice = device();
     if ([videoDevice position] == AVCaptureDevicePositionFront)
         capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
     if ([videoDevice position] == AVCaptureDevicePositionBack)
@@ -375,9 +421,9 @@ static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
 #endif
 }
 
-static inline int sensorOrientationFromVideoOutput(AVCaptureVideoDataOutput* videoOutput)
+static inline int sensorOrientationFromVideoOutput(AVCaptureVideoDataOutputType* videoOutput)
 {
-    AVCaptureConnection* connection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
+    AVCaptureConnectionType* connection = [videoOutput connectionWithMediaType: getAVMediaTypeVideo()];
     return connection ? sensorOrientation([connection videoOrientation]) : 0;
 }
 
@@ -388,7 +434,7 @@ bool AVVideoCaptureSource::setupSession()
 
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
-    m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+    m_session = adoptNS([allocAVCaptureSessionInstance() init]);
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     [m_session beginConfiguration];
@@ -401,10 +447,10 @@ bool AVVideoCaptureSource::setupSession()
     return success;
 }
 
-AVFrameRateRange* AVVideoCaptureSource::frameDurationForFrameRate(double rate)
+AVFrameRateRangeType* AVVideoCaptureSource::frameDurationForFrameRate(double rate)
 {
-    AVFrameRateRange *bestFrameRateRange = nil;
-    for (AVFrameRateRange *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
+    AVFrameRateRangeType *bestFrameRateRange = nil;
+    for (AVFrameRateRangeType *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
         if (frameRateRangeIncludesRate({ [frameRateRange minFrameRate], [frameRateRange maxFrameRate] }, rate)) {
             if (!bestFrameRateRange || CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], >, [bestFrameRateRange minFrameDuration]))
                 bestFrameRateRange = frameRateRange;
@@ -426,7 +472,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
 #endif
 
     NSError *error = nil;
-    RetainPtr<AVCaptureDeviceInput> videoIn = adoptNS([PAL::allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
+    RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureDeviceInput ", [[error localizedDescription] UTF8String]);
         return false;
@@ -438,7 +484,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     }
     [session() addInput:videoIn.get()];
 
-    m_videoOutput = adoptNS([PAL::allocAVCaptureVideoDataOutputInstance() init]);
+    m_videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
     auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:avVideoCapturePixelBufferFormat()], kCVPixelBufferPixelFormatTypeKey, nil]);
 
     [m_videoOutput setVideoSettings:settingsDictionary.get()];
@@ -522,7 +568,7 @@ void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
     dispatchMediaSampleToObservers(WTFMove(sample));
 }
 
-void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef sampleBuffer, AVCaptureConnection* captureConnection)
+void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType* captureConnection)
 {
     if (m_framesToDropAtStartup && m_framesToDropAtStartup--)
         return;
@@ -573,7 +619,7 @@ bool AVVideoCaptureSource::interrupted() const
 void AVVideoCaptureSource::generatePresets()
 {
     Vector<Ref<VideoPreset>> presets;
-    for (AVCaptureDeviceFormat* format in [device() formats]) {
+    for (AVCaptureDeviceFormatType* format in [device() formats]) {
 
         CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
         IntSize size = { dimensions.width, dimensions.height };
@@ -584,7 +630,7 @@ void AVVideoCaptureSource::generatePresets()
             continue;
 
         Vector<FrameRateRange> frameRates;
-        for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
+        for (AVFrameRateRangeType *range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
         presets.append(AVVideoPreset::create(size, WTFMove(frameRates), format));
@@ -666,7 +712,7 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     [center addObserver:self selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
 
 #if PLATFORM(IOS_FAMILY)
-    AVCaptureSession* session = m_callback->session();
+    AVCaptureSessionType* session = m_callback->session();
     [center addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:session];
     [center addObserver:self selector:@selector(beginSessionInterrupted:) name:AVCaptureSessionWasInterruptedNotification object:session];
     [center addObserver:self selector:@selector(endSessionInterrupted:) name:AVCaptureSessionInterruptionEndedNotification object:session];
@@ -678,7 +724,7 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
+- (void)captureOutput:(AVCaptureOutputType*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType*)connection
 {
     if (!m_callback)
         return;

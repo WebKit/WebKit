@@ -63,7 +63,9 @@
 #import "ThemeMac.h"
 #endif
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVPlayerLayer)
 
 namespace WebCore {
 
@@ -196,12 +198,12 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(PlatformLayer* layer)
 {
-    if ([layer isKindOfClass:PAL::getAVPlayerLayerClass()])
+    if ([layer isKindOfClass:getAVPlayerLayerClass()])
         return LayerTypeAVPlayerLayer;
 
     if ([layer isKindOfClass:objc_getClass("WebVideoContainerLayer")]
         && layer.sublayers.count == 1
-        && [layer.sublayers[0] isKindOfClass:PAL::getAVPlayerLayerClass()])
+        && [layer.sublayers[0] isKindOfClass:getAVPlayerLayerClass()])
         return LayerTypeAVPlayerLayer;
 
     if ([layer isKindOfClass:[WebGLLayer class]])
@@ -261,7 +263,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         layerClass = [WebTiledBackingLayer class];
         break;
     case LayerTypeAVPlayerLayer:
-        layerClass = PAL::getAVPlayerLayerClass();
+        layerClass = getAVPlayerLayerClass();
         break;
     case LayerTypeContentsProvidedLayer:
         // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebGPULayers.
@@ -358,7 +360,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->updateCustomAppearance(customAppearance());
 
     if (type == LayerTypeAVPlayerLayer) {
-        ASSERT([newLayer->platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]);
+        ASSERT([newLayer->platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
 
         AVPlayerLayer *destinationPlayerLayer = static_cast<PlatformCALayerCocoa&>(newLayer.get()).avPlayerLayer();
         AVPlayerLayer *sourcePlayerLayer = avPlayerLayer();
@@ -1269,12 +1271,12 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     if (layerType() != LayerTypeAVPlayerLayer)
         return nil;
 
-    if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()])
+    if ([platformLayer() isKindOfClass:getAVPlayerLayerClass()])
         return static_cast<AVPlayerLayer *>(platformLayer());
 
     if ([platformLayer() isKindOfClass:objc_getClass("WebVideoContainerLayer")]) {
         ASSERT([platformLayer() sublayers].count == 1);
-        ASSERT([[platformLayer() sublayers][0] isKindOfClass:PAL::getAVPlayerLayerClass()]);
+        ASSERT([[platformLayer() sublayers][0] isKindOfClass:getAVPlayerLayerClass()]);
         return static_cast<AVPlayerLayer *>([platformLayer() sublayers][0]);
     }
 

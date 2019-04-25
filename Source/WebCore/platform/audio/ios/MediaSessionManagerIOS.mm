@@ -45,18 +45,32 @@
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
-
-WEBCORE_EXPORT NSString* WebUIApplicationWillResignActiveNotification = @"WebUIApplicationWillResignActiveNotification";
-WEBCORE_EXPORT NSString* WebUIApplicationWillEnterForegroundNotification = @"WebUIApplicationWillEnterForegroundNotification";
-WEBCORE_EXPORT NSString* WebUIApplicationDidBecomeActiveNotification = @"WebUIApplicationDidBecomeActiveNotification";
-WEBCORE_EXPORT NSString* WebUIApplicationDidEnterBackgroundNotification = @"WebUIApplicationDidEnterBackgroundNotification";
+SOFT_LINK_FRAMEWORK(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionOptionKey, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *)
 
 #if HAVE(CELESTIAL)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
 SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
 #endif
+
+#if HAVE(MEDIA_PLAYER) && !PLATFORM(WATCHOS)
+SOFT_LINK_CLASS(AVFoundation, AVRouteDetector)
+#endif
+
+#define AVAudioSession getAVAudioSessionClass()
+#define AVAudioSessionInterruptionNotification getAVAudioSessionInterruptionNotification()
+#define AVAudioSessionInterruptionTypeKey getAVAudioSessionInterruptionTypeKey()
+#define AVAudioSessionInterruptionOptionKey getAVAudioSessionInterruptionOptionKey()
+
+WEBCORE_EXPORT NSString* WebUIApplicationWillResignActiveNotification = @"WebUIApplicationWillResignActiveNotification";
+WEBCORE_EXPORT NSString* WebUIApplicationWillEnterForegroundNotification = @"WebUIApplicationWillEnterForegroundNotification";
+WEBCORE_EXPORT NSString* WebUIApplicationDidBecomeActiveNotification = @"WebUIApplicationDidBecomeActiveNotification";
+WEBCORE_EXPORT NSString* WebUIApplicationDidEnterBackgroundNotification = @"WebUIApplicationDidEnterBackgroundNotification";
 
 using namespace WebCore;
 
@@ -203,7 +217,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     _callback = callback;
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[PAL::getAVAudioSessionClass() sharedInstance]];
+    [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
 
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:PAL::get_UIKit_UIApplicationWillEnterForegroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:WebUIApplicationWillEnterForegroundNotification object:nil];
@@ -286,9 +300,9 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
         if (protectedSelf->_callback) {
             BEGIN_BLOCK_OBJC_EXCEPTIONS
-            protectedSelf->_routeDetector = adoptNS([PAL::allocAVRouteDetectorInstance() init]);
+            protectedSelf->_routeDetector = adoptNS([allocAVRouteDetectorInstance() init]);
             protectedSelf->_routeDetector.get().routeDetectionEnabled = protectedSelf->_monitoringAirPlayRoutes;
-            [[NSNotificationCenter defaultCenter] addObserver:protectedSelf selector:@selector(wirelessRoutesAvailableDidChange:) name:AVRouteDetectorMultipleRoutesDetectedDidChangeNotification object:protectedSelf->_routeDetector.get()];
+            [[NSNotificationCenter defaultCenter] addObserver:protectedSelf selector:@selector(wirelessRoutesAvailableDidChange:) name:getAVRouteDetectorMultipleRoutesDetectedDidChangeNotification() object:protectedSelf->_routeDetector.get()];
             END_BLOCK_OBJC_EXCEPTIONS
         }
 
