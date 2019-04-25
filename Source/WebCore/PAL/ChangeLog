@@ -1,5 +1,154 @@
 2019-04-24  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r244174. rdar://problem/28160396
+
+    Cherry-pick r243841. rdar://problem/49725678
+    
+        -apple-trailing-word is needed for browser detection
+        https://bugs.webkit.org/show_bug.cgi?id=196575
+    
+        Unreviewed.
+    
+        PerformanceTests:
+    
+        * MotionMark/resources/debug-runner/motionmark.css:
+        (#intro .start-benchmark p):
+    
+        Source/JavaScriptCore:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Source/WebCore:
+    
+        This is an unreviewed partial revert of r243819. Turns out there are some websites
+        which use this property to do browser detection. So, we need to continue to parse
+        the property, but we don't need the property to do anything.
+    
+        Test: fast/text/trailing-word-detection.html
+    
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TrailingWord const):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::trailingWord const):
+        (WebCore::RenderStyle::setTrailingWord):
+        (WebCore::RenderStyle::initialTrailingWord):
+        * rendering/style/RenderStyleConstants.h:
+    
+        Source/WebCore/PAL:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Source/WebKit:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Source/WebKitLegacy/mac:
+    
+        * Configurations/FeatureDefines.xcconfig:
+    
+        Tools:
+    
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+        LayoutTests:
+    
+        * fast/text/trailing-word-detection-expected.txt: Added.
+        * fast/text/trailing-word-detection.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+    
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243841 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@244174 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-10  Alan Coon  <alancoon@apple.com>
+
+            Cherry-pick r243841. rdar://problem/49725678
+
+        -apple-trailing-word is needed for browser detection
+        https://bugs.webkit.org/show_bug.cgi?id=196575
+
+        Unreviewed.
+
+        PerformanceTests:
+
+        * MotionMark/resources/debug-runner/motionmark.css:
+        (#intro .start-benchmark p):
+
+        Source/JavaScriptCore:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Source/WebCore:
+
+        This is an unreviewed partial revert of r243819. Turns out there are some websites
+        which use this property to do browser detection. So, we need to continue to parse
+        the property, but we don't need the property to do anything.
+
+        Test: fast/text/trailing-word-detection.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TrailingWord const):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::trailingWord const):
+        (WebCore::RenderStyle::setTrailingWord):
+        (WebCore::RenderStyle::initialTrailingWord):
+        * rendering/style/RenderStyleConstants.h:
+
+        Source/WebCore/PAL:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Source/WebKit:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Source/WebKitLegacy/mac:
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        Tools:
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
+        LayoutTests:
+
+        * fast/text/trailing-word-detection-expected.txt: Added.
+        * fast/text/trailing-word-detection.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243841 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+                -apple-trailing-word is needed for browser detection
+                https://bugs.webkit.org/show_bug.cgi?id=196575
+
+                Unreviewed.
+
+                * Configurations/FeatureDefines.xcconfig:
+
+2019-04-24  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r244173. rdar://problem/28160396
 
     Cherry-pick r243819. rdar://problem/49725678
