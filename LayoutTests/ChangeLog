@@ -1,3 +1,15 @@
+2019-04-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244228.
+        https://bugs.webkit.org/show_bug.cgi?id=197262
+
+        Causes compat issues (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed test gardening for Windows."
+        https://trac.webkit.org/changeset/244228
+
 2019-04-24  John Wilander  <wilander@apple.com>
 
         Age out unconverted Ad Click Attributions after one week.

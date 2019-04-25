@@ -1,4 +1,5 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html>
+
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0">
@@ -25,12 +26,12 @@
         
         .container {
             position: absolute;
-            z-index: 0;
             top: 50px;
             left: 50px;
             height: 300px;
             width: 300px;
             overflow: scroll;
+            -webkit-overflow-scrolling: touch;
             border: 1px solid black;
             visibility: hidden;
             box-shadow: 0 0 10px black;
