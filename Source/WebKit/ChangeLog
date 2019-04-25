@@ -1,5 +1,24 @@
 2019-04-25  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
+        [GTK] Back/Forward gesture interferes with scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=197168
+
+        Reviewed by Michael Catanzaro.
+
+        When the gesture is released with 0 velocity close to an edge of the webview,
+        the finishing animation is way too long, and in some cases it can look like the
+        gesture is already over, when it's still animating. By scrolling vertically while
+        that happens, it's possible to reset animation over and over again.
+
+        To reduce the duration in this case, instead of using maximum possible duration
+        (400ms), introduce a base velocity and use it for calculating the duration if
+        the actual velocity, relative to the end point, is equal to or less than 0.
+
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::SwipeProgressTracker::startAnimation):
+
+2019-04-25  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
         [GTK] Back/forward gesture snapshot always times out
         https://bugs.webkit.org/show_bug.cgi?id=197233
 
