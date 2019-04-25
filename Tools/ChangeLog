@@ -1,3 +1,11 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix test-webkitpy after r244653
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig:
+        Also use C++17.
+
 2019-04-25  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:] never returns _WKWebsiteDataTypeCredentials
