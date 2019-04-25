@@ -50,11 +50,9 @@ public:
     explicit LocaleMac(NSLocale*);
     ~LocaleMac();
 
-#if PLATFORM(IOS_FAMILY)
-    String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
+
     String dateFormat() override;
     String monthFormat() override;
     String shortMonthFormat() override;

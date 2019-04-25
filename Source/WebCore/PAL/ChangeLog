@@ -1,3 +1,13 @@
+2019-04-25  Timothy Hatcher  <timothy@apple.com>
+
+        Disable date and time inputs on iOSMac.
+        https://bugs.webkit.org/show_bug.cgi?id=197287
+        rdar://problem/46794376
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++17

@@ -1,3 +1,16 @@
+2019-04-25  Timothy Hatcher  <timothy@apple.com>
+
+        Disable date and time inputs on iOSMac.
+        https://bugs.webkit.org/show_bug.cgi?id=197287
+        rdar://problem/46794376
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * platform/text/mac/LocaleMac.h:
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::formatDateTime):
+
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix more Windows builds after r244653
