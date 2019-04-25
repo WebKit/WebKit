@@ -1,3 +1,32 @@
+2019-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Follow-up and fixing bug after r244481
+        https://bugs.webkit.org/show_bug.cgi?id=197294
+
+        Reviewed by Saam Barati.
+
+        This patch includes follow-up after r244481 and bug fixes which is introduced in the refactoring.
+
+        * bmalloc/IsoAllocator.h: Remove unused function.
+        * bmalloc/IsoAllocatorInlines.h:
+        (bmalloc::IsoAllocator<Config>::allocateSlow):
+        * bmalloc/IsoDeallocatorInlines.h:
+        (bmalloc::IsoDeallocator<Config>::deallocate):
+        * bmalloc/IsoHeapImpl.h: Rename m_usableBits to m_availableShared and add static_assert.
+        * bmalloc/IsoHeapImplInlines.h: Do not clear m_numberOfAllocationsFromSharedInOneCycle etc. in scavenge since IsoHeapImpl::scavenge
+        is not related to thread-local IsoAllocator's status.
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::forEachLiveObject):
+        (bmalloc::IsoHeapImpl<Config>::updateAllocationMode): Update m_allocationMode correctly.
+        (bmalloc::IsoHeapImpl<Config>::allocateFromShared):
+        * bmalloc/IsoSharedHeapInlines.h:
+        (bmalloc::computeObjectSizeForSharedCell):
+        (bmalloc::IsoSharedHeap::allocateNew):
+        (bmalloc::IsoSharedHeap::allocateSlow): Add computeObjectSizeForSharedCell.
+        * bmalloc/IsoSharedPage.h:
+        * bmalloc/IsoSharedPageInlines.h:
+        (bmalloc::IsoSharedPage::free): Pass `const std::lock_guard<Mutex>&` in its parameter.
+
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++17

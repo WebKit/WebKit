@@ -43,11 +43,16 @@ void* VariadicBumpAllocator::allocate(const Func& slowPath)
     return slowPath();
 }
 
+inline constexpr unsigned computeObjectSizeForSharedCell(unsigned objectSize)
+{
+    return roundUpToMultipleOf<alignmentForIsoSharedAllocation>(static_cast<uintptr_t>(objectSize));
+}
+
 template<unsigned passedObjectSize>
 void* IsoSharedHeap::allocateNew(bool abortOnFailure)
 {
     std::lock_guard<Mutex> locker(mutex());
-    constexpr unsigned objectSize = roundUpToMultipleOf<alignmentForIsoSharedAllocation>(static_cast<uintptr_t>(passedObjectSize));
+    constexpr unsigned objectSize = computeObjectSizeForSharedCell(passedObjectSize);
     return m_allocator.template allocate<objectSize>(
         [&] () -> void* {
             return allocateSlow<passedObjectSize>(abortOnFailure);
@@ -73,7 +78,7 @@ BNO_INLINE void* IsoSharedHeap::allocateSlow(bool abortOnFailure)
     m_currentPage = page;
     m_allocator = m_currentPage->startAllocating();
 
-    constexpr unsigned objectSize = roundUpToMultipleOf<alignmentForIsoSharedAllocation>(static_cast<uintptr_t>(passedObjectSize));
+    constexpr unsigned objectSize = computeObjectSizeForSharedCell(passedObjectSize);
     return m_allocator.allocate<objectSize>([] () { BCRASH(); return nullptr; });
 }
 

@@ -60,11 +60,13 @@ protected:
     friend class AllIsoHeaps;
     
     IsoHeapImplBase* m_next { nullptr };
-    std::chrono::steady_clock::time_point m_slowPathTimePoint;
+    std::chrono::steady_clock::time_point m_lastSlowPathTime;
     std::array<void*, maxAllocationFromShared> m_sharedCells { };
     unsigned m_numberOfAllocationsFromSharedInOneCycle { 0 };
-    unsigned m_usableBits { maxAllocationFromSharedMask };
+    unsigned m_availableShared { maxAllocationFromSharedMask };
     AllocationMode m_allocationMode { AllocationMode::Init };
+    
+    static_assert(sizeof(m_availableShared) * 8 >= maxAllocationFromShared, "");
 };
 
 template<typename Config>
@@ -111,7 +113,7 @@ public:
     void isNoLongerFreeable(void* ptr, size_t bytes);
 
     AllocationMode updateAllocationMode();
-    void* allocateFromShared(bool abortOnFailure);
+    void* allocateFromShared(const std::lock_guard<Mutex>&, bool abortOnFailure);
     
     // It's almost always the caller's responsibility to grab the lock. This lock comes from the
     // PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->lock. That's pretty weird, and we don't

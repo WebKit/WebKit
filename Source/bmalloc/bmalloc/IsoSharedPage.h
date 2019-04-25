@@ -38,7 +38,7 @@ public:
     BEXPORT static IsoSharedPage* tryCreate();
 
     template<typename Config, typename Type>
-    void free(api::IsoHeap<Type>&, void*);
+    void free(const std::lock_guard<Mutex>&, api::IsoHeap<Type>&, void*);
     VariadicBumpAllocator startAllocating();
     void stopAllocating();
 

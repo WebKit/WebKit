@@ -40,8 +40,6 @@ public:
     IsoAllocator(IsoHeapImpl<Config>&);
     ~IsoAllocator();
     
-    AllocationMode considerUsingSharedAllocation();
-
     void* allocate(bool abortOnFailure);
     void scavenge();
     

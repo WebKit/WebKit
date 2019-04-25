@@ -69,7 +69,7 @@ BNO_INLINE void* IsoAllocator<Config>::allocateSlow(bool abortOnFailure)
             m_currentPage = nullptr;
             m_freeList.clear();
         }
-        return m_heap->allocateFromShared(abortOnFailure);
+        return m_heap->allocateFromShared(locker, abortOnFailure);
     }
 
     BASSERT(allocationMode == AllocationMode::Fast);

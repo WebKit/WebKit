@@ -60,7 +60,7 @@ void IsoDeallocator<Config>::deallocate(api::IsoHeap<Type>& handle, void* ptr)
     IsoPageBase* page = IsoPageBase::pageFor(ptr);
     if (page->isShared()) {
         std::lock_guard<Mutex> locker(*m_lock);
-        static_cast<IsoSharedPage*>(page)->free<Config>(handle, ptr);
+        static_cast<IsoSharedPage*>(page)->free<Config>(locker, handle, ptr);
         return;
     }
 

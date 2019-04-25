@@ -35,7 +35,7 @@ namespace bmalloc {
 // This is because empty IsoSharedPage is still split into various different objects that should keep some part of virtual memory region dedicated.
 // We cannot set up bump allocation for such a page. Not freeing IsoSharedPages are OK since IsoSharedPage is only used for the lower tier of IsoHeap.
 template<typename Config, typename Type>
-void IsoSharedPage::free(api::IsoHeap<Type>& handle, void* ptr)
+void IsoSharedPage::free(const std::lock_guard<Mutex>&, api::IsoHeap<Type>& handle, void* ptr)
 {
     auto& heapImpl = handle.impl();
     uint8_t index = *indexSlotFor<Config>(ptr) & IsoHeapImplBase::maxAllocationFromSharedMask;
@@ -43,7 +43,7 @@ void IsoSharedPage::free(api::IsoHeap<Type>& handle, void* ptr)
     // If vptr is replaced to the other vptr, we may accidentally chain this pointer to the incorrect HeapImplBase, which totally breaks the IsoHeap's goal.
     // To harden that, we validate that this pointer is actually allocated for a specific HeapImplBase here by checking whether this pointer is listed in HeapImplBase's shared cells.
     RELEASE_BASSERT(heapImpl.m_sharedCells[index] == ptr);
-    heapImpl.m_usableBits |= (1U << index);
+    heapImpl.m_availableShared |= (1U << index);
 }
 
 inline VariadicBumpAllocator IsoSharedPage::startAllocating()
