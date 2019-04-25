@@ -1,3 +1,22 @@
+2019-04-25  Frederic Wang  <fwang@igalia.com>
+
+        Add more tests for ios programmatic iframe scrolling with fixed/sticky layers
+        https://bugs.webkit.org/show_bug.cgi?id=197280
+
+        This commit adds iOS tests for scrolling iframes containing fixed/sticky layers. They are
+        extracted from earlier experimental patches for iOS frame scrolling but failed with the
+        alternative patches initially landed in bug 193539 and follow-up bugs. They now pass again
+        on trunk, so we can finally import them.
+
+        Reviewed by Darin Adler.
+
+        * fast/scrolling/ios/programmatic-scroll-iframe-010-expected.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-010.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-011-expected.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-011.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-012-expected.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-012.html: Added.
+
 2019-04-25  Shawn Roberts  <sroberts@apple.com>
 
         imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html is a flaky failure
