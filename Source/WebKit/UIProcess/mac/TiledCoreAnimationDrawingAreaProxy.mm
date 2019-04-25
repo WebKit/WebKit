@@ -125,12 +125,6 @@ void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityS
     process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(m_webPageProxy.pageID(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange(const IntSize& newIntrinsicContentSize)
-{
-    if (m_webPageProxy.viewLayoutSize().width() > 0)
-        m_webPageProxy.intrinsicContentSizeDidChange(newIntrinsicContentSize);
-}
-
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 {
     m_lastSentViewLayoutSize = m_webPageProxy.viewLayoutSize();

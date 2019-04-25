@@ -6230,6 +6230,19 @@ void WebPage::removeAllUserContent()
     m_userContentController->removeAllUserContent();
 }
 
+void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
+{
+    if (!viewLayoutSize().width())
+        return;
+    ASSERT(mainFrameView());
+    ASSERT(mainFrameView()->isAutoSizeEnabled());
+    ASSERT(!mainFrameView()->needsLayout());
+    if (m_lastSentIntrinsicContentSize == size)
+        return;
+    m_lastSentIntrinsicContentSize = size;
+    send(Messages::WebPageProxy::DidChangeIntrinsicContentSize(size));
+}
+
 void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     RefPtr<API::Object> userData;
@@ -6244,6 +6257,10 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
         auto drawingAreaRelatedMilestones = milestones & paintMilestones;
         if (drawingAreaRelatedMilestones && m_drawingArea->addMilestonesToDispatch(drawingAreaRelatedMilestones))
             milestones.remove(drawingAreaRelatedMilestones);
+    }
+    if (milestones.contains(DidFirstLayout) && mainFrameView()) {
+        // Ensure we never send DidFirstLayout milestone without updating the intrinsic size.
+        updateIntrinsicContentSizeIfNeeded(mainFrameView()->autoSizingIntrinsicContentSize());
     }
 
     send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones));

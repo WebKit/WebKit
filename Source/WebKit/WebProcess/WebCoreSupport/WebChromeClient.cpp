@@ -589,6 +589,11 @@ PlatformPageClient WebChromeClient::platformPageClient() const
     return 0;
 }
 
+void WebChromeClient::intrinsicContentsSizeChanged(const IntSize& size) const
+{
+    m_page.updateIntrinsicContentSizeIfNeeded(size);
+}
+
 void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) const
 {
     FrameView* frameView = frame.view();

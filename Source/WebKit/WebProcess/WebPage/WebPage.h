@@ -1178,6 +1178,8 @@ public:
 
     void setRemoteObjectRegistry(RemoteObjectRegistry&);
 
+    void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1890,6 +1892,7 @@ private:
 #if PLATFORM(COCOA)
     WeakPtr<RemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
+    WebCore::IntSize m_lastSentIntrinsicContentSize;
 };
 
 } // namespace WebKit

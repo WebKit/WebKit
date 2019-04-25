@@ -3463,12 +3463,15 @@ void FrameView::autoSizeIfEnabled()
     resize(m_autoSizeConstraint.width(), m_autoSizeConstraint.height());
     document->updateStyleIfNeeded();
     document->updateLayoutIgnorePendingStylesheets();
-    m_autoSizeContentSize = contentsSize();
 
-    auto finalWidth = std::max(m_autoSizeConstraint.width(), m_autoSizeContentSize.width());
-    auto finalHeight = m_autoSizeFixedMinimumHeight ? std::max(m_autoSizeFixedMinimumHeight, m_autoSizeContentSize.height()) : m_autoSizeContentSize.height();
+    auto currentContentsSize = this->contentsSize();
+    auto finalWidth = std::max(m_autoSizeConstraint.width(), currentContentsSize.width());
+    auto finalHeight = m_autoSizeFixedMinimumHeight ? std::max(m_autoSizeFixedMinimumHeight, currentContentsSize.height()) : currentContentsSize.height();
     resize(finalWidth, finalHeight);
     document->updateLayoutIgnorePendingStylesheets();
+    m_autoSizeContentSize = contentsSize(); 
+    if (auto* page = frame().page())
+        page->chrome().client().intrinsicContentsSizeChanged(m_autoSizeContentSize);
     m_didRunAutosize = true;
 }
 
@@ -4470,6 +4473,7 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize)
 
     m_shouldAutoSize = enable;
     m_autoSizeConstraint = viewSize;
+    m_autoSizeContentSize = contentsSize();
     m_didRunAutosize = false;
 
     setNeedsLayoutAfterViewConfigurationChange();
