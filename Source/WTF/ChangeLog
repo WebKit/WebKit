@@ -1,3 +1,14 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Remove DeprecatedOptional
+        https://bugs.webkit.org/show_bug.cgi?id=197161
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DeprecatedOptional.h: Removed.
+
 2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Hardcoded text color in input fields

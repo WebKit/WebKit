@@ -1,3 +1,23 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Remove DeprecatedOptional
+        https://bugs.webkit.org/show_bug.cgi?id=197161
+
+        Reviewed by Darin Adler.
+
+        We need to keep a symbol exported from JavaScriptCore for binary compatibility with iOS12.
+        We need this symbol to be in a file that doesn't include anything because libcxx's implementation of
+        std::optional is actually std::__1::optional, which has a different mangled name.  This change will
+        prevent protocol errors from being reported if you are running the iOS12 simulator with a custom build of WebKit
+        and using the web inspector with it, but it's necessary to allow us to start using C++17 in WebKit.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorBackendDispatcher.cpp:
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/InspectorBackendDispatcherCompatibility.cpp: Added.
+        (Inspector::BackendDispatcher::reportProtocolError):
+        * inspector/InspectorBackendDispatcherCompatibility.h: Added.
+
 2019-04-24  Saam Barati  <sbarati@apple.com>
 
         Add SPI callbacks for before and after module execution

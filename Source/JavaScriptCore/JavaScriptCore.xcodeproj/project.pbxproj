@@ -1104,6 +1104,7 @@
 		5B70CFDE1DB69E6600EC23F9 /* JSAsyncFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B70CFD81DB69E5C00EC23F9 /* JSAsyncFunction.h */; };
 		5B70CFE01DB69E6600EC23F9 /* AsyncFunctionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B70CFDA1DB69E5C00EC23F9 /* AsyncFunctionPrototype.h */; };
 		5B70CFE21DB69E6600EC23F9 /* AsyncFunctionConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B70CFDC1DB69E5C00EC23F9 /* AsyncFunctionConstructor.h */; };
+		5C4196622270E0000047B7CD /* InspectorBackendDispatcherCompatibility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4196612270DFF30047B7CD /* InspectorBackendDispatcherCompatibility.cpp */; };
 		5C4E8E961DBEBE620036F1FC /* JSONParseTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		5DBB151B131D0B310056AD36 /* testapi.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 14D857740A4696C80032146C /* testapi.js */; };
@@ -3685,6 +3686,7 @@
 		5B70CFDC1DB69E5C00EC23F9 /* AsyncFunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFunctionConstructor.h; sourceTree = "<group>"; };
 		5B70CFDD1DB69E5C00EC23F9 /* AsyncFunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncFunctionConstructor.cpp; sourceTree = "<group>"; };
 		5B8243041DB7AA4900EA6384 /* AsyncFunctionPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncFunctionPrototype.js; sourceTree = "<group>"; };
+		5C4196612270DFF30047B7CD /* InspectorBackendDispatcherCompatibility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcherCompatibility.cpp; sourceTree = "<group>"; };
 		5C4E8E941DBEBDA20036F1FC /* JSONParseTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSONParseTest.cpp; path = API/tests/JSONParseTest.cpp; sourceTree = "<group>"; };
 		5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParseTest.h; path = API/tests/JSONParseTest.h; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
@@ -8203,6 +8205,7 @@
 				A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */,
 				A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */,
 				A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */,
+				5C4196612270DFF30047B7CD /* InspectorBackendDispatcherCompatibility.cpp */,
 				A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */,
 				A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */,
 				99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */,
@@ -10723,6 +10726,7 @@
 				5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */,
 				33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */,
+				5C4196622270E0000047B7CD /* InspectorBackendDispatcherCompatibility.cpp in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
