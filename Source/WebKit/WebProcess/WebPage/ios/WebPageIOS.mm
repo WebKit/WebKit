@@ -689,8 +689,10 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (newFocusedElement && newFocusedElement == oldFocusedElement)
         elementDidRefocus(*newFocusedElement);
 
-    if (!tapWasHandled && nodeRespondingToClick.document().frame())
+    // Only send a synthetic mouse out event if synthetic mouse move events were sent; this is true when ContentChangeObserver is enabled.
+    if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled() && !tapWasHandled && nodeRespondingToClick.document().frame())
         nodeRespondingToClick.document().frame()->eventHandler().dispatchSyntheticMouseOut(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::NoType, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::NoTap));
+
     if (m_isClosed)
         return;
 
