@@ -1,5 +1,14 @@
 2019-04-25  Shawn Roberts  <sroberts@apple.com>
 
+        imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=197286
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations for flaky failure
+
+2019-04-25  Shawn Roberts  <sroberts@apple.com>
+
         http/wpt/resource-timing/rt-resources-per-frame.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=197207
 
