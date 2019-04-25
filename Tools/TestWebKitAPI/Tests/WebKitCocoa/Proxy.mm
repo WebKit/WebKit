@@ -27,8 +27,10 @@
 
 #import "TCPServer.h"
 #import "Utilities.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
@@ -64,16 +66,26 @@ TEST(WebKit, HTTPSProxy)
 
         const char* reply = ""
         "HTTP/1.1 200 OK\r\n"
+        "Strict-Transport-Security: max-age=16070400; includeSubDomains\r\n"
         "Content-Length: 34\r\n\r\n"
         "<script>alert('success!')</script>";
         auto writeResult = SSL_write(ssl, reply, strlen(reply));
         ASSERT_UNUSED(writeResult, writeResult == static_cast<int>(strlen(reply)));
     });
 
+    RetainPtr<NSString> tempDir = NSTemporaryDirectory();
+    WTFLogAlways("ORIGINAL TEMP DIR %@", tempDir.get());
+    if ([tempDir hasSuffix:@"/"])
+        tempDir = [tempDir substringWithRange:NSMakeRange(0, [tempDir length] - 1)];
+    
+    WTFLogAlways("TEMP DIR %@", tempDir.get());
+    auto poolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
+    [poolConfiguration setHSTSStorageDirectory:tempDir.get()];
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     [viewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()] autorelease]];
+    [viewConfiguration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:poolConfiguration.get()] autorelease]];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
     auto delegate = adoptNS([ProxyDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -81,6 +93,13 @@ TEST(WebKit, HTTPSProxy)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     TestWebKitAPI::Util::run(&receivedAlert);
+    
+    RetainPtr<NSString> filePath = [tempDir stringByAppendingPathComponent:@"HSTS.plist"];
+    WTFLogAlways("WAITING FOR FILE TO BE WRITTEN TO %@", filePath.get());
+    while (![[NSFileManager defaultManager] fileExistsAtPath:filePath.get()])
+        TestWebKitAPI::Util::spinRunLoop();
+    [[NSFileManager defaultManager] removeItemAtPath:filePath.get() error:nil];
+    WTFLogAlways("DONE");
 }
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,13 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++17
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsMSVC.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Hardcoded text color in input fields

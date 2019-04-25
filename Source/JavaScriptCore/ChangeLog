@@ -1,5 +1,14 @@
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
+        Start using C++17
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        Reviewed by Darin Alder.
+
+        * Configurations/Base.xcconfig:
+
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
         Remove DeprecatedOptional
         https://bugs.webkit.org/show_bug.cgi?id=197161
 

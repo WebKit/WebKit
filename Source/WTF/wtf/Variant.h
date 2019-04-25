@@ -2044,9 +2044,9 @@ struct __hash_visitor{
 // -- WebKit Additions --
 
 template<class V, class... F>
-auto switchOn(V&& v, F&&... f) -> decltype(visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
+auto switchOn(V&& v, F&&... f) -> decltype(WTF::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
 {
-    return visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
+    return WTF::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
 }
 
 } // namespace WTF
