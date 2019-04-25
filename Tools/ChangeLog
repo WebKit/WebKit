@@ -1,5 +1,13 @@
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
+        Revert some code accidentally committed with r244653
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
         Start using C++17
         https://bugs.webkit.org/show_bug.cgi?id=197131
 
