@@ -1,3 +1,11 @@
+2019-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Fix an internal High Sierra build after r244653
+       ​https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * DerivedSources.make:
+        Apparently we can't use gnu++17 when preprocessing Platform.h in the makefile.
+
 2019-04-26  Sihui Liu  <sihui_liu@apple.com>
 
         Stop IDB transactions to release locked database files when network process is ready to suspend

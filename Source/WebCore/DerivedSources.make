@@ -1115,35 +1115,35 @@ ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
     TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
 endif
 
-ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
     WTF_PLATFORM_IOS_FAMILY = 1
 else
     WTF_PLATFORM_IOS_FAMILY = 0
 endif
 
-ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
     WTF_PLATFORM_MAC = 1
 else
     WTF_PLATFORM_MAC = 0
 endif
 
-ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
     USE_APPLE_INTERNAL_SDK = 1
 else
     USE_APPLE_INTERNAL_SDK = 0
 endif
 
-ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep HAVE_OS_DARK_MODE_SUPPORT | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep HAVE_OS_DARK_MODE_SUPPORT | cut -d' ' -f3), 1)
     HAVE_OS_DARK_MODE_SUPPORT = 1
 else
     HAVE_OS_DARK_MODE_SUPPORT = 0
 endif
 
-ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
     ENABLE_ORIENTATION_EVENTS = 1
 endif
 
-ifeq ($(shell $(CC) -std=gnu++17 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_MEDIA_SOURCE | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_MEDIA_SOURCE | cut -d' ' -f3), 1)
 	ENABLE_MEDIA_SOURCE = 1
 endif
 
