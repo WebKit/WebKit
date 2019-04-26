@@ -915,12 +915,6 @@ webkit.org/b/194253 scrollingcoordinator/scrolling-tree/fixed-inside-frame.html 
 
 webkit.org/b/194916 fast/mediastream/MediaStream-video-element.html [ Pass Failure ]
 
-webkit.org/b/195719 fast/events/wheel-event-destroys-overflow.html [ Pass Timeout ]
-webkit.org/b/195719 fast/events/wheelevent-mousewheel-interaction.html  [ Pass Timeout ]
-webkit.org/b/195719 fast/events/wheel-event-destroys-frame.html  [ Pass Timeout ]
-webkit.org/b/195719 fast/events/wheelevent-basic.html  [ Pass Timeout ]
-webkit.org/b/195719 fast/events/wheelevent-in-text-node.html [ Pass Timeout ]
-
 webkit.org/b/196307 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Pass Failure ]
 
 webkit.org/b/196376 storage/domstorage/localstorage/private-browsing-affects-storage.html [ Pass Failure ]
