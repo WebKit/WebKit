@@ -1,3 +1,24 @@
+2019-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r234330): 3 legacy-animation-engine/compositing tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=188357
+        <rdar://problem/42986633>
+
+        Reviewed by Dean Jackson.
+        
+        DumpRenderTree had no code that set page.setCompositingPolicyOverride() to Normal, so some
+        tests would fall into low memory mode and have different behavior.
+        
+        Fix by moving the code that calls setCompositingPolicyOverride(Normal) from the WK2 layer
+        to Internals, so it's shared by DRT and WTR.
+        
+        We no longer need the WK2 C SPI glue.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetEventThrottlingBehaviorOverride):
+        (WKBundlePageSetCompositingPolicyOverride): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2019-04-25  Chris Dumez  <cdumez@apple.com>
 
         Trying to load a main resource outside the sandbox should not crash the WebContent process

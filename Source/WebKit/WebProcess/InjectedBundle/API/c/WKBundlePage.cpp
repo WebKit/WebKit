@@ -803,21 +803,3 @@ void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEven
 
     WebKit::toImpl(page)->corePage()->setEventThrottlingBehaviorOverride(behaviorValue);
 }
-
-void WKBundlePageSetCompositingPolicyOverride(WKBundlePageRef page, WKCompositingPolicy* policy)
-{
-    Optional<WebCore::CompositingPolicy> policyValue;
-    if (policy) {
-        switch (*policy) {
-        case kWKCompositingPolicyNormal:
-            policyValue = WebCore::CompositingPolicy::Normal;
-            break;
-        case kWKCompositingPolicyConservative:
-            policyValue = WebCore::CompositingPolicy::Conservative;
-            break;
-        }
-    }
-
-    WebKit::toImpl(page)->corePage()->setCompositingPolicyOverride(policyValue);
-}
-

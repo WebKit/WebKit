@@ -1,3 +1,22 @@
+2019-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r234330): 3 legacy-animation-engine/compositing tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=188357
+        <rdar://problem/42986633>
+
+        Reviewed by Dean Jackson.
+
+        DumpRenderTree had no code that set page.setCompositingPolicyOverride() to Normal, so some
+        tests would fall into low memory mode and have different behavior.
+        
+        Fix by moving the code that calls setCompositingPolicyOverride(Normal) from the WK2 layer
+        to Internals, so it's shared by DRT and WTR.
+        
+        We no longer need the WK2 C SPI glue.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2019-04-25  Sihui Liu  <sihui_liu@apple.com>
 
         [ iOS Sim ] REGRESSION (r242986) Layout Test storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html is a flaky failure
