@@ -2366,7 +2366,7 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
         && firstFrame->page()
         && firstFrame->mainFrame().document()
         && firstFrame->mainFrame().document()->loader()) {
-        auto results = firstFrame->page()->userContentProvider().processContentRuleListsForLoad(firstFrame->document()->completeURL(urlString), ResourceType::Popup, *firstFrame->mainFrame().document()->loader());
+        auto results = firstFrame->page()->userContentProvider().processContentRuleListsForLoad(firstFrame->document()->completeURL(urlString), ContentExtensions::ResourceType::Popup, *firstFrame->mainFrame().document()->loader());
         if (results.summary.blockedLoad)
             return RefPtr<WindowProxy> { nullptr };
     }

@@ -1,5 +1,53 @@
 2019-04-26  Alex Christensen  <achristensen@webkit.org>
 
+        Add ENABLE(CONTENT_EXTENSIONS) and namespace ContentExtensions to ResourceLoadInfo.h
+        https://bugs.webkit.org/show_bug.cgi?id=197165
+
+        Reviewed by Youenn Fablet.
+
+        No change in behavior.  This will just make it harder for people working on the loader to mistake
+        these ContentExtension specific structures for other structures general to loading.
+        One such mistake was made in r244248.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        * contentextensions/ContentExtensionsBackend.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::subresourcesAllowReuse const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        * loader/PingLoader.cpp:
+        (WebCore::processContentRuleListsForLoad):
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType): Deleted.
+        (WebCore::readResourceType): Deleted.
+        (WebCore::readLoadType): Deleted.
+        (WebCore::ResourceLoadInfo::isThirdParty const): Deleted.
+        (WebCore::ResourceLoadInfo::getResourceFlags const): Deleted.
+        * loader/ResourceLoadInfo.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open):
+        * page/UserContentProvider.cpp:
+        (WebCore::UserContentProvider::processContentRuleListsForLoad):
+        (WebCore::UserContentProvider::actionsForResourceLoad):
+        * page/UserContentProvider.h:
+
+2019-04-26  Alex Christensen  <achristensen@webkit.org>
+
         Fix an internal High Sierra build after r244653
        ​https://bugs.webkit.org/show_bug.cgi?id=197131
 

@@ -102,7 +102,7 @@ static bool contentExtensionsEnabled(const DocumentLoader& documentLoader)
     return true;
 }
     
-ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(const URL& url, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(const URL& url, ContentExtensions::ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (!contentExtensionsEnabled(initiatingDocumentLoader))
         return { };
@@ -110,7 +110,7 @@ ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(const
     return userContentExtensionBackend().processContentRuleListsForLoad(url, resourceType, initiatingDocumentLoader);
 }
 
-Vector<ContentExtensions::ActionsFromContentRuleList> UserContentProvider::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo, DocumentLoader& initiatingDocumentLoader)
+Vector<ContentExtensions::ActionsFromContentRuleList> UserContentProvider::actionsForResourceLoad(const ContentExtensions::ResourceLoadInfo& resourceLoadInfo, DocumentLoader& initiatingDocumentLoader)
 {
     if (!contentExtensionsEnabled(initiatingDocumentLoader))
         return { };

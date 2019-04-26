@@ -67,9 +67,9 @@ inline std::ostream& operator<<(std::ostream& os, const ActionType& action)
 }
 }
 
-using namespace WebCore;
-
 namespace TestWebKitAPI {
+using namespace WebCore;
+using namespace WebCore::ContentExtensions;
 
 class ContentExtensionTest : public testing::Test {
 public:

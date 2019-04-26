@@ -57,18 +57,10 @@
 
 namespace WebCore {
 
-#if !ENABLE(CONTENT_EXTENSIONS)
+#if ENABLE(CONTENT_EXTENSIONS)
 
 // Returns true if we should block the load.
-static inline bool processContentRuleListsForLoad(const Frame&, ResourceRequest&, ResourceType)
-{
-    return false;
-}
-
-#else
-
-// Returns true if we should block the load.
-static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& request, ResourceType resourceType)
+static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& request, ContentExtensions::ResourceType resourceType)
 {
     auto* documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
@@ -95,8 +87,10 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     }
 
     ResourceRequest request(url);
-    if (processContentRuleListsForLoad(frame, request, ResourceType::Image))
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Image))
         return;
+#endif
 
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
@@ -121,8 +115,10 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         return;
 
     ResourceRequest request(pingURL);
-    if (processContentRuleListsForLoad(frame, request, ResourceType::Raw))
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Raw))
         return;
+#endif
 
     auto& document = *frame.document();
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
@@ -156,8 +152,10 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     ASSERT(frame.document());
 
     ResourceRequest request(reportURL);
-    if (processContentRuleListsForLoad(frame, request, ResourceType::Raw))
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Raw))
         return;
+#endif
 
     auto& document = *frame.document();
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);

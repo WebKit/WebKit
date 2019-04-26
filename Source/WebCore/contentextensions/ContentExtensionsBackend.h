@@ -38,11 +38,10 @@ namespace WebCore {
 class DocumentLoader;
 class ResourceRequest;
 
-struct ResourceLoadInfo;
-
 namespace ContentExtensions {
 
 class CompiledContentExtension;
+struct ResourceLoadInfo;
 
 // The ContentExtensionsBackend is the internal model of all the content extensions.
 //

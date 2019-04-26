@@ -25,10 +25,13 @@
 
 #pragma once
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
 #include "CachedResource.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
+namespace ContentExtensions {
 
 enum class ResourceType : uint16_t {
     Invalid = 0x0000,
@@ -77,4 +80,7 @@ struct ResourceLoadInfo {
     ResourceFlags getResourceFlags() const;
 };
 
+} // namespace ContentExtensions
 } // namespace WebCore
+
+#endif

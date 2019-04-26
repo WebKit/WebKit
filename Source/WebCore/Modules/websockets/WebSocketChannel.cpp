@@ -89,7 +89,7 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto* page = m_document->page()) {
         if (auto* documentLoader = m_document->loader()) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(url, ResourceType::Raw, *documentLoader);
+            auto results = page->userContentProvider().processContentRuleListsForLoad(url, ContentExtensions::ResourceType::Raw, *documentLoader);
             if (results.summary.blockedLoad) {
                 Ref<WebSocketChannel> protectedThis(*this);
                 callOnMainThread([protectedThis = WTFMove(protectedThis)] {

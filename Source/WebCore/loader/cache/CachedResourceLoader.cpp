@@ -809,7 +809,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (frame() && frame()->page() && m_documentLoader) {
         const auto& resourceRequest = request.resourceRequest();
         auto* page = frame()->page();
-        auto results = page->userContentProvider().processContentRuleListsForLoad(resourceRequest.url(), toResourceType(type), *m_documentLoader);
+        auto results = page->userContentProvider().processContentRuleListsForLoad(resourceRequest.url(), ContentExtensions::toResourceType(type), *m_documentLoader);
         bool blockedLoad = results.summary.blockedLoad;
         bool madeHTTPS = results.summary.madeHTTPS;
         request.applyResults(WTFMove(results), page);

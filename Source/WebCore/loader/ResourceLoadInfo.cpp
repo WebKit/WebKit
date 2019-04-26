@@ -29,7 +29,10 @@
 #include "ContentExtensionActions.h"
 #include "SecurityOrigin.h"
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
 namespace WebCore {
+namespace ContentExtensions {
 
 ResourceType toResourceType(CachedResource::Type type)
 {
@@ -127,4 +130,7 @@ ResourceFlags ResourceLoadInfo::getResourceFlags() const
     return flags;
 }
 
+} // namespace ContentExtensions
 } // namespace WebCore
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

@@ -47,7 +47,9 @@
 
 namespace WebCore {
 
+#if ENABLE(CONTENT_EXTENSIONS)
 using namespace ContentExtensions;
+#endif
 using namespace HTMLNames;
 
 ExtensionStyleSheets::ExtensionStyleSheets(Document& document)

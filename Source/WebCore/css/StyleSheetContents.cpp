@@ -512,7 +512,7 @@ bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLo
         auto* documentLoader = loader.documentLoader();
         if (page && documentLoader) {
             const auto& request = resource.resourceRequest();
-            auto results = page->userContentProvider().processContentRuleListsForLoad(request.url(), toResourceType(resource.type()), *documentLoader);
+            auto results = page->userContentProvider().processContentRuleListsForLoad(request.url(), ContentExtensions::toResourceType(resource.type()), *documentLoader);
             if (results.summary.blockedLoad || results.summary.madeHTTPS)
                 return true;
         }

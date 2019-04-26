@@ -54,7 +54,6 @@
 
 namespace WebCore {
 
-using namespace ContentExtensions;
 using namespace HTMLNames;
 
 namespace Style {
