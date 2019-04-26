@@ -1,3 +1,40 @@
+2019-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Use normal loading path for ping loads
+        https://bugs.webkit.org/show_bug.cgi?id=196807
+
+        Reviewed by Alex Christensen.
+
+        In case a NetworkResourceLoader has the keepAlive option we do the following:
+        - Always use NetworkLoadChecker as we might need it to do checks after the Web context is gone.
+        - In case of aborting a KeepAlive loader, remove it from NetworkConnectionToWebProcess map
+        and add it to a kept-alive NetworkSession load set. The loader is only kept alive if it
+        has not yet received a response. Mark the loader as kept-alive.
+        - In case loader is kept-alive, cancel the load as soon as a response is gathered.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::transferKeptAliveLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addKeptAliveLoad):
+        (WebKit::NetworkProcess::removeKeptAliveLoad):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoadMap.cpp:
+        (WebKit::NetworkResourceLoadMap::remove):
+        (WebKit::NetworkResourceLoadMap::take):
+        * NetworkProcess/NetworkResourceLoadMap.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+        (WebKit::WebLoaderStrategy::usePingLoad const):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2019-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal High Sierra build after r244653

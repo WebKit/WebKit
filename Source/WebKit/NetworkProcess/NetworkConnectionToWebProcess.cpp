@@ -111,9 +111,23 @@ void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoad
 {
     RELEASE_ASSERT(loader.identifier());
     RELEASE_ASSERT(RunLoop::isMain());
-    ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
 
+    if (loader.isKeptAlive()) {
+        networkProcess().removeKeptAliveLoad(loader);
+        return;
+    }
+
+    ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
     m_networkResourceLoaders.remove(loader.identifier());
+}
+
+void NetworkConnectionToWebProcess::transferKeptAliveLoad(NetworkResourceLoader& loader)
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+    ASSERT(loader.isKeptAlive());
+    ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
+    if (auto takenLoader = m_networkResourceLoaders.take(loader.identifier()))
+        m_networkProcess->addKeptAliveLoad(takenLoader.releaseNonNull());
 }
 
 void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

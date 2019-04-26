@@ -32,6 +32,7 @@
 
 #pragma once
 
+#include "ReferrerPolicy.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
@@ -57,7 +58,7 @@ public:
 
 private:
     enum class ShouldFollowRedirects { No, Yes };
-    static void startPingLoad(Frame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects, ContentSecurityPolicyImposition);
+    static void startPingLoad(Frame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects, ContentSecurityPolicyImposition, ReferrerPolicy);
 };
 
 } // namespace WebCore

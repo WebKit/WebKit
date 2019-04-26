@@ -163,6 +163,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::Type::XSLStyleSheet:
 #endif
     case CachedResource::Type::Beacon:
+    case CachedResource::Type::Ping:
     case CachedResource::Type::LinkPrefetch:
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:

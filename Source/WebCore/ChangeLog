@@ -1,3 +1,58 @@
+2019-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Use normal loading path for ping loads
+        https://bugs.webkit.org/show_bug.cgi?id=196807
+
+        Reviewed by Alex Christensen.
+
+        Make use of regular code path for ping loads and beacon.
+        This is done conditionally on KeepAlive flag.
+        The benefits are a single loading code path and service worker interception.
+
+        For that purpose, introduce a LoaderStrategy switch based on KeepAlive runtime flag.
+        This switch is used to use ping loads when keepAlive is set or regular loads.
+        In case of regular loads, the keepAlive flag should be used to extend the lifetime of the load.
+
+        Migrate ping loads to use CachedResourceLoader instead of PingLoad.
+        For that purpose, introduce a new Ping CachedResource type.
+
+        Covered by existing tests.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::inspectorResourceType):
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient):
+        * loader/LoaderStrategy.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::PingLoader::startPingLoad):
+        * loader/PingLoader.h:
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::cancelLoad):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::shouldUsePingLoad):
+        (WebCore::CachedResource::isMainOrMediaOrIconOrRawResource const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestPingResource):
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent const):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::isResourceSuitableForDirectReuse):
+        (WebCore::destinationForType):
+        * loader/cache/CachedResourceLoader.h:
+
 2019-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build after r244695

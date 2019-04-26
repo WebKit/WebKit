@@ -1,5 +1,28 @@
 2019-04-26  Youenn Fablet  <youenn@apple.com>
 
+        Use normal loading path for ping loads
+        https://bugs.webkit.org/show_bug.cgi?id=196807
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * http/tests/blink/sendbeacon/beacon-cross-origin.https-expected.txt:
+        * http/tests/blink/sendbeacon/connect-src-beacon-allowed.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php:
+        * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher-expected.txt:
+        * http/wpt/beacon/beacon-async-error-logging-expected.txt:
+        * http/wpt/beacon/beacon-async-error-logging.html:
+        * http/wpt/beacon/connect-src-beacon-redirect-blocked.sub-expected.txt:
+        * http/wpt/beacon/contentextensions/beacon-redirect-blocked-expected.txt:
+        * http/wpt/beacon/resources/beacon-preflight.py:
+        (respondToCORSPreflight):
+        (main):
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only-expected.txt:
+
+2019-04-26  Youenn Fablet  <youenn@apple.com>
+
         Mark some cache-storage as slow on iOS-simulator
         https://bugs.webkit.org/show_bug.cgi?id=197316
 

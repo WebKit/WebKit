@@ -48,6 +48,7 @@ namespace WebKit {
 class AdClickAttributionManager;
 class NetworkDataTask;
 class NetworkProcess;
+class NetworkResourceLoader;
 class WebResourceLoadStatisticsStore;
 struct NetworkSessionCreationParameters;
 
@@ -88,6 +89,9 @@ public:
     void setAdClickAttributionConversionURLForTesting(URL&&);
     void markAdClickAttributionsAsExpiredForTesting();
 
+    void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
+    void removeKeptAliveLoad(NetworkResourceLoader&);
+
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID);
 
@@ -102,6 +106,8 @@ protected:
     WebCore::RegistrableDomain m_resourceLoadStatisticsManualPrevalentResource;
 #endif
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;
+
+    HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 };
 
 } // namespace WebKit

@@ -82,6 +82,7 @@ public:
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
+    void transferKeptAliveLoad(NetworkResourceLoader&);
     void setOnLineState(bool);
 
     bool captureExtraNetworkLoadMetricsEnabled() const { return m_captureExtraNetworkLoadMetricsEnabled; }

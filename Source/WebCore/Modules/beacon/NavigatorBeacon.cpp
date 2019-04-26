@@ -122,10 +122,12 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     ResourceRequest request(parsedUrl);
     request.setHTTPMethod("POST"_s);
 
-    FetchOptions options;
+    ResourceLoaderOptions options;
     options.credentials = FetchOptions::Credentials::Include;
     options.cache = FetchOptions::Cache::NoCache;
     options.keepAlive = true;
+    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
+
     if (body) {
         options.mode = FetchOptions::Mode::Cors;
         String mimeType;

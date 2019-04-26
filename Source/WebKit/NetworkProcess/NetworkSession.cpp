@@ -30,6 +30,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoadParameters.h"
+#include "NetworkResourceLoader.h"
 #include "PingLoad.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -181,6 +182,20 @@ void NetworkSession::setAdClickAttributionConversionURLForTesting(URL&& url)
 void NetworkSession::markAdClickAttributionsAsExpiredForTesting()
 {
     m_adClickAttribution->markAllUnconvertedAsExpiredForTesting();
+}
+
+void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
+{
+    ASSERT(m_sessionID == loader->sessionID());
+    ASSERT(!m_keptAliveLoads.contains(loader));
+    m_keptAliveLoads.add(WTFMove(loader));
+}
+
+void NetworkSession::removeKeptAliveLoad(NetworkResourceLoader& loader)
+{
+    ASSERT(m_sessionID == loader.sessionID());
+    ASSERT(m_keptAliveLoads.contains(loader));
+    m_keptAliveLoads.remove(loader);
 }
 
 } // namespace WebKit

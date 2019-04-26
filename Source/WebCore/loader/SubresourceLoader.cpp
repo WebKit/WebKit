@@ -518,8 +518,7 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         resourceType = DiagnosticLoggingKeys::fontKey();
         break;
     case CachedResource::Type::Beacon:
-        ASSERT_NOT_REACHED();
-        break;
+    case CachedResource::Type::Ping:
     case CachedResource::Type::MediaResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::RawResource:
@@ -687,9 +686,8 @@ void SubresourceLoader::didFail(const ResourceError& error)
     ASSERT(!reachedTerminalState());
     LOG(ResourceLoading, "Failed to load '%s'.\n", m_resource->url().string().latin1().data());
 
-    if (m_frame->document() && error.isAccessControl())
+    if (m_frame->document() && error.isAccessControl() && m_resource->type() != CachedResource::Type::Ping)
         m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
-
 
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);

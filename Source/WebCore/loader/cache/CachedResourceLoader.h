@@ -87,6 +87,7 @@ public:
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestMedia(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestIcon(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestBeaconResource(CachedResourceRequest&&);
+    ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestPingResource(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestMainResource(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedSVGDocument>> requestSVGDocument(CachedResourceRequest&&);
 #if ENABLE(XSLT)

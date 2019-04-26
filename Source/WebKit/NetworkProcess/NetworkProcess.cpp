@@ -2574,4 +2574,16 @@ void NetworkProcess::markAdClickAttributionsAsExpiredForTesting(PAL::SessionID s
     completionHandler();
 }
 
+void NetworkProcess::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
+{
+    if (auto session = m_networkSessions.get(loader->sessionID()))
+        session->addKeptAliveLoad(WTFMove(loader));
+}
+
+void NetworkProcess::removeKeptAliveLoad(NetworkResourceLoader& loader)
+{
+    if (auto session = m_networkSessions.get(loader.sessionID()))
+        session->removeKeptAliveLoad(loader);
+}
+
 } // namespace WebKit

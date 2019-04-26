@@ -280,6 +280,8 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(Cache
     case CachedResource::Type::ApplicationManifest:
         return InspectorPageAgent::ApplicationManifestResource;
 #endif
+    case CachedResource::Type::Ping:
+        return InspectorPageAgent::PingResource;
     case CachedResource::Type::MediaResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::RawResource:

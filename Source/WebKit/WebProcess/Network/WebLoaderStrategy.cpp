@@ -116,6 +116,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
 
     switch (resource->type()) {
     case CachedResource::Type::Beacon:
+    case CachedResource::Type::Ping:
     case CachedResource::Type::CSSStyleSheet:
     case CachedResource::Type::Script:
 #if ENABLE(SVG_FONTS)
@@ -286,7 +287,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)
         loadParameters.cspResponseHeaders = resourceLoader.options().cspResponseHeaders;
-    else if (document && !document->shouldBypassMainWorldContentSecurityPolicy()) {
+    else if (document && !document->shouldBypassMainWorldContentSecurityPolicy() && resourceLoader.options().contentSecurityPolicyImposition == ContentSecurityPolicyImposition::DoPolicyCheck) {
         if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
@@ -569,6 +570,11 @@ static uint64_t generateLoadIdentifier()
 {
     static uint64_t identifier = 0;
     return ++identifier;
+}
+
+bool WebLoaderStrategy::usePingLoad() const
+{
+    return !RuntimeEnabledFeatures::sharedFeatures().fetchAPIKeepAliveEnabled();
 }
 
 void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)

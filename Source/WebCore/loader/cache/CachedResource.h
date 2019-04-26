@@ -74,6 +74,7 @@ public:
         RawResource,
         Icon,
         Beacon,
+        Ping,
         SVGDocumentResource
 #if ENABLE(XSLT)
         , XSLStyleSheet
@@ -122,7 +123,7 @@ public:
     String mimeType() const { return m_response.mimeType(); }
     long long expectedContentLength() const { return m_response.expectedContentLength(); }
 
-    static bool shouldUsePingLoad(Type type) { return type == Type::Beacon; }
+    static bool shouldUsePingLoad(Type type) { return type == Type::Beacon || type == Type::Ping; }
 
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
     void setLoadPriority(const Optional<ResourceLoadPriority>&);
@@ -168,7 +169,7 @@ public:
 
     bool isImage() const { return type() == Type::ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
-    bool isMainOrMediaOrIconOrRawResource() const { return type() == Type::MainResource || type() == Type::MediaResource || type() == Type::Icon || type() == Type::RawResource || type() == Type::Beacon; }
+    bool isMainOrMediaOrIconOrRawResource() const { return type() == Type::MainResource || type() == Type::MediaResource || type() == Type::Icon || type() == Type::RawResource || type() == Type::Beacon || type() == Type::Ping; }
 
     // Whether this request should impact request counting and delay window.onload.
     bool ignoreForRequestCount() const
@@ -176,6 +177,8 @@ public:
         return m_ignoreForRequestCount
             || type() == Type::MainResource
             || type() == Type::LinkPrefetch
+            || type() == Type::Beacon
+            || type() == Type::Ping
             || type() == Type::Icon
             || type() == Type::RawResource;
     }

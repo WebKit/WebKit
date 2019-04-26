@@ -92,6 +92,7 @@ class AuthenticationManager;
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
+class NetworkResourceLoader;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 enum class ShouldGrandfatherStatistics : bool;
@@ -333,6 +334,9 @@ public:
     void markAdClickAttributionsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 
     WebCore::StorageQuotaManager& storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
+
+    void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
+    void removeKeptAliveLoad(NetworkResourceLoader&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);

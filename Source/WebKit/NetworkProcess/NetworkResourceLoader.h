@@ -114,6 +114,8 @@ public:
 
     void disableExtraNetworkLoadMetricsCapture() { m_shouldCaptureExtraNetworkLoadMetrics = false; }
 
+    bool isKeptAlive() const { return m_isKeptAlive; }
+
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&&);
 
@@ -208,6 +210,7 @@ private:
     bool m_shouldRestartLoad { false };
     ResponseCompletionHandler m_responseCompletionHandler;
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
+    bool m_isKeptAlive { false };
 
     Optional<NetworkActivityTracker> m_networkActivityTracker;
 };

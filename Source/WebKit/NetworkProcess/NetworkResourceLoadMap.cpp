@@ -46,9 +46,14 @@ NetworkResourceLoadMap::MapType::AddResult NetworkResourceLoadMap::add(ResourceL
 
 bool NetworkResourceLoadMap::remove(ResourceLoadIdentifier identifier)
 {
+    return !!take(identifier);
+}
+
+RefPtr<NetworkResourceLoader> NetworkResourceLoadMap::take(ResourceLoadIdentifier identifier)
+{
     auto loader = m_loaders.take(identifier);
     if (!loader)
-        return false;
+        return nullptr;
 
     if ((*loader)->originalRequest().hasUpload()) {
         m_loadersWithUploads.remove(loader->ptr());
@@ -56,7 +61,7 @@ bool NetworkResourceLoadMap::remove(ResourceLoadIdentifier identifier)
             m_connectionToWebProcess.clearConnectionHasUploads();
     }
 
-    return true;
+    return WTFMove(*loader);
 }
 
 NetworkResourceLoader* NetworkResourceLoadMap::get(ResourceLoadIdentifier identifier) const

@@ -62,6 +62,7 @@ ResourceType toResourceType(CachedResource::Type type)
         return ResourceType::Media;
 
     case CachedResource::Type::Beacon:
+    case CachedResource::Type::Ping:
     case CachedResource::Type::Icon:
     case CachedResource::Type::RawResource:
         return ResourceType::Raw;

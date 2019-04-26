@@ -56,6 +56,7 @@ public:
     MapType::AddResult add(ResourceLoadIdentifier, Ref<NetworkResourceLoader>&&);
     NetworkResourceLoader* get(ResourceLoadIdentifier) const;
     bool remove(ResourceLoadIdentifier);
+    RefPtr<NetworkResourceLoader> take(ResourceLoadIdentifier);
 
 private:
     NetworkConnectionToWebProcess& m_connectionToWebProcess;
