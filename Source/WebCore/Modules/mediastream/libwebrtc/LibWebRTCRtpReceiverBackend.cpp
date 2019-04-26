@@ -41,7 +41,7 @@ static inline void fillRTCRtpContributingSource(RTCRtpContributingSource& source
     source.timestamp = rtcSource.timestamp_ms();
     source.source = rtcSource.source_id();
     if (rtcSource.audio_level())
-        source.audioLevel = *rtcSource.audio_level();
+        source.audioLevel = (*rtcSource.audio_level() == 127) ? 0 : pow(10, -*rtcSource.audio_level() / 20);
 }
 
 static inline RTCRtpContributingSource toRTCRtpContributingSource(const webrtc::RtpSource& rtcSource)

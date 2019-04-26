@@ -1,3 +1,13 @@
+2019-04-26  Youenn Fablet  <youenn@apple.com>
+
+        [Mac WK2 iOS Sim] Layout Test imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196633
+        <rdar://problem/49627667>
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-04-26  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/harness/render-tree-as-text-options.html is failing
