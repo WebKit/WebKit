@@ -1,3 +1,13 @@
+2019-04-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Replace iOS build queue hardware
+        https://bugs.webkit.org/show_bug.cgi?id=197312
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        Use newer hardware that supports macOS Mojave.
+
 2019-04-26  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         check-webkit-style complains the first block in while loop.

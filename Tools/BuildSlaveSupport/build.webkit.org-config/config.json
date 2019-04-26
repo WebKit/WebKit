@@ -35,14 +35,14 @@
                     { "name": "bot638", "platform": "mac-highsierra" },
 
                     { "name": "bot673", "platform": "ios-12" },
-                    { "name": "bot626", "platform": "ios-simulator-12" },
-                    { "name": "bot618", "platform": "ios-simulator-12" },
-                    { "name": "bot620", "platform": "ios-simulator-12" },
-                    { "name": "bot621", "platform": "ios-simulator-12" },
                     { "name": "bot651", "platform": "ios-simulator-12" },
                     { "name": "bot652", "platform": "ios-simulator-12" },
                     { "name": "bot653", "platform": "ios-simulator-12" },
                     { "name": "bot654", "platform": "ios-simulator-12" },
+                    { "name": "bot677", "platform": "ios-simulator-12" },
+                    { "name": "bot682", "platform": "ios-simulator-12" },
+                    { "name": "bot694", "platform": "ios-simulator-12" },
+                    { "name": "bot695", "platform": "ios-simulator-12" },
 
                     { "name": "bot543", "platform": "win" },
                     { "name": "bot544", "platform": "win" },
@@ -182,13 +182,13 @@
                       "name": "Apple iOS 12 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-12-release",
                       "platform": "ios-simulator-12", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-12-release-tests-wk2"],
-                      "slavenames": ["bot618", "bot620"]
+                      "slavenames": ["bot677", "bot682"]
                     },
                     {
                       "name": "Apple iOS 12 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-12-debug",
                       "platform": "ios-simulator-12", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-12-debug-tests-wk2"],
-                      "slavenames": ["bot626", "bot621"]
+                      "slavenames": ["bot694", "bot695"]
                     },
                     {
                       "name": "Apple iOS 12 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-12-release-tests-wk2",
