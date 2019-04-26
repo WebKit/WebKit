@@ -2851,7 +2851,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     }
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage::dynamicViewportSizeUpdate setting view layout size to " << viewLayoutSize);
-    m_viewportConfiguration.setViewLayoutSize(viewLayoutSize);
+    if (m_viewportConfiguration.setViewLayoutSize(viewLayoutSize))
+        viewportConfigurationChanged();
     IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
 
     if (setFixedLayoutSize(newLayoutSize))
@@ -3030,10 +3031,12 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
 
 void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale)
 {
+    double initialScale = m_viewportConfiguration.initialScale();
+    m_page->setInitialScale(initialScale);
+
     if (setFixedLayoutSize(m_viewportConfiguration.layoutSize()))
         resetTextAutosizing();
 
-    double initialScale = m_viewportConfiguration.initialScale();
     double scale;
     if (m_userHasChangedPageScaleFactor && zoomToInitialScale == ZoomToInitialScale::No)
         scale = std::max(std::min(pageScaleFactor(), m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());

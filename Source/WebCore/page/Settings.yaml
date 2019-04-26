@@ -440,6 +440,10 @@ minimumZoomFontSize:
   type: float
   initial: defaultMinimumZoomFontSize()
   conditional: TEXT_AUTOSIZING
+textAutosizingUsesIdempotentMode:
+  initial: defaultTextAutosizingUsesIdempotentMode()
+  onChange: setNeedsRecalcStyleInAllFrames
+  conditional: TEXT_AUTOSIZING
 
 subpixelAntialiasedLayerTextEnabled:
   initial: false

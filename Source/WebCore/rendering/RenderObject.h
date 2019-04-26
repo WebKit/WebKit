@@ -154,7 +154,7 @@ public:
     };
 
     typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject&);
-    RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth,  int& newFixedDepth) const;
+    RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
 #endif
 
     WEBCORE_EXPORT RenderLayer* enclosingLayer() const;

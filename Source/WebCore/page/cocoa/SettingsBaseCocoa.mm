@@ -83,7 +83,12 @@ void SettingsBase::initializeDefaultFontFamilies()
 
 bool SettingsBase::defaultTextAutosizingEnabled()
 {
-    return !deviceHasIPadCapability() || [[PAL::getUIApplicationClass() sharedApplication] _isClassic];
+    return true;
+}
+
+bool SettingsBase::defaultTextAutosizingUsesIdempotentMode()
+{
+    return deviceHasIPadCapability() && ![[PAL::getUIApplicationClass() sharedApplication] _isClassic];
 }
 
 #endif

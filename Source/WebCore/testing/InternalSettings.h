@@ -61,6 +61,7 @@ public:
     ExceptionOr<void> setPictographFontFamily(const String& family, const String& script);
     ExceptionOr<void> setTextAutosizingEnabled(bool);
     ExceptionOr<void> setTextAutosizingWindowSizeOverride(int width, int height);
+    ExceptionOr<void> setTextAutosizingUsesIdempotentMode(bool);
     ExceptionOr<void> setTextAutosizingFontScaleFactor(float);
     ExceptionOr<void> setMediaTypeOverride(const String&);
     ExceptionOr<void> setCanStartMedia(bool);
@@ -155,6 +156,7 @@ private:
 #if ENABLE(TEXT_AUTOSIZING)
         bool m_originalTextAutosizingEnabled;
         IntSize m_originalTextAutosizingWindowSizeOverride;
+        bool m_originalTextAutosizingUsesIdempotentMode;
 #endif
 
         String m_originalMediaTypeOverride;

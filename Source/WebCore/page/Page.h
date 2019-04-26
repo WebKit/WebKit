@@ -353,6 +353,9 @@ public:
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     WEBCORE_EXPORT void setDeviceScaleFactor(float);
 
+    float initialScale() const { return m_initialScale; }
+    WEBCORE_EXPORT void setInitialScale(float);
+
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
 
@@ -834,6 +837,7 @@ private:
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingWidth { 0 };
 #endif
+    float m_initialScale { 1.0f };
     
     bool m_suppressScrollbarAnimations { false };
     

@@ -96,6 +96,11 @@ bool SettingsBase::defaultTextAutosizingEnabled()
 {
     return false;
 }
+
+bool SettingsBase::defaultTextAutosizingUsesIdempotentMode()
+{
+    return false;
+}
 #endif
 
 bool SettingsBase::defaultDownloadableBinaryFontsEnabled()

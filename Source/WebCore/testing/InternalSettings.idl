@@ -49,6 +49,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
 
     [MayThrowException] void setTextAutosizingEnabled(boolean enabled);
     [MayThrowException] void setTextAutosizingWindowSizeOverride(long width, long height);
+    [MayThrowException] void setTextAutosizingUsesIdempotentMode(boolean enabled);
 
     // Media
     [MayThrowException] void setCanStartMedia(boolean enabled);

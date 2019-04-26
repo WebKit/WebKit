@@ -493,13 +493,14 @@ void FrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
     auto& settings = layoutRoot.settings();
     if (!settings.textAutosizingEnabled() || renderView()->printing())
         return;
+    bool idempotentMode = settings.textAutosizingUsesIdempotentMode();
     auto minimumZoomFontSize = settings.minimumZoomFontSize();
-    if (!minimumZoomFontSize)
+    if (!idempotentMode && !minimumZoomFontSize)
         return;
     auto textAutosizingWidth = layoutRoot.page().textAutosizingWidth();
     if (auto overrideWidth = settings.textAutosizingWindowSizeOverride().width())
         textAutosizingWidth = overrideWidth;
-    if (!textAutosizingWidth)
+    if (!idempotentMode && !textAutosizingWidth)
         return;
     layoutRoot.adjustComputedFontSizesOnBlocks(minimumZoomFontSize, textAutosizingWidth);
     if (!layoutRoot.needsLayout())

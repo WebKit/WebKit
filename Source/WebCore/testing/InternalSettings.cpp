@@ -58,6 +58,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings.textAutosizingWindowSizeOverride())
+    , m_originalTextAutosizingUsesIdempotentMode(settings.textAutosizingUsesIdempotentMode())
 #endif
     , m_originalMediaTypeOverride(settings.mediaTypeOverride())
     , m_originalCanvasUsesAcceleratedDrawing(settings.canvasUsesAcceleratedDrawing())
@@ -157,6 +158,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(TEXT_AUTOSIZING)
     settings.setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings.setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+    settings.setTextAutosizingUsesIdempotentMode(m_originalTextAutosizingUsesIdempotentMode);
 #endif
     settings.setMediaTypeOverride(m_originalMediaTypeOverride);
     settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
@@ -413,6 +415,18 @@ ExceptionOr<void> InternalSettings::setTextAutosizingWindowSizeOverride(int widt
 #else
     UNUSED_PARAM(width);
     UNUSED_PARAM(height);
+#endif
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setTextAutosizingUsesIdempotentMode(bool enabled)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+#if ENABLE(TEXT_AUTOSIZING)
+    settings().setTextAutosizingUsesIdempotentMode(enabled);
+#else
+    UNUSED_PARAM(enabled);
 #endif
     return { };
 }

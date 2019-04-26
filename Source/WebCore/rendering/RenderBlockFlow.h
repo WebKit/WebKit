@@ -604,7 +604,7 @@ public:
 
 #if ENABLE(TEXT_AUTOSIZING)
     int lineCountForTextAutosizing();
-    void adjustComputedFontSizes(float size, float visibleWidth);
+    void adjustComputedFontSizes(float size, float visibleWidth, float pageScale, bool idempotentMode);
     void resetComputedFontSize()
     {
         m_widthForTextAutosizing = -1;

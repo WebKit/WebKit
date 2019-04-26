@@ -1,3 +1,48 @@
+2019-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Implement idempotent mode for text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=197250
+        <rdar://problem/50211034>
+
+        Reviewed by Jon Lee.
+
+        Our text autosizing code has this interesting behavior where it is sensitive to the width of the text's container
+        and the number of lines of text inside the element. Not only is it sensitive to those things, but as those things
+        change, their values are stored inside the RenderObject itself and then never recomputed. This means that the text
+        autosizing parameters are sensitive to the entire history of an element. So, a newly created element with the same
+        style as an existing element can have dramatically different results.
+
+        This patch adds a new mode for text autosizing, which isn't sensitive to either of those things, and therefore
+        maintains the invariant that a newly created element will behave the same as an existing element with the same style.
+        Instead of using container size, it instead uses the viewport's initial scale. As the viewport's initial scale
+        changes, new layouts will be triggered, which will cause the autosizing code to use the new value.
+
+        Tests: fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-identity.html
+               fast/text-autosizing/ios/idempotentmode/idempotent-autosizing.html
+
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::applyTextSizingIfNeeded):
+        * page/Page.cpp:
+        (WebCore::Page::setInitialScale): WebKit will push the initial scale down into the page.
+        * page/Page.h:
+        (WebCore::Page::initialScale const):
+        * page/SettingsBase.h:
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::SettingsBase::textAutosizingUsesIdempotentMode):
+        (WebCore::SettingsBase::defaultTextAutosizingEnabled):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::idempotentTextSize): Describe a piecewise-linear curve for the text size to follow. The curve scales
+        depending on the viewport's initial scale.
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::includeNonFixedHeight): This new mode should consider max-height as well as height when determining if
+        content overflows.
+        (WebCore::RenderElement::adjustComputedFontSizesOnBlocks):
+        (WebCore::RenderElement::resetTextAutosizing):
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.h:
+
 2019-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r234330): 3 legacy-animation-engine/compositing tests are flaky failures
