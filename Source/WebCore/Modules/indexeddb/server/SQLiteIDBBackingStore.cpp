@@ -1005,10 +1005,9 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to create an object store without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to create an object store without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to create an object store in a non-version-change transaction");
         return IDBError { UnknownError, "Attempt to create an object store in a non-version-change transaction"_s };
@@ -1061,10 +1060,9 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to delete an object store without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to delete an object store without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to delete an object store in a non-version-change transaction");
         return IDBError { UnknownError, "Attempt to delete an object store in a non-version-change transaction"_s };
@@ -1153,10 +1151,9 @@ IDBError SQLiteIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& t
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to rename an object store without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to rename an object store without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to rename an object store in a non-version-change transaction");
         return IDBError { UnknownError, "Attempt to rename an object store in a non-version-change transaction"_s };
@@ -1188,10 +1185,9 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to clear an object store without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to clear an object store without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to clear an object store in a read-only transaction");
         return IDBError { UnknownError, "Attempt to clear an object store in a read-only transaction"_s };
@@ -1229,10 +1225,9 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to create an index without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to create an index without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to create an index in a non-version-change transaction");
         return IDBError { UnknownError, "Attempt to create an index in a non-version-change transaction"_s };
@@ -1422,10 +1417,8 @@ IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to delete index without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to delete index without an in-progress transaction"_s };
-    }
 
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to delete index during a non-version-change transaction");
@@ -1477,10 +1470,8 @@ IDBError SQLiteIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
         return IDBError { UnknownError, "Could not rename index"_s };
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to rename an index without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to rename an index without an in-progress transaction"_s };
-    }
 
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to rename an index in a non-version-change transaction");
@@ -1516,10 +1507,8 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     keyExists = false;
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to see if key exists in objectstore without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to see if key exists in objectstore without an in-progress transaction"_s };
-    }
 
     RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
@@ -1691,10 +1680,9 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to delete range from database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to delete range from database without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to delete records from an object store in a read-only transaction");
         return IDBError { UnknownError, "Attempt to delete records from an object store in a read-only transaction"_s };
@@ -1814,10 +1802,9 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     ASSERT(value.blobURLs().size() == value.blobFilePaths().size());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to store a record in an object store without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to store a record in an object store without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to store a record in an object store in a read-only transaction");
         return IDBError { UnknownError, "Attempt to store a record in an object store in a read-only transaction"_s };
@@ -1983,10 +1970,8 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to get a record from database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get a record from database without an in-progress transaction"_s };
-    }
 
     auto key = keyRange.lowerKey;
     if (key.isNull())
@@ -2160,10 +2145,8 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to get records from database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get records from database without an in-progress transaction"_s };
-    }
 
     auto key = getAllRecordsData.keyRangeData.lowerKey;
     if (key.isNull())
@@ -2256,10 +2239,8 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to get all index records from database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get all index records from database without an in-progress transaction"_s };
-    }
 
     auto cursor = transaction->maybeOpenBackingStoreCursor(getAllRecordsData.objectStoreIdentifier, getAllRecordsData.indexIdentifier, getAllRecordsData.keyRangeData);
     if (!cursor) {
@@ -2306,10 +2287,8 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to get an index record from database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get an index record from database without an in-progress transaction"_s };
-    }
 
     if (range.isExactlyOneKey())
         return uncheckedGetIndexRecordForOneKey(indexID, objectStoreID, type, range.lowerKey, getResult);
@@ -2412,10 +2391,8 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     outCount = 0;
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to get count from database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get count from database without an in-progress transaction"_s };
-    }
 
     auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreIdentifier, indexIdentifier, range);
     if (!cursor) {
@@ -2475,10 +2452,9 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to generate key in database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to generate key in database without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to generate key in a read-only transaction");
         return IDBError { UnknownError, "Attempt to generate key in a read-only transaction"_s };
@@ -2504,10 +2480,9 @@ IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdenti
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to revert key generator value in database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to revert key generator value in database without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to revert key generator value in a read-only transaction");
         return IDBError { UnknownError, "Attempt to revert key generator value in a read-only transaction"_s };
@@ -2525,10 +2500,9 @@ IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to update key generator value in database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to update key generator value in database without an in-progress transaction"_s };
-    }
+
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to update key generator value in a read-only transaction");
         return IDBError { UnknownError, "Attempt to update key generator value in a read-only transaction"_s };
@@ -2551,10 +2525,8 @@ IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
     ASSERT(m_sqliteDB->isOpen());
 
     auto* transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to open a cursor in database without an in-progress transaction");
+    if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to open a cursor in database without an in-progress transaction"_s };
-    }
 
     auto* cursor = transaction->maybeOpenCursor(info);
     if (!cursor) {
@@ -2585,10 +2557,8 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
 
     ASSERT_UNUSED(transactionIdentifier, cursor->transaction()->transactionIdentifier() == transactionIdentifier);
 
-    if (!cursor->transaction() || !cursor->transaction()->inProgress()) {
-        LOG_ERROR("Attempt to iterate a cursor without an in-progress transaction");
+    if (!cursor->transaction() || !cursor->transaction()->inProgress())
         return IDBError { UnknownError, "Attempt to iterate a cursor without an in-progress transaction"_s };
-    }
 
     auto key = data.keyData;
     auto primaryKey = data.primaryKeyData;
@@ -2716,6 +2686,12 @@ void SQLiteIDBBackingStore::closeSQLiteDB()
         m_sqliteDB->close();
 
     m_sqliteDB = nullptr;
+}
+
+bool SQLiteIDBBackingStore::hasTransaction(const IDBResourceIdentifier& transactionIdentifier) const
+{
+    ASSERT(isMainThread());
+    return m_transactions.contains(transactionIdentifier);
 }
 
 } // namespace IDBServer

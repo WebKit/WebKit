@@ -100,6 +100,7 @@ public:
     static String fullDatabasePathForDirectory(const String&);
     static String databaseNameFromFile(const String&);
 
+    bool hasTransaction(const IDBResourceIdentifier&) const final;
 private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;

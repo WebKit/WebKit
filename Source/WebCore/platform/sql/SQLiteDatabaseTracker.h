@@ -37,9 +37,7 @@ WEBCORE_EXPORT void incrementTransactionInProgressCount();
 
 WEBCORE_EXPORT void setClient(SQLiteDatabaseTrackerClient*);
 
-#if !ASSERT_DISABLED
 WEBCORE_EXPORT bool hasTransactionInProgress();
-#endif
 
 };
 

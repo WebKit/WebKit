@@ -68,13 +68,11 @@ void decrementTransactionInProgressCount()
         s_staticSQLiteDatabaseTrackerClient->didFinishLastTransaction();
 }
 
-#if !ASSERT_DISABLED
 bool hasTransactionInProgress()
 {
     std::lock_guard<Lock> lock(transactionInProgressMutex);
     return !s_staticSQLiteDatabaseTrackerClient || s_transactionInProgressCounter > 0;
 }
-#endif
 
 } // namespace SQLiteDatabaseTracker
 

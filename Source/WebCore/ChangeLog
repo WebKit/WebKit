@@ -1,3 +1,65 @@
+2019-04-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Stop IDB transactions to release locked database files when network process is ready to suspend
+        https://bugs.webkit.org/show_bug.cgi?id=196372
+        <rdar://problem/48930116>
+
+        Reviewed by Brady Eidson.
+
+        Suspend IDB database thread and finish ongoing IDB transactions on the main thread before suspending network 
+        process.
+
+        API test: IndexedDB.IndexedDBSuspendImminently
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::tryStop):
+        (WebCore::IDBServer::IDBServer::resume):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp: Remove some error log messages, because now we may try
+        performing database operations without an active transaction if the transaction is finished on the main thread.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllIndexRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::openCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::hasTransaction const):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::prepareToFinishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransactionAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCommitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransactionOnMainThread):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransactionOnMainThread):
+        (WebCore::IDBServer::UniqueIDBDatabase::finishActiveTransactions):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setState):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::state const):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setResult):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::result const):
+        * platform/sql/SQLiteDatabaseTracker.cpp:
+        (WebCore::SQLiteDatabaseTracker::hasTransactionInProgress):
+        * platform/sql/SQLiteDatabaseTracker.h:
+
 2019-04-26  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Fix Curl Request Scheduler not to release wrong Curl handle when request is cancelled.

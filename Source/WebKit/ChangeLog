@@ -1,3 +1,16 @@
+2019-04-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Stop IDB transactions to release locked database files when network process is ready to suspend
+        https://bugs.webkit.org/show_bug.cgi?id=196372
+        <rdar://problem/48930116>
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processWillSuspendImminently):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+
 2019-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Add internal setting to force -webkit-text-size-adjust to "auto"

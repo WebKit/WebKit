@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
 #include "SQLiteDatabase.h"
+#include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteIDBBackingStore.h"
 #include "SQLiteStatement.h"
@@ -826,6 +827,30 @@ void IDBServer::upgradeFilesIfNecessary()
     String newVersionDirectory = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1");
     if (!FileSystem::fileExists(newVersionDirectory))
         FileSystem::makeAllDirectories(newVersionDirectory);
+}
+
+void IDBServer::tryStop(ShouldForceStop shouldForceStop)
+{
+    // Only stop non-ephemeral IDBServers that can hold locked database files.
+    if (m_sessionID.isEphemeral())
+        return;
+
+    suspendAndWait();
+    if (shouldForceStop == ShouldForceStop::No && SQLiteDatabaseTracker::hasTransactionInProgress()) {
+        CrossThreadTaskHandler::resume();
+        return;
+    }
+
+    for (auto& database : m_uniqueIDBDatabaseMap.values())
+        database->finishActiveTransactions();
+}
+
+void IDBServer::resume()
+{
+    if (m_sessionID.isEphemeral())
+        return;
+
+    CrossThreadTaskHandler::resume();
 }
 
 } // namespace IDBServer

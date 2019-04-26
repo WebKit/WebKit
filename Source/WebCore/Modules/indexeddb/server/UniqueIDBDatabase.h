@@ -127,6 +127,8 @@ public:
 
     void setQuota(uint64_t);
 
+    void finishActiveTransactions();
+
 private:
     void handleDatabaseOperations();
     void handleCurrentOperation();
@@ -237,7 +239,9 @@ private:
     void operationAndTransactionTimerFired();
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
 
-    bool prepareToFinishTransaction(UniqueIDBDatabaseTransaction&);
+    bool prepareToFinishTransaction(UniqueIDBDatabaseTransaction&, UniqueIDBDatabaseTransaction::State);
+    void abortTransactionOnMainThread(UniqueIDBDatabaseTransaction&);
+    void commitTransactionOnMainThread(UniqueIDBDatabaseTransaction&);
     
     void clearStalePendingOpenDBRequests();
 

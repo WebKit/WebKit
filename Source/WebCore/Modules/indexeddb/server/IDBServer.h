@@ -58,6 +58,8 @@ const uint64_t defaultPerOriginQuota = 500 * MB;
 
 class IDBBackingStoreTemporaryFileHandler;
 
+enum class ShouldForceStop : bool { No, Yes };
+
 class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler, public CanMakeWeakPtr<IDBServer> {
 public:
     using QuotaManagerGetter = WTF::Function<StorageQuotaManager*(PAL::SessionID, const ClientOrigin&)>;
@@ -123,6 +125,9 @@ public:
     void resetSpaceUsed(const ClientOrigin&);
 
     void initializeQuotaUser(const ClientOrigin& origin) { ensureQuotaUser(origin); }
+
+    WEBCORE_EXPORT void tryStop(ShouldForceStop);
+    WEBCORE_EXPORT void resume();
 
 private:
     IDBServer(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&);

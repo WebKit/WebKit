@@ -2007,6 +2007,10 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
 
 void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
 {
+#if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
+    for (auto& server : m_idbServers.values())
+        server->tryStop(IDBServer::ShouldForceStop::Yes);
+#endif
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     completionHandler(true);
 }
@@ -2014,6 +2018,11 @@ void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&
 void NetworkProcess::prepareToSuspend()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend()", this);
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
+    for (auto& server : m_idbServers.values())
+        server->tryStop(IDBServer::ShouldForceStop::No);
+#endif
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
 }
 
@@ -2052,6 +2061,10 @@ void NetworkProcess::resume()
 #if ENABLE(SERVICE_WORKER)
     for (auto& server : m_swServers.values())
         server->endSuspension();
+#endif
+#if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
+    for (auto& server : m_idbServers.values())
+        server->resume();
 #endif
 }
 

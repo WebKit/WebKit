@@ -1567,13 +1567,14 @@ void UniqueIDBDatabase::didPerformIterateCursor(uint64_t callbackIdentifier, con
     performGetResultCallback(callbackIdentifier, error, result);
 }
 
-bool UniqueIDBDatabase::prepareToFinishTransaction(UniqueIDBDatabaseTransaction& transaction)
+bool UniqueIDBDatabase::prepareToFinishTransaction(UniqueIDBDatabaseTransaction& transaction, UniqueIDBDatabaseTransaction::State state)
 {
     auto takenTransaction = m_inProgressTransactions.take(transaction.info().identifier());
     if (!takenTransaction)
         return false;
 
     ASSERT(!m_finishingTransactions.contains(transaction.info().identifier()));
+    takenTransaction->setState(state);
     m_finishingTransactions.set(transaction.info().identifier(), WTFMove(takenTransaction));
 
     return true;
@@ -1601,7 +1602,7 @@ void UniqueIDBDatabase::commitTransactionAfterQuotaCheck(UniqueIDBDatabaseTransa
     if (!callbackID)
         return;
 
-    if (!prepareToFinishTransaction(transaction)) {
+    if (!prepareToFinishTransaction(transaction, UniqueIDBDatabaseTransaction::State::Committing)) {
         if (!m_openDatabaseConnections.contains(&transaction.databaseConnection())) {
             // This database connection is closing or has already closed, so there is no point in messaging back to it about the commit failing.
             forgetErrorCallback(callbackID);
@@ -1629,7 +1630,23 @@ void UniqueIDBDatabase::didPerformCommitTransaction(uint64_t callbackIdentifier,
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformCommitTransaction - %s", transactionIdentifier.loggingString().utf8().data());
 
-    performErrorCallback(callbackIdentifier, error);
+    IDBError result = error;
+    auto transaction = m_finishingTransactions.get(transactionIdentifier);
+    switch (transaction->state()) {
+    case UniqueIDBDatabaseTransaction::State::Aborted:
+        result = IDBError { UnknownError, "Transaction is already aborted"_s };
+        break;
+    case UniqueIDBDatabaseTransaction::State::Committed:
+        result = transaction->result();
+        break;
+    case UniqueIDBDatabaseTransaction::State::Committing:
+        break;
+    case UniqueIDBDatabaseTransaction::State::Running:
+    case UniqueIDBDatabaseTransaction::State::Aborting:
+        ASSERT_NOT_REACHED();
+    }
+
+    performErrorCallback(callbackIdentifier, result);
 
     transactionCompleted(m_finishingTransactions.take(transactionIdentifier));
 }
@@ -1656,7 +1673,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
     if (!callbackID)
         return;
 
-    if (!prepareToFinishTransaction(transaction)) {
+    if (!prepareToFinishTransaction(transaction, UniqueIDBDatabaseTransaction::State::Aborting)) {
         if (!m_openDatabaseConnections.contains(&transaction.databaseConnection())) {
             // This database connection is closing or has already closed, so there is no point in messaging back to it about the abort failing.
             forgetErrorCallback(callbackID);
@@ -1713,7 +1730,8 @@ void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, 
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
     }
 
-    performErrorCallback(callbackIdentifier, error);
+    IDBError result = transaction->state() == UniqueIDBDatabaseTransaction::State::Aborted ? transaction->result() : error;
+    performErrorCallback(callbackIdentifier, result);
 
     transactionCompleted(WTFMove(transaction));
 }
@@ -2275,6 +2293,47 @@ void UniqueIDBDatabase::setQuota(uint64_t quota)
 {
     if (m_backingStore)
         m_backingStore->setQuota(quota);
+}
+
+void UniqueIDBDatabase::abortTransactionOnMainThread(UniqueIDBDatabaseTransaction& transaction)
+{
+    transaction.setResult(m_backingStore->abortTransaction(transaction.info().identifier()));
+    transaction.setState(UniqueIDBDatabaseTransaction::State::Aborted);
+}
+
+void UniqueIDBDatabase::commitTransactionOnMainThread(UniqueIDBDatabaseTransaction& transaction)
+{
+    transaction.setResult(m_backingStore->commitTransaction(transaction.info().identifier()));
+    transaction.setState(UniqueIDBDatabaseTransaction::State::Committed);
+}
+
+void UniqueIDBDatabase::finishActiveTransactions()
+{
+    ASSERT(isMainThread());
+
+    for (auto& identifier : copyToVector(m_inProgressTransactions.keys())) {
+        auto transaction = m_inProgressTransactions.get(identifier);
+        abortTransactionOnMainThread(*transaction);
+    }
+
+    for (auto& identifier : copyToVector(m_finishingTransactions.keys())) {
+        if (!m_backingStore->hasTransaction(identifier))
+            continue;
+
+        auto transaction = m_finishingTransactions.get(identifier);
+        switch (transaction->state()) {
+        case UniqueIDBDatabaseTransaction::State::Aborting:
+            abortTransactionOnMainThread(*transaction);
+            break;
+        case UniqueIDBDatabaseTransaction::State::Committing:
+            commitTransactionOnMainThread(*transaction);
+            break;
+        case UniqueIDBDatabaseTransaction::State::Running:
+        case UniqueIDBDatabaseTransaction::State::Aborted:
+        case UniqueIDBDatabaseTransaction::State::Committed:
+            ASSERT_NOT_REACHED();
+        }
+    }
 }
 
 } // namespace IDBServer

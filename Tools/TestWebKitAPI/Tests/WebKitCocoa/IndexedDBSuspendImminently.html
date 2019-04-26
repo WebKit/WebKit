@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script>
+
+var db;
+var shouldSendSuccessMessage = false;
+var hasAbort = false;
+var request = window.indexedDB.open("IndexedDBSuspendImminently");
+request.onsuccess = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Continue");
+    db = event.target.result;
+    for (let i = 0; i < 10; i++) {
+        transaction = db.transaction("TestObjectStore", "readwrite");
+        objectStore = transaction.objectStore("TestObjectStore");
+        for (let times = 0; times < 100; times++)
+            objectStore.put(i, i);
+        transaction.onabort = ()=> {
+            if (!hasAbort) {
+                hasAbort = true;
+                shouldSendSuccessMessage = true;
+                window.webkit.messageHandlers.testHandler.postMessage("Expected Abort For Suspension");
+            } else {
+                window.webkit.messageHandlers.testHandler.postMessage("Unexpected Abort");
+            }
+        }
+        transaction.oncomplete = ()=> {
+            if (shouldSendSuccessMessage) {
+                window.webkit.messageHandlers.testHandler.postMessage("Expected Success After Resume");
+                shouldSendSuccessMessage = false;
+            }
+        }
+    }
+}
+
+request.onupgradeneeded = function(event) {
+    var createRequest = event.target.result.createObjectStore("TestObjectStore");
+    createRequest.onerror = function(event) {
+        window.webkit.messageHandlers.testHandler.postMessage("ObjectStore Error");
+    }
+}
+
+request.onerror = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Open Error");
+}
+
+</script>
