@@ -59,16 +59,17 @@ private:
     void workerThread();
 
     void startTransfer(CurlRequestSchedulerClient*);
-    void completeTransfer(CURL*, CURLcode);
-    void cancelTransfer(CURL*);
-    void finalizeTransfer(CURL*, Function<void(CurlRequestSchedulerClient*)>);
+    void completeTransfer(CurlRequestSchedulerClient*, CURLcode);
+    void cancelTransfer(CurlRequestSchedulerClient*);
+    void finalizeTransfer(CurlRequestSchedulerClient*, Function<void()>);
 
-    mutable Lock m_mutex;
+    Lock m_mutex;
     RefPtr<Thread> m_thread;
     bool m_runThread { false };
 
     Vector<Function<void()>> m_taskQueue;
-    HashMap<CURL*, CurlRequestSchedulerClient*> m_activeJobs;
+    HashSet<CurlRequestSchedulerClient*> m_activeJobs;
+    HashMap<CURL*, CurlRequestSchedulerClient*> m_clientMaps;
 
     std::unique_ptr<CurlMultiHandle> m_curlMultiHandle;
 

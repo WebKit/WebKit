@@ -1,3 +1,37 @@
+2019-04-26  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Fix Curl Request Scheduler not to release wrong Curl handle when request is cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=191650
+
+        Reviewed by Fujii Hironori.
+
+        Test: http/tests/misc/repeat-open-cancel.html
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::cancel):
+        (WebCore::CurlRequest::isCancelled):
+        (WebCore::CurlRequest::isCompletedOrCancelled):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::completeDidReceiveResponse):
+        (WebCore::CurlRequest::pausedStatusChanged):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::isCompleted const): Deleted.
+        (WebCore::CurlRequest::isCancelled const): Deleted.
+        (WebCore::CurlRequest::isCompletedOrCancelled const): Deleted.
+        * platform/network/curl/CurlRequestScheduler.cpp:
+        (WebCore::CurlRequestScheduler::cancel):
+        (WebCore::CurlRequestScheduler::callOnWorkerThread):
+        (WebCore::CurlRequestScheduler::startThreadIfNeeded):
+        (WebCore::CurlRequestScheduler::stopThreadIfNoMoreJobRunning):
+        (WebCore::CurlRequestScheduler::stopThread):
+        (WebCore::CurlRequestScheduler::executeTasks):
+        (WebCore::CurlRequestScheduler::workerThread):
+        (WebCore::CurlRequestScheduler::startTransfer):
+        (WebCore::CurlRequestScheduler::completeTransfer):
+        (WebCore::CurlRequestScheduler::cancelTransfer):
+        (WebCore::CurlRequestScheduler::finalizeTransfer):
+        * platform/network/curl/CurlRequestScheduler.h:
+
 2019-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Add internal setting to force -webkit-text-size-adjust to "auto"

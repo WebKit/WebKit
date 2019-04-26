@@ -83,9 +83,8 @@ public:
     WEBCORE_EXPORT void resume();
 
     const ResourceRequest& resourceRequest() const { return m_request; }
-    bool isCompleted() const { return !m_curlHandle; }
-    bool isCancelled() const { return m_cancelled; }
-    bool isCompletedOrCancelled() const { return isCompleted() || isCancelled(); }
+    bool isCancelled();
+    bool isCompletedOrCancelled();
     Seconds timeoutInterval() const;
 
     const String& user() const { return m_user; }
@@ -166,7 +165,9 @@ private:
 
 
     CurlRequestClient* m_client { };
+    Lock m_statusMutex;
     bool m_cancelled { false };
+    bool m_completed { false };
     MessageQueue<Function<void()>>* m_messageQueue { };
 
     ResourceRequest m_request;
