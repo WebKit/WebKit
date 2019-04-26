@@ -466,6 +466,14 @@ size_t findIgnoringASCIICase(const SearchCharacterType* source, const MatchChara
     return notFound;
 }
 
+inline size_t findIgnoringASCIICaseWithoutLength(const char* source, const char* matchCharacters)
+{
+    unsigned searchLength = strlen(source);
+    unsigned matchLength = strlen(matchCharacters);
+
+    return matchLength < searchLength ? findIgnoringASCIICase(source, matchCharacters, 0, searchLength, matchLength) : notFound;
+}
+
 template<typename StringClassA, typename StringClassB>
 size_t findIgnoringASCIICase(const StringClassA& source, const StringClassB& stringToFind, unsigned startOffset)
 {

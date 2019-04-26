@@ -1,3 +1,15 @@
+2019-04-26  Don Olmstead  <don.olmstead@sony.com>
+
+        Add WTF::findIgnoringASCIICaseWithoutLength to replace strcasestr
+        https://bugs.webkit.org/show_bug.cgi?id=197291
+
+        Reviewed by Konstantin Tokarev.
+
+        Adds an implementation of strcasestr within WTF.
+
+        * wtf/text/StringCommon.h:
+        (WTF::findIgnoringASCIICaseWithoutLength):
+
 2019-04-26  Sihui Liu  <sihui_liu@apple.com>
 
         Stop IDB transactions to release locked database files when network process is ready to suspend

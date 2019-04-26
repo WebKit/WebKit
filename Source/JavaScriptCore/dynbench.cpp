@@ -34,6 +34,7 @@
 #include "JSObject.h"
 #include "VM.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/StringCommon.h>
 
 using namespace JSC;
 
@@ -54,7 +55,7 @@ unsigned requestedIterationCount;
 template<typename Callback>
 NEVER_INLINE void benchmarkImpl(const char* name, unsigned iterationCount, const Callback& callback)
 {
-    if (nameFilter && !strcasestr(name, nameFilter))
+    if (nameFilter && WTF::findIgnoringASCIICaseWithoutLength(name, nameFilter) == WTF::notFound)
         return;
 
     if (requestedIterationCount)

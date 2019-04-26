@@ -31,6 +31,7 @@
 #include "DFGAbstractValue.h"
 #include "InitializeThreading.h"
 #include <wtf/DataLog.h>
+#include <wtf/text/StringCommon.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
@@ -80,7 +81,7 @@ static void testEmptyValueDoesNotValidateWithHeapTop()
 void run(const char* filter)
 {
     auto shouldRun = [&] (const char* testName) -> bool {
-        return !filter || !!strcasestr(testName, filter);
+        return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
     };
 
     RUN_NOW(testEmptyValueDoesNotValidateWithHeapTop());

@@ -40,6 +40,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringCommon.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
@@ -955,11 +956,7 @@ void run(const char* filter)
     Deque<RefPtr<SharedTask<void()>>> tasks;
 
     auto shouldRun = [&] (const char* testName) -> bool {
-#if OS(UNIX)
-        return !filter || !!strcasestr(testName, filter);
-#else
-        return !filter || !!strstr(testName, filter);
-#endif
+        return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
     };
 
     RUN(testSimple());

@@ -36,6 +36,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringCommon.h>
 
 extern "C" int testCAPIViaCpp(const char* filter);
 
@@ -484,13 +485,9 @@ int testCAPIViaCpp(const char* filter)
 
     Deque<RefPtr<SharedTask<void(TestAPI&)>>> tasks;
 
-#if OS(DARWIN)
     auto shouldRun = [&] (const char* testName) -> bool {
-        return !filter || !!strcasestr(testName, filter);
+        return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
     };
-#else
-    auto shouldRun = [] (const char*) -> bool { return true; };
-#endif
 
     RUN(basicSymbol());
     RUN(symbolsTypeof());
