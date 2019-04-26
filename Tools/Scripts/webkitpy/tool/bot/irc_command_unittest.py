@@ -46,19 +46,19 @@ class IRCCommandTest(unittest.TestCase):
                           whois.execute("tom", ["Adam", "Barth"], None, None))
         self.assertEqual("tom: Sorry, I don't know any contributors matching 'unknown@example.com'.",
                           whois.execute("tom", ["unknown@example.com"], None, None))
-        self.assertEqual('tom: tonyg@chromium.org is "Tony Gentilcore" <tonyg@chromium.org> (:tonyg-cr) (r). Why do you ask?',
+        self.assertEqual('tom: tonyg@chromium.org is "Tony Gentilcore" <tonyg@chromium.org> (:tonyg-cr). Why do you ask?',
                           whois.execute("tom", ["tonyg@chromium.org"], None, None))
-        self.assertEqual('tom: TonyG@Chromium.org is "Tony Gentilcore" <tonyg@chromium.org> (:tonyg-cr) (r). Why do you ask?',
+        self.assertEqual('tom: TonyG@Chromium.org is "Tony Gentilcore" <tonyg@chromium.org> (:tonyg-cr). Why do you ask?',
                           whois.execute("tom", ["TonyG@Chromium.org"], None, None))
         self.assertEqual('tom: rniwa is "Ryosuke Niwa" <rniwa@webkit.org> (:rniwa) (r). Why do you ask?',
                           whois.execute("tom", ["rniwa"], None, None))
         self.assertEqual('tom: Xan Lopez is "Xan Lopez" <xan.lopez@gmail.com> (:xan) (r). Why do you ask?',
                           whois.execute("tom", ["Xan", "Lopez"], None, None))
-        self.assertEqual(u'tom: Osztrogon\u00e1c is "Csaba Osztrogon\u00e1c" <ossy@webkit.org> (:ossy) (r). Why do you ask?',
+        self.assertEqual(u'tom: Osztrogon\u00e1c is "Csaba Osztrogon\u00e1c" <ossy@webkit.org> (:ossy). Why do you ask?',
                           whois.execute("tom", [u'Osztrogon\u00e1c'], None, None))
         self.assertEqual('tom: "Vicki Murley" <vicki@apple.com> hasn\'t told me their nick. Boo hoo :-(',
                           whois.execute("tom", ["vicki@apple.com"], None, None))
-        self.assertEqual('tom: I\'m not sure who you mean?  "Gavin Barraclough" <barraclough@apple.com> (:gbarra) (r) or "Gavin Peters" <gavinp@chromium.org> (:gavinp) could be \'Gavin\'.',
+        self.assertEqual('tom: I\'m not sure who you mean?  "Gavin Barraclough" <barraclough@apple.com> (:gbarra) or "Gavin Peters" <gavinp@chromium.org> (:gavinp) could be \'Gavin\'.',
                           whois.execute("tom", ["Gavin"], None, None))
         self.assertEqual('tom: More than 5 contributors match \'david\', could you be more specific?',
                           whois.execute("tom", ["david"], None, None))

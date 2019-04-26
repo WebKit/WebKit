@@ -42,7 +42,7 @@ class MockCommitMessage(object):
 committer_list = CommitterList()
 
 mock_revisions = {
-    1: CommitInfo(852, "eric@webkit.org", {
+    1: CommitInfo(852, "ap@apple.com", {
         "bug_id": 50000,
         "author_name": "Adam Barth",
         "author_email": "abarth@webkit.org",
@@ -55,7 +55,7 @@ mock_revisions = {
         ],
         "bug_description": "Example description of bug 50000.",
     }),
-    963: CommitInfo(963, "eric@webkit.org", {
+    963: CommitInfo(963, "ap@apple.com", {
         "bug_id": 50005,
         "author_name": "Carol Szabo",
         "author_email": "carol.szabo@nokia.com",
@@ -68,7 +68,7 @@ mock_revisions = {
         ],
         "bug_description": "Example description of bug 50005.",
     }),
-    987: CommitInfo(987, "eric@webkit.org", {
+    987: CommitInfo(987, "ap@apple.com", {
         "bug_id": 50006,
         "author_name": "Adam Barth",
         "author_email": "abarth@webkit.org",

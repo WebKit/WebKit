@@ -41,7 +41,7 @@ class ChangeLogTest(unittest.TestCase):
 
     _example_entry = u'''2009-08-17  Peter Kasting  <pkasting@google.com>
 
-        Reviewed by Tor Arne Vestb\xf8.
+        Reviewed by Fr\u00e9d\u00e9ric Wang.
 
         https://bugs.webkit.org/show_bug.cgi?id=27323
         Only add Cygwin to the path when it isn't already there.  This avoids
@@ -56,7 +56,7 @@ class ChangeLogTest(unittest.TestCase):
     _rolled_over_footer = '== Rolled over to ChangeLog-2009-06-16 =='
 
     # More example text than we need.  Eventually we need to support parsing this all and write tests for the parsing.
-    _example_changelog = u"""2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>
+    _example_changelog = u"""2009-08-17  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>
 
         <http://webkit.org/b/28393> check-webkit-style: add check for use of std::max()/std::min() instead of MAX()/MIN()
 
@@ -237,7 +237,7 @@ class ChangeLogTest(unittest.TestCase):
         changelog_file = StringIO(self._example_changelog)
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
         self.assertEqual(len(parsed_entries), 9)
-        self.assertEqual(parsed_entries[0].date_line(), u"2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>")
+        self.assertEqual(parsed_entries[0].date_line(), u"2009-08-17  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>")
         self.assertEqual(parsed_entries[0].date(), "2009-08-17")
         self.assertEqual(parsed_entries[0].reviewer_text(), "David Levin")
         self.assertEqual(parsed_entries[0].is_touched_files_text_clean(), False)
@@ -579,14 +579,14 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(self._entry_with_reviewer(reviewer_line).has_valid_reviewer(), expected)
 
     def test_has_valid_reviewer(self):
-        self._assert_has_valid_reviewer("Reviewed by Eric Seidel.", True)
-        self._assert_has_valid_reviewer("Reviewed by Eric Seidel", True)  # Not picky about the '.'
-        self._assert_has_valid_reviewer("Reviewed by Eric.", False)
-        self._assert_has_valid_reviewer("Reviewed by Eric C Seidel.", False)
-        self._assert_has_valid_reviewer("Rubber-stamped by Eric.", False)
-        self._assert_has_valid_reviewer("Rubber-stamped by Eric Seidel.", True)
-        self._assert_has_valid_reviewer("Rubber stamped by Eric.", False)
-        self._assert_has_valid_reviewer("Rubber stamped by Eric Seidel.", True)
+        self._assert_has_valid_reviewer("Reviewed by Darin Adler.", True)
+        self._assert_has_valid_reviewer("Reviewed by Darin Adler", True)  # Not picky about the '.'
+        self._assert_has_valid_reviewer("Reviewed by Darin.", False)
+        self._assert_has_valid_reviewer("Reviewed by Darin B Adler.", False)
+        self._assert_has_valid_reviewer("Rubber-stamped by Darin.", False)
+        self._assert_has_valid_reviewer("Rubber-stamped by Darin Adler.", True)
+        self._assert_has_valid_reviewer("Rubber stamped by Darin.", False)
+        self._assert_has_valid_reviewer("Rubber stamped by Darin Adler.", True)
         self._assert_has_valid_reviewer("Unreviewed build fix.", True)
         self._assert_has_valid_reviewer("Reviewed by Gabor Rapcsanyi.", False)
         self._assert_has_valid_reviewer("Reviewed by Myles Maxfield", True)
@@ -641,7 +641,7 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(latest_entry.contents(), self._example_entry)
         self.assertEqual(latest_entry.author_name(), "Peter Kasting")
         self.assertEqual(latest_entry.author_email(), "pkasting@google.com")
-        self.assertEqual(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
+        self.assertEqual(latest_entry.reviewer_text(), u"Fr\u00e9d\u00e9ric Wang")
         touched_files = ["DumpRenderTree/win/DumpRenderTree.vcproj", "DumpRenderTree/win/ImageDiff.vcproj", "DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj"]
         self.assertEqual(latest_entry.touched_files(), touched_files)
         self.assertEqual(latest_entry.touched_functions(), dict((f, []) for f in touched_files))

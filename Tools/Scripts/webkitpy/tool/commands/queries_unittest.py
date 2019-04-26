@@ -75,7 +75,7 @@ class QueryCommandsTest(CommandsTest):
 
     def test_patches_to_commit_queue(self):
         expected_stdout = "http://example.com/10003&action=edit\n"
-        expected_logs = "10000 already has cq=+\n10001 already has cq=+\n10004 committer = \"Eric Seidel\" <eric@webkit.org>\n"
+        expected_logs = "10000 already has cq=+\n10001 already has cq=+\n10004 committer = \"Alexey Proskuryakov\" <ap@webkit.org>\n"
         options = Mock()
         options.bugs = False
         self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_logs=expected_logs, options=options)

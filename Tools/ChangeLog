@@ -1,3 +1,21 @@
+2019-04-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Update inactive reviewers' status to 'contributor'.
+
+        * Scripts/webkitpy/common/config/contributors.json: The change.
+
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        Sadly, regression tests operate on a crazy mix of mock and live data for
+        contributors.json. It would be a substantial project to mock all code paths,
+        so changing the tests instead.
+
 2019-04-26  Eric Carlson  <eric.carlson@apple.com>
 
         Create AVFoundationSoftLink.{h,mm} to reduce duplicate code

@@ -95,23 +95,23 @@ class IRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["restart"], expected_logs=expected_logs, expected_exception=TerminateQueue)
 
     def test_rollout(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
+        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...\nMOCK: irc.post: mock_nick, abarth, ap, darin: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 This patch broke the world"], expected_logs=expected_logs)
 
     def test_revert(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
+        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...\nMOCK: irc.post: mock_nick, abarth, ap, darin: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["revert 21654 This patch broke the world"], expected_logs=expected_logs)
 
     def test_multi_rollout(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654, https://trac.webkit.org/changeset/21655, and https://trac.webkit.org/changeset/21656 ...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
+        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654, https://trac.webkit.org/changeset/21655, and https://trac.webkit.org/changeset/21656 ...\nMOCK: irc.post: mock_nick, abarth, ap, darin: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 21655 21656 This 21654 patch broke the world"], expected_logs=expected_logs)
 
     def test_rollout_with_r_in_svn_revision(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
+        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...\nMOCK: irc.post: mock_nick, abarth, ap, darin: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout r21654 This patch broke the world"], expected_logs=expected_logs)
 
     def test_multi_rollout_with_r_in_svn_revision(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654, https://trac.webkit.org/changeset/21655, and https://trac.webkit.org/changeset/21656 ...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
+        expected_logs = "MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654, https://trac.webkit.org/changeset/21655, and https://trac.webkit.org/changeset/21656 ...\nMOCK: irc.post: mock_nick, abarth, ap, darin: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout r21654 21655 r21656 This r21654 patch broke the world"], expected_logs=expected_logs)
 
     def test_rollout_bananas(self):
@@ -128,7 +128,7 @@ class IRCBotTest(unittest.TestCase):
     def test_rollout_invalidate_reason(self):
         # FIXME: I'm slightly confused as to why this doesn't return the USAGE message.
         expected_logs = """MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654 ...
-MOCK: irc.post: mock_nick, abarth, darin, eseidel: Failed to create rollout patch:
+MOCK: irc.post: mock_nick, abarth, ap, darin: Failed to create rollout patch:
 MOCK: irc.post: The rollout reason may not begin with - (\"-bad (Requested by mock_nick on #webkit).\").
 """
         OutputCapture().assert_outputs(self, run,
@@ -137,7 +137,7 @@ MOCK: irc.post: The rollout reason may not begin with - (\"-bad (Requested by mo
 
     def test_multi_rollout_invalidate_reason(self):
         expected_logs = """MOCK: irc.post: mock_nick: Preparing rollout for https://trac.webkit.org/changeset/21654, https://trac.webkit.org/changeset/21655, and https://trac.webkit.org/changeset/21656 ...
-MOCK: irc.post: mock_nick, abarth, darin, eseidel: Failed to create rollout patch:
+MOCK: irc.post: mock_nick, abarth, ap, darin: Failed to create rollout patch:
 MOCK: irc.post: The rollout reason may not begin with - (\"-bad (Requested by mock_nick on #webkit).\").
 """
         OutputCapture().assert_outputs(self, run,

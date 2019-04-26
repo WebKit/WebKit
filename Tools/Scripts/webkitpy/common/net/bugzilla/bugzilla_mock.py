@@ -73,7 +73,7 @@ _patch2 = {
     "reviewer_email": "reviewer2@webkit.org",
     "commit-queue": "+",
     "committer_email": "non-committer@example.com",
-    "attacher_email": "eric@webkit.org",
+    "attacher_email": "ap@webkit.org",
 }
 
 
@@ -114,7 +114,7 @@ _patch5 = {
     "is_patch": True,
     "review": "+",
     "reviewer_email": "foo@bar.com",
-    "attacher_email": "eric@webkit.org",
+    "attacher_email": "ap@webkit.org",
 }
 
 

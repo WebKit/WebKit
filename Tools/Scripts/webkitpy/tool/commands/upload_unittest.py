@@ -45,9 +45,9 @@ class UploadCommandsTest(CommandsTest):
     def test_assign_to_committer(self):
         tool = MockTool()
         expected_logs = """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
-MOCK reassign_bug: bug_id=50000, assignee=eric@webkit.org
+MOCK reassign_bug: bug_id=50000, assignee=ap@webkit.org
 -- Begin comment --
-Attachment 10001 was posted by a committer and has review+, assigning to Eric Seidel for commit.
+Attachment 10001 was posted by a committer and has review+, assigning to Alexey Proskuryakov for commit.
 -- End comment --
 Bug 50003 is already assigned to foo@foo.com (None).
 Bug 50002 has no non-obsolete patches, ignoring.

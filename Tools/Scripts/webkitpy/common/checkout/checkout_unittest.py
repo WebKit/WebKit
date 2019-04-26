@@ -45,7 +45,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 
 
-_changelog1entry1 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+_changelog1entry1 = u"""2010-03-25  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -64,11 +64,11 @@ _changelog1entry2 = u"""2010-03-25  Adam Barth  <abarth@webkit.org>
         * Scripts/webkitpy/common/checkout/api.py:
 """
 _changelog1 = u"\n".join([_changelog1entry1, _changelog1entry2])
-_changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+_changelog2 = u"""2010-03-25  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>
 
         Unreviewed build fix to un-break webkit-patch land.
 
-        Second part of this complicated change by me, Tor Arne Vestb\u00f8!
+        Second part of this complicated change by me, Fr\u00e9d\u00e9ric Wang!
 
         * Path/To/Complicated/File: Added.
 
@@ -161,7 +161,7 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
             # Note that we use a real Executive here, not a MockExecutive, so we can test that we're
             # invoking commit-log-editor correctly.
             env = os.environ.copy()
-            env['CHANGE_LOG_EMAIL_ADDRESS'] = 'vestbo@webkit.org'
+            env['CHANGE_LOG_EMAIL_ADDRESS'] = 'fred.wang@free.fr'
             kwargs['env'] = env
             return executive.run_command(*args, **kwargs)
 
@@ -190,7 +190,7 @@ https://bugs.webkit.org/show_bug.cgi?id=36629
 
 LayoutTests:
 
-Second part of this complicated change by me, Tor Arne Vestb\u00f8!
+Second part of this complicated change by me, Fr\u00e9d\u00e9ric Wang!
 
 * Path/To/Complicated/File: Added.
 """
@@ -377,21 +377,21 @@ class CheckoutTest(unittest.TestCase):
         commitinfo = checkout.commit_info_for_revision(4)
         self.assertEqual(commitinfo.bug_id(), 36629)
         self.assertEqual(commitinfo.bug_description(), "Unreviewed build fix to un-break webkit-patch land.")
-        self.assertEqual(commitinfo.author_name(), u"Tor Arne Vestb\u00f8")
-        self.assertEqual(commitinfo.author_email(), "vestbo@webkit.org")
+        self.assertEqual(commitinfo.author_name(), u"Fr\u00e9d\u00e9ric Wang")
+        self.assertEqual(commitinfo.author_email(), "fred.wang@free.fr")
         self.assertIsNone(commitinfo.reviewer_text())
         self.assertIsNone(commitinfo.reviewer())
         self.assertEqual(commitinfo.committer_email(), "committer@example.com")
         self.assertIsNone(commitinfo.committer())
         self.assertEqual(commitinfo.to_json(), {
             'bug_id': 36629,
-            'author_email': 'vestbo@webkit.org',
+            'author_email': 'fred.wang@free.fr',
             'changed_files': [
                 'path/to/file',
                 'another/file',
             ],
             'reviewer_text': None,
-            'author_name': u'Tor Arne Vestb\xf8',
+            'author_name': u'Fr\u00e9d\u00e9ric Wang',
             'bug_description': 'Unreviewed build fix to un-break webkit-patch land.',
         })
 
@@ -438,7 +438,7 @@ class CheckoutTest(unittest.TestCase):
         checkout.changelog_entries_for_revision = mock_changelog_entries_for_revision
         reviewers = checkout.suggested_reviewers(git_commit=None)
         reviewer_names = [reviewer.full_name for reviewer in reviewers]
-        self.assertEqual(reviewer_names, [u'Tor Arne Vestb\xf8'])
+        self.assertEqual(reviewer_names, [u'Fr\u00e9d\u00e9ric Wang'])
 
     def test_apply_patch(self):
         checkout = self._make_checkout()
