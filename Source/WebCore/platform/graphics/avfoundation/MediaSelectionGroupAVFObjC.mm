@@ -33,18 +33,14 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <objc/runtime.h>
 #import <wtf/Language.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-
-SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionGroup)
-SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include <MediaAccessibility/MediaAccessibility.h>
 #include "MediaAccessibilitySoftLink.h"
 #endif
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
@@ -106,7 +102,7 @@ MediaSelectionGroupAVFObjC::~MediaSelectionGroupAVFObjC()
 
 void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteristics)
 {
-    RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[getAVMediaSelectionGroupClass() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
+    RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[PAL::getAVMediaSelectionGroupClass() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
     RetainPtr<NSMutableSet> oldAVOptions = adoptNS([[NSMutableSet alloc] initWithCapacity:m_options.size()]);
     for (auto& avOption : m_options.keys())
         [oldAVOptions addObject:(__bridge AVMediaSelectionOption *)avOption];
@@ -139,7 +135,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     RetainPtr<NSMutableArray> nsLanguages = adoptNS([[NSMutableArray alloc] initWithCapacity:userPreferredLanguages().size()]);
     for (auto& language : userPreferredLanguages())
         [nsLanguages addObject:(NSString*)language];
-    NSArray* filteredOptions = [getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options] filteredAndSortedAccordingToPreferredLanguages:nsLanguages.get()];
+    NSArray* filteredOptions = [PAL::getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options] filteredAndSortedAccordingToPreferredLanguages:nsLanguages.get()];
 
     if (![filteredOptions count] && characteristics.isEmpty())
         return;
@@ -152,7 +148,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     for (auto& characteristic : characteristics)
         [nsCharacteristics addObject:(NSString *)characteristic];
 
-    NSArray* optionsWithCharacteristics = [getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:filteredOptions withMediaCharacteristics:nsCharacteristics.get()];
+    NSArray* optionsWithCharacteristics = [PAL::getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:filteredOptions withMediaCharacteristics:nsCharacteristics.get()];
     if (optionsWithCharacteristics && [optionsWithCharacteristics count])
         filteredOptions = optionsWithCharacteristics;
 

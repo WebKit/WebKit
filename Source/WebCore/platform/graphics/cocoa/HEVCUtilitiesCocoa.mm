@@ -23,19 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "HEVCUtilitiesCocoa.h"
+#import "config.h"
+#import "HEVCUtilitiesCocoa.h"
 
 #if PLATFORM(COCOA)
 
-#include "FourCC.h"
-#include "HEVCUtilities.h"
-#include "MediaCapabilitiesInfo.h"
+#import "FourCC.h"
+#import "HEVCUtilities.h"
+#import "MediaCapabilitiesInfo.h"
 
-#include "VideoToolboxSoftLink.h"
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVVideoCodecTypeHEVCWithAlpha, NSString *)
+#import "VideoToolboxSoftLink.h"
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
@@ -43,10 +41,10 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
-        if (!AVFoundationLibrary() || !canLoadAVVideoCodecTypeHEVCWithAlpha())
+        if (!PAL::AVFoundationLibrary() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
             return false;
 
-        auto codecCode = FourCC::fromString(getAVVideoCodecTypeHEVCWithAlpha());
+        auto codecCode = FourCC::fromString(AVVideoCodecTypeHEVCWithAlpha);
         if (!codecCode)
             return false;
 

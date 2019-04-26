@@ -65,29 +65,7 @@
 #pragma mark - Soft Linking
 
 #import <pal/cf/CoreMediaSoftLink.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-
-SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
-SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser)
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-SOFT_LINK_CLASS(AVFoundation, AVSampleBufferAudioRenderer)
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-SOFT_LINK_CLASS(AVFoundation, AVSampleBufferDisplayLayer)
-SOFT_LINK_CLASS(AVFoundation, AVStreamSession)
-
-SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicVisual, NSString*)
-SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicAudible, NSString*)
-SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicLegible, NSString*)
-SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotification, NSString*)
-SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*)
-
-#define AVSampleBufferDisplayLayerFailedToDecodeNotification getAVSampleBufferDisplayLayerFailedToDecodeNotification()
-#define AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey getAVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey()
-
-#define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
-#define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
-#define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerQueueManagementPrivate)
 - (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
@@ -354,7 +332,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     UNUSED_PARAM(keyPath);
     ASSERT(_parent);
 
-    if ([object isKindOfClass:getAVSampleBufferDisplayLayerClass()]) {
+    if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
         RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
         ASSERT(_layers.contains(layer.get()));
 
@@ -375,7 +353,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         } else
             ASSERT_NOT_REACHED();
 
-    } else if ([object isKindOfClass:getAVSampleBufferAudioRendererClass()]) {
+    } else if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
         ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
         ALLOW_NEW_API_WITHOUT_GUARDS_END
@@ -486,7 +464,7 @@ Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePr
 }
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
-    : m_parser(adoptNS([allocAVStreamDataParserInstance() init]))
+    : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:createWeakPtr()]))
     , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
@@ -498,8 +476,8 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    
-    if (![getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
+
+    if (![PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
         CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
     
     m_delegate.get().abortSemaphore = Box<Semaphore>::create(0);
@@ -516,7 +494,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     destroyParser();
     destroyRenderers();
 
-    if (![getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
+    if (![PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
         CMNotificationCenterRemoveListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
 
     if (m_hasSessionSemaphore)
@@ -909,7 +887,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
         RetainPtr<AVSampleBufferAudioRenderer> renderer;
         ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!m_audioRenderers.contains(trackID)) {
-            renderer = adoptNS([allocAVSampleBufferAudioRendererInstance() init]);
+            renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
             auto weakThis = createWeakPtr();
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 if (weakThis)
@@ -1151,7 +1129,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
             DEBUG_LOG(LOGIDENTIFIER, "adding buffer attachment");
 
-            bool havePrerollDecodeWithCompletionHandler = [getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)];
+            bool havePrerollDecodeWithCompletionHandler = [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)];
 
             if (!havePrerollDecodeWithCompletionHandler) {
                 CMSampleBufferRef rawSampleCopy;

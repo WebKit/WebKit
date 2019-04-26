@@ -41,12 +41,6 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
-SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
-#define AVURLAsset getAVURLAssetClass()
-#define AVAssetResourceLoadingRequest getAVAssetResourceLoadingRequest()
-
 namespace WebCore {
 
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient* client)

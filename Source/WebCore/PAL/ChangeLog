@@ -1,3 +1,15 @@
+2019-04-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Create AVFoundationSoftLink.{h,mm} to reduce duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=197171
+        <rdar://problem/47454979>
+
+        Reviewed by Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AVFoundationSoftLink.h: Added.
+        * pal/cocoa/AVFoundationSoftLink.mm: Added.
+
 2019-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Disable date and time inputs on iOSMac.

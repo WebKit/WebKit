@@ -32,21 +32,35 @@
 #import <AVFoundation/AVSpeechSynthesis.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVSpeechSynthesizer)
-SOFT_LINK_CLASS(AVFoundation, AVSpeechUtterance)
-SOFT_LINK_CLASS(AVFoundation, AVSpeechSynthesisVoice)
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
-SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceDefaultSpeechRate, float)
-SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
+static float getAVSpeechUtteranceDefaultSpeechRate()
+{
+    static float value;
+    static void* symbol;
+    if (!symbol) {
+        void* symbol = dlsym(PAL::AVFoundationLibrary(), "AVSpeechUtteranceDefaultSpeechRate");
+        RELEASE_ASSERT_WITH_MESSAGE(symbol, "%s", dlerror());
+        value = *static_cast<float const *>(symbol);
+    }
+    return value;
+}
+
+static float getAVSpeechUtteranceMaximumSpeechRate()
+{
+    static float value;
+    static void* symbol;
+    if (!symbol) {
+        void* symbol = dlsym(PAL::AVFoundationLibrary(), "AVSpeechUtteranceMaximumSpeechRate");
+        RELEASE_ASSERT_WITH_MESSAGE(symbol, "%s", dlerror());
+        value = *static_cast<float const *>(symbol);
+    }
+    return value;
+}
 
 #define AVSpeechUtteranceDefaultSpeechRate getAVSpeechUtteranceDefaultSpeechRate()
 #define AVSpeechUtteranceMaximumSpeechRate getAVSpeechUtteranceMaximumSpeechRate()
-
-#define AVSpeechUtteranceClass getAVSpeechUtteranceClass()
-#define AVSpeechSynthesisVoiceClass getAVSpeechSynthesisVoiceClass()
 
 @interface WebSpeechSynthesisWrapper : NSObject<AVSpeechSynthesizerDelegate>
 {
@@ -96,7 +110,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_synthesizer) {
-        m_synthesizer = adoptNS([allocAVSpeechSynthesizerInstance() init]);
+        m_synthesizer = adoptNS([PAL::allocAVSpeechSynthesizerInstance() init]);
         [m_synthesizer setDelegate:self];
     }
 
@@ -106,7 +120,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     NSString *voiceLanguage = nil;
     if (!utteranceVoice) {
         if (utterance->lang().isEmpty())
-            voiceLanguage = [AVSpeechSynthesisVoiceClass currentLanguageCode];
+            voiceLanguage = [PAL::getAVSpeechSynthesisVoiceClass() currentLanguageCode];
         else
             voiceLanguage = utterance->lang();
     } else
@@ -114,9 +128,9 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 
     AVSpeechSynthesisVoice *avVoice = nil;
     if (voiceLanguage)
-        avVoice = [AVSpeechSynthesisVoiceClass voiceWithLanguage:voiceLanguage];
+        avVoice = [PAL::getAVSpeechSynthesisVoiceClass() voiceWithLanguage:voiceLanguage];
 
-    AVSpeechUtterance *avUtterance = [AVSpeechUtteranceClass speechUtteranceWithString:utterance->text()];
+    AVSpeechUtterance *avUtterance = [PAL::getAVSpeechUtteranceClass() speechUtteranceWithString:utterance->text()];
 
     [avUtterance setRate:[self mapSpeechRateToPlatformRate:utterance->rate()]];
     [avUtterance setVolume:utterance->volume()];
@@ -244,7 +258,7 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    for (AVSpeechSynthesisVoice *voice in [AVSpeechSynthesisVoiceClass speechVoices]) {
+    for (AVSpeechSynthesisVoice *voice in [PAL::getAVSpeechSynthesisVoiceClass() speechVoices]) {
         NSString *language = [voice language];
         bool isDefault = true;
         NSString *voiceURI = [voice identifier];

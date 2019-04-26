@@ -57,18 +57,14 @@
 #import <wtf/text/Base64.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
-
-typedef AVMetadataItem AVMetadataItemType;
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
-#define AVMetadataItem getAVMetadataItemClass()
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 using namespace PAL;
 
 #if PLATFORM(IOS_FAMILY)
 static JSValue *jsValueWithValueInContext(id, JSContext *);
-static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *, JSContext *);
+static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *, JSContext *);
 #endif
 
 static String quickTimePluginReplacementScript()
@@ -329,13 +325,13 @@ static JSValue *jsValueWithValueInContext(id value, JSContext *context)
         return jsValueWithArrayInContext(value, context);
     else if ([value isKindOfClass:[NSData class]])
         return jsValueWithDataInContext(value, emptyString(), context);
-    else if ([value isKindOfClass:[AVMetadataItem class]])
+    else if ([value isKindOfClass:PAL::getAVMetadataItemClass()])
         return jsValueWithAVMetadataItemInContext(value, context);
 
     return nil;
 }
 
-static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *item, JSContext *context)
+static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *item, JSContext *context)
 {
     NSMutableDictionary* dictionary = [NSMutableDictionary dictionaryWithDictionary:[item extraAttributes]];
 
