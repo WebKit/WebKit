@@ -381,6 +381,8 @@ void WebAssemblyPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming", webAssemblyPrototypeCompileStreamingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming", webAssemblyPrototypeInstantiateStreamingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
+
+    didBecomePrototype();
 }
 
 WebAssemblyPrototype::WebAssemblyPrototype(VM& vm, Structure* structure)
