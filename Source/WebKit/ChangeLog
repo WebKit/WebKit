@@ -1,5 +1,13 @@
 2019-04-26  Alex Christensen  <achristensen@webkit.org>
 
+        Fix internal High Sierra build after r244653
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        * DerivedSources.make:
+        -std=gnu++17 didn't exist yet.  -std=gnu++1z did.
+
+2019-04-26  Alex Christensen  <achristensen@webkit.org>
+
         Fix an internal High Sierra build after r244653
        ​https://bugs.webkit.org/show_bug.cgi?id=197131
 
