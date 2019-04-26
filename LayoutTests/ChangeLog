@@ -1,3 +1,13 @@
+2019-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        propertyRegistry() was not overridden for SVGFEFloodElement and SVGFEMergeElement
+        https://bugs.webkit.org/show_bug.cgi?id=197303
+
+        Reviewed by Alex Christensen.
+
+        * svg/dom/SVGFEFloodElement-filter-standard-attributes-expected.svg: Added.
+        * svg/dom/SVGFEFloodElement-filter-standard-attributes.svg: Added.
+
 2019-04-26  Youenn Fablet  <youenn@apple.com>
 
         [Mac WK2 iOS Sim] Layout Test imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html is a flaky failure

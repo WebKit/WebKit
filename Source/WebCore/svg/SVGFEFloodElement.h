@@ -32,8 +32,13 @@ public:
 private:
     SVGFEFloodElement(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEFloodElement, SVGFilterPrimitiveStandardAttributes>;
+    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
+
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
+
+    PropertyRegistry m_propertyRegistry { *this };
 };
 
 } // namespace WebCore

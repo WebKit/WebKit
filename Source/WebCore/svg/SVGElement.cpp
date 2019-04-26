@@ -583,6 +583,7 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
 void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
 {
     QualifiedName attributeName = propertyRegistry().animatedPropertyAttributeName(animatedProperty);
+    ASSERT(attributeName != nullQName());
 
     // A change in a style property, e.g SVGRectElement::x should be serialized to
     // the attribute immediately. Otherwise it is okay to be lazy in this regard.

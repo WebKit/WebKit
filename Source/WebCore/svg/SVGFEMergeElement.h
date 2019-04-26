@@ -32,7 +32,12 @@ public:
 private:
     SVGFEMergeElement(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
+    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
+
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
+
+    PropertyRegistry m_propertyRegistry { *this };
 };
 
 } // namespace WebCore
