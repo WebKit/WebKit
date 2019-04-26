@@ -1,3 +1,28 @@
+2019-04-26  David Kilzer  <ddkilzer@apple.com>
+
+        WebKitTestRunner leaks an NSDictionary and multiple JSStringRef objects
+        <https://webkit.org/b/197314>
+        <rdar://problem/50245252>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::lastUndoLabel const):
+        (WTR::UIScriptController::firstRedoLabel const):
+        - Use adopt(JSStringCreateWithCFString(...)) to fix leaks.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator sendEventStream:completionBlock:]):
+        - Call -autorelease to fix leak of NSDictionary.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::accessibilitySpeakSelectionContent const):
+        (WTR::UIScriptController::selectFormPopoverTitle const):
+        (WTR::UIScriptController::textContentType const):
+        (WTR::UIScriptController::formInputLabel const):
+        (WTR::UIScriptController::scrollingTreeAsText const):
+        - Use adopt(JSStringCreateWithCFString(...)) to fix leaks.
+
 2019-04-26  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Running a single test will always use the default device

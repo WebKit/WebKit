@@ -1138,7 +1138,7 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     }
     
     NSDictionary* threadData = @{
-        @"eventInfo": [eventInfo copy],
+        @"eventInfo": [[eventInfo copy] autorelease],
         @"completionBlock": [[completionBlock copy] autorelease]
     };
     

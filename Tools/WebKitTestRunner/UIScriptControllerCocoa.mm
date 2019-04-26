@@ -151,12 +151,12 @@ void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
 
 JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const
 {
-    return JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().undoActionName);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().undoActionName));
 }
 
 JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
 {
-    return JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName));
 }
 
 NSUndoManager *UIScriptController::platformUndoManager() const
