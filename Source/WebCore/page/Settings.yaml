@@ -444,10 +444,6 @@ textAutosizingUsesIdempotentMode:
   initial: defaultTextAutosizingUsesIdempotentMode()
   onChange: setNeedsRecalcStyleInAllFrames
   conditional: TEXT_AUTOSIZING
-forceAutoBehaviorForTextSizeAdjust:
-  initial: false
-  onChange: setNeedsRecalcStyleInAllFrames
-  conditional: TEXT_AUTOSIZING
 
 subpixelAntialiasedLayerTextEnabled:
   initial: false

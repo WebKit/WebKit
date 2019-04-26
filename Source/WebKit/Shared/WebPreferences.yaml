@@ -433,6 +433,11 @@ UsesEncodingDetector:
   type: bool
   defaultValue: false
 
+TextAutosizingEnabled:
+  type: bool
+  defaultValue: WebCore::Settings::defaultTextAutosizingEnabled()
+  condition: ENABLE(TEXT_AUTOSIZING)
+
 AggressiveTileRetentionEnabled:
   type: bool
   defaultValue: false
@@ -1644,22 +1649,6 @@ ApplePayRemoteUIEnabled:
   humanReadableDescription: "Enable Apple Pay Remote UI"
   humanReadableName: "Apple Pay Remote UI"
   type: bool
-
-TextAutosizingEnabled:
-  type: bool
-  defaultValue: WebCore::Settings::defaultTextAutosizingEnabled()
-  condition: ENABLE(TEXT_AUTOSIZING)
-  humanReadableName: "Text Autosizing"
-  humanReadableDescription: "Enable text autosizing, which increases text size so as to be more easily read"
-  category: internal
-
-ForceAutoBehaviorForTextSizeAdjust:
-  type: bool
-  defaultValue: false
-  condition: ENABLE(TEXT_AUTOSIZING)
-  humanReadableName: "Force text-size-adjust to auto"
-  humanReadableDescription: "Force -webkit-text-size-adjust to behave like auto, which means web authors can't opt-out of text autosizing heuristics"
-  category: internal
 
 # Deprecated
 
