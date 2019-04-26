@@ -1,3 +1,43 @@
+2019-04-25  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(scriptExecutionContext()) in Performance::resourceTimingBufferFullTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=197300
+        <rdar://problem/49965990>
+
+        Reviewed by Youenn Fablet.
+
+        We crash because the scriptExecutionContext has been destroyed by the time the m_resourceTimingBufferFullTimer
+        timer fires. However, r241598 already makes sure that we stop the timer when the script execution context
+        is destroyed. This makes me think that somebody restarts the timer *after* the script execution context has
+        been destroyed. The thing is that we only start the timer in Performance::addResourceTiming() and there are
+        only 2 call sites for this method. Both call sites get the Performance object from the Window object, which
+        they get from the Document object. As a result, I would believe that the Window's document is alive, even
+        though the Performance object's scriptExecutionContext is not. This could indicate that the Performance
+        object's scriptExecutionContext gets out of sync with its Window's document. I have found one place where
+        it could happen in theory (DOMWindow::didSecureTransitionTo()). I have not been able to write a test
+        confirming my theory though so this is a speculative fix. I have also added a few assertions to help us
+        track down the issue if my speculative fix turns out to be ineffective.
+
+        No new tests, we do not know how to reproduce.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::didSecureTransitionTo):
+        This is a speculative fix for the crash. When a DOMWindow transitions from one document to
+        another, reset its data members which store the DOMWindow's document to make sure that they
+        do not get out of sync.
+
+        (WebCore::DOMWindow::crypto const):
+        (WebCore::DOMWindow::navigator):
+        (WebCore::DOMWindow::performance const):
+        Add assertions to make sure that the member's scriptExecutionContext is in sync with
+        the window's.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::addResourceTiming):
+        Add assertion to make sure that the scriptExecutionContext() is non-null when calling this
+        as this may start the m_resourceTimingBufferFullTimer timer. If my speculative fix above
+        does not work, we should hit this and this should tell us which call site is causing this.
+
 2019-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Disable ContentChangeObserver on iOSMac.

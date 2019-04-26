@@ -181,6 +181,8 @@ void Performance::setResourceTimingBufferSize(unsigned size)
 
 void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
 {
+    ASSERT(scriptExecutionContext());
+
     auto entry = PerformanceResourceTiming::create(m_timeOrigin, WTFMove(resourceTiming));
 
     if (m_waitingForBackupBufferToBeProcessed) {
