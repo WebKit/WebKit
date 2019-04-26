@@ -395,13 +395,11 @@ set(WEBKITLEGACY_IDL_DEPENDENCIES
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h"
 )
 
-if (USE_VERSION_STAMPER)
-    add_custom_command(
-        OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${WebKitLegacy_DERIVED_SOURCES_DIR}
-        VERBATIM)
-endif ()
+add_custom_command(
+    OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${WebKitLegacy_DERIVED_SOURCES_DIR}
+    VERBATIM)
 
 GENERATE_INTERFACE(win/Interfaces/WebKit.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
 GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")

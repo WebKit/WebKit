@@ -1319,7 +1319,7 @@ endif ()
 add_custom_target(stageSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore stageSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
 
-if (USE_VERSION_STAMPER)
+if (MSVC)
     add_custom_command(
         TARGET JavaScriptCore
         PRE_BUILD
