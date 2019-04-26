@@ -1,3 +1,30 @@
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Make NetworkCache blobs safe for mmap instead of not using blobs
+        https://bugs.webkit.org/show_bug.cgi?id=197264
+        <rdar://problem/49564348>
+
+        Reviewed by Antti Koivisto.
+
+        This does what r244597 did for WKContentRuleLists but for the NetworkCache's blobs.
+        Those are the two cases where we were calling mmap and seeing crashes in apps with
+        default file protection of NSFileProtectionComplete.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::add):
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath): Deleted.
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheFileSystemCocoa.mm:
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::mayContainBlob const):
+        (WebKit::NetworkCache::Storage::shouldStoreBodyAsBlob):
+        (WebKit::NetworkCache::estimateRecordsSize): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2019-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r234330): 3 legacy-animation-engine/compositing tests are flaky failures

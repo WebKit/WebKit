@@ -169,7 +169,6 @@ private:
     
     const Mode m_mode;
     const Salt m_salt;
-    const bool m_canUseBlobsForForBodyData;
 
     size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateRecordsSize { 0 };

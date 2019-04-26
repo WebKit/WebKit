@@ -146,10 +146,6 @@ void updateFileModificationTimeIfNeeded(const String& path)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool isSafeToUseMemoryMapForPath(const String&)
-{
-    return true;
-}
 void makeSafeToUseMemoryMapForPath(const String&)
 {
 }

@@ -33,10 +33,8 @@ namespace WebKit {
 namespace NetworkCache {
 
 #if PLATFORM(IOS_FAMILY)
-bool isSafeToUseMemoryMapForPath(const String& path)
+static bool isSafeToUseMemoryMapForPath(const String& path)
 {
-    // FIXME: For the network cache we should either use makeSafeToUseMemoryMapForPath instead of this
-    // or we should listen to UIApplicationProtectedDataWillBecomeUnavailable and unmap files.
     NSError *error = nil;
     NSDictionary<NSFileAttributeKey, id> *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
     if (error) {

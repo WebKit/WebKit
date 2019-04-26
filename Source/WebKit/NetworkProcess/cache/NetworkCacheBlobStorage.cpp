@@ -93,7 +93,10 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     if (data.isEmpty())
         return { data, hash };
 
-    auto blobPath = FileSystem::fileSystemRepresentation(blobPathForHash(hash));
+    String blobPathString = blobPathForHash(hash);
+    makeSafeToUseMemoryMapForPath(blobPathString);
+    
+    auto blobPath = FileSystem::fileSystemRepresentation(blobPathString);
     auto linkPath = FileSystem::fileSystemRepresentation(path);
     unlink(linkPath.data());
 
