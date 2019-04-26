@@ -2,6 +2,14 @@
 
         Update inactive reviewers' status to 'contributor'.
 
+        Accidentally skipped one at first.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2019-04-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Update inactive reviewers' status to 'contributor'.
+
         * Scripts/webkitpy/common/config/contributors.json: The change.
 
         * Scripts/webkitpy/common/checkout/changelog_unittest.py:
