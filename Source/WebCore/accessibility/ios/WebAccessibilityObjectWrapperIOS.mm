@@ -2007,6 +2007,11 @@ static RenderObject* rendererForView(WAKView* view)
     [self accessibilityModifySelection:granularity increase:YES];
 }
 
+- (void)_accessibilitySetFocus:(BOOL)focus
+{
+    [self baseAccessibilitySetFocus:focus];
+}
+
 - (void)accessibilityDecreaseSelection:(TextGranularity)granularity
 {
     [self accessibilityModifySelection:granularity increase:NO];

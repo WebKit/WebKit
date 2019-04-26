@@ -1,3 +1,22 @@
+2019-04-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Provide iOS method for setting focus
+        https://bugs.webkit.org/show_bug.cgi?id=197200
+        <rdar://problem/50131679>
+
+        Reviewed by Alex Christensen.
+
+        Put the focus setting code in a place that iOS and macOS can access.
+        Override a platform level method for setting focus on iOS.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilitySetFocus:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilitySetFocus:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilitySetValue:forAttribute:]):
+
 2019-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         propertyRegistry() was not overridden for SVGFEFloodElement and SVGFEMergeElement

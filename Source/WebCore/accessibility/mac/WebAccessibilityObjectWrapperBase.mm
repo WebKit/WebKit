@@ -571,6 +571,27 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     }
 }
 
+- (void)baseAccessibilitySetFocus:(BOOL)focus
+{
+    // If focus is just set without making the view the first responder, then keyboard focus won't move to the right place.
+    if (focus && !m_object->document()->frame()->selection().isFocusedAndActive()) {
+        FrameView* frameView = m_object->documentFrameView();
+        Page* page = m_object->page();
+        if (page && frameView) {
+            ChromeClient& chromeClient = page->chrome().client();
+            chromeClient.focus();
+
+            // Legacy WebKit1 case.
+            if (frameView->platformWidget())
+                chromeClient.makeFirstResponder(frameView->platformWidget());
+            else
+                chromeClient.assistiveTechnologyMakeFirstResponder();
+        }
+    }
+
+    m_object->setFocused(focus);
+}
+
 - (NSString *)accessibilityPlatformMathSubscriptKey
 {
     ASSERT_NOT_REACHED();

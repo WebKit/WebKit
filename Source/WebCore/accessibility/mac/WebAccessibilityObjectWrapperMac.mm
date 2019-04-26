@@ -3871,27 +3871,7 @@ IGNORE_WARNINGS_END
         ASSERT(textMarkerRange);
         m_object->setSelectedVisiblePositionRange([self visiblePositionRangeForTextMarkerRange:textMarkerRange]);
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
-        ASSERT(number);
-        
-        bool focus = [number boolValue];
-        
-        // If focus is just set without making the view the first responder, then keyboard focus won't move to the right place.
-        if (focus && !m_object->document()->frame()->selection().isFocusedAndActive()) {
-            FrameView* frameView = m_object->documentFrameView();
-            Page* page = m_object->page();
-            if (page && frameView) {
-                ChromeClient& chromeClient = page->chrome().client();
-                chromeClient.focus();
-                
-                // Legacy WebKit1 case.
-                if (frameView->platformWidget())
-                    chromeClient.makeFirstResponder(frameView->platformWidget());
-                else
-                    chromeClient.assistiveTechnologyMakeFirstResponder();
-            }
-        }
-        
-        m_object->setFocused(focus);
+        [self baseAccessibilitySetFocus:[number boolValue]];
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (number && m_object->canSetNumericValue())
             m_object->setValue([number floatValue]);
