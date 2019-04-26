@@ -205,6 +205,13 @@ class Manager(object):
             tests_to_run_by_device[device_type] = [test for test in tests_to_run if test not in aggregate_tests]
             aggregate_tests.update(tests_to_run)
 
+        # If a test is marked skipped, but was explicitly requested, run it anyways
+        if self._options.skipped != 'always':
+            for arg in args:
+                if arg in total_tests and arg not in aggregate_tests:
+                    tests_to_run_by_device[device_type_list[0]].append(arg)
+                    aggregate_tests.add(arg)
+
         tests_to_skip = total_tests - aggregate_tests
         self._printer.print_found(len(aggregate_test_names), len(aggregate_tests), self._options.repeat_each, self._options.iterations)
         start_time = time.time()

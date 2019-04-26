@@ -1,3 +1,24 @@
+2019-04-26  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Running a single test will always use the default device
+        https://bugs.webkit.org/show_bug.cgi?id=195472
+        <rdar://problem/48724825>
+
+        Reviewed by Lucas Forschler.
+
+        It makes more sense to have the Manager class handle the case where a user specifically requests a test which is
+        skipped on the current configuration. This changes the behavior when running part of a test shard, now tests explicitly
+        requested will be run regardless of what shard they are in.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.skip_tests): Caller should manage running skipped tests which were explicitly requested.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): If a test is marked as skipped for the configuration, but was specifically requested, run it anyways
+        on the default device type.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_run_chunk): Explicitly requesting a test will override sharing behavior.
+        (RunTest.test_run_part): Ditto.
+
 2019-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Add ENABLE(CONTENT_EXTENSIONS) and namespace ContentExtensions to ResourceLoadInfo.h
