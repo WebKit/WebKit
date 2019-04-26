@@ -4541,7 +4541,12 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (!fromAPI)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
-    MESSAGE_CHECK_URL(process, request.url());
+    if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, request.url())) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring request to load this main resource because it is outside the sandbox");
+        sender->send(PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt);
+        return;
+    }
+
     MESSAGE_CHECK_URL(process, originalRequest.url());
 
     RefPtr<API::Navigation> navigation;

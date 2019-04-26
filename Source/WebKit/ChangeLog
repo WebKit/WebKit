@@ -1,3 +1,17 @@
+2019-04-25  Chris Dumez  <cdumez@apple.com>
+
+        Trying to load a main resource outside the sandbox should not crash the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=197299
+        <rdar://problem/49808042>
+
+        Reviewed by Geoffrey Garen.
+
+        Trying to load a main resource outside the sandbox should not crash the WebContent process. We should
+        simply ignore the load and log an error message.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Only send a synthetic mouse out event if synthetic mouse move events were sent.
