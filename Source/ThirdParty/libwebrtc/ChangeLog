@@ -1,3 +1,14 @@
+2019-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Make sure sockets file descriptors are in the correct range
+        https://bugs.webkit.org/show_bug.cgi?id=197301
+        <rdar://problem/48389381>
+
+        Reviewed by Chris Dumez.
+
+        * Source/webrtc/rtc_base/physicalsocketserver.cc:
+        * WebKit/0001-fix-197301.patch: Added.
+
 2019-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++17

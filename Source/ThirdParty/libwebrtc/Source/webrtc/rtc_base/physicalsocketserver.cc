@@ -1424,6 +1424,8 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
         // "select"ing a file descriptor that is equal to or larger than
         // FD_SETSIZE will result in undefined behavior.
         RTC_DCHECK_LT(fd, FD_SETSIZE);
+        if (fd < 0 || fd >= FD_SETSIZE)
+            continue;
         if (fd > fdmax)
           fdmax = fd;
 
