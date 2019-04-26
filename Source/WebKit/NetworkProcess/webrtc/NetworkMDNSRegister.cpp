@@ -139,7 +139,7 @@ void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::Sess
     auto* record = &pendingRequest->record;
     auto error = DNSServiceRegisterRecord(service,
         record,
-        kDNSServiceFlagsUnique,
+        kDNSServiceFlagsUnique | kDNSServiceFlagsKnownUnique,
         0,
         pendingRequest->name.utf8().data(),
         kDNSServiceType_A,

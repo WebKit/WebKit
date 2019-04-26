@@ -1,3 +1,16 @@
+2019-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Use kDNSServiceFlagsKnownUnique to speed up mdns name registration for ICE candidates
+        https://bugs.webkit.org/show_bug.cgi?id=197328
+
+        Reviewed by Eric Carlson.
+
+        This allows skipping the probing step of MDNS name registration.
+        We can do that as registered names are random UUIDs.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+
 2019-04-26  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Our process assertion should not allow idle sleep
