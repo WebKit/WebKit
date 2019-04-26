@@ -641,6 +641,7 @@ void IDBTransaction::dispatchEvent(Event& event)
     auto protectedThis = makeRef(*this);
 
     EventDispatcher::dispatchEvent({ this, m_database.ptr() }, event);
+    m_didDispatchAbortOrCommit = true;
 
     if (isVersionChange()) {
         ASSERT(m_openDBRequest);

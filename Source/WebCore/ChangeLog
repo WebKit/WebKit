@@ -1,3 +1,21 @@
+2019-04-25  Sihui Liu  <sihui_liu@apple.com>
+
+        [ iOS Sim ] REGRESSION (r242986) Layout Test storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196357
+        <rdar://problem/49386836>
+
+        Reviewed by Geoffrey Garen.
+
+        Dispatch IDBRequest event to IDBTransaction if event of IDBTransaction has not been dispatched.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::dispatchEvent):
+        * Modules/indexeddb/IDBTransaction.h:
+
 2019-04-25  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(scriptExecutionContext()) in Performance::resourceTimingBufferFullTimerFired()

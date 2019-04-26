@@ -146,6 +146,7 @@ public:
 
     bool isFinishedOrFinishing() const;
     bool isFinished() const { return m_state == IndexedDB::TransactionState::Finished; }
+    bool didDispatchAbortOrCommit() const { return m_didDispatchAbortOrCommit; }
 
     IDBClient::IDBConnectionProxy& connectionProxy();
 
@@ -261,6 +262,7 @@ private:
     RefPtr<IDBRequest> m_currentlyCompletingRequest;
 
     bool m_contextStopped { false };
+    bool m_didDispatchAbortOrCommit { false };
 };
 
 class TransactionActivator {

@@ -1593,8 +1593,6 @@ webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-co
 
 webkit.org/b/165311 [ Sierra+ ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure ]
 
-webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
-
 # User-installed font infrastructure is ony present on certain OSes.
 webkit.org/b/180062 [ Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
