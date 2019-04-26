@@ -56,7 +56,7 @@ class BuildBotPrinter(object):
 
     def print_run_results(self, run_results):
         failed = run_results.total_failures
-        total = run_results.total
+        total = run_results.total - run_results.expected_skips
         passed = total - failed - run_results.remaining
         percent_passed = 0.0
         if total > 0:

@@ -1,3 +1,14 @@
+2019-04-25  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Including skipped tests in the final count
+        https://bugs.webkit.org/show_bug.cgi?id=197298
+        <rdar://problem/49705424>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        (BuildBotPrinter.print_run_results): The total number of tests run should exclude delibrately skipped tests.
+
 2019-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Disable date and time inputs on iOSMac.
