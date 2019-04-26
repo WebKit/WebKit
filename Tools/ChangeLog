@@ -1,3 +1,15 @@
+2019-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] linkPolymorphicCall now does GC
+        https://bugs.webkit.org/show_bug.cgi?id=197306
+
+        Reviewed by Saam Barati.
+
+        The test is sensitive to allocations and even adding $vm makes it non-reproducible.
+        To add this test, we add `runWithoutBaseOption`.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-04-26  Alexey Proskuryakov  <ap@apple.com>
 
         Update inactive reviewers' status to 'contributor'.

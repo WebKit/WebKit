@@ -1,3 +1,19 @@
+2019-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] linkPolymorphicCall now does GC
+        https://bugs.webkit.org/show_bug.cgi?id=197306
+
+        Reviewed by Saam Barati.
+
+        Previously, we assumed that linkPolymorphicCall does not perform allocations. So we put CallVariant into a Vector<>.
+        But now, WebAssemblyFunction's entrypoint generation can allocate JSToWasmICCallee and cause GC. Since CallLinkInfo
+        does not hold these cells, they can be collected, and we will see dead cells in the middle of linkPolymorphicCall.
+        We should defer GC for a while in linkPolymorphicCall. We use DeferGCForAWhile instead of DeferGC because the
+        caller "operationLinkPolymorphicCall" assumes that this function does not cause GC.
+
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
 2019-04-26  Robin Morisset  <rmorisset@apple.com>
 
         All prototypes should call didBecomePrototype()

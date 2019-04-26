@@ -616,8 +616,16 @@ def runWithOutputHandler(kind, outputHandler, *options)
     addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
 end
 
+def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
+    addRunCommand(kind, [pathToVM.to_s] + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+end
+
 def run(kind, *options)
     runWithOutputHandler(kind, silentOutputHandler, *options)
+end
+
+def runWithoutBaseOption(kind, *options)
+    runWithOutputHandlerWithoutBaseOption(kind, silentOutputHandler, *options)
 end
 
 def runNoFTL(*optionalTestSpecificOptions)

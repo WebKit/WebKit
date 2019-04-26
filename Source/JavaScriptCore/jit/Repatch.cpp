@@ -955,19 +955,23 @@ void linkPolymorphicCall(
     ExecState* exec, CallLinkInfo& callLinkInfo, CallVariant newVariant)
 {
     RELEASE_ASSERT(callLinkInfo.allowStubs());
+
+    CallFrame* callerFrame = exec->callerFrame();
+    VM& vm = callerFrame->vm();
+
+    // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
+    // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
+    DeferGCForAWhile deferGCForAWhile(vm.heap);
     
     if (!newVariant) {
         linkVirtualFor(exec, callLinkInfo);
         return;
     }
 
-    CallFrame* callerFrame = exec->callerFrame();
-
     // Our caller must be have a cell for a callee. When calling
     // this from Wasm, we ensure the callee is a cell.
     ASSERT(callerFrame->callee().isCell());
 
-    VM& vm = callerFrame->vm();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     bool isWebAssembly = isWebAssemblyToJSCallee(callerFrame->callee().asCell());
 
