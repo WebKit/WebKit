@@ -76,7 +76,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     Vector<Text*> nodesForRemoval;
     for (auto& textNode : m_autoSizedNodes) {
         auto* renderer = textNode->renderer();
-        if (!renderer || !renderer->style().textSizeAdjust().isAuto() || !renderer->candidateComputedTextSize())
+        if (!renderer || (!textNode->document().settings().forceAutoBehaviorForTextSizeAdjust() && !renderer->style().textSizeAdjust().isAuto()) || !renderer->candidateComputedTextSize())
             nodesForRemoval.append(textNode.get());
     }
 

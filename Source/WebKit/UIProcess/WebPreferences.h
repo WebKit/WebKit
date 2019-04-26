@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesStore.h"
+#include <WebCore/Settings.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 

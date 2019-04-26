@@ -3815,7 +3815,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth, fl
                 candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
             }
 
-            if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
+            if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && (text.document().settings().forceAutoBehaviorForTextSizeAdjust() || oldStyle.textSizeAdjust().isAuto()))
                 document().textAutoSizing().addTextNode(*text.textNode(), candidateNewSize);
         }
 

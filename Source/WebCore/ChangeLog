@@ -1,5 +1,22 @@
 2019-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] Add internal setting to force -webkit-text-size-adjust to "auto"
+        https://bugs.webkit.org/show_bug.cgi?id=197275
+        <rdar://problem/50211019>
+
+        Reviewed by Simon Fraser.
+
+        This setting makes it easier to investigate the autosizing work we've been doing
+        in https://bugs.webkit.org/show_bug.cgi?id=197250.
+
+        * page/Settings.yaml:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustTextNodeSizes):
+
+2019-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] Implement idempotent mode for text autosizing
         https://bugs.webkit.org/show_bug.cgi?id=197250
         <rdar://problem/50211034>
