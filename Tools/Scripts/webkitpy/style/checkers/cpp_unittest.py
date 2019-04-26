@@ -4891,6 +4891,23 @@ class WebKitStyleTest(CppStyleTestBase):
             '        reallyLongParam5);\n'
             '    }\n',
             '')
+        # 6. An open brace on its own line for a nested code block should be allowed.
+        self.assert_multi_line_lint(
+            '    if (condition) {\n'
+            '        {\n'
+            '            j = 1;\n'
+            '        }\n'
+            '    }\n',
+            '')
+        self.assert_multi_line_lint(
+            '    if (condition1\n'
+            '        || condition2\n'
+            '        && condition3) {\n'
+            '        {\n'
+            '            j = 1;\n'
+            '        }\n'
+            '    }\n',
+            '')
 
     def test_null_false_zero(self):
         # 1. In C++, the null pointer value should be written as nullptr. In C,
