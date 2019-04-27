@@ -36,30 +36,6 @@ void TestRunner::platformInitialize()
 {
 }
 
-void TestRunner::invalidateWaitToDumpWatchdogTimer()
-{
-    if (!m_waitToDumpWatchdogTimer)
-        return;
-
-    CFRunLoopTimerInvalidate(m_waitToDumpWatchdogTimer.get());
-    m_waitToDumpWatchdogTimer = nullptr;
-}
-
-static void waitUntilDoneWatchdogTimerFired(CFRunLoopTimerRef timer, void* info)
-{
-    InjectedBundle::singleton().testRunner()->waitToDumpWatchdogTimerFired();
-}
-
-void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
-{
-    if (m_waitToDumpWatchdogTimer)
-        return;
-
-    CFTimeInterval interval = m_timeout.seconds();
-    m_waitToDumpWatchdogTimer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + interval, 0, 0, 0, WTR::waitUntilDoneWatchdogTimerFired, NULL));
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdogTimer.get(), kCFRunLoopCommonModes);
-}
-
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     return JSStringRetain(url); // Do nothing on mac.

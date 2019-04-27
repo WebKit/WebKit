@@ -39,19 +39,6 @@ void TestRunner::platformInitialize()
 {
 }
 
-void TestRunner::invalidateWaitToDumpWatchdogTimer()
-{
-    m_waitToDumpWatchdogTimer.stop();
-}
-
-void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
-{
-    if (m_waitToDumpWatchdogTimer.isActive())
-        return;
-
-    m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
-}
-
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     size_t urlSize = JSStringGetMaximumUTF8CStringSize(url);

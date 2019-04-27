@@ -36,18 +36,6 @@
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/RetainPtr.h>
-#include <CoreFoundation/CFRunLoop.h>
-typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
-#else
-#include <wtf/RunLoop.h>
-namespace WTR {
-class TestRunner;
-typedef RunLoop::Timer<TestRunner> PlatformTimerRef;
-}
-#endif
-
 namespace WTR {
 
 class TestRunner : public JSWrappable {
@@ -233,8 +221,6 @@ public:
     void clearDidReceiveServerRedirectForProvisionalNavigation();
 
     bool shouldWaitUntilDone() const;
-    void waitToDumpWatchdogTimerFired();
-    void invalidateWaitToDumpWatchdogTimer();
 
     // Downloads
     bool shouldFinishAfterDownload() const { return m_shouldFinishAfterDownload; }
@@ -512,7 +498,6 @@ private:
     TestRunner();
 
     void platformInitialize();
-    void initializeWaitToDumpWatchdogTimerIfNeeded();
 
     void setDumpPixels(bool);
     void setWaitUntilDone(bool);
@@ -526,8 +511,6 @@ private:
 
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
     WKRetainPtr<WKArrayRef> m_allowedHosts;
-
-    PlatformTimerRef m_waitToDumpWatchdogTimer;
 
     double m_databaseDefaultQuota { -1 };
     double m_databaseMaxQuota { -1 };

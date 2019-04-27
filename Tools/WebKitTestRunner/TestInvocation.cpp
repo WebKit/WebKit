@@ -69,6 +69,7 @@ namespace WTR {
 TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     : m_options(options)
     , m_url(url)
+    , m_waitToDumpWatchdogTimer(RunLoop::main(), this, &TestInvocation::waitToDumpWatchdogTimerFired)
 {
     WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(m_url.get()));
 
@@ -137,10 +138,6 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     WKRetainPtr<WKStringRef> dumpPixelsKey = adoptWK(WKStringCreateWithUTF8CString("DumpPixels"));
     WKRetainPtr<WKBooleanRef> dumpPixelsValue = adoptWK(WKBooleanCreate(m_dumpPixels));
     WKDictionarySetItem(beginTestMessageBody.get(), dumpPixelsKey.get(), dumpPixelsValue.get());
-
-    WKRetainPtr<WKStringRef> useWaitToDumpWatchdogTimerKey = adoptWK(WKStringCreateWithUTF8CString("UseWaitToDumpWatchdogTimer"));
-    WKRetainPtr<WKBooleanRef> useWaitToDumpWatchdogTimerValue = adoptWK(WKBooleanCreate(TestController::singleton().useWaitToDumpWatchdogTimer()));
-    WKDictionarySetItem(beginTestMessageBody.get(), useWaitToDumpWatchdogTimerKey.get(), useWaitToDumpWatchdogTimerValue.get());
 
     WKRetainPtr<WKStringRef> timeoutKey = adoptWK(WKStringCreateWithUTF8CString("Timeout"));
     WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout.milliseconds()));
@@ -357,8 +354,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKRetainPtr<WKStringRef> audioResultKey =  adoptWK(WKStringCreateWithUTF8CString("AudioResult"));
         m_audioResult = static_cast<WKDataRef>(WKDictionaryGetItemForKey(messageBodyDictionary, audioResultKey.get()));
 
-        m_gotFinalMessage = true;
-        TestController::singleton().notifyDone();
+        done();
         return;
     }
 
@@ -832,7 +828,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetWaitUntilDone")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-        m_waitUntilDone = static_cast<unsigned char>(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        setWaitUntilDone(static_cast<unsigned char>(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody))));
         return nullptr;
     }
     if (WKStringIsEqualToUTF8CString(messageName, "GetWaitUntilDone"))
@@ -1827,6 +1823,48 @@ void TestInvocation::performCustomMenuAction()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("PerformCustomMenuAction"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::initializeWaitToDumpWatchdogTimerIfNeeded()
+{
+    if (m_waitToDumpWatchdogTimer.isActive())
+        return;
+
+    m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
+}
+
+void TestInvocation::invalidateWaitToDumpWatchdogTimer()
+{
+    m_waitToDumpWatchdogTimer.stop();
+}
+
+void TestInvocation::waitToDumpWatchdogTimerFired()
+{
+    invalidateWaitToDumpWatchdogTimer();
+
+#if PLATFORM(COCOA)
+    char buffer[1024];
+    snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
+    outputText(buffer);
+#endif
+    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
+    done();
+}
+
+void TestInvocation::setWaitUntilDone(bool waitUntilDone)
+{
+    m_waitUntilDone = waitUntilDone;
+    if (waitUntilDone && TestController::singleton().useWaitToDumpWatchdogTimer())
+        initializeWaitToDumpWatchdogTimerIfNeeded();
+}
+
+void TestInvocation::done()
+{
+    m_gotFinalMessage = true;
+    invalidateWaitToDumpWatchdogTimer();
+    RunLoop::main().dispatch([] {
+        TestController::singleton().notifyDone();
+    });
 }
 
 } // namespace WTR

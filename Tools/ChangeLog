@@ -1,3 +1,43 @@
+2019-04-27  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Move test timeout handling to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=197333
+
+        Reviewed by Darin Adler.
+
+        Move test timeout handling in WebKitTestRunner to the UIProcess to play nicely with PSON. Previously,
+        we'd start the timeout timer in the InjectedBundle, which would fail to account of the time spent in
+        every WebContent process in the case of swapping.
+
+        Also, because of process caching, the timeout timer would sometime fire in a cached process and it
+        would lead to crashes when firing the timer.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::shouldDumpPixels const):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        (WTR::TestRunner::waitUntilDone):
+        (WTR::TestRunner::setWaitUntilDone):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp:
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::createTestSettingsDictionary):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestInvocation::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestInvocation::waitToDumpWatchdogTimerFired):
+        (WTR::TestInvocation::setWaitUntilDone):
+        (WTR::TestInvocation::done):
+        * WebKitTestRunner/TestInvocation.h:
+
 2019-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] linkPolymorphicCall now does GC

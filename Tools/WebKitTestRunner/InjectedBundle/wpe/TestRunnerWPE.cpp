@@ -40,19 +40,8 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
     return JSStringCreateWithUTF8CString("");
 }
 
-void TestRunner::invalidateWaitToDumpWatchdogTimer()
-{
-    m_waitToDumpWatchdogTimer.stop();
-}
-
 void TestRunner::platformInitialize()
 {
-}
-
-void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
-{
-    if (!m_waitToDumpWatchdogTimer.isActive())
-        m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
 }
 
 void TestRunner::installFakeHelvetica(JSStringRef configuration)

@@ -66,9 +66,6 @@ Ref<TestRunner> TestRunner::create()
 
 TestRunner::TestRunner()
     : m_userStyleSheetLocation(adoptWK(WKStringCreateWithUTF8CString("")))
-#if !PLATFORM(COCOA)
-    , m_waitToDumpWatchdogTimer(RunLoop::main(), this, &TestRunner::waitToDumpWatchdogTimerFired)
-#endif
 {
     platformInitialize();
 }
@@ -161,16 +158,13 @@ void TestRunner::waitUntilDone()
     RELEASE_ASSERT(injectedBundle.isTestRunning());
 
     setWaitUntilDone(true);
-    // FIXME: Watchdog timer should be moved to UI process in order to take the elapsed time in anotehr process into account.
-    if (injectedBundle.useWaitToDumpWatchdogTimer())
-        initializeWaitToDumpWatchdogTimerIfNeeded();
 }
 
 void TestRunner::setWaitUntilDone(bool value)
 {
-    WKRetainPtr<WKStringRef> messsageName = adoptWK(WKStringCreateWithUTF8CString("SetWaitUntilDone"));
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetWaitUntilDone"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), messageBody.get(), nullptr);
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
 bool TestRunner::shouldWaitUntilDone() const
@@ -180,19 +174,6 @@ bool TestRunner::shouldWaitUntilDone() const
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
     return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
-}
-
-void TestRunner::waitToDumpWatchdogTimerFired()
-{
-    invalidateWaitToDumpWatchdogTimer();
-    auto& injectedBundle = InjectedBundle::singleton();
-#if PLATFORM(COCOA)
-    char buffer[1024];
-    snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
-    injectedBundle.outputText(buffer);
-#endif
-    injectedBundle.outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
-    injectedBundle.done();
 }
 
 void TestRunner::notifyDone()
