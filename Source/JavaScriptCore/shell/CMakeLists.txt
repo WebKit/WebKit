@@ -1,101 +1,106 @@
-set(JSC_SOURCES
+set(jsc_SOURCES
     ../jsc.cpp
 )
 
-set(JSC_LIBRARIES
+if ("${JavaScriptCore_LIBRARY_TYPE}" MATCHES "STATIC")
+    set(jsc_PRIVATE_DEFINITIONS STATICALLY_LINKED_WITH_JavaScriptCore)
+endif ()
+
+set(jsc_LIBRARIES
     ${CMAKE_DL_LIBS}
     JavaScriptCore${DEBUG_SUFFIX}
     WTF${DEBUG_SUFFIX}
 )
 
-if (WTF_OS_MAC_OS_X)
-    list(APPEND JSC_LIBRARIES edit)
-endif ()
-
-if ("${JavaScriptCore_LIBRARY_TYPE}" MATCHES "STATIC")
-    add_definitions(-DSTATICALLY_LINKED_WITH_JavaScriptCore)
-endif ()
-
-set(TESTAPI_SOURCES
-    ../API/tests/CompareAndSwapTest.cpp
-    ../API/tests/CustomGlobalObjectClassTest.c
-    ../API/tests/ExecutionTimeLimitTest.cpp
-    ../API/tests/FunctionOverridesTest.cpp
-    ../API/tests/GlobalContextWithFinalizerTest.cpp
-    ../API/tests/JSONParseTest.cpp
-    ../API/tests/JSObjectGetProxyTargetTest.cpp
-    ../API/tests/MultithreadedMultiVMExecutionTest.cpp
-    ../API/tests/PingPongStackOverflowTest.cpp
-    ../API/tests/TypedArrayCTest.cpp
-    ../API/tests/testapi.c
-    ../API/tests/testapi.cpp
+set(jsc_PRIVATE_INCLUDE_DIRECTORIES
+    ${JavaScriptCore_INCLUDE_DIRECTORIES}
+    ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
+    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES}
 )
+
+if (WTF_OS_MAC_OS_X)
+    list(APPEND jsc_LIBRARIES edit)
+endif ()
+
+WEBKIT_EXECUTABLE_DECLARE(jsc)
+
+if (DEVELOPER_MODE)
+    set(testapi_SOURCES
+        ../API/tests/CompareAndSwapTest.cpp
+        ../API/tests/CustomGlobalObjectClassTest.c
+        ../API/tests/ExecutionTimeLimitTest.cpp
+        ../API/tests/FunctionOverridesTest.cpp
+        ../API/tests/GlobalContextWithFinalizerTest.cpp
+        ../API/tests/JSONParseTest.cpp
+        ../API/tests/JSObjectGetProxyTargetTest.cpp
+        ../API/tests/MultithreadedMultiVMExecutionTest.cpp
+        ../API/tests/PingPongStackOverflowTest.cpp
+        ../API/tests/TypedArrayCTest.cpp
+        ../API/tests/testapi.c
+        ../API/tests/testapi.cpp
+    )
+    set(testapi_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testapi_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testapi_LIBRARIES JavaScriptCore)
+
+    set(testmasm_SOURCES ../assembler/testmasm.cpp)
+    set(testmasm_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testmasm_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testmasm_LIBRARIES JavaScriptCore)
+
+    set(testRegExp_SOURCES ../testRegExp.cpp)
+    set(testRegExp_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testRegExp_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testRegExp_LIBRARIES JavaScriptCore)
+
+    set(testb3_SOURCES ../b3/testb3.cpp)
+    set(testb3_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testb3_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testb3_LIBRARIES JavaScriptCore)
+
+    set(testair_SOURCES ../b3/air/testair.cpp)
+    set(testair_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testair_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testair_LIBRARIES JavaScriptCore)
+
+    set(testdfg_SOURCES ../dfg/testdfg.cpp)
+    set(testdfg_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testdfg_LIBRARIES JavaScriptCore)
+
+    WEBKIT_EXECUTABLE_DECLARE(testapi)
+    WEBKIT_EXECUTABLE_DECLARE(testRegExp)
+    WEBKIT_EXECUTABLE_DECLARE(testmasm)
+    WEBKIT_EXECUTABLE_DECLARE(testb3)
+    WEBKIT_EXECUTABLE_DECLARE(testair)
+    WEBKIT_EXECUTABLE_DECLARE(testdfg)
+endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-WEBKIT_WRAP_SOURCELIST(${JSC_SOURCES})
-WEBKIT_WRAP_SOURCELIST(${TESTAPI_SOURCES})
-include_directories(./ ${JavaScriptCore_INCLUDE_DIRECTORIES} ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
-add_executable(jsc ${JSC_SOURCES})
-target_link_libraries(jsc ${JSC_LIBRARIES})
-
-if (JSC_OUTPUT_NAME)
-    set_target_properties(jsc PROPERTIES OUTPUT_NAME ${JSC_OUTPUT_NAME})
-endif ()
-
-if (JSC_LINK_FLAGS)
-    WEBKIT_ADD_TARGET_PROPERTIES(jsc LINK_FLAGS "${JSC_LINK_FLAGS}")
-endif ()
+WEBKIT_EXECUTABLE(jsc)
 
 if (SHOULD_INSTALL_JS_SHELL)
     install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
 endif ()
 
-if (TARGET jscLib)
-    add_dependencies(jsc jscLib)
+if (DEVELOPER_MODE)
+    WEBKIT_EXECUTABLE(testapi)
+    WEBKIT_EXECUTABLE(testRegExp)
+    WEBKIT_EXECUTABLE(testmasm)
+    WEBKIT_EXECUTABLE(testb3)
+    WEBKIT_EXECUTABLE(testair)
+    WEBKIT_EXECUTABLE(testdfg)
+
+    file(COPY
+        "${JAVASCRIPTCORE_DIR}/API/tests/testapi.js"
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
+    )
+    file(COPY
+        "${JAVASCRIPTCORE_DIR}/API/tests/testapi-function-overrides.js"
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
+    )
 endif ()
-
-set(TESTMASM_SOURCES
-    ../assembler/testmasm.cpp
-)
-
-set(TESTB3_SOURCES
-    ../b3/testb3.cpp
-)
-
-set(TESTAIR_SOURCES
-    ../b3/air/testair.cpp
-)
-
-set(TESTDFG_SOURCES
-    ../dfg/testdfg.cpp
-)
-
-if (DEVELOPER_MODE AND NOT WIN32)
-    add_executable(testmasm ${TESTMASM_SOURCES})
-    target_link_libraries(testmasm ${JSC_LIBRARIES})
-
-    add_executable(testb3 ${TESTB3_SOURCES})
-    target_link_libraries(testb3 ${JSC_LIBRARIES})
-
-    add_executable(testair ${TESTAIR_SOURCES})
-    target_link_libraries(testair ${JSC_LIBRARIES})
-
-    add_executable(testdfg ${TESTDFG_SOURCES})
-    target_link_libraries(testdfg ${JSC_LIBRARIES})
-
-    add_executable(testapi ${TESTAPI_SOURCES})
-    target_link_libraries(testapi ${JSC_LIBRARIES})
-endif ()
-
-file(COPY
-    "${JAVASCRIPTCORE_DIR}/API/tests/testapi.js"
-    DESTINATION
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
-)
-file(COPY
-    "${JAVASCRIPTCORE_DIR}/API/tests/testapi-function-overrides.js"
-    DESTINATION
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
-)

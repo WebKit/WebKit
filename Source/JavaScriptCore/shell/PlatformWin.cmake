@@ -1,40 +1,56 @@
-include_directories(./ PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES} ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES} ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR})
-include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
-add_library(jscLib SHARED ${JSC_SOURCES})
-
-list(APPEND JSC_LIBRARIES
-    Winmm
-)
-
-target_link_libraries(jscLib ${JSC_LIBRARIES})
+set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
 
 if (${WTF_PLATFORM_WIN_CAIRO})
-    add_definitions(-DWIN_CAIRO)
+    list(APPEND wrapper_DEFINITIONS WIN_CAIRO)
 endif ()
 
-set(JSC_SOURCES ${JAVASCRIPTCORE_DIR}/shell/DLLLauncherMain.cpp)
-set(JSC_LIBRARIES shlwapi)
-add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
+WEBKIT_WRAP_EXECUTABLE(jsc
+    SOURCES DLLLauncherMain.cpp
+    LIBRARIES shlwapi
+)
+target_compile_definitions(jsc PRIVATE ${wrapper_DEFINITIONS})
+set(jsc_OUTPUT_NAME jsc${DEBUG_SUFFIX})
 
-set(JSC_OUTPUT_NAME "jsc${DEBUG_SUFFIX}")
+if (DEVELOPER_MODE)
+    WEBKIT_WRAP_EXECUTABLE(testapi
+        SOURCES DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(testapi PRIVATE ${wrapper_DEFINITIONS})
+    set(testapi_OUTPUT_NAME testapi${DEBUG_SUFFIX})
 
-add_library(testRegExpLib SHARED ../testRegExp.cpp)
-add_executable(testRegExp ${JSC_SOURCES})
-set_target_properties(testRegExp PROPERTIES OUTPUT_NAME "testRegExp${DEBUG_SUFFIX}")
-target_link_libraries(testRegExp shlwapi)
-add_dependencies(testRegExp testRegExpLib)
-target_link_libraries(testRegExpLib JavaScriptCore)
+    WEBKIT_WRAP_EXECUTABLE(testRegExp
+        SOURCES DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(testRegExp PRIVATE ${wrapper_DEFINITIONS})
+    set(testRegExp_OUTPUT_NAME testRegExp${DEBUG_SUFFIX})
 
-add_library(testapiLib SHARED ${TESTAPI_SOURCES})
-add_executable(testapi ${JSC_SOURCES})
-set_target_properties(testapi PROPERTIES OUTPUT_NAME "testapi${DEBUG_SUFFIX}")
-target_link_libraries(testapi shlwapi)
-add_dependencies(testapi testapiLib)
-target_link_libraries(testapiLib JavaScriptCore)
+    WEBKIT_WRAP_EXECUTABLE(testmasm
+        SOURCES DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(testmasm PRIVATE ${wrapper_DEFINITIONS})
+    set(testmasm_OUTPUT_NAME testmasm${DEBUG_SUFFIX})
 
-add_library(testmasmLib SHARED ../assembler/testmasm.cpp)
-add_executable(testmasm ${JSC_SOURCES})
-set_target_properties(testmasm PROPERTIES OUTPUT_NAME "testmasm${DEBUG_SUFFIX}")
-target_link_libraries(testmasm shlwapi)
-add_dependencies(testmasm testmasmLib)
-target_link_libraries(testmasmLib JavaScriptCore)
+    WEBKIT_WRAP_EXECUTABLE(testb3
+        SOURCES DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(testb3 PRIVATE ${wrapper_DEFINITIONS})
+    set(testb3_OUTPUT_NAME testb3${DEBUG_SUFFIX})
+
+    WEBKIT_WRAP_EXECUTABLE(testair
+        SOURCES DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(testair PRIVATE ${wrapper_DEFINITIONS})
+    set(testair_OUTPUT_NAME testair${DEBUG_SUFFIX})
+
+    WEBKIT_WRAP_EXECUTABLE(testdfg
+        SOURCES DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(testdfg PRIVATE ${wrapper_DEFINITIONS})
+    set(testdfg_OUTPUT_NAME testdfg${DEBUG_SUFFIX})
+endif ()

@@ -1,3 +1,23 @@
+2019-04-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WEBKIT_EXECUTABLE macro
+        https://bugs.webkit.org/show_bug.cgi?id=197206
+
+        Reviewed by Konstantin Tokarev.
+
+        Migrate to WEBKIT_EXECUTABLE for the jsc and test targets.
+
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        * dfg/testdfg.cpp:
+        * shell/CMakeLists.txt:
+        * shell/PlatformGTK.cmake:
+        * shell/PlatformJSCOnly.cmake: Removed.
+        * shell/PlatformMac.cmake:
+        * shell/PlatformPlayStation.cmake:
+        * shell/PlatformWPE.cmake:
+        * shell/PlatformWin.cmake:
+
 2019-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] linkPolymorphicCall now does GC

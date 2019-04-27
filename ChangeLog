@@ -1,3 +1,21 @@
+2019-04-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WEBKIT_EXECUTABLE macro
+        https://bugs.webkit.org/show_bug.cgi?id=197206
+
+        Reviewed by Konstantin Tokarev.
+
+        Add WEBKIT_EXECUTABLE macro for creating executable targets. This wraps the creation of
+        executable targets using the same conventions of WEBKIT_FRAMEWORK.
+
+        Common code from the two macros were moved to WEBKIT_TARGET which is meant as an internal
+        macro.
+
+        Add WEBKIT_WRAP_EXECUTABLE macro to support Windows targets which use a DLLLauncherMain to
+        launch the executable.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2019-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r244669.
