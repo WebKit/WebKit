@@ -102,7 +102,6 @@ private:
     JSTestGlobalObjectPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
-        didBecomePrototype();
     }
 public:
     static const unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;

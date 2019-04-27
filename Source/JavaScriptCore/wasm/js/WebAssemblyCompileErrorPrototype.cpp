@@ -57,7 +57,6 @@ Structure* WebAssemblyCompileErrorPrototype::createStructure(VM& vm, JSGlobalObj
 void WebAssemblyCompileErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    didBecomePrototype();
 }
 
 WebAssemblyCompileErrorPrototype::WebAssemblyCompileErrorPrototype(VM& vm, Structure* structure)

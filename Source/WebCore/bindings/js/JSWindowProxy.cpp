@@ -97,7 +97,6 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
     // FIXME: Why do we need to protect this when there's a pointer to it on the stack?
     // Perhaps the issue is that structure objects aren't seen when scanning the stack?
     Strong<JSNonFinalObject> prototype(vm, isRemoteDOMWindow ? static_cast<JSNonFinalObject*>(JSRemoteDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)) : static_cast<JSNonFinalObject*>(JSDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)));
-    prototype->didBecomePrototype();
 
     JSDOMGlobalObject* window = nullptr;
     if (isRemoteDOMWindow) {

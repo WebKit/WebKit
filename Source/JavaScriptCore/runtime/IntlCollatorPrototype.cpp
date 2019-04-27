@@ -76,7 +76,6 @@ void IntlCollatorPrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Object"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    didBecomePrototype();
 }
 
 static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)

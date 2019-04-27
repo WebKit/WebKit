@@ -1,3 +1,16 @@
+2019-04-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244708.
+        https://bugs.webkit.org/show_bug.cgi?id=197334
+
+        "Broke the debug build" (Requested by rmorisset on #webkit).
+
+        Reverted changeset:
+
+        "All prototypes should call didBecomePrototype()"
+        https://bugs.webkit.org/show_bug.cgi?id=196315
+        https://trac.webkit.org/changeset/244708
+
 2019-04-26  Robin Morisset  <rmorisset@apple.com>
 
         All prototypes should call didBecomePrototype()

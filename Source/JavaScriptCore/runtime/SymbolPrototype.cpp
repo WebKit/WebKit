@@ -67,8 +67,6 @@ void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, symbolProtoFuncValueOf, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-
-    didBecomePrototype();
 }
 
 // ------------------------------ Functions ---------------------------
