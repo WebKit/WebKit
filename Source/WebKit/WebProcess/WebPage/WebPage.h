@@ -1886,7 +1886,7 @@ private:
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
 #endif
 
-    OptionSet<LayerTreeFreezeReason> m_LayerTreeFreezeReasons;
+    OptionSet<LayerTreeFreezeReason> m_layerTreeFreezeReasons;
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
 #if PLATFORM(COCOA)
