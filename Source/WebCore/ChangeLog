@@ -1,3 +1,14 @@
+2019-04-26  Jer Noble  <jer.noble@apple.com>
+
+        Reduce the number of copies made during SourceBufferPrivateAVFObjC::append() using SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=197335
+        <rdar://problem/49175604>
+
+        Rubber-stamped by Alex Christensen.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+
 2019-04-26  Jessie Berlin  <jberlin@webkit.org>
 
         Add new mac target numbers

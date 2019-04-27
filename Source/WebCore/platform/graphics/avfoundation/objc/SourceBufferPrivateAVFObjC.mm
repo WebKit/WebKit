@@ -706,16 +706,12 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
 {
     DEBUG_LOG(LOGIDENTIFIER, "data length = ", data.size());
 
-    // FIXME: Avoid the data copy by wrapping around the Vector<> object.
-    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
-    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = m_appendWeakFactory.createWeakPtr(*this);
-    RetainPtr<AVStreamDataParser> parser = m_parser;
-    RetainPtr<WebAVStreamDataParserListener> delegate = m_delegate;
-
     m_parsingSucceeded = true;
     dispatch_group_enter(m_isAppendingGroup.get());
 
-    dispatch_async(globalDataParserQueue(), [nsData, weakThis, parser, delegate, isAppendingGroup = m_isAppendingGroup, parserStateWasReset = m_parserStateWasReset] {
+    dispatch_async(globalDataParserQueue(), [data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser, delegate = m_delegate, isAppendingGroup = m_isAppendingGroup, parserStateWasReset = m_parserStateWasReset] () mutable {
+        auto sharedData = SharedBuffer::create(WTFMove(data));
+        auto nsData = sharedData->createNSData();
         if (parserStateWasReset)
             [parser appendStreamData:nsData.get() withFlags:AVStreamDataParserStreamDataDiscontinuity];
         else
