@@ -1,3 +1,21 @@
+2019-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Move some Compositing logging to the Layers log channel
+        https://bugs.webkit.org/show_bug.cgi?id=197345
+
+        Reviewed by Sam Weinig.
+
+        Make Compositing logging a bit less verbose by moving the GraphicsLayer tree dump
+        to the Layers log channel. Also log GraphicsLayers after flushing, when we'll have
+        accurate visible rects. 
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateCoverage):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::layersLogEnabled):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+
 2019-04-27  Megan Gardner  <megan_gardner@apple.com>
 
         Lookup only looking up the first word in selection

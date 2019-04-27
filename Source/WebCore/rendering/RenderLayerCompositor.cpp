@@ -276,6 +276,11 @@ static inline bool compositingLogEnabled()
 {
     return LogCompositing.state == WTFLogChannelState::On;
 }
+
+static inline bool layersLogEnabled()
+{
+    return LogLayers.state == WTFLogChannelState::On;
+}
 #endif
 
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
@@ -492,7 +497,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     // As long as we're not the root of the flush, we can bail.
     if (!isFlushRoot && rootLayerAttachment() == RootLayerAttachedViaEnclosingFrame)
         return;
-    
+
     if (rootLayerAttachment() == RootLayerUnattached) {
 #if PLATFORM(IOS_FAMILY)
         startLayerFlushTimerIfNeeded();
@@ -515,6 +520,13 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         }
         
         ASSERT(m_flushingLayers);
+
+#if ENABLE(TREE_DEBUGGING)
+        if (layersLogEnabled()) {
+            LOG(Layers, "RenderLayerCompositor::flushPendingLayerChanges");
+            showGraphicsLayerTree(m_rootContentsLayer.get());
+        }
+#endif
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -806,8 +818,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (compositingLogEnabled()) {
         LOG(Compositing, "RenderLayerCompositor::updateCompositingLayers - post");
         showPaintOrderTree(m_renderView.layer());
-        LOG(Compositing, "RenderLayerCompositor::updateCompositingLayers - GraphicsLayers post, contentLayersCount %d", m_contentLayersCount);
-        showGraphicsLayerTree(m_rootContentsLayer.get());
     }
 #endif
 
