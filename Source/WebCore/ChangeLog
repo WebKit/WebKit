@@ -1,3 +1,18 @@
+2019-04-27  Megan Gardner  <megan_gardner@apple.com>
+
+        Lookup only looking up the first word in selection
+        https://bugs.webkit.org/show_bug.cgi?id=197341
+        <rdar://problem/48221414>
+
+        Reviewed by Wenson Hsieh.
+
+        Lookup is not testable.
+
+        Reveal needs the full range in order to correctly create the item for the popover.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::showPopupOrCreateAnimationController):
+
 2019-04-26  Jer Noble  <jer.noble@apple.com>
 
         Reduce the number of copies made during SourceBufferPrivateAVFObjC::append() using SharedBuffer
