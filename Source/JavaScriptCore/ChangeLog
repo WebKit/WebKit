@@ -1,3 +1,20 @@
+2019-04-26  Keith Rollin  <krollin@apple.com>
+
+        Enable new build rule for post-processing headers when using XCBuild
+        https://bugs.webkit.org/show_bug.cgi?id=197340
+        <rdar://problem/50226685>
+
+        Reviewed by Brent Fulgham.
+
+        In Bug 197116, we conditionally disabled the old method for
+        post-processing header files when we are using the new XCBuild build
+        system. This check-in conditionally enables the new post-processing
+        facility. Note that the old system is disabled and the new system
+        enabled only when the USE_NEW_BUILD_SYSTEM environment variable is set
+        to YES.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2019-04-26  Jessie Berlin  <jberlin@webkit.org>
 
         Add new mac target numbers

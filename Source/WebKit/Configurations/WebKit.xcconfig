@@ -155,6 +155,7 @@ EXCLUDED_SOURCE_FILE_NAMES = Resources/ios/*;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = PluginProcessShim.dylib SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb com.apple.WebKit.plugin-common.sb PlugInSandboxProfiles/*.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
+APPLY_RULES_IN_COPY_HEADERS = $(USE_NEW_BUILD_SYSTEM);
 
 WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED[sdk=macosx*] = $(WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED$(WK_MACOS_1014));
 WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED_MACOS_BEFORE_1014 = YES;
