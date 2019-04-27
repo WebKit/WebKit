@@ -1,3 +1,50 @@
+2019-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Improve safety of MachMessage class
+        https://bugs.webkit.org/show_bug.cgi?id=197323
+        <rdar://problem/44291920>
+
+        Reviewed by Darin Adler.
+
+        Improve safety of MachMessage class and clean things up a bit.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendOutgoingMessage):
+        - Pass MessageReceiverName / MessageName when constructing the MachMessage rather
+          than setting them afterwards since they never change for a given MachMessage.
+        - Set header->msgh_id to the right value right away instead of setting it first
+          to inlineBodyMessageID and then later fixing it to be outOfLineBodyMessageID
+          when the body is out of line.
+        - When messageBodyIsOOL was true, we would call getDescriptorAndSkip() which
+          would advance the pointer by sizeof(mach_msg_port_descriptor_t), even though
+          the descriptor type is mach_msg_ool_descriptor_t. This would not matter in
+          the end because we would not use the messageData pointer after this but
+          still.
+
+        * Platform/IPC/mac/MachMessage.cpp:
+        (IPC::MachMessage::create):
+        Use fastZeroedMalloc() instead of fastMalloc() for safety, given that this class
+        has a mach_msg_header_t flexible array member. This is what is recommended by the
+        mach documentation. It is much safer because it otherwize relies on the user
+        (Connection::sendOutgoingMessage()) to initialize ALL the message members
+        correctly. I suspect this was the cause of <rdar://problem/44291920> because
+        Connection::sendOutgoingMessage() would fail to initialize header->msgh_voucher_port
+        and the MachMessage destructor would then call mach_msg_destroy(header()), which
+        would mach_msg_destroy_port(header->msgh_voucher_port).
+
+        (IPC::MachMessage::MachMessage):
+        Pass MessageReceiverName / MessageName when constructing the MachMessage rather
+        than setting them afterwards since they never change for a given MachMessage.
+
+        (IPC::MachMessage::messageSize):
+        Drop if checks for portDescriptorCount and memoryDescriptorCount since the logic
+        will do the right thing even if they are 0.
+
+        * Platform/IPC/mac/MachMessage.h:
+        (IPC::MachMessage::header):
+        (IPC::MachMessage::messageReceiverName const):
+        (IPC::MachMessage::messageName const):
+
 2019-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename m_LayerTreeFreezeReasons to m_layerTreeFreezeReasons

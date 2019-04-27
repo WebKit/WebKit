@@ -36,30 +36,27 @@ namespace IPC {
 class MachMessage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<MachMessage> create(size_t);
+    static std::unique_ptr<MachMessage> create(CString&& messageReceiverName, CString&& messageName, size_t);
     ~MachMessage();
 
     static size_t messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
 
     size_t size() const { return m_size; }
-    mach_msg_header_t* header();
+    mach_msg_header_t* header() { return m_messageHeader; }
 
     void leakDescriptors();
 
     const CString& messageReceiverName() const { return m_messageReceiverName; }
-    void setMessageReceiverName(CString&& messageReceiverName) { m_messageReceiverName = WTFMove(messageReceiverName); }
-
     const CString& messageName() const { return m_messageName; }
-    void setMessageName(CString&& messageName) { m_messageName = WTFMove(messageName); }
 
 private:
-    explicit MachMessage(size_t);
+    MachMessage(CString&& messageReceiverName, CString&& messageName, size_t);
 
     CString m_messageReceiverName;
     CString m_messageName;
     size_t m_size;
-    bool m_shouldFreeDescriptors;
-    mach_msg_header_t m_messageHeader[0];
+    bool m_shouldFreeDescriptors { true };
+    mach_msg_header_t m_messageHeader[];
 };
 
 }

@@ -306,16 +306,14 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
         messageSize = MachMessage::messageSize(0, numberOfPortDescriptors, messageBodyIsOOL);
     }
 
-    auto message = MachMessage::create(messageSize);
-    message->setMessageReceiverName(encoder->messageReceiverName().toString());
-    message->setMessageName(encoder->messageName().toString());
+    auto message = MachMessage::create(encoder->messageReceiverName().toString(), encoder->messageName().toString(), messageSize);
 
     auto* header = message->header();
     header->msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
     header->msgh_size = messageSize;
     header->msgh_remote_port = m_sendPort;
     header->msgh_local_port = MACH_PORT_NULL;
-    header->msgh_id = inlineBodyMessageID;
+    header->msgh_id = messageBodyIsOOL ? outOfLineBodyMessageID : inlineBodyMessageID;
 
     auto* messageData = reinterpret_cast<uint8_t*>(header + 1);
 
@@ -327,14 +325,14 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
         body->msgh_descriptor_count = numberOfPortDescriptors + messageBodyIsOOL;
         messageData = reinterpret_cast<uint8_t*>(body + 1);
 
-        auto getDescriptorAndSkip = [](uint8_t*& data) {
-            return reinterpret_cast<mach_msg_descriptor_t*>(std::exchange(data, data + sizeof(mach_msg_port_descriptor_t)));
+        auto getDescriptorAndAdvance = [](uint8_t*& data, std::size_t toAdvance) {
+            return reinterpret_cast<mach_msg_descriptor_t*>(std::exchange(data, data + toAdvance));
         };
 
         for (auto& attachment : attachments) {
             ASSERT(attachment.type() == Attachment::MachPortType);
             if (attachment.type() == Attachment::MachPortType) {
-                auto* descriptor = getDescriptorAndSkip(messageData);
+                auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_port_descriptor_t));
                 descriptor->port.name = attachment.port();
                 descriptor->port.disposition = attachment.disposition();
                 descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;
@@ -342,9 +340,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
         }
 
         if (messageBodyIsOOL) {
-            header->msgh_id = outOfLineBodyMessageID;
-
-            auto* descriptor = getDescriptorAndSkip(messageData);
+            auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_ool_descriptor_t));
             descriptor->out_of_line.address = encoder->buffer();
             descriptor->out_of_line.size = encoder->bufferSize();
             descriptor->out_of_line.copy = MACH_MSG_VIRTUAL_COPY;

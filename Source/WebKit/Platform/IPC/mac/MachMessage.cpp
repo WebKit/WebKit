@@ -32,15 +32,16 @@
 
 namespace IPC {
 
-std::unique_ptr<MachMessage> MachMessage::create(size_t size)
+std::unique_ptr<MachMessage> MachMessage::create(CString&& messageReceiverName, CString&& messageName, size_t size)
 {
-    void* memory = WTF::fastMalloc(sizeof(MachMessage) + size);
-    return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { size } };
+    void* memory = WTF::fastZeroedMalloc(sizeof(MachMessage) + size);
+    return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { WTFMove(messageReceiverName), WTFMove(messageName), size } };
 }
 
-MachMessage::MachMessage(size_t size)
-    : m_size { size }
-    , m_shouldFreeDescriptors { true }
+MachMessage::MachMessage(CString&& messageReceiverName, CString&& messageName, size_t size)
+    : m_messageReceiverName(WTFMove(messageReceiverName))
+    , m_messageName(WTFMove(messageName))
+    , m_size { size }
 {
 }
 
@@ -56,19 +57,11 @@ size_t MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, siz
 
     if (portDescriptorCount || memoryDescriptorCount) {
         messageSize += sizeof(mach_msg_body_t);
-
-        if (portDescriptorCount)
-            messageSize += (portDescriptorCount * sizeof(mach_msg_port_descriptor_t));
-        if (memoryDescriptorCount)
-            messageSize += (memoryDescriptorCount * sizeof(mach_msg_ool_descriptor_t));
+        messageSize += (portDescriptorCount * sizeof(mach_msg_port_descriptor_t));
+        messageSize += (memoryDescriptorCount * sizeof(mach_msg_ool_descriptor_t));
     }
 
     return round_msg(messageSize);
-}
-
-mach_msg_header_t* MachMessage::header()
-{
-    return m_messageHeader;
 }
 
 void MachMessage::leakDescriptors()
