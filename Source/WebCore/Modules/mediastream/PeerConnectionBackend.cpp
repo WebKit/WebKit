@@ -308,14 +308,10 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
     if (m_peerConnection.isClosed())
         return;
 
-    // FIXME: Update remote description and set ICE connection state to checking if not already done so.
     ASSERT(m_addIceCandidatePromise);
 
     m_addIceCandidatePromise->resolve();
     m_addIceCandidatePromise = WTF::nullopt;
-
-    if (!m_waitingForMDNSResolution && m_finishedReceivingCandidates)
-        endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
 }
 
 void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
@@ -330,9 +326,6 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
 
     m_addIceCandidatePromise->reject(WTFMove(exception));
     m_addIceCandidatePromise = WTF::nullopt;
-
-    if (!m_waitingForMDNSResolution && m_finishedReceivingCandidates)
-        endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
 }
 
 void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)

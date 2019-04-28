@@ -210,7 +210,6 @@ private:
     Optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
     Optional<DOMPromiseDeferred<void>> m_setDescriptionPromise;
     Optional<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
-    Optional<DOMPromiseDeferred<void>> m_endOfIceCandidatePromise;
 
     bool m_shouldFilterICECandidates { true };
     struct PendingICECandidate {
@@ -229,11 +228,6 @@ private:
     bool m_negotiationNeeded { false };
     bool m_finishedGatheringCandidates { false };
     uint64_t m_waitingForMDNSRegistration { 0 };
-
-    bool m_finishedReceivingCandidates { false };
-    uint64_t m_waitingForMDNSResolution { 0 };
-
-    HashMap<String, String> m_mdnsMapping;
 };
 
 } // namespace WebCore
