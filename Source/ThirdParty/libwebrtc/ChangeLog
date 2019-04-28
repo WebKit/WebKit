@@ -1,3 +1,10 @@
+2019-04-28  Andy Estes  <aestes@apple.com>
+
+        Fix the watchOS engineering build.
+
+        * Makefile: Set OTHER_OPTIONS to build libwebrtc's boringssl target on watchOS, which is a
+        dependency for TestWebKitAPI's TCPServer.
+
 2019-04-26  Jessie Berlin  <jberlin@webkit.org>
 
         Add new mac target numbers

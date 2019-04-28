@@ -1,3 +1,10 @@
+2019-04-28  Andy Estes  <aestes@apple.com>
+
+        Fix the watchOS engineering build.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+        (TestWebKitAPI::TEST): AVVideoPerformanceMetrics does not exist on watchOS.
+
 2019-04-27  Chris Dumez  <cdumez@apple.com>
 
         [WKTR] Move test timeout handling to the UIProcess

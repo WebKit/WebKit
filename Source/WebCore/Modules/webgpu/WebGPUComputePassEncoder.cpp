@@ -30,6 +30,7 @@
 
 #include "GPUComputePassEncoder.h"
 #include "GPUProgrammablePassEncoder.h"
+#include "Logging.h"
 #include "WebGPUComputePipeline.h"
 
 namespace WebCore {

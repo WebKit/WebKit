@@ -80,7 +80,9 @@ TEST(AVFoundationSoftLink, Classes)
     EXPECT_NE(PAL::getAVContentKeySessionClass(), nullptr);
     EXPECT_NE(PAL::getAVAssetResourceLoadingRequestClass(), nullptr);
     EXPECT_NE(PAL::getAVAssetReaderSampleReferenceOutputClass(), nullptr);
+#if !PLATFORM(WATCHOS)
     EXPECT_NE(PAL::getAVVideoPerformanceMetricsClass(), nullptr);
+#endif
     EXPECT_NE(PAL::getAVSampleBufferAudioRendererClass(), nullptr);
     EXPECT_NE(PAL::getAVSampleBufferDisplayLayerClass(), nullptr);
     EXPECT_NE(PAL::getAVSampleBufferRenderSynchronizerClass(), nullptr);
