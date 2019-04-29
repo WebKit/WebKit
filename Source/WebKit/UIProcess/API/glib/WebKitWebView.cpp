@@ -514,7 +514,11 @@ static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebVie
 static void enableBackForwardNavigationGesturesChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
     gboolean enable = webkit_settings_get_enable_back_forward_navigation_gestures(settings);
-    webkitWebViewBaseSetEnableBackForwardNavigationGesture(WEBKIT_WEB_VIEW_BASE(webView), enable);
+
+    ViewGestureController& controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(webView));
+    controller.setSwipeGestureEnabled(enable);
+
+    getPage(webView).setShouldRecordNavigationSnapshots(enable);
 }
 
 static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)

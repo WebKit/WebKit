@@ -206,7 +206,6 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<GestureController> gestureController;
 #endif
     std::unique_ptr<ViewGestureController> viewGestureController;
-    bool isBackForwardNavigationGestureEnabled { false };
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -1190,18 +1189,6 @@ GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webView
 }
 #endif
 
-void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase* webViewBase, bool enabled)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-
-    priv->isBackForwardNavigationGestureEnabled = enabled;
-
-    if (priv->pageProxy->hasRunningProcess())
-        webViewBase->priv->viewGestureController->setSwipeGestureEnabled(enabled);
-
-    priv->pageProxy->setShouldRecordNavigationSnapshots(enabled);
-}
-
 ViewGestureController& webkitWebViewBaseViewGestureController(WebKitWebViewBase* webViewBase)
 {
     return *webViewBase->priv->viewGestureController;
@@ -1433,6 +1420,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
 #endif
+
+    priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
@@ -1650,12 +1639,11 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     // Queue a resize to ensure the new DrawingAreaProxy is resized.
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-
 #if PLATFORM(X11) && USE(TEXTURE_MAPPER_GL) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
         return;
 
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
     ASSERT(drawingArea);
 
@@ -1667,9 +1655,6 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
 #else
     UNUSED_PARAM(webkitWebViewBase);
 #endif
-
-    priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
-    priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
 }
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
