@@ -1,3 +1,14 @@
+2019-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        <rdar://problem/50299396> Fix internal High Sierra build
+        https://bugs.webkit.org/show_bug.cgi?id=197388
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MobileMiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2019-04-29  Youenn Fablet  <youenn@apple.com>
 
         Remove spurious GVA printf logging
