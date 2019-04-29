@@ -170,8 +170,8 @@ macro(_WEBKIT_TARGET _target_logical_name _target_cmake_name)
 
     target_link_libraries(${_target_cmake_name} ${${_target_logical_name}_LIBRARIES})
 
-    if (${_target}_DEPENDENCIES)
-        add_dependencies(${_target_cmake_name} ${${_target}_DEPENDENCIES})
+    if (${_target_logical_name}_DEPENDENCIES)
+        add_dependencies(${_target_cmake_name} ${${_target_logical_name}_DEPENDENCIES})
     endif ()
 endmacro()
 
