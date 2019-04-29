@@ -45,12 +45,12 @@ void presentStorageAccessAlert(WKWebView *webView, const WebCore::RegistrableDom
     auto currentDomain = current.string().createCFString();
 
 #if PLATFORM(MAC)
-    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?", @"Message for requesting cross-site cookie and website data access."), requestingDomain.get(), currentDomain.get()];
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Do you want to allow “%@” to use cookies and website data while browsing “%@”?", @"Message for requesting cross-site cookie and website data access."), requestingDomain.get(), currentDomain.get()];
 #else
-    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow \"%@\" to use cookies and website data while browsing \"%@\"?", @"Message for requesting cross-site cookie and website data access."), requestingDomain.get(), currentDomain.get()];
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use cookies and website data while browsing “%@”?", @"Message for requesting cross-site cookie and website data access."), requestingDomain.get(), currentDomain.get()];
 #endif
 
-    NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"This will allow \"%@\" to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), requestingDomain.get()];
+    NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), requestingDomain.get()];
     NSString *allowButtonString = WEB_UI_STRING_KEY(@"Allow", "Allow (cross-site cookie and website data access)", @"Button title in Storage Access API prompt");
     NSString *doNotAllowButtonString = WEB_UI_STRING_KEY(@"Don't Allow", "Don't Allow (cross-site cookie and website data access)", @"Button title in Storage Access API prompt");
 

@@ -113,7 +113,7 @@
 "Allow (device motion and orientation access)" = "Allow";
 
 /* Message for requesting cross-site cookie and website data access. */
-"Allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Allow \"%@\" to use cookies and website data while browsing \"%@\"?";
+"Allow “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” to use cookies and website data while browsing “%@”?";
 
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
@@ -275,7 +275,7 @@
 "Dictation (Undo action name)" = "Dictation";
 
 /* Message for requesting cross-site cookie and website data access. */
-"Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?";
+"Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
 /* Button title in Storage Access API prompt */
 "Don't Allow (cross-site cookie and website data access)" = "Don't Allow";
@@ -842,7 +842,7 @@
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
 /* Informative text for requesting cross-site cookie and website data access. */
-"This will allow \"%@\" to track your activity." = "This will allow \"%@\" to track your activity.";
+"This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
 
 /* Undo action name */
 "Tighten Kerning (Undo action name)" = "Tighten Kerning";
@@ -972,9 +972,6 @@
 
 /* message in authentication panel */
 "Your password will be sent unencrypted." = "Your password will be sent unencrypted.";
-
-/* Message for requesting access to the device motion and orientation */
-"\"%@\" Would Like to Access Motion and Orientation" = "\"%@\" Would Like to Access Motion and Orientation";
 
 /* HTTP result code string */
 "accepted" = "accepted";
@@ -1437,6 +1434,9 @@
 
 /* accessibility role description for a time field. */
 "week and year field" = "week and year field";
+
+/* Message for requesting access to the device motion and orientation */
+"“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";

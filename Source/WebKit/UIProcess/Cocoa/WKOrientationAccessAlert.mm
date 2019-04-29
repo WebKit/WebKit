@@ -36,7 +36,7 @@ namespace WebKit {
 
 void presentOrientationAccessAlert(WKWebView *view, const String& host, CompletionHandler<void(bool)>&& completionHandler)
 {
-    NSString *alertText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"\"%@\" Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), (NSString *)host];
+    NSString *alertText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"“%@” Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), (NSString *)host];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertText message:nil preferredStyle:UIAlertControllerStyleAlert];
 
     auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
