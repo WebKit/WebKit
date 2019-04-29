@@ -1971,6 +1971,8 @@ webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/o
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004.html [ Skip ]
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-word-overflow-wrap-interactions.html [ Skip ]
 
+webkit.org/b/197277 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-008.html [ ImageOnlyFailure ]
+
 
 ########################################
 ### START OF display: contents failures

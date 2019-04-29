@@ -1,3 +1,13 @@
+2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        Update the CSS Text WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=197326
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+          - The break-spaces-008.html fails due to bug 197277
+
 2019-04-26  Youenn Fablet  <youenn@apple.com>
 
         Use normal loading path for ping loads

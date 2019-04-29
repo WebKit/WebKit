@@ -56,6 +56,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-span-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-span-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-span-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-002-expected.html
@@ -64,6 +68,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/word-wrap-002-expected.html

@@ -78,6 +78,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-none-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-none-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-001-expected.html

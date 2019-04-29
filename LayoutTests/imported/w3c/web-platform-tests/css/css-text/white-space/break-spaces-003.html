@@ -7,11 +7,12 @@
 <link rel="help" href="https://drafts.csswg.org/css-text-3/#valdef-white-space-break-spaces">
 <link rel="help" href="https://drafts.csswg.org/css-text-3/#valdef-word-break-break-word">
 <meta name="flags" content="ahem">
-<link rel="match" href="reference/pre-wrap-001-ref.html">
-<meta name="assert" content="The word is not broken if there are previous breaking opportunities, honoring the 'white-space: break-spaces' value.">
+<link rel="match" href="reference/white-space-break-spaces-005-ref.html">
+<meta name="assert" content="break-word + break-spaces do not allow a break
+between the last character of a word and the first space of a sequence of preserved spaces
+if there are other wrapping opportunities earlier in the line.">
 <style>
 div {
-   position: relative;
    font: 25px/1 Ahem;
 }
 .fail {
