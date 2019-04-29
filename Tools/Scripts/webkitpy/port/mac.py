@@ -266,8 +266,8 @@ class MacPort(DarwinPort):
             self._helper = None
 
     def logging_patterns_to_strip(self):
-        # FIXME: Remove this after <rdar://problem/15605007> is fixed
-        return [(re.compile('(AVF|GVA) info:.*\n'), '')]
+        # FIXME: Remove this after <rdar://problem/15605007> and <rdar://problem/35954459> are fixed.
+        return [(re.compile('(AVF|GVA) info:.*\n'), ''), ('AVDCreateGPUAccelerator: Error loading GPU renderer\n', '')]
 
     def stderr_patterns_to_strip(self):
         worthless_patterns = []

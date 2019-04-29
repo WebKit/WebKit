@@ -1,5 +1,16 @@
 2019-04-29  Youenn Fablet  <youenn@apple.com>
 
+        Remove spurious GVA printf logging
+        https://bugs.webkit.org/show_bug.cgi?id=197368
+        <rdar://problem/35975256>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.logging_patterns_to_strip):
+
+2019-04-29  Youenn Fablet  <youenn@apple.com>
+
         getDisplayMedia should be called on user gesture
         https://bugs.webkit.org/show_bug.cgi?id=197356
         <rdar://problem/50296074>
