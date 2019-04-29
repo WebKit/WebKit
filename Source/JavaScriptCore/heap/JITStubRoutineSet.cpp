@@ -37,9 +37,8 @@ namespace JSC {
 JITStubRoutineSet::JITStubRoutineSet() { }
 JITStubRoutineSet::~JITStubRoutineSet()
 {
-    for (size_t i = m_listOfRoutines.size(); i--;) {
-        GCAwareJITStubRoutine* routine = m_listOfRoutines[i];
-        
+    for (auto& entry : m_routines) {
+        GCAwareJITStubRoutine* routine = entry.routine;
         routine->m_mayBeExecuting = false;
         
         if (!routine->m_isJettisoned) {
@@ -57,62 +56,84 @@ void JITStubRoutineSet::add(GCAwareJITStubRoutine* routine)
 {
     ASSERT(!routine->m_isJettisoned);
     
-    m_listOfRoutines.append(routine);
-    
-    uintptr_t start = routine->startAddress();
-    uintptr_t end = routine->endAddress();
-    uintptr_t step = JITStubRoutine::addressStep();
-    for (uintptr_t iter = start; iter < end; iter += step) {
-        ASSERT(m_addressToRoutineMap.find(iter) == m_addressToRoutineMap.end());
-        m_addressToRoutineMap.add(iter, routine);
+    m_routines.append(Routine {
+        routine->startAddress(),
+        routine
+    });
+}
+
+void JITStubRoutineSet::prepareForConservativeScan()
+{
+    if (m_routines.isEmpty()) {
+        m_range = Range<uintptr_t> { 0, 0 };
+        return;
     }
+    std::sort(
+        m_routines.begin(), m_routines.end(),
+        [&] (const Routine& a, const Routine& b) {
+            return a.startAddress < b.startAddress;
+        });
+    m_range = Range<uintptr_t> {
+        m_routines.first().startAddress,
+        m_routines.last().routine->endAddress()
+    };
 }
 
 void JITStubRoutineSet::clearMarks()
 {
-    for (size_t i = m_listOfRoutines.size(); i--;)
-        m_listOfRoutines[i]->m_mayBeExecuting = false;
+    for (auto& entry : m_routines)
+        entry.routine->m_mayBeExecuting = false;
 }
 
 void JITStubRoutineSet::markSlow(uintptr_t address)
 {
-    HashMap<uintptr_t, GCAwareJITStubRoutine*>::iterator iter =
-        m_addressToRoutineMap.find(address & ~(JITStubRoutine::addressStep() - 1));
-    
-    if (iter == m_addressToRoutineMap.end())
-        return;
-    
-    iter->value->m_mayBeExecuting = true;
+    ASSERT(isJITPC(bitwise_cast<void*>(address)));
+    ASSERT(!m_routines.isEmpty());
+
+    Routine* result = approximateBinarySearch<Routine>(
+        m_routines.begin(), m_routines.size(), address,
+        [] (const Routine* routine) -> uintptr_t { return routine->startAddress; });
+    if (result) {
+        auto markIfContained = [&] (const Routine& routine, uintptr_t address) {
+            if (routine.startAddress <= address && address < routine.routine->endAddress()) {
+                routine.routine->m_mayBeExecuting = true;
+                return true;
+            }
+            return false;
+        };
+
+        if (result > m_routines.begin()) {
+            if (markIfContained(result[-1], address))
+                return;
+        }
+        if (markIfContained(result[0], address))
+            return;
+        if (result + 1 < m_routines.end()) {
+            if (markIfContained(result[1], address))
+                return;
+        }
+    }
 }
 
 void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
 {
-    for (size_t i = 0; i < m_listOfRoutines.size(); i++) {
-        GCAwareJITStubRoutine* routine = m_listOfRoutines[i];
-        if (!routine->m_isJettisoned || routine->m_mayBeExecuting)
+    unsigned srcIndex = 0;
+    unsigned dstIndex = srcIndex;
+    while (srcIndex < m_routines.size()) {
+        Routine routine = m_routines[srcIndex++];
+        if (!routine.routine->m_isJettisoned || routine.routine->m_mayBeExecuting) {
+            m_routines[dstIndex++] = routine;
             continue;
-        
-        uintptr_t start = routine->startAddress();
-        uintptr_t end = routine->endAddress();
-        uintptr_t step = JITStubRoutine::addressStep();
-        for (uintptr_t iter = start; iter < end; iter += step) {
-            ASSERT(m_addressToRoutineMap.find(iter) != m_addressToRoutineMap.end());
-            ASSERT(m_addressToRoutineMap.find(iter)->value == routine);
-            m_addressToRoutineMap.remove(iter);
         }
-        
-        routine->deleteFromGC();
-        
-        m_listOfRoutines[i] = m_listOfRoutines.last();
-        m_listOfRoutines.removeLast();
-        i--;
+        routine.routine->deleteFromGC();
     }
+    m_routines.shrink(dstIndex);
 }
 
 void JITStubRoutineSet::traceMarkedStubRoutines(SlotVisitor& visitor)
 {
-    for (size_t i = m_listOfRoutines.size(); i--;) {
-        GCAwareJITStubRoutine* routine = m_listOfRoutines[i];
+    for (auto& entry : m_routines) {
+        GCAwareJITStubRoutine* routine = entry.routine;
         if (!routine->m_mayBeExecuting)
             continue;
         

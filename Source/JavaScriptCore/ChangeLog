@@ -1,3 +1,37 @@
+2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JITStubRoutineSet wastes 180KB of HashTable capacity on can.com
+        https://bugs.webkit.org/show_bug.cgi?id=186732
+
+        Reviewed by Saam Barati.
+
+        Our current mechanism of JITStubRoutineSet consumes more memory than needed. Basically we have HashMap<uintptr_t, StubRoutine*> and register
+        each executable address by 16 byte to this entry. So if your StubRoutine has 128bytes, it just adds 8 entries to this hash table.
+        In Gmail, we see a ~2MB table size.
+
+        Instead, this patch uses Vector<pair<uintptr_t, StubRoutine*>> and performs binary search onto this sorted vector. Before conservative
+        scanning, we sort this vector. And doing binary search with the sorted vector to find executing stub routines from the conservative roots.
+        This vector includes uintptr_t startAddress to make binary searching fast.
+
+        Large amount of conservative scan should be filtered by range check, so I think binary search here is OK, but we can decide based on what the
+        performance bots say.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::~JITStubRoutineSet):
+        (JSC::JITStubRoutineSet::add):
+        (JSC::JITStubRoutineSet::prepareForConservativeScan):
+        (JSC::JITStubRoutineSet::clearMarks):
+        (JSC::JITStubRoutineSet::markSlow):
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        (JSC::JITStubRoutineSet::traceMarkedStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::mark):
+        (JSC::JITStubRoutineSet::prepareForConservativeScan):
+        (JSC::JITStubRoutineSet::size const): Deleted.
+        (JSC::JITStubRoutineSet::at const): Deleted.
+
 2019-04-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] Add flag to enable version information stamping and disable by default.

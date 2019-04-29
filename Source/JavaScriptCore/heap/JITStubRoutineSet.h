@@ -28,6 +28,7 @@
 #include "JITStubRoutine.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/Range.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -52,24 +53,26 @@ public:
     void mark(void* candidateAddress)
     {
         uintptr_t address = removeCodePtrTag<uintptr_t>(candidateAddress);
-        if (!JITStubRoutine::passesFilter(address))
+        if (!m_range.contains(address))
             return;
-        
         markSlow(address);
     }
+
+    void prepareForConservativeScan();
     
     void deleteUnmarkedJettisonedStubRoutines();
     
     void traceMarkedStubRoutines(SlotVisitor&);
     
-    unsigned size() const { return m_listOfRoutines.size(); }
-    GCAwareJITStubRoutine* at(unsigned i) const { return m_listOfRoutines[i]; }
-    
 private:
     void markSlow(uintptr_t address);
     
-    HashMap<uintptr_t, GCAwareJITStubRoutine*> m_addressToRoutineMap;
-    Vector<GCAwareJITStubRoutine*> m_listOfRoutines;
+    struct Routine {
+        uintptr_t startAddress;
+        GCAwareJITStubRoutine* routine;
+    };
+    Vector<Routine> m_routines;
+    Range<uintptr_t> m_range { 0, 0 };
 };
 
 #else // !ENABLE(JIT)
@@ -85,6 +88,7 @@ public:
     void add(GCAwareJITStubRoutine*) { }
     void clearMarks() { }
     void mark(void*) { }
+    void prepareForConservativeScan() { }
     void deleteUnmarkedJettisonedStubRoutines() { }
     void traceMarkedStubRoutines(SlotVisitor&) { }
 };

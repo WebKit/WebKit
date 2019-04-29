@@ -1,3 +1,13 @@
+2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JITStubRoutineSet wastes 180KB of HashTable capacity on can.com
+        https://bugs.webkit.org/show_bug.cgi?id=186732
+
+        Reviewed by Saam Barati.
+
+        * wtf/Range.h:
+        (WTF::Range::contains const):
+
 2019-04-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] Add flag to enable version information stamping and disable by default.

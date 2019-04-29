@@ -2687,6 +2687,7 @@ void Heap::addCoreConstraints()
             
             TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan");
             m_objectSpace.prepareForConservativeScan();
+            m_jitStubRoutines->prepareForConservativeScan();
 
             {
                 ConservativeRoots conservativeRoots(*this);
