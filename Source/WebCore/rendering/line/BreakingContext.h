@@ -755,7 +755,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         // A single preserved leading white-space doesn't fulfill the 'betweenWords' condition, however it's indeed a
         // soft-breaking opportunty so we may want to avoid breaking in the middle of the word.
         if (m_atStart && m_currentCharacterIsSpace && !previousCharacterIsSpace) {
-            m_hasFormerOpportunity = canBreakMidWord;
+            m_hasFormerOpportunity = true;
             breakWords = false;
             canBreakMidWord = breakAll;
         }
@@ -953,7 +953,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 wrapW = wrapWidthOffset;
                 // Auto-wrapping text should not wrap in the middle of a word once it has had an
                 // opportunity to break after a word.
-                m_hasFormerOpportunity = canBreakMidWord;
+                m_hasFormerOpportunity = true;
                 breakWords = false;
                 canBreakMidWord = breakAll;
             }
@@ -1091,7 +1091,7 @@ inline void BreakingContext::trailingSpacesHang(InlineIterator& lineBreak, Rende
     ASSERT(m_currWS == WhiteSpace::BreakSpaces);
     // Avoid breaking before the first white-space after a word if there is a
     // breaking opportunity before.
-    if (m_hasFormerOpportunity)
+    if (m_hasFormerOpportunity && !previousCharacterIsSpace)
         return;
 
     lineBreak.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());

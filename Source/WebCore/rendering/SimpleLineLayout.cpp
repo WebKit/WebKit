@@ -821,7 +821,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
                     line.setOverflowedFragment(fragment);
                     break;
                 }
-                if (style.breakSpaces && style.breakWordOnOverflow && line.hasWhitespaceFragments() && fragment.length() == 1) {
+                if (style.breakSpaces && line.hasWhitespaceFragments() && fragment.length() == 1) {
                     // Breaking before the first space after a word is not allowed if there are previous breaking opportunities in the line.
                     textFragmentIterator.revertToEndOfFragment(line.revertToLastCompleteFragment(runs));
                     break;

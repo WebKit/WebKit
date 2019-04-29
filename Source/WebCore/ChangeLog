@@ -1,3 +1,54 @@
+2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        line should not be broken before the first space after a word
+        https://bugs.webkit.org/show_bug.cgi?id=197278
+
+        Reviewed by Myles C. Maxfield.
+
+        The 'white-space: break-spaces' only adds breaking opportunities after
+        a white space character. However, it's possible to break before the
+        first space after a word when the feature is used in combination with
+        other properties, like overflow-wrap.
+
+        However, breaking before the first space should not be allowed if
+        there are previous opportunities. We wrongly assumed that we had to
+        consider these previous breaking opportunities if the proper combination
+        of line breaking properties is being used, so that breaking before the
+        first space after a word is allowed.
+
+        This wrong assumption caused several issues, like the one described in
+        the bug, that lead to incorrectly break before the first space even
+        though there are previous opportunities, either white spaces or between
+        letters.
+
+        Theses issues have been analyzed [1] by the CSS WG and finally agreed on a
+        expected behavior, represented in the Web Platform tests added in this
+        patch.
+
+        For the later case, of considering previous opportunities between
+        letters, we have a seperated issue #952254, so the tests covering such
+        cases will be added to the TestExpecations as Failure entries.
+
+        [1] https://github.com/w3c/csswg-drafts/issues/3701
+
+        Tests: imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-001.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-002.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-003.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-004.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-005.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-006.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-007.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-008.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-009.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-010.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-011.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-013.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::trailingSpacesHang):
+
 2019-04-29  Chris Dumez  <cdumez@apple.com>
 
         User-facing strings should use curly quotes instead of straight

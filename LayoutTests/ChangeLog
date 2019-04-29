@@ -1,3 +1,15 @@
+2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        line should not be broken before the first space after a word
+        https://bugs.webkit.org/show_bug.cgi?id=197278
+
+        Reviewed by Myles C. Maxfield.
+
+        Added a few Skip (due to unimplemented features) and Failure (break-all related
+        issues) entries for some of the tests added by this patch.
+
+        * TestExpectations:
+
 2019-04-29  Youenn Fablet  <youenn@apple.com>
 
         RTCTrackEvent should be delayed until the whole remote description is set

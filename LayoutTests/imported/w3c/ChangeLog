@@ -1,5 +1,43 @@
 2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
 
+        line should not be broken before the first space after a word
+        https://bugs.webkit.org/show_bug.cgi?id=197278
+
+        Reviewed by Myles C. Maxfield.
+
+        Added new Web Platform Tests to cover the cases discussed [1] with the CSS WG.
+
+        [1] https://github.com/w3c/csswg-drafts/issues/3701
+
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-001-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-001.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-002-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-002.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-004-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-004.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-005-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-005.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-006-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-006.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-007-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-007.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-008.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-009.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-010.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-011-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-011.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-012.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-013-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-013.html: Added.
+
+2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
+
         Update the CSS Text WPT test suite
         https://bugs.webkit.org/show_bug.cgi?id=197326
 
