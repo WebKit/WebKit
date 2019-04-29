@@ -1,3 +1,12 @@
+2019-04-29  scootergrisen  <scootergrisen@gmail.com>
+
+        Add Danish translation
+        https://bugs.webkit.org/show_bug.cgi?id=194850
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * da.po: Added.
+
 2019-04-11  Álvaro Torralba  <donfrutosgomez@gmail.com>
 
         Updated Spanish translation
