@@ -1679,6 +1679,9 @@ static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
             return color;
     }
 
+    if (!webView->_page)
+        return { };
+
     return webView->_page->pageExtendedBackgroundColor();
 }
 
@@ -1690,7 +1693,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     WebCore::Color color = baseScrollViewBackgroundColor(webView);
 
     if (!color.isValid())
-        color = [webView->_contentView backgroundColor].CGColor;
+        color = webView->_contentView ? [webView->_contentView backgroundColor].CGColor : UIColor.whiteColor.CGColor;
 
     CGFloat zoomScale = contentZoomScale(webView);
     CGFloat minimumZoomScale = [webView->_scrollView minimumZoomScale];

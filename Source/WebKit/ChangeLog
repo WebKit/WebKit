@@ -1,3 +1,19 @@
+2019-04-29  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r244142): Fandango accounts tab crashes under Color()
+        https://bugs.webkit.org/show_bug.cgi?id=197380
+        <rdar://problem/50186175>
+
+        Reviewed by Megan Gardner.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (baseScrollViewBackgroundColor):
+        We now call -_updateScrollViewBackground from -setBackgroundColor:.
+        -setBackgroundColor: can be called from -[UIView initWithCoder:]; if it
+        is, WKWebView's _page is not yet initialized, so we crash. Return an invalid color.
+        Then, the caller falls back to WKContentView's backgroundColor. But WKContentView
+        isn't initialized yet either. So add a further fallback.
+
 2019-04-29  Dean Jackson  <dino@apple.com>
 
         Add InteractionIsHappening to SuppressSelectionAssistantReason
