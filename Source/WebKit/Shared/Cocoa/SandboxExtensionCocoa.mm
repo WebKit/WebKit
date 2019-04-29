@@ -58,7 +58,7 @@ public:
         free(m_token);
     }
 
-    bool consume() WARN_UNUSED_RETURN
+    bool WARN_UNUSED_RETURN consume()
     {
         m_handle = sandbox_extension_consume(m_token);
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -77,7 +77,7 @@ public:
         return !sandbox_extension_release(std::exchange(m_handle, 0));
     }
 
-    const char* getSerializedFormat(size_t& length) WARN_UNUSED_RETURN
+    const char* WARN_UNUSED_RETURN getSerializedFormat(size_t& length)
     {
         length = strlen(m_token);
         return m_token;

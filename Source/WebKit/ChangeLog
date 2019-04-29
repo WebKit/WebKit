@@ -1,3 +1,23 @@
+2019-04-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Move common sandbox files from Shared/mac to Shared/Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=197376
+        <rdar://problem/50305272>
+
+        Reviewed by Dean Jackson.
+
+        The Apple sandboxing logic currently lives in the inappropriate 'Shared/mac' directory. This is
+        confusing because the code is used by all Apple ports, not just macOS.
+
+        This patch just moves the relevant files from 'Shared/mac' to 'Shared/Cocoa' to avoid this confusion.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm: Renamed from Source/WebKit/Shared/mac/SandboxExtensionMac.mm.
+        * Shared/Cocoa/SandboxInitialiationParametersCocoa.mm: Renamed from Source/WebKit/Shared/mac/SandboxInitialiationParametersMac.mm.
+        * Shared/Cocoa/SandboxUtilities.h: Renamed from Source/WebKit/Shared/mac/SandboxUtilities.h.
+        * Shared/Cocoa/SandboxUtilities.mm: Renamed from Source/WebKit/Shared/mac/SandboxUtilities.mm.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-04-29  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Back/forward gesture snapshot always times out

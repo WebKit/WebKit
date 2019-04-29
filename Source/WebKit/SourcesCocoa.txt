@@ -143,6 +143,9 @@ Shared/Cocoa/AuxiliaryProcessCocoa.mm
 Shared/Cocoa/CompletionHandlerCallChecker.mm
 Shared/Cocoa/DataDetectionResult.mm
 Shared/Cocoa/LoadParametersCocoa.mm
+Shared/Cocoa/SandboxExtensionCocoa.mm
+Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
+Shared/Cocoa/SandboxUtilities.mm
 Shared/Cocoa/SharedRingBufferStorage.cpp
 Shared/Cocoa/WebCoreArgumentCodersCocoa.mm
 Shared/Cocoa/WebErrorsCocoa.mm
@@ -186,9 +189,6 @@ Shared/mac/ObjCObjectGraph.mm
 Shared/mac/PasteboardTypes.mm
 Shared/mac/PDFKitImports.mm
 Shared/mac/PrintInfoMac.mm
-Shared/mac/SandboxExtensionMac.mm
-Shared/mac/SandboxInitialiationParametersMac.mm
-Shared/mac/SandboxUtilities.mm
 Shared/mac/SecItemRequestData.cpp
 Shared/mac/SecItemResponseData.cpp
 Shared/mac/SecItemShim.cpp

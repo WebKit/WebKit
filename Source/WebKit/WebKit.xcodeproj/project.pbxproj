@@ -2239,7 +2239,6 @@
 		1AAB0378185A7C6A00EDF501 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
 		1AAB037B185F99D800EDF501 /* APIData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIData.cpp; sourceTree = "<group>"; };
 		1AAB4A8C1296F0A20023952F /* SandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxExtension.h; sourceTree = "<group>"; };
-		1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionMac.mm; sourceTree = "<group>"; };
 		1AABFE391829C1ED005B070E /* _WKRemoteObjectInterfaceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRemoteObjectInterfaceInternal.h; sourceTree = "<group>"; };
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		1AAF089819267EE500B6390C /* WKUserScript.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKUserScript.mm; sourceTree = "<group>"; };
@@ -3622,6 +3621,9 @@
 		7A8A9D571EF119AA009801AE /* APIInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleClient.h; sourceTree = "<group>"; };
 		7A8A9D591EF13020009801AE /* APIInjectedBundleBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleBundleClient.h; sourceTree = "<group>"; };
 		7A8A9D5B1EF1458E009801AE /* APIInjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
+		7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionCocoa.mm; sourceTree = "<group>"; };
+		7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxInitialiationParametersCocoa.mm; sourceTree = "<group>"; };
+		7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxUtilities.mm; sourceTree = "<group>"; };
 		7AB6EA441EEAAE2300037B2B /* APIIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIIconDatabaseClient.h; sourceTree = "<group>"; };
 		7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeolocationProvider.h; sourceTree = "<group>"; };
 		7ACE82E7221CAE06000DA94C /* ResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsStore.h; path = Classifier/ResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
@@ -4542,7 +4544,6 @@
 		E19582D4153CC05300B60875 /* PDFKitImports.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitImports.mm; sourceTree = "<group>"; };
 		E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = DerivedSources/WebKit2/com.apple.WebProcess.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E19BDA8419365F4B00B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.appstore.CodeRedeemerNetscapePlugin.sb; sourceTree = "<group>"; };
-		E19BDA87193686A400B97F57 /* SandboxUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxUtilities.mm; sourceTree = "<group>"; };
 		E19BDA88193686A400B97F57 /* SandboxUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxUtilities.h; sourceTree = "<group>"; };
 		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
 		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
@@ -4553,7 +4554,6 @@
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
 		E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintInfoMac.mm; sourceTree = "<group>"; };
 		E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = WebContentProcess.xib; path = Resources/WebContentProcess.xib; sourceTree = "<group>"; };
-		E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxInitialiationParametersMac.mm; sourceTree = "<group>"; };
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
@@ -6352,6 +6352,10 @@
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
 				CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */,
 				CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */,
+				7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */,
+				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
+				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
+				7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */,
 				CD4B4D9A1E765E0000D27092 /* SharedRingBufferStorage.cpp */,
 				CD4B4D9B1E765E0000D27092 /* SharedRingBufferStorage.h */,
 				1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */,
@@ -7975,10 +7979,6 @@
 				E19582D2153CBFD700B60875 /* PDFKitImports.h */,
 				E19582D4153CC05300B60875 /* PDFKitImports.mm */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
-				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
-				E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */,
-				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
-				E19BDA87193686A400B97F57 /* SandboxUtilities.mm */,
 				51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */,
 				51D130501382EAC000351EDD /* SecItemRequestData.h */,
 				51D130511382EAC000351EDD /* SecItemResponseData.cpp */,
