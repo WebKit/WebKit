@@ -715,6 +715,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             case CSSValueAppleSystemTextBackground:
                 return @selector(textBackgroundColor);
             case CSSValueAppleSystemControlBackground:
+#if HAVE(OS_DARK_MODE_SUPPORT)
+            case CSSValueWebkitControlBackground:
+#endif
                 return @selector(controlBackgroundColor);
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);

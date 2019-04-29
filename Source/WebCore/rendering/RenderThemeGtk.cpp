@@ -1780,13 +1780,24 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::O
         return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorForeground);
     case CSSValueGraytext:
         return styleColor(Entry, GTK_STATE_FLAG_INSENSITIVE, StyleColorForeground);
+    case CSSValueWebkitControlBackground:
+        return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
 #if GTK_CHECK_VERSION(3, 20, 0)
-    case CSSValueWindowframe:
-        return styleColor(Window, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
+    case CSSValueWindow: {
+        // Only get window color from the theme in dark mode.
+        gboolean preferDarkTheme = FALSE;
+        if (auto* settings = gtk_settings_get_default())
+            g_object_get(settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
+        if (preferDarkTheme)
+            return styleColor(Window, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
+        break;
+    }
 #endif
     default:
-        return RenderTheme::systemColor(cssValueId, options);
+        break;
     }
+
+    return RenderTheme::systemColor(cssValueId, options);
 }
 
 void RenderThemeGtk::platformColorsDidChange()

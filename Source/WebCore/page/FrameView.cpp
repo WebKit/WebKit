@@ -3004,7 +3004,7 @@ void FrameView::updateBackgroundRecursively(const Optional<Color>& backgroundCol
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     static const auto cssValueControlBackground = CSSValueAppleSystemControlBackground;
 #else
-    static const auto cssValueControlBackground = CSSValueWindowframe;
+    static const auto cssValueControlBackground = CSSValueWindow;
 #endif
     Color baseBackgroundColor = backgroundColor.valueOr(RenderTheme::singleton().systemColor(cssValueControlBackground, styleColorOptions()));
 #else
