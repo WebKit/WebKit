@@ -1,3 +1,18 @@
+2019-04-29  Youenn Fablet  <youenn@apple.com>
+
+        getDisplayMedia should be called on user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=197356
+        <rdar://problem/50296074>
+
+        Reviewed by Eric Carlson.
+
+        Update test configuration to inject internals
+        so that we can use it to simulate a user click to call getDisplayMedia.
+
+        * TestWebKitAPI/Tests/WebKit/getDisplayMedia.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        (TestWebKitAPI::GetDisplayMediaTest::SetUp):
+
 2019-04-26  Stephanie Lewis  <slewis@apple.com>
 
         run-benchmarks should have an intial prep and restore env call for tasks that are too expensive to do for every iteration

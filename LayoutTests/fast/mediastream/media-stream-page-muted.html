@@ -4,6 +4,9 @@
     <title>mediastream page muted</title>
     <script src="../../resources/js-test-pre.js"></script>
     <script>
+        if (window.internals)
+            internals.setDisableGetDisplayMediaUserGestureConstraint(true);
+
         async function checkPageState(activeState, inactiveState) {
             await new Promise((resolve, reject) => {
                 let retryCount = 0;

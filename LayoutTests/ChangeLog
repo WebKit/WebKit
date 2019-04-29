@@ -1,3 +1,20 @@
+2019-04-29  Youenn Fablet  <youenn@apple.com>
+
+        getDisplayMedia should be called on user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=197356
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/media-stream-page-muted.html:
+        * fast/mediastream/screencapture-user-gesture-expected.txt: Added.
+        * fast/mediastream/screencapture-user-gesture.html: Added.
+        * http/tests/media/media-stream/get-display-media-iframe-allow-attribute-expected.txt:
+        * http/tests/media/media-stream/get-display-media-iframe-allow-attribute.html:
+        * http/tests/media/media-stream/get-display-media-prompt.html:
+        * http/tests/media/media-stream/resources/get-display-media-devices-iframe.html:
+
+        * resources/testharnessreport.js:
+
 2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
 
         line should not be broken before the first space after a word

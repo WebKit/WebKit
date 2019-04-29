@@ -29,6 +29,9 @@ if (self.testRunner) {
     }
 }
 
+if (self.internals && internals.setDisableGetDisplayMediaUserGestureConstraint)
+    internals.setDisableGetDisplayMediaUserGestureConstraint(true);
+
 if (self.internals && internals.setICECandidateFiltering)
     internals.setICECandidateFiltering(false);
 

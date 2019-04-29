@@ -1,0 +1,18 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+if (window.internals)
+    internals.setDisableGetDisplayMediaUserGestureConstraint(false);
+
+promise_test(() => {
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getDisplayMedia({video : true});
+    });
+    return promise;
+}, "Allow getDisplayMedia call in case of user gesture");
+
+promise_test((test) => {
+    return promise_rejects(test, "InvalidAccessError", navigator.mediaDevices.getDisplayMedia({video : true}));
+}, "Deny getDisplayMedia call if no user gesture");
+</script>

@@ -1,0 +1,4 @@
+
+PASS Allow getDisplayMedia call in case of user gesture 
+PASS Deny getDisplayMedia call if no user gesture 
+

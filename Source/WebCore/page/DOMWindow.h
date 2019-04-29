@@ -158,7 +158,7 @@ public:
     BarProp& scrollbars();
     BarProp& statusbar();
     BarProp& toolbar();
-    Navigator& navigator();
+    WEBCORE_EXPORT Navigator& navigator();
     Navigator* optionalNavigator() const { return m_navigator.get(); }
     Navigator& clientInformation() { return navigator(); }
 

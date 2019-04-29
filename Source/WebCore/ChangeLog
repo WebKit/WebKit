@@ -1,3 +1,27 @@
+2019-04-29  Youenn Fablet  <youenn@apple.com>
+
+        getDisplayMedia should be called on user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=197356
+
+        Reviewed by Eric Carlson.
+
+        Allow getDisplayMedia on user gesture only.
+        Otherwise reject the promise.
+        Minor refactoring to align getDisplayMedia, getUserMedia and
+        enumerateDevices when called with no document.
+
+        Test: fast/mediastream/screencapture-user-gesture.html
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::getUserMedia const):
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/NavigatorMediaDevices.h:
+        * page/DOMWindow.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setDisableGetDisplayMediaUserGestureConstraint):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
 
         line should not be broken before the first space after a word

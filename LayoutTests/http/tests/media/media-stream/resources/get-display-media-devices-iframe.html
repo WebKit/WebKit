@@ -1,4 +1,7 @@
 <script>
+    if (window.internals)
+        internals.setDisableGetDisplayMediaUserGestureConstraint(true);
+
     async function enumerate(event)
     {
         let result;

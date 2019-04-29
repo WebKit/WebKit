@@ -108,6 +108,7 @@
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "MallocStatistics.h"
+#include "MediaDevices.h"
 #include "MediaEngineConfigurationFactory.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
@@ -118,6 +119,7 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
+#include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -4705,6 +4707,15 @@ void Internals::setMediaStreamSourceInterrupted(MediaStreamTrack& track, bool in
     track.source().setInterruptedForTesting(interrupted);
 }
 
+void Internals::setDisableGetDisplayMediaUserGestureConstraint(bool value)
+{
+    Document* document = contextDocument();
+    if (!document || !document->domWindow())
+        return;
+
+    if (auto* mediaDevices = NavigatorMediaDevices::mediaDevices(document->domWindow()->navigator()))
+        mediaDevices->setDisableGetDisplayMediaUserGestureConstraint(value);
+}
 #endif
 
 String Internals::audioSessionCategory() const

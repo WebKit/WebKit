@@ -9,6 +9,8 @@
     <div id="console"></div>
 
 <script>
+    if (window.internals)
+        internals.setDisableGetDisplayMediaUserGestureConstraint(true);
 
     let stream;
     let err;

@@ -76,12 +76,14 @@ public:
         Variant<bool, MediaTrackConstraints> audio;
     };
     void getUserMedia(const StreamConstraints&, Promise&&) const;
-    ExceptionOr<void> getDisplayMedia(const StreamConstraints&, Promise&&) const;
+    void getDisplayMedia(const StreamConstraints&, Promise&&) const;
     void enumerateDevices(EnumerateDevicesPromise&&) const;
     MediaTrackSupportedConstraints getSupportedConstraints();
 
     using RefCounted<MediaDevices>::ref;
     using RefCounted<MediaDevices>::deref;
+
+    void setDisableGetDisplayMediaUserGestureConstraint(bool value) { m_disableGetDisplayMediaUserGestureConstraint = value; }
 
 private:
     explicit MediaDevices(Document&);
@@ -107,6 +109,7 @@ private:
     UserMediaClient::DeviceChangeObserverToken m_deviceChangeToken;
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
     bool m_listeningForDeviceChanges { false };
+    bool m_disableGetDisplayMediaUserGestureConstraint { false };
 };
 
 } // namespace WebCore

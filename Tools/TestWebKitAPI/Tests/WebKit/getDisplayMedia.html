@@ -7,16 +7,18 @@
 
             function promptForCapture(constraints)
             {
-                navigator.mediaDevices.getDisplayMedia(constraints)
-                .then((s) => {
-                    stream = s;
-                    video.srcObject = stream;
-                    if (window.webkit)
-                      window.webkit.messageHandlers.testHandler.postMessage('allowed');
-                })
-                .catch((error) => {
-                    if (window.webkit)
-                       window.webkit.messageHandlers.testHandler.postMessage('denied');
+                window.internals.withUserGesture(async () => {
+                    navigator.mediaDevices.getDisplayMedia(constraints)
+                    .then((s) => {
+                        stream = s;
+                        video.srcObject = stream;
+                        if (window.webkit)
+                          window.webkit.messageHandlers.testHandler.postMessage('allowed');
+                    })
+                    .catch((error) => {
+                        if (window.webkit)
+                           window.webkit.messageHandlers.testHandler.postMessage('denied');
+                    });
                 });
             }
 

@@ -102,10 +102,8 @@ static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackCon
 void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
-    if (!document) {
-        promise.reject(Exception { InvalidStateError });
+    if (!document)
         return;
-    }
 
     auto audioConstraints = createMediaConstraints(constraints.audio);
     auto videoConstraints = createMediaConstraints(constraints.video);
@@ -114,20 +112,21 @@ void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& 
 
     auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints) }, WTFMove(promise));
     request->start();
-
-    return;
 }
 
-ExceptionOr<void> MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise) const
+void MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
     if (!document)
-        return Exception { InvalidStateError };
+        return;
+
+    if (!m_disableGetDisplayMediaUserGestureConstraint && !UserGestureIndicator::processingUserGesture()) {
+        promise.reject(Exception { InvalidAccessError, "getDisplayMedia must be called from a user gesture handler."_s });
+        return;
+    }
 
     auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, createMediaConstraints(constraints.video) }, WTFMove(promise));
     request->start();
-
-    return { };
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
