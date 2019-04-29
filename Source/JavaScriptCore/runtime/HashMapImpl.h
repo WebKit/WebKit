@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionHelpers.h"
+#include "JSCJSValueInlines.h"
 #include "JSObject.h"
 
 namespace JSC {
@@ -245,7 +246,7 @@ ALWAYS_INLINE JSValue normalizeMapKey(JSValue key)
 
     double d = key.asDouble();
     if (std::isnan(d))
-        return key;
+        return jsNaN();
 
     int i = static_cast<int>(d);
     if (i == d) {

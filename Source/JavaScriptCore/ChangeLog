@@ -1,3 +1,22 @@
+2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        normalizeMapKey should normalize NaN to one PureNaN bit pattern to make MapHash same
+        https://bugs.webkit.org/show_bug.cgi?id=197362
+
+        Reviewed by Saam Barati.
+
+        Our Map/Set's hash algorithm relies on the bit pattern of JSValue. So our Map/Set has
+        normalization of the key, which normalizes Int32 / Double etc. But we did not normalize
+        pure NaNs into one canonicalized pure NaN. So we end up having multiple different pure NaNs
+        in one Map/Set. This patch normalizes NaN into one jsNaN(), which uses PNaN for the representation.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNormalizeMapKey):
+        * runtime/HashMapImpl.h:
+        (JSC::normalizeMapKey):
+
 2019-04-29  Alex Christensen  <achristensen@webkit.org>
 
         <rdar://problem/50299396> Fix internal High Sierra build
