@@ -431,9 +431,9 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {
-    ViewGestureController& controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-    if (controller.isSwipeGestureEnabled()) {
-        controller.wheelEventWasNotHandledByWebCore(&event.nativeEvent()->scroll);
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    if (controller && controller->isSwipeGestureEnabled()) {
+        controller->wheelEventWasNotHandledByWebCore(&event.nativeEvent()->scroll);
         return;
     }
 

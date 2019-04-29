@@ -206,6 +206,7 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<GestureController> gestureController;
 #endif
     std::unique_ptr<ViewGestureController> viewGestureController;
+    bool isBackForwardNavigationGestureEnabled { false };
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -572,9 +573,9 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     }
 
     if (showingNavigationSnapshot) {
-        ViewGestureController& controller = webkitWebViewBaseViewGestureController(webViewBase);
         RefPtr<cairo_pattern_t> group = adoptRef(cairo_pop_group(cr));
-        controller.draw(cr, group.get());
+        if (auto* controller = webkitWebViewBaseViewGestureController(webViewBase))
+            controller->draw(cr, group.get());
     }
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
@@ -889,8 +890,8 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
         }
     }
 
-    ViewGestureController& controller = webkitWebViewBaseViewGestureController(webViewBase);
-    if (controller.isSwipeGestureEnabled() && controller.handleScrollWheelEvent(event))
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
+    if (controller && controller->isSwipeGestureEnabled() && controller->handleScrollWheelEvent(event))
         return GDK_EVENT_STOP;
 
     webkitWebViewBaseHandleWheelEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
@@ -1189,9 +1190,21 @@ GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webView
 }
 #endif
 
-ViewGestureController& webkitWebViewBaseViewGestureController(WebKitWebViewBase* webViewBase)
+void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase* webViewBase, bool enabled)
 {
-    return *webViewBase->priv->viewGestureController;
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    priv->isBackForwardNavigationGestureEnabled = enabled;
+
+    if (priv->pageProxy->hasRunningProcess())
+        webViewBase->priv->viewGestureController->setSwipeGestureEnabled(enabled);
+
+    priv->pageProxy->setShouldRecordNavigationSnapshots(enabled);
+}
+
+ViewGestureController* webkitWebViewBaseViewGestureController(WebKitWebViewBase* webViewBase)
+{
+    return webViewBase->priv->viewGestureController.get();
 }
 
 static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint /* x */, gint /* y */, gboolean keyboardMode, GtkTooltip* tooltip)
@@ -1420,8 +1433,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
 #endif
-
-    priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
@@ -1639,11 +1650,12 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     // Queue a resize to ensure the new DrawingAreaProxy is resized.
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
 #if PLATFORM(X11) && USE(TEXTURE_MAPPER_GL) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
         return;
 
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
     ASSERT(drawingArea);
 
@@ -1655,6 +1667,9 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
 #else
     UNUSED_PARAM(webkitWebViewBase);
 #endif
+
+    priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
+    priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
 }
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
@@ -1700,36 +1715,42 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
 
 void webkitWebViewBaseDidStartProvisionalLoadForMainFrame(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->viewGestureController->isSwipeGestureEnabled())
-        webkitWebViewBase->priv->viewGestureController->didStartProvisionalLoadForMainFrame();
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
+    if (controller && controller->isSwipeGestureEnabled())
+        controller->didStartProvisionalLoadForMainFrame();
 }
 
 void webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->viewGestureController->isSwipeGestureEnabled())
-        webkitWebViewBase->priv->viewGestureController->didFirstVisuallyNonEmptyLayoutForMainFrame();
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
+    if (controller && controller->isSwipeGestureEnabled())
+        controller->didFirstVisuallyNonEmptyLayoutForMainFrame();
 }
 
 void webkitWebViewBaseDidFinishLoadForMainFrame(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->viewGestureController->isSwipeGestureEnabled())
-        webkitWebViewBase->priv->viewGestureController->didFinishLoadForMainFrame();
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
+    if (controller && controller->isSwipeGestureEnabled())
+        controller->didFinishLoadForMainFrame();
 }
 
 void webkitWebViewBaseDidFailLoadForMainFrame(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->viewGestureController->isSwipeGestureEnabled())
-        webkitWebViewBase->priv->viewGestureController->didFailLoadForMainFrame();
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
+    if (controller && controller->isSwipeGestureEnabled())
+        controller->didFailLoadForMainFrame();
 }
 
 void webkitWebViewBaseDidSameDocumentNavigationForMainFrame(WebKitWebViewBase* webkitWebViewBase, SameDocumentNavigationType type)
 {
-    if (webkitWebViewBase->priv->viewGestureController->isSwipeGestureEnabled())
-        webkitWebViewBase->priv->viewGestureController->didSameDocumentNavigationForMainFrame(type);
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
+    if (controller && controller->isSwipeGestureEnabled())
+        controller->didSameDocumentNavigationForMainFrame(type);
 }
 
 void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->viewGestureController->isSwipeGestureEnabled())
+    ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
+    if (controller && controller->isSwipeGestureEnabled())
         webkitWebViewBase->priv->viewGestureController->didRestoreScrollPosition();
 }

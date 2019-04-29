@@ -84,7 +84,8 @@ WebKit::GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase*
 
 RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase*);
 
-WebKit::ViewGestureController& webkitWebViewBaseViewGestureController(WebKitWebViewBase*);
+void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase*, bool enabled);
+WebKit::ViewGestureController* webkitWebViewBaseViewGestureController(WebKitWebViewBase*);
 
 void webkitWebViewBaseDidStartProvisionalLoadForMainFrame(WebKitWebViewBase*);
 void webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame(WebKitWebViewBase*);
