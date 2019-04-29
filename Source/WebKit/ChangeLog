@@ -1,3 +1,16 @@
+2019-04-29  Dean Jackson  <dino@apple.com>
+
+        Add InteractionIsHappening to SuppressSelectionAssistantReason
+        https://bugs.webkit.org/show_bug.cgi?id=197375
+        <rdar://problem/50304986>
+
+        Reviewed by Megan Gardner.
+
+        Add a new reason for suppressing the selection assistant, to
+        be used in a follow-up patch.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Add InteractionIsHappening.
+
 2019-04-29  Alex Christensen  <achristensen@webkit.org>
 
         Storage::deleteOldVersions does not need to retain Storage
