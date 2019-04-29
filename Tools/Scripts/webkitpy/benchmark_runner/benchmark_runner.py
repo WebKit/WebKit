@@ -77,32 +77,36 @@ class BenchmarkRunner(object):
     def _run_benchmark(self, count, web_root):
         results = []
         debug_outputs = []
-        for iteration in xrange(1, count + 1):
-            _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
-            try:
-                self._browser_driver.prepare_env(self._config)
+        try:
+            self._browser_driver.prepare_initial_env(self._config)
+            for iteration in xrange(1, count + 1):
+                _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
+                try:
+                    self._browser_driver.prepare_env(self._config)
 
-                if 'entry_point' in self._plan:
-                    result = self._run_one_test(web_root, self._plan['entry_point'])
-                    debug_outputs.append(result.pop('debugOutput', None))
-                    assert(result)
-                    results.append(result)
-                elif 'test_files' in self._plan:
-                    run_result = {}
-                    for test in self._plan['test_files']:
-                        result = self._run_one_test(web_root, test)
-                        assert(result)
-                        run_result = self._merge(run_result, result)
+                    if 'entry_point' in self._plan:
+                        result = self._run_one_test(web_root, self._plan['entry_point'])
                         debug_outputs.append(result.pop('debugOutput', None))
+                        assert(result)
+                        results.append(result)
+                    elif 'test_files' in self._plan:
+                        run_result = {}
+                        for test in self._plan['test_files']:
+                            result = self._run_one_test(web_root, test)
+                            assert(result)
+                            run_result = self._merge(run_result, result)
+                            debug_outputs.append(result.pop('debugOutput', None))
 
-                    results.append(run_result)
-                else:
-                    raise Exception('Plan does not contain entry_point or test_files')
+                        results.append(run_result)
+                    else:
+                        raise Exception('Plan does not contain entry_point or test_files')
 
-            finally:
-                self._browser_driver.restore_env()
+                finally:
+                    self._browser_driver.restore_env()
 
-            _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
+                _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
+        finally:
+            self._browser_driver.restore_env_after_all_testing()
 
         results = self._wrap(results)
         output_file = self._output_file if self._output_file else self._plan['output_file']

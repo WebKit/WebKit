@@ -15,6 +15,10 @@ class BrowserDriver(object):
         pass
 
     @abstractmethod
+    def prepare_initial_env(self, config):
+        pass
+
+    @abstractmethod
     def launch_url(self, url, options, browser_build_path=None, browser_path=None):
         pass
 
@@ -32,6 +36,10 @@ class BrowserDriver(object):
 
     @abstractmethod
     def restore_env(self):
+        pass
+
+    @abstractmethod
+    def restore_env_after_all_testing(self):
         pass
 
     @property

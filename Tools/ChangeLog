@@ -1,3 +1,26 @@
+2019-04-26  Stephanie Lewis  <slewis@apple.com>
+
+        run-benchmarks should have an intial prep and restore env call for tasks that are too expensive to do for every iteration
+        https://bugs.webkit.org/show_bug.cgi?id=197339
+
+        Reviewed by Dewei Zhu.
+
+        Add two new functions prepare_inital_env and restore_env_after_all_testing around the entire
+        test run for setup steps that are too expensive to do every iteration.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner._run_benchmark):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver):
+        (BrowserDriver.prepare_initial_env):
+        (BrowserDriver.restore_env_after_all_testing):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_browser_driver.py:
+        (LinuxBrowserDriver.prepare_initial_env):
+        (LinuxBrowserDriver.restore_env_after_all_testing):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.prepare_initial_env):
+        (OSXBrowserDriver.restore_env_after_all_testing):
+
 2019-04-28  Andy Estes  <aestes@apple.com>
 
         Fix the watchOS engineering build.
