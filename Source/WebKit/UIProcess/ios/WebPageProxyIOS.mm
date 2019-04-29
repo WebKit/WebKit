@@ -867,11 +867,6 @@ void WebPageProxy::didRecognizeLongPress()
     process().send(Messages::WebPage::DidRecognizeLongPress(), m_pageID);
 }
 
-void WebPageProxy::handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t layerTreeTransactionIdAtLastTouchStart)
-{
-    process().send(Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(point, modifiers, layerTreeTransactionIdAtLastTouchStart), m_pageID);
-}
-
 void WebPageProxy::inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint& position)
 {
     process().send(Messages::WebPage::InspectorNodeSearchMovedToPosition(position), m_pageID);
