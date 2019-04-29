@@ -73,6 +73,21 @@
         (WebCore::BreakingContext::handleText):
         (WebCore::BreakingContext::trailingSpacesHang):
 
+2019-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): animation on https://www.robotodyssey.online gets stuck; site broken
+        https://bugs.webkit.org/show_bug.cgi?id=197381
+
+        Reviewed by Zalan Bujtas.
+
+        When -webkit-clip-path changes on a composited layer, we need to trigger a backing geometry update
+        to push the changes to GraphicsLayers.
+
+        Test: compositing/style-change/clip-path-change.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::recompositeChangeRequiresGeometryUpdate):
+
 2019-04-29  Chris Dumez  <cdumez@apple.com>
 
         User-facing strings should use curly quotes instead of straight

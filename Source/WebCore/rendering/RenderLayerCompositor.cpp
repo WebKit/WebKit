@@ -1434,7 +1434,8 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.perspective() != newStyle.perspective()
         || oldStyle.perspectiveOriginX() != newStyle.perspectiveOriginX()
         || oldStyle.perspectiveOriginY() != newStyle.perspectiveOriginY()
-        || oldStyle.backfaceVisibility() != newStyle.backfaceVisibility();
+        || oldStyle.backfaceVisibility() != newStyle.backfaceVisibility()
+        || !arePointingToEqualData(oldStyle.clipPath(), newStyle.clipPath());
 }
 
 void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)

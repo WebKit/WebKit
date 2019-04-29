@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            margin: 50px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+        }
+        
+        .clipped {
+            width: 100%;
+            height: 100%;
+            background-color: blue;
+            transform: translateZ(0);
+            -webkit-clip-path: circle(50% at center);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="clipped"></div>
+    </div>
+</body>
+</html>
