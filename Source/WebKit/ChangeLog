@@ -1,3 +1,15 @@
+2019-04-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] window-object-cleared documentation should reference webkit_frame_get_js_context_for_script_world()
+        https://bugs.webkit.org/show_bug.cgi?id=197357
+
+        Reviewed by Carlos Garcia Campos.
+
+        We should recommend using the non-deprecated replacement for
+        webkit_frame_get_javascript_context_for_script_world().
+
+        * WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp:
+
 2019-04-27  Chris Dumez  <cdumez@apple.com>
 
         Improve safety of MachMessage class

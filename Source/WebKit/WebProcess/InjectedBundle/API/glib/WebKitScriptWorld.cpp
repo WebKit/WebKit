@@ -69,7 +69,7 @@ static void webkit_script_world_class_init(WebKitScriptWorldClass* klass)
      * cleared. This is the preferred place to set custom properties on the window
      * object using the JavaScriptCore API. You can get the window object of @frame
      * from the JavaScript execution context of @world that is returned by
-     * webkit_frame_get_javascript_context_for_script_world().
+     * webkit_frame_get_js_context_for_script_world().
      *
      * Since: 2.2
      */
