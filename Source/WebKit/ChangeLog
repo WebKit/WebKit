@@ -1,3 +1,25 @@
+2019-04-29  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] The UIProcess may get killed for trying to stay runnable in the background for more than 30 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=197385
+        <rdar://problem/50001505>
+
+        Reviewed by Geoffrey Garen.
+
+        If the UIProcess holds a background assertion for itself for 30 seconds, the assertion's invalidation handler
+        will get called and it is our responsibility to release this assertion or the UIProcess will get killed by the
+        system. The logic in ProcessAssertion would normally do that but it would also happily try and re-take another
+        background process assertion shortly after the previous one expired (and before the UIProcess got suspended).
+        When doing so, the new background assertion would expire right away and we would get killed without its
+        invalidation handler getting called.
+
+        To address the issue, the logic in ProcessAssertion will now prevent taking a new background assertion after
+        one expires and until the application becomes foreground again.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+
 2019-04-29  Alex Christensen  <achristensen@webkit.org>
 
         <rdar://problem/50299396> Fix internal High Sierra build
