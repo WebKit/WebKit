@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBError.h"
 #include "IDBTransactionInfo.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include <wtf/Ref.h>
@@ -37,7 +38,6 @@ namespace WebCore {
 
 class IDBCursorInfo;
 class IDBDatabaseInfo;
-class IDBError;
 class IDBIndexInfo;
 class IDBKeyData;
 class IDBObjectStoreInfo;
