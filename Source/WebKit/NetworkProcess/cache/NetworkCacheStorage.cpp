@@ -1109,9 +1109,8 @@ void Storage::shrink()
 
 void Storage::deleteOldVersions()
 {
-    backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        auto cachePath = basePath();
-        traverseDirectory(cachePath, [&cachePath](const String& subdirName, DirectoryEntryType type) {
+    backgroundIOQueue().dispatch([cachePath = basePath()] () mutable {
+        traverseDirectory(cachePath, [cachePath = WTFMove(cachePath)](const String& subdirName, DirectoryEntryType type) {
             if (type != DirectoryEntryType::Directory)
                 return;
             if (!subdirName.startsWith(versionDirectoryPrefix))
