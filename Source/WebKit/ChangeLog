@@ -1,3 +1,33 @@
+2019-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Double-tapping a post to like doesn't work on Instagram.com (needs 'dblclick' event)
+        https://bugs.webkit.org/show_bug.cgi?id=197347
+        <rdar://problem/49393423>
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds support for dispatching dblclick event as the result of the double tap gesture.
+
+        1. The new double tap gesture recognizer always fires regardless of what type of action the other, existing double gesture recognizers (double-tap to zoom) trigger.
+        2. The dblclick event is dispatched on the node with registered dblclick event handler unless the node prohibits double tap gesture (touch-action != auto).
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _doubleTapRecognizedForDoubleClick:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleDoubleTapForDoubleClickAtPoint):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleDoubleTapForDoubleClickAtPoint):
+
 2019-04-29  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r244142): Fandango accounts tab crashes under Color()
