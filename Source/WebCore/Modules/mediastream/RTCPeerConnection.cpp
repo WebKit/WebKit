@@ -52,7 +52,6 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCSessionDescription.h"
-#include "RTCTrackEvent.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>

@@ -192,6 +192,14 @@ protected:
 
     String filterSDP(String&&) const;
 
+    struct PendingTrackEvent {
+        Ref<RTCRtpReceiver> receiver;
+        Ref<MediaStreamTrack> track;
+        Vector<RefPtr<MediaStream>> streams;
+        RefPtr<RTCRtpTransceiver> transceiver;
+    };
+    void addPendingTrackEvent(PendingTrackEvent&&);
+
 private:
     virtual void doCreateOffer(RTCOfferOptions&&) = 0;
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;
@@ -220,6 +228,8 @@ private:
         String serverURL;
     };
     Vector<PendingICECandidate> m_pendingICECandidates;
+
+    Vector<PendingTrackEvent> m_pendingTrackEvents;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

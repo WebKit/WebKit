@@ -60,6 +60,8 @@ function testBasicVideoExchangeWithAddTrack(waitForSecondTrack)
                             assert_equals(trackEvent.track.id, stream.getVideoTracks()[0].id);
                         else
                             assert_equals(trackEvent.track.id, stream.getAudioTracks()[0].id);
+                        assert_equals(trackEvent.streams.length, 1);
+                        assert_equals(trackEvent.streams[0].getTracks().length, 2);
                     }, " track " + count + ", wait = " + waitForSecondTrack);
                     if (count++ === (waitForSecondTrack ? 1 : 0))
                         resolve(trackEvent.streams[0]);

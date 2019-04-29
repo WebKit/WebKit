@@ -1,3 +1,13 @@
+2019-04-29  Youenn Fablet  <youenn@apple.com>
+
+        RTCTrackEvent should be delayed until the whole remote description is set
+        https://bugs.webkit.org/show_bug.cgi?id=196808
+        <rdar://problem/49802649>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-addTrack.html:
+
 2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
 
         Update the CSS Text WPT test suite

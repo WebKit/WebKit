@@ -43,6 +43,7 @@
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCRtpCapabilities.h"
+#include "RTCTrackEvent.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -248,6 +249,21 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
 
+    ASSERT(!m_peerConnection.isClosed());
+
+    auto events = WTFMove(m_pendingTrackEvents);
+    for (auto& event : events) {
+        auto& track = event.track.get();
+
+        m_peerConnection.fireEvent(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
+
+        if (m_peerConnection.isClosed())
+            return;
+
+        // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
+        track.source().setMuted(false);
+    }
+
     if (m_peerConnection.isClosed())
         return;
 
@@ -262,13 +278,20 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description failed:", exception.message());
 
-    if (m_peerConnection.isClosed())
-        return;
+    ASSERT(m_pendingTrackEvents.isEmpty());
+    m_pendingTrackEvents.clear();
 
+    ASSERT(!m_peerConnection.isClosed());
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->reject(WTFMove(exception));
     m_setDescriptionPromise = WTF::nullopt;
+}
+
+void PeerConnectionBackend::addPendingTrackEvent(PendingTrackEvent&& event)
+{
+    ASSERT(!m_peerConnection.isClosed());
+    m_pendingTrackEvents.append(WTFMove(event));
 }
 
 static String extractIPAddres(const String& sdp)
@@ -490,6 +513,8 @@ void PeerConnectionBackend::stop()
     m_offerAnswerPromise = WTF::nullopt;
     m_setDescriptionPromise = WTF::nullopt;
     m_addIceCandidatePromise = WTF::nullopt;
+
+    m_pendingTrackEvents.clear();
 
     doStop();
 }
