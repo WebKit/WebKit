@@ -83,9 +83,12 @@ if (!$ENVIRONMENT_VERSION) {
     # an engineering build and we'll stamp the build with some more information.
 
     my $BUILD_DATE = localtime(time);
-    my $SVN_REVISION = `svn info`;
-    $SVN_REVISION =~ m/Revision: (\d+)/;
-    $SVN_REVISION= $1;
+    my $SVN_REVISION = '';
+    if (-d File::Spec->catfile($thisDirectory, '.svn')) {
+        $SVN_REVISION = `svn info`;
+        $SVN_REVISION =~ m/Revision: (\d+)/;
+        $SVN_REVISION= $1;
+    }
 
     chomp($BUILD_DATE);
     chomp($SVN_REVISION);

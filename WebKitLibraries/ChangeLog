@@ -1,3 +1,15 @@
+2019-04-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win] Add flag to enable version information stamping and disable by default.
+        https://bugs.webkit.org/show_bug.cgi?id=197249
+        <rdar://problem/50224412>
+
+        Reviewed by Ross Kirsling.
+
+        Modify script not to invoke SVN command if the directory for SVN doesn't exists.
+
+        * win/tools/scripts/auto-version.pl:
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Software keyboard is shown too frequently on some websites
