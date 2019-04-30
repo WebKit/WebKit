@@ -9828,6 +9828,7 @@ private:
         m_out.appendTo(notNaNCase, convertibleCase);
         LValue integerValue = m_out.doubleToInt(doubleValue);
         LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
+        ValueFromBlock doubleResult = m_out.anchor(key);
         m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, integerValueConvertedToDouble), unsure(continuation), unsure(convertibleCase));
 
         m_out.appendTo(convertibleCase, continuation);
@@ -9835,7 +9836,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, fastResult, normalizedNaNResult, boxedIntResult));
+        setJSValue(m_out.phi(Int64, fastResult, normalizedNaNResult, doubleResult, boxedIntResult));
     }
 
     void compileGetMapBucket()

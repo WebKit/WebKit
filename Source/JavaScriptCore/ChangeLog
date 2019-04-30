@@ -1,5 +1,17 @@
 2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreivewed, fix FTL implementation of r244760
+        https://bugs.webkit.org/show_bug.cgi?id=197362
+
+        Reviewed by Saam Barati.
+
+        Looked with Saam. ValueFromBlock from double case block was overridden by NaN thing now.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNormalizeMapKey):
+
+2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         normalizeMapKey should normalize NaN to one PureNaN bit pattern to make MapHash same
         https://bugs.webkit.org/show_bug.cgi?id=197362
 
