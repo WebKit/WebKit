@@ -15,7 +15,7 @@ fragment float4 fragmentShader(float4 position : SV_Position) : SV_Target 0 {
 }
 `;
 async function start() {
-    const adapter = await window.gpu.requestAdapter();
+    const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
 
     const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});

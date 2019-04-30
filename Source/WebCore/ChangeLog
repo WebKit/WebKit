@@ -1,3 +1,33 @@
+2019-04-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Move 'gpu' API entry point from DOMWindow to Navigator
+        https://bugs.webkit.org/show_bug.cgi?id=197348
+
+        Reviewed by Myles C. Maxfield.
+
+        Latest API provides 'gpu' through Navigator instead of DOMWindow. Replace DOMWindowWebGPU with NavigatorGPU.
+
+        Existing tests updated to match. Add test: webgpu-enabled-in-worker.html to ensure workers can access WebGPU.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/NavigatorGPU.cpp:
+        (WebCore::NavigatorGPU::from):
+        (WebCore::NavigatorGPU::supplementName):
+        (WebCore::NavigatorGPU::gpu):
+        (WebCore::NavigatorGPU::gpu const):
+        * Modules/webgpu/NavigatorGPU.h:
+        * Modules/webgpu/NavigatorGPU.idl:
+        * Modules/webgpu/WorkerNavigatorGPU.cpp:
+        (WebCore::WorkerNavigatorGPU::from):
+        (WebCore::WorkerNavigatorGPU::supplementName):
+        (WebCore::WorkerNavigatorGPU::gpu):
+        (WebCore::WorkerNavigatorGPU::gpu const):
+        * Modules/webgpu/WorkerNavigatorGPU.h:
+        * Modules/webgpu/WorkerNavigatorGPU.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Double-tapping a post to like doesn't work on Instagram.com (needs 'dblclick' event)

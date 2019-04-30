@@ -374,7 +374,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
-    $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
     $(WebCore)/Modules/webgpu/GPUCanvasContext.idl \
     $(WebCore)/Modules/webgpu/GPUColor.idl \
     $(WebCore)/Modules/webgpu/GPUColorStateDescriptor.idl \
@@ -399,6 +398,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
     $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
 	$(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
+    $(WebCore)/Modules/webgpu/NavigatorGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroup.idl \
@@ -429,6 +429,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
     $(WebCore)/Modules/webgpu/WebGPUTexture.idl \
     $(WebCore)/Modules/webgpu/WebGPUTextureView.idl \
+    $(WebCore)/Modules/webgpu/WorkerNavigatorGPU.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/Modules/webvr/DOMWindowWebVR.idl \

@@ -304,8 +304,8 @@ Modules/websockets/WebSocketFrame.cpp
 Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
-Modules/webgpu/DOMWindowWebGPU.cpp
 Modules/webgpu/GPUCanvasContext.cpp
+Modules/webgpu/NavigatorGPU.cpp
 Modules/webgpu/WHLSL/WHLSLInferTypes.cpp
 Modules/webgpu/WHLSL/WHLSLLexer.cpp
 Modules/webgpu/WHLSL/WHLSLParser.cpp
@@ -375,6 +375,7 @@ Modules/webgpu/WebGPUSwapChain.cpp
 Modules/webgpu/WebGPUSwapChainDescriptor.cpp
 Modules/webgpu/WebGPUTexture.cpp
 Modules/webgpu/WebGPUTextureView.cpp
+Modules/webgpu/WorkerNavigatorGPU.cpp
 
 Modules/webvr/NavigatorWebVR.cpp
 Modules/webvr/VRDisplay.cpp
@@ -2655,7 +2656,6 @@ JSDOMWindowFetch.cpp
 JSDOMWindowIndexedDatabase.cpp
 JSDOMWindowSpeechSynthesis.cpp
 JSDOMWindowWebDatabase.cpp
-JSDOMWindowWebGPU.cpp
 JSDOMWindowWebVR.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
@@ -2918,6 +2918,7 @@ JSNavigator.cpp
 JSNavigatorBeacon.cpp
 JSNavigatorCredentials.cpp
 JSNavigatorGeolocation.cpp
+JSNavigatorGPU.cpp
 JSNavigatorID.cpp
 JSNavigatorLanguage.cpp
 JSNavigatorMediaCapabilities.cpp
@@ -3327,6 +3328,7 @@ JSWorkerGlobalScopeFetch.cpp
 JSWorkerGlobalScopeIndexedDatabase.cpp
 JSWorkerLocation.cpp
 JSWorkerNavigator.cpp
+JSWorkerNavigatorGPU.cpp
 JSWorkerType.cpp
 JSWritableStream.cpp
 JSXMLDocument.cpp

@@ -23,32 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "NavigatorGPU.h"
 
 #if ENABLE(WEBGPU)
 
-#include "DOMWindowProperty.h"
-#include "Supplementable.h"
+#include "Navigator.h"
+#include "RuntimeEnabledFeatures.h"
+#include "WebGPU.h"
 
 namespace WebCore {
 
-class DOMWindow;
-class WebGPU;
+NavigatorGPU* NavigatorGPU::from(Navigator* navigator)
+{
+    NavigatorGPU* supplement = static_cast<NavigatorGPU*>(Supplement<Navigator>::from(navigator, supplementName()));
+    if (!supplement) {
+        auto newSupplement = std::make_unique<NavigatorGPU>();
+        supplement = newSupplement.get();
+        provideTo(navigator, supplementName(), WTFMove(newSupplement));
+    }
+    return supplement;
+}
 
-class DOMWindowWebGPU : public Supplement<DOMWindow>, public DOMWindowProperty {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit DOMWindowWebGPU(DOMWindow*);
-    virtual ~DOMWindowWebGPU() = default;
-    static DOMWindowWebGPU* from(DOMWindow*);
-    static WebGPU* gpu(DOMWindow&);
-    WebGPU* gpu() const;
+const char* NavigatorGPU::supplementName()
+{
+    return "NavigatorGPU";
+}
 
-private:
-    static const char* supplementName();
+const WebGPU* NavigatorGPU::gpu(Navigator& navigator)
+{
+    return NavigatorGPU::from(&navigator)->gpu();
+}
 
-    mutable RefPtr<WebGPU> m_gpu;
-};
+const WebGPU* NavigatorGPU::gpu() const
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled());
+
+    if (!m_gpu)
+        m_gpu = WebGPU::create();
+    return m_gpu.get();
+}
 
 } // namespace WebCore
 

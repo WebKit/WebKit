@@ -8,6 +8,7 @@ navigator.appVersion is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
+navigator.gpu is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
@@ -33,6 +34,7 @@ navigator.appVersion is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
+navigator.gpu is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK

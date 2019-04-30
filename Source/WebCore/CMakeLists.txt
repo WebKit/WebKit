@@ -468,7 +468,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/webdriver/NavigatorWebDriver.idl
 
-    Modules/webgpu/DOMWindowWebGPU.idl
     Modules/webgpu/GPUBindGroupLayoutBinding.idl
     Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/GPUBlendDescriptor.idl
@@ -493,6 +492,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUTextureUsage.idl
     Modules/webgpu/GPUVertexAttributeDescriptor.idl
     Modules/webgpu/GPUVertexInputDescriptor.idl
+    Modules/webgpu/NavigatorGPU.idl
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUBindGroup.idl
@@ -523,6 +523,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
     Modules/webgpu/WebGPUTextureView.idl
+    Modules/webgpu/WorkerNavigatorGPU.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
