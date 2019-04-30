@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -359,7 +359,10 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
         slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, jsUndefined());
         return false;
     }
-    
+
+    if (canonicalNumericIndexString(propertyName))
+        return false;
+
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
@@ -375,7 +378,10 @@ bool JSGenericTypedArrayView<Adaptor>::put(
     // 9.4.5.5-2-b-i Return ? IntegerIndexedElementSet(O, numericIndex, V).
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
-    
+
+    if (canonicalNumericIndexString(propertyName))
+        return false;
+
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -410,7 +416,10 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
         }
         return true;
     }
-    
+
+    if (canonicalNumericIndexString(propertyName))
+        return false;
+
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow));
 }
 
@@ -433,7 +442,7 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
-    JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+    JSObject* object, ExecState*, unsigned propertyName, PropertySlot& slot)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
@@ -442,10 +451,8 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
         return true;
     }
 
-    if (propertyName > MAX_ARRAY_INDEX) {
-        return thisObject->methodTable(exec->vm())->getOwnPropertySlot(
-            thisObject, exec, Identifier::from(exec, propertyName), slot);
-    }
+    if (propertyName > MAX_ARRAY_INDEX)
+        return false;
     
     if (!thisObject->canGetIndexQuickly(propertyName))
         return false;
@@ -456,14 +463,12 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::putByIndex(
-    JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+    JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
-    if (propertyName > MAX_ARRAY_INDEX) {
-        PutPropertySlot slot(JSValue(thisObject), shouldThrow);
-        return thisObject->methodTable(exec->vm())->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
-    }
+    if (propertyName > MAX_ARRAY_INDEX)
+        return false;
     
     return thisObject->setIndex(exec, propertyName, value);
 }

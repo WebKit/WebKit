@@ -1,3 +1,19 @@
+2019-04-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        TypeArrays should not store properties that are canonical numeric indices
+        https://bugs.webkit.org/show_bug.cgi?id=197228
+        <rdar://problem/49557381>
+
+        Reviewed by Darin Adler.
+
+        * stress/typed-array-canonical-numeric-index-string.js: Added.
+        (makeTest.assert):
+        (makeTest):
+        (const.testInvalidIndices.makeTest.set assert):
+        (const.testInvalidIndices.makeTest):
+        (const.testValidIndices.makeTest.set assert):
+        (const.testValidIndices.makeTest):
+
 2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         normalizeMapKey should normalize NaN to one PureNaN bit pattern to make MapHash same
