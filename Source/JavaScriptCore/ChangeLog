@@ -1,3 +1,25 @@
+2019-04-30  Brian Burg  <bburg@apple.com>
+
+        Web Automation: use a more informative key to indicate automation availability
+        https://bugs.webkit.org/show_bug.cgi?id=197377
+        <rdar://problem/50258069>
+
+        Reviewed by Devin Rousso.
+
+        The existing WIRAutomationEnabledKey does not encode uncertainty.
+        Add a new key that provides an 'Unknown' state, and prefer to use it.
+
+        Since an application's initial listing is sent from a background dispatch queue
+        on Cocoa platforms, this can race with main thread initialization that sets up
+        RemoteInspector::Client. Therefore, the initial listing may not properly represent
+        the client's capabilites because the client is not yet available. Allowing for
+        an "Unknown" state that is later upgraded to Available or Not Available makes it
+        possible to work around this potential race.
+
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::pushListingsNow):
+
 2019-04-30  Keith Miller  <keith_miller@apple.com>
 
         Fix failing ARM64E wasm tests

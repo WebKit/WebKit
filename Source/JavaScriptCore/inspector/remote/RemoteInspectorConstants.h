@@ -68,6 +68,7 @@
 #define WIRListingMessage                       @"WIRListingMessage"
 #define WIRListingKey                           @"WIRListingKey"
 #define WIRRemoteAutomationEnabledKey           @"WIRRemoteAutomationEnabledKey"
+#define WIRAutomationAvailabilityKey            @"WIRAutomationAvailabilityKey"
 #define WIRDestinationKey                       @"WIRDestinationKey"
 #define WIRConnectionDiedMessage                @"WIRConnectionDiedMessage"
 #define WIRTypeKey                              @"WIRTypeKey"
@@ -76,6 +77,11 @@
 #define WIRTypeWeb                              @"WIRTypeWeb"
 #define WIRTypeAutomation                       @"WIRTypeAutomation"
 #define WIRAutomaticallyPause                   @"WIRAutomaticallyPause"
+
+// Allowed values for WIRAutomationAvailabilityKey.
+#define WIRAutomationAvailabilityNotAvailable     @"WIRAutomationAvailabilityNotAvailable"
+#define WIRAutomationAvailabilityAvailable        @"WIRAutomationAvailabilityAvailable"
+#define WIRAutomationAvailabilityUnknown          @"WIRAutomationAvailabilityUnknown"
 
 #define WIRAutomaticInspectionEnabledKey           @"WIRAutomaticInspectionEnabledKey"
 #define WIRAutomaticInspectionSessionIdentifierKey @"WIRAutomaticInspectionSessionIdentifierKey"

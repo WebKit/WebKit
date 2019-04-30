@@ -454,6 +454,14 @@ void RemoteInspector::pushListingsNow()
     RetainPtr<NSMutableDictionary> message = adoptNS([[NSMutableDictionary alloc] init]);
     [message setObject:listings.get() forKey:WIRListingKey];
 
+    if (!m_clientCapabilities)
+        [message setObject:WIRAutomationAvailabilityUnknown forKey:WIRAutomationAvailabilityKey];
+    else if (m_clientCapabilities->remoteAutomationAllowed)
+        [message setObject:WIRAutomationAvailabilityAvailable forKey:WIRAutomationAvailabilityKey];
+    else
+        [message setObject:WIRAutomationAvailabilityNotAvailable forKey:WIRAutomationAvailabilityKey];
+
+    // COMPATIBILITY(iOS 13): this key is deprecated and not used by newer versions of webinspectord.
     BOOL isAllowed = m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed;
     [message setObject:@(isAllowed) forKey:WIRRemoteAutomationEnabledKey];
 
