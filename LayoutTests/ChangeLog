@@ -1,3 +1,15 @@
+2019-04-30  Youenn Fablet  <youenn@apple.com>
+
+        Reject/throw when calling AudioContext methods on a stopped AudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=197391
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webaudio/audiocontext-stopped-expected.txt: Added.
+        * http/wpt/webaudio/audiocontext-stopped.html: Added.
+        * http/wpt/webaudio/resources/audiocontext-stopped-iframe.html: Added.
+        * platform/win/TestExpectations: Skip test for win.
+
 2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Support prefers-color-scheme media query

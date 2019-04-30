@@ -134,26 +134,26 @@ public:
     bool wouldTaintOrigin(const URL&) const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
-    Ref<AudioBufferSourceNode> createBufferSource();
+    ExceptionOr<Ref<AudioBufferSourceNode>> createBufferSource();
 #if ENABLE(VIDEO)
     ExceptionOr<Ref<MediaElementAudioSourceNode>> createMediaElementSource(HTMLMediaElement&);
 #endif
 #if ENABLE(MEDIA_STREAM)
     ExceptionOr<Ref<MediaStreamAudioSourceNode>> createMediaStreamSource(MediaStream&);
-    Ref<MediaStreamAudioDestinationNode> createMediaStreamDestination();
+    ExceptionOr<Ref<MediaStreamAudioDestinationNode>> createMediaStreamDestination();
 #endif
-    Ref<GainNode> createGain();
-    Ref<BiquadFilterNode> createBiquadFilter();
-    Ref<WaveShaperNode> createWaveShaper();
+    ExceptionOr<Ref<GainNode>> createGain();
+    ExceptionOr<Ref<BiquadFilterNode>> createBiquadFilter();
+    ExceptionOr<Ref<WaveShaperNode>> createWaveShaper();
     ExceptionOr<Ref<DelayNode>> createDelay(double maxDelayTime);
-    Ref<PannerNode> createPanner();
-    Ref<ConvolverNode> createConvolver();
-    Ref<DynamicsCompressorNode> createDynamicsCompressor();
-    Ref<AnalyserNode> createAnalyser();
+    ExceptionOr<Ref<PannerNode>> createPanner();
+    ExceptionOr<Ref<ConvolverNode>> createConvolver();
+    ExceptionOr<Ref<DynamicsCompressorNode>> createDynamicsCompressor();
+    ExceptionOr<Ref<AnalyserNode>> createAnalyser();
     ExceptionOr<Ref<ScriptProcessorNode>> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels);
     ExceptionOr<Ref<ChannelSplitterNode>> createChannelSplitter(size_t numberOfOutputs);
     ExceptionOr<Ref<ChannelMergerNode>> createChannelMerger(size_t numberOfInputs);
-    Ref<OscillatorNode> createOscillator();
+    ExceptionOr<Ref<OscillatorNode>> createOscillator();
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Float32Array& real, Float32Array& imaginary);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
