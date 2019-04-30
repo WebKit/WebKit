@@ -405,7 +405,7 @@
       "shortname": "webkitpy",
       "factory": "WebKitPyFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151"]
     },
     {
       "name": "WebKitPerl-Tests-EWS",
@@ -435,7 +435,7 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["macOS-High-Sierra-Release-Build-EWS",
-                       "iOS-12-Simulator-Build-EWS", "WebKitPerl-Tests-EWS"]
+                       "iOS-12-Simulator-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"]
     },
     {
       "type": "Try_Userpass",
@@ -443,7 +443,7 @@
       "port": 5556,
       "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "JSC-Tests-EWS",
                        "iOS-12-Simulator-WK2-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",  "macOS-High-Sierra-Release-WK1-Tests-EWS",
-                       "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS", "WebKitPy-Tests-EWS", "WPE-EWS"]
+                       "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS", "WPE-EWS"]
     },
     {
       "type": "Triggerable",
