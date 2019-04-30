@@ -1,3 +1,19 @@
+2019-04-30  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT service-worker resource-timing test to use hosts[alt]
+        https://bugs.webkit.org/show_bug.cgi?id=197329
+
+        Reviewed by Chris Dumez.
+
+        Set alt server as 127.0.0.1.
+        Use hosts[alt][] instead of domains[www] to trigger a cross origin load.
+
+        * resources/config.json:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/resource-timing.sub.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.https.html.
+        * web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.sub.html:
+
 2019-04-29  Javier Fernandez  <jfernandez@igalia.com>
 
         line should not be broken before the first space after a word

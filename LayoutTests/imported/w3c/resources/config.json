@@ -1,4 +1,5 @@
 {"browser_host": "localhost",
+ "alternate_hosts": { "alt": "127.0.0.1" },
  "ports":{"http":[8800, 8801],
           "https":[9443],
           "ws":[49001]},

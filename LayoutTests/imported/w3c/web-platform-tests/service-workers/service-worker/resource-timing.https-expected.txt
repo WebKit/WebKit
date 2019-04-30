@@ -1,9 +1,0 @@
-Blocked access to external URL https://www1.localhost:9443/service-workers/service-worker/resources/square.png
-Blocked access to external URL https://www1.localhost:9443/service-workers/service-worker/resources/missing.jpg
-Blocked access to external URL https://www1.localhost:9443/service-workers/service-worker/resources/square.png
-Blocked access to external URL https://www1.localhost:9443/service-workers/service-worker/resources/missing.jpg
-
-
-FAIL Controlled resource loads assert_greater_than: Generated response expected a number greater than 0 but got 0
-PASS Non-controlled resource loads 
-
