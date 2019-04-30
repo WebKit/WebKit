@@ -847,7 +847,7 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
         m_statsFirstDeliveredTimestamp = timestamp;
 
     callOnMainThread([protectedThis = makeRef(*this), this, timestamp, report] {
-        if (m_backend && m_statsLogTimer.repeatInterval() != statsLogInterval(timestamp)) {
+        if (m_statsLogTimer.repeatInterval() != statsLogInterval(timestamp)) {
             m_statsLogTimer.stop();
             m_statsLogTimer.startRepeating(statsLogInterval(timestamp));
         }

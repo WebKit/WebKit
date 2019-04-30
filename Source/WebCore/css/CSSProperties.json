@@ -6709,10 +6709,7 @@
                 "name-for-methods": "TrailingWord",
                 "enable-if": "ENABLE_CSS_TRAILING_WORD"
             },
-            "status": {
-                "status": "non-standard",
-                "comment": "Needed for feature-detecting the Safari browser. Implementation has no effect."
-            }
+            "status": "non-standard"
         },
         "-apple-pay-button-style": {
             "codegen-properties": {
