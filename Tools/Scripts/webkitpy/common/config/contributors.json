@@ -4572,10 +4572,14 @@
       ],
       "status" : "contributor"
    },
-   "Pablo Saavedra Rodi\u00f1o" : {
+   "Pablo Saavedra" : {
       "emails" : [
          "psaavedra@igalia.com"
-      ]
+      ],
+      "nicks" : [
+         "psaavedra"
+      ],
+      "status" : "committer"
    },
    "Pam Greene" : {
       "emails" : [

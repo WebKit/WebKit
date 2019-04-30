@@ -1,3 +1,9 @@
+2019-04-30  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-04-30  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Enable webkitpy queue on new EWS
