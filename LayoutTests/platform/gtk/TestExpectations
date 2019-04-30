@@ -754,9 +754,6 @@ webkit.org/b/192875 css-typedom [ Skip ]
 # ENABLE(CSS_PAINTING_API) is disabled.
 webkit.org/b/190710 fast/css-custom-paint [ Skip ]
 
-# ENABLE(DARK_MODE_CSS) is disabled.
-css-dark-mode [ Skip ]
-
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]
@@ -3936,6 +3933,9 @@ imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass
 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
 
 webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
+
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

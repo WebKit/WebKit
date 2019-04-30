@@ -1,5 +1,23 @@
 2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Support prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=196685
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip css-dark-mode tests and add platform specific results for some of the tests using the supported color
+        scheme feature.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css-dark-mode/color-scheme-css-expected.txt: Added.
+        * platform/gtk/css-dark-mode/color-scheme-meta-expected.txt: Added.
+        * platform/gtk/css-dark-mode/default-colors-expected.txt: Added.
+        * platform/gtk/css-dark-mode/older-syntax/supported-color-schemes-css-expected.txt: Added.
+        * platform/gtk/css-dark-mode/older-syntax/supported-color-schemes-meta-expected.txt: Added.
+        * platform/gtk/css-dark-mode/prefers-color-scheme-expected.txt: Added.
+
+2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK gardening. Rebaseline tests after r244635.
 
         * platform/gtk/css3/selectors3/html/css3-modsel-24-expected.png:

@@ -137,6 +137,8 @@ private:
     Settings& settings() const;
     static const char* supplementName();
 
+    void setUseDarkAppearanceInternal(bool);
+
     class Backup {
     public:
         explicit Backup(Settings&);

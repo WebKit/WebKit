@@ -1,3 +1,15 @@
+2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Support prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=196685
+
+        Reviewed by Michael Catanzaro.
+
+        Enable DARK_MODE_CSS. Supported color schemes feature is not supported for now. I'm not sure we will be able to
+        suport it, because it requires to change the theme too many times, which is very slow in GTK.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2019-04-29  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WEBKIT_EXECUTABLE macro
