@@ -294,18 +294,20 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunBindingsTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        timeout=300,
                         command=['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='bindings-tests')
+        self.expectOutcome(result=SUCCESS, state_string='Passed bindings tests')
         return self.runStep()
 
     def test_failure(self):
         self.setupStep(RunBindingsTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        timeout=300,
                         command=['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )

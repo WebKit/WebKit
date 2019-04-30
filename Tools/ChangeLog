@@ -1,3 +1,17 @@
+2019-04-30  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Parse and display bindings test failures
+        https://bugs.webkit.org/show_bug.cgi?id=197423
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunBindingsTests.__init__): Set timeout of 5 minutes.
+        (RunBindingsTests.start): Initialize log_observer for json output.
+        (RunBindingsTests.getResultSummary): Update step and build summary based on bindings test results.
+        (RunBindingsTests._addToLog): Method to add message to log.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-test accordingly.
+
 2019-04-30  Pablo Saavedra  <psaavedra@igalia.com>
 
         Unreviewed. Add myself as a committer.
