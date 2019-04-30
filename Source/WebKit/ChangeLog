@@ -1,5 +1,31 @@
 2019-04-30  Chris Dumez  <cdumez@apple.com>
 
+        Regression(PSON) URL scheme handlers can no longer respond asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=197426
+        <rdar://problem/50256169>
+
+        Reviewed by Brady Eidson.
+
+        The issue was that when committing the provisional process, we would call WebPageProxy::processDidTerminate()
+        which would call WebPageProxy::stopAllURLSchemeTasks(). This would terminate all URL scheme tasks associated
+        with the page, including the one associated with the provisisional page / process.
+
+        To address the issue, pass m_process to stopAllURLSchemeTasks() in processDidTerminate() and only stop the
+        tasks associated with the m_process (which is the process we're about to swap away from).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::stopAllURLSchemeTasks):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::processForTaskIdentifier):
+        (WebKit::WebURLSchemeHandler::stopAllTasksForPage):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::process const):
+
+2019-04-30  Chris Dumez  <cdumez@apple.com>
+
         Only use a related page's process if that page has not been closed yet
         https://bugs.webkit.org/show_bug.cgi?id=197393
         <rdar://problem/50302423>

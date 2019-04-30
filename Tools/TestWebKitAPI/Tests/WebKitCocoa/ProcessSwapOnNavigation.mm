@@ -48,6 +48,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -238,6 +239,8 @@ static RetainPtr<WKWebView> createdWebView;
     const char* _bytes;
     HashMap<String, String> _redirects;
     HashMap<String, RetainPtr<NSData>> _dataMappings;
+    HashSet<id <WKURLSchemeTask>> _runningTasks;
+    bool _shouldRespondAsynchronously;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
 - (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString;
@@ -263,8 +266,29 @@ static RetainPtr<WKWebView> createdWebView;
     _dataMappings.set(urlString, [NSData dataWithBytesNoCopy:(void*)data length:strlen(data) freeWhenDone:NO]);
 }
 
+- (void)setShouldRespondAsynchronously:(BOOL)value
+{
+    _shouldRespondAsynchronously = value;
+}
+
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
+    if ([(id<WKURLSchemeTaskPrivate>)task _requestOnlyIfCached]) {
+        [task didFailWithError:[NSError errorWithDomain:@"TestWebKitAPI" code:1 userInfo:nil]];
+        return;
+    }
+
+    _runningTasks.add(task);
+
+    auto doAsynchronouslyIfNecessary = [self, strongSelf = retainPtr(self), task = retainPtr(task)](Function<void(id <WKURLSchemeTask>)>&& f, double delay) {
+        if (!_shouldRespondAsynchronously)
+            return f(task.get());
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), dispatch_get_main_queue(), makeBlockPtr([self, strongSelf, task, f = WTFMove(f)] {
+            if (_runningTasks.contains(task.get()))
+                f(task.get());
+        }).get());
+    };
+
     NSURL *finalURL = task.request.URL;
     auto target = _redirects.get(task.request.URL.absoluteString);
     if (!target.isEmpty()) {
@@ -276,27 +300,30 @@ static RetainPtr<WKWebView> createdWebView;
         [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:redirectResponse.get() newRequest:request.get()];
     }
 
-    if ([(id<WKURLSchemeTaskPrivate>)task _requestOnlyIfCached]) {
-        [task didFailWithError:[NSError errorWithDomain:@"TestWebKitAPI" code:1 userInfo:nil]];
-        return;
-    }
+    doAsynchronouslyIfNecessary([finalURL = retainPtr(finalURL)](id <WKURLSchemeTask> task) {
+        RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL.get() MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+    }, 0.1);
 
-    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
-    [task didReceiveResponse:response.get()];
+    doAsynchronouslyIfNecessary([self, finalURL = retainPtr(finalURL)](id <WKURLSchemeTask> task) {
+        if (auto data = _dataMappings.get([finalURL absoluteString]))
+            [task didReceiveData:data.get()];
+        else if (_bytes) {
+            RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void *)_bytes length:strlen(_bytes) freeWhenDone:NO]);
+            [task didReceiveData:data.get()];
+        } else
+            [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
+    }, 0.2);
 
-    if (auto data = _dataMappings.get([finalURL absoluteString]))
-        [task didReceiveData:data.get()];
-    else if (_bytes) {
-        RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void *)_bytes length:strlen(_bytes) freeWhenDone:NO]);
-        [task didReceiveData:data.get()];
-    } else
-        [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [task didFinish];
+    doAsynchronouslyIfNecessary([self](id <WKURLSchemeTask> task) {
+        [task didFinish];
+        _runningTasks.remove(task);
+    }, 0.3);
 }
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
 {
+    _runningTasks.remove(task);
 }
 
 @end
@@ -471,7 +498,8 @@ static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()
     return processPoolConfiguration;
 }
 
-TEST(ProcessSwap, Basic)
+enum class SchemeHandlerShouldBeAsync { No, Yes };
+static void runBasicTest(SchemeHandlerShouldBeAsync schemeHandlerShouldBeAsync)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -479,6 +507,7 @@ TEST(ProcessSwap, Basic)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler setShouldRespondAsynchronously:(schemeHandlerShouldBeAsync == SchemeHandlerShouldBeAsync::Yes)];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -514,6 +543,16 @@ TEST(ProcessSwap, Basic)
 
     // 3 loads, 3 decidePolicy calls (e.g. the load that did perform a process swap should not have generated an additional decidePolicy call)
     EXPECT_EQ(numberOfDecidePolicyCalls, 3);
+}
+
+TEST(ProcessSwap, Basic)
+{
+    runBasicTest(SchemeHandlerShouldBeAsync::No);
+}
+
+TEST(ProcessSwap, BasicWithAsyncSchemeHandler)
+{
+    runBasicTest(SchemeHandlerShouldBeAsync::Yes);
 }
 
 TEST(ProcessSwap, LoadAfterPolicyDecision)
