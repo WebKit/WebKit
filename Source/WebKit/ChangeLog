@@ -1,3 +1,16 @@
+2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r244750): [GTK][WPE] Network process is crashing in all layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=197406
+
+        Reviewed by Žan Doberšek.
+
+        Do not trasnfer ownership of cachePath to traverseDirectory() lambda, since it's passed also as first argument
+        and it can be passed as a reference.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+
 2019-04-29  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r244755.
