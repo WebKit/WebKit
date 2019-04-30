@@ -1,3 +1,19 @@
+2019-04-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r243641. rdar://problem/50232877
+
+    Unreviewed build fix.
+    
+    * wtf/CMakeLists.txt: Added SpanningTree.h to WTF_PUBLIC_HEADERS.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243641 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+            Unreviewed build fix.
+
+            * wtf/CMakeLists.txt: Added SpanningTree.h to WTF_PUBLIC_HEADERS.
+
 2019-04-24  Alan Coon  <alancoon@apple.com>
 
         Revert r244122. rdar://problem/50132675
