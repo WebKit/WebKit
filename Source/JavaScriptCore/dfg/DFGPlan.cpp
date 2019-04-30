@@ -184,7 +184,7 @@ void Plan::compileInThread(ThreadData* threadData)
     CompilationScope compilationScope;
 
     if (logCompilationChanges(m_mode) || Options::logPhaseTimes())
-        dataLog("DFG(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", number of instructions = ", m_codeBlock->instructionCount(), "\n");
+        dataLog("DFG(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
 
     CompilationPath path = compileInThreadImpl();
 

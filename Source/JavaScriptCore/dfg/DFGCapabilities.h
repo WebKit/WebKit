@@ -166,7 +166,7 @@ inline CapabilityLevel inlineFunctionForCapabilityLevel(CodeBlock* codeBlock, Co
 
 inline bool isSmallEnoughToInlineCodeInto(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumInliningCallerSize();
+    return codeBlock->bytecodeCost() <= Options::maximumInliningCallerBytecodeCost();
 }
 
 } } // namespace JSC::DFG

@@ -300,13 +300,13 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(bool, breakOnThrow, false, Normal, nullptr) \
     \
-    v(unsigned, maximumOptimizationCandidateInstructionCount, 100000, Normal, nullptr) \
+    v(unsigned, maximumOptimizationCandidateBytecodeCost, 100000, Normal, nullptr) \
     \
-    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 120, Normal, nullptr) \
-    v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100, Normal, nullptr) \
-    v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100, Normal, nullptr) \
+    v(unsigned, maximumFunctionForCallInlineCandidateBytecodeCost, 120, Normal, nullptr) \
+    v(unsigned, maximumFunctionForClosureCallInlineCandidateBytecodeCost, 100, Normal, nullptr) \
+    v(unsigned, maximumFunctionForConstructInlineCandidateBytecoodeCost, 100, Normal, nullptr) \
     \
-    v(unsigned, maximumFTLCandidateInstructionCount, 20000, Normal, nullptr) \
+    v(unsigned, maximumFTLCandidateBytecodeCost, 20000, Normal, nullptr) \
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
     v(unsigned, maximumInliningDepth, 5, Normal, "maximum allowed inlining depth.  Depth of 1 means no inlining") \
@@ -314,7 +314,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     /* Maximum size of a caller for enabling inlining. This is purely to protect us */\
     /* from super long compiles that take a lot of memory. */\
-    v(unsigned, maximumInliningCallerSize, 10000, Normal, nullptr) \
+    v(unsigned, maximumInliningCallerBytecodeCost, 10000, Normal, nullptr) \
     \
     v(unsigned, maximumVarargsForInlining, 100, Normal, nullptr) \
     \
@@ -558,6 +558,12 @@ enum OptionEquivalence {
     v(enableDollarVM, useDollarVM, SameOption) \
     v(enableWebAssembly, useWebAssembly, SameOption) \
     v(verboseDFGByteCodeParsing, verboseDFGBytecodeParsing, SameOption) \
+    v(maximumOptimizationCandidateInstructionCount, maximumOptimizationCandidateBytecodeCost, SameOption) \
+    v(maximumFunctionForCallInlineCandidateInstructionCount, maximumFunctionForCallInlineCandidateBytecodeCost, SameOption) \
+    v(maximumFunctionForClosureCallInlineCandidateInstructionCount, maximumFunctionForClosureCallInlineCandidateBytecodeCost, SameOption) \
+    v(maximumFunctionForConstructInlineCandidateInstructionCount, maximumFunctionForConstructInlineCandidateBytecoodeCost, SameOption) \
+    v(maximumFTLCandidateInstructionCount, maximumFTLCandidateBytecodeCost, SameOption) \
+    v(maximumInliningCallerSize, maximumInliningCallerBytecodeCost, SameOption) \
 
 
 class Options {

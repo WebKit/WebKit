@@ -1559,7 +1559,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     VERBOSE_LOG("    Inlining should be possible.\n");
     
     // It might be possible to inline.
-    return codeBlock->instructionCount();
+    return codeBlock->bytecodeCost();
 }
 
 template<typename ChecksFunctor>
@@ -1904,11 +1904,11 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
 
 unsigned ByteCodeParser::getInliningBalance(const CallLinkStatus& callLinkStatus, CodeSpecializationKind specializationKind)
 {
-    unsigned inliningBalance = Options::maximumFunctionForCallInlineCandidateInstructionCount();
+    unsigned inliningBalance = Options::maximumFunctionForCallInlineCandidateBytecodeCost();
     if (specializationKind == CodeForConstruct)
-        inliningBalance = std::min(inliningBalance, Options::maximumFunctionForConstructInlineCandidateInstructionCount());
+        inliningBalance = std::min(inliningBalance, Options::maximumFunctionForConstructInlineCandidateBytecoodeCost());
     if (callLinkStatus.isClosureCall())
-        inliningBalance = std::min(inliningBalance, Options::maximumFunctionForClosureCallInlineCandidateInstructionCount());
+        inliningBalance = std::min(inliningBalance, Options::maximumFunctionForClosureCallInlineCandidateBytecodeCost());
     return inliningBalance;
 }
 

@@ -1,3 +1,72 @@
+2019-04-30  Saam barati  <sbarati@apple.com>
+
+        CodeBlock::m_instructionCount is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=197304
+
+        Reviewed by Yusuke Suzuki.
+
+        What we were calling instructionCount() was wrong, as evidenced by
+        us using it incorrectly both in the sampling profiler and when we
+        dumped bytecode for a given CodeBlock. Prior to the bytecode rewrite,
+        instructionCount() was probably valid to do bounds checks against.
+        However, this is no longer the case. This patch renames what we called
+        instructionCount() to bytecodeCost(). It is now only used to make decisions
+        about inlining and tier up heuristics. I've also named options related to
+        this appropriately.
+        
+        This patch also introduces instructionsSize(). The result of this method
+        is valid to do bounds checks against.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType const):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        (JSC::CodeBlock::predictedMachineCodeSize):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::instructionsSize const):
+        (JSC::CodeBlock::bytecodeCost const):
+        (JSC::CodeBlock::instructionCount const): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::getInliningBalance):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForClosureCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::isSmallEnoughToInlineCodeInto):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpHeader):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpHeader):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        * profiler/ProfilerBytecodes.cpp:
+        (JSC::Profiler::Bytecodes::Bytecodes):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::tryGetBytecodeIndex):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+
 2019-04-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         TypeArrays should not store properties that are canonical numeric indices

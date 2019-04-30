@@ -907,7 +907,7 @@ CompilationResult JIT::link()
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
         static_cast<double>(result.size()) /
-        static_cast<double>(m_codeBlock->instructionCount()));
+        static_cast<double>(m_codeBlock->instructionsSize()));
 
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     m_codeBlock->setJITCode(

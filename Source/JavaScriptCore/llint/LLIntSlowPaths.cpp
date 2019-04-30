@@ -357,7 +357,7 @@ static FunctionWhitelist& ensureGlobalJITWhitelist()
 
 inline bool shouldJIT(CodeBlock* codeBlock)
 {
-    if (!Options::bytecodeRangeToJITCompile().isInRange(codeBlock->instructionCount())
+    if (!Options::bytecodeRangeToJITCompile().isInRange(codeBlock->instructionsSize())
         || !ensureGlobalJITWhitelist().contains(codeBlock))
         return false;
 

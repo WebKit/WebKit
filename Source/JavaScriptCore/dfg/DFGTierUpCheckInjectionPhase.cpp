@@ -69,7 +69,7 @@ public:
         if (m_graph.m_profiledBlock->m_didFailFTLCompilation)
             return false;
 
-        if (!Options::bytecodeRangeToFTLCompile().isInRange(m_graph.m_profiledBlock->instructionCount()))
+        if (!Options::bytecodeRangeToFTLCompile().isInRange(m_graph.m_profiledBlock->instructionsSize()))
             return false;
 
         if (!ensureGlobalFTLWhitelist().contains(m_graph.m_profiledBlock))

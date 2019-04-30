@@ -190,7 +190,7 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITType jitType) const
 
     if (codeType() == FunctionCode)
         out.print(specializationKind());
-    out.print(", ", instructionCount());
+    out.print(", ", instructionsSize());
     if (this->jitType() == JITType::BaselineJIT && m_shouldAlwaysBeInlined)
         out.print(" (ShouldAlwaysBeInlined)");
     if (ownerExecutable()->neverInline())
@@ -298,7 +298,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
-    , m_instructionCount(other.m_instructionCount)
+    , m_bytecodeCost(other.m_bytecodeCost)
     , m_scopeRegister(other.m_scopeRegister)
     , m_hash(other.m_hash)
     , m_unlinkedCode(*other.vm(), this, other.m_unlinkedCode.get())
@@ -524,7 +524,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     const InstructionStream& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
-        m_instructionCount += opcodeLengths[opcodeID];
+        m_bytecodeCost += opcodeLengths[opcodeID];
         switch (opcodeID) {
         LINK(OpHasIndexedProperty, arrayProfile)
 
@@ -2335,17 +2335,17 @@ double CodeBlock::optimizationThresholdScalingFactor()
     const double c = 0.0;
     const double d = 0.825914;
     
-    double instructionCount = this->instructionCount();
+    double bytecodeCost = this->bytecodeCost();
     
-    ASSERT(instructionCount); // Make sure this is called only after we have an instruction stream; otherwise it'll just return the value of d, which makes no sense.
+    ASSERT(bytecodeCost); // Make sure this is called only after we have an instruction stream; otherwise it'll just return the value of d, which makes no sense.
     
-    double result = d + a * sqrt(instructionCount + b) + c * instructionCount;
+    double result = d + a * sqrt(bytecodeCost + b) + c * bytecodeCost;
     
     result *= codeTypeThresholdMultiplier();
     
     if (Options::verboseOSR()) {
         dataLog(
-            *this, ": instruction count is ", instructionCount,
+            *this, ": bytecode cost is ", bytecodeCost,
             ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(),
             "\n");
     }
@@ -2870,7 +2870,7 @@ size_t CodeBlock::predictedMachineCodeSize()
     if (multiplier < 0 || multiplier > 1000)
         return 0;
     
-    double doubleResult = multiplier * instructionCount();
+    double doubleResult = multiplier * bytecodeCost();
     
     // Be even more paranoid: silently reject values that won't fit into a size_t. If
     // the function is so huge that we can't even fit it into virtual memory then we

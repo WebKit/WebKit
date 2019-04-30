@@ -71,7 +71,7 @@ void link(State& state)
     if (UNLIKELY(compilation)) {
         compilation->addDescription(
             Profiler::OriginStack(),
-            toCString("Generated FTL JIT code for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ", instruction count = ", graph.m_codeBlock->instructionCount(), ":\n"));
+            toCString("Generated FTL JIT code for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ", instructions size = ", graph.m_codeBlock->instructionsSize(), ":\n"));
         
         graph.ensureSSADominators();
         graph.ensureSSANaturalLoops();

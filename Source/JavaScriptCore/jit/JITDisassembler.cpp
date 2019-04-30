@@ -89,7 +89,7 @@ void JITDisassembler::reportToProfiler(Profiler::Compilation* compilation, LinkB
 
 void JITDisassembler::dumpHeader(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    out.print("Generated Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITType::BaselineJIT), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
+    out.print("Generated Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITType::BaselineJIT), ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
     out.print("   Source: ", m_codeBlock->sourceCodeOnOneLine(), "\n");
     out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.size()), "):\n");
 }

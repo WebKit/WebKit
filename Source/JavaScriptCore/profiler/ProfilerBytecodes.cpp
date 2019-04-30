@@ -40,7 +40,7 @@ Bytecodes::Bytecodes(size_t id, CodeBlock* codeBlock)
     , m_inferredName(codeBlock->inferredName())
     , m_sourceCode(codeBlock->sourceCodeForTools())
     , m_hash(codeBlock->hash())
-    , m_instructionCount(codeBlock->instructionCount())
+    , m_instructionCount(codeBlock->instructionsSize())
 {
 }
 

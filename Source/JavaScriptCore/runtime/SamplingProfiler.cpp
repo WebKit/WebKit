@@ -434,7 +434,7 @@ static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* c
 
 #if USE(JSVALUE64)
     unsigned bytecodeIndex = llintPC;
-    if (bytecodeIndex < codeBlock->instructionCount()) {
+    if (bytecodeIndex < codeBlock->instructionsSize()) {
         isValid = true;
         return bytecodeIndex;
     }
@@ -465,7 +465,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
         stackTrace.timestamp = unprocessedStackTrace.timestamp;
 
         auto populateCodeLocation = [] (CodeBlock* codeBlock, unsigned bytecodeIndex, StackFrame::CodeLocation& location) {
-            if (bytecodeIndex < codeBlock->instructionCount()) {
+            if (bytecodeIndex < codeBlock->instructionsSize()) {
                 int divot;
                 int startOffset;
                 int endOffset;

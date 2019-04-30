@@ -384,7 +384,8 @@ public:
 
     size_t predictedMachineCodeSize();
 
-    unsigned instructionCount() const { return m_instructionCount; }
+    unsigned instructionsSize() const { return instructions().size(); }
+    unsigned bytecodeCost() const { return m_bytecodeCost; }
 
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     CodeBlock* newReplacement();
@@ -963,7 +964,7 @@ private:
             unsigned m_numBreakpoints : 30;
         };
     };
-    unsigned m_instructionCount { 0 };
+    unsigned m_bytecodeCost { 0 };
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
 
