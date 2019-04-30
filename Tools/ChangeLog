@@ -1,5 +1,14 @@
 2019-04-30  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Configure ews151 for running various tests
+        https://bugs.webkit.org/show_bug.cgi?id=197419
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
+2019-04-30  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Parse and display bindings test failures
         https://bugs.webkit.org/show_bug.cgi?id=197423
 

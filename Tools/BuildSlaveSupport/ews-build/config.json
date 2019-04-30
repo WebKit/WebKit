@@ -155,7 +155,7 @@
     {
       "name": "ews151",
       "platform": "*",
-      "max_builds": 2
+      "max_builds": 3
     },
     {
       "name": "ews152",
@@ -276,7 +276,7 @@
       "shortname": "style",
       "factory": "StyleFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151"]
     },
     {
       "name": "GTK-Webkit2-EWS",
@@ -398,7 +398,7 @@
       "shortname": "bindings",
       "factory": "BindingsFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151"]
     },
     {
       "name": "WebKitPy-Tests-EWS",
@@ -426,7 +426,7 @@
       "shortname": "api-mac",
       "factory": "APITestsFactory",
       "platform": "*",
-      "workernames": ["ews120", "ews150", "ews151", "ews153", "ews155"]
+      "workernames": ["ews120", "ews150", "ews153", "ews155"]
     }
   ],
   "schedulers": [
