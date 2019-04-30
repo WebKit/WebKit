@@ -1035,6 +1035,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCredentials.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCredentials.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorEME.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorEME.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGPU.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGPU.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGamepad.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGamepad.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGeolocation.cpp
@@ -2011,6 +2013,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigatorGPU.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigatorGPU.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigatorStorageQuota.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigatorStorageQuota.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerType.cpp

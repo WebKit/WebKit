@@ -341,6 +341,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUTextureFormat.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexAttributeDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexInputDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/NavigatorGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapter.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUBindGroup.idl
@@ -371,6 +372,7 @@ $(PROJECT_DIR)/Modules/webgpu/WebGPUShaderModuleDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUSwapChain.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUTexture.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUTextureView.idl
+$(PROJECT_DIR)/Modules/webgpu/WorkerNavigatorGPU.idl
 $(PROJECT_DIR)/Modules/websockets/CloseEvent.idl
 $(PROJECT_DIR)/Modules/websockets/WebSocket.idl
 $(PROJECT_DIR)/Modules/webvr/DOMWindowWebVR.idl
