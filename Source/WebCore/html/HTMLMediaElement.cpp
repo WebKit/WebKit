@@ -1768,9 +1768,9 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
             if (!weakThis)
                 return;
 
-            auto currentMediaTime = this->currentMediaTime();
+            auto currentMediaTime = weakThis->currentMediaTime();
             INFO_LOG(LOGIDENTIFIER, " lambda, currentMediaTime: ", currentMediaTime);
-            this->updateActiveTextTrackCues(currentMediaTime);
+            weakThis->updateActiveTextTrackCues(currentMediaTime);
         }, nextInterestingTime);
     }
 

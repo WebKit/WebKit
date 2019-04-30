@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Algorithms.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/WeakPtr.h>
@@ -122,11 +121,6 @@ public:
                 return false;
         }
         return true;
-    }
-
-    bool hasNullReferences() const
-    {
-        return WTF::anyOf(m_set, [] (auto& value) { return !value->get(); });
     }
 
     unsigned computeSize() const

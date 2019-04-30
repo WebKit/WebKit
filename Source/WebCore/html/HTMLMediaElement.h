@@ -573,8 +573,6 @@ public:
 
     enum class AutoplayEventPlaybackState { None, PreventedAutoplay, StartedWithUserGesture, StartedWithoutUserGesture };
 
-    using HTMLElement::weakPtrFactory;
-
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual void finishInitialization();
