@@ -147,6 +147,11 @@ AudioContext::AudioContext(Document& document)
 
     // Initialize the destination node's muted state to match the page's current muted state.
     pageMutedStateDidChange();
+
+    if (!isOfflineContext()) {
+        document.addAudioProducer(*this);
+        document.registerForVisibilityStateChangedCallbacks(*this);
+    }
 }
 
 // Constructor for offline (non-realtime) rendering.
@@ -202,6 +207,11 @@ AudioContext::~AudioContext()
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
     ASSERT(m_renderingAutomaticPullNodes.isEmpty());
     // FIXME: Can we assert that m_deferredFinishDerefList is empty?
+
+    if (!isOfflineContext() && scriptExecutionContext()) {
+        document()->removeAudioProducer(*this);
+        document()->unregisterForVisibilityStateChangedCallbacks(*this);
+    }
 }
 
 void AudioContext::lazyInitialize()
@@ -218,9 +228,6 @@ void AudioContext::lazyInitialize()
         m_destinationNode->initialize();
 
         if (!isOfflineContext()) {
-            document()->addAudioProducer(*this);
-            document()->registerForVisibilityStateChangedCallbacks(*this);
-
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
             // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
@@ -265,9 +272,6 @@ void AudioContext::uninitialize()
     m_isAudioThreadFinished = true;
 
     if (!isOfflineContext()) {
-        document()->removeAudioProducer(*this);
-        document()->unregisterForVisibilityStateChangedCallbacks(*this);
-
         ASSERT(s_hardwareContextCount);
         --s_hardwareContextCount;
 
@@ -378,7 +382,7 @@ bool AudioContext::isSuspended() const
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
-    if (mediaState() == MediaProducer::IsPlayingAudio)
+    if (mediaState() == MediaProducer::IsPlayingAudio || m_isStopScheduled)
         return;
 
     if (document()->hidden()) {
