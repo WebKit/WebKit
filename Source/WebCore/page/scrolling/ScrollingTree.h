@@ -42,6 +42,7 @@ namespace WebCore {
 class IntPoint;
 class ScrollingStateTree;
 class ScrollingStateNode;
+class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeNode;
 class ScrollingTreeScrollingNode;
 
@@ -129,7 +130,7 @@ public:
     WEBCORE_EXPORT void setScrollingPerformanceLoggingEnabled(bool flag);
     bool scrollingPerformanceLoggingEnabled();
 
-    ScrollingTreeNode* rootNode() const { return m_rootNode.get(); }
+    ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
 
     ScrollingNodeID latchedNode();
     void setLatchedNode(ScrollingNodeID);
@@ -170,7 +171,7 @@ private:
 
     Lock m_treeMutex; // Protects the scrolling tree.
 
-    RefPtr<ScrollingTreeNode> m_rootNode;
+    RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, ScrollingTreeNode*>;
     ScrollingTreeNodeMap m_nodeMap;

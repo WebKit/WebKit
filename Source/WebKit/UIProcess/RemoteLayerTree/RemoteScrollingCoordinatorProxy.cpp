@@ -39,7 +39,7 @@
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStatePositionedNode.h>
 #include <WebCore/ScrollingStateTree.h>
-#include <WebCore/ScrollingTreeScrollingNode.h>
+#include <WebCore/ScrollingTreeFrameScrollingNode.h>
 
 namespace WebKit {
 using namespace WebCore;

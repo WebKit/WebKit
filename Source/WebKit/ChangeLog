@@ -1,3 +1,12 @@
+2019-04-30  Antti Koivisto  <antti@apple.com>
+
+        Tighten type of ScrollingTree:rootNode() to ScrollingTreeFrameScrollingNode
+        https://bugs.webkit.org/show_bug.cgi?id=197414
+
+        Reviewed by Frédéric Wang.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+
 2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r244750): [GTK][WPE] Network process is crashing in all layout tests

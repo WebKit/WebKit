@@ -60,9 +60,8 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
         m_treeState.latchedNodeID = 0;
     
     if (!m_treeState.eventTrackingRegions.isEmpty() && m_rootNode) {
-        auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
         FloatPoint position = wheelEvent.position();
-        position.move(frameScrollingNode.viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
 
         const EventNames& names = eventNames();
         IntPoint roundedPosition = roundedIntPoint(position);
@@ -97,7 +96,7 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     if (!asyncFrameOrOverflowScrollingEnabled()) {
         if (m_rootNode)
-            downcast<ScrollingTreeScrollingNode>(*m_rootNode).handleWheelEvent(wheelEvent);
+            m_rootNode->handleWheelEvent(wheelEvent);
         return ScrollingEventResult::DidNotHandleEvent;
     }
 
@@ -109,10 +108,8 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     }
 
     if (m_rootNode) {
-        auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
-
         FloatPoint position = wheelEvent.position();
-        ScrollingTreeNode* node = frameScrollingNode.scrollingNodeForPoint(LayoutPoint(position));
+        ScrollingTreeNode* node = m_rootNode->scrollingNodeForPoint(LayoutPoint(position));
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position << "\n");
 
@@ -136,8 +133,7 @@ void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoi
     if (!m_rootNode)
         return;
 
-    auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
-    frameScrollingNode.wasScrolledByDelegatedScrolling(scrollPosition, layoutViewport);
+    m_rootNode->wasScrolledByDelegatedScrolling(scrollPosition, layoutViewport);
 }
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
@@ -212,7 +208,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
         if (!parentNodeID) {
             // This is the root node. Clear the node map.
             ASSERT(stateNode->isFrameScrollingNode());
-            m_rootNode = node;
+            m_rootNode = downcast<ScrollingTreeFrameScrollingNode>(node.get());
             m_nodeMap.clear();
         } 
         m_nodeMap.set(nodeID, node.get());
