@@ -2001,7 +2001,7 @@ private:
 
     void viewIsBecomingVisible();
 
-    void stopAllURLSchemeTasks(WebProcessProxy* = nullptr);
+    void stopAllURLSchemeTasks();
 
     void clearInspectorTargets();
     void createInspectorTargets();

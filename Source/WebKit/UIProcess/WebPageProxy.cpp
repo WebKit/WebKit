@@ -6741,7 +6741,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
             automationSession->terminate();
     }
 
-    stopAllURLSchemeTasks(m_process.ptr());
+    stopAllURLSchemeTasks();
 }
 
 void WebPageProxy::provisionalProcessDidTerminate()
@@ -6801,14 +6801,14 @@ void WebPageProxy::resetRecentCrashCount()
     m_recentCrashCount = 0;
 }
 
-void WebPageProxy::stopAllURLSchemeTasks(WebProcessProxy* process)
+void WebPageProxy::stopAllURLSchemeTasks()
 {
     HashSet<WebURLSchemeHandler*> handlers;
     for (auto& handler : m_urlSchemeHandlersByScheme.values())
         handlers.add(handler.ptr());
 
     for (auto* handler : handlers)
-        handler->stopAllTasksForPage(*this, process);
+        handler->stopAllTasksForPage(*this);
 }
 
 #if PLATFORM(IOS_FAMILY)

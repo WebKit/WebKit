@@ -58,7 +58,6 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
     uint64_t pageID() const { return m_pageIdentifier; }
-    WebProcessProxy* process() const { return m_process.get(); }
 
     const WebCore::ResourceRequest& request() const { return m_request; }
 
