@@ -727,7 +727,8 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
 
     auto& processPool = m_process->processPool();
 
-    if (auto* relatedPage = m_configuration->relatedPage())
+    auto* relatedPage = m_configuration->relatedPage();
+    if (relatedPage && !relatedPage->isClosed())
         m_process = relatedPage->ensureRunningProcess();
     else
         m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), this, registrableDomain);

@@ -1,3 +1,20 @@
+2019-04-30  Chris Dumez  <cdumez@apple.com>
+
+        Only use a related page's process if that page has not been closed yet
+        https://bugs.webkit.org/show_bug.cgi?id=197393
+        <rdar://problem/50302423>
+
+        Reviewed by Tim Horton.
+
+        We should not attempt to use a related page's process if that related page has already been closed.
+        Once closed, a page's process is invalid and trying to launch a new process for the closed page
+        leads to crashes such as the one in the radar.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2019-04-30  Tim Horton  <timothy_horton@apple.com>
 
         Long-standing rare crash under -[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal...]
