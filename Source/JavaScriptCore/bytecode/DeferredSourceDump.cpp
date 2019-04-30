@@ -34,11 +34,11 @@ namespace JSC {
 
 DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock)
     : m_codeBlock(*codeBlock->vm(), codeBlock)
-    , m_rootJITType(JITCode::None)
+    , m_rootJITType(JITType::None)
 {
 }
 
-DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITCode::JITType rootJITType, unsigned callerBytecodeIndex)
+DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITType rootJITType, unsigned callerBytecodeIndex)
     : m_codeBlock(*codeBlock->vm(), codeBlock)
     , m_rootCodeBlock(*codeBlock->vm(), rootCodeBlock)
     , m_rootJITType(rootJITType)

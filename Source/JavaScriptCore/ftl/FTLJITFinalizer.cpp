@@ -75,11 +75,11 @@ bool JITFinalizer::finalizeCommon()
     
     MacroAssemblerCodeRef<JSEntryPtrTag> b3CodeRef =
         FINALIZE_CODE_IF(dumpDisassembly, *b3CodeLinkBuffer, JSEntryPtrTag,
-            "FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock(), JITCode::FTLJIT)).data());
+            "FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock(), JITType::FTLJIT)).data());
 
     MacroAssemblerCodeRef<JSEntryPtrTag> arityCheckCodeRef = entrypointLinkBuffer
         ? FINALIZE_CODE_IF(dumpDisassembly, *entrypointLinkBuffer, JSEntryPtrTag,
-            "FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock(), JITCode::FTLJIT)).data(), function)
+            "FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock(), JITType::FTLJIT)).data(), function)
         : MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(b3CodeRef.code());
 
     jitCode->initializeB3Code(b3CodeRef);

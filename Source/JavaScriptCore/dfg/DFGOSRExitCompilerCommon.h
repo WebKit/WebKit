@@ -41,11 +41,11 @@ void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
 void adjustAndJumpToTarget(VM&, CCallHelpers&, const OSRExitBase&);
 
 template <typename JITCodeType>
-void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITCode::JITType jitType)
+void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITType jitType)
 {
-    ASSERT(jitType == JITCode::DFGJIT || jitType == JITCode::FTLJIT);
+    ASSERT(jitType == JITType::DFGJIT || jitType == JITType::FTLJIT);
 
-    bool isFTLOSRExit = jitType == JITCode::FTLJIT;
+    bool isFTLOSRExit = jitType == JITType::FTLJIT;
     RegisterSet registersToPreserve;
     registersToPreserve.set(GPRInfo::regT0);
     if (isFTLOSRExit) {

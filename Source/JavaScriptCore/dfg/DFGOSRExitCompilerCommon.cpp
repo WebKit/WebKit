@@ -116,10 +116,10 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
         activeThreshold, jit.baselineCodeBlock());
     int32_t clippedValue;
     switch (jit.codeBlock()->jitType()) {
-    case JITCode::DFGJIT:
+    case JITType::DFGJIT:
         clippedValue = BaselineExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
         break;
-    case JITCode::FTLJIT:
+    case JITType::FTLJIT:
         clippedValue = UpperTierExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
         break;
     default:
@@ -141,7 +141,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     // FIXME: We shouldn't leave holes on the stack when performing an OSR exit
     // in presence of inlined tail calls.
     // https://bugs.webkit.org/show_bug.cgi?id=147511
-    ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
+    ASSERT(jit.baselineCodeBlock()->jitType() == JITType::BaselineJIT);
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)CallFrameSlot::codeBlock));
 
     const CodeOrigin* codeOrigin;
@@ -310,7 +310,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 
     CodeBlock* codeBlockForExit = jit.baselineCodeBlockFor(exit.m_codeOrigin);
     ASSERT(codeBlockForExit == codeBlockForExit->baselineVersion());
-    ASSERT(codeBlockForExit->jitType() == JITCode::BaselineJIT);
+    ASSERT(codeBlockForExit->jitType() == JITType::BaselineJIT);
     CodeLocationLabel<JSEntryPtrTag> codeLocation = codeBlockForExit->jitCodeMap().find(exit.m_codeOrigin.bytecodeIndex());
     ASSERT(codeLocation);
 

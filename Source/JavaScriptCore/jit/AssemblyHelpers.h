@@ -57,7 +57,7 @@ public:
         if (m_codeBlock) {
             ASSERT(m_baselineCodeBlock);
             ASSERT(!m_baselineCodeBlock->alternative());
-            ASSERT(m_baselineCodeBlock->jitType() == JITCode::None || JITCode::isBaselineCode(m_baselineCodeBlock->jitType()));
+            ASSERT(m_baselineCodeBlock->jitType() == JITType::None || JITCode::isBaselineCode(m_baselineCodeBlock->jitType()));
         }
     }
 

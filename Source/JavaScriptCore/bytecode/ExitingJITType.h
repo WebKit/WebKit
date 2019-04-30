@@ -35,12 +35,12 @@ enum ExitingJITType : uint8_t {
     ExitFromFTL
 };
 
-inline ExitingJITType exitingJITTypeFor(JITCode::JITType type)
+inline ExitingJITType exitingJITTypeFor(JITType type)
 {
     switch (type) {
-    case JITCode::DFGJIT:
+    case JITType::DFGJIT:
         return ExitFromDFG;
-    case JITCode::FTLJIT:
+    case JITType::FTLJIT:
         return ExitFromFTL;
     default:
         RELEASE_ASSERT_NOT_REACHED();

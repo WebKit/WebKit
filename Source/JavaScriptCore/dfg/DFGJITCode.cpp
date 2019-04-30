@@ -36,7 +36,7 @@
 namespace JSC { namespace DFG {
 
 JITCode::JITCode()
-    : DirectJITCode(DFGJIT)
+    : DirectJITCode(JITType::DFGJIT)
 #if ENABLE(FTL_JIT)
     , osrEntryRetry(0)
     , abandonOSREntry(false)
@@ -123,13 +123,13 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
 #if ENABLE(FTL_JIT)
 bool JITCode::checkIfOptimizationThresholdReached(CodeBlock* codeBlock)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     return tierUpCounter.checkIfThresholdCrossedAndSet(codeBlock);
 }
 
 void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": FTL-optimizing next invocation.\n");
     tierUpCounter.setNewThreshold(0, codeBlock);
@@ -137,7 +137,7 @@ void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
 
 void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": Not FTL-optimizing anytime soon.\n");
     tierUpCounter.deferIndefinitely();
@@ -145,7 +145,7 @@ void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
 
 void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": FTL-optimizing after warm-up.\n");
     CodeBlock* baseline = codeBlock->baselineVersion();
@@ -156,7 +156,7 @@ void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
 
 void JITCode::optimizeSoon(CodeBlock* codeBlock)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": FTL-optimizing soon.\n");
     CodeBlock* baseline = codeBlock->baselineVersion();
@@ -167,7 +167,7 @@ void JITCode::optimizeSoon(CodeBlock* codeBlock)
 
 void JITCode::forceOptimizationSlowPathConcurrently(CodeBlock* codeBlock)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": Forcing slow path concurrently for FTL entry.\n");
     tierUpCounter.forceSlowPathConcurrently();
@@ -176,7 +176,7 @@ void JITCode::forceOptimizationSlowPathConcurrently(CodeBlock* codeBlock)
 void JITCode::setOptimizationThresholdBasedOnCompilationResult(
     CodeBlock* codeBlock, CompilationResult result)
 {
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     switch (result) {
     case CompilationSuccessful:
         optimizeNextInvocation(codeBlock);

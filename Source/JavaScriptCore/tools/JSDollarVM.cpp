@@ -1300,7 +1300,7 @@ class CallerFrameJITTypeFunctor {
 public:
     CallerFrameJITTypeFunctor()
         : m_currentFrame(0)
-        , m_jitType(JITCode::None)
+        , m_jitType(JITType::None)
     {
     }
 
@@ -1313,11 +1313,11 @@ public:
         return StackVisitor::Continue;
     }
     
-    JITCode::JITType jitType() { return m_jitType; }
+    JITType jitType() { return m_jitType; }
 
 private:
     mutable unsigned m_currentFrame;
-    mutable JITCode::JITType m_jitType;
+    mutable JITType m_jitType;
 };
 
 static FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
@@ -1344,7 +1344,7 @@ static EncodedJSValue JSC_HOST_CALL functionLLintTrue(ExecState* exec)
         return JSValue::encode(jsUndefined());
     CallerFrameJITTypeFunctor functor;
     exec->iterate(functor);
-    return JSValue::encode(jsBoolean(functor.jitType() == JITCode::InterpreterThunk));
+    return JSValue::encode(jsBoolean(functor.jitType() == JITType::InterpreterThunk));
 }
 
 // Returns true if the current frame is a baseline JIT frame.
@@ -1355,7 +1355,7 @@ static EncodedJSValue JSC_HOST_CALL functionJITTrue(ExecState* exec)
         return JSValue::encode(jsUndefined());
     CallerFrameJITTypeFunctor functor;
     exec->iterate(functor);
-    return JSValue::encode(jsBoolean(functor.jitType() == JITCode::BaselineJIT));
+    return JSValue::encode(jsBoolean(functor.jitType() == JITType::BaselineJIT));
 }
 
 // Set that the argument function should not be inlined.

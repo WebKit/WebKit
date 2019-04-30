@@ -72,7 +72,7 @@ static FunctionPtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, Co
 {
     FunctionPtr<OperationPtrTag> target = MacroAssembler::readCallTarget<OperationPtrTag>(call);
 #if ENABLE(FTL_JIT)
-    if (codeBlock->jitType() == JITCode::FTLJIT) {
+    if (codeBlock->jitType() == JITType::FTLJIT) {
         MacroAssemblerCodePtr<JITThunkPtrTag> thunk = MacroAssemblerCodePtr<OperationPtrTag>::createFromExecutableAddress(target.executableAddress()).retagged<JITThunkPtrTag>();
         return codeBlock->vm()->ftlThunks->keyForSlowPathCallThunk(thunk).callTarget().retagged<CFunctionPtrTag>();
     }
@@ -85,7 +85,7 @@ static FunctionPtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, Co
 void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, FunctionPtr<CFunctionPtrTag> newCalleeFunction)
 {
 #if ENABLE(FTL_JIT)
-    if (codeBlock->jitType() == JITCode::FTLJIT) {
+    if (codeBlock->jitType() == JITType::FTLJIT) {
         VM& vm = *codeBlock->vm();
         FTL::Thunks& thunks = *vm.ftlThunks;
         FunctionPtr<OperationPtrTag> target = MacroAssembler::readCallTarget<OperationPtrTag>(call);

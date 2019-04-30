@@ -689,7 +689,7 @@ static Ref<NativeJITCode> jitCodeForCallTrampoline()
     static NativeJITCode* result;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITCode::HostCallThunk, NoIntrinsic);
+        result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITType::HostCallThunk, NoIntrinsic);
     });
     return makeRef(*result);
 }
@@ -699,7 +699,7 @@ static Ref<NativeJITCode> jitCodeForConstructTrampoline()
     static NativeJITCode* result;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITCode::HostCallThunk, NoIntrinsic);
+        result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITType::HostCallThunk, NoIntrinsic);
     });
     return makeRef(*result);
 }

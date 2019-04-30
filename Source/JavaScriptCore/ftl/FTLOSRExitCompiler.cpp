@@ -506,7 +506,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     CodeBlock* codeBlock = exec->codeBlock();
     
     ASSERT(codeBlock);
-    ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
+    ASSERT(codeBlock->jitType() == JITType::FTLJIT);
     
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.

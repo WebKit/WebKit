@@ -1427,7 +1427,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, uint32_t byt
     DeferGCForAWhile deferGC(vm.heap);
     
     CodeBlock* codeBlock = exec->codeBlock();
-    if (UNLIKELY(codeBlock->jitType() != JITCode::BaselineJIT)) {
+    if (UNLIKELY(codeBlock->jitType() != JITType::BaselineJIT)) {
         dataLog("Unexpected code block in Baseline->DFG tier-up: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1660,8 +1660,8 @@ char* JIT_OPERATION operationTryOSREnterAtCatch(ExecState* exec, uint32_t byteco
         return nullptr;
 
     switch (optimizedReplacement->jitType()) {
-    case JITCode::DFGJIT:
-    case JITCode::FTLJIT: {
+    case JITType::DFGJIT:
+    case JITType::FTLJIT: {
         MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex);
         return entry.executableAddress<char*>();
     }
@@ -1682,8 +1682,8 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState* exec, 
         return nullptr;
 
     switch (optimizedReplacement->jitType()) {
-    case JITCode::DFGJIT:
-    case JITCode::FTLJIT: {
+    case JITType::DFGJIT:
+    case JITType::FTLJIT: {
         MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex);
         return entry.executableAddress<char*>();
     }

@@ -34,7 +34,7 @@ namespace JSC {
 
 class CodeBlockWithJITType {
 public:
-    CodeBlockWithJITType(CodeBlock* codeBlock, JITCode::JITType jitType)
+    CodeBlockWithJITType(CodeBlock* codeBlock, JITType jitType)
         : m_codeBlock(codeBlock)
         , m_jitType(jitType)
     {
@@ -46,7 +46,7 @@ public:
     }
 private:
     CodeBlock* m_codeBlock;
-    JITCode::JITType m_jitType;
+    JITType m_jitType;
 };
 
 } // namespace JSC

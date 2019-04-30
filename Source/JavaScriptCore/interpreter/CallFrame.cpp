@@ -52,11 +52,11 @@ bool CallFrame::callSiteBitsAreBytecodeOffset() const
 {
     ASSERT(codeBlock());
     switch (codeBlock()->jitType()) {
-    case JITCode::InterpreterThunk:
-    case JITCode::BaselineJIT:
+    case JITType::InterpreterThunk:
+    case JITType::BaselineJIT:
         return true;
-    case JITCode::None:
-    case JITCode::HostCallThunk:
+    case JITType::None:
+    case JITType::HostCallThunk:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     default:
@@ -71,11 +71,11 @@ bool CallFrame::callSiteBitsAreCodeOriginIndex() const
 {
     ASSERT(codeBlock());
     switch (codeBlock()->jitType()) {
-    case JITCode::DFGJIT:
-    case JITCode::FTLJIT:
+    case JITType::DFGJIT:
+    case JITType::FTLJIT:
         return true;
-    case JITCode::None:
-    case JITCode::HostCallThunk:
+    case JITType::None:
+    case JITType::HostCallThunk:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     default:

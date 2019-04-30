@@ -51,50 +51,50 @@ struct ProtoCallFrame;
 class TrackedReferences;
 class VM;
 
+enum class JITType : uint8_t {
+    None,
+    HostCallThunk,
+    InterpreterThunk,
+    BaselineJIT,
+    DFGJIT,
+    FTLJIT
+};
+
 class JITCode : public ThreadSafeRefCounted<JITCode> {
 public:
     template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
-    enum JITType : uint8_t {
-        None,
-        HostCallThunk,
-        InterpreterThunk,
-        BaselineJIT,
-        DFGJIT,
-        FTLJIT
-    };
-    
     static const char* typeName(JITType);
 
     static JITType bottomTierJIT()
     {
-        return BaselineJIT;
+        return JITType::BaselineJIT;
     }
     
     static JITType topTierJIT()
     {
-        return FTLJIT;
+        return JITType::FTLJIT;
     }
     
     static JITType nextTierJIT(JITType jitType)
     {
         switch (jitType) {
-        case BaselineJIT:
-            return DFGJIT;
-        case DFGJIT:
-            return FTLJIT;
+        case JITType::BaselineJIT:
+            return JITType::DFGJIT;
+        case JITType::DFGJIT:
+            return JITType::FTLJIT;
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return None;
+            return JITType::None;
         }
     }
     
     static bool isExecutableScript(JITType jitType)
     {
         switch (jitType) {
-        case None:
-        case HostCallThunk:
+        case JITType::None:
+        case JITType::HostCallThunk:
             return false;
         default:
             return true;
@@ -104,8 +104,8 @@ public:
     static bool couldBeInterpreted(JITType jitType)
     {
         switch (jitType) {
-        case InterpreterThunk:
-        case BaselineJIT:
+        case JITType::InterpreterThunk:
+        case JITType::BaselineJIT:
             return true;
         default:
             return false;
@@ -115,9 +115,9 @@ public:
     static bool isJIT(JITType jitType)
     {
         switch (jitType) {
-        case BaselineJIT:
-        case DFGJIT:
-        case FTLJIT:
+        case JITType::BaselineJIT:
+        case JITType::DFGJIT:
+        case JITType::FTLJIT:
             return true;
         default:
             return false;
@@ -148,12 +148,12 @@ public:
     
     static bool isOptimizingJIT(JITType jitType)
     {
-        return jitType == DFGJIT || jitType == FTLJIT;
+        return jitType == JITType::DFGJIT || jitType == JITType::FTLJIT;
     }
     
     static bool isBaselineCode(JITType jitType)
     {
-        return jitType == InterpreterThunk || jitType == BaselineJIT;
+        return jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT;
     }
 
     virtual const DOMJIT::Signature* signature() const { return nullptr; }
@@ -178,7 +178,7 @@ public:
     static JITType jitTypeFor(PointerType jitCode)
     {
         if (!jitCode)
-            return None;
+            return JITType::None;
         return jitCode->jitType();
     }
     
@@ -278,6 +278,6 @@ private:
 namespace WTF {
 
 class PrintStream;
-void printInternal(PrintStream&, JSC::JITCode::JITType);
+void printInternal(PrintStream&, JSC::JITType);
 
 } // namespace WTF

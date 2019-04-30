@@ -342,7 +342,7 @@ CallLinkStatus CallLinkStatus::computeFor(
         // fast-path-slow-path control-flow-diamond style of IC inlining. It's either all fast
         // path or it's a full IC. So, for them, if there is an IC status then it means case (1).
         
-        bool checkStatusFirst = context->optimizedCodeBlock->jitType() == JITCode::FTLJIT;
+        bool checkStatusFirst = context->optimizedCodeBlock->jitType() == JITType::FTLJIT;
         
         auto bless = [&] (CallLinkStatus& result) {
             if (!context->isInlined(codeOrigin))

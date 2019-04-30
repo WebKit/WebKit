@@ -231,7 +231,7 @@ void JITWorklist::poll(VM& vm)
 void JITWorklist::compileLater(CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
 {
     DeferGC deferGC(codeBlock->vm()->heap);
-    RELEASE_ASSERT(codeBlock->jitType() == JITCode::InterpreterThunk);
+    RELEASE_ASSERT(codeBlock->jitType() == JITType::InterpreterThunk);
     
     if (codeBlock->m_didFailJITCompilation) {
         codeBlock->dontJITAnytimeSoon();
@@ -284,7 +284,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecode
 {
     VM* vm = codeBlock->vm();
     DeferGC deferGC(vm->heap);
-    if (codeBlock->jitType() != JITCode::InterpreterThunk)
+    if (codeBlock->jitType() != JITType::InterpreterThunk)
         return;
     
     bool isPlanned;
@@ -300,7 +300,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecode
     }
     
     // Now it might be compiled!
-    if (codeBlock->jitType() != JITCode::InterpreterThunk)
+    if (codeBlock->jitType() != JITType::InterpreterThunk)
         return;
     
     // We do this in case we had previously attempted, and then failed, to compile with the

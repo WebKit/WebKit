@@ -45,17 +45,17 @@ JITCode::~JITCode()
 const char* JITCode::typeName(JITType jitType)
 {
     switch (jitType) {
-    case None:
+    case JITType::None:
         return "None";
-    case HostCallThunk:
+    case JITType::HostCallThunk:
         return "Host";
-    case InterpreterThunk:
+    case JITType::InterpreterThunk:
         return "LLInt";
-    case BaselineJIT:
+    case JITType::BaselineJIT:
         return "Baseline";
-    case DFGJIT:
+    case JITType::DFGJIT:
         return "DFG";
-    case FTLJIT:
+    case JITType::FTLJIT:
         return "FTL";
     default:
         CRASH();
@@ -241,7 +241,7 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
 
 namespace WTF {
 
-void printInternal(PrintStream& out, JSC::JITCode::JITType type)
+void printInternal(PrintStream& out, JSC::JITType type)
 {
     out.print(JSC::JITCode::typeName(type));
 }

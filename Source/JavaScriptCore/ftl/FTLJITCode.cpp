@@ -36,7 +36,7 @@ namespace JSC { namespace FTL {
 using namespace B3;
 
 JITCode::JITCode()
-    : JSC::JITCode(FTLJIT)
+    : JSC::JITCode(JITType::FTLJIT)
 {
 }
 

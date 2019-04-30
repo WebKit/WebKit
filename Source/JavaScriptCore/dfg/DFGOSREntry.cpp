@@ -96,7 +96,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 {
     ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
-    ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
 
     if (!Options::useOSREntryToDFG())
@@ -115,8 +115,8 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (bytecodeIndex)
         codeBlock->ownerExecutable()->setDidTryToEnterInLoop(true);
     
-    if (codeBlock->jitType() != JITCode::DFGJIT) {
-        RELEASE_ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
+    if (codeBlock->jitType() != JITType::DFGJIT) {
+        RELEASE_ASSERT(codeBlock->jitType() == JITType::FTLJIT);
         
         // When will this happen? We could have:
         //
@@ -341,11 +341,11 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 
 MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 { 
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT || codeBlock->jitType() == JITCode::FTLJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT || codeBlock->jitType() == JITType::FTLJIT);
 
-    if (!Options::useOSREntryToDFG() && codeBlock->jitCode()->jitType() == JITCode::DFGJIT)
+    if (!Options::useOSREntryToDFG() && codeBlock->jitCode()->jitType() == JITType::DFGJIT)
         return nullptr;
-    if (!Options::useOSREntryToFTL() && codeBlock->jitCode()->jitType() == JITCode::FTLJIT)
+    if (!Options::useOSREntryToFTL() && codeBlock->jitCode()->jitType() == JITType::FTLJIT)
         return nullptr;
 
     VM& vm = exec->vm();

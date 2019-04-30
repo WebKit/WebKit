@@ -81,8 +81,8 @@ static CompilationResult compileImpl(
     
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
-    ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
-    ASSERT(!profiledDFGCodeBlock || profiledDFGCodeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
+    ASSERT(!profiledDFGCodeBlock || profiledDFGCodeBlock->jitType() == JITType::DFGJIT);
     
     if (logCompilationChanges(mode))
         dataLog("DFG(Driver) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");

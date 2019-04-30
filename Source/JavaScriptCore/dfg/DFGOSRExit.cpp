@@ -351,7 +351,7 @@ void OSRExit::executeOSRExit(Context& context)
 
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock);
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
 
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
@@ -375,7 +375,7 @@ void OSRExit::executeOSRExit(Context& context)
         prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
 
         CodeBlock* baselineCodeBlock = codeBlock->baselineAlternative();
-        ASSERT(baselineCodeBlock->jitType() == JITCode::BaselineJIT);
+        ASSERT(baselineCodeBlock->jitType() == JITType::BaselineJIT);
 
         SpeculationRecovery* recovery = nullptr;
         if (exit.m_recoveryIndex != UINT_MAX) {
@@ -445,7 +445,7 @@ void OSRExit::executeOSRExit(Context& context)
 
     OSRExitState& exitState = *exit.exitState.get();
     CodeBlock* baselineCodeBlock = exitState.baselineCodeBlock;
-    ASSERT(baselineCodeBlock->jitType() == JITCode::BaselineJIT);
+    ASSERT(baselineCodeBlock->jitType() == JITType::BaselineJIT);
 
     Operands<ValueRecovery>& operands = exitState.operands;
     Vector<UndefinedOperandSpan>& undefinedOperandSpans = exitState.undefinedOperandSpans;
@@ -752,7 +752,7 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
     // FIXME: We shouldn't leave holes on the stack when performing an OSR exit
     // in presence of inlined tail calls.
     // https://bugs.webkit.org/show_bug.cgi?id=147511
-    ASSERT(outermostBaselineCodeBlock->jitType() == JITCode::BaselineJIT);
+    ASSERT(outermostBaselineCodeBlock->jitType() == JITType::BaselineJIT);
     frame.setOperand<CodeBlock*>(CallFrameSlot::codeBlock, outermostBaselineCodeBlock);
 
     const CodeOrigin* codeOrigin;
@@ -1035,7 +1035,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
 
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock);
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITType::DFGJIT);
 
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.

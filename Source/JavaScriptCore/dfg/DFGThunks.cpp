@@ -53,7 +53,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM* vm)
     MacroAssembler jit;
 
     // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
-    adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITCode::DFGJIT);
+    adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITType::DFGJIT);
     
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
     ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(scratchSize);

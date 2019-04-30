@@ -108,7 +108,7 @@ public:
             unsigned columnNumber { std::numeric_limits<unsigned>::max() };
             unsigned bytecodeIndex { std::numeric_limits<unsigned>::max() };
             CodeBlockHash codeBlockHash;
-            JITCode::JITType jitType { JITCode::None };
+            JITType jitType { JITType::None };
         };
 
         CodeLocation semanticLocation;

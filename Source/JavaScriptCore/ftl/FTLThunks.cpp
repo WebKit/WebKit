@@ -53,7 +53,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
 
     if (frameAndStackAdjustmentRequirement == FrameAndStackAdjustmentRequirement::Needed) {
         // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
-        adjustFrameAndStackInOSRExitCompilerThunk<FTL::JITCode>(jit, vm, JITCode::FTLJIT);
+        adjustFrameAndStackInOSRExitCompilerThunk<FTL::JITCode>(jit, vm, JITType::FTLJIT);
     }
     
     // Note that the "return address" will be the ID that we pass to the generation function.

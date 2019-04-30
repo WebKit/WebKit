@@ -240,7 +240,7 @@ inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCal
 
 inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)
 {
-    ASSERT(baselineCodeBlock->jitType() == JITCode::BaselineJIT);
+    ASSERT(baselineCodeBlock->jitType() == JITType::BaselineJIT);
     auto* inlineCallFrame = codeOrigin.inlineCallFrame();
     if (inlineCallFrame)
         return baselineCodeBlockForInlineCallFrame(inlineCallFrame);

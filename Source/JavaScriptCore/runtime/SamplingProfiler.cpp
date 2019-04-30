@@ -590,7 +590,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 // inside the LLInt's handleUncaughtException. So we just protect against this
                 // by ignoring it.
                 unsigned bytecodeIndex = 0;
-                if (topCodeBlock->jitType() == JITCode::InterpreterThunk || topCodeBlock->jitType() == JITCode::BaselineJIT) {
+                if (topCodeBlock->jitType() == JITType::InterpreterThunk || topCodeBlock->jitType() == JITType::BaselineJIT) {
                     bool isValidPC;
                     unsigned bits;
 #if USE(JSVALUE64)

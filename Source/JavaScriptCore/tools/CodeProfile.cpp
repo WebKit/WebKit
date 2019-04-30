@@ -82,7 +82,7 @@ void CodeProfile::sample(void* pc, void** framePointer)
             type = RegExpCode;
         else {
             CodeBlock* codeBlock = static_cast<CodeBlock*>(ownerUID);
-            if (codeBlock->jitType() == JITCode::DFGJIT)
+            if (codeBlock->jitType() == JITType::DFGJIT)
                 type = DFGJIT;
             else if (!canCompile(codeBlock->capabilityLevelState()))
                 type = BaselineOnly;

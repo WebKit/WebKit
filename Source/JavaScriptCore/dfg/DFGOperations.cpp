@@ -3167,7 +3167,7 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
     
     sanitizeStackForVM(vm);
 
-    if (codeBlock->jitType() != JITCode::DFGJIT) {
+    if (codeBlock->jitType() != JITType::DFGJIT) {
         dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -3433,7 +3433,7 @@ void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeInde
 
     sanitizeStackForVM(vm);
 
-    if (codeBlock->jitType() != JITCode::DFGJIT) {
+    if (codeBlock->jitType() != JITType::DFGJIT) {
         dataLog("Unexpected code block in DFG->FTL trigger tier up now in loop: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -3467,7 +3467,7 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
 
     sanitizeStackForVM(vm);
 
-    if (codeBlock->jitType() != JITCode::DFGJIT) {
+    if (codeBlock->jitType() != JITType::DFGJIT) {
         dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }

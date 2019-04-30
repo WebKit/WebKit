@@ -142,7 +142,7 @@ public:
     CString hashAsStringIfPossible() const;
     CString sourceCodeForTools() const; // Not quite the actual source we parsed; this will do things like prefix the source for a function with a reified signature.
     CString sourceCodeOnOneLine() const; // As sourceCodeForTools(), but replaces all whitespace runs with a single space.
-    void dumpAssumingJITType(PrintStream&, JITCode::JITType) const;
+    void dumpAssumingJITType(PrintStream&, JITType) const;
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     int numParameters() const { return m_numParameters; }
@@ -402,18 +402,18 @@ public:
 
     RefPtr<JITCode> jitCode() { return m_jitCode; }
     static ptrdiff_t jitCodeOffset() { return OBJECT_OFFSETOF(CodeBlock, m_jitCode); }
-    JITCode::JITType jitType() const
+    JITType jitType() const
     {
         JITCode* jitCode = m_jitCode.get();
         WTF::loadLoadFence();
-        JITCode::JITType result = JITCode::jitTypeFor(jitCode);
+        JITType result = JITCode::jitTypeFor(jitCode);
         WTF::loadLoadFence(); // This probably isn't needed. Oh well, paranoia is good.
         return result;
     }
 
     bool hasBaselineJITProfiling() const
     {
-        return jitType() == JITCode::BaselineJIT;
+        return jitType() == JITType::BaselineJIT;
     }
     
 #if ENABLE(JIT)
@@ -423,7 +423,7 @@ public:
     DFG::CapabilityLevel capabilityLevel();
     DFG::CapabilityLevel capabilityLevelState() { return static_cast<DFG::CapabilityLevel>(m_capabilityLevelState); }
 
-    bool hasOptimizedReplacement(JITCode::JITType typeToReplace);
+    bool hasOptimizedReplacement(JITType typeToReplace);
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 

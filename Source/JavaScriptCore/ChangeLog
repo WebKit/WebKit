@@ -1,3 +1,147 @@
+2019-04-29  Saam Barati  <sbarati@apple.com>
+
+        Make JITType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=197394
+
+        Reviewed by Yusuke Suzuki.
+
+        This makes the code more easily searchable.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType const):
+        (JSC::CodeBlock::specialOSREntryBlockOrNull):
+        (JSC::timeToLive):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::baselineAlternative):
+        (JSC::CodeBlock::baselineVersion):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::noticeIncomingCall):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        (JSC::CodeBlock::frameRegisterCount):
+        (JSC::CodeBlock::bytecodeOffsetFromCallSiteIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitType const):
+        (JSC::CodeBlock::hasBaselineJITProfiling const):
+        * bytecode/CodeBlockWithJITType.h:
+        (JSC::CodeBlockWithJITType::CodeBlockWithJITType):
+        * bytecode/DeferredSourceDump.cpp:
+        (JSC::DeferredSourceDump::DeferredSourceDump):
+        * bytecode/DeferredSourceDump.h:
+        * bytecode/ExitingJITType.h:
+        (JSC::exitingJITTypeFor):
+        * bytecode/InlineCallFrame.h:
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpHeader):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::JITCode):
+        (JSC::DFG::JITCode::checkIfOptimizationThresholdReached):
+        (JSC::DFG::JITCode::optimizeNextInvocation):
+        (JSC::DFG::JITCode::dontOptimizeAnytimeSoon):
+        (JSC::DFG::JITCode::optimizeAfterWarmUp):
+        (JSC::DFG::JITCode::optimizeSoon):
+        (JSC::DFG::JITCode::forceOptimizationSlowPathConcurrently):
+        (JSC::DFG::JITCode::setOptimizationThresholdBasedOnCompilationResult):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct const):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callSiteBitsAreBytecodeOffset const):
+        (JSC::CallFrame::callSiteBitsAreCodeOriginIndex const):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::dump const):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::AssemblyHelpers):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::typeName):
+        (WTF::printInternal):
+        * jit/JITCode.h:
+        (JSC::JITCode::bottomTierJIT):
+        (JSC::JITCode::topTierJIT):
+        (JSC::JITCode::nextTierJIT):
+        (JSC::JITCode::isExecutableScript):
+        (JSC::JITCode::couldBeInterpreted):
+        (JSC::JITCode::isJIT):
+        (JSC::JITCode::isOptimizingJIT):
+        (JSC::JITCode::isBaselineCode):
+        (JSC::JITCode::jitTypeFor):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpHeader):
+        * jit/JITOperations.cpp:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        * jit/Repatch.cpp:
+        (JSC::readPutICCallTarget):
+        (JSC::ftlThunkAwareRepatchCall):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/SamplingProfiler.h:
+        * runtime/VM.cpp:
+        (JSC::jitCodeForCallTrampoline):
+        (JSC::jitCodeForConstructTrampoline):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::sample):
+        * tools/JSDollarVM.cpp:
+        (JSC::CallerFrameJITTypeFunctor::CallerFrameJITTypeFunctor):
+        (JSC::CallerFrameJITTypeFunctor::jitType):
+        (JSC::functionLLintTrue):
+        (JSC::functionJITTrue):
+
 2019-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreivewed, fix FTL implementation of r244760

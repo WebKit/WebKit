@@ -35,14 +35,14 @@ class CodeBlock;
 class DeferredSourceDump {
 public:
     DeferredSourceDump(CodeBlock*);
-    DeferredSourceDump(CodeBlock*, CodeBlock* rootCodeBlock, JITCode::JITType rootJITType, unsigned callerBytecodeIndex);
+    DeferredSourceDump(CodeBlock*, CodeBlock* rootCodeBlock, JITType rootJITType, unsigned callerBytecodeIndex);
 
     void dump();
 
 private:
     Strong<CodeBlock> m_codeBlock;
     Strong<CodeBlock> m_rootCodeBlock;
-    JITCode::JITType m_rootJITType;
+    JITType m_rootJITType;
     unsigned m_callerBytecodeIndex { UINT_MAX };
 };
 

@@ -492,8 +492,8 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, WTF::Function<
                     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
                     out.print(indent, "callSiteIndex: ", callSiteIndex.bits(), " of ", codeBlock->codeOrigins().size(), "\n");
 
-                    JITCode::JITType jitType = codeBlock->jitType();
-                    if (jitType != JITCode::FTLJIT) {
+                    JITType jitType = codeBlock->jitType();
+                    if (jitType != JITType::FTLJIT) {
                         JITCode* jitCode = codeBlock->jitCode().get();
                         out.print(indent, "jitCode: ", RawPointer(jitCode),
                             " start ", RawPointer(jitCode->start()),

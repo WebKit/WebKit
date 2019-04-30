@@ -383,15 +383,15 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec, un
     JITWorklist::ensureGlobalWorklist().poll(vm);
     
     switch (codeBlock->jitType()) {
-    case JITCode::BaselineJIT: {
+    case JITType::BaselineJIT: {
         if (Options::verboseOSR())
             dataLogF("    Code was already compiled.\n");
         codeBlock->jitSoon();
         return true;
     }
-    case JITCode::InterpreterThunk: {
+    case JITType::InterpreterThunk: {
         JITWorklist::ensureGlobalWorklist().compileLater(codeBlock, loopOSREntryBytecodeOffset);
-        return codeBlock->jitType() == JITCode::BaselineJIT;
+        return codeBlock->jitType() == JITType::BaselineJIT;
     }
     default:
         dataLog("Unexpected code block in LLInt: ", *codeBlock, "\n");
@@ -480,7 +480,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     
     CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", loopOSREntryBytecodeOffset));
 
-    ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
 
     const JITCodeMap& codeMap = codeBlock->jitCodeMap();
     CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(loopOSREntryBytecodeOffset);

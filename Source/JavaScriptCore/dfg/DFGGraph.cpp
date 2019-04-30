@@ -525,7 +525,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         context = &myContext;
     
     out.print("\n");
-    out.print("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
+    out.print("DFG for ", CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT), ":\n");
     out.print("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
     if (m_form == SSA) {
         for (unsigned entrypointIndex = 0; entrypointIndex < m_argumentFormats.size(); ++entrypointIndex)

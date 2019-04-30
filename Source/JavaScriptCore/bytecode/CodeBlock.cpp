@@ -180,7 +180,7 @@ CString CodeBlock::hashAsStringIfPossible() const
     return "<no-hash>";
 }
 
-void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) const
+void CodeBlock::dumpAssumingJITType(PrintStream& out, JITType jitType) const
 {
     out.print(inferredName(), "#", hashAsStringIfPossible());
     out.print(":[", RawPointer(this), "->");
@@ -191,7 +191,7 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
     if (codeType() == FunctionCode)
         out.print(specializationKind());
     out.print(", ", instructionCount());
-    if (this->jitType() == JITCode::BaselineJIT && m_shouldAlwaysBeInlined)
+    if (this->jitType() == JITType::BaselineJIT && m_shouldAlwaysBeInlined)
         out.print(" (ShouldAlwaysBeInlined)");
     if (ownerExecutable()->neverInline())
         out.print(" (NeverInline)");
@@ -205,9 +205,9 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(" (StrictMode)");
     if (m_didFailJITCompilation)
         out.print(" (JITFail)");
-    if (this->jitType() == JITCode::BaselineJIT && m_didFailFTLCompilation)
+    if (this->jitType() == JITType::BaselineJIT && m_didFailFTLCompilation)
         out.print(" (FTLFail)");
-    if (this->jitType() == JITCode::BaselineJIT && m_hasBeenCompiledWithFTL)
+    if (this->jitType() == JITType::BaselineJIT && m_hasBeenCompiledWithFTL)
         out.print(" (HadFTLReplacement)");
     out.print("]");
 }
@@ -929,7 +929,7 @@ void CodeBlock::setNumParameters(int newValue)
 CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 {
 #if ENABLE(FTL_JIT)
-    if (jitType() != JITCode::DFGJIT)
+    if (jitType() != JITType::DFGJIT)
         return 0;
     DFG::JITCode* jitCode = m_jitCode->dfg();
     return jitCode->osrEntryBlock();
@@ -1002,17 +1002,17 @@ bool CodeBlock::shouldJettisonDueToWeakReference(VM& vm)
     return !vm.heap.isMarked(this);
 }
 
-static Seconds timeToLive(JITCode::JITType jitType)
+static Seconds timeToLive(JITType jitType)
 {
     if (UNLIKELY(Options::useEagerCodeBlockJettisonTiming())) {
         switch (jitType) {
-        case JITCode::InterpreterThunk:
+        case JITType::InterpreterThunk:
             return 10_ms;
-        case JITCode::BaselineJIT:
+        case JITType::BaselineJIT:
             return 30_ms;
-        case JITCode::DFGJIT:
+        case JITType::DFGJIT:
             return 40_ms;
-        case JITCode::FTLJIT:
+        case JITType::FTLJIT:
             return 120_ms;
         default:
             return Seconds::infinity();
@@ -1020,15 +1020,15 @@ static Seconds timeToLive(JITCode::JITType jitType)
     }
 
     switch (jitType) {
-    case JITCode::InterpreterThunk:
+    case JITType::InterpreterThunk:
         return 5_s;
-    case JITCode::BaselineJIT:
+    case JITType::BaselineJIT:
         // Effectively 10 additional seconds, since BaselineJIT and
         // InterpreterThunk share a CodeBlock.
         return 15_s;
-    case JITCode::DFGJIT:
+    case JITType::DFGJIT:
         return 20_s;
-    case JITCode::FTLJIT:
+    case JITType::FTLJIT:
         return 60_s;
     default:
         return Seconds::infinity();
@@ -1068,7 +1068,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
 
     VM& vm = *m_vm;
 
-    if (jitType() == JITCode::InterpreterThunk) {
+    if (jitType() == JITType::InterpreterThunk) {
         const Vector<InstructionStream::Offset>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
         const InstructionStream& instructionStream = instructions();
         for (size_t i = 0; i < propertyAccessInstructions.size(); ++i) {
@@ -1630,7 +1630,7 @@ CodeBlock* CodeBlock::baselineAlternative()
     while (result->alternative())
         result = result->alternative();
     RELEASE_ASSERT(result);
-    RELEASE_ASSERT(JITCode::isBaselineCode(result->jitType()) || result->jitType() == JITCode::None);
+    RELEASE_ASSERT(JITCode::isBaselineCode(result->jitType()) || result->jitType() == JITType::None);
     return result;
 #else
     return this;
@@ -1640,7 +1640,7 @@ CodeBlock* CodeBlock::baselineAlternative()
 CodeBlock* CodeBlock::baselineVersion()
 {
 #if ENABLE(JIT)
-    JITCode::JITType selfJITType = jitType();
+    JITType selfJITType = jitType();
     if (JITCode::isBaselineCode(selfJITType))
         return this;
     CodeBlock* result = replacement();
@@ -1654,7 +1654,7 @@ CodeBlock* CodeBlock::baselineVersion()
         } else {
             // This can happen if we're creating the original CodeBlock for an executable.
             // Assume that we're the baseline CodeBlock.
-            RELEASE_ASSERT(selfJITType == JITCode::None);
+            RELEASE_ASSERT(selfJITType == JITType::None);
             return this;
         }
     }
@@ -1667,7 +1667,7 @@ CodeBlock* CodeBlock::baselineVersion()
 }
 
 #if ENABLE(JIT)
-bool CodeBlock::hasOptimizedReplacement(JITCode::JITType typeToReplace)
+bool CodeBlock::hasOptimizedReplacement(JITType typeToReplace)
 {
     CodeBlock* replacement = this->replacement();
     return replacement && JITCode::isHigherTier(replacement->jitType(), typeToReplace);
@@ -2147,7 +2147,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         return;
     }
 
-    if (callerCodeBlock->jitType() == JITCode::InterpreterThunk) {
+    if (callerCodeBlock->jitType() == JITType::InterpreterThunk) {
         // If the caller is still in the interpreter, then we can't expect inlining to
         // happen anytime soon. Assume it's profitable to optimize it separately. This
         // ensures that a function is SABI only if it is called no more frequently than
@@ -2489,10 +2489,10 @@ void CodeBlock::forceOptimizationSlowPathConcurrently()
 #if ENABLE(DFG_JIT)
 void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResult result)
 {
-    JITCode::JITType type = jitType();
-    if (type != JITCode::BaselineJIT) {
+    JITType type = jitType();
+    if (type != JITType::BaselineJIT) {
         dataLog(*this, ": expected to have baseline code but have ", type, "\n");
-        CRASH_WITH_INFO(bitwise_cast<uintptr_t>(jitCode().get()), type);
+        CRASH_WITH_INFO(bitwise_cast<uintptr_t>(jitCode().get()), static_cast<uint8_t>(type));
     }
     
     CodeBlock* replacement = this->replacement();
@@ -2723,12 +2723,12 @@ bool CodeBlock::shouldOptimizeNow()
 void CodeBlock::tallyFrequentExitSites()
 {
     ASSERT(JITCode::isOptimizingJIT(jitType()));
-    ASSERT(alternative()->jitType() == JITCode::BaselineJIT);
+    ASSERT(alternative()->jitType() == JITType::BaselineJIT);
     
     CodeBlock* profiledBlock = alternative();
     
     switch (jitType()) {
-    case JITCode::DFGJIT: {
+    case JITType::DFGJIT: {
         DFG::JITCode* jitCode = m_jitCode->dfg();
         for (auto& exit : jitCode->osrExit)
             exit.considerAddingAsFrequentExitSite(profiledBlock);
@@ -2736,7 +2736,7 @@ void CodeBlock::tallyFrequentExitSites()
     }
 
 #if ENABLE(FTL_JIT)
-    case JITCode::FTLJIT: {
+    case JITType::FTLJIT: {
         // There is no easy way to avoid duplicating this code since the FTL::JITCode::osrExit
         // vector contains a totally different type, that just so happens to behave like
         // DFG::JITCode::osrExit.
@@ -2824,17 +2824,17 @@ void CodeBlock::dumpValueProfiles()
 unsigned CodeBlock::frameRegisterCount()
 {
     switch (jitType()) {
-    case JITCode::InterpreterThunk:
+    case JITType::InterpreterThunk:
         return LLInt::frameRegisterCountFor(this);
 
 #if ENABLE(JIT)
-    case JITCode::BaselineJIT:
+    case JITType::BaselineJIT:
         return JIT::frameRegisterCountFor(this);
 #endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
-    case JITCode::DFGJIT:
-    case JITCode::FTLJIT:
+    case JITType::DFGJIT:
+    case JITType::FTLJIT:
         return jitCode()->dfgCommon()->frameRegisterCount;
 #endif // ENABLE(DFG_JIT)
         
@@ -3175,15 +3175,15 @@ Optional<CodeOrigin> CodeBlock::findPC(void* pc)
 Optional<unsigned> CodeBlock::bytecodeOffsetFromCallSiteIndex(CallSiteIndex callSiteIndex)
 {
     Optional<unsigned> bytecodeOffset;
-    JITCode::JITType jitType = this->jitType();
-    if (jitType == JITCode::InterpreterThunk || jitType == JITCode::BaselineJIT) {
+    JITType jitType = this->jitType();
+    if (jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT) {
 #if USE(JSVALUE64)
         bytecodeOffset = callSiteIndex.bits();
 #else
         Instruction* instruction = bitwise_cast<Instruction*>(callSiteIndex.bits());
         bytecodeOffset = this->bytecodeOffset(instruction);
 #endif
-    } else if (jitType == JITCode::DFGJIT || jitType == JITCode::FTLJIT) {
+    } else if (jitType == JITType::DFGJIT || jitType == JITType::FTLJIT) {
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(canGetCodeOrigin(callSiteIndex));
         CodeOrigin origin = codeOrigin(callSiteIndex);
