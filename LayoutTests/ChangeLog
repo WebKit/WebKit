@@ -1,5 +1,13 @@
 2019-04-30  Shawn Roberts  <sroberts@apple.com>
 
+        Fixing typo in https://trac.webkit.org/changeset/244780/webkit.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2019-04-30  Shawn Roberts  <sroberts@apple.com>
+
         scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=197425
 
