@@ -491,6 +491,42 @@ class RunWebKitPyTests(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(RunWebKitPyTests, self).__init__(timeout=2 * 60, **kwargs)
 
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer)
+        return shell.ShellCommand.start(self)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            message = 'Passed webkitpy tests'
+            self.build.buildFinished([message], SUCCESS)
+            return {u'step': unicode(message)}
+
+        logLines = self.log_observer.getStdout()
+        json_text = ''.join([line for line in logLines.splitlines()])
+        try:
+            webkitpy_results = json.loads(json_text)
+        except Exception as ex:
+            self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
+            return super(RunWebKitPyTests, self).getResultSummary()
+
+        failures = webkitpy_results.get('failures') + webkitpy_results.get('errors')
+        if not failures:
+            return super(RunWebKitPyTests, self).getResultSummary()
+        pluralSuffix = 's' if len(failures) > 1 else ''
+        failures_string = ', '.join([failure.get('name').replace('webkitpy.', '') for failure in failures])
+        message = 'Found {} WebKitPy test failure{}: {}'.format(len(failures), pluralSuffix, failures_string)
+        self.build.buildFinished([message], FAILURE)
+        return {u'step': unicode(message)}
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
 
 def appendCustomBuildFlags(step, platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.

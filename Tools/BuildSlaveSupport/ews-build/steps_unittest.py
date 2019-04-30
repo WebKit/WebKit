@@ -372,7 +372,7 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='webkitpy-tests')
+        self.expectOutcome(result=SUCCESS, state_string='Passed webkitpy tests')
         return self.runStep()
 
     def test_failure(self):

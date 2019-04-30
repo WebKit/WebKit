@@ -1,3 +1,16 @@
+2019-04-30  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Parse and display webkitpy failures
+        https://bugs.webkit.org/show_bug.cgi?id=197395
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitPyTests.start): Initialize log_observer for json output.
+        (RunWebKitPyTests.getResultSummary): Update step and build summary based on webkitpy results.
+        (RunWebKitPyTests._addToLog): Method to add message to log.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-test accordingly.
+
 2019-04-29  Alex Christensen  <achristensen@webkit.org>
 
         <rdar://problem/50299396> Fix internal High Sierra build
