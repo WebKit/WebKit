@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
-class MediaProducer {
+class MediaProducer : public CanMakeWeakPtr<MediaProducer> {
 public:
     enum MediaState {
         IsNotPlaying = 0,

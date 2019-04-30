@@ -3902,13 +3902,13 @@ void Document::updateViewportUnitsOnResize()
 
 void Document::addAudioProducer(MediaProducer& audioProducer)
 {
-    m_audioProducers.add(&audioProducer);
+    m_audioProducers.add(audioProducer);
     updateIsPlayingMedia();
 }
 
 void Document::removeAudioProducer(MediaProducer& audioProducer)
 {
-    m_audioProducers.remove(&audioProducer);
+    m_audioProducers.remove(audioProducer);
     updateIsPlayingMedia();
 }
 
@@ -3926,9 +3926,11 @@ void Document::noteUserInteractionWithMediaElement()
 
 void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 {
+    ASSERT(!m_audioProducers.hasNullReferences());
+
     MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
-    for (auto* audioProducer : m_audioProducers)
-        state |= audioProducer->mediaState();
+    for (auto& audioProducer : m_audioProducers)
+        state |= audioProducer.mediaState();
 
 #if ENABLE(MEDIA_SESSION)
     if (HTMLMediaElement* sourceElement = HTMLMediaElement::elementWithID(sourceElementID)) {
@@ -3969,8 +3971,8 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 
 void Document::pageMutedStateDidChange()
 {
-    for (auto* audioProducer : m_audioProducers)
-        audioProducer->pageMutedStateDidChange();
+    for (auto& audioProducer : m_audioProducers)
+        audioProducer.pageMutedStateDidChange();
 }
 
 static bool isNodeInSubtree(Node& node, Node& container, Document::NodeRemoval nodeRemoval)
