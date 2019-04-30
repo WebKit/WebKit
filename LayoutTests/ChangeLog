@@ -1,3 +1,16 @@
+2019-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        Double-tapping a post to like doesn't work on Instagram.com (needs 'dblclick' event)
+        https://bugs.webkit.org/show_bug.cgi?id=197347
+        <rdar://problem/49393423>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/events/touch/ios/double-tap-for-double-click1-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-for-double-click1.html: Added.
+        * fast/events/touch/ios/double-tap-for-double-click2-expected.txt: Added.
+        * fast/events/touch/ios/double-tap-for-double-click2.html: Added.
+
 2019-04-30  Youenn Fablet  <youenn@apple.com>
 
         Reject/throw when calling AudioContext methods on a stopped AudioContext
