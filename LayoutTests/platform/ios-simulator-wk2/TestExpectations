@@ -102,3 +102,5 @@ webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Pass Timeout ]
 webkit.org/b/196944 imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html [ Pass Failure ]
 
 webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass Failure ]
+
+webkit.org/b/192501 animations/play-state-in-shorthand.html [ Pass Failure ]

@@ -1,3 +1,13 @@
+2019-04-30  Shawn Roberts  <sroberts@apple.com>
+
+        animations/play-state-in-shorthand.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=192501
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating expectations for flaky failure
+        * platform/mac/TestExpectations: Ditto
+
 2019-04-30  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Move 'gpu' API entry point from DOMWindow to Navigator
