@@ -52,7 +52,7 @@ layer at (13,59) size 185x18
     RenderText {#text} at (0,0) size 90x17
       text run at (0,0) width 90: "disabled text"
 layer at (13,59) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18 [color=#545454]
+  RenderBlock {DIV} at (3,3) size 185x18 [color=#8B8E8F]
 layer at (212,59) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 48x17

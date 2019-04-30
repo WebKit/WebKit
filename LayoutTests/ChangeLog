@@ -1,3 +1,36 @@
+2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Rebaseline tests after r244635.
+
+        * platform/gtk/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/gtk/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/gtk/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/gtk/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-68-expected.png:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-68-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-24-expected.png:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-24-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/gtk/fast/forms/basic-inputs-expected.png:
+        * platform/gtk/fast/forms/basic-inputs-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.png:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.png:
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-disabled-expected.png:
+        * platform/gtk/fast/forms/input-appearance-disabled-expected.txt:
+        * platform/gtk/fast/forms/input-disabled-color-expected.png:
+        * platform/gtk/fast/forms/input-disabled-color-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+
 2019-04-29  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r244755.

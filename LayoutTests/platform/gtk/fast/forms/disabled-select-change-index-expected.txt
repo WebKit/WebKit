@@ -23,9 +23,9 @@ layer at (0,0) size 785x604
           RenderText at (9,5) size 43x17
             text run at (9,5) width 43: "PASS"
       RenderBR {BR} at (83,124) size 0x0
-      RenderListBox {SELECT} at (2,138) size 64x73 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,138) size 64x73 [color=#8B8E8F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (68,206) size 0x0
-      RenderListBox {SELECT} at (2,215) size 64x73 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,215) size 64x73 [color=#8B8E8F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (68,283) size 0x0
       RenderListBox {SELECT} at (2,292) size 64x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (68,360) size 0x0
