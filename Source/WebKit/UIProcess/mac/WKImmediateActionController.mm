@@ -328,6 +328,11 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     }
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
+    if (!hitTestResult) {
+        [self _cancelImmediateAction];
+        return;
+    }
+
     id customClientAnimationController = _page->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData);
     if (customClientAnimationController == [NSNull null]) {
         [self _cancelImmediateAction];
@@ -353,6 +358,9 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
         return nil;
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
+    if (!hitTestResult)
+        return nil;
+
     return [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
 }
 
@@ -372,6 +380,9 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
         return NSZeroRect;
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
+    if (!hitTestResult)
+        return NSZeroRect;
+
     return [_view convertRect:hitTestResult->elementBoundingBox() toView:nil];
 }
 
@@ -449,6 +460,9 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.elementBoundingBox toView:nil]]];
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
+    if (!hitTestResult)
+        return nil;
+
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:_currentActionContext.get()];
 
     if (menuItems.count != 1)

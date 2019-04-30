@@ -1,3 +1,20 @@
+2019-04-30  Tim Horton  <timothy_horton@apple.com>
+
+        Long-standing rare crash under -[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal...]
+        https://bugs.webkit.org/show_bug.cgi?id=197404
+        <rdar://problem/24589331>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _updateImmediateActionItem]):
+        (-[WKImmediateActionController menuItem:previewItemAtPoint:]):
+        (-[WKImmediateActionController menuItem:itemFrameForPoint:]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+        Add some null checks; _webHitTestResult can be null if we (somehow) get
+        an immediate action gesture without having previously gotten a
+        mouseDidMoveOverElement from the Web Content process. Cover all our bases.
+
 2019-04-30  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix crash caused by sandbox violation
