@@ -1,5 +1,15 @@
 2019-04-30  Youenn Fablet  <youenn@apple.com>
 
+        [macOS WK1] ASSERTION FAILED: formData in WebCore::ResourceRequest::doUpdateResourceHTTPBody()
+        https://bugs.webkit.org/show_bug.cgi?id=196864
+        <rdar://problem/49854497>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/xhr/send-redirect-post-upload-expected.txt:
+
+2019-04-30  Youenn Fablet  <youenn@apple.com>
+
         Update WPT service-worker resource-timing test to use hosts[alt]
         https://bugs.webkit.org/show_bug.cgi?id=197329
 

@@ -1,3 +1,21 @@
+2019-04-30  Youenn Fablet  <youenn@apple.com>
+
+        [macOS WK1] ASSERTION FAILED: formData in WebCore::ResourceRequest::doUpdateResourceHTTPBody()
+        https://bugs.webkit.org/show_bug.cgi?id=196864
+        <rdar://problem/49854497>
+
+        Reviewed by Alex Christensen.
+
+        In case of redirection, it is sometimes not possible to retrieve the form data
+        from its NSInputStream in case of redirections.
+        To handle this case, reuse the first request form data if the new request has a body.
+        We also clear the HTTP content type in such a case if the original request has no content type.
+
+        Covered by re-enabled tests.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+
 2019-04-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244773.

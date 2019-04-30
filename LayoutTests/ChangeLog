@@ -1,3 +1,13 @@
+2019-04-30  Youenn Fablet  <youenn@apple.com>
+
+        [macOS WK1] ASSERTION FAILED: formData in WebCore::ResourceRequest::doUpdateResourceHTTPBody()
+        https://bugs.webkit.org/show_bug.cgi?id=196864
+        <rdar://problem/49854497>
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-04-30  Shawn Roberts  <sroberts@apple.com>
 
         imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm is a flaky failure

@@ -2,5 +2,6 @@
 PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (301) 
 PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (302) 
 PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (303) 
-FAIL XMLHttpRequest: The send() method: POSTing to URL that redirects (307) assert_array_equals: events firing in expected order and states lengths differ, expected 9 got 10
+PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (307 (string)) 
+PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (307 (blob)) 
 
