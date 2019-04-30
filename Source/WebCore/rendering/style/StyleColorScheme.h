@@ -36,11 +36,6 @@ class StyleColorScheme {
 public:
     StyleColorScheme() { }
 
-    StyleColorScheme(const StyleColorScheme& other)
-        : m_colorScheme(other.m_colorScheme)
-        , m_allowsTransformations(other.m_allowsTransformations)
-    { }
-
     StyleColorScheme(OptionSet<ColorScheme> colorScheme, bool allowsTransformations)
         : m_colorScheme(colorScheme)
         , m_allowsTransformations(allowsTransformations)
