@@ -1,3 +1,21 @@
+2019-04-30  Keith Miller  <keith_miller@apple.com>
+
+        Fix failing ARM64E wasm tests
+        https://bugs.webkit.org/show_bug.cgi?id=197420
+
+        Reviewed by Saam Barati.
+
+        This patch fixes a bug in the slow path of our JS->Wasm IC bridge
+        where we wouldn't untag the link register before tail calling.
+
+        Additionally, this patch fixes a broken assert when using setting
+        Options::useTailCalls=false.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCallForwardArgumentsInTailPosition):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-04-29  Saam Barati  <sbarati@apple.com>
 
         Make JITType an enum class
