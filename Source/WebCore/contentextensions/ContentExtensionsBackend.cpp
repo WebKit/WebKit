@@ -150,7 +150,7 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(const URL& url, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (m_contentExtensions.isEmpty())
         return { };

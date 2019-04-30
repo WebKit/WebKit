@@ -63,7 +63,7 @@ namespace WebCore {
 #if ENABLE(CONTENT_EXTENSIONS)
 
 // Returns true if we should block the load.
-static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& request, ContentExtensions::ResourceType resourceType)
+static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& request, OptionSet<ContentExtensions::ResourceType> resourceType)
 {
     auto* documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
@@ -119,7 +119,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
 
     ResourceRequest request(pingURL);
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Raw))
+    if (processContentRuleListsForLoad(frame, request, { ContentExtensions::ResourceType::Raw, ContentExtensions::ResourceType::Ping }))
         return;
 #endif
 

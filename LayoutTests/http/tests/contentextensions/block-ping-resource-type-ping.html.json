@@ -1,0 +1,11 @@
+[
+    {
+        "trigger": {
+            "url-filter": "save-ping.php",
+            "resource-type": ["ping"]
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

@@ -102,7 +102,7 @@ static bool contentExtensionsEnabled(const DocumentLoader& documentLoader)
     return true;
 }
     
-ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(const URL& url, ContentExtensions::ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (!contentExtensionsEnabled(initiatingDocumentLoader))
         return { };

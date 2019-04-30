@@ -1,3 +1,27 @@
+2019-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKContentRuleList ping resource-type
+        https://bugs.webkit.org/show_bug.cgi?id=197325
+        <rdar://problem/49841404>
+
+        Reviewed by Geoff Garen.
+
+        Tests: http/tests/contentextensions/block-ping-resource-type-ping.html and http/tests/contentextensions/block-ping-resource-type-raw.html
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForLoad):
+        * contentextensions/ContentExtensionsBackend.h:
+        * loader/PingLoader.cpp:
+        (WebCore::processContentRuleListsForLoad):
+        (WebCore::PingLoader::sendPing):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::ContentExtensions::readResourceType):
+        (WebCore::ContentExtensions::ResourceLoadInfo::getResourceFlags const):
+        * loader/ResourceLoadInfo.h:
+        * page/UserContentProvider.cpp:
+        (WebCore::UserContentProvider::processContentRuleListsForLoad):
+        * page/UserContentProvider.h:
+
 2019-04-30  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Move 'gpu' API entry point from DOMWindow to Navigator

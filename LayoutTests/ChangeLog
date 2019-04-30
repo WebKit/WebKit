@@ -1,3 +1,18 @@
+2019-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKContentRuleList ping resource-type
+        https://bugs.webkit.org/show_bug.cgi?id=197325
+        <rdar://problem/49841404>
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/contentextensions/block-ping-resource-type-raw--expected.txt: Copied from LayoutTests/http/tests/contentextensions/block-ping-expected.txt.
+        * http/tests/contentextensions/block-ping-resource-type-raw.html: Copied from LayoutTests/http/tests/contentextensions/block-ping.html.
+        * http/tests/contentextensions/block-ping-resource-type-raw.html.json: Copied from LayoutTests/http/tests/contentextensions/block-ping.html.json.
+        * http/tests/contentextensions/block-ping-resource-type-ping-expected.txt: Copied from LayoutTests/http/tests/contentextensions/block-ping-expected.txt.
+        * http/tests/contentextensions/block-ping-resource-type-ping.html: Copied from LayoutTests/http/tests/contentextensions/block-ping.html.
+        * http/tests/contentextensions/block-ping-resource-type-ping.html.json: Copied from LayoutTests/http/tests/contentextensions/block-ping.html.json.
+
 2019-04-30  Shawn Roberts  <sroberts@apple.com>
 
         Fixing typo in https://trac.webkit.org/changeset/244780/webkit.

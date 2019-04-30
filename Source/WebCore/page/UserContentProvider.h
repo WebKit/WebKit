@@ -88,7 +88,7 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     // FIXME: These don't really belong here. They should probably bundled up in the ContentExtensionsBackend
     // which should always exist.
-    ContentRuleListResults processContentRuleListsForLoad(const URL&, ContentExtensions::ResourceType, DocumentLoader& initiatingDocumentLoader);
+    ContentRuleListResults processContentRuleListsForLoad(const URL&, OptionSet<ContentExtensions::ResourceType>, DocumentLoader& initiatingDocumentLoader);
     Vector<ContentExtensions::ActionsFromContentRuleList> actionsForResourceLoad(const ContentExtensions::ResourceLoadInfo&, DocumentLoader& initiatingDocumentLoader);
     WEBCORE_EXPORT void forEachContentExtension(const Function<void(const String&, ContentExtensions::ContentExtension&)>&, DocumentLoader& initiatingDocumentLoader);
 #endif

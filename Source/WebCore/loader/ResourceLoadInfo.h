@@ -28,6 +28,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "CachedResource.h"
+#include <wtf/OptionSet.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -45,8 +46,10 @@ enum class ResourceType : uint16_t {
     Media = 0x0080,
     PlugInStream = 0x0100,
     Popup = 0x0200,
+    // 0x0400 and 0x0800 are used by LoadType.
+    Ping = 0x1000,
 };
-const uint16_t ResourceTypeMask = 0x03FF;
+const uint16_t ResourceTypeMask = 0x13FF;
 
 enum class LoadType : uint16_t {
     Invalid = 0x0000,
@@ -54,6 +57,8 @@ enum class LoadType : uint16_t {
     ThirdParty = 0x0800,
 };
 const uint16_t LoadTypeMask = 0x0C00;
+
+static_assert(!(ResourceTypeMask & LoadTypeMask), "ResourceTypeMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint16_t");
 
 typedef uint16_t ResourceFlags;
 
@@ -74,7 +79,7 @@ uint16_t readLoadType(const String&);
 struct ResourceLoadInfo {
     URL resourceURL;
     URL mainDocumentURL;
-    ResourceType type;
+    OptionSet<ResourceType> type;
 
     bool isThirdParty() const;
     ResourceFlags getResourceFlags() const;
