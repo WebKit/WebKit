@@ -52,6 +52,7 @@
       to { -webkit-transform: translateX(100px); }
     }
   </style>
+  <script src="../../../compositing/layer-creation/resources/compositing-overlap-utils.js"></script>
   <script>
     if (window.testRunner) {
       testRunner.dumpAsText();
@@ -61,17 +62,10 @@
     function runTest()
     {
       var box = document.getElementById('to-animate');
-      box.addEventListener('webkitAnimationStart', animationStarted, false);
+      box.addEventListener('webkitAnimationStart', dumpLayers, false);
       box.classList.add('animating');
     }
-    
-    function animationStarted()
-    {
-      if (window.testRunner) {
-        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
-        testRunner.notifyDone();
-      }
-    }
+
     window.addEventListener('load', runTest, false);
   </script>
 </head>

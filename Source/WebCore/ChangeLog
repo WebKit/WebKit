@@ -243,6 +243,32 @@
         * page/ios/FrameIOS.mm:
         (WebCore::Frame::nodeRespondingToDoubleClickEvent):
 
+2019-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Transform is sometimes left in a bad state after an animation
+        https://bugs.webkit.org/show_bug.cgi?id=197401
+        rdar://problem/48179186
+
+        Reviewed by Dean Jackson.
+        
+        In some more complex compositing scenarios, at the end of an animation we'd
+        fail to push a new transform onto a layer, because updateGeometry() would
+        think there's an animation running (which there is, but in the "Ending" state).
+
+        It's simpler in this code to just always push transform and opacity to the layer;
+        they will get overridden by the animation while it's running. The current code
+        dates from the first landing of the file, and the reason for the if (!isRunningAcceleratedTransformAnimation)
+        check is lost in the sands of time.
+
+        I was not able to get a reliable ref or layer tree test for this, because the next compositing update
+        fixes it, and WTR seems to trigger one.  But the added test does show the bug
+        in Safari, and is a good test to have.
+
+        Test: compositing/animation/transform-after-animation.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2019-04-29  Youenn Fablet  <youenn@apple.com>
 
         getDisplayMedia should be called on user gesture

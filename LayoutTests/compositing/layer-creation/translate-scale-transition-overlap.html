@@ -27,6 +27,7 @@
             -webkit-transform: translateX(100px) scale(1.3);
         }
     </style>
+    <script src="resources/compositing-overlap-utils.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -41,22 +42,9 @@
             }
         }
 
-        function makeDots()
+        function runTest()
         {
-            const width = 50;
-            const height = 23;
-            
-            const spacing = 10;
-            
-            for (var row = 0; row < height; ++row) {
-                for (var col = 0; col < width; ++col) {
-                    var dot = document.createElement('div');
-                    dot.className = 'dot';
-                    dot.style.left = spacing * col + 'px';
-                    dot.style.top = spacing * row + 'px';
-                    document.body.appendChild(dot);
-                }
-            }
+            makeDots(50, 23);
             
             window.setTimeout(function() {
                 document.body.classList.add('changed');
@@ -64,7 +52,7 @@
             }, 0);
         }
         
-        window.addEventListener('load', makeDots, false);
+        window.addEventListener('load', runTest, false);
     </script>
 </head>
 <body>

@@ -34,36 +34,16 @@
             }
         }
     </style>
+    <script src="resources/compositing-overlap-utils.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
 
-        function dumpLayers()
+        function runTest()
         {
-            if (window.testRunner) {
-                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
-                testRunner.notifyDone();
-            }
-        }
-
-        function makeDots()
-        {
-            const width = 40;
-            const height = 20;
-            
-            const spacing = 10;
-            
-            for (var row = 0; row < height; ++row) {
-                for (var col = 0; col < width; ++col) {
-                    var dot = document.createElement('div');
-                    dot.className = 'dot';
-                    dot.style.left = spacing * col + 'px';
-                    dot.style.top = spacing * row + 'px';
-                    document.body.appendChild(dot);
-                }
-            }
+            makeDots(40, 20);
             
             window.setTimeout(function() {
                 document.getElementById('target').addEventListener('animationstart', dumpLayers, false);
@@ -71,7 +51,7 @@
             }, 0);
         }
         
-        window.addEventListener('load', makeDots, false);
+        window.addEventListener('load', runTest, false);
     </script>
 </head>
 <body>

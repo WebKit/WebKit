@@ -1001,26 +1001,14 @@ void RenderLayerBacking::updateGeometry()
     const RenderStyle& style = renderer().style();
 
     bool isRunningAcceleratedTransformAnimation = false;
-    bool isRunningAcceleratedOpacityAnimation = false;
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = renderer().documentTimeline()) {
+        if (auto* timeline = renderer().documentTimeline())
             isRunningAcceleratedTransformAnimation = timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
-            isRunningAcceleratedOpacityAnimation = timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyOpacity);
-        }
-    } else {
+    } else
         isRunningAcceleratedTransformAnimation = renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
-        isRunningAcceleratedOpacityAnimation = renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyOpacity);
-    }
 
-    // Set transform property, if it is not animating. We have to do this here because the transform
-    // is affected by the layer dimensions.
-    if (!isRunningAcceleratedTransformAnimation)
-        updateTransform(style);
-
-    // Set opacity, if it is not animating.
-    if (!isRunningAcceleratedOpacityAnimation)
-        updateOpacity(style);
-
+    updateTransform(style);
+    updateOpacity(style);
     updateFilters(style);
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);

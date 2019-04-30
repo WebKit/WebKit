@@ -34,14 +34,20 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
+    
+    function layerTreeWithoutTransforms()
+    {
+        var layerTreeText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+        var filteredLines = layerTreeText.split("\n").filter(line => line.indexOf('transform') == -1);
+        return filteredLines.join('\n');
+    }
 
     function dumpLayerTree()
     {
         if (!window.internals)
             return;
 
-        var out = document.getElementById('out');
-        out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+        document.getElementById('out').textContent = layerTreeWithoutTransforms();
     }
 
     function dumpLayersSoon()
