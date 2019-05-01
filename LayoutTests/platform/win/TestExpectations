@@ -3597,6 +3597,7 @@ svg/custom/second-inline-text.xhtml [ Failure ]
 tables/mozilla/bugs/bug4427.html [ Failure ]
 transitions/clip-path-path-transitions.html [ Failure ]
 legacy-animation-engine/transitions/clip-path-path-transitions.html [ Failure ]
+fast/text/font-weight-1-1000.html [ Failure ]
 # Unexpected image-only failures tracked in webkit.org/b/172437.
 editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]

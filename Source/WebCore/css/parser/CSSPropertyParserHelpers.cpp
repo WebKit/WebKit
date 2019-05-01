@@ -230,7 +230,7 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 {
     // Values less than or equal to 0 or greater than or equal to 1000 are parse errors.
     auto& token = range.peek();
-    if (token.type() == NumberToken && token.numericValue() > 0 && token.numericValue() < 1000
+    if (token.type() == NumberToken && token.numericValue() >= 1 && token.numericValue() <= 1000
 #if !ENABLE(VARIATION_FONTS)
         && token.numericValueType() == IntegerValueType && divisibleBy100(token.numericValue())
 #endif

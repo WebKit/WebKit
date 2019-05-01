@@ -1,0 +1,17 @@
+This test makes sure that font-weight's range of values are parsed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-weight') is "normal"
+PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-weight') is "normal"
+PASS window.getComputedStyle(document.getElementById('test3')).getPropertyValue('font-weight') is "1"
+PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue('font-weight') is "999"
+PASS window.getComputedStyle(document.getElementById('test5')).getPropertyValue('font-weight') is "999.5"
+PASS window.getComputedStyle(document.getElementById('test6')).getPropertyValue('font-weight') is "1000"
+PASS window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-weight') is "normal"
+PASS window.getComputedStyle(document.getElementById('test8')).getPropertyValue('font-weight') is "normal"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

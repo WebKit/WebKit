@@ -1,3 +1,20 @@
+2019-04-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-weight: 1000 is not parsed successfully
+        https://bugs.webkit.org/show_bug.cgi?id=197427
+
+        Reviewed by Dean Jackson.
+
+        The spec says:
+        "Only values greater than or equal to 1, and less than or equal to 1000, are valid"
+
+        This change brings us in-line with all the other browsers.
+
+        Test: fast/text/font-weight-1-1000.html
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+
 2019-04-30  Youenn Fablet  <youenn@apple.com>
 
         Make Document audio producers use WeakPtr
