@@ -66,6 +66,7 @@
 #include <wtf/Logger.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -1891,7 +1892,7 @@ private:
 
     Ref<CSSFontSelector> m_fontSelector;
 
-    HashSet<MediaProducer*> m_audioProducers;
+    WeakHashSet<MediaProducer> m_audioProducers;
 
     HashSet<ShadowRoot*> m_inDocumentShadowRoots;
 

@@ -51,8 +51,7 @@ class MediaStreamTrack
     : public RefCounted<MediaStreamTrack>
     , public ActiveDOMObject
     , public EventTargetWithInlineData
-    , public CanMakeWeakPtr<MediaStreamTrack>
-    , private MediaProducer
+    , public MediaProducer
     , private MediaStreamTrackPrivate::Observer
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
