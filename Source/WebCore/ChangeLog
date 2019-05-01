@@ -1,3 +1,13 @@
+2019-05-01  Shawn Roberts  <sroberts@apple.com>
+
+        Unreviewed, rolling out r244822.
+
+        Causing
+
+        Reverted changeset:
+
+        https://trac.webkit.org/changeset/244822
+
 2019-05-01  Youenn Fablet  <youenn@apple.com>
 
         Reject/throw when calling AudioContext methods on a stopped AudioContext

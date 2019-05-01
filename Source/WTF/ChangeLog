@@ -1,3 +1,13 @@
+2019-05-01  Shawn Roberts  <sroberts@apple.com>
+
+        Unreviewed, rolling out r244822.
+
+        Causing 4 Test262 failures on JSC Release and Debug
+
+        Reverted changeset:
+
+        https://trac.webkit.org/changeset/244822 https://trac.webkit.org/changeset/244821
+
 2019-04-29  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
