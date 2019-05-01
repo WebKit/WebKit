@@ -1,3 +1,30 @@
+2019-04-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r244326. rdar://problem/50352719
+
+    Web Inspector: CRASH when reopening tab with docked inspector on crashed page
+    https://bugs.webkit.org/show_bug.cgi?id=196954
+    <rdar://problem/48716433>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * UIProcess/mac/WebInspectorProxyMac.mm:
+    (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244326 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: CRASH when reopening tab with docked inspector on crashed page
+            https://bugs.webkit.org/show_bug.cgi?id=196954
+            <rdar://problem/48716433>
+
+            Reviewed by Ryosuke Niwa.
+
+            * UIProcess/mac/WebInspectorProxyMac.mm:
+            (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+
 2019-04-24  Alan Coon  <alancoon@apple.com>
 
         Revert r244173. rdar://problem/28160396
