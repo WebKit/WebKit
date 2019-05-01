@@ -27,7 +27,8 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    InterfaceName=GPUDevice
 ] interface WebGPUDevice {
     readonly attribute WebGPUAdapter adapter;
 

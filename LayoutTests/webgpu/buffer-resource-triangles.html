@@ -118,7 +118,7 @@ async function test() {
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
-    // Create vertex data WebGPUBuffers.
+    // Create vertex data GPUBuffers.
     const verticesBuffer = createAndUploadVerticesBuffer(device);
 
     let bufferPromises = [];
@@ -145,7 +145,7 @@ async function test() {
         }]
     };
 
-    // Create buffer WebGPUBindGroupLayoutBindings.
+    // Create buffer GPUBindGroupLayoutBindings.
     const layoutUL = createUniformBufferBindGroupLayout(bindingNums.UL);
     const layoutUM = createUniformBufferBindGroupLayout(bindingNums.UM);
     const layoutUR = createUniformBufferBindGroupLayout(bindingNums.UR);
@@ -153,15 +153,15 @@ async function test() {
     const layoutLR = createUniformBufferBindGroupLayout(bindingNums.LR);
     const layoutG = createUniformBufferBindGroupLayout(bindingNums.G, GPUShaderStageBit.FRAGMENT);
 
-    // WebGPUBindGroupLayouts
+    // GPUBindGroupLayouts
     const leftTriangleBGLayout = device.createBindGroupLayout({ bindings: [layoutUL, layoutUM, layoutLL, layoutG] });
     const rightTriangleBGLayout = device.createBindGroupLayout({ bindings: [layoutUR, layoutUM, layoutLR] });
 
-    // WebGPUPipelineLayout and WebGPURenderPipeline
+    // GPUPipelineLayout and GPURenderPipeline
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [leftTriangleBGLayout, rightTriangleBGLayout] });
     const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, inputState, null, "triangle-list");
 
-    // WebGPUBufferBindings
+    // GPUBufferBindings
     const bindingUL = createBufferBinding(upperLeft);
     const bindingUM = createBufferBinding(upperMiddle);
     const bindingUR = createBufferBinding(upperRight);
@@ -169,7 +169,7 @@ async function test() {
     const bindingLR = createBufferBinding(lowerRight);
     const bindingG = createBufferBinding(green);
     
-    // WebGPUBindGroupBindings
+    // GPUBindGroupBindings
     const bgBindingUL = { binding: bindingNums.UL, resource: bindingUL };
     const bgBindingUM = { binding: bindingNums.UM, resource: bindingUM };
     const bgBindingUR = { binding: bindingNums.UR, resource: bindingUR };
@@ -177,7 +177,7 @@ async function test() {
     const bgBindingLR = { binding: bindingNums.LR, resource: bindingLR };
     const bgBindingG = { binding: bindingNums.G, resource: bindingG };
 
-    // WebGPUBindGroups
+    // GPUBindGroups
     const leftTriangleBG = device.createBindGroup({ 
         layout: leftTriangleBGLayout, 
         bindings: [bgBindingUL, bgBindingUM, bgBindingLL, bgBindingG] 

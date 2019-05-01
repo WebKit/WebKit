@@ -27,6 +27,7 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    InterfaceName=GPUSampler
 ] interface WebGPUSampler {
 };

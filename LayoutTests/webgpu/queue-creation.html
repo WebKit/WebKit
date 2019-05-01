@@ -1,6 +1,6 @@
 <!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <meta charset=utf-8>
-<title>Get the WebGPUDevice and ask for the WebGPUQueue</title>
+<title>Get the GPUDevice and ask for the GPUQueue</title>
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
@@ -15,17 +15,17 @@ promise_test(async t => {
     assert_true(context instanceof GPUCanvasContext, "getContext returned a GPUCanvasContext.");
 
     const adapter = await navigator.gpu.requestAdapter({});
-    assert_true(adapter instanceof WebGPUAdapter, "requestAdapter returned a WebGPUAdapter.");
+    assert_true(adapter instanceof GPUAdapter, "requestAdapter returned a GPUAdapter.");
 
     const device = await adapter.requestDevice();
-    assert_true(device instanceof WebGPUDevice, "requestDevice returned a WebGPUDevice.");
+    assert_true(device instanceof GPUDevice, "requestDevice returned a GPUDevice.");
 
     const queue = device.getQueue();
-    assert_true(queue instanceof WebGPUQueue, "getQueue returned a WebGPUQueue.");
+    assert_true(queue instanceof GPUQueue, "getQueue returned a GPUQueue.");
 
     queue.label = "Example label";
     assert_equals(queue.label, "Example label", "queue.label was set.");
-}, "getQueue() on WebGPUDevice.");
+}, "getQueue() on GPUDevice.");
 
 </script>
 </body>

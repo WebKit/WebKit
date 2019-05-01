@@ -1,6 +1,6 @@
 <!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <meta charset=utf-8>
-<title>Create a basic WebGPUBindGroup.</title>
+<title>Create a basic GPUBindGroup.</title>
 <body>
 <script src="js/webgpu-functions.js"></script>
 <script src="../resources/testharness.js"></script>
@@ -9,7 +9,7 @@
 promise_test(async () => {
     const device = await getBasicDevice();
 
-    // WebGPUBindGroupLayoutBindings
+    // GPUBindGroupLayoutBindings
     // FIXME: Also test sampled texture bindings. 
     const bufferLayoutBinding = {
         binding: 1,
@@ -24,7 +24,7 @@ promise_test(async () => {
     const bindGroupBinding = { binding: 1, resource: bufferBinding };
 
     const bindGroup = device.createBindGroup({ layout: bindGroupLayout, bindings: [bindGroupBinding]});
-    assert_true(bindGroup instanceof WebGPUBindGroup, "WebGPUBindGroup successfully created.")
-}, "Create a basic WebGPUBindGroup via WebGPUDevice.")
+    assert_true(bindGroup instanceof GPUBindGroup, "GPUBindGroup successfully created.")
+}, "Create a basic GPUBindGroup via GPUDevice.")
 </script>
 </body>

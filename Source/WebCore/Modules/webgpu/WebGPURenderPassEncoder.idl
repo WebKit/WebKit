@@ -31,6 +31,7 @@ typedef unsigned long long u64;
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
+    InterfaceName=GPURenderPassEncoder,
     JSGenerateToJSObject
 ] interface WebGPURenderPassEncoder : WebGPUProgrammablePassEncoder {
     void setPipeline(WebGPURenderPipeline pipeline);

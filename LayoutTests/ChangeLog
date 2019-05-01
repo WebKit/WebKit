@@ -1,3 +1,31 @@
+2019-05-01  Justin Fan  <justin_fan@apple.com>
+
+        Update WebGPU class names based on sketch.idl
+        https://bugs.webkit.org/show_bug.cgi?id=194260
+
+        Reviewed by Dean Jackson.
+
+        Update all exposed Web GPU interface names to GPU* prefix.
+
+        * webgpu/adapter-options.html:
+        * webgpu/bind-groups-expected.txt:
+        * webgpu/bind-groups.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/js/webgpu-functions.js:
+        (beginBasicRenderPass):
+        * webgpu/map-read-buffers.html:
+        * webgpu/map-write-buffers.html:
+        * webgpu/pipeline-layouts-expected.txt:
+        * webgpu/pipeline-layouts.html:
+        * webgpu/queue-creation-expected.txt:
+        * webgpu/queue-creation.html:
+        * webgpu/render-command-encoding-expected.txt:
+        * webgpu/render-command-encoding.html:
+        * webgpu/render-pipelines-expected.txt:
+        * webgpu/render-pipelines.html:
+        * webgpu/textures-textureviews.html:
+        * webgpu/webgpu-enabled.html:
+
 2019-05-01  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Unreviewed test gardening.

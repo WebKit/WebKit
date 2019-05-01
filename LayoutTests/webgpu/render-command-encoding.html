@@ -1,6 +1,6 @@
 <!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <meta charset=utf-8>
-<title>Get the WebGPUDevice and ask for the WebGPUQueue</title>
+<title>Get the GPUDevice and ask for the GPUQueue</title>
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
@@ -38,11 +38,11 @@ promise_test(async () => {
     assert_true(commandEncoder instanceof GPUCommandEncoder, "createCommandEncoder returned a GPUCommandEncoder");
 
     const encoder = beginBasicRenderPass(swapChain, commandEncoder);
-    assert_true(encoder instanceof WebGPURenderPassEncoder, "beginRenderPass() returned a WebGPURenderPassEncoder");
+    assert_true(encoder instanceof GPURenderPassEncoder, "beginRenderPass() returned a GPURenderPassEncoder");
 
     encoder.setPipeline(pipeline);
     encoder.endPass();
-}, "WebGPURenderPassEncoder created and successfully ended");
+}, "GPURenderPassEncoder created and successfully ended");
 
 </script>
 </body>

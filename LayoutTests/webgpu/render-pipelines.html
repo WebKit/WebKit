@@ -48,7 +48,7 @@ promise_test(async () => {
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
     const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout);
-    assert_true(pipeline instanceof WebGPURenderPipeline, "Successfully created WebGPURenderPipeline");
-}, "Create basic WebGPURenderPipeline");
+    assert_true(pipeline instanceof GPURenderPipeline, "Successfully created GPURenderPipeline");
+}, "Create basic GPURenderPipeline");
 </script>
 </html>

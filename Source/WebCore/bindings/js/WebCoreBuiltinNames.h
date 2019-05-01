@@ -81,6 +81,11 @@ namespace WebCore {
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \
+    macro(GPU) \
+    macro(GPUAdapter) \
+    macro(GPUBindGroup) \
+    macro(GPUBindGroupLayout) \
+    macro(GPUBuffer) \
     macro(GPUBufferUsage) \
     macro(GPUCanvasContext) \
     macro(GPUColorWriteBits) \
@@ -88,10 +93,19 @@ namespace WebCore {
     macro(GPUCommandEncoder) \
     macro(GPUComputePassEncoder) \
     macro(GPUComputePipeline) \
+    macro(GPUDevice) \
+    macro(GPUPipelineLayout) \
+    macro(GPUProgrammablePassEncoder) \
+    macro(GPUQueue) \
+    macro(GPURenderPassEncoder) \
+    macro(GPURenderPipeline) \
+    macro(GPUSampler) \
     macro(GPUShaderModule) \
     macro(GPUShaderStageBit) \
     macro(GPUSwapChain) \
+    macro(GPUTexture) \
     macro(GPUTextureUsage) \
+    macro(GPUTextureView) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
     macro(HTMLDataListElement) \
@@ -203,23 +217,6 @@ namespace WebCore {
     macro(VisualViewport) \
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \
-    macro(WebGPU) \
-    macro(WebGPUAdapter) \
-    macro(WebGPUBindGroup) \
-    macro(WebGPUBindGroupLayout) \
-    macro(WebGPUBuffer) \
-    macro(WebGPUDevice) \
-    macro(WebGPUIndexFormat) \
-    macro(WebGPUInputStepMode) \
-    macro(WebGPUQueue) \
-    macro(WebGPUPipelineLayout) \
-    macro(WebGPUProgrammablePassEncoder) \
-    macro(WebGPURenderPassEncoder) \
-    macro(WebGPURenderPipeline) \
-    macro(WebGPUSampler) \
-    macro(WebGPUTexture) \
-    macro(WebGPUTextureView) \
-    macro(WebGPUVertexFormat) \
     macro(WebKitMediaKeyError) \
     macro(WebKitMediaKeyMessageEvent) \
     macro(WebKitMediaKeyNeededEvent) \
