@@ -1461,7 +1461,11 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
             return;
         }
 
-        ASSERT(inViewCenterPoint);
+        if (!inViewCenterPoint) {
+            completionHandler(WTF::nullopt, AUTOMATION_COMMAND_ERROR_WITH_NAME(ElementNotInteractable));
+            return;
+        }
+
         completionHandler(inViewCenterPoint, WTF::nullopt);
     };
 

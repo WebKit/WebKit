@@ -222,7 +222,11 @@ void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentL
                 return;
             }
 
-            ASSERT(inViewCenterPoint);
+            if (!inViewCenterPoint) {
+                completionHandler(WTF::nullopt, AUTOMATION_COMMAND_ERROR_WITH_NAME(ElementNotInteractable));
+                return;
+            }
+
             destination.moveBy(inViewCenterPoint.value());
             completionHandler(destination, WTF::nullopt);
         });
@@ -269,7 +273,12 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 eventDispatchFinished(error);
                 return;
             }
-            RELEASE_ASSERT(location);
+
+            if (!location) {
+                eventDispatchFinished(AUTOMATION_COMMAND_ERROR_WITH_NAME(ElementNotInteractable));
+                return;
+            }
+
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
             if (!a.pressedMouseButton && b.pressedMouseButton) {
@@ -303,7 +312,12 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 eventDispatchFinished(error);
                 return;
             }
-            RELEASE_ASSERT(location);
+
+            if (!location) {
+                eventDispatchFinished(AUTOMATION_COMMAND_ERROR_WITH_NAME(ElementNotInteractable));
+                return;
+            }
+
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
             if (!a.pressedMouseButton && b.pressedMouseButton) {
