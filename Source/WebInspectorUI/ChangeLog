@@ -1,5 +1,35 @@
 2019-04-30  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r244358. rdar://problem/50352725
+
+    REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
+    https://bugs.webkit.org/show_bug.cgi?id=193505
+    <rdar://problem/47325957>
+    
+    Reviewed by Devin Rousso.
+    
+    * UserInterface/Views/NetworkTableContentView.js:
+    (WI.NetworkTableContentView):
+    (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
+    Handle new frames by adding the frame's main resource.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244358 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+            REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
+            https://bugs.webkit.org/show_bug.cgi?id=193505
+            <rdar://problem/47325957>
+
+            Reviewed by Devin Rousso.
+
+            * UserInterface/Views/NetworkTableContentView.js:
+            (WI.NetworkTableContentView):
+            (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
+            Handle new frames by adding the frame's main resource.
+
+2019-04-30  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r242772. rdar://problem/50352729
 
     Web Inspector: REGRESSION: Network Cookies Table does not load
