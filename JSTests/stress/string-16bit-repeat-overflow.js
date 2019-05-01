@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 var exception;
 try {
     print('\ud000'.repeat(2**30));
