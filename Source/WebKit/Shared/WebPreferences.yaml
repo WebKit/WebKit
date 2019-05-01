@@ -1089,7 +1089,7 @@ LogsPageMessagesToSystemConsoleEnabled:
 
 IgnoreViewportScalingConstraints:
   type: bool
-  defaultValue: true
+  defaultValue: false
   category: debug
   webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)

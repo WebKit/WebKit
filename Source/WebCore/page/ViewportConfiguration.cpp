@@ -586,6 +586,32 @@ int ViewportConfiguration::layoutHeight() const
     return minimumLayoutSize.height();
 }
 
+bool ViewportConfiguration::setMinimumEffectiveDeviceWidth(double width)
+{
+    if (WTF::areEssentiallyEqual(m_minimumEffectiveDeviceWidth, width))
+        return false;
+
+    m_minimumEffectiveDeviceWidth = width;
+
+    if (shouldIgnoreMinimumEffectiveDeviceWidth())
+        return false;
+
+    updateMinimumLayoutSize();
+    updateConfiguration();
+    return true;
+}
+
+bool ViewportConfiguration::setIsKnownToLayOutWiderThanViewport(bool value)
+{
+    if (m_isKnownToLayOutWiderThanViewport == value)
+        return false;
+
+    m_isKnownToLayOutWiderThanViewport = value;
+    updateMinimumLayoutSize();
+    updateConfiguration();
+    return true;
+}
+
 #ifndef NDEBUG
 
 TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& parameters)
@@ -649,6 +675,7 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("ignoring vertical scaling constraints", shouldIgnoreVerticalScalingConstraints() ? "true" : "false");
     ts.dumpProperty("avoids unsafe area", avoidsUnsafeArea() ? "true" : "false");
     ts.dumpProperty("minimum effective device width", m_minimumEffectiveDeviceWidth);
+    ts.dumpProperty("known to lay out wider than viewport", m_isKnownToLayOutWiderThanViewport ? "true" : "false");
     
     ts.endGroup();
 

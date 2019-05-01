@@ -1,4 +1,4 @@
-Viewport: width=device-width
+Viewport: width=device-width, shrink-to-fit=no
 
 scale	1.00000
 maxScale	5.00000

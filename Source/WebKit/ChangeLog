@@ -1,3 +1,96 @@
+2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a version of viewport shrink-to-fit heuristics that preserves page layout
+        https://bugs.webkit.org/show_bug.cgi?id=197342
+        <rdar://problem/50063091>
+
+        Reviewed by Tim Horton.
+
+        This patch introduces a new shrink-to-fit heuristic that attempts to lay out the contents of the page at a
+        larger width in order to shrink content to fit the viewport. This is similar to existing shrink-to-fit behaviors
+        used for viewport sizing in multitasking mode, except that it not only scales the view, but additionally expands
+        the layout size, such that the overall layout of the page is preserved. In fact, the reason we ended up
+        reverting the existing flavor of shrink-to-fit in all cases except for multitasking was that page layout was not
+        preserved, which caused elements that poke out of the viewport to make the rest of the page look out of
+        proportion — see <rdar://problem/23818102> and related radars.
+
+        Covered by 5 new layout tests, and by adjusting a couple of existing layout tests. See comments below for more
+        details.
+
+        * Platform/Logging.h:
+
+        Add a new ViewportSizing logging channel. This will only log on pages that overflow the viewport and shrink to
+        fit as a result.
+
+        * Shared/WebPreferences.yaml:
+
+        Turn IgnoreViewportScalingConstraints off by default. This preference currently controls whether we allow
+        shrink-to-fit behaviors, and is only used by Safari when it is in multitasking mode. The value of this
+        preference is currenly *on* by default, and is turned off almost immediately during every page load after the
+        first visible content rect update, wherein visibleContentRectUpdateInfo.allowShrinkToFit() is false.
+
+        However, this sometimes causes a brief jitter during page load; to fix this, make the default value for
+        IgnoreViewportScalingConstraints false, and change the logic in WebPage::updateVisibleContentRects to
+        setCanIgnoreScalingConstraints to true if either the IgnoreViewportScalingConstraints preference (not only
+        affected by an internal debug switch) is true, or WKWebView SPI is used to enable the behavior.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+
+        Add a new hook for WebFrameLoaderClient to call into WebPage when document load finishes. Also, tweak
+        dispatchDidFinishLoad to take a WebFrame& instead of a WebFrame* in a drive-by fix (the frame is assumed to be
+        non-null anyways).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::didFinishDocumentLoad):
+        (WebKit::WebPage::didFinishLoad):
+
+        When finishing document load or finishing the overall load, kick off the shrink-to-fit timer; when committing a
+        load, cancel the timer.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize):
+
+        Don't allow the minimum effective device width from the client to stomp over any minimum effective device width
+        set as a result of the new shrink-to-fit heuristic; on some pages that load quickly, this can result in a race
+        where the minimum effective device width (i.e. a value that lower-bounds the minimum layout width) is first set
+        by the shrink-to-fit heuristic, and then set to an incorrect value by the client.
+
+        In the near future, web view SPI used to set the minimum effective device width should actually be removed
+        altogether, since the new shrink-to-fit heuristic supersedes any need for the client to fiddle with the minimum
+        effective device width.
+
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
+        When performing a dynamic viewport size update, additionally re-run the shrink-to-fit heuristic. This allows
+        the minimum layout size of the viewport to be updated, if necessary. An example of where this matters is when a
+        web page is *below* a tablet/desktop layout breakpoint in portrait device orientation, but then exceeds this
+        layout breakpoint in landscape orientation. In this scenario, rotating the device should swap between these two
+        page layouts.
+
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+        (WebKit::WebPage::scheduleShrinkToFitContent):
+        (WebKit::WebPage::shrinkToFitContentTimerFired):
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+
+        Leverage the existing capability for a viewport to have a "minimum effective device width" to grant the viewport
+        a larger layout size than it would normally have, and then scale down to fit within the bounds of the view. One
+        challenge with this overall approach is that laying out at a larger width may cause the page to lay out even
+        wider in response, which may actually worsen horizontal scrolling. To mitigate this, we only attempt to lay out
+        at the current content width once; if laying out at this width reduced the amount of horizontal scrolling by any
+        amount, then proceed with this layout width; otherwise, revert to the previous layout width.
+
+        (WebKit::WebPage::shouldIgnoreMetaViewport const):
+
+        Pull some common logic out into a readonly getter.
+
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        See the comment below WebPreferences.yaml, above.
+
 2019-05-01  Dean Jackson  <dino@apple.com>
 
         Link Previews that use WKImagePreviewViewController are not always scaled correctly

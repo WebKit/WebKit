@@ -1,3 +1,38 @@
+2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a version of viewport shrink-to-fit heuristics that preserves page layout
+        https://bugs.webkit.org/show_bug.cgi?id=197342
+        <rdar://problem/50063091>
+
+        Reviewed by Tim Horton.
+
+        Adds support for a new shrink-to-fit heuristic that attempts to lay out the contents of the page at a larger
+        width in order to shrink content to fit the viewport. See WebKit ChangeLog for more details.
+
+        Tests: fast/viewport/ios/shrink-to-fit-content-constant-width.html
+               fast/viewport/ios/shrink-to-fit-content-large-width-breakpoint.html
+               fast/viewport/ios/shrink-to-fit-content-no-viewport.html
+               fast/viewport/ios/shrink-to-fit-content-responsive-viewport-with-horizontal-overflow.html
+               fast/viewport/ios/shrink-to-fit-content-temporary-overflow.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::setMinimumEffectiveDeviceWidth):
+        (WebCore::ViewportConfiguration::setIsKnownToLayOutWiderThanViewport):
+        (WebCore::ViewportConfiguration::description const):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::canIgnoreScalingConstraints const):
+        (WebCore::ViewportConfiguration::minimumEffectiveDeviceWidth const):
+
+        Add several new getters and setters in ViewportConfiguration.
+
+        (WebCore::ViewportConfiguration::isKnownToLayOutWiderThanViewport const):
+        (WebCore::ViewportConfiguration::shouldIgnoreMinimumEffectiveDeviceWidth const):
+
+        Importantly, only allow ignoring the minimum effective device width in webpages with responsive viewports, if
+        they also have *not* laid out wider than the viewport.
+
+        (WebCore::ViewportConfiguration::setForceAlwaysUserScalable):
+
 2019-05-01  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Star rating is covered with a black circle when writing a review on Yelp

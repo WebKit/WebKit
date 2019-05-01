@@ -85,6 +85,7 @@ extern "C" {
     M(TextInput) \
     M(ViewGestures) \
     M(ViewState) \
+    M(ViewportSizing) \
     M(VirtualMemory) \
     M(VisibleRects) \
     M(WebGL) \

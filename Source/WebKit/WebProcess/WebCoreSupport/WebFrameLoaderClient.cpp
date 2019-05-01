@@ -609,6 +609,8 @@ void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFinishDocumentLoadForFrame(m_frame->frameID(), navigationID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+
+    webPage->didFinishDocumentLoad(*m_frame);
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()
@@ -631,7 +633,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFinishLoad(m_frame);
 
-    webPage->didFinishLoad(m_frame);
+    webPage->didFinishLoad(*m_frame);
 }
 
 void WebFrameLoaderClient::forcePageTransitionIfNeeded()

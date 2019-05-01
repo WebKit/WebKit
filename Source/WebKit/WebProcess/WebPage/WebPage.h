@@ -131,6 +131,8 @@ OBJC_CLASS NSObject;
 OBJC_CLASS WKAccessibilityWebPageObject;
 #endif
 
+#define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
+
 namespace API {
 class Array;
 }
@@ -349,7 +351,8 @@ public:
     void didCommitLoad(WebFrame*);
     void willReplaceMultipartContent(const WebFrame&);
     void didReplaceMultipartContent(const WebFrame&);
-    void didFinishLoad(WebFrame*);
+    void didFinishDocumentLoad(WebFrame&);
+    void didFinishLoad(WebFrame&);
     void show();
     String userAgent(const URL&) const;
     String platformUserAgent(const URL&) const;
@@ -1228,6 +1231,13 @@ private:
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
     WebAutocorrectionContext autocorrectionContext();
     bool applyAutocorrectionInternal(const String& correction, const String& originalText);
+    bool shouldIgnoreMetaViewport() const;
+#endif
+
+#if ENABLE(VIEWPORT_RESIZING)
+    void scheduleShrinkToFitContent();
+    void shrinkToFitContentTimerFired();
+    bool immediatelyShrinkToFitContent();
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
@@ -1894,6 +1904,9 @@ private:
     WeakPtr<RemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
     WebCore::IntSize m_lastSentIntrinsicContentSize;
+#if ENABLE(VIEWPORT_RESIZING)
+    WebCore::DeferrableOneShotTimer m_shrinkToFitContentTimer;
+#endif
 };
 
 } // namespace WebKit

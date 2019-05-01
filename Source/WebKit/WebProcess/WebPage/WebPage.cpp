@@ -424,6 +424,9 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(WPE)
     , m_hostFileDescriptor(WTFMove(parameters.hostFileDescriptor))
 #endif
+#if ENABLE(VIEWPORT_RESIZING)
+    , m_shrinkToFitContentTimer(*this, &WebPage::shrinkToFitContentTimerFired, 0_s)
+#endif
 {
     ASSERT(m_pageID);
 
@@ -5714,6 +5717,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
         viewportConfigurationChanged();
 #endif
 
+#if ENABLE(VIEWPORT_RESIZING)
+    m_shrinkToFitContentTimer.stop();
+#endif
+
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     resetPrimarySnapshottedPlugIn();
 #endif
@@ -5727,12 +5734,22 @@ void WebPage::didCommitLoad(WebFrame* frame)
     updateMainFrameScrollOffsetPinning();
 }
 
-void WebPage::didFinishLoad(WebFrame* frame)
+void WebPage::didFinishDocumentLoad(WebFrame& frame)
 {
-    if (!frame->isMainFrame())
+    if (!frame.isMainFrame())
         return;
 
-    WebProcess::singleton().sendPrewarmInformation(frame->url());
+#if ENABLE(VIEWPORT_RESIZING)
+    scheduleShrinkToFitContent();
+#endif
+}
+
+void WebPage::didFinishLoad(WebFrame& frame)
+{
+    if (!frame.isMainFrame())
+        return;
+
+    WebProcess::singleton().sendPrewarmInformation(frame.url());
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     m_readyToFindPrimarySnapshottedPlugin = true;
@@ -5740,6 +5757,10 @@ void WebPage::didFinishLoad(WebFrame* frame)
     m_determinePrimarySnapshottedPlugInTimer.startOneShot(0_s);
 #else
     UNUSED_PARAM(frame);
+#endif
+
+#if ENABLE(VIEWPORT_RESIZING)
+    scheduleShrinkToFitContent();
 #endif
 }
 

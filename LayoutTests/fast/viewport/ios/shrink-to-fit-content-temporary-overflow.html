@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.square {
+    background-color: green;
+    width: 100px;
+    height: 100px;
+}
+
+.square::before {
+    color: white;
+    content: "PASS";
+}
+
+@media screen and (min-width: 1200px) {
+    .square::before {
+        content: "FAIL";
+    }
+
+    .square {
+        background-color: red;
+    }
+}
+
+.bar {
+    width: 1500px;
+    height: 100px;
+    background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+}
+
+#description {
+    width: 300px;
+    overflow: scroll;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("This test verifies that a temporary change in content width does not cause the viewport width to permanently expand to try and accomodate the content. To test manually, load the page and check that the box below reads 'PASS'. This test is only intended to run on devices with less than 1200px screen width.");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+    minScale = await UIHelper.minimumZoomScale();
+    shouldBe("minScale", "1");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div class="square"></div>
+<script>
+const bar = document.createElement("div");
+bar.classList.add("bar");
+document.body.appendChild(bar);
+document.scrollingElement.scrollTo(0, 1);
+document.scrollingElement.scrollTo(0, 0);
+document.scrollingElement.scrollTop;
+bar.remove();
+</script>
+</body>
+</html>

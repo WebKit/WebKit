@@ -1,3 +1,56 @@
+2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a version of viewport shrink-to-fit heuristics that preserves page layout
+        https://bugs.webkit.org/show_bug.cgi?id=197342
+        <rdar://problem/50063091>
+
+        Reviewed by Tim Horton.
+
+        Introduces new layout tests, and adjusts some existing tests. See comments below.
+
+        * fast/viewport/ios/shrink-to-fit-content-constant-width-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-constant-width.html: Added.
+
+        Add a new layout test to exercise the scenario where a constant width viewport narrower than the view is used.
+
+        * fast/viewport/ios/shrink-to-fit-content-large-width-breakpoint-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-large-width-breakpoint.html: Added.
+
+        Add a new layout test to exercise the scenario where a responsive website that lays out larger than the view
+        width ends up with even more horizontal scrolling when laying out at the initial content width. In this
+        scenario, we shouldn't try to expand the viewport to try and encompass the content width, since that would only
+        induce even worse horizontal scrolling.
+
+        * fast/viewport/ios/shrink-to-fit-content-no-viewport-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-no-viewport.html: Added.
+
+        Add a new layout test for the case where there is no viewport, but content lays out wider than the view.
+
+        * fast/viewport/ios/shrink-to-fit-content-responsive-viewport-with-horizontal-overflow-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-responsive-viewport-with-horizontal-overflow.html: Added.
+
+        Add a new layout test for the case where the page has opted for a responsive viewport (device-width, initial
+        scale 1), but has laid out wider than the viewport anyways. In this case, we want to shrink the contents down to
+        fit inside the view.
+
+        * fast/viewport/ios/shrink-to-fit-content-temporary-overflow-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-content-temporary-overflow.html: Added.
+
+        Add a new layout test to exercise the case where, during page load, content width temporarily increases, and
+        then decreases such that it once again fits within the viewport. In this case, we don't want to expand the
+        viewport to be as wide as the large temporary width of the page.
+
+        * fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html:
+        * fast/viewport/ios/width-is-device-width-overflowing-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing.html:
+
+        Tweak these 2 existing layout tests to include "shrink-to-fit=no", to prevent the new heuristics from shrinking
+        the page to fit on device classes that use native viewports by default.
+
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt:
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-expected.txt:
+
 2019-05-01  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Star rating is covered with a black circle when writing a review on Yelp
