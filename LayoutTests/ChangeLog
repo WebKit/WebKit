@@ -1,3 +1,12 @@
+2019-05-01  Truitt Savell  <tsavell@apple.com>
+
+        Win10 failing or flakey tests need to be given expectations to allow for new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=197471
+
+        Unreviewed test Gardening
+
+        * platform/win/TestExpectations:
+
 2019-05-01  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
