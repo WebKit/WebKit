@@ -1,3 +1,23 @@
+2019-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] Element::focus and Element::scrollIntoView do not clamp scroll positions
+        https://bugs.webkit.org/show_bug.cgi?id=197211
+
+        Reviewed by Simon Fraser.
+
+        Added tests for scrolling via Element.prototype.focus and Element.prototype.scrollIntoView.
+
+        * fast/scrolling/ios/programmatic-scroll-via-focus-should-clamp-top-expected.txt: Added.
+        * fast/scrolling/ios/programmatic-scroll-via-focus-should-clamp-top.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-via-scrollIntoView-inside-iframe-should-clamp-top-expected.txt: Added.
+        * fast/scrolling/ios/programmatic-scroll-via-scrollIntoView-inside-iframe-should-clamp-top.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-via-scrollIntoView-should-clamp-top-expected.txt: Added.
+        * fast/scrolling/ios/programmatic-scroll-via-scrollIntoView-should-clamp-top.html: Added.
+        * platform/ios-wk2/fast/dom/focus-contenteditable-expected.txt: Rebaselined the output now that the scroll position
+        is properly clamped.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom-view/elementFromPoint-expected.txt: Rebaselined as one
+        more test case is passing.
+
 2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a version of viewport shrink-to-fit heuristics that preserves page layout

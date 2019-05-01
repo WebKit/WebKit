@@ -2586,18 +2586,27 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             if (options.revealMode == SelectionRevealMode::RevealUpToMainFrame && frameView.frame().isMainFrame())
                 return;
 
+            auto minScrollPosition = frameView.minimumScrollPosition();
+            auto maxScrollPosition = frameView.maximumScrollPosition();
+
 #if !PLATFORM(IOS_FAMILY)
             LayoutRect viewRect = frameView.visibleContentRect();
 #else
+            // FIXME: ContentInsets should be taken care of in UI process side.
+            // To do that, getRectToExpose needs to return the additional scrolling to do beyond content rect.
             LayoutRect viewRect = frameView.visualViewportRectExpandedByContentInsets();
+
+            auto contentInsets = page().contentInsets();
+            minScrollPosition.move(-contentInsets.left(), -contentInsets.top());
+            maxScrollPosition.move(contentInsets.right(), contentInsets.bottom());
 #endif
             // Move the target rect into "scrollView contents" coordinates.
             LayoutRect targetRect = absoluteRect;
             targetRect.move(0, frameView.headerHeight());
 
             LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
-            
-            frameView.setScrollPosition(roundedIntPoint(revealRect.location()));
+            ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
+            frameView.setScrollPosition(clampedScrollPosition);
 
             // This is the outermost view of a web page, so after scrolling this view we
             // scroll its container by calling Page::scrollRectIntoView.

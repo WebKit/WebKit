@@ -17,5 +17,5 @@ PASS no hit target at x,y
 PASS No viewport available 
 FAIL Image Maps assert_equals: Should have returned the area element expected Element node <area id="rectG" shape="rect" coords="0,0,90,100" href="#... but got Element node <html><head><title>cssom-view - elementFromPoint</title>
 ...
-FAIL Fieldsets assert_equals: The fieldset should not cover up the div it doesn't even overlap expected Element node <div id="fieldset-div" class="size" style="position: abso... but got null
+PASS Fieldsets 
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+if (window.internals)
+    internals.settings.setAsyncFrameScrollingEnabled(true);
+
+description(`This tests programming scrolling via element.scrollIntoView to an element inside an iframe position well above the viewport top<br>
+WebKit should clamp the scroll top to 0px.`);
+
+const iframe = document.createElement('iframe');
+document.body.append(iframe);
+iframe.style.position = 'absolute';
+iframe.style.top = '-1000px';
+iframe.style.height = '1050px';
+iframe.contentDocument.body.innerHTML = '<div id="target" style="position: absolute; top:2000px; height: 20px;">some content</div>';
+const target = iframe.contentWindow.target;
+
+target.scrollIntoView({block: 'end'});
+shouldBe('document.documentElement.scrollTop', '0');
+shouldBe('visualViewport.pageTop', '0');
+shouldBe('iframe.contentDocument.documentElement.scrollTop', '0');
+shouldBeTrue('iframe.contentWindow.visualViewport.pageTop > 900');
+shouldBe('iframe.contentWindow.visualViewport.pageTop', 'target.offsetTop + target.offsetHeight - iframe.clientHeight');
+
+</script>
+</body>
+</html>
