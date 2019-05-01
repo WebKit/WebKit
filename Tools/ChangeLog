@@ -1,3 +1,16 @@
+2019-04-30  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the WebKitTestRunner build
+        https://bugs.webkit.org/show_bug.cgi?id=197449
+        <rdar://problem/50334169>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+        (WTR::EventSenderProxy::mouseForceChanged):
+        Use some SPI instead of IPI.
+
 2019-04-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) URL scheme handlers can no longer respond asynchronously

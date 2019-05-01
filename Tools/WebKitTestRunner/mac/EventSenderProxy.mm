@@ -27,6 +27,7 @@
 #import "config.h"
 #import "EventSenderProxy.h"
 
+#import "CoreGraphicsTestSPI.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestController.h"
@@ -45,6 +46,7 @@
 
 @interface NSEvent (ForTestRunner)
 - (void)_postDelayed;
+- (instancetype)_initWithCGEvent:(CGEventRef)event eventRef:(void *)eventRef;
 @end
 
 @interface EventSenderSyntheticEvent : NSEvent {
@@ -69,9 +71,41 @@
 
 @implementation EventSenderSyntheticEvent
 
-- (id)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure stageTransition:(float)stageTransition phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
+- (instancetype)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure stageTransition:(float)stageTransition phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
 {
-    self = [super init];
+    CGSGesturePhase gesturePhase;
+    switch (phase) {
+    case NSEventPhaseMayBegin:
+        gesturePhase = kCGSGesturePhaseMayBegin;
+        break;
+    case NSEventPhaseBegan:
+        gesturePhase = kCGSGesturePhaseBegan;
+        break;
+    case NSEventPhaseChanged:
+        gesturePhase = kCGSGesturePhaseChanged;
+        break;
+    case NSEventPhaseCancelled:
+        gesturePhase = kCGSGesturePhaseCancelled;
+        break;
+    case NSEventPhaseEnded:
+        gesturePhase = kCGSGesturePhaseEnded;
+        break;
+    case NSEventPhaseNone:
+    default:
+        gesturePhase = kCGSGesturePhaseNone;
+        break;
+    }
+
+    CGEventRef cgEvent = CGEventCreate(nullptr);
+    CGEventSetType(cgEvent, (CGEventType)kCGSEventGesture);
+    CGEventSetIntegerValueField(cgEvent, kCGEventGestureHIDType, 32);
+    CGEventSetIntegerValueField(cgEvent, kCGEventGesturePhase, gesturePhase);
+    CGEventSetDoubleValueField(cgEvent, kCGEventStagePressure, pressure);
+    CGEventSetDoubleValueField(cgEvent, kCGEventTransitionProgress, pressure);
+    CGEventSetIntegerValueField(cgEvent, kCGEventGestureStage, stageTransition);
+    CGEventSetIntegerValueField(cgEvent, kCGEventGestureBehavior, kCGSGestureBehaviorDeepPress);
+
+    self = [super _initWithCGEvent:cgEvent eventRef:nullptr];
 
     if (!self)
         return nil;
@@ -85,10 +119,7 @@
     _eventSender_timestamp = time;
     _eventSender_eventNumber = eventNumber;
     _eventSender_window = window;
-#if defined(__LP64__)
-    self->_type = NSEventTypePressure;
     _eventSender_type = NSEventTypePressure;
-#endif
 
     return self;
 }
@@ -325,7 +356,6 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     m_clickPosition = m_position;
 }
 
-#if defined(__LP64__)
 void EventSenderProxy::sendMouseDownToStartPressureEvents()
 {
     updateClickCountForButton(0);
@@ -525,49 +555,6 @@ void EventSenderProxy::mouseForceChanged(float force)
     [targetView pressureChangeWithEvent:nil];
     IGNORE_NULL_CHECK_WARNINGS_END
 }
-#else
-
-#if PLATFORM(COCOA)
-RetainPtr<NSEvent> EventSenderProxy::beginPressureEvent(int)
-{
-    return nil;
-}
-
-RetainPtr<NSEvent> EventSenderProxy::pressureChangeEvent(int, PressureChangeDirection)
-{
-    return nil;
-}
-
-RetainPtr<NSEvent> EventSenderProxy::pressureChangeEvent(int, float, PressureChangeDirection)
-{
-    return nil;
-}
-#endif // PLATFORM(COCOA)
-
-void EventSenderProxy::sendMouseDownToStartPressureEvents()
-{
-}
-
-void EventSenderProxy::mouseForceDown()
-{
-}
-
-void EventSenderProxy::mouseForceUp()
-{
-}
-
-void EventSenderProxy::mouseForceChanged(float)
-{
-}
-
-void EventSenderProxy::mouseForceClick()
-{
-}
-
-void EventSenderProxy::startAndCancelMouseForceClick()
-{
-}
-#endif // defined(__LP64__)
 
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {

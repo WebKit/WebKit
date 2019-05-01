@@ -84,6 +84,21 @@ enum {
 };
 typedef uint32_t CGSHIDEventType;
 
+typedef CF_ENUM(uint8_t, CGSGesturePhase)
+{
+    kCGSGesturePhaseNone = 0,
+    kCGSGesturePhaseBegan = 1,
+    kCGSGesturePhaseChanged = 2,
+    kCGSGesturePhaseEnded = 4,
+    kCGSGesturePhaseCancelled = 8,
+    kCGSGesturePhaseMayBegin = 128
+};
+
+typedef CF_ENUM(uint8_t, CGSGestureBehavior)
+{
+    kCGSGestureBehaviorDeepPress = 5,
+};
+
 CGPoint CGEventGetWindowLocation(CGEventRef);
 void CGEventSetWindowLocation(CGEventRef, CGPoint);
 
