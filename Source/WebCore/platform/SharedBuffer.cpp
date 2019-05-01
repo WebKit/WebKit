@@ -334,17 +334,16 @@ RefPtr<SharedBuffer> utf8Buffer(const String& string)
 
     // Convert to runs of 8-bit characters.
     char* p = buffer.data();
-    WTF::Unicode::ConversionResult result;
     if (length) {
         if (string.is8Bit()) {
             const LChar* d = string.characters8();
-            result = WTF::Unicode::convertLatin1ToUTF8(&d, d + length, &p, p + buffer.size());
+            if (!WTF::Unicode::convertLatin1ToUTF8(&d, d + length, &p, p + buffer.size()))
+                return nullptr;
         } else {
             const UChar* d = string.characters16();
-            result = WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size(), true);
+            if (WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size()) != WTF::Unicode::ConversionOK)
+                return nullptr;
         }
-        if (result != WTF::Unicode::conversionOK)
-            return nullptr;
     }
 
     buffer.shrink(p - buffer.data());

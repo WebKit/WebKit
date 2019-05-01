@@ -1,3 +1,21 @@
+2019-04-29  Darin Adler  <darin@apple.com>
+
+        WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::utf8Buffer): Removed unnecessary "strict" argument to convertUTF16ToUTF8 since
+        that is the default behavior. Also updated for changes to return values.
+
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::writeToStringBuilder): Removed unnecessary use of StringBuffer for a temporary
+        buffer for characters. Rewrote to use U8_NEXT and U16_APPEND directly.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::convertUTF16EntityToUTF8): Updated for changes to CompletionResult.
+
 2019-04-30  John Wilander  <wilander@apple.com>
 
         Add logging of Ad Click Attribution errors and events to a dedicated channel

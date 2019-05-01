@@ -58,11 +58,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/unicode/UTF8Conversion.h>
 
 namespace JSC {
-
-using namespace WTF::Unicode;
 
 const ASCIILiteral ObjectProtoCalledOnNullOrUndefinedError { "Object.prototype.__proto__ called on null or undefined"_s };
 
@@ -184,10 +181,10 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
             int charLen = 0;
             if (k <= length - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
                 const char b0 = Lexer<CharType>::convertHex(p[1], p[2]);
-                const int sequenceLen = UTF8SequenceLength(b0);
-                if (sequenceLen && k <= length - sequenceLen * 3) {
+                const int sequenceLen = 1 + U8_COUNT_TRAIL_BYTES(b0);
+                if (k <= length - sequenceLen * 3) {
                     charLen = sequenceLen * 3;
-                    char sequence[5];
+                    uint8_t sequence[U8_MAX_LENGTH];
                     sequence[0] = b0;
                     for (int i = 1; i < sequenceLen; ++i) {
                         const CharType* q = p + i * 3;
@@ -199,16 +196,20 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
                         }
                     }
                     if (charLen != 0) {
-                        sequence[sequenceLen] = 0;
-                        const int character = decodeUTF8Sequence(sequence);
-                        if (character < 0 || character >= 0x110000)
+                        UChar32 character;
+                        int32_t offset = 0;
+                        U8_NEXT(sequence, offset, sequenceLen, character);
+                        if (character < 0)
                             charLen = 0;
-                        else if (character >= 0x10000) {
+                        else if (!U_IS_BMP(character)) {
                             // Convert to surrogate pair.
-                            builder.append(static_cast<UChar>(0xD800 | ((character - 0x10000) >> 10)));
-                            u = static_cast<UChar>(0xDC00 | ((character - 0x10000) & 0x3FF));
-                        } else
+                            ASSERT(U_IS_SUPPLEMENTARY(character));
+                            builder.append(U16_LEAD(character));
+                            u = U16_TRAIL(character);
+                        } else {
+                            ASSERT(!U_IS_SURROGATE(character));
                             u = static_cast<UChar>(character);
+                        }
                     }
                 }
             }

@@ -1,3 +1,15 @@
+2019-04-29  Darin Adler  <darin@apple.com>
+
+        WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+
+        Reviewed by Alexey Proskuryakov.
+
+        * web-platform-tests/encoding/textdecoder-utf16-surrogates-expected.txt:
+        Updated expected results to have the Unicode replacement character in cases where the
+        text contains unpaired surrogates. The tests are still doing the same operations, and
+        still getting the same results, but the text output no longer includes illegal UTF-8.
+
 2019-04-30  Youenn Fablet  <youenn@apple.com>
 
         [macOS WK1] ASSERTION FAILED: formData in WebCore::ResourceRequest::doUpdateResourceHTTPBody()

@@ -113,19 +113,24 @@ AtomicString AtomicString::number(double number)
     return numberToString(number, buffer);
 }
 
-AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const char* charactersEnd)
+AtomicString AtomicString::fromUTF8Internal(const char* start, const char* end)
 {
-    auto impl = AtomicStringImpl::addUTF8(charactersStart, charactersEnd);
-    if (!impl)
-        return nullAtom();
-    return impl.get();
+    ASSERT(start);
+
+    // Caller needs to handle empty string.
+    ASSERT(!end || end > start);
+    ASSERT(end || start[0]);
+
+    return AtomicStringImpl::addUTF8(start, end ? end : start + std::strlen(start));
 }
 
 #ifndef NDEBUG
+
 void AtomicString::show() const
 {
     m_string.show();
 }
+
 #endif
 
 WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> nullAtomData;

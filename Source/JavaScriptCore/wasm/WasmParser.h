@@ -162,7 +162,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Name& result, size_t s
 
         UChar* bufferCurrent = bufferStart;
         const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-        if (WTF::Unicode::convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + stringLength), &bufferCurrent, bufferCurrent + buffer.size()) != WTF::Unicode::conversionOK)
+        if (!WTF::Unicode::convertUTF8ToUTF16(stringCurrent, reinterpret_cast<const char *>(stringStart + stringLength), &bufferCurrent, bufferCurrent + buffer.size()))
             return false;
     }
 

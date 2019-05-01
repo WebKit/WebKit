@@ -1,3 +1,28 @@
+2019-04-29  Darin Adler  <darin@apple.com>
+
+        WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+
+        Reviewed by Alexey Proskuryakov.
+
+        * css3/escape-dom-api-expected.txt:
+        * fast/text/dangling-surrogates-expected.txt:
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/invalid-utf8-in-syntax-error-expected.txt:
+        Updated expected results to have the Unicode replacement character in cases where the
+        text contains unpaired surrogates. The tests are still doing the same operations, and
+        still getting the same results, but the text output no longer includes illegal UTF-8
+        because the WTF changes affect the code path that DumpRenderTree and WebKitTestRunner
+        use to produce the text output.
+
+        * js/invalid-utf8-in-syntax-error.html: Added. Before adding this, the test was
+        run, but unlike the rest of the tests in this directory, was only run as part of
+        run-javascriptcore-tests. There are two reasons for adding this. One is to be
+        consistent with the rest of the tests here and run a second time as part of the
+        broader WebKit tests. The second is that we can now use "--reset-results" to generate
+        new expected results, something that run-webkit-tests has but run-javascriptcore-tests
+        does not have.
+
 2019-04-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-weight: 1000 is not parsed successfully
