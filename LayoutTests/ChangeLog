@@ -1,3 +1,14 @@
+2019-05-01  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Star rating is covered with a black circle when writing a review on Yelp
+        https://bugs.webkit.org/show_bug.cgi?id=197469
+        <rdar://problem/48094446>
+
+        Reviewed by Dean Jackson.
+
+        * fast/forms/radio-and-checkbox-checked-with-no-appearance-expected.html: Added.
+        * fast/forms/radio-and-checkbox-checked-with-no-appearance.html: Added.
+
 2019-05-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: Layout test imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html is frequently failing on Mac-ews

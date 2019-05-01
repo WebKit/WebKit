@@ -385,13 +385,15 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
     bool checked = isChecked(box);
     bool indeterminate = isIndeterminate(box);
     CGContextRef cgContext = paintInfo.context().platformContext();
-
     GraphicsContextStateSaver stateSaver { paintInfo.context() };
-    auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-    float width = clip.width();
-    float height = clip.height();
 
     if (checked || indeterminate) {
+        auto border = box.style().getRoundedBorderFor(rect);
+        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), Color(0.0f, 0.0f, 0.0f, 0.8f));
+
+        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
+        auto width = clip.width();
+        auto height = clip.height();
         drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
 
         constexpr float thicknessRatio = 2 / 14.0;
@@ -425,10 +427,13 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
         lineWidth = std::max<float>(lineWidth, 1);
         drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(shadow) }, kCGLineCapSquare, lineWidth, Color { 0.0f, 0.0f, 0.0f, 0.7f });
 
-        lineWidth = std::max<float>(std::min(clip.width(), clip.height()) * thicknessRatio, 1);
+        lineWidth = std::max<float>(std::min(width, height) * thicknessRatio, 1);
         drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(line) }, kCGLineCapButt, lineWidth, Color { 1.0f, 1.0f, 1.0f, 240 / 255.0f });
     } else {
-        FloatPoint bottomCenter { clip.x() + clip.width() / 2.0f, clip.maxY() };
+        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
+        auto width = clip.width();
+        auto height = clip.height();
+        FloatPoint bottomCenter { clip.x() + width / 2.0f, clip.maxY() };
 
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
         drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, sqrtf((width * width) / 4.0f + height * height), ExponentialInterpolation);
@@ -471,10 +476,19 @@ void RenderThemeIOS::adjustRadioStyle(StyleResolver&, RenderStyle& style, const 
 bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-    FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-
     CGContextRef cgContext = paintInfo.context().platformContext();
+
+    auto drawShadeAndShineGradients = [&](auto clip) {
+        FloatPoint bottomCenter(clip.x() + clip.width() / 2.0, clip.maxY());
+        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
+        drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, std::max(clip.width(), clip.height()), ExponentialInterpolation);
+    };
+
     if (isChecked(box)) {
+        auto border = box.style().getRoundedBorderFor(rect);
+        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), Color(0.0f, 0.0f, 0.0f, 0.8f));
+
+        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
         drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
 
         // The inner circle is 6 / 14 the size of the surrounding circle, 
@@ -489,10 +503,11 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
 
         FloatSize radius(clip.width() / 2.0f, clip.height() / 2.0f);
         paintInfo.context().clipRoundedRect(FloatRoundedRect(clip, radius, radius, radius, radius));
+        drawShadeAndShineGradients(clip);
+    } else {
+        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
+        drawShadeAndShineGradients(clip);
     }
-    FloatPoint bottomCenter(clip.x() + clip.width() / 2.0, clip.maxY());
-    drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-    drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, std::max(clip.width(), clip.height()), ExponentialInterpolation);
     return false;
 }
 
