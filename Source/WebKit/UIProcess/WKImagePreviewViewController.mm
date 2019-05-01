@@ -53,6 +53,7 @@
     _image = image;
 
     _imageView = adoptNS([[UIImageView alloc] initWithFrame:CGRectZero]);
+    _imageView.get().contentMode = UIViewContentModeScaleAspectFill;
     RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:_image.get()]);
     [_imageView setImage:uiImage.get()];
 

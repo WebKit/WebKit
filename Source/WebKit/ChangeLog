@@ -1,3 +1,17 @@
+2019-05-01  Dean Jackson  <dino@apple.com>
+
+        Link Previews that use WKImagePreviewViewController are not always scaled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=197450
+        <rdar://problem/50357695>
+
+        Reviewed by Wenson Hsieh.
+
+        Tell the UIImageView that we create in WKImagePreviewViewController to use
+        a filling scaling method.
+
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController initWithCGImage:defaultActions:elementInfo:]):
+
 2019-05-01  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
