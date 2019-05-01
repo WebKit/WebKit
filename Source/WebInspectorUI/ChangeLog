@@ -1,3 +1,32 @@
+2019-04-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r242772. rdar://problem/50352729
+
+    Web Inspector: REGRESSION: Network Cookies Table does not load
+    https://bugs.webkit.org/show_bug.cgi?id=195599
+    
+    Patch by Joseph Pecoraro <pecoraro@apple.com> on 2019-03-11
+    Reviewed by Devin Rousso.
+    
+    * UserInterface/Views/ResourceCookiesContentView.js:
+    (WI.ResourceCookiesContentView.prototype.tableIndexForRepresentedObject):
+    (WI.ResourceCookiesContentView.prototype.tableRepresentedObjectForIndex):
+    Include needed delegate methods.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242772 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: REGRESSION: Network Cookies Table does not load
+            https://bugs.webkit.org/show_bug.cgi?id=195599
+
+            Reviewed by Devin Rousso.
+
+            * UserInterface/Views/ResourceCookiesContentView.js:
+            (WI.ResourceCookiesContentView.prototype.tableIndexForRepresentedObject):
+            (WI.ResourceCookiesContentView.prototype.tableRepresentedObjectForIndex):
+            Include needed delegate methods.
+
 2019-04-24  Alan Coon  <alancoon@apple.com>
 
         Revert r244173. rdar://problem/28160396
