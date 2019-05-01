@@ -1,3 +1,16 @@
+2019-05-01  Youenn Fablet  <youenn@apple.com>
+
+        Kept alive loaders should use the redirected request in case of redirections
+        https://bugs.webkit.org/show_bug.cgi?id=197337
+
+        Reviewed by Alex Christensen.
+
+        Instead of using the request, the redirected request should be used in case of redirection.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+
 2019-04-29  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support

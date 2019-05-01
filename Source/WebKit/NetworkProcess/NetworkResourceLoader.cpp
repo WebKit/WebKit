@@ -656,7 +656,7 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
     ASSERT(!isSynchronous());
 
     if (m_isKeptAlive) {
-        continueWillSendRequest(WTFMove(request), false);
+        continueWillSendRequest(WTFMove(redirectRequest), false);
         return;
     }
 

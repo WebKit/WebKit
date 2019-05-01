@@ -1,3 +1,12 @@
+2019-05-01  Youenn Fablet  <youenn@apple.com>
+
+        Enable Fetch Keep Alive by default
+        https://bugs.webkit.org/show_bug.cgi?id=197331
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/basic/keepalive-expected.txt: Added.
+
 2019-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         XMLHttpRequest should propagate user gestures for media playback
