@@ -1,5 +1,18 @@
 2019-05-01  Shawn Roberts  <sroberts@apple.com>
 
+        Unreviewed, rolling out r244821.
+
+        Causing
+
+        Reverted changeset:
+
+        "WebKit has too much of its own UTF-8 code and should rely
+        more on ICU's UTF-8 support"
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+        https://trac.webkit.org/changeset/244821
+
+2019-05-01  Shawn Roberts  <sroberts@apple.com>
+
         Unreviewed, rolling out r244822.
 
         Causing 4 Test262 failures on JSC Release and Debug

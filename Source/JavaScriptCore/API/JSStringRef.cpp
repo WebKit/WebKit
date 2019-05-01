@@ -49,7 +49,7 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
         UChar* p = buffer.data();
         bool sourceIsAllASCII;
         const LChar* stringStart = reinterpret_cast<const LChar*>(string);
-        if (convertUTF8ToUTF16(string, string + length, &p, p + length, &sourceIsAllASCII)) {
+        if (conversionOK == convertUTF8ToUTF16(&string, string + length, &p, p + length, &sourceIsAllASCII)) {
             if (sourceIsAllASCII)
                 return &OpaqueJSString::create(stringStart, length).leakRef();
             return &OpaqueJSString::create(buffer.data(), p - buffer.data()).leakRef();
@@ -102,18 +102,20 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
         return 0;
 
     char* destination = buffer;
-    bool failed = false;
+    ConversionResult result;
     if (string->is8Bit()) {
         const LChar* source = string->characters8();
-        convertLatin1ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
+        result = convertLatin1ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
     } else {
         const UChar* source = string->characters16();
-        ConversionResult result = convertUTF16ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1);
-        failed = result != ConversionOK && result != TargetExhausted;
+        result = convertUTF16ToUTF8(&source, source + string->length(), &destination, destination + bufferSize - 1, true);
     }
 
     *destination++ = '\0';
-    return failed ? 0 : destination - buffer;
+    if (result != conversionOK && result != targetExhausted)
+        return 0;
+
+    return destination - buffer;
 }
 
 bool JSStringIsEqual(JSStringRef a, JSStringRef b)

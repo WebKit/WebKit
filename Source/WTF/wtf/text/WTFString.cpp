@@ -859,7 +859,7 @@ String String::fromUTF8(const LChar* stringStart, size_t length)
  
     UChar* bufferCurrent = bufferStart;
     const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-    if (!convertUTF8ToUTF16(stringCurrent, reinterpret_cast<const char*>(stringStart + length), &bufferCurrent, bufferCurrent + buffer.size()))
+    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &bufferCurrent, bufferCurrent + buffer.size()) != conversionOK)
         return String();
 
     unsigned utf16Length = bufferCurrent - bufferStart;

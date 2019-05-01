@@ -48,6 +48,8 @@
 #include <libxslt/xslt.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/StringBuffer.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinkLibxslt.h"
@@ -157,41 +159,27 @@ static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* pr
     globalCachedResourceLoader = cachedResourceLoader;
 }
 
-static int writeToStringBuilder(void* context, const char* buffer, int length)
+static int writeToStringBuilder(void* context, const char* buffer, int len)
 {
     StringBuilder& resultOutput = *static_cast<StringBuilder*>(context);
 
-    // FIXME: Consider ways to make this more efficient by moving it into a
-    // StringBuilder::appendUTF8 function, and then optimizing to not need a
-    // Vector<UChar> and possibly optimize cases that can produce 8-bit Latin-1
-    // strings, but that would need to be sophisticated about not processing
-    // trailing incomplete sequences and communicating that to the caller.
+    if (!len)
+        return 0;
 
-    Vector<UChar> outputBuffer(length);
+    StringBuffer<UChar> stringBuffer(len);
+    UChar* bufferUChar = stringBuffer.characters();
+    UChar* bufferUCharEnd = bufferUChar + len;
 
-    UBool error = false;
-    int inputOffset = 0;
-    int outputOffset = 0;
-    while (inputOffset < length) {
-        UChar32 character;
-        int nextInputOffset = inputOffset;
-        U8_NEXT(reinterpret_cast<const uint8_t*>(buffer), nextInputOffset, length, character);
-        if (character < 0) {
-            if (nextInputOffset == length)
-                break;
-            ASSERT_NOT_REACHED();
-            return -1;
-        }
-        inputOffset = nextInputOffset;
-        U16_APPEND(outputBuffer.data(), outputOffset, length, character, error);
-        if (error) {
-            ASSERT_NOT_REACHED();
-            return -1;
-        }
+    const char* stringCurrent = buffer;
+    WTF::Unicode::ConversionResult result = WTF::Unicode::convertUTF8ToUTF16(&stringCurrent, buffer + len, &bufferUChar, bufferUCharEnd);
+    if (result != WTF::Unicode::conversionOK && result != WTF::Unicode::sourceExhausted) {
+        ASSERT_NOT_REACHED();
+        return -1;
     }
 
-    resultOutput.append(outputBuffer.data(), outputOffset);
-    return inputOffset;
+    int utf16Length = bufferUChar - stringBuffer.characters();
+    resultOutput.append(stringBuffer.characters(), utf16Length);
+    return stringCurrent - buffer;
 }
 
 static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, String& resultString)

@@ -35,8 +35,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 namespace WTF {
+
+using namespace Unicode;
 
 bool StringView::containsIgnoringASCIICase(const StringView& matchString) const
 {

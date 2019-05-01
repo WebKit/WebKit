@@ -1756,11 +1756,11 @@ UTF8ConversionError StringImpl::utf8Impl(const UChar* characters, unsigned lengt
         char* bufferEnd = buffer + bufferSize;
         while (characters < charactersEnd) {
             // Use strict conversion to detect unpaired surrogates.
-            ConversionResult result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd);
-            ASSERT(result != TargetExhausted);
+            ConversionResult result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, true);
+            ASSERT(result != targetExhausted);
             // Conversion fails when there is an unpaired surrogate.
             // Put replacement character (U+FFFD) instead of the unpaired surrogate.
-            if (result != ConversionOK) {
+            if (result != conversionOK) {
                 ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
                 // There should be room left, since one UChar hasn't been converted.
                 ASSERT((buffer + 3) <= bufferEnd);
@@ -1772,16 +1772,16 @@ UTF8ConversionError StringImpl::utf8Impl(const UChar* characters, unsigned lengt
         bool strict = mode == StrictConversion;
         const UChar* originalCharacters = characters;
         ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferSize, strict);
-        ASSERT(result != TargetExhausted); // (length * 3) should be sufficient for any conversion
+        ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
 
         // Only produced from strict conversion.
-        if (result == SourceIllegal) {
+        if (result == sourceIllegal) {
             ASSERT(strict);
             return UTF8ConversionError::IllegalSource;
         }
 
         // Check for an unconverted high surrogate.
-        if (result == SourceExhausted) {
+        if (result == sourceExhausted) {
             if (strict)
                 return UTF8ConversionError::SourceExhausted;
             // This should be one unpaired high surrogate. Treat it the same
@@ -1809,8 +1809,8 @@ Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const LChar
     Vector<char, 1024> bufferVector(length * 3);
     char* buffer = bufferVector.data();
     const LChar* source = characters;
-    bool charactersFit = convertLatin1ToUTF8(&source, source + length, &buffer, buffer + bufferVector.size());
-    ASSERT_UNUSED(charactersFit, charactersFit); // (length * 3) should be sufficient for any conversion
+    ConversionResult result = convertLatin1ToUTF8(&source, source + length, &buffer, buffer + bufferVector.size());
+    ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
     return CString(bufferVector.data(), buffer - bufferVector.data());
 }
 
@@ -1854,8 +1854,9 @@ Expected<CString, UTF8ConversionError> StringImpl::tryGetUtf8ForRange(unsigned o
 
     if (is8Bit()) {
         const LChar* characters = this->characters8() + offset;
-        bool charactersFit = convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
-        ASSERT_UNUSED(charactersFit, charactersFit); // (length * 3) should be sufficient for any conversion
+
+        ConversionResult result = convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
+        ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
     } else {
         UTF8ConversionError error = utf8Impl(this->characters16() + offset, length, buffer, bufferVector.size(), mode);
         if (error != UTF8ConversionError::None)
