@@ -216,6 +216,8 @@ AudioContext::~AudioContext()
 
 void AudioContext::lazyInitialize()
 {
+    ASSERT(!m_isStopScheduled);
+
     if (m_isInitialized)
         return;
 
@@ -430,11 +432,15 @@ void AudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBuf
     m_audioDecoder.decodeAsync(WTFMove(audioData), sampleRate(), WTFMove(successCallback), WTFMove(errorCallback));
 }
 
-Ref<AudioBufferSourceNode> AudioContext::createBufferSource()
+ExceptionOr<Ref<AudioBufferSourceNode>> AudioContext::createBufferSource()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    
+
     ASSERT(isMainThread());
+
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     Ref<AudioBufferSourceNode> node = AudioBufferSourceNode::create(*this, m_destinationNode->sampleRate());
 
@@ -450,12 +456,13 @@ Ref<AudioBufferSourceNode> AudioContext::createBufferSource()
 ExceptionOr<Ref<MediaElementAudioSourceNode>> AudioContext::createMediaElementSource(HTMLMediaElement& mediaElement)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    
+
     ASSERT(isMainThread());
-    lazyInitialize();
-    
-    if (mediaElement.audioSourceNode())
+
+    if (m_isStopScheduled || mediaElement.audioSourceNode())
         return Exception { InvalidStateError };
+
+    lazyInitialize();
 
     auto node = MediaElementAudioSourceNode::create(*this, mediaElement);
 
@@ -474,6 +481,9 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
 
     auto audioTracks = mediaStream.getAudioTracks();
     if (audioTracks.isEmpty())
@@ -498,8 +508,11 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
     return node;
 }
 
-Ref<MediaStreamAudioDestinationNode> AudioContext::createMediaStreamDestination()
+ExceptionOr<Ref<MediaStreamAudioDestinationNode>> AudioContext::createMediaStreamDestination()
 {
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     // FIXME: Add support for an optional argument which specifies the number of channels.
     // FIXME: The default should probably be stereo instead of mono.
     return MediaStreamAudioDestinationNode::create(*this, 1);
@@ -512,6 +525,10 @@ ExceptionOr<Ref<ScriptProcessorNode>> AudioContext::createScriptProcessor(size_t
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
 
     // W3C Editor's Draft 06 June 2017
@@ -567,65 +584,87 @@ ExceptionOr<Ref<ScriptProcessorNode>> AudioContext::createScriptProcessor(size_t
     return node;
 }
 
-Ref<BiquadFilterNode> AudioContext::createBiquadFilter()
+ExceptionOr<Ref<BiquadFilterNode>> AudioContext::createBiquadFilter()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
+
     return BiquadFilterNode::create(*this, m_destinationNode->sampleRate());
 }
 
-Ref<WaveShaperNode> AudioContext::createWaveShaper()
+ExceptionOr<Ref<WaveShaperNode>> AudioContext::createWaveShaper()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return WaveShaperNode::create(*this);
 }
 
-Ref<PannerNode> AudioContext::createPanner()
+ExceptionOr<Ref<PannerNode>> AudioContext::createPanner()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return PannerNode::create(*this, m_destinationNode->sampleRate());
 }
 
-Ref<ConvolverNode> AudioContext::createConvolver()
+ExceptionOr<Ref<ConvolverNode>> AudioContext::createConvolver()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return ConvolverNode::create(*this, m_destinationNode->sampleRate());
 }
 
-Ref<DynamicsCompressorNode> AudioContext::createDynamicsCompressor()
+ExceptionOr<Ref<DynamicsCompressorNode>> AudioContext::createDynamicsCompressor()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return DynamicsCompressorNode::create(*this, m_destinationNode->sampleRate());
 }
 
-Ref<AnalyserNode> AudioContext::createAnalyser()
+ExceptionOr<Ref<AnalyserNode>> AudioContext::createAnalyser()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return AnalyserNode::create(*this, m_destinationNode->sampleRate());
 }
 
-Ref<GainNode> AudioContext::createGain()
+ExceptionOr<Ref<GainNode>> AudioContext::createGain()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return GainNode::create(*this, m_destinationNode->sampleRate());
 }
@@ -635,6 +674,9 @@ ExceptionOr<Ref<DelayNode>> AudioContext::createDelay(double maxDelayTime)
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     return DelayNode::create(*this, m_destinationNode->sampleRate(), maxDelayTime);
 }
@@ -644,6 +686,9 @@ ExceptionOr<Ref<ChannelSplitterNode>> AudioContext::createChannelSplitter(size_t
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     auto node = ChannelSplitterNode::create(*this, m_destinationNode->sampleRate(), numberOfOutputs);
     if (!node)
@@ -656,6 +701,9 @@ ExceptionOr<Ref<ChannelMergerNode>> AudioContext::createChannelMerger(size_t num
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
     auto node = ChannelMergerNode::create(*this, m_destinationNode->sampleRate(), numberOfInputs);
     if (!node)
@@ -663,11 +711,14 @@ ExceptionOr<Ref<ChannelMergerNode>> AudioContext::createChannelMerger(size_t num
     return node.releaseNonNull();
 }
 
-Ref<OscillatorNode> AudioContext::createOscillator()
+ExceptionOr<Ref<OscillatorNode>> AudioContext::createOscillator()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     lazyInitialize();
 
     Ref<OscillatorNode> node = OscillatorNode::create(*this, m_destinationNode->sampleRate());
@@ -684,6 +735,9 @@ ExceptionOr<Ref<PeriodicWave>> AudioContext::createPeriodicWave(Float32Array& re
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    if (m_isStopScheduled)
+        return Exception { InvalidStateError };
+
     if (real.length() != imaginary.length() || (real.length() > MaxPeriodicWaveLength) || !real.length())
         return Exception { IndexSizeError };
     lazyInitialize();
@@ -1078,7 +1132,7 @@ bool AudioContext::willPausePlayback()
 void AudioContext::startRendering()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (!willBeginPlayback())
+    if (m_isStopScheduled || !willBeginPlayback())
         return;
 
     destination()->startRendering();
@@ -1150,7 +1204,7 @@ void AudioContext::decrementActiveSourceCount()
 
 void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
 {
-    if (isOfflineContext()) {
+    if (isOfflineContext() || m_isStopScheduled) {
         promise.reject(InvalidStateError);
         return;
     }
@@ -1179,7 +1233,7 @@ void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
 
 void AudioContext::resume(DOMPromiseDeferred<void>&& promise)
 {
-    if (isOfflineContext()) {
+    if (isOfflineContext() || m_isStopScheduled) {
         promise.reject(InvalidStateError);
         return;
     }
@@ -1208,7 +1262,7 @@ void AudioContext::resume(DOMPromiseDeferred<void>&& promise)
 
 void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
-    if (isOfflineContext()) {
+    if (isOfflineContext() || m_isStopScheduled) {
         promise.reject(InvalidStateError);
         return;
     }
