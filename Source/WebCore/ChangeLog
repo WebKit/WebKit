@@ -1,3 +1,27 @@
+2019-05-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Move Document::domainIsRegisterable to SecurityOrigin::isMatchingRegistrableDomainSuffix
+        https://bugs.webkit.org/show_bug.cgi?id=181950
+        <rdar://problem/43357371>
+
+        Reviewed by Brent Fulgham.
+
+        This patch moves Document::domainIsRegisterable to SecurityOrigin::isMatchingRegistrableDomainSuffix
+        to be more aligned with the HTML standard:
+        https://html.spec.whatwg.org/multipage/origin.html#is-a-registrable-domain-suffix-of-or-is-equal-to.
+        Besides that, it also removes redundant codes within the original method that is also done in
+        OriginAccessEntry::matchesOrigin.
+
+        Covered by new API tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain):
+        (WebCore::Document::domainIsRegisterable const): Deleted.
+        * dom/Document.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::isMatchingRegistrableDomainSuffix const):
+        * page/SecurityOrigin.h:
+
 2019-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Element::focus and Element::scrollIntoView do not clamp scroll positions

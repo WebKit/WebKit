@@ -1,3 +1,14 @@
+2019-05-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Move Document::domainIsRegisterable to SecurityOrigin::isMatchingRegistrableDomainSuffix
+        https://bugs.webkit.org/show_bug.cgi?id=181950
+        <rdar://problem/43357371>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2019-05-01  Aakash Jain  <aakash_jain@apple.com>
 
         Remove webkitpy and bindings EWS queues from dashboard

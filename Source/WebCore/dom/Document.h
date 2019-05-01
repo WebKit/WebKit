@@ -1644,8 +1644,6 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    bool domainIsRegisterable(const String&) const;
-
     void enableTemporaryTimeUserGesture();
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);

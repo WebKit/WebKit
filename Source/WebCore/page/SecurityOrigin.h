@@ -204,6 +204,10 @@ public:
     // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
     WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin&) const;
 
+    // This method implements the "is a registrable domain suffix of or is equal to" algorithm from the HTML Standard:
+    // https://html.spec.whatwg.org/multipage/origin.html#is-a-registrable-domain-suffix-of-or-is-equal-to
+    WEBCORE_EXPORT bool isMatchingRegistrableDomainSuffix(const String&, bool treatIPAddressAsDomain = false) const;
+
     bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
     void setIsPotentiallyTrustworthy(bool value) { m_isPotentiallyTrustworthy = value; }
 

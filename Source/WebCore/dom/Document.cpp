@@ -135,7 +135,6 @@
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
-#include "OriginAccessEntry.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -4857,49 +4856,6 @@ String Document::domain() const
     return securityOrigin().domain();
 }
 
-bool Document::domainIsRegisterable(const String& newDomain) const
-{
-    if (newDomain.isEmpty())
-        return false;
-
-    const String& effectiveDomain = domain();
-
-    // If the new domain is the same as the old domain, return true so that
-    // we still call securityOrigin().setDomainForDOM. This will change the
-    // security check behavior. For example, if a page loaded on port 8000
-    // assigns its current domain using document.domain, the page will
-    // allow other pages loaded on different ports in the same domain that
-    // have also assigned to access this page.
-    if (equalIgnoringASCIICase(effectiveDomain, newDomain))
-        return true;
-
-    // e.g. newDomain = webkit.org (10) and domain() = www.webkit.org (14)
-    unsigned oldLength = effectiveDomain.length();
-    unsigned newLength = newDomain.length();
-    if (newLength >= oldLength)
-        return false;
-
-    auto ipAddressSetting = settings().treatIPAddressAsDomain() ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
-    OriginAccessEntry accessEntry { securityOrigin().protocol(), newDomain, OriginAccessEntry::AllowSubdomains, ipAddressSetting };
-    if (!accessEntry.matchesOrigin(securityOrigin()))
-        return false;
-
-    if (effectiveDomain[oldLength - newLength - 1] != '.')
-        return false;
-    if (StringView { effectiveDomain }.substring(oldLength - newLength) != newDomain)
-        return false;
-
-    auto potentialPublicSuffix = newDomain;
-    if (potentialPublicSuffix.startsWith('.'))
-        potentialPublicSuffix.remove(0, 1);
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    return !isPublicSuffix(potentialPublicSuffix);
-#else
-    return true;
-#endif
-}
-
 ExceptionOr<void> Document::setDomain(const String& newDomain)
 {
     if (!frame())
@@ -4917,7 +4873,7 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
     if (effectiveDomain.isEmpty())
         return Exception { SecurityError, "The document has a null effectiveDomain." };
 
-    if (!domainIsRegisterable(newDomain))
+    if (!securityOrigin().isMatchingRegistrableDomainSuffix(newDomain, settings().treatIPAddressAsDomain()))
         return Exception { SecurityError, "Attempted to use a non-registrable domain." };
 
     securityOrigin().setDomainFromDOM(newDomain);

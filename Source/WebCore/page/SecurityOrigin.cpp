@@ -30,6 +30,7 @@
 #include "SecurityOrigin.h"
 
 #include "BlobURL.h"
+#include "OriginAccessEntry.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
 #include "TextEncoding.h"
@@ -430,6 +431,27 @@ bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
         return false;
 
     return isSameSchemeHostPort(other);
+}
+
+bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffix, bool treatIPAddressAsDomain) const
+{
+    if (domainSuffix.isEmpty())
+        return false;
+
+    auto ipAddressSetting = treatIPAddressAsDomain ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
+    OriginAccessEntry accessEntry { protocol(), domainSuffix, OriginAccessEntry::AllowSubdomains, ipAddressSetting };
+    if (!accessEntry.matchesOrigin(*this))
+        return false;
+
+    // Always return true if it is an exact match.
+    if (domainSuffix.length() == host().length())
+        return true;
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    return !isPublicSuffix(domainSuffix);
+#else
+    return true;
+#endif
 }
 
 void SecurityOrigin::grantLoadLocalResources()
