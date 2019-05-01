@@ -1,3 +1,12 @@
+2019-05-01  Aakash Jain  <aakash_jain@apple.com>
+
+        Remove webkitpy and bindings test queues from old EWS
+        https://bugs.webkit.org/show_bug.cgi?id=197468
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/config/queues.py:
+
 2019-04-30  Tim Horton  <timothy_horton@apple.com>
 
         Fix the WebKitTestRunner build
