@@ -1,3 +1,28 @@
+2019-05-01  Darin Adler  <darin@apple.com>
+
+        WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+
+        Reviewed by Alexey Proskuryakov.
+
+        * API/JSClassRef.cpp: Removed uneeded include of UTF8Conversion.h.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithUTF8CString): Updated for changes to convertUTF8ToUTF16.
+        (JSStringGetUTF8CString): Updated for changes to convertLatin1ToUTF8.
+        Removed unneeded "true" to get the strict version of convertUTF16ToUTF8,
+        since that is the default. Also updated for changes to CompletionResult.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode): Stop using UTF8SequenceLength, and instead use U8_COUNT_TRAIL_BYTES
+        and U8_MAX_LENGTH. Instead of decodeUTF8Sequence, use U8_NEXT. Also use U_IS_BMP,
+        U_IS_SUPPLEMENTARY, U16_LEAD, U16_TRAIL, and U_IS_SURROGATE instead of our own
+        equivalents, since these macros from ICU are correct and efficient.
+
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::consumeUTF8String): Updated for changes to
+        convertUTF8ToUTF16.
+
 2019-05-01  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r244821.

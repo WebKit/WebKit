@@ -56,7 +56,8 @@ public:
     WTF_EXPORT_PRIVATE static Ref<AtomicStringImpl> addLiteral(const char* characters, unsigned length);
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
-    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> addUTF8(const char* start, const char* end);
+    static RefPtr<AtomicStringImpl> addUTF8(const char* start, const char* end);
+
 #if USE(CF)
     WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(CFStringRef);
 #endif

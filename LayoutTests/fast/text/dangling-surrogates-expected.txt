@@ -3,8 +3,8 @@ This tests verifies that the test tools can handle a dangling surrogate characte
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS danglingFirst is "í "
-PASS danglingSecond is "í°"
+PASS danglingFirst is "�"
+PASS danglingSecond is "�"
 PASS successfullyParsed is true
 
 TEST COMPLETE

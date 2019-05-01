@@ -1,3 +1,73 @@
+2019-05-01  Darin Adler  <darin@apple.com>
+
+        WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::fromUTF8Internal): Added code to compute string length when the
+        end is nullptr; this behavior used to be implemented inside the
+        calculateStringHashAndLengthFromUTF8MaskingTop8Bits function.
+
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::translate): Updated for change to
+        convertUTF8ToUTF16.
+
+        * wtf/text/AtomicStringImpl.h: Took the WTF_EXPORT_PRIVATE off of the
+        AtomicStringImpl::addUTF8 function. This is used only inside a non-inlined function in
+        the AtomicString class and its behavior changed subtly in this patch; it's helpful
+        to document that it's not exported.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::utf8Impl): Don't pass "true" for strictness to convertUTF16ToUTF8
+        since strict is the default. Also updated for changes to ConversionResult.
+        (WTF::StringImpl::utf8ForCharacters): Updated for change to convertLatin1ToUTF8.
+        (WTF::StringImpl::tryGetUtf8ForRange const): Ditto.
+
+        * wtf/text/StringView.cpp: Removed uneeded include of UTF8Conversion.h.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::fromUTF8): Updated for change to convertUTF8ToUTF16.
+
+        * wtf/unicode/UTF8Conversion.cpp:
+        (WTF::Unicode::inlineUTF8SequenceLengthNonASCII): Deleted.
+        (WTF::Unicode::inlineUTF8SequenceLength): Deleted.
+        (WTF::Unicode::UTF8SequenceLength): Deleted.
+        (WTF::Unicode::decodeUTF8Sequence): Deleted.
+        (WTF::Unicode::convertLatin1ToUTF8): Use U8_APPEND, enabling us to remove
+        almost everything in the function. Also changed resturn value to be a boolean
+        to indicate success since there is only one possible failure (target exhausted).
+        There is room for further simplification, since most callers have lengths rather
+        than end pointers for the source buffer, and all but one caller supplies a buffer
+        size known to be sufficient, so those don't need a return value, nor do they need
+        to pass an end of buffer pointer.
+        (WTF::Unicode::convertUTF16ToUTF8): Use U_IS_LEAD, U_IS_TRAIL,
+        U16_GET_SUPPLEMENTARY, U_IS_SURROGATE, and U8_APPEND. Also changed behavior
+        for non-strict mode so that unpaired surrogates will be turned into the
+        replacement character instead of invalid UTF-8 sequences, because U8_APPEND
+        won't create an invalid UTF-8 sequence, and because we don't need to do that
+        for any good reason at any call site.
+        (WTF::Unicode::isLegalUTF8): Deleted.
+        (WTF::Unicode::readUTF8Sequence): Deleted.
+        (WTF::Unicode::convertUTF8ToUTF16): Use U8_NEXT instead of
+        inlineUTF8SequenceLength, isLegalUTF8, and readUTF8Sequence. Use
+        U16_APPEND instead of lots of code that does the same thing. There is
+        room for further simplification since most callers don't need the "all ASCII"
+        feature and could probably pass the arguments in a more natural way.
+        (WTF::Unicode::calculateStringHashAndLengthFromUTF8MaskingTop8Bits):
+        Use U8_NEXT instead of isLegalUTF8, readUTF8Sequence, and various
+        error handling checks for things that are handled by U8_NEXT. Also removed
+        support for passing nullptr for end to specify a null-terminated string.
+        (WTF::Unicode::equalUTF16WithUTF8): Ditto.
+
+        * wtf/unicode/UTF8Conversion.h: Removed UTF8SequenceLength and
+        decodeUTF8Sequence. Changed the ConversionResult to match WebKit coding
+        style, with an eye toward perhaps removing it in the future. Changed
+        the convertUTF8ToUTF16 return value to a boolean and removed the "strict"
+        argument since no caller was passing false. Changed the convertLatin1ToUTF8
+        return value to a boolean. Tweaked comments.
+
 2019-05-01  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r244821.

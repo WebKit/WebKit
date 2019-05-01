@@ -1,3 +1,15 @@
+2019-05-01  Darin Adler  <darin@apple.com>
+
+        WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
+        https://bugs.webkit.org/show_bug.cgi?id=195535
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/API/APIString.h: Removed uneeded includes and also switched to #pragma once.
+
+        * Shared/API/c/WKString.cpp: Moved include of UTF8Conversion.h here.
+        (WKStringGetUTF8CStringImpl): Updated for changes to return values.
+
 2019-05-01  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r244821.

@@ -1009,48 +1009,48 @@ PASS converter.testEnforceRangeUnsignedShort = {valueOf:function(){throw new Err
 
 converter.testUSVString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
 converter.testString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
-PASS converter.testUSVString is "!@#123ABCabc\u0000ÂÃ¿\r\n\t"
-PASS converter.testString is "!@#123ABCabc\u0000ÂÃ¿\r\n\t"
+PASS converter.testUSVString is "!@#123ABCabc\u0000ÿ\r\n\t"
+PASS converter.testString is "!@#123ABCabc\u0000ÿ\r\n\t"
 converter.testUSVString = '\u0100'
 converter.testString = '\u0100'
-PASS converter.testUSVString is "Ä"
-PASS converter.testString is "Ä"
+PASS converter.testUSVString is "Ā"
+PASS converter.testString is "Ā"
 PASS converter.testUSVString = {toString: function() { throw Error(); }} threw exception Error.
 PASS converter.testString = {toString: function() { throw Error(); }} threw exception Error.
-PASS converter.testUSVString is "Ä"
-PASS converter.testString is "Ä"
+PASS converter.testUSVString is "Ā"
+PASS converter.testString is "Ā"
 converter.testUSVString = "\ud800"
 converter.testString = "\ud800"
-PASS converter.testUSVString is "ï¿½"
+PASS converter.testUSVString is "�"
 PASS converter.testString is "\ud800"
 converter.testUSVString = "\udc00"
 converter.testString = "\udc00"
-PASS converter.testUSVString is "ï¿½"
+PASS converter.testUSVString is "�"
 PASS converter.testString is "\udc00"
 converter.testUSVString = "\ud800\u0000"
 converter.testString = "\ud800\u0000"
-PASS converter.testUSVString is "ï¿½\u0000"
+PASS converter.testUSVString is "�\u0000"
 PASS converter.testString is "\ud800\u0000"
 converter.testUSVString = "\udc00\u0000"
 converter.testString = "\udc00\u0000"
-PASS converter.testUSVString is "ï¿½\u0000"
+PASS converter.testUSVString is "�\u0000"
 PASS converter.testString is "\udc00\u0000"
 converter.testUSVString = "\udc00\ud800"
 converter.testString = "\udc00\ud800"
-PASS converter.testUSVString is "ï¿½ï¿½"
+PASS converter.testUSVString is "��"
 PASS converter.testString is "\udc00\ud800"
-converter.testUSVString = "ð"
-converter.testString = "ð"
-PASS converter.testUSVString is "ð"
-PASS converter.testString is "ð"
+converter.testUSVString = "𝄞"
+converter.testString = "𝄞"
+PASS converter.testUSVString is "𝄞"
+PASS converter.testString is "𝄞"
 converter.testByteString = '!@#123ABCabc\x00\x80\xFF\r\n\t'
-PASS converter.testByteString is "!@#123ABCabc\u0000ÂÃ¿\r\n\t"
+PASS converter.testByteString is "!@#123ABCabc\u0000ÿ\r\n\t"
 converter.testByteString = '\u00FF'
-PASS converter.testByteString is "Ã¿"
+PASS converter.testByteString is "ÿ"
 PASS converter.testByteString = '\u0100' threw exception TypeError: Type error.
-PASS converter.testByteString is "Ã¿"
+PASS converter.testByteString is "ÿ"
 PASS converter.testByteString = {toString: function() { throw Error(); }} threw exception Error.
-PASS converter.testByteString is "Ã¿"
+PASS converter.testByteString is "ÿ"
 converter.testUSVString = true
 converter.testString = true
 converter.testByteString = true
@@ -1180,37 +1180,37 @@ PASS converter.testNodeRecord().hasOwnProperty('key2') is true
 PASS 'key2' in converter.testNodeRecord() is true
 PASS converter.testNodeRecord()['key2'] is document.documentElement
 PASS converter.setTestNodeRecord({ key: 'hello' }) threw exception TypeError: Type error.
-converter.setTestLongRecord({'í ': 1 })
-PASS converter.testLongRecord()['í '] is 1
-converter.setTestNodeRecord({'í ': document })
-PASS converter.testNodeRecord()['ï¿½'] is document
-converter.setTestLongRecord({'í°': 1 })
-PASS converter.testLongRecord()['í°'] is 1
-converter.setTestNodeRecord({'í°': document })
-PASS converter.testNodeRecord()['ï¿½'] is document
-converter.setTestLongRecord({'í ': 1 })
-PASS converter.testLongRecord()['í \0'] is 1
-converter.setTestNodeRecord({'í ': document })
-PASS converter.testNodeRecord()['ï¿½\0'] is document
-converter.setTestLongRecord({'í°': 1 })
-PASS converter.testLongRecord()['í°\0'] is 1
-converter.setTestNodeRecord({'í°': document })
-PASS converter.testNodeRecord()['ï¿½\0'] is document
-converter.setTestLongRecord({'í°í ': 1 })
-PASS converter.testLongRecord()['í°í '] is 1
-converter.setTestNodeRecord({'í°í ': document })
-PASS converter.testNodeRecord()['ï¿½ï¿½'] is document
-converter.setTestLongRecord({'ð': 1 })
-PASS converter.testLongRecord()['ð'] is 1
-converter.setTestNodeRecord({'ð': document })
-PASS converter.testNodeRecord()['ð'] is document
+converter.setTestLongRecord({'�': 1 })
+PASS converter.testLongRecord()['�'] is 1
+converter.setTestNodeRecord({'�': document })
+PASS converter.testNodeRecord()['�'] is document
+converter.setTestLongRecord({'�': 1 })
+PASS converter.testLongRecord()['�'] is 1
+converter.setTestNodeRecord({'�': document })
+PASS converter.testNodeRecord()['�'] is document
+converter.setTestLongRecord({'�': 1 })
+PASS converter.testLongRecord()['�\0'] is 1
+converter.setTestNodeRecord({'�': document })
+PASS converter.testNodeRecord()['�\0'] is document
+converter.setTestLongRecord({'�': 1 })
+PASS converter.testLongRecord()['�\0'] is 1
+converter.setTestNodeRecord({'�': document })
+PASS converter.testNodeRecord()['�\0'] is document
+converter.setTestLongRecord({'��': 1 })
+PASS converter.testLongRecord()['��'] is 1
+converter.setTestNodeRecord({'��': document })
+PASS converter.testNodeRecord()['��'] is document
+converter.setTestLongRecord({'𝄞': 1 })
+PASS converter.testLongRecord()['𝄞'] is 1
+converter.setTestNodeRecord({'𝄞': document })
+PASS converter.testNodeRecord()['𝄞'] is document
 converter.setTestSequenceRecord({ key: ['value', 'other value'] })
 PASS converter.testSequenceRecord().hasOwnProperty('key') is true
 PASS 'key' in converter.testSequenceRecord() is true
 PASS converter.testSequenceRecord()['key'] is ['value', 'other value']
-PASS converter.setTestSequenceRecord({ 'Ä': ['value'] }) threw exception TypeError: Type error.
-converter.setTestSequenceRecord({ 'Ã¿': ['value'] })
-PASS converter.testSequenceRecord()['Ã¿'] is ['value']
+PASS converter.setTestSequenceRecord({ 'Ā': ['value'] }) threw exception TypeError: Type error.
+converter.setTestSequenceRecord({ 'ÿ': ['value'] })
+PASS converter.testSequenceRecord()['ÿ'] is ['value']
 PASS converter.testImpureNaNUnrestrictedDouble is NaN
 PASS converter.testImpureNaN2UnrestrictedDouble is NaN
 PASS converter.testQuietNaNUnrestrictedDouble is NaN

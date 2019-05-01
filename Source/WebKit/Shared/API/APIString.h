@@ -23,14 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIString_h
-#define APIString_h
+#pragma once
 
 #include "APIObject.h"
-#include <wtf/Ref.h>
 #include <wtf/text/StringView.h>
-#include <wtf/text/WTFString.h>
-#include <wtf/unicode/UTF8Conversion.h>
 
 namespace API {
 
@@ -75,5 +71,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // APIString_h

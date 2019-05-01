@@ -219,7 +219,7 @@ struct HashAndUTF8CharactersTranslator {
 
         bool isAllASCII;
         const char* source = buffer.characters;
-        if (convertUTF8ToUTF16(&source, source + buffer.length, &target, target + buffer.utf16Length, &isAllASCII) != conversionOK)
+        if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &isAllASCII))
             ASSERT_NOT_REACHED();
 
         if (isAllASCII)
