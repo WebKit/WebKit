@@ -453,12 +453,6 @@ void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer* layer)
     scheduleLayerFlush(layer->canThrottleLayerFlush());
 }
 
-void RenderLayerCompositor::scheduleLayerFlushNow()
-{
-    m_hasPendingLayerFlush = false;
-    page().renderingUpdateScheduler().scheduleRenderingUpdate();
-}
-
 void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
 {
     ASSERT(!m_flushingLayers);
@@ -466,11 +460,12 @@ void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
     if (canThrottle)
         startInitialLayerFlushTimerIfNeeded();
 
-    if (canThrottle && isThrottlingLayerFlushes()) {
+    if (canThrottle && isThrottlingLayerFlushes())
         m_hasPendingLayerFlush = true;
-        return;
+    else {
+        m_hasPendingLayerFlush = false;
+        page().renderingUpdateScheduler().scheduleRenderingUpdate();
     }
-    scheduleLayerFlushNow();
 }
 
 FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
@@ -607,7 +602,7 @@ void RenderLayerCompositor::didChangeVisibleRect()
     bool requiresFlush = rootLayer->visibleRectChangeRequiresFlush(visibleRect);
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor::didChangeVisibleRect " << visibleRect << " requiresFlush " << requiresFlush);
     if (requiresFlush)
-        scheduleLayerFlushNow();
+        scheduleLayerFlush();
 }
 
 void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
@@ -1911,7 +1906,7 @@ void RenderLayerCompositor::frameViewDidScroll()
     // it will also manage updating the scroll layer position.
     if (hasCoordinatedScrolling()) {
         // We have to schedule a flush in order for the main TiledBacking to update its tile coverage.
-        scheduleLayerFlushNow();
+        scheduleLayerFlush();
         return;
     }
 
@@ -3802,7 +3797,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
     rootLayerAttachmentChanged();
     
     if (m_shouldFlushOnReattach) {
-        scheduleLayerFlushNow();
+        scheduleLayerFlush();
         m_shouldFlushOnReattach = false;
     }
 }
@@ -4374,7 +4369,7 @@ void RenderLayerCompositor::setLayerFlushThrottlingEnabled(bool enabled)
     m_layerFlushTimer.stop();
     if (!m_hasPendingLayerFlush)
         return;
-    scheduleLayerFlushNow();
+    scheduleLayerFlush();
 }
 
 void RenderLayerCompositor::disableLayerFlushThrottlingTemporarilyForInteraction()
@@ -4417,7 +4412,7 @@ void RenderLayerCompositor::layerFlushTimerFired()
 {
     if (!m_hasPendingLayerFlush)
         return;
-    scheduleLayerFlushNow();
+    scheduleLayerFlush();
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

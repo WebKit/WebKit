@@ -47,6 +47,12 @@ void RenderingUpdateScheduler::scheduleRenderingUpdate()
     if (isScheduled())
         return;
 
+    // Optimize the case when an invisible page wants just to schedule layer flush.
+    if (!m_page.isVisible()) {
+        scheduleCompositingLayerFlush();
+        return;
+    }
+
     tracePoint(ScheduleRenderingUpdate);
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

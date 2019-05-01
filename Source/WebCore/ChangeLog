@@ -1,3 +1,41 @@
+2019-05-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244182): RenderingUpdate should not be scheduled for invisible pages
+        https://bugs.webkit.org/show_bug.cgi?id=197451
+
+        Reviewed by Simon Fraser.
+
+        Before r244182, some web pages never need to schedule a RenderingUpdate.
+        Only pages with rAF callbacks, web animations, intersection and resize 
+        observers needed to do so. After r244182, all pages have to schedule a
+        RenderingUpdate when a page rendering update is required.
+
+        When Safari opens, it create a 'blank' web page. The blank page will not
+        be visible unless the user selects to show the 'Empty page' in the new
+        tab. Although the blank page is not visible, the loader needs to resolveStyle()
+        which requires to scheduleLayerFlushNow(). 
+
+        We need to optimize this case: calling scheduleLayerFlushNow() for invisible
+        pages. We do that by checking if the page is visible before scheduling
+        the RenderingUpdate.
+
+        Also we need to change or get rid of scheduleLayerFlushNow() since its name
+        has become confusing. It suggests that it is going to schedule flushing
+        the layer 'now'. But after r244182, it does scheduleRenderingUpdate() first.
+        And when it fires, scheduleCompositingLayerFlush() will be called.
+
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush):
+        (WebCore::RenderLayerCompositor::didChangeVisibleRect):
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::setLayerFlushThrottlingEnabled):
+        (WebCore::RenderLayerCompositor::layerFlushTimerFired):
+        (WebCore::RenderLayerCompositor::scheduleLayerFlushNow): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-05-01  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support

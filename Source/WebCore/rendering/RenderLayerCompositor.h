@@ -168,7 +168,7 @@ public:
 
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
-    void scheduleLayerFlush(bool canThrottle);
+    void scheduleLayerFlush(bool canThrottle = false);
     void flushPendingLayerChanges(bool isFlushRoot = true);
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
@@ -526,7 +526,6 @@ private:
 
     bool shouldCompositeOverflowControls() const;
 
-    void scheduleLayerFlushNow();
     bool isThrottlingLayerFlushes() const;
     void startInitialLayerFlushTimerIfNeeded();
     void startLayerFlushTimerIfNeeded();
