@@ -304,6 +304,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     auto isITPFirstPartyWebsiteDataRemovalEnabledStr = [defaults stringForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isITPFirstPartyWebsiteDataRemovalEnabledKey().createCFString().get()]];
     if ([isITPFirstPartyWebsiteDataRemovalEnabledStr isEqual:@"0"])
         parameters.isITPFirstPartyWebsiteDataRemovalEnabled = false;
+
+    parameters.enableAdClickAttributionDebugMode = [defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::adClickAttributionDebugModeEnabledKey().createCFString().get()]];
 }
 
 void WebProcessPool::platformInvalidateContext()

@@ -26,12 +26,14 @@
 #include "config.h"
 #include "AdClickAttributionManager.h"
 
+#include "Logging.h"
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -43,11 +45,35 @@ using Destination = AdClickAttribution::Destination;
 using DestinationMap = HashMap<Destination, AdClickAttribution>;
 using Conversion = AdClickAttribution::Conversion;
 
+constexpr Seconds debugModeSecondsUntilSend { 60_s };
+
 void AdClickAttributionManager::storeUnconverted(AdClickAttribution&& attribution)
 {
     clearExpired();
-    
+
+    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Storing an ad click.");
     m_unconvertedAdClickAttributionMap.set(std::make_pair(attribution.source(), attribution.destination()), WTFMove(attribution));
+}
+
+void AdClickAttributionManager::handleConversion(Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+{
+    if (m_sessionID.isEphemeral())
+        return;
+
+    RegistrableDomain redirectDomain { redirectRequest.url() };
+    auto& firstPartyURL = redirectRequest.firstPartyForCookies();
+
+    if (!redirectDomain.matches(requestURL)) {
+        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the HTTP redirect was not same-site.");
+        return;
+    }
+
+    if (redirectDomain.matches(firstPartyURL)) {
+        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because it was requested in an HTTP redirect that is same-site as the first-party.");
+        return;
+    }
+
+    convert(AdClickAttribution::Source { WTFMove(redirectDomain) }, AdClickAttribution::Destination { firstPartyURL }, WTFMove(conversion));
 }
 
 void AdClickAttributionManager::startTimer(Seconds seconds)
@@ -59,8 +85,17 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
 {
     clearExpired();
 
-    if (!conversion.isValid())
+    if (!conversion.isValid()) {
+        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Got an invalid conversion.");
         return;
+    }
+
+#if !RELEASE_LOG_DISABLED
+    auto conversionData = conversion.data;
+    auto conversionPriority = conversion.priority;
+#endif
+
+    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Got a conversion with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
 
     auto secondsUntilSend = Seconds::infinity();
 
@@ -73,17 +108,22 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
         if (auto optionalSecondsUntilSend = previouslyUnconvertedAttribution.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
             secondsUntilSend = *optionalSecondsUntilSend;
             ASSERT(secondsUntilSend != Seconds::infinity());
+            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Converted a stored ad click with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
         }
-        // If there is no previously converted attribution for this pair, add the new one.
-        // If the newly converted attribution has higher priority, replace the old one.
-        if (previouslyConvertedAttributionIter == m_convertedAdClickAttributionMap.end()
-            || previouslyUnconvertedAttribution.hasHigherPriorityThan(previouslyConvertedAttributionIter->value))
+
+        if (previouslyConvertedAttributionIter == m_convertedAdClickAttributionMap.end())
+            m_convertedAdClickAttributionMap.add(pair, WTFMove(previouslyUnconvertedAttribution));
+        else if (previouslyUnconvertedAttribution.hasHigherPriorityThan(previouslyConvertedAttributionIter->value)) {
+            // If the newly converted attribution has higher priority, replace the old one.
             m_convertedAdClickAttributionMap.set(pair, WTFMove(previouslyUnconvertedAttribution));
+            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Replaced a previously converted ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
+        }
     } else if (previouslyConvertedAttributionIter != m_convertedAdClickAttributionMap.end()) {
         // If we have no newly converted attribution, re-convert the old one to respect the new priority.
         if (auto optionalSecondsUntilSend = previouslyConvertedAttributionIter->value.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
             secondsUntilSend = *optionalSecondsUntilSend;
             ASSERT(secondsUntilSend != Seconds::infinity());
+            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Re-converted an ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
         }
     }
 
@@ -92,7 +132,12 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
     
     if (m_firePendingConversionRequestsTimer.isActive() && m_firePendingConversionRequestsTimer.nextFireInterval() < secondsUntilSend)
         return;
-    
+
+    if (debugModeEnabled()) {
+        RELEASE_LOG_INFO(AdClickAttribution, "Setting timer for firing conversion requests to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
+        secondsUntilSend = debugModeSecondsUntilSend;
+    }
+
     startTimer(secondsUntilSend);
 }
 
@@ -133,8 +178,10 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
     loadParameters.mainDocumentURL = WTFMove(conversionReferrerURL);
 #endif
 
+    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "About to fire an attribution request for a conversion.");
+
     m_pingLoadFunction(WTFMove(loadParameters), [](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
-        // FIXME: Add logging of errors to a dedicated channel.
+        RELEASE_LOG_ERROR_IF(!error.isNull(), AdClickAttribution, "Received error: '%{public}s' for ad click attribution request.", error.localizedDescription().utf8().data());
         UNUSED_PARAM(response);
         UNUSED_PARAM(error);
     });
@@ -155,7 +202,7 @@ void AdClickAttributionManager::firePendingConversionRequests()
         }
 
         auto now = WallTime::now();
-        if (*earliestTimeToSend <= now || m_isRunningTest) {
+        if (*earliestTimeToSend <= now || m_isRunningTest || debugModeEnabled()) {
             fireConversionRequest(attribution);
             attribution.markConversionAsSent();
             continue;
@@ -245,6 +292,11 @@ void AdClickAttributionManager::markAllUnconvertedAsExpiredForTesting()
 {
     for (auto& attribution : m_unconvertedAdClickAttributionMap.values())
         attribution.markAsExpired();
+}
+
+bool AdClickAttributionManager::debugModeEnabled() const
+{
+    return RuntimeEnabledFeatures::sharedFeatures().adClickAttributionDebugModeEnabled() && !m_sessionID.isEphemeral();
 }
 
 } // namespace WebKit

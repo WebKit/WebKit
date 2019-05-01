@@ -39,6 +39,7 @@
 
 namespace WebCore {
 class NetworkStorageSession;
+class ResourceRequest;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ShouldSample : bool;
 }
@@ -81,7 +82,7 @@ public:
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
 #endif
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
-    void convertAdClickAttribution(const WebCore::AdClickAttribution::Source&, const WebCore::AdClickAttribution::Destination&, WebCore::AdClickAttribution::Conversion&&);
+    void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void dumpAdClickAttribution(CompletionHandler<void(String)>&&);
     void clearAdClickAttribution();
     void clearAdClickAttributionForRegistrableDomain(WebCore::RegistrableDomain&&);

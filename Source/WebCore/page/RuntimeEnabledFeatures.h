@@ -341,6 +341,8 @@ public:
 
     bool adClickAttributionEnabled() const { return m_adClickAttributionEnabled; }
     void setAdClickAttributionEnabled(bool isEnabled) { m_adClickAttributionEnabled = isEnabled; }
+    bool adClickAttributionDebugModeEnabled() const { return m_adClickAttributionDebugModeEnabled; }
+    void setAdClickAttributionDebugModeEnabled(bool isEnabled) { m_adClickAttributionDebugModeEnabled = isEnabled; }
 
 #if ENABLE(TOUCH_EVENTS)
     bool mouseEventsSimulationEnabled() const { return m_mouseEventsSimulationEnabled; }
@@ -525,6 +527,7 @@ private:
     bool m_CSSLogicalEnabled { false };
 
     bool m_adClickAttributionEnabled { false };
+    bool m_adClickAttributionDebugModeEnabled { false };
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_mouseEventsSimulationEnabled { false };

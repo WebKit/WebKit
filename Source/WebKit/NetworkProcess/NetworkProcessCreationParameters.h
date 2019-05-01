@@ -109,6 +109,7 @@ struct NetworkProcessCreationParameters {
     bool shouldEnableITPDatabase { false };
     bool isITPFirstPartyWebsiteDataRemovalEnabled { true };
     uint32_t downloadMonitorSpeedMultiplier { 1 };
+    bool enableAdClickAttributionDebugMode { false };
 };
 
 } // namespace WebKit

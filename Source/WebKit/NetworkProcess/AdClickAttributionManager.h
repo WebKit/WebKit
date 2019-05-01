@@ -33,11 +33,12 @@
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class AdClickAttributionManager {
+class AdClickAttributionManager : public CanMakeWeakPtr<AdClickAttributionManager> {
 public:
 
     using RegistrableDomain = WebCore::RegistrableDomain;
@@ -46,17 +47,18 @@ public:
     using Destination = WebCore::AdClickAttribution::Destination;
     using Conversion = WebCore::AdClickAttribution::Conversion;
 
-    AdClickAttributionManager()
+    explicit AdClickAttributionManager(PAL::SessionID sessionID)
         : m_firePendingConversionRequestsTimer(*this, &AdClickAttributionManager::firePendingConversionRequests)
         , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
             UNUSED_PARAM(params);
             completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
         })
+        , m_sessionID(sessionID)
     {
     }
 
     void storeUnconverted(AdClickAttribution&&);
-    void convert(const Source&, const Destination&, Conversion&&);
+    void handleConversion(Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void clear();
     void clearForRegistrableDomain(const RegistrableDomain&);
     void toString(CompletionHandler<void(String)>&&) const;
@@ -67,9 +69,11 @@ public:
 
 private:
     void startTimer(Seconds);
+    void convert(const Source&, const Destination&, Conversion&&);
     void fireConversionRequest(const AdClickAttribution&);
     void firePendingConversionRequests();
     void clearExpired();
+    bool debugModeEnabled() const;
 
     HashMap<std::pair<Source, Destination>, AdClickAttribution> m_unconvertedAdClickAttributionMap;
     HashMap<std::pair<Source, Destination>, AdClickAttribution> m_convertedAdClickAttributionMap;
@@ -77,6 +81,7 @@ private:
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
     bool m_isRunningTest { false };
     Optional<URL> m_conversionBaseURLForTesting;
+    PAL::SessionID m_sessionID;
 };
     
 } // namespace WebKit

@@ -1412,6 +1412,14 @@ AdClickAttributionEnabled:
     webcoreBinding: RuntimeEnabledFeatures
     category: experimental
 
+AdClickAttributionDebugModeEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "Ad Click Attribution Debug Mode"
+    humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

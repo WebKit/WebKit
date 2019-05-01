@@ -262,6 +262,7 @@ public:
 
 private:
     bool isValid() const;
+    static bool debugModeEnabled();
 
     Campaign m_campaign;
     Source m_source;

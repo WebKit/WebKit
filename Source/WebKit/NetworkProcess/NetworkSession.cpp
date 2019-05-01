@@ -37,6 +37,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/ResourceRequest.h>
 
 #if PLATFORM(COCOA)
 #include "NetworkSessionCocoa.h"
@@ -74,7 +75,7 @@ NetworkStorageSession& NetworkSession::networkStorageSession() const
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID)
     : m_sessionID(sessionID)
     , m_networkProcess(networkProcess)
-    , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>())
+    , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(sessionID))
 {
     m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
@@ -149,9 +150,9 @@ void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adCli
     m_adClickAttribution->storeUnconverted(WTFMove(adClickAttribution));
 }
 
-void NetworkSession::convertAdClickAttribution(const WebCore::AdClickAttribution::Source& source, const WebCore::AdClickAttribution::Destination& destination, WebCore::AdClickAttribution::Conversion&& conversion)
+void NetworkSession::handleAdClickAttributionConversion(AdClickAttribution::Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    m_adClickAttribution->convert(source, destination, WTFMove(conversion));
+    m_adClickAttribution->handleConversion(WTFMove(conversion), requestURL, redirectRequest);
 }
 
 void NetworkSession::dumpAdClickAttribution(CompletionHandler<void(String)>&& completionHandler)

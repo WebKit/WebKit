@@ -600,18 +600,6 @@ Optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidatio
     return WTF::nullopt;
 }
 
-void NetworkResourceLoader::handleAdClickAttributionConversion(AdClickAttribution::Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
-{
-    ASSERT(!sessionID().isEphemeral());
-
-    RegistrableDomain redirectDomain { redirectRequest.url() };
-    auto& firstPartyURL = redirectRequest.firstPartyForCookies();
-    NetworkSession* networkSession = nullptr;
-    // The redirect has to be done by the same registrable domain and it has to be a third-party request.
-    if (redirectDomain.matches(requestURL) && !redirectDomain.matches(firstPartyURL) && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
-        networkSession->convertAdClickAttribution(AdClickAttribution::Source { WTFMove(redirectDomain) }, AdClickAttribution::Destination { firstPartyURL }, WTFMove(conversion));
-}
-
 void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ++m_redirectCount;
@@ -672,8 +660,10 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
         return;
     }
 
-    if (adClickConversion)
-        handleAdClickAttributionConversion(WTFMove(*adClickConversion), request.url(), redirectRequest);
+    NetworkSession* networkSession = nullptr;
+    if (adClickConversion && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
+        networkSession->handleAdClickAttributionConversion(WTFMove(*adClickConversion), request.url(), redirectRequest);
+
     send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
 }
 
