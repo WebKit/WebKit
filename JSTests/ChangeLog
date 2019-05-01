@@ -1,3 +1,18 @@
+2019-04-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244806.
+        https://bugs.webkit.org/show_bug.cgi?id=197446
+
+        Causing Test262 and JSC test failures on multiple builds
+        (Requested by ShawnRoberts on #webkit).
+
+        Reverted changeset:
+
+        "TypeArrays should not store properties that are canonical
+        numeric indices"
+        https://bugs.webkit.org/show_bug.cgi?id=197228
+        https://trac.webkit.org/changeset/244806
+
 2019-04-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         TypeArrays should not store properties that are canonical numeric indices

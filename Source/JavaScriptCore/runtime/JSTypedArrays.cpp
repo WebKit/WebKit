@@ -55,5 +55,6 @@ JSUint8Array* createUint8TypedArray(ExecState* exec, Structure* structure, RefPt
     return JSUint8Array::create(exec, structure, WTFMove(buffer), byteOffset, length);
 }
 
+
 } // namespace JSC
 

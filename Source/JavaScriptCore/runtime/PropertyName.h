@@ -26,10 +26,8 @@
 #pragma once
 
 #include "Identifier.h"
-#include "JSGlobalObjectFunctions.h"
 #include "PrivateName.h"
 #include <wtf/Optional.h>
-#include <wtf/dtoa.h>
 
 namespace JSC {
 
@@ -130,20 +128,6 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
     if (uid->isSymbol())
         return WTF::nullopt;
     return parseIndex(*uid);
-}
-
-// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-canonicalnumericindexstring
-ALWAYS_INLINE Optional<double> canonicalNumericIndexString(const PropertyName& propertyName)
-{
-    StringImpl* property = propertyName.uid();
-    if (equal(property, "-0"))
-        return { -0.0 };
-    double index = jsToNumber(property);
-    NumberToStringBuffer buffer;
-    const char* indexString = WTF::numberToString(index, buffer);
-    if (!equal(property, indexString))
-        return WTF::nullopt;
-    return { index };
 }
 
 } // namespace JSC
