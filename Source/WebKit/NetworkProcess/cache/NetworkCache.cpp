@@ -478,10 +478,8 @@ void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
         }
 
         auto entry = Entry::decodeStorageRecord(*record);
-        if (!entry) {
-            traverseHandler(nullptr);
+        if (!entry)
             return;
-        }
 
         TraversalEntry traversalEntry { *entry, recordInfo };
         traverseHandler(&traversalEntry);

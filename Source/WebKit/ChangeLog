@@ -1,3 +1,17 @@
+2019-05-01  Alex Christensen  <achristensen@webkit.org>
+
+        Protect against null crash in fetchDiskCacheEntries
+        https://bugs.webkit.org/show_bug.cgi?id=197399
+        <rdar://problem/47759337>
+
+        Reviewed by Antti Koivisto.
+
+        If the call to Entry::decodeStorageRecord returns nullptr in Storage::traverse, do not call the traverseHandler, which expects
+        that when it is called with nullptr that is the end of the traversal.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+
 2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a version of viewport shrink-to-fit heuristics that preserves page layout
