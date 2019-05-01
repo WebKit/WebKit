@@ -42,7 +42,7 @@ bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char
     for (source = *sourceStart; source < sourceEnd; ++source) {
         UBool sawError = false;
         // Work around bug in either Windows compiler or old version of ICU, where passing a uint8_t to
-        // U8_APPEND warns, by convering from uint8_t to a wider type.
+        // U8_APPEND warns, by converting from uint8_t to a wider type.
         UChar32 character = *source;
         U8_APPEND(reinterpret_cast<uint8_t*>(target), i, targetEnd - *targetStart, character, sawError);
         if (sawError)
