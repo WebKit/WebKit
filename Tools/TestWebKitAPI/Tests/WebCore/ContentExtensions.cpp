@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "PlatformUtilities.h"
+#include "Utilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CombinedURLFilters.h>
 #include <WebCore/ContentExtensionCompiler.h>

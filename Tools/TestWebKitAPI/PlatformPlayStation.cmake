@@ -1,17 +1,15 @@
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI")
-set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF")
-
-add_definitions(-DBUILDING_JSCONLY__)
-
-include_directories(
-    ${ICU_INCLUDE_DIRS}
-    ${FORWARDING_HEADERS_DIR}
-)
 
 set(test_main_SOURCES
-    ${TESTWEBKITAPI_DIR}/generic/main.cpp
+    generic/main.cpp
 )
 
 list(APPEND TestWTF_SOURCES
-    ${TESTWEBKITAPI_DIR}/generic/UtilitiesGeneric.cpp
+    ${test_main_SOURCES}
+
+    generic/UtilitiesGeneric.cpp
+)
+
+list(APPEND TestWebCore_SOURCES
+    ${test_main_SOURCES}
 )

@@ -1,12 +1,9 @@
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI")
-set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF")
 
-include_directories(
-    ${FORWARDING_HEADERS_DIR}
-)
+list(APPEND TestWTF_SOURCES generic/main.cpp)
 
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
-    include_directories(SYSTEM
+    list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
         ${GLIB_INCLUDE_DIRS}
     )
     list(APPEND TestWTF_SOURCES
@@ -17,7 +14,3 @@ else ()
         ${TESTWEBKITAPI_DIR}/generic/UtilitiesGeneric.cpp
     )
 endif ()
-
-set(test_main_SOURCES
-    ${TESTWEBKITAPI_DIR}/generic/main.cpp
-)

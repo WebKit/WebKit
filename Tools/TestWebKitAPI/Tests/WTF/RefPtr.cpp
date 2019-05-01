@@ -25,10 +25,8 @@
 
 #include "config.h"
 
-#if! PLATFORM(WIN)
-#include "PlatformUtilities.h"
-#endif
 #include "RefLogger.h"
+#include "Utilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>

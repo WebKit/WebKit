@@ -1,24 +1,11 @@
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI")
-set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF")
-
-# This is necessary because it is possible to build TestWebKitAPI with WebKit2
-# disabled and this triggers the inclusion of the WebKit2 headers.
-add_definitions(-DBUILDING_WEBKIT2__)
 
 add_custom_target(TestWebKitAPI-forwarding-headers
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${TESTWEBKITAPI_DIR} --output ${FORWARDING_HEADERS_DIR} --platform wpe --platform soup
     DEPENDS webkitwpe-forwarding-headers
 )
 
-list(APPEND TestWebKitAPI_DEPENDENCIES TestWebKitAPI-forwarding-headers)
-
-include_directories(
-    ${FORWARDING_HEADERS_DIR}
-    ${FORWARDING_HEADERS_DIR}/JavaScriptCore
-    ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
-    ${DERIVED_SOURCES_JAVASCRIPCOREWPE_DIR}
-    ${TOOLS_DIR}/wpe/backends
-)
+list(APPEND TestWebKit_DEPENDENCIES TestWebKitAPI-forwarding-headers)
 
 include_directories(SYSTEM
     ${CAIRO_INCLUDE_DIRS}
@@ -30,98 +17,109 @@ include_directories(SYSTEM
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
-set(test_main_SOURCES
-    ${TESTWEBKITAPI_DIR}/generic/main.cpp
-)
-
-set(bundle_harness_SOURCES
-    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
-    ${TESTWEBKITAPI_DIR}/wpe/InjectedBundleControllerWPE.cpp
-    ${TESTWEBKITAPI_DIR}/wpe/PlatformUtilitiesWPE.cpp
-)
-
-set(webkit_api_harness_SOURCES
-    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
-    ${TESTWEBKITAPI_DIR}/wpe/PlatformUtilitiesWPE.cpp
-    ${TESTWEBKITAPI_DIR}/wpe/PlatformWebViewWPE.cpp
-)
+set(test_main_SOURCES generic/main.cpp)
 
 # TestWTF
-
 list(APPEND TestWTF_SOURCES
-    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/GUniquePtr.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/WorkQueueGLib.cpp
+    ${test_main_SOURCES}
+
+    Tests/WTF/glib/GUniquePtr.cpp
+    Tests/WTF/glib/WorkQueueGLib.cpp
+
+    glib/UtilitiesGLib.cpp
+)
+
+list(APPEND TestWTF_SYSTEM_INCLUDE_DIRECTORIES
+    ${GLIB_INCLUDE_DIRS}
 )
 
 # TestWebCore
-
-add_executable(TestWebCore
+list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
-    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
-    ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileMonitor.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/gstreamer/GstMappedBuffer.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/gstreamer/GStreamerTest.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/MIMETypeRegistry.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParserTextEncoding.cpp
+
+    Tests/WebCore/gstreamer/GStreamerTest.cpp
+    Tests/WebCore/gstreamer/GstMappedBuffer.cpp
+
+    glib/UtilitiesGLib.cpp
 )
 
-target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
-add_dependencies(TestWebCore ${TestWebKitAPI_DEPENDENCIES})
-
-add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCore)
-set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
-set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore)
+list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
+    ${GLIB_INCLUDE_DIRS}
+)
 
 # TestWebKit
+list(APPEND TestWebKit_SOURCES
+    ${test_main_SOURCES}
 
-list(APPEND test_webkit_api_LIBRARIES
+    ${TOOLS_DIR}/wpe/backends/ViewBackend.cpp
+    ${TOOLS_DIR}/wpe/backends/HeadlessViewBackend.cpp
+
+    glib/UtilitiesGLib.cpp
+
+    wpe/PlatformUtilitiesWPE.cpp
+    wpe/PlatformWebViewWPE.cpp
+)
+
+list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/Source
+    ${FORWARDING_HEADERS_DIR}
+    ${WPEBACKEND_FDO_INCLUDE_DIRS}
+    ${TOOLS_DIR}/wpe/backends
+)
+
+list(APPEND TestWebKit_SYSTEM_INCLUDE_DIRECTORIES
+    ${GLIB_INCLUDE_DIRS}
+)
+
+list(APPEND TestWebKit_LIBRARIES
+    ${WPEBACKEND_FDO_LIBRARIES}
     WPEToolingBackends
 )
 
-add_executable(TestWebKit ${test_webkit_api_SOURCES})
-
-target_link_libraries(TestWebKit ${test_webkit_api_LIBRARIES})
-add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/TestWebKit)
-set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
-set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
-
 # TestWebKitAPIBase
-list(APPEND TestWebKitAPIBase_LIBRARIES ${WPEBACKEND_FDO_LIBRARIES})
-list(APPEND TestWebKitAPI_LIBRARIES ${WPEBACKEND_FDO_LIBRARIES})
-list(APPEND TestWebKitAPIBase_SOURCES
-    ${TOOLS_DIR}/wpe/backends/ViewBackend.cpp
-    ${TOOLS_DIR}/wpe/backends/HeadlessViewBackend.cpp
+target_include_directories(TestWebKitAPIBase PRIVATE
+    ${CMAKE_SOURCE_DIR}/Source
+    ${FORWARDING_HEADERS_DIR}
+)
+
+# TestWebKitAPIInjectedBundle
+target_sources(TestWebKitAPIInjectedBundle PRIVATE
+    glib/UtilitiesGLib.cpp
+
+    wpe/InjectedBundleControllerWPE.cpp
+    wpe/PlatformUtilitiesWPE.cpp
+)
+target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
+    ${CMAKE_SOURCE_DIR}/Source
+    ${FORWARDING_HEADERS_DIR}
 )
 
 # TestJSC
+set(TestJSC_SOURCES
+    Tests/JavaScriptCore/glib/TestJSC.cpp
+)
 
-add_definitions(-DWEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}")
-add_executable(TestJSC ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/glib/TestJSC.cpp)
-target_link_libraries(TestJSC
+set(TestJSC_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
+    ${TESTWEBKITAPI_DIR}
+    ${THIRDPARTY_DIR}/gtest/include
+    ${WTF_FRAMEWORK_HEADERS_DIR}
+    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    ${FORWARDING_HEADERS_DIR}
+    ${FORWARDING_HEADERS_DIR}/JavaScriptCore
+    ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
+    ${DERIVED_SOURCES_JAVASCRIPCOREWPE_DIR}
+)
+
+set(TestJSC_LIBRARIES
     ${GLIB_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     JavaScriptCore
 )
-add_test(TestJSC ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJSC)
-add_dependencies(TestJSC ${TestWebKitAPI_DEPENDENCIES})
-set_tests_properties(TestJSC PROPERTIES TIMEOUT 60)
-set_target_properties(TestJSC PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore)
 
-if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebCore -Wno-sign-compare
-                                            -Wno-undef
-                                            -Wno-unused-parameter)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-sign-compare
-                                           -Wno-undef
-                                           -Wno-unused-parameter)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(TestJSC -Wno-sign-compare
-                                        -Wno-undef
-                                        -Wno-unused-parameter)
-endif ()
+set(TestJSC_DEFINITIONS
+    WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
+)
+
+WEBKIT_EXECUTABLE_DECLARE(TestJSC)
+WEBKIT_TEST(TestJSC)

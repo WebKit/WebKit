@@ -25,8 +25,8 @@
 
 #import "config.h"
 
-#import "PlatformUtilities.h"
 #import "SharedBufferTest.h"
+#import "Utilities.h"
 #import <WebCore/SharedBuffer.h>
 
 using namespace WebCore;

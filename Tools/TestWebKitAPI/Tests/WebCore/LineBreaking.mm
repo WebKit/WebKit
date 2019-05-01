@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "Utilities.h"
 #import <unicode/ubrk.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>

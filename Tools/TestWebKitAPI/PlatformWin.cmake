@@ -1,34 +1,47 @@
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}")
-add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
+
+set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
 
 if (${WTF_PLATFORM_WIN_CAIRO})
-    add_definitions(-DWIN_CAIRO)
+    list(APPEND wrapper_DEFINITIONS WIN_CAIRO)
 endif ()
 
+set(webcore_DEFINITIONS
+    STATICALLY_LINKED_WITH_PAL=1
+    WEBCORE_EXPORT=
+    WEBCORE_TESTSUPPORT_EXPORT=
+)
+
 set(test_main_SOURCES
-    ${TESTWEBKITAPI_DIR}/win/main.cpp
+    win/main.cpp
 )
 
-include_directories(
-    ${DERIVED_SOURCES_DIR}
-    ${FORWARDING_HEADERS_DIR}
-    ${FORWARDING_HEADERS_DIR}/JavaScriptCore
-    ${TESTWEBKITAPI_DIR}/win
-    ${DERIVED_SOURCES_DIR}/WebKit/Interfaces
-    ${WTF_FRAMEWORK_HEADERS_DIR}
-    ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
-    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${PAL_FRAMEWORK_HEADERS_DIR}
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
-    ${WebKit_FRAMEWORK_HEADERS_DIR}
-    ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
+# TestWTF
+list(REMOVE_ITEM TestWTF_SOURCES Tests/WTF/FileSystem.cpp)
+list(APPEND TestWTF_SOURCES
+    ${test_main_SOURCES}
+    win/UtilitiesWin.cpp
 )
 
-add_definitions(-DWEBCORE_EXPORT= -DWEBCORE_TESTSUPPORT_EXPORT=)
+WEBKIT_WRAP_EXECUTABLE(TestWTF
+    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    LIBRARIES shlwapi
+)
+target_compile_definitions(TestWTF PRIVATE ${wrapper_DEFINITIONS})
+set(TestWTF_OUTPUT_NAME TestWTF${DEBUG_SUFFIX})
 
-set(test_webcore_LIBRARIES
+# TestWebCore
+list(APPEND TestWebCore_SOURCES
+    ${test_main_SOURCES}
+
+    Tests/WebCore/win/DIBPixelData.cpp
+    Tests/WebCore/win/LinkedFonts.cpp
+
+    win/TestWebCoreStubs.cpp
+)
+list(APPEND TestWebCore_DEFINITIONS ${webcore_DEFINITIONS})
+
+list(APPEND TestWebCore_LIBRARIES
     Crypt32
     D2d1
     Dwrite
@@ -37,42 +50,11 @@ set(test_webcore_LIBRARIES
     Psapi
     Shlwapi
     Usp10
-    WebCore${DEBUG_SUFFIX}
     WindowsCodecs
-    gtest
-)
-
-set(TestWebCoreLib_SOURCES
-    ${test_main_SOURCES}
-    win/TestWebCoreStubs.cpp
-    ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/AffineTransform.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/CalculationValue.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/ComplexTextController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatRect.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatPoint.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatSize.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/GridPosition.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/IntRect.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/IntPoint.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/IntSize.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/MIMETypeRegistry.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/ParsedContentRange.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SecurityOrigin.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/TimeRanges.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/TransformationMatrix.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParserTextEncoding.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/DIBPixelData.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/LinkedFonts.cpp
 )
 
 if (${WTF_PLATFORM_WIN_CAIRO})
-    list(APPEND test_webcore_LIBRARIES
+    list(APPEND TestWebCore_LIBRARIES
         ${CAIRO_LIBRARIES}
         ${OPENSSL_LIBRARIES}
         libANGLE
@@ -80,14 +62,15 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         strmiids
         vcruntime
     )
-    list(APPEND TestWebCoreLib_SOURCES
-        ${TESTWEBKITAPI_DIR}/Tests/WebCore/curl/Cookies.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/BitmapImage.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebCore/CryptoDigest.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
+    list(APPEND TestWebCore_SOURCES
+        Tests/WebCore/CryptoDigest.cpp
+
+        Tests/WebCore/curl/Cookies.cpp
+
+        Tests/WebCore/win/BitmapImage.cpp
     )
 else ()
-    list(APPEND test_webcore_LIBRARIES
+    list(APPEND TestWebCore_LIBRARIES
         ASL${DEBUG_SUFFIX}
         CFNetwork${DEBUG_SUFFIX}
         CoreGraphics${DEBUG_SUFFIX}
@@ -102,126 +85,82 @@ else ()
 endif ()
 
 if (USE_CF)
-    list(APPEND test_webcore_LIBRARIES
+    list(APPEND TestWebCore_LIBRARIES
         ${COREFOUNDATION_LIBRARY}
     )
 endif ()
 
-if (ENABLE_WEBKIT)
-    list(APPEND TestWebKitAPI_DEPENDENCIES WebKitFrameworkHeaders)
-endif ()
-
-add_library(TestWTFLib SHARED
-    ${test_main_SOURCES}
-    ${TestWTF_SOURCES}
-    ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
+WEBKIT_WRAP_EXECUTABLE(TestWebCore
+    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    LIBRARIES shlwapi
 )
-set_target_properties(TestWTFLib PROPERTIES OUTPUT_NAME "TestWTFLib")
-target_link_libraries(TestWTFLib ${test_wtf_LIBRARIES})
-add_dependencies(TestWTFLib ${TestWebKitAPI_DEPENDENCIES})
+target_compile_definitions(TestWebCore PRIVATE ${wrapper_DEFINITIONS})
+set(TestWebCore_OUTPUT_NAME TestWebCore${DEBUG_SUFFIX})
 
-set(test_wtf_LIBRARIES
-    shlwapi
-)
-set(TestWTF_SOURCES
-)
-
-add_library(TestWebCoreLib SHARED
-    ${TestWebCoreLib_SOURCES}
-)
-
-target_link_libraries(TestWebCoreLib ${test_webcore_LIBRARIES})
-set_target_properties(TestWebCoreLib PROPERTIES OUTPUT_NAME "TestWebCoreLib")
-add_dependencies(TestWebCoreLib ${TestWebKitAPI_DEPENDENCIES})
-
-if (PAL_LIBRARY_TYPE MATCHES STATIC)
-    target_compile_definitions(TestWebCoreLib PRIVATE -DSTATICALLY_LINKED_WITH_PAL=1)
-endif ()
-
-add_executable(TestWebCore
-    ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-)
-target_link_libraries(TestWebCore shlwapi)
-
-
-add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebCore)
-set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
-
-if (${WTF_PLATFORM_WIN_CAIRO})
-    include_directories(
-        ${CAIRO_INCLUDE_DIRS}
-    )
-endif ()
-
-set(test_webkitlegacy_LIBRARIES
-    WebCoreTestSupport
-    WebKitLegacy${DEBUG_SUFFIX}
-    gtest
-)
-
+# TestWebKitLegacy
 if (ENABLE_WEBKIT_LEGACY)
-    add_library(TestWebKitLegacyLib SHARED
+    list(APPEND TestWebKitLegacy_SOURCES
         ${test_main_SOURCES}
-        ${TESTWEBKITAPI_DIR}/TestsController.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/ScaleWebView.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/WebViewDestruction.cpp
-        ${TESTWEBKITAPI_DIR}/win/HostWindow.cpp
+
+        Tests/WebKitLegacy/win/ScaleWebView.cpp
+        Tests/WebKitLegacy/win/WebViewDestruction.cpp
+
+        win/HostWindow.cpp
     )
 
-    target_link_libraries(TestWebKitLegacyLib ${test_webkitlegacy_LIBRARIES})
-    add_dependencies(TestWebKitLegacyLib ${TestWebKitAPI_DEPENDENCIES})
+    list(APPEND TestWebKitLegacy_DEFINITIONS ${webcore_DEFINITIONS})
 
-    add_executable(TestWebKitLegacy
-        ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    list(APPEND TestWebKitLegacy_LIBRARIES
+        WTF
     )
-    target_link_libraries(TestWebKitLegacy shlwapi)
 
-    add_test(TestWebKitLegacy ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitLegacy)
-    set_tests_properties(TestWebKitLegacy PROPERTIES TIMEOUT 60)
+    list(APPEND TestWebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
+        ${TESTWEBKITAPI_DIR}/win
+    )
 
-    add_dependencies(TestWebKitLegacy TestWebKitLegacyLib)
+    WEBKIT_WRAP_EXECUTABLE(TestWebKitLegacy
+        SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+        LIBRARIES shlwapi
+    )
+    target_compile_definitions(TestWebKitLegacy PRIVATE ${wrapper_DEFINITIONS})
+    set(TestWebKitLegacy_OUTPUT_NAME TestWebKitLegacy${DEBUG_SUFFIX})
 endif ()
 
+# TestWebKit
 if (ENABLE_WEBKIT)
-    set(bundle_harness_SOURCES
-        ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
-        ${TESTWEBKITAPI_DIR}/win/InjectedBundleControllerWin.cpp
-        ${TESTWEBKITAPI_DIR}/win/PlatformUtilitiesWin.cpp
+    add_dependencies(TestWebKitAPIBase WebKitFrameworkHeaders)
+    add_dependencies(TestWebKitAPIInjectedBundle WebKitFrameworkHeaders)
+
+    target_sources(TestWebKitAPIInjectedBundle PRIVATE
+        win/InjectedBundleControllerWin.cpp
+        win/PlatformUtilitiesWin.cpp
+        win/UtilitiesWin.cpp
     )
 
-    set(webkit_api_harness_SOURCES
-        ${TESTWEBKITAPI_DIR}/win/PlatformUtilitiesWin.cpp
-        ${TESTWEBKITAPI_DIR}/win/PlatformWebViewWin.cpp
-        ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
+    list(APPEND TestWebKit_SOURCES
+        ${test_main_SOURCES}
+
+        win/PlatformUtilitiesWin.cpp
+        win/PlatformWebViewWin.cpp
+        win/UtilitiesWin.cpp
     )
 
     if (${WTF_PLATFORM_WIN_CAIRO})
-        list(APPEND test_webkit_api_SOURCES
-            ${TESTWEBKITAPI_DIR}/Tests/WebKit/curl/Certificates.cpp
+        list(APPEND TestWebKit_SOURCES
+            Tests/WebKit/curl/Certificates.cpp
         )
     endif ()
 
-    add_library(TestWebKitLib SHARED
-        ${TESTWEBKITAPI_DIR}/win/main.cpp
-        ${test_webkit_api_SOURCES}
+    list(APPEND TestWebKit_DEFINITIONS ${webcore_DEFINITIONS})
+
+    list(APPEND TestWebKit_DEPENDENCIES
+        WebKitFrameworkHeaders
     )
 
-    target_link_libraries(TestWebKitLib ${test_webkit_api_LIBRARIES})
-
-    add_executable(TestWebKit
-        ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    WEBKIT_WRAP_EXECUTABLE(TestWebKit
+        SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+        LIBRARIES shlwapi
     )
-    target_link_libraries(TestWebKit shlwapi)
-
-    add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/TestWebKit)
-    set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
-    set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
-
-    add_dependencies(TestWebKit TestWebKitAPIBase WebKitFrameworkHeaders)
+    target_compile_definitions(TestWebKit PRIVATE ${wrapper_DEFINITIONS})
+    set(TestWebKit_OUTPUT_NAME TestWebKit${DEBUG_SUFFIX})
 endif ()
-
-set(test_main_SOURCES
-    ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-)
-
-add_dependencies(TestWebCore TestWebCoreLib)

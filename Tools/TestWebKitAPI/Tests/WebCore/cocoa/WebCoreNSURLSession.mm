@@ -27,7 +27,7 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
-#import "PlatformUtilities.h"
+#import "Utilities.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
