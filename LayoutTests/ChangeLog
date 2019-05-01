@@ -1,3 +1,13 @@
+2019-05-01  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unreviewed test gardening.
+
+        * platform/ios-wk2/fast/block/margin-collapse/103-expected.txt:
+        * platform/ios/compositing/overflow/theme-affects-visual-overflow-expected.txt:
+        * platform/ios/fast/block/margin-collapse/103-expected.txt:
+        * platform/ios/fast/parser/bad-xml-slash-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4527-expected.txt:
+
 2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION(r244494): editing/pasteboard/5761530-1.html is flaky due to a simple line layout bug

@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
               RenderTextControl {INPUT} at (4,2) size 75x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
               RenderImage {INPUT} at (80,3) size 26x18
             RenderTableCell {TD} at (476,70) size 138x26 [bgcolor=#CCCCCC] [r=1 c=3 rs=1 cs=1]
-              RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+              RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #FFFFFF00)]
               RenderImage {IMG} at (20,1) size 40x25
               RenderBlock {INPUT} at (62,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
               RenderText {#text} at (80,2) size 4x19

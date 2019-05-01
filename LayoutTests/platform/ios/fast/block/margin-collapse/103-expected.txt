@@ -80,7 +80,7 @@ layer at (0,0) size 800x1753
               RenderText {#text} at (0,2) size 222x16
                 text run at (0,2) width 222: "Your research is primarily focused on:"
             RenderBlock {SPAN} at (325,267) size 180x23 [color=#333333]
-              RenderBlock {INPUT} at (2,3) size 16x16 [color=#000000] [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+              RenderBlock {INPUT} at (2,3) size 16x16 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #FFFFFF00)]
               RenderText {#text} at (20,4) size 32x16
                 text run at (20,4) width 32: "Texts"
             RenderBlock {SPAN} at (325,289) size 180x23 [color=#333333]
