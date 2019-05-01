@@ -816,7 +816,9 @@ public:
     void processDidResume();
 
     void testDictionaryLogging();
-        
+
+    void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest&, double);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

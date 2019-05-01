@@ -1,3 +1,50 @@
+2019-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        XMLHttpRequest should propagate user gestures for media playback
+        https://bugs.webkit.org/show_bug.cgi?id=197428
+        <rdar://problem/46677392>
+
+        Reviewed by Jer Noble.
+
+        A user gesture the would allow media state change in effect when XMLHttpRequest.send is 
+        called should be active when the event handlers fire after the transaction completes successfully.
+
+        Test: http/tests/media/user-gesture-preserved-across-xmlhttprequest.html
+
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::UserGestureIndicator): Add a 'scope' parameter to potentially
+        limit the scope of the gesture to just media.
+        (WebCore::UserGestureIndicator::~UserGestureIndicator): Clear the scope.
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureToken::processingUserGesture const):
+        (WebCore::UserGestureToken::setScope):
+        (WebCore::UserGestureToken::resetScope):
+        (WebCore::UserGestureToken::hasExpired const):
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimerFireState::DOMTimerFireState): Don't need to store the nested timer interval,
+        UserGestureIndicator knows when it started.
+        (WebCore::DOMTimer::DOMTimer): Ditto.
+        (WebCore::DOMTimer::fired): Ditto.
+        (WebCore::DOMTimerFireState::nestedTimerInterval const): Deleted.
+        (WebCore::shouldForwardUserGesture): Deleted.
+        (WebCore::userGestureTokenToForward): Deleted.
+        (WebCore::currentNestedTimerInterval): Deleted.
+        * page/DOMTimer.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setXHRMaximumIntervalForUserGestureForwarding): Override the maximum
+        user gesture interval for testing.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): 
+        (WebCore::XMLHttpRequest::send): Stash the user gesture token.
+        (WebCore::XMLHttpRequest::dispatchEvent): Clear user gesture token if it has expired. If still
+        valid, activate it.
+        * xml/XMLHttpRequest.h:
+
 2019-04-29  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support

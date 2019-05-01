@@ -70,7 +70,7 @@ UserGestureIndicator::UserGestureIndicator(Optional<ProcessingUserGestureState> 
     }
 }
 
-UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token)
+UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token, UserGestureToken::GestureScope scope)
 {
     // Silently ignore UserGestureIndicators on non main threads.
     if (!isMainThread())
@@ -79,8 +79,10 @@ UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token)
     // It is only safe to use currentToken() on the main thread.
     m_previousToken = currentToken();
 
-    if (token)
+    if (token) {
+        token->setScope(scope);
         currentToken() = token;
+    }
 }
 
 UserGestureIndicator::~UserGestureIndicator()
@@ -88,8 +90,10 @@ UserGestureIndicator::~UserGestureIndicator()
     if (!isMainThread())
         return;
     
-    if (auto token = currentToken())
+    if (auto token = currentToken()) {
         token->resetDOMPasteAccess();
+        token->resetScope();
+    }
 
     currentToken() = m_previousToken;
 }

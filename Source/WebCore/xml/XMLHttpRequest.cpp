@@ -66,6 +66,8 @@
 
 namespace WebCore {
 
+static const Seconds maximumIntervalForUserGestureForwarding { 10_s };
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(XMLHttpRequest);
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, xmlHttpRequestCounter, ("XMLHttpRequest"));
@@ -121,6 +123,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_resumeTimer(*this, &XMLHttpRequest::resumeTimerFired)
     , m_networkErrorTimer(*this, &XMLHttpRequest::networkErrorTimerFired)
     , m_timeoutTimer(*this, &XMLHttpRequest::didReachTimeout)
+    , m_maximumIntervalForUserGestureForwarding(maximumIntervalForUserGestureForwarding)
 {
 #ifndef NDEBUG
     xmlHttpRequestCounter.increment();
@@ -436,6 +439,7 @@ Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 ExceptionOr<void> XMLHttpRequest::send(Optional<SendTypes>&& sendType)
 {
     InspectorInstrumentation::willSendXMLHttpRequest(scriptExecutionContext(), url());
+    m_userGestureToken = UserGestureIndicator::currentUserGesture();
 
     ExceptionOr<void> result;
     if (!sendType)
@@ -1089,6 +1093,20 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     }
 }
 
+void XMLHttpRequest::dispatchEvent(Event& event)
+{
+    if (m_userGestureToken && m_userGestureToken->hasExpired(m_maximumIntervalForUserGestureForwarding))
+        m_userGestureToken = nullptr;
+
+    if (readyState() != DONE || !m_userGestureToken || !m_userGestureToken->processingUserGesture()) {
+        EventTarget::dispatchEvent(event);
+        return;
+    }
+
+    UserGestureIndicator gestureIndicator(m_userGestureToken, UserGestureToken::GestureScope::MediaOnly);
+    EventTarget::dispatchEvent(event);
+}
+
 void XMLHttpRequest::dispatchErrorEvents(const AtomicString& type)
 {
     if (!m_uploadComplete) {
@@ -1186,6 +1204,11 @@ void XMLHttpRequest::contextDestroyed()
 {
     ASSERT(!m_loader);
     ActiveDOMObject::contextDestroyed();
+}
+
+void XMLHttpRequest::setMaximumIntervalForUserGestureForwarding(double interval)
+{
+    m_maximumIntervalForUserGestureForwarding = Seconds(interval);    
 }
 
 } // namespace WebCore

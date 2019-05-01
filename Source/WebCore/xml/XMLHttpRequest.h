@@ -26,6 +26,7 @@
 #include "FormData.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoaderClient.h"
+#include "UserGestureIndicator.h"
 #include <wtf/URL.h>
 #include "XMLHttpRequestEventTarget.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
@@ -127,6 +128,8 @@ public:
 
     size_t memoryCost() const;
 
+    WEBCORE_EXPORT void setMaximumIntervalForUserGestureForwarding(double);
+
 private:
     explicit XMLHttpRequest(ScriptExecutionContext&);
 
@@ -187,6 +190,9 @@ private:
 
     void dispatchErrorEvents(const AtomicString&);
 
+    using EventTarget::dispatchEvent;
+    void dispatchEvent(Event&) override;
+
     void resumeTimerFired();
     Ref<TextResourceDecoder> createDecoder() const;
 
@@ -243,6 +249,8 @@ private:
     MonotonicTime m_sendingTime;
 
     Optional<ExceptionCode> m_exceptionCode;
+    RefPtr<UserGestureToken> m_userGestureToken;
+    Seconds m_maximumIntervalForUserGestureForwarding;
 };
 
 inline auto XMLHttpRequest::responseType() const -> ResponseType

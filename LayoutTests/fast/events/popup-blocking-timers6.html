@@ -15,14 +15,14 @@
             setTimeout(function() {
                 newWindow = window.open("about:blank");
                 self.focus();
-                debug("Test calling window.open() with a 1001 ms delay. A popup should not be allowed.")
+                debug("Test calling window.open() with a 1100 ms delay. A popup should not be allowed.")
                 shouldBeNull("newWindow");
 
                 if (window.testRunner)
                     testRunner.notifyDone();
-            }, 1001);
+            }, 1100);
             if (window.eventSender)
-                eventSender.leapForward(1001);
+                eventSender.leapForward(1100);
         }
         
         function clickButton() {

@@ -1,0 +1,56 @@
+Test that a user gesture is preserved across XHR and setTimeout.
+
+
+Run!
+
+** gesture -> XHR -> timeout -> XHR -> window.open: should fail because XHR only propagates user gesture for media
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+setting timeout, delay = 100
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+EXPECTED (window.open("about:blank") == 'null') OK
+
+** gesture -> timeout -> XHR -> timeout -> window.open: should succeed
+setting timeout, delay = 100
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+setting timeout, delay = 100
+EXPECTED (window.open("about:blank") != 'null') OK
+
+** gesture -> timeout -> XHR -> timeout -> video playback: should succeed
+EVENT(canplaythrough)
+setting timeout, delay = 100
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+setting timeout, delay = 100
+RUN(shouldResolve(mediaElement.play()).then(testComplete, testComplete))
+Promise resolved OK
+
+** gesture -> XHR -> timeout -> XHR -> video playback: should succeed
+EVENT(canplaythrough)
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+setting timeout, delay = 100
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+RUN(shouldResolve(mediaElement.play()).then(testComplete, testComplete))
+Promise resolved OK
+
+** NO gesture -> XHR -> timeout -> video playback: should fail
+EVENT(canplaythrough)
+sending XHR, delay = 100
+EVENT(load): readyState = 4
+setting timeout, delay = 100
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** gesture -> "long" XHR -> video playback: should fail
+EVENT(canplaythrough)
+sending XHR, delay = 300
+EVENT(load): readyState = 4
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+END OF TEST
+

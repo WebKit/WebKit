@@ -92,7 +92,6 @@ private:
     Seconds m_originalInterval;
     TimerThrottleState m_throttleState;
     Seconds m_currentTimerInterval;
-    Seconds m_nestedTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
 };
 

@@ -747,4 +747,6 @@ enum CompositingPolicy {
     void processDidResume();
 
     void testDictionaryLogging();
+
+    void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest xhr, double interval);
 };

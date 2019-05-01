@@ -53,9 +53,8 @@ static const int maxTimerNestingLevel = 5;
 
 class DOMTimerFireState {
 public:
-    DOMTimerFireState(ScriptExecutionContext& context, int nestingLevel, const Seconds& nestedTimerInterval)
+    DOMTimerFireState(ScriptExecutionContext& context, int nestingLevel)
         : m_context(context)
-        , m_nestedTimerInterval(nestedTimerInterval)
         , m_contextIsDocument(is<Document>(m_context))
     {
         // For worker threads, don't update the current DOMTimerFireState.
@@ -78,8 +77,6 @@ public:
 
     Document* contextDocument() const { return m_contextIsDocument ? &downcast<Document>(m_context) : nullptr; }
 
-    const Seconds& nestedTimerInterval() const { return m_nestedTimerInterval; }
-
     void setScriptMadeUserObservableChanges() { m_scriptMadeUserObservableChanges = true; }
     void setScriptMadeNonUserObservableChanges() { m_scriptMadeNonUserObservableChanges = true; }
 
@@ -98,7 +95,6 @@ public:
 
 private:
     ScriptExecutionContext& m_context;
-    Seconds m_nestedTimerInterval;
     uint64_t m_initialDOMTreeVersion;
     DOMTimerFireState* m_previous;
     bool m_contextIsDocument;
@@ -163,27 +159,6 @@ private:
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
-static inline bool shouldForwardUserGesture(Seconds interval)
-{
-    return UserGestureIndicator::processingUserGesture()
-        && interval <= maxIntervalForUserGestureForwarding;
-}
-
-static inline RefPtr<UserGestureToken> userGestureTokenToForward(Seconds interval)
-{
-    if (!shouldForwardUserGesture(interval))
-        return nullptr;
-
-    return UserGestureIndicator::currentUserGesture();
-}
-
-static inline Seconds currentNestedTimerInterval()
-{
-    if (DOMTimerFireState::current)
-        return DOMTimerFireState::current->nestedTimerInterval();
-    return { };
-}
-
 DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds interval, bool singleShot)
     : SuspendableTimer(context)
     , m_nestingLevel(context.timerNestingLevel())
@@ -191,8 +166,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAct
     , m_originalInterval(interval)
     , m_throttleState(Undetermined)
     , m_currentTimerInterval(intervalClampedToMinimum())
-    , m_nestedTimerInterval(currentNestedTimerInterval())
-    , m_userGestureTokenToForward(userGestureTokenToForward(m_nestedTimerInterval + m_currentTimerInterval))
+    , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
     RefPtr<DOMTimer> reference = adoptRef(this);
 
@@ -310,7 +284,10 @@ void DOMTimer::fired()
     ASSERT(scriptExecutionContext());
     ScriptExecutionContext& context = *scriptExecutionContext();
 
-    DOMTimerFireState fireState(context, std::min(m_nestingLevel + 1, maxTimerNestingLevel), m_nestedTimerInterval + m_currentTimerInterval);
+    DOMTimerFireState fireState(context, std::min(m_nestingLevel + 1, maxTimerNestingLevel));
+
+    if (m_userGestureTokenToForward && m_userGestureTokenToForward->hasExpired(maxIntervalForUserGestureForwarding))
+        m_userGestureTokenToForward = nullptr;
 
     ASSERT(!isSuspended());
     ASSERT(!context.activeDOMObjectsAreSuspended());

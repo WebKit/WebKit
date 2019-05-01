@@ -1,3 +1,20 @@
+2019-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        XMLHttpRequest should propagate user gestures for media playback
+        https://bugs.webkit.org/show_bug.cgi?id=197428
+        <rdar://problem/46677392>
+
+        Reviewed by Jer Noble.
+
+        * fast/events/popup-blocking-timers5-expected.txt:
+        * fast/events/popup-blocking-timers5.html: Decrease the timer interval from 1000 to 900
+        because the user gesture is invalidated based on wall clock time.
+        * fast/events/popup-blocking-timers6-expected.txt:
+        * fast/events/popup-blocking-timers6.html: Increase the timer interval from 1001 to 1100
+        because the user gesture is invalidated based on wall clock time.
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest-expected.txt: Added.
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest.html: Added.
+
 2019-04-29  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
