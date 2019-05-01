@@ -55,7 +55,7 @@ public:
 
     void startTask(WebPageProxy&, WebProcessProxy&, uint64_t taskIdentifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
     void stopTask(WebPageProxy&, uint64_t taskIdentifier);
-    void stopAllTasksForPage(WebPageProxy&);
+    void stopAllTasksForPage(WebPageProxy&, WebProcessProxy*);
     void taskCompleted(WebURLSchemeTask&);
 
 protected:
@@ -67,6 +67,7 @@ private:
     virtual void platformTaskCompleted(WebURLSchemeTask&) = 0;
 
     void removeTaskFromPageMap(uint64_t pageID, uint64_t taskID);
+    WebProcessProxy* processForTaskIdentifier(uint64_t) const;
 
     uint64_t m_identifier;
 

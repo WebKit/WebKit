@@ -6725,6 +6725,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     PageLoadState::Transaction transaction = m_pageLoadState.transaction();
 
     resetStateAfterProcessExited(reason);
+    stopAllURLSchemeTasks(m_process.ptr());
 
     // For bringup of process swapping, NavigationSwap termination will not go out to clients.
     // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
@@ -6740,8 +6741,6 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->terminate();
     }
-
-    stopAllURLSchemeTasks();
 }
 
 void WebPageProxy::provisionalProcessDidTerminate()
@@ -6801,14 +6800,14 @@ void WebPageProxy::resetRecentCrashCount()
     m_recentCrashCount = 0;
 }
 
-void WebPageProxy::stopAllURLSchemeTasks()
+void WebPageProxy::stopAllURLSchemeTasks(WebProcessProxy* process)
 {
     HashSet<WebURLSchemeHandler*> handlers;
     for (auto& handler : m_urlSchemeHandlersByScheme.values())
         handlers.add(handler.ptr());
 
     for (auto* handler : handlers)
-        handler->stopAllTasksForPage(*this);
+        handler->stopAllTasksForPage(*this, process);
 }
 
 #if PLATFORM(IOS_FAMILY)

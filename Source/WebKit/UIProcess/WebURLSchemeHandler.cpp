@@ -60,17 +60,31 @@ void WebURLSchemeHandler::startTask(WebPageProxy& page, WebProcessProxy& process
     platformStartTask(page, result.iterator->value);
 }
 
-void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page)
+WebProcessProxy* WebURLSchemeHandler::processForTaskIdentifier(uint64_t taskIdentifier) const
+{
+    auto iterator = m_tasks.find(taskIdentifier);
+    if (iterator == m_tasks.end())
+        return nullptr;
+    return iterator->value->process();
+}
+
+void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProxy* process)
 {
     auto iterator = m_tasksByPageIdentifier.find(page.pageID());
     if (iterator == m_tasksByPageIdentifier.end())
         return;
 
     auto& tasksByPage = iterator->value;
-    while (!tasksByPage.isEmpty())
-        stopTask(page, *tasksByPage.begin());
+    Vector<uint64_t> taskIdentifiersToStop;
+    taskIdentifiersToStop.reserveInitialCapacity(tasksByPage.size());
+    for (auto taskIdentifier : tasksByPage) {
+        if (!process || processForTaskIdentifier(taskIdentifier) == process)
+            taskIdentifiersToStop.uncheckedAppend(taskIdentifier);
+    }
 
-    ASSERT(m_tasksByPageIdentifier.find(page.pageID()) == m_tasksByPageIdentifier.end());
+    for (auto& taskIdentifier : taskIdentifiersToStop)
+        stopTask(page, taskIdentifier);
+
 }
 
 void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
