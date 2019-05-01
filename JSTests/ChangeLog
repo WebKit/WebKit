@@ -1,3 +1,9 @@
+2019-05-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed correction to Test262 expectations following r244828.
+
+        * test262/expectations.yaml:
+
 2019-05-01  Stephan Szabo  <stephan.szabo@sony.com>
 
         Add memory-limited skipping to some tests generating very large strings

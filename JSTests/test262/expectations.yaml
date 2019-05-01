@@ -1156,8 +1156,8 @@ test/built-ins/RegExp/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
-  default: 'Test262Error: Expected SameValue(Â«í¼Â», Â«nullÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«í¼Â», Â«nullÂ») to be true'
+  default: 'Test262Error: Expected SameValue(Â«ï¿½Â», Â«nullÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«ï¿½Â», Â«nullÂ») to be true'
 test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-capture.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«foo[toString value]barÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«foo[toString value]barÂ») to be true'
@@ -1192,8 +1192,8 @@ test/built-ins/RegExp/prototype/exec/success-lastindex-access.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
-  default: 'Test262Error: Expected SameValue(Â«í¼Â», Â«nullÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«í¼Â», Â«nullÂ») to be true'
+  default: 'Test262Error: Expected SameValue(Â«ï¿½Â», Â«nullÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«ï¿½Â», Â«nullÂ») to be true'
 test/built-ins/RegExp/prototype/global/cross-realm.js:
   default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
