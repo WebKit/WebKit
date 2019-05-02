@@ -1,3 +1,15 @@
+2019-05-02  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Refactor WEBKIT_MAKE_FORWARDING_HEADERS into WEBKIT_COPY_FILES
+        https://bugs.webkit.org/show_bug.cgi?id=197174
+
+        Reviewed by Alex Christensen.
+
+        Make TestJSC dependent on JavaScriptCorePrivateFrameworkHeaders.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+
 2019-05-02  Alex Christensen  <achristensen@webkit.org>
 
         Build fix for internal branch.

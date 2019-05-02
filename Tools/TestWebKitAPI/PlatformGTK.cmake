@@ -119,6 +119,10 @@ set(TestJSC_LIBRARIES
     JavaScriptCore
 )
 
+set(TestJSC_DEPENDENCIES
+    JavaScriptCorePrivateFrameworkHeaders
+)
+
 set(TestJSC_DEFINITIONS
     WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
 )

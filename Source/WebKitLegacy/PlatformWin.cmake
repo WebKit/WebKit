@@ -496,13 +496,12 @@ set(WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS
     win/WebKitCOMAPI.h
 )
 
-WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacyGUID
-    TARGET_NAME WebKitLegacyFrameworkHeaders
+WEBKIT_COPY_FILES(WebKitLegacyFrameworkHeaders
     DESTINATION ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy
     FILES ${WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS}
     FLATTENED
 )
-add_dependencies(WebKitLegacyFrameworkHeaders WebCorePrivateFrameworkHeaders)
+add_dependencies(WebKitLegacyFrameworkHeaders WebKitLegacyGUID)
 
 set(WebKitLegacy_OUTPUT_NAME
     WebKit${DEBUG_SUFFIX}

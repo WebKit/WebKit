@@ -1,3 +1,14 @@
+2019-05-02  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Refactor WEBKIT_MAKE_FORWARDING_HEADERS into WEBKIT_COPY_FILES
+        https://bugs.webkit.org/show_bug.cgi?id=197174
+
+        Reviewed by Alex Christensen.
+
+        Replace WEBKIT_MAKE_FORWARDING_HEADERS with WEBKIT_COPY_FILES.
+
+        * wtf/CMakeLists.txt:
+
 2019-05-01  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support

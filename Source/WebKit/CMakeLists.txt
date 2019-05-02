@@ -421,7 +421,7 @@ list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 WEBKIT_COMPUTE_SOURCES(WebKit)
 
 WEBKIT_FRAMEWORK(WebKit)
-add_dependencies(WebKit WebCore ${WEBKIT_EXTRA_DEPENDENCIES})
+add_dependencies(WebKit WebCore WebCorePrivateFrameworkHeaders ${WEBKIT_EXTRA_DEPENDENCIES})
 ADD_WEBKIT_PREFIX_HEADER(WebKit)
 
 add_executable(WebProcess ${WebProcess_SOURCES})
