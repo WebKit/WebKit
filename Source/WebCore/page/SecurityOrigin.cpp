@@ -31,6 +31,7 @@
 
 #include "BlobURL.h"
 #include "OriginAccessEntry.h"
+#include "PublicSuffix.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
 #include "TextEncoding.h"
