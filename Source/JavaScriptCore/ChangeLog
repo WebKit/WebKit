@@ -1,3 +1,10 @@
+2019-05-02  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed rollout of r244862.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+
 2019-05-01  Saam barati  <sbarati@apple.com>
 
         Baseline JIT should do argument value profiling after checking for stack overflow

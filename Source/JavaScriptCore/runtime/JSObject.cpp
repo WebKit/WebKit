@@ -3441,14 +3441,10 @@ static JSCustomGetterSetterFunction* getCustomGetterSetterFunctionForGetterSette
 bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSC::PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     if (!methodTable(vm)->getOwnPropertySlot(this, exec, propertyName, slot))
         return false;
-    EXCEPTION_ASSERT(!scope.exception());
-    scope.release();
-    
+
     // DebuggerScope::getOwnPropertySlot() (and possibly others) may return attributes from the prototype chain
     // but getOwnPropertyDescriptor() should only work for 'own' properties so we exit early if we detect that
     // the property is not an own property.
@@ -3494,7 +3490,6 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
             descriptor.setSetter(getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Setter));
     } else
         descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes());
-
     return true;
 }
 
