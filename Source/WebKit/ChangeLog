@@ -1,3 +1,25 @@
+2019-05-02  Timothy Hatcher  <timothy@apple.com>
+
+        NSAttributedString conversion in a loop returns nil and WKUnknownError every other time.
+        https://bugs.webkit.org/show_bug.cgi?id=197523
+
+        Reviewed by Darin Adler.
+
+        Caching the WKWebView was loading about:blank to unload the previous content.
+        This was causing subsequent rapid conversions to fail since the blank load
+        would be confused with the real content loading. Loading a blank page wasn't
+        really needed, it just helped keep the cached view in a cleaner state. Instead
+        of adding complexity to track the extra navigation, we can eliminate the blank load.
+        Ultimately a process swap will likely happen on the next navigation, and unused
+        cached views are closed quickly -- so stale content isn't held around too long.
+        This also avoids extra work and speeds up conversions a bit.
+
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (+[_WKAttributedStringWebViewCache cacheWebView:]): Don't load about:blank when caching.
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::getContentsAsAttributedString): Use rangeOfContents() for a fail
+        safe way to get the range needed.
+
 2019-05-02  John Wilander  <wilander@apple.com>
 
         Make both filterForRegistrableDomains() in WebKit::NetworkProcess use WebCore::RegistrableDomain::uncheckedCreateFromHost()

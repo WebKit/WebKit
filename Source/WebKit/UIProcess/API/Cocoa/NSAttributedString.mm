@@ -170,9 +170,6 @@ static WKWebViewConfiguration *configuration;
         return;
 
     [cache addObject:webView];
-
-    // Load a blank page to clear anything loaded while in the cache.
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 }
 
 + (void)resetPurgeDelay

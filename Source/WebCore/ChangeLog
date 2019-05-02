@@ -1,3 +1,14 @@
+2019-05-02  Timothy Hatcher  <timothy@apple.com>
+
+        NSAttributedString conversion in a loop returns nil and WKUnknownError every other time.
+        https://bugs.webkit.org/show_bug.cgi?id=197523
+
+        Reviewed by Darin Adler.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::convert): Don't return early if m_dataSource is nil. This is already null
+        checked later and only needed in specific cases, it shouldn't fail the whole conversion.
+
 2019-05-02  Chris Dumez  <cdumez@apple.com>
 
         Setting a frame's src to a javascript URL should not run it synchronously

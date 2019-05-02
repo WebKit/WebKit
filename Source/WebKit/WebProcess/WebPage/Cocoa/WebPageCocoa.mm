@@ -205,10 +205,8 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&& completionHandler)
 {
-    Frame& frame = m_page->mainFrame();
-
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame.document()->documentElement(), 0, INT_MAX);
-    if (!range) {
+    auto* documentElement = m_page->mainFrame().document()->documentElement();
+    if (!documentElement) {
         completionHandler({ });
         return;
     }
@@ -216,7 +214,7 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
     NSDictionary* documentAttributes = nil;
 
     AttributedString result;
-    result.string = attributedStringFromRange(*range, &documentAttributes);
+    result.string = attributedStringFromRange(rangeOfContents(*documentElement), &documentAttributes);
     result.documentAttributes = documentAttributes;
 
     completionHandler({ result });

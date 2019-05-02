@@ -407,8 +407,6 @@ NSAttributedString *HTMLConverter::convert(NSDictionary** documentAttributes)
     ASSERT(commonAncestorContainer);
 
     m_dataSource = commonAncestorContainer->document().frame()->loader().documentLoader();
-    if (!m_dataSource)
-        return nil;
 
     Document& document = commonAncestorContainer->document();
     if (auto* body = document.bodyOrFrameset()) {
