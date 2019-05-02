@@ -50,14 +50,12 @@ constexpr CGFloat maxWidth = 675;
 #endif
 
 #if PLATFORM(MAC)
-using ColorType = NSColor;
 using FontType = NSFont;
 using TextViewType = NSTextView;
 using ButtonType = NSButton;
 using AlignmentType = NSLayoutAttribute;
 using SizeType = NSSize;
 #else
-using ColorType = UIColor;
 using FontType = UIFont;
 using TextViewType = UITextView;
 using ButtonType = UIButton;
@@ -200,6 +198,13 @@ static ColorType *colorForItem(WarningItem item, ViewType *warning)
     [exclamationPoint fill];
 }
 
+#if PLATFORM(MAC)
+- (void)viewDidChangeEffectiveAppearance
+{
+    [self setNeedsDisplay:YES];
+}
+#endif
+
 - (NSSize)intrinsicContentSize
 {
     return { exclamationPointSize, exclamationPointSize };
@@ -254,15 +259,26 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
 #endif
 }
 
-static void setBackground(ViewType *view, ColorType *color)
+@implementation WKSafeBrowsingBox
+
+- (void)setSafeBrowsingBackgroundColor:(ColorType *)color
 {
 #if PLATFORM(MAC)
-    view.wantsLayer = YES;
-    view.layer.backgroundColor = color.CGColor;
+    _backgroundColor = color;
+    self.wantsLayer = YES;
 #else
-    view.backgroundColor = color;
+    self.backgroundColor = color;
 #endif
 }
+
+#if PLATFORM(MAC)
+- (void)updateLayer
+{
+    self.layer.backgroundColor = [_backgroundColor CGColor];
+}
+#endif
+
+@end
 
 @interface WKSafeBrowsingTextView : TextViewType {
 @package
@@ -287,9 +303,11 @@ static void setBackground(ViewType *view, ColorType *color)
         completionHandler(WTFMove(result));
     };
     _warning = makeRef(warning);
-    setBackground(self, colorForItem(WarningItem::Background, self));
 #if PLATFORM(MAC)
+    [self setSafeBrowsingBackgroundColor:colorForItem(WarningItem::Background, self)];
     [self addContent];
+#else
+    [self setBackgroundColor:colorForItem(WarningItem::Background, self)];
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -317,9 +335,9 @@ static void setBackground(ViewType *view, ColorType *color)
     }] autorelease]);
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
-    auto box = [[ViewType new] autorelease];
+    auto box = [[WKSafeBrowsingBox new] autorelease];
     _box = box;
-    setBackground(box, colorForItem(WarningItem::BoxBackground, self));
+    [box setSafeBrowsingBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
     box.layer.cornerRadius = boxCornerRadius;
 
     for (ViewType *view in @[exclamationPoint, title, warning, goBack, showDetails]) {
@@ -392,7 +410,7 @@ static void setBackground(ViewType *view, ColorType *color)
 
 - (void)showDetailsClicked
 {
-    ViewType *box = _box.get().get();
+    WKSafeBrowsingBox *box = _box.get().get();
     ButtonType *showDetails = box.subviews.lastObject;
     [showDetails removeFromSuperview];
 
@@ -400,8 +418,8 @@ static void setBackground(ViewType *view, ColorType *color)
     [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body) } range:NSMakeRange(0, text.length)];
     WKSafeBrowsingTextView *details = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:text forWarning:self] autorelease];
     _details = details;
-    ViewType *bottom = [[ViewType new] autorelease];
-    setBackground(bottom, colorForItem(WarningItem::BoxBackground, self));
+    WKSafeBrowsingBox *bottom = [[WKSafeBrowsingBox new] autorelease];
+    [bottom setSafeBrowsingBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
     bottom.layer.cornerRadius = boxCornerRadius;
 
 #if HAVE(SAFE_BROWSING)
@@ -416,8 +434,8 @@ static void setBackground(ViewType *view, ColorType *color)
 #endif
 #endif
 
-    ViewType *line = [[ViewType new] autorelease];
-    setBackground(line, [ColorType lightGrayColor]);
+    WKSafeBrowsingBox *line = [[WKSafeBrowsingBox new] autorelease];
+    [line setSafeBrowsingBackgroundColor:[ColorType lightGrayColor]];
     for (ViewType *view in @[details, bottom, line])
         view.translatesAutoresizingMaskIntoConstraints = NO;
 

@@ -45,10 +45,25 @@ OBJC_CLASS WKSafeBrowsingTextView;
 #if PLATFORM(MAC)
 using ViewType = NSView;
 using RectType = NSRect;
-@interface WKSafeBrowsingWarning : NSView<NSTextViewDelegate>
+using ColorType = NSColor;
 #else
 using ViewType = UIView;
 using RectType = CGRect;
+using ColorType = UIColor;
+#endif
+
+@interface WKSafeBrowsingBox : ViewType {
+@package
+#if PLATFORM(MAC)
+    RetainPtr<ColorType> _backgroundColor;
+#endif
+}
+- (void)setSafeBrowsingBackgroundColor:(ColorType *)color;
+@end
+
+#if PLATFORM(MAC)
+@interface WKSafeBrowsingWarning : WKSafeBrowsingBox<NSTextViewDelegate>
+#else
 @interface WKSafeBrowsingWarning : UIScrollView<UITextViewDelegate>
 #endif
 {
@@ -56,7 +71,7 @@ using RectType = CGRect;
     CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
     WeakObjCPtr<WKSafeBrowsingTextView> _details;
-    WeakObjCPtr<ViewType> _box;
+    WeakObjCPtr<WKSafeBrowsingBox> _box;
 #if PLATFORM(WATCHOS)
     WeakObjCPtr<UIResponder> _previousFirstResponder;
 #endif

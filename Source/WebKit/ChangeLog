@@ -1,3 +1,26 @@
+2019-05-02  Alex Christensen  <achristensen@webkit.org>
+
+        Safe browsing warning should update colors when a user switches between light and dark appearance
+        https://bugs.webkit.org/show_bug.cgi?id=197443
+        <rdar://problem/49883917>
+
+        Reviewed by Tim Horton.
+
+        We draw the WKSafeBrowsingExclamationPoint ourselves, so we need to call setNeedsDisplay when viewDidChangeEffectiveAppearance is called.
+        Instead of setting NSView.layer.backgroundColor we need to make an NSView subclass I call WKSafeBrowsingBox and we need to set its layer's
+        backgroundColor in updateLayer, otherwise the CGColor isn't updated from the NSColor.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (colorForItem):
+        (-[WKSafeBrowsingExclamationPoint viewDidChangeEffectiveAppearance]):
+        (-[WKSafeBrowsingBox setSafeBrowsingBackgroundColor:]):
+        (-[WKSafeBrowsingBox updateLayer]):
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingWarning:completionHandler:]):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (setBackground): Deleted.
+
 2019-05-02  Frederic Wang  <fwang@igalia.com>
 
         [GTK][WPE] Disable "thin", "thick", "medium" values of mfrac@linethickness at runtime
