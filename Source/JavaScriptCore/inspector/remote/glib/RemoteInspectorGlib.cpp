@@ -240,28 +240,6 @@ void RemoteInspector::pushListingsSoon()
     });
 }
 
-void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget* target)
-{
-    LockHolder lock(m_mutex);
-
-    ASSERT(target);
-    auto targetIdentifier = target->targetIdentifier();
-    if (!targetIdentifier)
-        return;
-
-    auto result = m_targetMap.set(targetIdentifier, target);
-    ASSERT_UNUSED(result, !result.isNewEntry);
-
-    // If the target has just allowed remote control, then the listing won't exist yet.
-    // If the target has no identifier remove the old listing.
-    if (auto targetListing = listingForTarget(*target))
-        m_targetListingMap.set(targetIdentifier, targetListing);
-    else
-        m_targetListingMap.remove(targetIdentifier);
-    // FIXME: Implement automatic inspection.
-    pushListingsSoon();
-}
-
 void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 {
     ASSERT(m_enabled);

@@ -1,3 +1,27 @@
+2019-05-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        RemoteInspector::updateAutomaticInspectionCandidate should have a default implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=197439
+
+        Reviewed by Devin Rousso.
+
+        On non-Cocoa platforms, automatic inspection is not currently implemented,
+        so updateAutomaticInspectionCandidate falls back to the logic of updateTarget.
+        This logic already existed in three places, so refactor it into a common private method
+        and allow our websocket-based RWI implementation to make use of it too.
+
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateTargetMap):
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate): Deleted.
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate): Deleted.
+
 2019-05-01  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support

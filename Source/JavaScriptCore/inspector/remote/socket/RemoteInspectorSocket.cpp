@@ -184,10 +184,6 @@ void RemoteInspector::pushListingsSoon()
     });
 }
 
-void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*)
-{
-}
-
 void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 {
 }

@@ -104,14 +104,22 @@ void RemoteInspector::updateTarget(RemoteControllableTarget* target)
 
     LockHolder lock(m_mutex);
 
-    auto targetIdentifier = target->targetIdentifier();
-    if (!targetIdentifier)
+    if (!updateTargetMap(target))
         return;
 
-    {
-        auto result = m_targetMap.set(targetIdentifier, target);
-        ASSERT_UNUSED(result, !result.isNewEntry);
-    }
+    pushListingsSoon();
+}
+
+bool RemoteInspector::updateTargetMap(RemoteControllableTarget* target)
+{
+    ASSERT(m_mutex.isLocked());
+
+    auto targetIdentifier = target->targetIdentifier();
+    if (!targetIdentifier)
+        return false;
+
+    auto result = m_targetMap.set(targetIdentifier, target);
+    ASSERT_UNUSED(result, !result.isNewEntry);
 
     // If the target has just allowed remote control, then the listing won't exist yet.
     // If the target has no identifier remove the old listing.
@@ -120,8 +128,16 @@ void RemoteInspector::updateTarget(RemoteControllableTarget* target)
     else
         m_targetListingMap.remove(targetIdentifier);
 
-    pushListingsSoon();
+    return true;
 }
+
+#if !PLATFORM(COCOA)
+void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget* target)
+{
+    // FIXME: Implement automatic inspection.
+    updateTarget(target);
+}
+#endif
 
 void RemoteInspector::updateClientCapabilities()
 {

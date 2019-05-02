@@ -180,6 +180,8 @@ private:
     TargetListing listingForInspectionTarget(const RemoteInspectionTarget&) const;
     TargetListing listingForAutomationTarget(const RemoteAutomationTarget&) const;
 
+    bool updateTargetMap(RemoteControllableTarget*);
+
     void pushListingsNow();
     void pushListingsSoon();
 

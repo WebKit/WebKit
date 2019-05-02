@@ -122,25 +122,16 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     {
         LockHolder lock(m_mutex);
 
-        auto targetIdentifier = target->targetIdentifier();
-        if (!targetIdentifier)
+        if (!updateTargetMap(target))
             return;
-
-        auto result = m_targetMap.set(targetIdentifier, target);
-        ASSERT_UNUSED(result, !result.isNewEntry);
-
-        // If the target has just allowed remote control, then the listing won't exist yet.
-        // If the target has no identifier remove the old listing.
-        if (RetainPtr<NSDictionary> targetListing = listingForTarget(*target))
-            m_targetListingMap.set(targetIdentifier, targetListing);
-        else
-            m_targetListingMap.remove(targetIdentifier);
 
         // Don't allow automatic inspection unless it is allowed or we are stopped.
         if (!m_automaticInspectionEnabled || !m_enabled) {
             pushListingsSoon();
             return;
         }
+
+        auto targetIdentifier = target->targetIdentifier();
 
         // FIXME: We should handle multiple debuggables trying to pause at the same time on different threads.
         // To make this work we will need to change m_automaticInspectionCandidateTargetIdentifier to be a per-thread value.
