@@ -824,6 +824,10 @@ editableImagesEnabled:
 adClickAttributionEnabled:
   initial: false
 
+coreMathMLEnabled:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
 blockingOfSmallPluginsEnabled:
   initial: true
 

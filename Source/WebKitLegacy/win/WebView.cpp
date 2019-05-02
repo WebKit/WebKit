@@ -5601,6 +5601,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setResizeObserverEnabled(!!enabled);
 
+    hr = prefsPrivate->coreMathMLEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setCoreMathMLEnabled(!!enabled);
+
     return S_OK;
 }
 

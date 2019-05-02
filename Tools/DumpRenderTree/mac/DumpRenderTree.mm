@@ -1019,6 +1019,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.CSSLogicalEnabled = options.enableCSSLogical;
     preferences.adClickAttributionEnabled = options.adClickAttributionEnabled;
     preferences.resizeObserverEnabled = options.enableResizeObserver;
+    preferences.coreMathMLEnabled = options.enableCoreMathML;
 }
 
 // Called once on DumpRenderTree startup.

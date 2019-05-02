@@ -268,3 +268,5 @@
 #define WebKitAdClickAttributionEnabledPreferenceKey @"WebKitAdClickAttributionEnabled"
 #define WebKitReferrerPolicyAttributeEnabledPreferenceKey @"WebKitReferrerPolicyAttributeEnabled"
 #define WebKitResizeObserverEnabledPreferenceKey @"WebKitResizeObserverEnabled"
+#define WebKitCoreMathMLEnabledPreferenceKey @"WebKitCoreMathMLEnabled"
+

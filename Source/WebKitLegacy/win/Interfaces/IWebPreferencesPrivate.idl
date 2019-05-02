@@ -240,4 +240,6 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setCrossOriginWindowPolicySupportEnabled([in] BOOL enabled);
     HRESULT resizeObserverEnabled([out, retval] BOOL*);
     HRESULT setResizeObserverEnabled([in] BOOL enabled);
+    HRESULT coreMathMLEnabled([out, retval] BOOL* enabled);
+    HRESULT setCoreMathMLEnabled([in] BOOL enabled);
 }

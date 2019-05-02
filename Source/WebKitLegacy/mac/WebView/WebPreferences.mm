@@ -691,6 +691,7 @@ public:
 #if ENABLE(RESIZE_OBSERVER)
         @NO, WebKitResizeObserverEnabledPreferenceKey,
 #endif
+        @NO, WebKitCoreMathMLEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3456,6 +3457,17 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:flag forKey:WebKitResizeObserverEnabledPreferenceKey];
 }
+
+- (BOOL)coreMathMLEnabled
+{
+    return [self _boolValueForKey:WebKitCoreMathMLEnabledPreferenceKey];
+}
+
+- (void)setCoreMathMLEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCoreMathMLEnabledPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

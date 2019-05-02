@@ -603,6 +603,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setReferrerPolicyAttributeEnabled:(BOOL)flag;
 - (BOOL)referrerPolicyAttributeEnabled;
 
+- (void)setCoreMathMLEnabled:(BOOL)flag;
+- (BOOL)coreMathMLEnabled;
+
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
@@ -635,6 +638,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL sourceBufferChangeTypeEnabled;
 @property (nonatomic) BOOL referrerPolicyAttributeEnabled;
 @property (nonatomic) BOOL resizeObserverEnabled;
+@property (nonatomic) BOOL coreMathMLEnabled;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL quickLookDocumentSavingEnabled;

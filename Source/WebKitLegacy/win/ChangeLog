@@ -1,3 +1,26 @@
+2019-05-02  Frederic Wang  <fwang@igalia.com>
+
+        [GTK][WPE] Disable "thin", "thick", "medium" values of mfrac@linethickness at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=196142
+
+        This patch introduces some experimental runtime flag to let users
+        disable MathML features that are removed from MathML Core [1]. For now,
+        these features are only disabled on GTK and WPE ports.
+
+        [1] https://mathml-refresh.github.io/mathml-core/
+
+        Reviewed by Rob Buis.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::coreMathMLEnabled):
+        (WebPreferences::setCoreMathMLEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2019-04-24  Zalan Bujtas  <zalan@apple.com>
 
         Regression (r244291): Broken API Test AutoLayoutRenderingProgressRelativeOrdering

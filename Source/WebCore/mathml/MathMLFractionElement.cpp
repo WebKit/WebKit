@@ -30,6 +30,7 @@
 #if ENABLE(MATHML)
 
 #include "RenderMathMLFraction.h"
+#include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -53,10 +54,15 @@ const MathMLElement::Length& MathMLFractionElement::lineThickness()
     if (m_lineThickness)
         return m_lineThickness.value();
 
+    auto& thickness = attributeWithoutSynchronization(linethicknessAttr);
+    if (document().settings().coreMathMLEnabled()) {
+        m_lineThickness = parseMathMLLength(thickness);
+        return m_lineThickness.value();
+    }
+
     // The MathML3 recommendation states that "medium" is the default thickness.
     // However, it only states that "thin" and "thick" are respectively thiner and thicker.
     // The MathML in HTML5 implementation note suggests 50% and 200% and these values are also used in Gecko.
-    auto& thickness = attributeWithoutSynchronization(linethicknessAttr);
     m_lineThickness = Length();
     if (equalLettersIgnoringASCIICase(thickness, "thin")) {
         m_lineThickness.value().type = LengthType::UnitLess;

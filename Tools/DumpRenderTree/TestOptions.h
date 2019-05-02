@@ -47,6 +47,7 @@ struct TestOptions {
     bool enableCSSLogical { false };
     bool adClickAttributionEnabled { false };
     bool enableResizeObserver { false };
+    bool enableCoreMathML { false };
     std::string jscOptions;
 
     TestOptions(const std::string& pathOrURL, const std::string& absolutePath);

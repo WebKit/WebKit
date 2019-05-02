@@ -3214,6 +3214,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAnimatedImageAsyncDecodingEnabled([preferences animatedImageAsyncDecodingEnabled]);
     settings.setMediaCapabilitiesEnabled([preferences mediaCapabilitiesEnabled]);
 
+    settings.setCoreMathMLEnabled([preferences coreMathMLEnabled]);
+
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
 
     settings.setSelectionAcrossShadowBoundariesEnabled(preferences.selectionAcrossShadowBoundariesEnabled);

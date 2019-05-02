@@ -1650,6 +1650,13 @@ PageAtRuleSupportEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+CoreMathMLEnabled:
+  type: bool
+  defaultValue: DEFAULT_CORE_MATHML_ENABLED
+  humanReadableName: "MathML Core"
+  humanReadableDescription: "Disable features removed from the MathML Core spec."
+  category: experimental
+
 ApplePayRemoteUIEnabled:
   category: internal
   condition: ENABLE(APPLE_PAY_REMOTE_UI)

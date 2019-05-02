@@ -1,3 +1,24 @@
+2019-05-02  Frederic Wang  <fwang@igalia.com>
+
+        [GTK][WPE] Disable "thin", "thick", "medium" values of mfrac@linethickness at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=196142
+
+        This patch introduces some experimental runtime flag to let users
+        disable MathML features that are removed from MathML Core [1]. For now,
+        these features are only disabled on GTK and WPE ports. This patch also
+        adds a condition to disable "thin", "thick", "medium" values of
+        mfrac@linethickness at runtime as agreed in [2].
+
+        [1] https://mathml-refresh.github.io/mathml-core/
+        [2] https://github.com/mathml-refresh/mathml/issues/4
+
+        Reviewed by Rob Buis.
+
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001.html:
+        Explicitly enable deprecated features in this test. It should be moved
+        back to WebKit's test suite if/when it is updated in the upstream WPT
+        repository so also add a reminder for the next synchronization.
+
 2019-05-01  Darin Adler  <darin@apple.com>
 
         WebKit has too much of its own UTF-8 code and should rely more on ICU's UTF-8 support
