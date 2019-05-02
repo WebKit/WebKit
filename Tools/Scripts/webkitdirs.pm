@@ -2179,6 +2179,8 @@ sub generateBuildSystemFromCMakeProject
 
     push @args, "-DENABLE_SANITIZERS=address" if asanIsEnabled();
 
+    push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
+
     push @args, '-DCMAKE_TOOLCHAIN_FILE=Platform/PlayStation' if isPlayStation();
 
     if ($willUseNinja) {

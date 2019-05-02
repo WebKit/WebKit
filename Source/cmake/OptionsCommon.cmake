@@ -59,9 +59,22 @@ if (WTF_CPU_ARM)
     endif ()
 endif ()
 
+# Use ld.lld when building with LTO
+CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
+                       "LTO_MODE;NOT USE_LD_GOLD;NOT WIN32" OFF)
+if (USE_LD_LLD)
+    execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
+    if ("${LD_VERSION}" MATCHES "LLD")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld -Wl,--disable-new-dtags")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld -Wl,--disable-new-dtags")
+    else ()
+        set(USE_LD_LLD OFF)
+    endif ()
+endif ()
+
 # Use ld.gold if it is available and isn't disabled explicitly
 CMAKE_DEPENDENT_OPTION(USE_LD_GOLD "Use GNU gold linker" ON
-                       "NOT CXX_ACCEPTS_MFIX_CORTEX_A53_835769;NOT ARM_TRADITIONAL_DETECTED;NOT WIN32;NOT APPLE" OFF)
+                       "NOT CXX_ACCEPTS_MFIX_CORTEX_A53_835769;NOT ARM_TRADITIONAL_DETECTED;NOT WIN32;NOT APPLE;NOT USE_LD_LLD" OFF)
 if (USE_LD_GOLD)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
     if ("${LD_VERSION}" MATCHES "GNU gold")

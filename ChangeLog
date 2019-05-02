@@ -1,3 +1,16 @@
+2019-05-02  Christopher Reid  <chris.reid@sony.com>
+
+        [CMake] Add support for LTO builds
+        https://bugs.webkit.org/show_bug.cgi?id=188986
+
+        Reviewed by Don Olmstead.
+
+        Add LTO_MODE cmake variable to enable flto in clang builds.
+        Add support to use ld.lld to build with LTO.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2019-05-02  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Refactor WEBKIT_MAKE_FORWARDING_HEADERS into WEBKIT_COPY_FILES

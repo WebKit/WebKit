@@ -1,3 +1,16 @@
+2019-05-02  Christopher Reid  <chris.reid@sony.com>
+
+        [CMake] Add support for LTO builds
+        https://bugs.webkit.org/show_bug.cgi?id=188986
+
+        Reviewed by Don Olmstead.
+
+        Add support to configure --lto-mode with cmake builds.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2019-05-02  John Wilander  <wilander@apple.com>
 
         Make both filterForRegistrableDomains() in WebKit::NetworkProcess use WebCore::RegistrableDomain::uncheckedCreateFromHost()

@@ -166,6 +166,14 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND NOT "${LOWERCASE_CMAKE_HOST_SY
     set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-Wl,--no-keep-memory ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
 endif ()
 
+if (LTO_MODE AND COMPILER_IS_CLANG)
+    set(CMAKE_C_FLAGS "-flto=${LTO_MODE} ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-flto=${LTO_MODE} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_EXE_LINKER_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_SHARED_LINKER_FLAGS}")
+    set(CMAKE_MODULE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_MODULE_LINKER_FLAGS}")
+endif ()
+
 if (COMPILER_IS_GCC_OR_CLANG)
     # Careful: this needs to be above where ENABLED_COMPILER_SANITIZERS is set.
     # Also, it's not possible to use the normal prepend/append macros for

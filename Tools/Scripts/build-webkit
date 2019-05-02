@@ -114,7 +114,7 @@ Usage: $programName [options] [options to pass to build system]
   --simulator                       DEPRECATED alias of --ios-simulator
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (iOS and Mac only)
-  --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (Xcode only)
+  --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
 
   --gtk                             Build the GTK+ port
   --wpe                             Build the WPE port
