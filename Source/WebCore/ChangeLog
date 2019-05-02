@@ -1,3 +1,16 @@
+2019-05-02  Gary Katsevman  <git@gkatsev.com>
+
+        WebVTT: fix vertical cue alignment.
+        https://bugs.webkit.org/show_bug.cgi?id=136627.
+        <rdar://problem/49725538>
+
+        Reviewed by Eric Carlson.
+
+        Updated existing test results.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+
 2019-05-02  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Refactor WEBKIT_MAKE_FORWARDING_HEADERS into WEBKIT_COPY_FILES

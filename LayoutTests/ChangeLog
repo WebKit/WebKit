@@ -1,3 +1,16 @@
+2019-05-02  Gary Katsevman  <git@gkatsev.com>
+
+        WebVTT: vertical cue text alignment is the wrong way around
+        https://bugs.webkit.org/show_bug.cgi?id=136627
+        <rdar://problem/49725538>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/mac/TestExpectations: Unskipped test.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.png: Removed.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.txt:
+
 2019-05-02  Truitt Savell  <tsavell@apple.com>
 
         [ Sierra Release WK2 ] Layout Test fast/workers/worker-cloneport.html is flaky

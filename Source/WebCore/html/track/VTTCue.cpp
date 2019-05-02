@@ -178,7 +178,10 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyTop, position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
 
     // the 'left' property must be set to left
-    setInlineStyleProperty(CSSPropertyLeft, position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (cue->vertical() == horizontalKeyword())
+        setInlineStyleProperty(CSSPropertyLeft, position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
+    else if (cue->vertical() == verticalGrowingRightKeyword())
+        setInlineStyleProperty(CSSPropertyLeft, makeString("calc(-", FormattedNumber::fixedWidth(videoSize.width(), 2), "px - ", FormattedNumber::fixedWidth(cue->getCSSSize(), 2), "px)"));
 
     double authorFontSize = std::min(videoSize.width(), videoSize.height()) * DEFAULTCAPTIONFONTSIZEPERCENTAGE / 100.0;
     double multiplier = 1.0;
