@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class Document;
+class HTMLElement;
 
 class Quirks {
     WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;
@@ -47,6 +48,7 @@ public:
     bool hasWebSQLSupportQuirk() const;
     bool shouldDispatchSimulatedMouseEvents() const;
     bool shouldDisablePointerEventsQuirk() const;
+    bool needsInputModeNoneImplicitly(const HTMLElement&) const;
 
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;

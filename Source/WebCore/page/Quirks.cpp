@@ -265,4 +265,26 @@ bool Quirks::shouldDisablePointerEventsQuirk() const
     return false;
 }
 
+// FIXME(<rdar://problem/50394969>): Remove after desmos.com adopts inputmode="none".
+bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!element.hasTagName(HTMLNames::textareaTag))
+        return false;
+
+    auto& url = m_document->url();
+    auto host = url.host();
+    if (!host.endsWithIgnoringASCIICase(".desmos.com"))
+        return false;
+
+    return element.parentElement() && element.parentElement()->classNames().contains("dcg-mq-textarea");
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
+}
+
 }
