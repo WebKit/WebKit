@@ -544,7 +544,7 @@ class SimulatedDevice(object):
 
         # Either shutdown is successful, or the device was already shutdown when we attempted to shut it down.
         exit_code = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'shutdown', self.udid], return_exit_code=True)
-        if exit_code != 0 and exit_code != 164:
+        if exit_code != 0 and self.state() != SimulatedDevice.DeviceState.SHUT_DOWN:
             raise RuntimeError('Failed to shutdown {} with exit code {}'.format(self.udid, exit_code))
 
         while self.state(force_update=True) != SimulatedDevice.DeviceState.SHUT_DOWN:

@@ -1,3 +1,14 @@
+2019-05-02  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Ignore errors when shutting down an already shutdown simulator
+        <https://bugs.webkit.org/show_bug.cgi?id=197514>
+        <rdar://problem/50390247>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice._shut_down):
+
 2019-05-02  Frederic Wang  <fwang@igalia.com>
 
         [GTK][WPE] Disable "thin", "thick", "medium" values of mfrac@linethickness at runtime
