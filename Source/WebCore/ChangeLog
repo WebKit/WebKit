@@ -1,3 +1,20 @@
+2019-05-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Adopt SecurityOrigin::isMatchingRegistrableDomainSuffix()
+        https://bugs.webkit.org/show_bug.cgi?id=197481
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements Step 6-7 from:
+        https://www.w3.org/TR/webauthn/#createCredential,
+        https://www.w3.org/TR/webauthn/#discover-from-external-source.
+
+        Test: http/wpt/webauthn/public-key-credential-ip-address.html
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+
 2019-05-01  Youenn Fablet  <youenn@apple.com>
 
         Add back hasNullReferences() assert in Document::updateIsPlayingMedia

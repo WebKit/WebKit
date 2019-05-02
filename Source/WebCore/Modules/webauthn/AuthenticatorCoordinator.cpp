@@ -126,16 +126,21 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
         return;
     }
 
-    // Step 5-7.
-    // FIXME(181950): We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
-    // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
-    // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
-    if (!options.rp.id.isEmpty() && callerOrigin.host() != options.rp.id) {
-        promise.reject(Exception { SecurityError, "The origin of the document is not a registrable domain suffix of the provided RP ID."_s });
+    // Step 5. Skipped since SecurityOrigin doesn't have the concept of "opaque origin".
+    // Step 6. The effective domain may be represented in various manners, such as a domain or an ip address.
+    // Only the domain format of host is permitted in WebAuthN.
+    if (URL::hostIsIPAddress(callerOrigin.domain())) {
+        promise.reject(Exception { SecurityError, "The effective domain of the document is not a valid domain."_s });
+        return;
+    }
+
+    // Step 7.
+    if (!options.rp.id.isEmpty() && !callerOrigin.isMatchingRegistrableDomainSuffix(options.rp.id)) {
+        promise.reject(Exception { SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
         return;
     }
     if (options.rp.id.isEmpty())
-        options.rp.id = callerOrigin.host();
+        options.rp.id = callerOrigin.domain();
 
     // Step 8-10.
     // Most of the jobs are done by bindings. However, we can't know if the JSValue of options.pubKeyCredParams
@@ -188,16 +193,21 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
         return;
     }
 
-    // Step 5-7.
-    // FIXME(181950): We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
-    // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
-    // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
-    if (!options.rpId.isEmpty() && callerOrigin.host() != options.rpId) {
-        promise.reject(Exception { SecurityError, "The origin of the document is not a registrable domain suffix of the provided RP ID."_s });
+    // Step 5. Skipped since SecurityOrigin doesn't have the concept of "opaque origin".
+    // Step 6. The effective domain may be represented in various manners, such as a domain or an ip address.
+    // Only the domain format of host is permitted in WebAuthN.
+    if (URL::hostIsIPAddress(callerOrigin.domain())) {
+        promise.reject(Exception { SecurityError, "The effective domain of the document is not a valid domain."_s });
+        return;
+    }
+
+    // Step 7.
+    if (!options.rpId.isEmpty() && !callerOrigin.isMatchingRegistrableDomainSuffix(options.rpId)) {
+        promise.reject(Exception { SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
         return;
     }
     if (options.rpId.isEmpty())
-        options.rpId = callerOrigin.host();
+        options.rpId = callerOrigin.domain();
 
     // Step 8-9.
     // Only FIDO AppID Extension is supported.
