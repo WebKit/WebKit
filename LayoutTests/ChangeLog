@@ -1,3 +1,9 @@
+2019-05-02  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r244868.
+
+        * platform/gtk/TestExpectations:
+
 2019-05-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Win10] Some tests are failing only on specific machines
