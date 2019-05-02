@@ -1,3 +1,25 @@
+2019-05-01  Youenn Fablet  <youenn@apple.com>
+
+        Add back hasNullReferences() assert in Document::updateIsPlayingMedia
+        https://bugs.webkit.org/show_bug.cgi?id=197477
+
+        Reviewed by Eric Carlson.
+
+        AudioContext had a special scriptExecutionContext() getter
+        that was returning nullptr when AudioContext is stopped.
+        Instead, make this getter behave as all other scriptExecutionContext() getters
+        and make sure existing call sites of the getter are fine with the change.
+
+        Covered by existing tests.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        No need to check whether offline since this constructor is for non offline AudioContext.
+        (WebCore::AudioContext::scriptExecutionContext const):
+        (WebCore::AudioContext::fireCompletionEvent):
+        * dom/Document.cpp:
+        (WebCore::Document::updateIsPlayingMedia):
+
 2019-05-01  Justin Fan  <justin_fan@apple.com>
 
         Update WebGPU class names based on sketch.idl

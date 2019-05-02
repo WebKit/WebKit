@@ -148,10 +148,8 @@ AudioContext::AudioContext(Document& document)
     // Initialize the destination node's muted state to match the page's current muted state.
     pageMutedStateDidChange();
 
-    if (!isOfflineContext()) {
-        document.addAudioProducer(*this);
-        document.registerForVisibilityStateChangedCallbacks(*this);
-    }
+    document.addAudioProducer(*this);
+    document.registerForVisibilityStateChangedCallbacks(*this);
 }
 
 // Constructor for offline (non-realtime) rendering.
@@ -1067,7 +1065,7 @@ void AudioContext::processAutomaticPullNodes(size_t framesToProcess)
 
 ScriptExecutionContext* AudioContext::scriptExecutionContext() const
 {
-    return m_isStopScheduled ? 0 : ActiveDOMObject::scriptExecutionContext();
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 void AudioContext::nodeWillBeginPlayback()
@@ -1186,7 +1184,7 @@ void AudioContext::fireCompletionEvent()
         return;
 
     // Avoid firing the event if the document has already gone away.
-    if (scriptExecutionContext()) {
+    if (!m_isStopScheduled) {
         // Call the offline rendering completion event listener.
         m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
     }

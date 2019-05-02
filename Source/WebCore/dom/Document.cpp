@@ -3925,6 +3925,7 @@ void Document::noteUserInteractionWithMediaElement()
 
 void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 {
+    ASSERT(!m_audioProducers.hasNullReferences());
     MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
     for (auto& audioProducer : m_audioProducers)
         state |= audioProducer.mediaState();
