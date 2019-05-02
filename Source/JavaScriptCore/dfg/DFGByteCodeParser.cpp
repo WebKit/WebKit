@@ -1608,22 +1608,69 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
         calleeVariable->mergeShouldNeverUnbox(true);
     }
 
+    InlineStackEntry* callerStackTop = m_inlineStackTop;
+    InlineStackEntry inlineStackEntry(this, codeBlock, codeBlock, callee.function(), result,
+        (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind, continuationBlock);
+
+    // This is where the actual inlining really happens.
+    unsigned oldIndex = m_currentIndex;
+    m_currentIndex = 0;
+
+    switch (kind) {
+    case InlineCallFrame::GetterCall:
+    case InlineCallFrame::SetterCall: {
+        // When inlining getter and setter calls, we setup a stack frame which does not appear in the bytecode.
+        // Because Inlining can switch on executable, we could have a graph like this.
+        //
+        // BB#0
+        //     ...
+        //     30: GetSetter
+        //     31: MovHint(loc10)
+        //     32: SetLocal(loc10)
+        //     33: MovHint(loc9)
+        //     34: SetLocal(loc9)
+        //     ...
+        //     37: GetExecutable(@30)
+        //     ...
+        //     41: Switch(@37)
+        //
+        // BB#2
+        //     42: GetLocal(loc12, bc#7 of caller)
+        //     ...
+        //     --> callee: loc9 and loc10 are arguments of callee.
+        //       ...
+        //       <HERE, exit to callee, loc9 and loc10 are required in the bytecode>
+        //
+        // When we prune OSR availability at the beginning of BB#2 (bc#7 in the caller), we prune loc9 and loc10's liveness because the caller does not actually have loc9 and loc10.
+        // However, when we begin executing the callee, we need OSR exit to be aware of where it can recover the arguments to the setter, loc9 and loc10. The MovHints in the inlined
+        // callee make it so that if we exit at <HERE>, we can recover loc9 and loc10.
+        for (int index = 0; index < argumentCountIncludingThis; ++index) {
+            VirtualRegister argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgument(index, registerOffset));
+            addToGraph(MovHint, OpInfo(argumentToGet.offset()), getDirect(argumentToGet));
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
     if (arityFixupCount) {
         // Note: we do arity fixup in two phases:
         // 1. We get all the values we need and MovHint them to the expected locals.
-        // 2. We SetLocal them inside the callee's CodeOrigin. This way, if we exit, the callee's
+        // 2. We SetLocal them after that. This way, if we exit, the callee's
         //    frame is already set up. If any SetLocal exits, we have a valid exit state.
         //    This is required because if we didn't do this in two phases, we may exit in
-        //    the middle of arity fixup from the caller's CodeOrigin. This is unsound because if
-        //    we did the SetLocals in the caller's frame, the memcpy may clobber needed parts
-        //    of the frame right before exiting. For example, consider if we need to pad two args:
+        //    the middle of arity fixup from the callee's CodeOrigin. This is unsound because exited
+        //    code does not have arity fixup so that remaining necessary fixups are not executed.
+        //    For example, consider if we need to pad two args:
         //    [arg3][arg2][arg1][arg0]
         //    [fix ][fix ][arg3][arg2][arg1][arg0]
         //    We memcpy starting from arg0 in the direction of arg3. If we were to exit at a type check
-        //    for arg3's SetLocal in the caller's CodeOrigin, we'd exit with a frame like so:
+        //    for arg3's SetLocal in the callee's CodeOrigin, we'd exit with a frame like so:
         //    [arg3][arg2][arg1][arg2][arg1][arg0]
-        //    And the caller would then just end up thinking its argument are:
-        //    [arg3][arg2][arg1][arg2]
+        //    Since we do not perform arity fixup in the callee, this is the frame used by the callee.
+        //    And the callee would then just end up thinking its argument are:
+        //    [fix ][fix ][arg3][arg2][arg1][arg0]
         //    which is incorrect.
 
         Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
@@ -1642,28 +1689,22 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
         // In such cases, we do not need to move frames.
         if (registerOffsetAfterFixup != registerOffset) {
             for (int index = 0; index < argumentCountIncludingThis; ++index) {
-                Node* value = get(virtualRegisterForArgument(index, registerOffset));
-                VirtualRegister argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgument(index, registerOffsetAfterFixup));
+                VirtualRegister argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgument(index, registerOffset));
+                Node* value = getDirect(argumentToGet);
+                VirtualRegister argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgument(index));
                 addToGraph(MovHint, OpInfo(argumentToSet.offset()), value);
                 m_setLocalQueue.append(DelayedSetLocal { currentCodeOrigin(), argumentToSet, value, ImmediateNakedSet });
             }
         }
         for (int index = 0; index < arityFixupCount; ++index) {
-            VirtualRegister argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgument(argumentCountIncludingThis + index, registerOffsetAfterFixup));
+            VirtualRegister argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgument(argumentCountIncludingThis + index));
             addToGraph(MovHint, OpInfo(argumentToSet.offset()), undefined);
             m_setLocalQueue.append(DelayedSetLocal { currentCodeOrigin(), argumentToSet, undefined, ImmediateNakedSet });
         }
 
         // At this point, it's OK to OSR exit because we finished setting up
-        // our callee's frame. We emit an ExitOK below from the callee's CodeOrigin.
+        // our callee's frame. We emit an ExitOK below.
     }
-
-    InlineStackEntry inlineStackEntry(this, codeBlock, codeBlock, callee.function(), result,
-        (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind, continuationBlock);
-
-    // This is where the actual inlining really happens.
-    unsigned oldIndex = m_currentIndex;
-    m_currentIndex = 0;
 
     // At this point, it's again OK to OSR exit.
     m_exitOK = true;
@@ -4371,8 +4412,7 @@ void ByteCodeParser::handleGetById(
     //    the dreaded arguments object on the getter, the right things happen. Well, sort of -
     //    since we only really care about 'this' in this case. But we're not going to take that
     //    shortcut.
-    int nextRegister = registerOffset + CallFrame::headerSizeInRegisters;
-    set(VirtualRegister(nextRegister++), base, ImmediateNakedSet);
+    set(virtualRegisterForArgument(0, registerOffset), base, ImmediateNakedSet);
 
     // We've set some locals, but they are not user-visible. It's still OK to exit from here.
     m_exitOK = true;
@@ -4555,9 +4595,8 @@ void ByteCodeParser::handlePutById(
             m_inlineStackTop->remapOperand(
                 VirtualRegister(registerOffset)).toLocal());
     
-        int nextRegister = registerOffset + CallFrame::headerSizeInRegisters;
-        set(VirtualRegister(nextRegister++), base, ImmediateNakedSet);
-        set(VirtualRegister(nextRegister++), value, ImmediateNakedSet);
+        set(virtualRegisterForArgument(0, registerOffset), base, ImmediateNakedSet);
+        set(virtualRegisterForArgument(1, registerOffset), value, ImmediateNakedSet);
 
         // We've set some locals, but they are not user-visible. It's still OK to exit from here.
         m_exitOK = true;

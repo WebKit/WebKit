@@ -157,14 +157,11 @@ public:
         };
 
         Operands<VariableAccessData*> currentBlockAccessData(block->variablesAtTail.numberOfArguments(), block->variablesAtTail.numberOfLocals(), nullptr);
-        HashSet<InlineCallFrame*> seenInlineCallFrames;
 
         auto flushEverything = [&] (NodeOrigin origin, unsigned index) {
             RELEASE_ASSERT(currentExceptionHandler);
-            auto flush = [&] (VirtualRegister operand, bool alwaysInsert) {
-                if ((operand.isLocal() && liveAtCatchHead[operand.toLocal()]) 
-                    || operand.isArgument()
-                    || alwaysInsert) {
+            auto flush = [&] (VirtualRegister operand) {
+                if ((operand.isLocal() && liveAtCatchHead[operand.toLocal()]) || operand.isArgument()) {
 
                     ASSERT(isValidFlushLocation(block, index, operand));
 
@@ -180,12 +177,8 @@ public:
             };
 
             for (unsigned local = 0; local < block->variablesAtTail.numberOfLocals(); local++)
-                flush(virtualRegisterForLocal(local), false);
-            for (InlineCallFrame* inlineCallFrame : seenInlineCallFrames)
-                flush(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
-            flush(VirtualRegister(CallFrame::thisArgumentOffset()), true);
-
-            seenInlineCallFrames.clear();
+                flush(virtualRegisterForLocal(local));
+            flush(VirtualRegister(CallFrame::thisArgumentOffset()));
         };
 
         for (unsigned nodeIndex = 0; nodeIndex < block->size(); nodeIndex++) {
@@ -199,15 +192,8 @@ public:
             }
 
             if (currentExceptionHandler && (node->op() == SetLocal || node->op() == SetArgumentDefinitely || node->op() == SetArgumentMaybe)) {
-                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame();
-                if (inlineCallFrame)
-                    seenInlineCallFrames.add(inlineCallFrame);
                 VirtualRegister operand = node->local();
-
-                int stackOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
-                if ((operand.isLocal() && liveAtCatchHead[operand.toLocal()])
-                    || operand.isArgument()
-                    || (operand.offset() == stackOffset + CallFrame::thisArgumentOffset())) {
+                if ((operand.isLocal() && liveAtCatchHead[operand.toLocal()]) || operand.isArgument()) {
 
                     ASSERT(isValidFlushLocation(block, nodeIndex, operand));
 

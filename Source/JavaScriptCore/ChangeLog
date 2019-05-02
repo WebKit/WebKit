@@ -1,3 +1,52 @@
+2019-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Inlining Getter/Setter should care availability of ad-hocly constructed frame
+        https://bugs.webkit.org/show_bug.cgi?id=197405
+
+        Reviewed by Saam Barati.
+
+        When inlining getter and setter calls, we setup a stack frame which does not appear in the bytecode.
+        Because Inlining can switch on executable, we could have a graph like this.
+
+        BB#0
+            ...
+            30: GetSetter
+            31: MovHint(loc10)
+            32: SetLocal(loc10)
+            33: MovHint(loc9)
+            34: SetLocal(loc9)
+            ...
+            37: GetExecutable(@30)
+            ...
+            41: Switch(@37)
+
+        BB#2
+            42: GetLocal(loc12, bc#7 of caller)
+            ...
+            --> callee: loc9 and loc10 are arguments of callee.
+              ...
+              <HERE, exit to callee, loc9 and loc10 are required in the bytecode>
+
+        When we prune OSR availability at the beginning of BB#2 (bc#7 in the caller), we prune loc9 and loc10's liveness because the caller does not actually have loc9 and loc10.
+        However, when we begin executing the callee, we need OSR exit to be aware of where it can recover the arguments to the setter, loc9 and loc10.
+
+        This patch inserts MovHint at the beginning of callee for a getter / setter stack frame to make arguments (loc9 and loc10 in the above example) recoverable from OSR exit.
+        We also move arity fixup DFG nodes from the caller to the callee, since moved arguments are not live in the caller too.
+
+        Interestingly, this fix also reveals the existing issue in LiveCatchVariablePreservationPhase. We emitted Flush for |this| of InlineCallFrame blindly if we saw InlineCallFrame
+        inside a block which is covered by catch handler. But this is wrong because inlined function can finish its execution within the block, and |this| is completely unrelated to
+        the catch handler if the catch handler is in the outer callee. We already collect all the live locals at the catch handler. And this locals must include arguments too if the
+        catch handler is in inlined function. So, we should not emit Flush for each |this| of seen InlineCallFrame. This emitted Flush may connect unrelated locals in the catch handler
+        to the locals that is only defined and used in the inlined function, and it leads to the results like DFG says the local is live while the bytecode says the local is dead.
+        This results in reading and using garbage in OSR entry because DFG OSR entry needs to fill live DFG values from the stack.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlockForTryCatch):
+
 2019-05-01  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: !m_needExceptionCheck with --validateExceptionChecks=1; ProxyObject.getOwnPropertySlotCommon/JSFunction.callerGetter
