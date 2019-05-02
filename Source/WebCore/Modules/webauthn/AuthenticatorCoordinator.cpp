@@ -80,6 +80,17 @@ static Vector<uint8_t> produceClientDataJsonHash(const ArrayBuffer& clientDataJs
     return crypto->computeHash();
 }
 
+static bool needsAppIdQuirks(const String& host, const String& appId)
+{
+    // FIXME(197524): Remove this quirk in 2023. As an early adopter of U2F features, Google has a large number of
+    // existing device registrations that authenticate 'google.com' against 'gstatic.com'. Firefox and other browsers
+    // have agreed to grant an exception to the AppId rules for a limited time period (5 years from January, 2018) to
+    // allow existing Google users to seamlessly transition to proper WebAuthN behavior.
+    if (equalLettersIgnoringASCIICase(host, "google.com") || host.endsWithIgnoringASCIICase(".google.com"))
+        return (appId == "https://www.gstatic.com/securitykey/origins.json"_s) || (appId == "https://www.gstatic.com/securitykey/a/google.com/origins.json"_s);
+    return false;
+}
+
 // The following roughly implements Step 1-3 of the spec to avoid the complexity of making unnecessary network requests:
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-appid-and-facets-v2.0-id-20180227.html#determining-if-a-caller-s-facetid-is-authorized-for-an-appid
 // It follows what Chrome and Firefox do, see:
@@ -96,7 +107,7 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
 
     // Step 3. Relax the comparison to same site.
     URL appIdURL(URL(), appId);
-    if (!appIdURL.isValid() || facetId.protocol() != appIdURL.protocol() || RegistrableDomain(appIdURL) != RegistrableDomain::uncheckedCreateFromHost(facetId.host()))
+    if (!appIdURL.isValid() || facetId.protocol() != appIdURL.protocol() || (RegistrableDomain(appIdURL) != RegistrableDomain::uncheckedCreateFromHost(facetId.host()) && !needsAppIdQuirks(facetId.host(), appId)))
         return String();
     return appId;
 }
