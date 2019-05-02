@@ -124,8 +124,11 @@ function test() {
                         if (!recording.ready)
                             return;
 
+                        let html = recording.toHTML();
+                        html = html.replace(/"data:image\/png;base64,[^"]+"/g, "<filtered>");
+
                         InspectorTest.log("++++++++++ HTML ++++++++++");
-                        InspectorTest.log(recording.toHTML());
+                        InspectorTest.log(html);
                         InspectorTest.log("++++++++++ HTML ++++++++++");
 
                         recording.removeEventListener(WI.Recording.Event.ProcessedAction, listener);

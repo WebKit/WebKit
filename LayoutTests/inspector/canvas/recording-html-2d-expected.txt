@@ -214,16 +214,16 @@ function rebuildPath2D(key, data) {
     objects[key] = new Path2D(data);
 }
 
-rebuildImage(0, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC");
+rebuildImage(0, <filtered>);
 rebuildPath2D(1, "");
 rebuildPath2D(2, "");
 rebuildPath2D(3, "");
 rebuildCanvasGradient(4, {"type":"linear-gradient","points":[1,2,3,4],"stops":[{"offset":1,"color":"rgb(255, 0, 0)"},{"offset":1,"color":"rgb(0, 0, 255)"}]});
 rebuildCanvasGradient(5, {"type":"radial-gradient","points":[1,2,3,4,5,6],"stops":[]});
-rebuildCanvasPattern(6, {"image":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=","repeat":"no-repeat"});
-rebuildImage(7, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=");
+rebuildCanvasPattern(6, {"image":<filtered>,"repeat":"no-repeat"});
+rebuildImage(7, <filtered>);
 rebuildImageData(8, {"data":[0,0,0,0,0,0,0,0],"width":1,"height":2});
-rebuildImageBitmap(9, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=");
+rebuildImageBitmap(9, <filtered>);
 rebuildDOMMatrix(10, "matrix(1, 2, 3, 4, 5, 6)");
 rebuildPath2D(11, "M1 2");
 
