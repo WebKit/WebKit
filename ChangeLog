@@ -1,3 +1,14 @@
+2019-05-01  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Update port for WEBKIT_EXECUTABLE changes
+        https://bugs.webkit.org/show_bug.cgi?id=197483
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        Update wrapping for configuring executables' playstation
+        specific data to new WEBKIT_EXECUTABLE macro.
+
 2019-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Support prefers-color-scheme media query
