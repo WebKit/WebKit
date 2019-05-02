@@ -1,3 +1,15 @@
+2019-05-01  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: !m_needExceptionCheck with --validateExceptionChecks=1; ProxyObject.getOwnPropertySlotCommon/JSFunction.callerGetter
+        https://bugs.webkit.org/show_bug.cgi?id=197485
+
+        Reviewed by Saam Barati.
+
+        New test.
+
+        * stress/proxy-getOwnPropertySlots-exceptionChecks.js: Added.
+        (foo):
+
 2019-05-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed correction to Test262 expectations following r244828.

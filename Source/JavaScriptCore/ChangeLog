@@ -1,3 +1,15 @@
+2019-05-01  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: !m_needExceptionCheck with --validateExceptionChecks=1; ProxyObject.getOwnPropertySlotCommon/JSFunction.callerGetter
+        https://bugs.webkit.org/show_bug.cgi?id=197485
+
+        Reviewed by Saam Barati.
+
+        Added an EXCEPTION_ASSERT after call to getOwnPropertySlot().
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+
 2019-05-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         RemoteInspector::updateAutomaticInspectionCandidate should have a default implementation.
