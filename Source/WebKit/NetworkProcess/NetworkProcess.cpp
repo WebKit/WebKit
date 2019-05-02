@@ -1522,9 +1522,9 @@ void NetworkProcess::clearStorageQuota(PAL::SessionID sessionID)
 static Vector<String> filterForRegistrableDomains(const Vector<RegistrableDomain>& registrableDomains, const HashSet<String>& foundValues)
 {
     Vector<String> result;
-    for (const auto& domain : registrableDomains) {
-        if (foundValues.contains(domain.string()))
-            result.append(domain.string());
+    for (const auto& value : foundValues) {
+        if (registrableDomains.contains(RegistrableDomain::uncheckedCreateFromHost(value)))
+            result.append(value);
     }
     
     return result;

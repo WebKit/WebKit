@@ -1,3 +1,16 @@
+2019-05-02  John Wilander  <wilander@apple.com>
+
+        Make both filterForRegistrableDomains() in WebKit::NetworkProcess use WebCore::RegistrableDomain::uncheckedCreateFromHost()
+        https://bugs.webkit.org/show_bug.cgi?id=197521
+        <rdar://problem/49651503>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/RegistrableDomain.cpp:
+        (TestWebKitAPI::TEST):
+           Added a test for host strings with leading dots since they are
+           often used for the domain attribute in cookies.
+
 2019-05-02  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials

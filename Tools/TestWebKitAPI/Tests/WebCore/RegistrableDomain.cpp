@@ -82,4 +82,15 @@ TEST(RegistrableDomain, MatchesURLs)
     ASSERT_FALSE(webkitDomain.matches(ebkitURL));
 }
 
+TEST(RegistrableDomain, UncheckedCreateFromHost)
+{
+    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org");
+
+    auto webkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost("webkit.org");
+    ASSERT_EQ(webkitDomainFromHost, webkitDomainFromString);
+    // This test is important for matching cookies' domain attributes which often have a leading dot.
+    auto dotWebkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost(".webkit.org");
+    ASSERT_EQ(dotWebkitDomainFromHost, webkitDomainFromString);
+}
+
 } // namespace TestWebKitAPI
