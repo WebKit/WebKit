@@ -173,5 +173,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
     MarkAdClickAttributionsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
     RemoveCredential(WebCore::Credential credential, WebCore::ProtectionSpace protectionSpace) -> () Async
-    OriginsWithPersistentCredentials() -> (Vector<WebCore::SecurityOriginData> persistentCredentials) Async
+    OriginsWithPersistentCredentials() -> (Vector<WebCore::SecurityOriginData> origins) Async
+    RemoveCredentialsWithOrigins(Vector<WebCore::SecurityOriginData> origins) -> () Async
 }

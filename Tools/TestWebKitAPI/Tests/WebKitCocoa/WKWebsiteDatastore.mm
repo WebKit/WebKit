@@ -197,4 +197,55 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
     TestWebKitAPI::Util::run(&removedCredential);
 }
 
+TEST(WKWebsiteDataStore, RemovePersistentCredentials)
+{
+    TCPServer server(respondWithChallengeThenOK);
+    
+    usePersistentCredentialStorage = true;
+    auto websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+    auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    __block RetainPtr<WKWebsiteDataRecord> expectedRecord;
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        int credentialCount = dataRecords.count;
+        ASSERT_GT(credentialCount, 0);
+        for (WKWebsiteDataRecord *record in dataRecords) {
+            auto name = [record displayName];
+            if ([name isEqualToString:@"127.0.0.1"]) {
+                expectedRecord = record;
+                break;
+            }
+        }
+        EXPECT_TRUE(expectedRecord);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] forDataRecords:[NSArray arrayWithObject:expectedRecord.get()] completionHandler:^(void) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        bool foundLocalHostRecord = false;
+        for (WKWebsiteDataRecord *record in dataRecords) {
+            auto name = [record displayName];
+            if ([name isEqualToString:@"127.0.0.1"]) {
+                foundLocalHostRecord = true;
+                break;
+            }
+        }
+        EXPECT_FALSE(foundLocalHostRecord);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 }

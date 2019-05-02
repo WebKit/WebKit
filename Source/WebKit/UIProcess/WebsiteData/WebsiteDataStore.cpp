@@ -1181,6 +1181,19 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         });
     }
 
+    if (dataTypes.contains(WebsiteDataType::Credentials) && isPersistent()) {
+        for (auto& processPool : processPools()) {
+            if (!processPool->networkProcess())
+                continue;
+            
+            callbackAggregator->addPendingCallback();
+            WTF::CompletionHandler<void()> completionHandler = [callbackAggregator]() mutable {
+                callbackAggregator->removePendingCallback();
+            };
+            processPool->networkProcess()->sendWithAsyncReply(Messages::NetworkProcess::RemoveCredentialsWithOrigins(origins), WTFMove(completionHandler));
+        }
+    }
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
         Vector<String> hostNames;

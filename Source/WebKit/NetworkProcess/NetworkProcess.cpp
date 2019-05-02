@@ -2506,7 +2506,12 @@ void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vec
 {
     completionHandler(Vector<WebCore::SecurityOriginData>());
 }
-    
+
+void NetworkProcess::removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }
