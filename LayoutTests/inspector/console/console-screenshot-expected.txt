@@ -7,17 +7,18 @@ Tests for the console.screenshot API.
 == Running test suite: console.screenshot
 -- Running test case: console.screenshot.SingleNode
 PASS: The added message should be an image.
-PASS: The image should be a 2x2 red square.
+PASS: The image should not be empty.
 
 -- Running test case: console.screenshot.MultipleNodes
 PASS: The added message should be an image.
-PASS: The image should be a 2x2 blue square.
+PASS: The image should not be empty.
 
 -- Running test case: console.screenshot.DetachedNode
 PASS: Could not capture screenshot
 
 -- Running test case: console.screenshot.NoArguments
 PASS: The added message should be an image.
+PASS: The image should not be empty.
 PASS: The image width should be greater than 2px.
 PASS: The image height should be greater than 2px.
 

@@ -1,3 +1,12 @@
+2019-05-01  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failures after r242992.
+        <rdar://problem/50383600>
+
+        * inspector/console/console-screenshot.html:
+        * inspector/console/console-screenshot-expected.txt:
+        Don't print the dataURL in the expectation file.
+
 2019-05-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Adopt SecurityOrigin::isMatchingRegistrableDomainSuffix()
