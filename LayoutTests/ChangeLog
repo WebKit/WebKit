@@ -1,3 +1,12 @@
+2019-05-02  Truitt Savell  <tsavell@apple.com>
+
+        [ Sierra Release WK2 ] Layout Test fast/workers/worker-cloneport.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=191644
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Remove expectation. 
+
 2019-05-02  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r244868.
