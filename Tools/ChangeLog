@@ -1,3 +1,10 @@
+2019-05-02  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix for internal branch.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        RetainPtr.h was not explicitly included.
+
 2019-05-02  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ignore errors when shutting down an already shutdown simulator

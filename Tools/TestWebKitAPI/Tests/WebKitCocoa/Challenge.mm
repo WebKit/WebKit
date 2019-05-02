@@ -31,6 +31,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/RetainPtr.h>
 
 static bool navigationFinished;
 
