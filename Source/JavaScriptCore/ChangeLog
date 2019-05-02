@@ -1,3 +1,17 @@
+2019-05-01  Saam barati  <sbarati@apple.com>
+
+        Baseline JIT should do argument value profiling after checking for stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=197052
+        <rdar://problem/50009602>
+
+        Reviewed by Yusuke Suzuki.
+
+        Otherwise, we may do value profiling without running a write barrier, which
+        is against the rules of how we do value profiling.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+
 2019-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Inlining Getter/Setter should care availability of ad-hocly constructed frame
