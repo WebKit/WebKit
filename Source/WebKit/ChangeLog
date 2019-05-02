@@ -1,3 +1,19 @@
+2019-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add the ability to import WebKitAdditions snippets in WebKit.apinotes
+        https://bugs.webkit.org/show_bug.cgi?id=197487
+        <rdar://problem/50389085>
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/WebKit.apinotes: Import a new WebKitAdditions file.
+
+        * WebKit.xcodeproj/project.pbxproj: Check all files in Headers/ and PrivateHeaders/ that need replacement, not
+        simply anything ending with ".h".
+
+        * mac/replace-webkit-additions-includes.py:
+        (main): Teach the replacement script to handle files in Headers/ or PrivateHeaders/ that don't end in ".h".
+
 2019-05-01  Alex Christensen  <achristensen@webkit.org>
 
         Protect against null crash in fetchDiskCacheEntries

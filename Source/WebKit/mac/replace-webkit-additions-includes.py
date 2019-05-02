@@ -65,7 +65,7 @@ def main(argv=None):
         print("(%s): SDK root directory unspecified" % argv[0])
         return 1
 
-    additions_import_pattern = re.compile(r"\#if USE\(APPLE_INTERNAL_SDK\)\n#import <WebKitAdditions/(.*\.h)>\n#endif")
+    additions_import_pattern = re.compile(r"\#if USE\(APPLE_INTERNAL_SDK\)\n#import <WebKitAdditions/(.*)>\n#endif")
     try:
         with open(header_path, "r") as header:
             header_contents = header.read()
