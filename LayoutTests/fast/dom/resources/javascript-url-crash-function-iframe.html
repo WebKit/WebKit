@@ -16,7 +16,9 @@ function test()
 setTimeout(function ()
 {
     test();
-    if (window.testRunner)
-        testRunner.notifyDone();
+    top.setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
 }, 0);
 </script>

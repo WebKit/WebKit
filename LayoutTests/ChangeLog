@@ -1,3 +1,48 @@
+2019-05-02  Chris Dumez  <cdumez@apple.com>
+
+        Setting a frame's src to a javascript URL should not run it synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=197466
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/frame-src-javascript-url-async-expected.txt: Added.
+        * fast/dom/frame-src-javascript-url-async.html: Added.
+        Add layout test coverage for the fact that the javascript URL is executed asynchronously
+        whether set during parsing or later via JS. Also makes sure that executing the javascript
+        URL asynchronously does not replace the frame's window. This test passes in both Chrome
+        and Firefox.
+
+        * imported/blink/fast/frames/navigation-in-pagehide.html:
+        Re-sync this test from the Blink repository.
+
+        * fast/dom/Element/id-in-frameset-expected.txt:
+        * fast/dom/Element/id-in-frameset.html:
+        * fast/dom/insertedIntoDocument-iframe-expected.txt:
+        * fast/dom/javascript-url-exception-isolation-expected.txt:
+        * fast/dom/javascript-url-exception-isolation.html:
+        * fast/dom/no-assert-for-malformed-js-url-attribute-expected.txt:
+        * fast/dom/resources/javascript-url-crash-function-iframe.html:
+        * fast/frames/adopt-from-created-document.html:
+        * fast/frames/out-of-document-iframe-has-child-frame.html:
+        * fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html:
+        * fast/loader/javascript-url-iframe-remove-on-navigate.html:
+        * fast/loader/unload-mutation-crash.html:
+        * fast/parser/resources/set-parent-to-javascript-url.html:
+        * fast/parser/xml-error-adopted.xml:
+        * http/tests/navigation/lockedhistory-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html:
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html:
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-from-javscript-url.html:
+        * imported/blink/loader/iframe-sync-loads-expected.txt:
+        * js/dom/call-base-resolution.html:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe-expected.txt:
+        Update / Rebaseline existing tests to reflect behavior change. I ran those tests in Firefox and Chrome to confirm that our behavior
+        is indeed aligned.
+
 2019-05-02  Gary Katsevman  <git@gkatsev.com>
 
         WebVTT: vertical cue text alignment is the wrong way around

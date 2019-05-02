@@ -2,8 +2,10 @@
 <html>
 <head>
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 function start() {
     window.firstFrame = document.createElement('iframe');
@@ -20,6 +22,8 @@ function maybeStart() {
 
     window.firstFrame.src = 'javascript:"";';
     document.write("PASS. WebKit didn't crash.");
+    if (window.testRunner)
+       testRunner.notifyDone();
 }
 </script>
 </head>

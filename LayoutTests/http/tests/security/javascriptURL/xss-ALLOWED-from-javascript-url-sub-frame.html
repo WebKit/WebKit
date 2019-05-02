@@ -7,6 +7,7 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
         var url = "javascript:\"<html>"
@@ -20,6 +21,12 @@
 
         var iframe = document.getElementById("aFrame");
         iframe.src = url;
+        onload = () => {
+            setTimeout(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
     </script>
 </body>
 </html>

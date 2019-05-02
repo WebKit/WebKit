@@ -7,11 +7,13 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
         var innerURL = 'javascript:\\\"<html>'
             + "<scr" + "ipt>"
             +     'top.document.getElementById(\\\\\\\"accessMe\\\\\\\").innerHTML = \\\\\\\"PASS: Cross frame access from a javascript: URL inside another javascript: URL was allowed!\\\\\\\";'
+            +     'top.setTimeout(() => { testRunner.notifyDone(); }, 0);'
             + "</scri" + "pt>"
             + "<body>"
             +     "<p>Inner-inner iframe.</p>"

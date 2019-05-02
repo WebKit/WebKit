@@ -1,5 +1,10 @@
 <html>
-
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
 <frameset id="frameset">
   <frame name="frame2" src="about:blank">
   <frame name="frame1" src="javascript:
@@ -16,6 +21,8 @@
 
     top.frameset.removeChild(top.frame2.frameElement);
     log(top.frameset.children.length);
+    if (window.testRunner)
+        testRunner.notifyDone();
   ">
 
   <frame name="frame3" src="about:blank">

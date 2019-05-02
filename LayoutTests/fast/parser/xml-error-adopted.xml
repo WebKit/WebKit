@@ -15,7 +15,9 @@ function test() {
         testRunner.notifyDone();
 }
 
-setTimeout(test, 0);
+onload = () => {
+    setTimeout(test, 0);
+};
 </script>
 <elt attr="1" attr="2"/>
 </svg>

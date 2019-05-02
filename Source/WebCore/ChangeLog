@@ -1,3 +1,33 @@
+2019-05-02  Chris Dumez  <cdumez@apple.com>
+
+        Setting a frame's src to a javascript URL should not run it synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=197466
+
+        Reviewed by Darin Adler.
+
+        When an iframe's src attribute is set to a javascript URL, whether when parsing
+        or later on via JS, we now execute the URL's JavaScript asynchronously. We used
+        to execute it synchronously, which was a source of bugs and also did not match
+        other browsers.
+
+        I have verified that our new behavior is aligned with both Firefox and Chrome.
+
+        Note that for backward-compatibility and interoperability with Blink
+        (https://bugs.chromium.org/p/chromium/issues/detail?id=923585), the
+        "javascript:''" URL will still run synchronously. We should consider dropping
+        this quirk at some point.
+
+        Test: fast/dom/frame-src-javascript-url-async.html
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledLocationChange::ScheduledLocationChange):
+        (WebCore::ScheduledLocationChange::~ScheduledLocationChange):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        * loader/NavigationScheduler.h:
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+
 2019-05-02  Gary Katsevman  <git@gkatsev.com>
 
         WebVTT: fix vertical cue alignment.

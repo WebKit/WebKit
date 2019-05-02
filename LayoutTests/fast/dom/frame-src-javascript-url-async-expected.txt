@@ -1,0 +1,21 @@
+Checks that setting an iframe's src attribute to a javascript URL runs the javascript asynchronously
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame2.contentWindow is initialFrame2Window
+PASS frame2.contentDocument is initialFrame2Document
+PASS messages is "1234"
+PASS frame1.contentWindow is initialFrame1Window
+PASS frame1.contentDocument is initialFrame1Document
+PASS frame2.contentWindow is initialFrame2Window
+PASS frame2.contentDocument is initialFrame2Document
+PASS frame3.contentWindow is initialFrame3Window
+PASS frame3.contentDocument is not initialFrame3Document
+PASS frame3.contentWindow is initialFrame3Window
+PASS frame3.contentDocument is not initialFrame3Document
+PASS frame3.contentDocument.documentElement.textContent is "1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
