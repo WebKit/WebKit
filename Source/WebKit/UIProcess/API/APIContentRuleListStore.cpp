@@ -208,7 +208,7 @@ struct MappedData {
 
 static Optional<MappedData> openAndMapOrCopyContentRuleList(const WTF::String& path)
 {
-    WebKit::NetworkCache::makeSafeToUseMemoryMapForPath(path);
+    FileSystem::makeSafeToUseMemoryMapForPath(path);
     WebKit::NetworkCache::Data fileData = mapFile(fileSystemRepresentation(path).data());
     if (fileData.isNull())
         return WTF::nullopt;
@@ -386,7 +386,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
     
-    makeSafeToUseMemoryMapForPath(finalFilePath);
+    FileSystem::makeSafeToUseMemoryMapForPath(finalFilePath);
     
     return {{ WTFMove(metaData), WTFMove(mappedData) }};
 }

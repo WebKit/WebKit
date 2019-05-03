@@ -363,5 +363,16 @@ bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowS
     return metadata.value().type == FileMetadata::Type::Directory;
 }
 
+#if !PLATFORM(IOS_FAMILY)
+bool isSafeToUseMemoryMapForPath(const String&)
+{
+    return true;
+}
+
+void makeSafeToUseMemoryMapForPath(const String&)
+{
+}
+#endif
+
 } // namespace FileSystemImpl
 } // namespace WTF

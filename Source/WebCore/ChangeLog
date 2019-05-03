@@ -1,3 +1,20 @@
+2019-05-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Add assertion to check whether shm files have maximum FileProtection of CompleteUnlessOpen
+        https://bugs.webkit.org/show_bug.cgi?id=197390
+        <rdar://problem/42685773>
+
+        Reviewed by Geoffrey Garen.
+
+        We have seen crashes about accessing database files after device is locked. We are suspecting this is because 
+        shm files have wrong data protection class, but shm files should not have Complete class protection when it 
+        is created. It is likely the protection class is changed later. Add an assertion to verify our guess. If the 
+        crash signature changes after this patch, we probably need to change database implementation. If it is not, we
+        have other problem than data protection.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2019-05-03  Youenn Fablet  <youenn@apple.com>
 
         Cache.add and Cache.addAll should compute a correct response body size

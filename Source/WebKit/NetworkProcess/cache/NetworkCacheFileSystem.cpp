@@ -145,11 +145,5 @@ void updateFileModificationTimeIfNeeded(const String& path)
 #endif
 }
 
-#if !PLATFORM(IOS_FAMILY)
-void makeSafeToUseMemoryMapForPath(const String&)
-{
-}
-#endif
-
 }
 }

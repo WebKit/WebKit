@@ -42,7 +42,5 @@ struct FileTimes {
 FileTimes fileTimes(const String& path);
 void updateFileModificationTimeIfNeeded(const String& path);
 
-void makeSafeToUseMemoryMapForPath(const String&);
-
 }
 }

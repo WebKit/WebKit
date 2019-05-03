@@ -94,7 +94,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
         return { data, hash };
 
     String blobPathString = blobPathForHash(hash);
-    makeSafeToUseMemoryMapForPath(blobPathString);
+    FileSystem::makeSafeToUseMemoryMapForPath(blobPathString);
     
     auto blobPath = FileSystem::fileSystemRepresentation(blobPathString);
     auto linkPath = FileSystem::fileSystemRepresentation(path);

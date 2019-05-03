@@ -139,5 +139,33 @@ bool deleteNonEmptyDirectory(const String& path)
     return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool isSafeToUseMemoryMapForPath(const String& path)
+{
+    NSError *error = nil;
+    NSDictionary<NSFileAttributeKey, id> *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+    if (error) {
+        LOG_ERROR("Unable to get path protection class");
+        return false;
+    }
+    if ([[attributes objectForKey:NSFileProtectionKey] isEqualToString:NSFileProtectionComplete]) {
+        LOG_ERROR("Path protection class is NSFileProtectionComplete, so it is not safe to use memory map");
+        return false;
+    }
+    return true;
+}
+
+void makeSafeToUseMemoryMapForPath(const String& path)
+{
+    if (isSafeToUseMemoryMapForPath(path))
+        return;
+    
+    NSError *error = nil;
+    BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen } ofItemAtPath:path error:&error];
+    ASSERT(!error);
+    ASSERT_UNUSED(success, success);
+}
+#endif
+
 } // namespace FileSystemImpl
 } // namespace WTF

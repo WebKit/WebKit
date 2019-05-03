@@ -149,6 +149,10 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     if (openMode != OpenMode::ReadOnly)
         useWALJournalMode();
 
+    String shmFileName = makeString(filename, "-shm"_s);
+    if (FileSystem::fileExists(shmFileName))
+        RELEASE_ASSERT(FileSystem::isSafeToUseMemoryMapForPath(shmFileName));
+
     return isOpen();
 }
 

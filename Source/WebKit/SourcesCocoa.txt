@@ -22,7 +22,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 NetworkProcess/cache/NetworkCacheDataCocoa.mm
-NetworkProcess/cache/NetworkCacheFileSystemCocoa.mm
 NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
 
 NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm

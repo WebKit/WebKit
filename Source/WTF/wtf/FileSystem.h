@@ -187,6 +187,9 @@ WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 
 WTF_EXPORT_PRIVATE String realPath(const String&);
 
+WTF_EXPORT_PRIVATE bool isSafeToUseMemoryMapForPath(const String&);
+WTF_EXPORT_PRIVATE void makeSafeToUseMemoryMapForPath(const String&);
+
 class MappedFileData {
 public:
     MappedFileData() { }
