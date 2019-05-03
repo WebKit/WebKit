@@ -1763,6 +1763,13 @@ set(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/Pai
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
+WEBKIT_MAKE_FORWARDING_HEADERS(WebCore
+    TARGET_NAME WebCorePrivateFrameworkHeaders
+    DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
+    FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
+    FLATTENED
+)
+
 # Generate CommandLineAPIModuleSource.h
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CommandLineAPIModuleSource.h ${WebCore_DERIVED_SOURCES_DIR}/CommandLineAPIModuleSource.min.js
@@ -2072,17 +2079,7 @@ endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
 
-WEBKIT_COPY_FILES(WebCorePrivateFrameworkHeaders
-    DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
-    FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
-    FLATTENED
-)
-
-add_dependencies(WebCore
-    PALFrameworkHeaders
-    JavaScriptCorePrivateFrameworkHeaders
-    WebCoreBindings
-)
+add_dependencies(WebCore WebCoreBindings)
 add_dependencies(WebCorePrivateFrameworkHeaders WebCoreBindings)
 
 if (APPLE)

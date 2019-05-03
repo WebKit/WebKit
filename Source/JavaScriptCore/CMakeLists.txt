@@ -296,9 +296,9 @@ add_executable(LLIntOffsetsExtractor
 )
 
 target_link_libraries(LLIntSettingsExtractor WTF)
-add_dependencies(LLIntSettingsExtractor JavaScriptCoreFrameworkHeaders WTFFrameworkHeaders)
+add_dependencies(LLIntSettingsExtractor JavaScriptCoreFrameworkHeaders)
 target_link_libraries(LLIntOffsetsExtractor WTF)
-add_dependencies(LLIntOffsetsExtractor JavaScriptCoreFrameworkHeaders WTFFrameworkHeaders)
+add_dependencies(LLIntOffsetsExtractor JavaScriptCoreFrameworkHeaders)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
 # LLIntAssembly.h's mtime. The problem we have here is: asm.rb has some built-in optimization
@@ -1274,6 +1274,20 @@ if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -ffp-contract=off)
 endif ()
 
+WEBKIT_MAKE_FORWARDING_HEADERS(JavaScriptCore
+    TARGET_NAME JavaScriptCoreFrameworkHeaders
+    DESTINATION ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}/JavaScriptCore
+    FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS}
+    FLATTENED
+)
+
+WEBKIT_MAKE_FORWARDING_HEADERS(JavaScriptCore
+    TARGET_NAME JavaScriptCorePrivateFrameworkHeaders
+    DESTINATION ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore
+    FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
+    FLATTENED
+)
+
 target_include_directories(LLIntSettingsExtractor PRIVATE
     ${JavaScriptCore_INCLUDE_DIRECTORIES}
     ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
@@ -1291,21 +1305,6 @@ add_subdirectory(shell)
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
 WEBKIT_FRAMEWORK(JavaScriptCore)
-
-WEBKIT_COPY_FILES(JavaScriptCoreFrameworkHeaders
-    DESTINATION ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}/JavaScriptCore
-    FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS}
-    FLATTENED
-)
-
-WEBKIT_COPY_FILES(JavaScriptCorePrivateFrameworkHeaders
-    DESTINATION ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore
-    FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
-    FLATTENED
-)
-
-add_dependencies(JavaScriptCore JavaScriptCoreFrameworkHeaders)
-add_dependencies(JavaScriptCorePrivateFrameworkHeaders JavaScriptCore)
 
 if (NOT "${PORT}" STREQUAL "Mac")
     if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
