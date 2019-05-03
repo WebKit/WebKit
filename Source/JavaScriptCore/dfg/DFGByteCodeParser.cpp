@@ -1646,7 +1646,9 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
         // callee make it so that if we exit at <HERE>, we can recover loc9 and loc10.
         for (int index = 0; index < argumentCountIncludingThis; ++index) {
             VirtualRegister argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgument(index, registerOffset));
-            addToGraph(MovHint, OpInfo(argumentToGet.offset()), getDirect(argumentToGet));
+            Node* value = getDirect(argumentToGet);
+            addToGraph(MovHint, OpInfo(argumentToGet.offset()), value);
+            m_setLocalQueue.append(DelayedSetLocal { currentCodeOrigin(), argumentToGet, value, ImmediateNakedSet });
         }
         break;
     }

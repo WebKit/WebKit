@@ -1,3 +1,43 @@
+2019-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Need to emit SetLocal if we emit MovHint in DFGByteCodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=197584
+
+        Reviewed by Saam Barati.
+
+        In r244864, we emit MovHint for adhocly created GetterCall/SetterCall frame locals in the callee side to make OSR availability analysis's pruning correct.
+        However, we just emit MovHint, and we do not emit SetLocal since we ensured that these locals are already flushed in the same place before. However, MovHint
+        and SetLocal are needed to be a pair in DFGByteCodeParser because we rely on this assumption in SSA conversion phase. SSA conversion phase always emit KillStack
+        just before MovHint's target location even if the MovHint's target is the same to the previously emitted MovHint and SetLocal.
+        This patch emits SetLocal too when emitting MovHint for GetterCall/SetterCall frame locals.
+
+        The example is like this.
+
+            a:  SomeValueNode
+             :  MovHint(@a, loc10)
+            b:  SetLocal(@a, loc10)
+                ...
+            c:  MovHint(@a, loc10)
+
+        Then, this will be converted to the style in SSA conversion.
+
+            a:  SomeValueNode
+             :  KillStack(loc10)
+            b:  PutStack(@a, loc10)
+                ...
+            c:  KillStack(loc10)
+
+        Then, @b will be removed later since @c kills it.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+
 2019-05-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: rename "low power" to "display composited"

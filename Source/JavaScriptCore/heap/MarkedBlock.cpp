@@ -38,6 +38,9 @@
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
+namespace MarkedBlockInternal {
+static constexpr bool verbose = false;
+}
 
 const size_t MarkedBlock::blockSize;
 
@@ -87,7 +90,7 @@ MarkedBlock::Handle::~Handle()
 MarkedBlock::MarkedBlock(VM& vm, Handle& handle)
 {
     new (&footer()) Footer(vm, handle);
-    if (false)
+    if (MarkedBlockInternal::verbose)
         dataLog(RawPointer(this), ": Allocated.\n");
 }
 
@@ -124,12 +127,12 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 {
     auto locker = holdLock(blockFooter().m_lock);
     
-    if (false)
+    if (MarkedBlockInternal::verbose)
         dataLog(RawPointer(this), ": MarkedBlock::Handle::stopAllocating!\n");
     ASSERT(!directory()->isAllocated(NoLockingNecessary, this));
 
     if (!isFreeListed()) {
-        if (false)
+        if (MarkedBlockInternal::verbose)
             dataLog("There ain't no newly allocated.\n");
         // This means that we either didn't use this block at all for allocation since last GC,
         // or someone had already done stopAllocating() before.
@@ -137,7 +140,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
         return;
     }
     
-    if (false)
+    if (MarkedBlockInternal::verbose)
         dataLog("Free list: ", freeList, "\n");
     
     // Roll back to a coherent state for Heap introspection. Cells newly
@@ -155,7 +158,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 
     freeList.forEach(
         [&] (HeapCell* cell) {
-            if (false)
+            if (MarkedBlockInternal::verbose)
                 dataLog("Free cell: ", RawPointer(cell), "\n");
             if (m_attributes.destruction == NeedsDestruction)
                 cell->zap();
@@ -183,13 +186,13 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
     {
         auto locker = holdLock(blockFooter().m_lock);
         
-        if (false)
+        if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": MarkedBlock::Handle::resumeAllocating!\n");
         ASSERT(!directory()->isAllocated(NoLockingNecessary, this));
         ASSERT(!isFreeListed());
         
         if (!block().hasAnyNewlyAllocated()) {
-            if (false)
+            if (MarkedBlockInternal::verbose)
                 dataLog("There ain't no newly allocated.\n");
             // This means we had already exhausted the block when we stopped allocation.
             freeList.clear();
@@ -223,7 +226,7 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
 
     if (handle().directory()->isAllocated(holdLock(directory->bitvectorLock()), &handle())
         || !marksConveyLivenessDuringMarking(markingVersion)) {
-        if (false)
+        if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": Clearing marks without doing anything else.\n");
         // We already know that the block is full and is already recognized as such, or that the
         // block did not survive the previous GC. So, we can clear mark bits the old fashioned
@@ -233,7 +236,7 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
         // we created a newlyAllocated.
         footer().m_marks.clearAll();
     } else {
-        if (false)
+        if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": Doing things.\n");
         HeapVersion newlyAllocatedVersion = space()->newlyAllocatedVersion();
         if (footer().m_newlyAllocatedVersion == newlyAllocatedVersion) {
@@ -303,7 +306,7 @@ bool MarkedBlock::isMarked(const void* p)
 void MarkedBlock::Handle::didConsumeFreeList()
 {
     auto locker = holdLock(blockFooter().m_lock);
-    if (false)
+    if (MarkedBlockInternal::verbose)
         dataLog(RawPointer(this), ": MarkedBlock::Handle::didConsumeFreeList!\n");
     ASSERT(isFreeListed());
     m_isFreeListed = false;

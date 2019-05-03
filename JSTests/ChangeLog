@@ -1,3 +1,14 @@
+2019-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Need to emit SetLocal if we emit MovHint in DFGByteCodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=197584
+
+        Reviewed by Saam Barati.
+
+        * stress/adhoc-setter-frame-should-emit-setlocal-again.js: Added.
+        (X):
+        (foo):
+
 2019-05-03  Michael Saboff  <msaboff@apple.com>
 
         iOS JSC tests frequently exiting with execption after stress/json-stringify-string-builder-overflow.js.no-cjit-validate-phases
