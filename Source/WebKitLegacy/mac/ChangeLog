@@ -1,3 +1,15 @@
+2019-05-03  Daniel Bates  <dabates@apple.com>
+
+        Pass KeyboardEvent by reference in more places
+        https://bugs.webkit.org/show_bug.cgi?id=197480
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeyboardEvent):
+        (WebEditorClient::handleInputMethodKeydown):
+
 2019-05-02  Frederic Wang  <fwang@igalia.com>
 
         [GTK][WPE] Disable "thin", "thick", "medium" values of mfrac@linethickness at runtime

@@ -715,13 +715,13 @@ void WebEditorClient::redo()
     }
 }
 
-void WebEditorClient::handleKeyboardEvent(KeyboardEvent* evt)
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
-    if (m_webView->handleEditingKeyboardEvent(evt))
-        evt->setDefaultHandled();
+    if (m_webView->handleEditingKeyboardEvent(event))
+        event.setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* )
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 {
 }
 

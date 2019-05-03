@@ -102,8 +102,8 @@ private:
     void undo() final;
     void redo() final;
 
-    void handleKeyboardEvent(WebCore::KeyboardEvent*) final;
-    void handleInputMethodKeydown(WebCore::KeyboardEvent*) final;
+    void handleKeyboardEvent(WebCore::KeyboardEvent&) final;
+    void handleInputMethodKeydown(WebCore::KeyboardEvent&) final;
     
     void textFieldDidBeginEditing(WebCore::Element*) final;
     void textFieldDidEndEditing(WebCore::Element*) final;

@@ -1,3 +1,34 @@
+2019-05-03  Daniel Bates  <dabates@apple.com>
+
+        Pass KeyboardEvent by reference in more places
+        https://bugs.webkit.org/show_bug.cgi?id=197480
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
 2019-05-03  Youenn Fablet  <youenn@apple.com>
 
         Enable Fetch Keep Alive by default

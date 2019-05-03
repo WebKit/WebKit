@@ -52,9 +52,9 @@ bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WT
     return true;
 }
 
-void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
-    auto* platformEvent = event->underlyingPlatformEvent();
+    auto* platformEvent = event.underlyingPlatformEvent();
     if (!platformEvent)
         return;
 
@@ -62,8 +62,8 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (platformEvent->handledByInputMethod())
         return;
 
-    ASSERT(event->target());
-    auto* frame = downcast<Node>(event->target())->document().frame();
+    ASSERT(event.target());
+    auto* frame = downcast<Node>(event.target())->document().frame();
     ASSERT(frame);
 
     const Vector<String> pendingEditorCommands = platformEvent->commands();
@@ -74,14 +74,14 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
         // through the DOM first.
         if (platformEvent->type() == PlatformEvent::RawKeyDown) {
             if (executePendingEditorCommands(frame, pendingEditorCommands, false))
-                event->setDefaultHandled();
+                event.setDefaultHandled();
 
             return;
         }
 
         // Only allow text insertion commands if the current node is editable.
         if (executePendingEditorCommands(frame, pendingEditorCommands, frame->editor().canEdit())) {
-            event->setDefaultHandled();
+            event.setDefaultHandled();
             return;
         }
     }
@@ -93,26 +93,26 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
     // This is just a normal text insertion, so wait to execute the insertion
     // until a keypress event happens. This will ensure that the insertion will not
     // be reflected in the contents of the field until the keyup DOM event.
-    if (event->type() != eventNames().keypressEvent)
+    if (event.type() != eventNames().keypressEvent)
         return;
 
     // Don't insert null or control characters as they can result in unexpected behaviour
-    if (event->charCode() < ' ')
+    if (event.charCode() < ' ')
         return;
 
     // Don't insert anything if a modifier is pressed
     if (platformEvent->controlKey() || platformEvent->altKey())
         return;
 
-    if (frame->editor().insertText(platformEvent->text(), event))
-        event->setDefaultHandled();
+    if (frame->editor().insertText(platformEvent->text(), &event))
+        event.setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent& event)
 {
-    auto* platformEvent = event->underlyingPlatformEvent();
+    auto* platformEvent = event.underlyingPlatformEvent();
     if (platformEvent && platformEvent->handledByInputMethod())
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
 
 void WebEditorClient::updateGlobalSelection(Frame* frame)

@@ -361,13 +361,13 @@ WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(const Str
 }
 
 #if PLATFORM(WIN)
-void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 {
     notImplemented();
 }

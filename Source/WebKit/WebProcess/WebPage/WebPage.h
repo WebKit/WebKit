@@ -344,7 +344,7 @@ public:
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect&);
 
     // -- Called from WebCore clients.
-    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
+    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent&);
 
     void didStartPageTransition();
     void didCompletePageTransition();

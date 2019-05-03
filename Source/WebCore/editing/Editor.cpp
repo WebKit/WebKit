@@ -291,14 +291,14 @@ TextCheckerClient* Editor::textChecker() const
 
 void Editor::handleKeyboardEvent(KeyboardEvent& event)
 {
-    if (EditorClient* c = client())
-        c->handleKeyboardEvent(&event);
+    if (auto* client = this->client())
+        client->handleKeyboardEvent(event);
 }
 
 void Editor::handleInputMethodKeydown(KeyboardEvent& event)
 {
-    if (EditorClient* c = client())
-        c->handleInputMethodKeydown(&event);
+    if (auto* client = this->client())
+        client->handleInputMethodKeydown(event);
 }
 
 bool Editor::handleTextEvent(TextEvent& event)

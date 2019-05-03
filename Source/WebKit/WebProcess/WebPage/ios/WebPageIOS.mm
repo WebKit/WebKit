@@ -414,9 +414,9 @@ bool WebPage::allowsUserScaling() const
     return m_viewportConfiguration.allowsUserScaling();
 }
 
-bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 {
-    auto* platformEvent = event->underlyingPlatformEvent();
+    auto* platformEvent = event.underlyingPlatformEvent();
     if (!platformEvent)
         return false;
 

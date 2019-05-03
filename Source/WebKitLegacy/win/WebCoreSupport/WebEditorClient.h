@@ -95,8 +95,8 @@ private:
     void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final { }
 
-    void handleKeyboardEvent(WebCore::KeyboardEvent*) final;
-    void handleInputMethodKeydown(WebCore::KeyboardEvent*) final;
+    void handleKeyboardEvent(WebCore::KeyboardEvent&) final;
+    void handleInputMethodKeydown(WebCore::KeyboardEvent&) final;
 
     bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const final;
     void ignoreWordInSpellDocument(const WTF::String&) final;

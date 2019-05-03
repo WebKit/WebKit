@@ -2356,32 +2356,32 @@ const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
     return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
 }
 
-bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
+bool WebView::handleEditingKeyboardEvent(KeyboardEvent& event)
 {
-    auto* frame = downcast<Node>(evt->target())->document().frame();
+    auto* frame = downcast<Node>(event.target())->document().frame();
     ASSERT(frame);
 
-    auto* keyEvent = evt->underlyingPlatformEvent();
+    auto* keyEvent = event.underlyingPlatformEvent();
     if (!keyEvent || keyEvent->isSystemKey())  // do not treat this as text input if it's a system key event
         return false;
 
-    auto command = frame->editor().command(interpretKeyEvent(evt));
+    auto command = frame->editor().command(interpretKeyEvent(&event));
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
         // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
         // (e.g. Tab that inserts a Tab character, or Enter).
-        return !command.isTextInsertion() && command.execute(evt);
+        return !command.isTextInsertion() && command.execute(&event);
     }
 
-    if (command.execute(evt))
+    if (command.execute(&event))
         return true;
 
     // Don't insert null or control characters as they can result in unexpected behaviour
-    if (evt->charCode() < ' ')
+    if (event.charCode() < ' ')
         return false;
 
-    return frame->editor().insertText(keyEvent->text(), evt);
+    return frame->editor().insertText(keyEvent->text(), &event);
 }
 
 bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)

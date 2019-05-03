@@ -201,8 +201,8 @@ private:
     void undo() final { }
     void redo() final { }
 
-    void handleKeyboardEvent(KeyboardEvent*) final { }
-    void handleInputMethodKeydown(KeyboardEvent*) final { }
+    void handleKeyboardEvent(KeyboardEvent&) final { }
+    void handleInputMethodKeydown(KeyboardEvent&) final { }
 
     void textFieldDidBeginEditing(Element*) final { }
     void textFieldDidEndEditing(Element*) final { }

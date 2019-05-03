@@ -473,7 +473,7 @@ public:
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
     const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
-    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
+    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent&);
 
     bool isPainting() const { return m_paintCount > 0; }
 

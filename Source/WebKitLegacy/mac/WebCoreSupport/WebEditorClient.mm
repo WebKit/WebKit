@@ -684,28 +684,28 @@ void WebEditorClient::redo()
         [[m_webView undoManager] redo];    
 }
 
-void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
-    auto* frame = downcast<Node>(event->target())->document().frame();
+    auto* frame = downcast<Node>(event.target())->document().frame();
 #if !PLATFORM(IOS_FAMILY)
     WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
-    if ([webHTMLView _interpretKeyEvent:event savingCommands:NO])
-        event->setDefaultHandled();
+    if ([webHTMLView _interpretKeyEvent:&event savingCommands:NO])
+        event.setDefaultHandled();
 #else
     WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
-    if ([webHTMLView _handleEditingKeyEvent:event])
-        event->setDefaultHandled();
+    if ([webHTMLView _handleEditingKeyEvent:&event])
+        event.setDefaultHandled();
 #endif
 }
 
-void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent& event)
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
-    auto* frame = downcast<Node>(event->target())->document().frame();
+    auto* frame = downcast<Node>(event.target())->document().frame();
     WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
-    if ([webHTMLView _interpretKeyEvent:event savingCommands:YES])
-        event->setDefaultHandled();
+    if ([webHTMLView _interpretKeyEvent:&event savingCommands:YES])
+        event.setDefaultHandled();
 #else
     // iOS does not use input manager this way
 #endif

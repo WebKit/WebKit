@@ -275,14 +275,14 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     return eventWasHandled;
 }
 
-bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 {
-    Frame* frame = frameForEvent(event);
+    auto* frame = frameForEvent(&event);
     
-    auto* platformEvent = event->underlyingPlatformEvent();
+    auto* platformEvent = event.underlyingPlatformEvent();
     if (!platformEvent)
         return false;
-    auto& commands = event->keypressCommands();
+    auto& commands = event.keypressCommands();
 
     ASSERT(!platformEvent->macEvent()); // Cannot have a native event in WebProcess.
 
@@ -304,7 +304,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
     // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
     // Keypress (Char event) handler is the latest opportunity to execute.
     if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Char) {
-        eventWasHandled = executeKeypressCommandsInternal(commands, event);
+        eventWasHandled = executeKeypressCommandsInternal(commands, &event);
         commands.clear();
     }
 
