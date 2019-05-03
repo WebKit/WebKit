@@ -33,30 +33,58 @@
 
 namespace Inspector {
 
-void RemoteInspectorServer::addServerConnection(PlatformSocketType identifier)
+Optional<PlatformSocketType> RemoteInspectorServer::connect()
 {
-    if (!m_server)
-        return;
-
-    if (auto id = m_server->createClient(identifier)) {
-        LockHolder lock(m_connectionsLock);
-        m_inspectorConnections.append(id.value());
+    if (!m_server) {
+        LOG_ERROR("Inspector server is not running");
+        return WTF::nullopt;
     }
+
+    if (auto sockets = Socket::createPair()) {
+        if (auto id = m_server->createClient(sockets->at(0))) {
+            LockHolder lock(m_connectionsLock);
+            m_inspectorConnections.append(id.value());
+
+            return sockets->at(1);
+        }
+    }
+
+    return WTF::nullopt;
 }
 
-void RemoteInspectorServer::didAccept(ConnectionID id, Socket::Domain type)
+Optional<uint16_t> RemoteInspectorServer::listenForTargets()
+{
+    if (!m_server) {
+        LOG_ERROR("Inspector server is not running");
+        return WTF::nullopt;
+    }
+
+    if (m_inspectorListener) {
+        LOG_ERROR("Inspector server is already listening for targets.");
+        return WTF::nullopt;
+    }
+
+    if (auto connection = m_server->listenInet("127.0.0.1", 0)) {
+        m_inspectorListener = connection;
+        return m_server->getPort(*connection);
+    }
+
+    return WTF::nullopt;
+}
+
+void RemoteInspectorServer::didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain type)
 {
     ASSERT(!isMainThread());
 
-    if (type == Socket::Domain::Network) {
+    if (type == Socket::Domain::Local || (m_inspectorListener && listenerID == *m_inspectorListener)) {
+        LockHolder lock(m_connectionsLock);
+        m_inspectorConnections.append(acceptedID);
+    } else if (type == Socket::Domain::Network) {
         if (m_clientConnection) {
             LOG_ERROR("Inspector server can accept only 1 client");
             return;
         }
-        m_clientConnection = id;
-    } else if (type == Socket::Domain::Local) {
-        LockHolder lock(m_connectionsLock);
-        m_inspectorConnections.append(id);
+        m_clientConnection = acceptedID;
     }
 }
 
@@ -81,12 +109,12 @@ void RemoteInspectorServer::didClose(ConnectionID id)
 HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorServer::dispatchMap()
 {
     static NeverDestroyed<HashMap<String, CallHandler>> dispatchMap = HashMap<String, CallHandler>({
-        {"SetTargetList"_s, &RemoteInspectorServer::setTargetList},
-        {"SetupInspectorClient"_s, &RemoteInspectorServer::setupInspectorClient},
-        {"Setup"_s, &RemoteInspectorServer::setup},
-        {"FrontendDidClose"_s, &RemoteInspectorServer::close},
-        {"SendMessageToFrontend"_s, &RemoteInspectorServer::sendMessageToFrontend},
-        {"SendMessageToBackend"_s, &RemoteInspectorServer::sendMessageToBackend},
+        { "SetTargetList"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::setTargetList) },
+        { "SetupInspectorClient"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::setupInspectorClient) },
+        { "Setup"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::setup) },
+        { "FrontendDidClose"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::close) },
+        { "SendMessageToFrontend"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::sendMessageToFrontend) },
+        { "SendMessageToBackend"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::sendMessageToBackend) },
     });
 
     return dispatchMap;
@@ -108,7 +136,7 @@ bool RemoteInspectorServer::start(uint16_t port)
 {
     m_server = RemoteInspectorSocketEndpoint::create(this, "RemoteInspectorServer");
 
-    if (!m_server->listenInet(port)) {
+    if (!m_server->listenInet(nullptr, port)) {
         m_server = nullptr;
         return false;
     }

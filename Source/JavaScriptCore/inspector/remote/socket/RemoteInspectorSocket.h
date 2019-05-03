@@ -66,14 +66,17 @@ enum class Domain {
     Network,
 };
 
+void init();
+
 Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort);
-Optional<PlatformSocketType> listen(uint16_t port);
+Optional<PlatformSocketType> listen(const char* address, uint16_t port);
 Optional<PlatformSocketType> accept(PlatformSocketType);
 Optional<std::array<PlatformSocketType, 2>> createPair();
 
 void setup(PlatformSocketType);
 bool isValid(PlatformSocketType);
 bool isListening(PlatformSocketType);
+uint16_t getPort(PlatformSocketType);
 
 Optional<size_t> read(PlatformSocketType, void* buffer, int bufferSize);
 Optional<size_t> write(PlatformSocketType, const void* data, int size);

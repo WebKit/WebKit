@@ -39,6 +39,10 @@ namespace Inspector {
 
 namespace Socket {
 
+void init()
+{
+}
+
 Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort)
 {
     struct sockaddr_in address = { };
@@ -63,7 +67,7 @@ Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverP
     return fd;
 }
 
-Optional<PlatformSocketType> listen(uint16_t port)
+Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
 {
     struct sockaddr_in address = { };
 
@@ -87,7 +91,10 @@ Optional<PlatformSocketType> listen(uint16_t port)
 
     // FIXME: Support AF_INET6 connections.
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (addressStr)
+        inet_aton(addressStr, &address.sin_addr);
+    else
+        address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(port);
     error = ::bind(fdListen, (struct sockaddr*)&address, sizeof(address));
     if (error < 0) {
@@ -153,6 +160,16 @@ bool isListening(PlatformSocketType socket)
 
     LOG_ERROR("getsockopt errno = %d", errno);
     return false;
+}
+
+uint16_t getPort(PlatformSocketType socket)
+{
+    ASSERT(isValid(socket));
+
+    struct sockaddr_in address = { };
+    int len = sizeof(address);
+    getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len);
+    return address.sin_port;
 }
 
 Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)

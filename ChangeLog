@@ -1,3 +1,17 @@
+2019-05-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Implement and enable RemoteInspector Server.
+        https://bugs.webkit.org/show_bug.cgi?id=197432
+
+        Reviewed by Ross Kirsling.
+
+        Add new build flag USE_INSPECTOR_SOCKET_SERVER to indicate using Socket implementation for RemoteInspector
+        protocol. Currently PlayStation is the only platform which uses this. WinCairo is the second one.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2019-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244881.

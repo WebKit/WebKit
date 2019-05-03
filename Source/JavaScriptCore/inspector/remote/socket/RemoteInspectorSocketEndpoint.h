@@ -53,11 +53,13 @@ public:
     ~RemoteInspectorSocketEndpoint();
 
     Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
-    bool listenInet(uint16_t port);
+    Optional<ConnectionID> listenInet(const char* address, uint16_t port);
 
     void send(ConnectionID, const uint8_t* data, size_t);
 
     Optional<ConnectionID> createClient(PlatformSocketType fd);
+
+    Optional<uint16_t> getPort(ConnectionID) const;
 
 protected:
     void recvIfEnabled(ConnectionID);
@@ -67,7 +69,7 @@ protected:
     void acceptInetSocketIfEnabled(ConnectionID);
     bool isListening(ConnectionID);
 
-    Lock m_connectionsLock;
+    mutable Lock m_connectionsLock;
     HashMap<ConnectionID, std::unique_ptr<Socket::Connection>> m_connections;
 
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };

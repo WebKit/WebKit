@@ -53,7 +53,7 @@ typedef struct _GDBusConnection GDBusConnection;
 typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 #endif
 
-#if PLATFORM(PLAYSTATION)
+#if USE(INSPECTOR_SOCKET_SERVER)
 #include "RemoteConnectionToTarget.h"
 #include "RemoteInspectorConnectionClient.h"
 #include "RemoteInspectorSocketEndpoint.h"
@@ -77,7 +77,7 @@ class RemoteInspectorClient;
 class JS_EXPORT_PRIVATE RemoteInspector final
 #if PLATFORM(COCOA)
     : public RemoteInspectorXPCConnection::Client
-#elif PLATFORM(PLAYSTATION)
+#elif USE(INSPECTOR_SOCKET_SERVER)
     : public RemoteInspectorConnectionClient
 #endif
 {
@@ -146,12 +146,13 @@ public:
 #if USE(GLIB)
     void requestAutomationSession(const char* sessionID, const Client::SessionCapabilities&);
 #endif
-#if USE(GLIB) || PLATFORM(PLAYSTATION)
+#if USE(GLIB) || USE(INSPECTOR_SOCKET_SERVER)
     void setup(TargetID);
     void sendMessageToTarget(TargetID, const char* message);
 #endif
-#if PLATFORM(PLAYSTATION)
+#if USE(INSPECTOR_SOCKET_SERVER)
     static void setConnectionIdentifier(PlatformSocketType);
+    static void setServerPort(uint16_t);
 #endif
 
 private:
@@ -208,7 +209,7 @@ private:
     void receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo);
     void receivedAutomationSessionRequestMessage(NSDictionary *userInfo);
 #endif
-#if PLATFORM(PLAYSTATION)
+#if USE(INSPECTOR_SOCKET_SERVER)
     HashMap<String, CallHandler>& dispatchMap() override;
     void didClose(ConnectionID) override;
 
@@ -239,9 +240,10 @@ private:
     GRefPtr<GCancellable> m_cancellable;
 #endif
 
-#if PLATFORM(PLAYSTATION)
+#if USE(INSPECTOR_SOCKET_SERVER)
     std::unique_ptr<RemoteInspectorSocketEndpoint> m_socketConnection;
     static PlatformSocketType s_connectionIdentifier;
+    static uint16_t s_serverPort;
     Optional<ConnectionID> m_clientID;
 #endif
 

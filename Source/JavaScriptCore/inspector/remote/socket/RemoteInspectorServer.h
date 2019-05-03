@@ -43,9 +43,13 @@ public:
     JS_EXPORT_PRIVATE bool start(uint16_t);
     bool isRunning() const { return !!m_server; }
 
-    JS_EXPORT_PRIVATE void addServerConnection(PlatformSocketType);
+    JS_EXPORT_PRIVATE Optional<uint16_t> listenForTargets();
+    JS_EXPORT_PRIVATE Optional<PlatformSocketType> connect();
 
 private:
+    friend class NeverDestroyed<RemoteInspectorServer>;
+    RemoteInspectorServer() { Socket::init(); }
+
     void connectionClosed(ConnectionID);
 
     void setTargetList(const Event&);
@@ -58,7 +62,7 @@ private:
     void sendCloseEvent(ConnectionID, TargetID);
     void clientConnectionClosed();
 
-    void didAccept(ConnectionID, Socket::Domain) override;
+    void didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) override;
     void didClose(ConnectionID) override;
 
     void sendWebInspectorEvent(ConnectionID, const String&);
@@ -71,6 +75,9 @@ private:
     // Connections to the WebProcess.
     Vector<ConnectionID> m_inspectorConnections;
     Lock m_connectionsLock;
+
+    // Listener for targets.
+    Optional<ConnectionID> m_inspectorListener;
 
     // Connections from RemoteInspectorClient.
     Optional<ConnectionID> m_clientConnection;

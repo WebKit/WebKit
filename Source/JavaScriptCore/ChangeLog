@@ -1,3 +1,77 @@
+2019-05-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Implement and enable RemoteInspector Server.
+        https://bugs.webkit.org/show_bug.cgi?id=197432
+
+        Reviewed by Ross Kirsling.
+
+        Implement Windows implementation for Socket Backend of RemoteInspector and enable it on WinCairo
+        for experimental feature.
+
+        Also add listener interface for connection between RemoteInspector and RemoteInspectorServer
+        for flexible configuration.
+
+        * PlatformWin.cmake:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        (Inspector::RemoteInspectorConnectionClient::didAccept):
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::connect):
+        (Inspector::RemoteInspectorServer::listenForTargets):
+        (Inspector::RemoteInspectorServer::didAccept):
+        (Inspector::RemoteInspectorServer::dispatchMap):
+        (Inspector::RemoteInspectorServer::start):
+        (Inspector::RemoteInspectorServer::addServerConnection): Deleted.
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        (Inspector::RemoteInspectorServer::RemoteInspectorServer):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::dispatchMap):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::setServerPort):
+        * inspector/remote/socket/RemoteInspectorSocket.h:
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::getPort const):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp:
+        (Inspector::Socket::init): Added.
+        (Inspector::Socket::listen): Signature changed.
+        (Inspector::Socket::getPort): Added.
+        * inspector/remote/socket/win/RemoteInspectorSocketWin.cpp: Added.
+        (Inspector::Socket::init):
+        (Inspector::Socket::Socket::Socket):
+        (Inspector::Socket::Socket::~Socket):
+        (Inspector::Socket::Socket::close):
+        (Inspector::Socket::Socket::operator PlatformSocketType const):
+        (Inspector::Socket::Socket::operator bool const):
+        (Inspector::Socket::Socket::leak):
+        (Inspector::Socket::Socket::create):
+        (Inspector::Socket::setOpt):
+        (Inspector::Socket::setOptEnabled):
+        (Inspector::Socket::enableOpt):
+        (Inspector::Socket::connectTo):
+        (Inspector::Socket::bindAndListen):
+        (Inspector::Socket::connect):
+        (Inspector::Socket::listen):
+        (Inspector::Socket::accept):
+        (Inspector::Socket::createPair):
+        (Inspector::Socket::setup):
+        (Inspector::Socket::isValid):
+        (Inspector::Socket::isListening):
+        (Inspector::Socket::getPort):
+        (Inspector::Socket::read):
+        (Inspector::Socket::write):
+        (Inspector::Socket::close):
+        (Inspector::Socket::preparePolling):
+        (Inspector::Socket::poll):
+        (Inspector::Socket::isReadable):
+        (Inspector::Socket::isWritable):
+        (Inspector::Socket::markWaitingWritable):
+        (Inspector::Socket::clearWaitingWritable):
+
 2019-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Generator CodeBlock generation should be idempotent

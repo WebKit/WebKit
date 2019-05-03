@@ -27,6 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "RemoteControllableTarget.h"
 #include "RemoteInspectorSocketEndpoint.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +37,7 @@ namespace Inspector {
 class RemoteInspectorConnectionClient : public CanMakeWeakPtr<RemoteInspectorConnectionClient> {
 public:
     void didReceiveWebInspectorEvent(ConnectionID, Vector<uint8_t>&&);
-    virtual void didAccept(ConnectionID, Socket::Domain) { };
+    virtual void didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) { };
     virtual void didClose(ConnectionID) = 0;
 
     struct Event {

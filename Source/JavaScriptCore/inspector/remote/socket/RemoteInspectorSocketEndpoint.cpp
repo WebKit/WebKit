@@ -76,14 +76,12 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* se
     return WTF::nullopt;
 }
 
-bool RemoteInspectorSocketEndpoint::listenInet(uint16_t port)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port)
 {
-    if (auto socket = Socket::listen(port)) {
-        if (createClient(*socket))
-            return true;
-    }
+    if (auto socket = Socket::listen(address, port))
+        return createClient(*socket);
 
-    return false;
+    return WTF::nullopt;
 }
 
 bool RemoteInspectorSocketEndpoint::isListening(ConnectionID id)
@@ -159,6 +157,15 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocke
     wakeupWorkerThread();
 
     return id;
+}
+
+Optional<uint16_t> RemoteInspectorSocketEndpoint::getPort(ConnectionID id) const
+{
+    LockHolder lock(m_connectionsLock);
+    if (const auto& connection = m_connections.get(id))
+        return Socket::getPort(connection->socket);
+
+    return WTF::nullopt;
 }
 
 void RemoteInspectorSocketEndpoint::recvIfEnabled(ConnectionID id)
@@ -246,7 +253,7 @@ void RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled(ConnectionID id)
             lock.unlockEarly();
             if (auto newID = createClient(*socket)) {
                 if (m_inspectorClient) {
-                    m_inspectorClient->didAccept(newID.value(), Socket::Domain::Network);
+                    m_inspectorClient->didAccept(newID.value(), id, Socket::Domain::Network);
                     return;
                 }
             }

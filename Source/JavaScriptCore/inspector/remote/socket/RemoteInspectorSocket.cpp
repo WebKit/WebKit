@@ -39,6 +39,7 @@
 namespace Inspector {
 
 PlatformSocketType RemoteInspector::s_connectionIdentifier = INVALID_SOCKET_VALUE;
+uint16_t RemoteInspector::s_serverPort = 0;
 
 RemoteInspector& RemoteInspector::singleton()
 {
@@ -48,7 +49,7 @@ RemoteInspector& RemoteInspector::singleton()
 
 RemoteInspector::RemoteInspector()
 {
-    start();
+    Socket::init();
 }
 
 void RemoteInspector::didClose(ConnectionID id)
@@ -65,10 +66,10 @@ void RemoteInspector::didClose(ConnectionID id)
 HashMap<String, RemoteInspector::CallHandler>& RemoteInspector::dispatchMap()
 {
     static NeverDestroyed<HashMap<String, CallHandler>> methods = HashMap<String, CallHandler>({
-        {"GetTargetList"_s, static_cast<CallHandler>(&RemoteInspector::receivedGetTargetListMessage)},
-        {"Setup"_s, static_cast<CallHandler>(&RemoteInspector::receivedSetupMessage)},
-        {"SendMessageToTarget"_s, static_cast<CallHandler>(&RemoteInspector::receivedDataMessage)},
-        {"FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspector::receivedCloseMessage)},
+        { "GetTargetList"_s, static_cast<CallHandler>(&RemoteInspector::receivedGetTargetListMessage) },
+        { "Setup"_s, static_cast<CallHandler>(&RemoteInspector::receivedSetupMessage) },
+        { "SendMessageToTarget"_s, static_cast<CallHandler>(&RemoteInspector::receivedDataMessage) },
+        { "FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspector::receivedCloseMessage) },
     });
 
     return methods;
@@ -87,14 +88,18 @@ void RemoteInspector::start()
 {
     LockHolder lock(m_mutex);
 
-    if (m_enabled || s_connectionIdentifier == INVALID_SOCKET_VALUE)
+    if (m_enabled || (s_connectionIdentifier == INVALID_SOCKET_VALUE && !s_serverPort))
         return;
 
     m_enabled = true;
 
     m_socketConnection = RemoteInspectorSocketEndpoint::create(this, "RemoteInspector");
 
-    m_clientID = m_socketConnection->createClient(s_connectionIdentifier);
+    if (s_connectionIdentifier) {
+        m_clientID = m_socketConnection->createClient(s_connectionIdentifier);
+        s_connectionIdentifier = INVALID_SOCKET_VALUE;
+    } else
+        m_clientID = m_socketConnection->connectInet("127.0.0.1", s_serverPort);
 
     if (!m_targetMap.isEmpty())
         pushListingsSoon();
@@ -117,7 +122,6 @@ void RemoteInspector::stopInternal(StopSource)
     m_automaticInspectionPaused = false;
     m_socketConnection = nullptr;
     m_clientID = WTF::nullopt;
-    s_connectionIdentifier = INVALID_SOCKET_VALUE;
 }
 
 TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
@@ -289,6 +293,11 @@ void RemoteInspector::sendMessageToTarget(TargetID targetIdentifier, const char*
 void RemoteInspector::setConnectionIdentifier(PlatformSocketType connectionIdentifier)
 {
     RemoteInspector::s_connectionIdentifier = connectionIdentifier;
+}
+
+void RemoteInspector::setServerPort(uint16_t port)
+{
+    RemoteInspector::s_serverPort = port;
 }
 
 } // namespace Inspector
