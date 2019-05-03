@@ -1,3 +1,14 @@
+2019-05-02  Alex Christensen  <achristensen@webkit.org>
+
+        Mark U+01C0 as a homograph of U+006C
+        https://bugs.webkit.org/show_bug.cgi?id=197526
+        <rdar://problem/50301904>
+
+        Reviewed by Tim Horton.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isLookalikeCharacter):
+
 2019-05-02  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Refactor WEBKIT_MAKE_FORWARDING_HEADERS into WEBKIT_COPY_FILES
