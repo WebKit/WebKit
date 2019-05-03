@@ -160,7 +160,7 @@ void AVCaptureDeviceManager::refreshCaptureDevices()
 
 bool AVCaptureDeviceManager::isAvailable()
 {
-    return PAL::AVFoundationLibrary();
+    return PAL::isAVFoundationFrameworkAvailable();
 }
 
 AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()

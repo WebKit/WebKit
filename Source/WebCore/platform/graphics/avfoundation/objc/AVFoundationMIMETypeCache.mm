@@ -93,7 +93,7 @@ bool AVFoundationMIMETypeCache::isAvailable() const
 #if PLATFORM(IOSMAC)
     // FIXME: This should be using AVFoundationLibraryIsAvailable() instead, but doing so causes soft-linking
     // to subsequently fail on certain symbols. See <rdar://problem/42224780> for more details.
-    return PAL::AVFoundationLibrary();
+    return PAL::isAVFoundationFrameworkAvailable();
 #else
     return AVFoundationLibraryIsAvailable();
 #endif
@@ -109,7 +109,7 @@ void AVFoundationMIMETypeCache::loadMIMETypes()
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [this] {
-        if (!PAL::AVFoundationLibrary())
+        if (!PAL::isAVFoundationFrameworkAvailable())
             return;
 
         for (NSString* type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])

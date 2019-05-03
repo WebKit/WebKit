@@ -1,3 +1,30 @@
+2019-05-03  Eric Carlson  <eric.carlson@apple.com>
+
+        AVFoundation framework isn't always installed
+        https://bugs.webkit.org/show_bug.cgi?id=197577
+        <rdar://problem/50447841>
+
+        Reviewed by Jer Noble.
+        
+        Use PAL::isAVFoundationFrameworkAvailable() to check to see if AVFoundation is
+        installed, not PAL::AVFoundationLibrary().
+
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm:
+        (WebCore::AVFoundationMIMETypeCache::isAvailable const):
+        (WebCore::AVFoundationMIMETypeCache::loadMIMETypes):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isAvailable):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetType const):
+        (WebCore::exernalDeviceDisplayNameForPlayer):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::isAvailable):
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm:
+        (WebCore::validateHEVCParameters):
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::isAvailable):
+
 2019-05-03  Sihui Liu  <sihui_liu@apple.com>
 
         Add assertion to check whether shm files have maximum FileProtection of CompleteUnlessOpen

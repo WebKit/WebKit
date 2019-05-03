@@ -41,7 +41,7 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
-        if (!PAL::AVFoundationLibrary() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
+        if (!PAL::isAVFoundationFrameworkAvailable() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
             return false;
 
         auto codecCode = FourCC::fromString(AVVideoCodecTypeHEVCWithAlpha);

@@ -179,7 +179,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
-    return PAL::AVFoundationLibrary()
+    return PAL::isAVFoundationFrameworkAvailable()
         && isCoreMediaFrameworkAvailable()
         && getAVStreamDataParserClass()
         && getAVSampleBufferAudioRendererClass()

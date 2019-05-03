@@ -1696,7 +1696,7 @@ void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLo
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()
 {
-    return PAL::AVFoundationLibrary() && isCoreMediaFrameworkAvailable();
+    return PAL::isAVFoundationFrameworkAvailable() && isCoreMediaFrameworkAvailable();
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaTime& timeValue) const
@@ -2576,7 +2576,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
         return MediaPlayer::TargetTypeNone;
 
 #if PLATFORM(IOS_FAMILY)
-    if (!PAL::AVFoundationLibrary())
+    if (!PAL::isAVFoundationFrameworkAvailable())
         return MediaPlayer::TargetTypeNone;
 
     switch ([m_avPlayer externalPlaybackType]) {
@@ -2600,7 +2600,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
 static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
 {
 #if HAVE(CELESTIAL)
-    if (!PAL::AVFoundationLibrary())
+    if (!PAL::isAVFoundationFrameworkAvailable())
         return nil;
 
     if ([PAL::getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)]) {
