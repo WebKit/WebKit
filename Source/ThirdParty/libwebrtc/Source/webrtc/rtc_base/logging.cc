@@ -54,7 +54,6 @@ static LoggingSeverity g_dbg_sev = LS_NONE;
 #endif
 static LogMessage::LogOutputCallback g_log_output_callback = nullptr;
 
-
 // Return the filename portion of the string (that following the last slash).
 const char* FilenameFromPath(const char* file) {
   const char* end1 = ::strrchr(file, '/');
@@ -465,9 +464,10 @@ void LogMessage::OutputToDebug(const std::string& str,
     }
   }
 #endif  // WEBRTC_ANDROID
+  if (g_log_output_callback) {
+    g_log_output_callback(severity, str.c_str());
+  }
   if (log_to_stderr) {
-    if (g_log_output_callback)
-      g_log_output_callback(severity, str.c_str());
     fprintf(stderr, "%s", str.c_str());
     fflush(stderr);
   }

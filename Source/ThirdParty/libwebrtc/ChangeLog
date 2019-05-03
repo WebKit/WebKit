@@ -1,3 +1,12 @@
+2019-05-03  Youenn Fablet  <youenn@apple.com>
+
+        Do not require log_to_stderr for WebRTC logging through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=197560
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/rtc_base/logging.cc:
+
 2019-04-29  Alex Christensen  <achristensen@webkit.org>
 
         <rdar://problem/50299396> Fix internal High Sierra build
