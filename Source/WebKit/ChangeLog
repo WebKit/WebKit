@@ -1,3 +1,16 @@
+2019-05-03  Jay Mulani  <jmulani@apple.com>
+
+        Expose full screen controller SPI to check if full screen is open and close full screen
+        https://bugs.webkit.org/show_bug.cgi?id=197263
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView closeFullScreenWindowController]):
+        (-[WKWebView fullScreenWindowController]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2019-05-03  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm is a flaky failure

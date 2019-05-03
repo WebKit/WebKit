@@ -195,12 +195,10 @@ struct PrintInfo;
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-@interface WKWebView (FullScreenAPI)
--(BOOL)hasFullScreenWindowController;
+@interface WKWebView (FullScreenAPI_Internal)
 -(WKFullScreenWindowController *)fullScreenWindowController;
--(void)closeFullScreenWindowController;
 @end
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
+#endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 @interface WKWebView (_WKWebViewPrintFormatter)
