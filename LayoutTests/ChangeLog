@@ -1,3 +1,16 @@
+2019-05-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make focusing-element-with-tabindex-by-tap-or-click.html more robust on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197548
+
+        Reviewed by Wenson Hsieh.
+
+        There was a race between the time the editable element was focused and the keyboard was brought up
+        to when the next non-editable element was focused. Made the test explicitly wait for the keyboard
+        to come up and go down between test cases to make it more robust.
+
+        * fast/events/focusing-element-with-tabindex-by-tap-or-click.html:
+
 2019-05-02  Chris Dumez  <cdumez@apple.com>
 
         Add test coverage for <rdar://problem/49731231>

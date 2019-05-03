@@ -18,11 +18,13 @@ description('This tests tapping or clicking on an element with tabindex would fo
 jsTestIsAsync = true;
 
 async function runTests() {
-    await UIHelper.activateAt(contentEditableElement.offsetLeft + 5, contentEditableElement.offsetTop + 5);
+    await UIHelper.activateElementAndWaitForInputSession(contentEditableElement);
     shouldBe('"Activated contentEditableElement"; document.activeElement', 'contentEditableElement');
 
     await UIHelper.activateAt(elementWithTabIndexAndClickHandler.offsetLeft + 5, elementWithTabIndexAndClickHandler.offsetTop + 5);
     shouldBe('"Activated elementWithTabIndexAndClickHandler"; document.activeElement', 'elementWithTabIndexAndClickHandler');
+
+    await UIHelper.waitForKeyboardToHide();
 
     await UIHelper.activateAt(elementWithTabIndex.offsetLeft + 5, elementWithTabIndex.offsetTop + 5);
     shouldBe('"Activated elementWithTabIndex"; document.activeElement', 'elementWithTabIndex');
