@@ -55,6 +55,7 @@ public:
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
 
     bool needsGMailOverflowScrollQuirk() const;
+    bool needsYouTubeOverflowScrollQuirk() const;
 
 private:
     bool needsQuirks() const;
@@ -65,6 +66,7 @@ private:
     mutable Optional<bool> m_hasWebSQLSupportQuirk;
 #if PLATFORM(IOS_FAMILY)
     mutable Optional<bool> m_needsGMailOverflowScrollQuirk;
+    mutable Optional<bool> m_needsYouTubeOverflowScrollQuirk;
 #endif
 };
 

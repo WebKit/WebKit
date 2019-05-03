@@ -1,3 +1,20 @@
+2019-05-03  Antti Koivisto  <antti@apple.com>
+
+        Add a quirk to make youtube navigation bar scrollable without mouse hover on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197555
+        <rdar://problem/49582231>
+
+        Reviewed by Brent Fulgham.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyleForSiteSpecificQuirks):
+
+        Turn 'overflow:hidden' into 'overflow:auto' on element with id="guide-inner-content".
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsYouTubeOverflowScrollQuirk const):
+        * page/Quirks.h:
+
 2019-05-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Record actions performed on WebGL2RenderingContext

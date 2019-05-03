@@ -1131,7 +1131,14 @@ void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, c
 {
     if (document().quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
-        if (style.overflowY() == Overflow::Hidden && element.attributeWithoutSynchronization(roleAttr) == "navigation")
+        static NeverDestroyed<AtomicString> roleValue("navigation", AtomicString::ConstructFromLiteral);
+        if (style.overflowY() == Overflow::Hidden && element.attributeWithoutSynchronization(roleAttr) == roleValue)
+            style.setOverflowY(Overflow::Auto);
+    }
+    if (document().quirks().needsYouTubeOverflowScrollQuirk()) {
+        // This turns sidebar scrollable without hover.
+        static NeverDestroyed<AtomicString> idValue("guide-inner-content", AtomicString::ConstructFromLiteral);
+        if (style.overflowY() == Overflow::Hidden && element.idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
 }

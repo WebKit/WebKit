@@ -287,6 +287,7 @@ bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
 #endif
 }
 
+// FIXME: Remove after the site is fixed, <rdar://problem/50374200>
 bool Quirks::needsGMailOverflowScrollQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -297,6 +298,22 @@ bool Quirks::needsGMailOverflowScrollQuirk() const
         m_needsGMailOverflowScrollQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "mail.google.com");
 
     return *m_needsGMailOverflowScrollQuirk;
+#else
+    return false;
+#endif
+}
+
+// FIXME: Remove after the site is fixed, <rdar://problem/50374311>
+bool Quirks::needsYouTubeOverflowScrollQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsYouTubeOverflowScrollQuirk)
+        m_needsYouTubeOverflowScrollQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "www.youtube.com");
+
+    return *m_needsYouTubeOverflowScrollQuirk;
 #else
     return false;
 #endif
