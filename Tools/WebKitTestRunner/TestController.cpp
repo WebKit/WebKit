@@ -229,9 +229,9 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 void TestController::runModal(WKPageRef page, const void* clientInfo)
 {
     PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
-    view->setWindowIsKey(false);
+    TestController::singleton().mainWebView()->setWindowIsKey(false);
     runModal(view);
-    view->setWindowIsKey(true);
+    TestController::singleton().mainWebView()->setWindowIsKey(true);
 }
 
 static void closeOtherPage(WKPageRef page, const void* clientInfo)

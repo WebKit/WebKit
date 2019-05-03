@@ -1,5 +1,16 @@
 2019-05-02  Chris Dumez  <cdumez@apple.com>
 
+        Add test coverage for <rdar://problem/49731231>
+        https://bugs.webkit.org/show_bug.cgi?id=196730
+        <rdar://problem/49731231>
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/security/showModalDialog-sync-cross-origin-page-load-expected.txt: Added.
+        * http/tests/security/showModalDialog-sync-cross-origin-page-load.html: Added.
+
+2019-05-02  Chris Dumez  <cdumez@apple.com>
+
         Setting a frame's src to a javascript URL should not run it synchronously
         https://bugs.webkit.org/show_bug.cgi?id=197466
 

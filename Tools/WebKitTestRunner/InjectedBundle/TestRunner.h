@@ -448,6 +448,7 @@ public:
 
     // Modal alerts
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);
+    void abortModal();
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();

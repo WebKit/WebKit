@@ -124,6 +124,10 @@ void TestController::runModal(PlatformWebView*)
     // FIXME: Need to implement this to test showModalDialog.
 }
 
+void TestController::abortModal()
+{
+}
+
 WKContextRef TestController::platformContext()
 {
     return m_context.get();

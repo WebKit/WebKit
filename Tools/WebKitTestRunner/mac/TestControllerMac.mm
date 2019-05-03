@@ -353,6 +353,11 @@ void TestController::runModal(PlatformWebView* view)
     [NSApp runModalForWindow:window];
 }
 
+void TestController::abortModal()
+{
+    [NSApp abortModal];
+}
+
 const char* TestController::platformLibraryPathForTesting()
 {
     return [[@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath] UTF8String];

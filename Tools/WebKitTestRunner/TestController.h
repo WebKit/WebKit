@@ -309,6 +309,7 @@ public:
 
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);
     void handleJavaScriptAlert(WKPageRunJavaScriptAlertResultListenerRef);
+    void abortModal();
 
     bool isDoingMediaCapture() const;
 

@@ -2820,6 +2820,12 @@ void TestRunner::setShouldDismissJavaScriptAlertsAsynchronously(bool shouldDismi
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::abortModal()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("AbortModal"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 void TestRunner::dumpAdClickAttribution()
 {
     auto messageName = adoptWK(WKStringCreateWithUTF8CString("DumpAdClickAttribution"));

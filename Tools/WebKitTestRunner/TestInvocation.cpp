@@ -1630,6 +1630,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AbortModal")) {
+        TestController::singleton().abortModal();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "DumpAdClickAttribution")) {
         dumpAdClickAttribution();
         return nullptr;

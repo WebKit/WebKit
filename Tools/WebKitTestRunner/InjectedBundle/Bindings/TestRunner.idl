@@ -352,6 +352,7 @@ interface TestRunner {
 
     // Modal alerts
     void setShouldDismissJavaScriptAlertsAsynchronously(boolean value);
+    void abortModal();
 
     void setWebRTCMDNSICECandidatesEnabled(boolean value);
     void setWebRTCUnifiedPlanEnabled(boolean value);
