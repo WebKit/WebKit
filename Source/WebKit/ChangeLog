@@ -1,3 +1,17 @@
+2019-05-03  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: [weakThis->m_view window] == weakThis->m_targetWindowForMovePreparation
+        https://bugs.webkit.org/show_bug.cgi?id=197574
+        <rdar://problem/50453181>
+
+        Reviewed by Tim Horton.
+
+        Tweak the assertion so that it holds even if the WebView gets closed because the completion
+        handler has been called.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+
 2019-05-03  Brent Fulgham  <bfulgham@apple.com>
 
         Use more efficient path resolution logic
