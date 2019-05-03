@@ -177,4 +177,13 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 
 @end
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKElementActionAdditions.m>)
+#include <WebKitAdditions/WKElementActionAdditions.m>
+#else
+UIImage *_WKUIImageForElementActionType(_WKElementActionType)
+{
+    return nil;
+}
+#endif
+
 #endif // PLATFORM(IOS_FAMILY)

@@ -27,7 +27,10 @@
 
 #if TARGET_OS_IPHONE
 
+#import <WebKit/WKBase.h>
 #import <WebKit/_WKActivatedElementInfo.h>
+
+@class UIImage;
 
 typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
 typedef BOOL (^WKElementActionDismissalHandler)(void);
@@ -63,5 +66,15 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, copy) WKElementActionDismissalHandler dismissalHandler;
 
 @end
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT UIImage *_WKUIImageForElementActionType(_WKElementActionType) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // TARGET_OS_IPHONE
