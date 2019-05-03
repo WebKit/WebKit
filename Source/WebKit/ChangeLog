@@ -1,5 +1,22 @@
 2019-05-02  Dean Jackson  <dino@apple.com>
 
+        Need additional UIPreviewAction information in WKImagePreviewViewController
+        https://bugs.webkit.org/show_bug.cgi?id=197540
+        <rdar://problem/50430510>
+
+        Reviewed by Wenson Hsieh.
+
+        Include a WebKitAdditions file to provide a macro for
+        additional UIPreviewAction information.
+
+        While here, take the opportunity to move from the deprecated
+        UIViewControllerPreviewAction to the newer UIPreviewAction.
+
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController previewActionItems]):
+
+2019-05-02  Dean Jackson  <dino@apple.com>
+
         Provide UIImages for element actions
         https://bugs.webkit.org/show_bug.cgi?id=197539
         <rdar://problem/50430363>
