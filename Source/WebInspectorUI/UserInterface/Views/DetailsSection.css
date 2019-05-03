@@ -31,7 +31,7 @@
 
 .details-section .details-section {
     background-color: hsl(0, 0%, 100%);
-    border-color: hsla(0, 0%, 0%, 0.15);
+    border-color: var(--text-color-quaternary);
 }
 
 .details-section .details-section:last-child {

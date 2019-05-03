@@ -1,3 +1,13 @@
+2019-05-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: borders between section should be lighter than background
+        https://bugs.webkit.org/show_bug.cgi?id=197551
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section .details-section):
+
 2019-04-29  Alex Christensen  <achristensen@webkit.org>
 
         <rdar://problem/50299396> Fix internal High Sierra build
