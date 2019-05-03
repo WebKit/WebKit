@@ -42,6 +42,7 @@ namespace WebCore {
     M(Animations) \
     M(ApplePay) \
     M(Archives) \
+    M(ClipRects) \
     M(Compositing) \
     M(ContentFiltering) \
     M(ContentObservation) \
