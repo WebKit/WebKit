@@ -780,8 +780,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     auto* containingBlock = box.containingBlock();
 
     // Resolve a "computed value" percentage if the element is positioned.
-    // TODO: percentages for sticky positioning should be handled here (bug 189549).
-    if (containingBlock && offset.isPercentOrCalculated() && box.isPositioned() && !box.isStickilyPositioned()) {
+    if (containingBlock && offset.isPercentOrCalculated() && box.isPositioned()) {
         bool isVerticalProperty;
         if (propertyID == CSSPropertyTop || propertyID == CSSPropertyBottom)
             isVerticalProperty = true;
@@ -790,14 +789,23 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
             isVerticalProperty = false;
         }
         LayoutUnit containingBlockSize;
-        if (isVerticalProperty == containingBlock->isHorizontalWritingMode()) {
-            containingBlockSize = box.isOutOfFlowPositioned()
-                ? box.containingBlockLogicalHeightForPositioned(*containingBlock, false)
-                : box.containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+        if (box.isStickilyPositioned()) {
+            const RenderBox& enclosingScrollportBox =
+                box.enclosingScrollportBox();
+            if (isVerticalProperty == enclosingScrollportBox.isHorizontalWritingMode())
+                containingBlockSize = enclosingScrollportBox.contentLogicalHeight();
+            else
+                containingBlockSize = enclosingScrollportBox.contentLogicalWidth();
         } else {
-            containingBlockSize = box.isOutOfFlowPositioned()
-                ? box.containingBlockLogicalWidthForPositioned(*containingBlock, nullptr, false)
-                : box.containingBlockLogicalWidthForContent();
+            if (isVerticalProperty == containingBlock->isHorizontalWritingMode()) {
+                containingBlockSize = box.isOutOfFlowPositioned()
+                    ? box.containingBlockLogicalHeightForPositioned(*containingBlock, false)
+                    : box.containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+            } else {
+                containingBlockSize = box.isOutOfFlowPositioned()
+                    ? box.containingBlockLogicalWidthForPositioned(*containingBlock, nullptr, false)
+                    : box.containingBlockLogicalWidthForContent();
+            }
         }
         return zoomAdjustedPixelValue(floatValueForLength(offset, containingBlockSize), style);
     }
