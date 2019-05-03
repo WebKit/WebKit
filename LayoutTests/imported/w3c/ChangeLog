@@ -1,3 +1,15 @@
+2019-05-03  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=182849
+        <rdar://problem/50353372>
+
+        Reviewed by Alex Christensen.
+
+        Modernize the test and add an assertion that the body is transmitted after a redirection.
+
+        * web-platform-tests/xhr/event-upload-progress-crossorigin.htm:
+
 2019-05-03  Joonghun Park  <jh718.park@samsung.com>
 
         Resolve the percentage values of inset properties against proper box.

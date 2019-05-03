@@ -52,6 +52,7 @@ public:
     bool isAllowedToAskUserForCredentials() const;
 
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
+    void updateRequestAfterRedirection(WebCore::ResourceRequest&) const;
 
     const NetworkLoadParameters& parameters() const { return m_parameters; }
 

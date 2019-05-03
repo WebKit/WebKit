@@ -90,14 +90,26 @@ void NetworkLoad::cancel()
         m_task->cancel();
 }
 
-void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
+static inline void updateRequest(ResourceRequest& currentRequest, const ResourceRequest& newRequest)
 {
 #if PLATFORM(COCOA)
-    m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
+    currentRequest.updateFromDelegatePreservingOldProperties(newRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
 #else
     // FIXME: Implement ResourceRequest::updateFromDelegatePreservingOldProperties. See https://bugs.webkit.org/show_bug.cgi?id=126127.
-    m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest);
+    currentRequest.updateFromDelegatePreservingOldProperties(newRequest);
 #endif
+}
+
+void NetworkLoad::updateRequestAfterRedirection(WebCore::ResourceRequest& newRequest) const
+{
+    ResourceRequest updatedRequest = m_currentRequest;
+    updateRequest(updatedRequest, newRequest);
+    newRequest = WTFMove(updatedRequest);
+}
+
+void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
+{
+    updateRequest(m_currentRequest, newRequest);
 
     auto redirectCompletionHandler = std::exchange(m_redirectCompletionHandler, nullptr);
     ASSERT(redirectCompletionHandler);

@@ -701,6 +701,10 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 {
     if (m_shouldRestartLoad) {
         m_shouldRestartLoad = false;
+
+        if (m_networkLoad)
+            m_networkLoad->updateRequestAfterRedirection(newRequest);
+
         restartNetworkLoad(WTFMove(newRequest));
         return;
     }
