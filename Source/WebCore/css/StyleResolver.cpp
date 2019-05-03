@@ -76,6 +76,7 @@
 #include "PageRuleCollector.h"
 #include "PaintWorkletGlobalScope.h"
 #include "Pair.h"
+#include "Quirks.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
 #include "RenderTheme.h"
@@ -1121,6 +1122,18 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 #if ENABLE(POINTER_EVENTS)
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, parentStyle.effectiveTouchActions()));
 #endif
+
+    if (element)
+        adjustRenderStyleForSiteSpecificQuirks(style, *element);
+}
+
+void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, const Element& element)
+{
+    if (document().quirks().needsGMailOverflowScrollQuirk()) {
+        // This turns sidebar scrollable without mouse move event.
+        if (style.overflowY() == Overflow::Hidden && element.attributeWithoutSynchronization(roleAttr) == "navigation")
+            style.setOverflowY(Overflow::Auto);
+    }
 }
 
 static void checkForOrientationChange(RenderStyle* style)

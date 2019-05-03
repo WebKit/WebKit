@@ -54,6 +54,8 @@ public:
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
 
+    bool needsGMailOverflowScrollQuirk() const;
+
 private:
     bool needsQuirks() const;
 
@@ -61,6 +63,9 @@ private:
 
     mutable Optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
     mutable Optional<bool> m_hasWebSQLSupportQuirk;
+#if PLATFORM(IOS_FAMILY)
+    mutable Optional<bool> m_needsGMailOverflowScrollQuirk;
+#endif
 };
 
 }

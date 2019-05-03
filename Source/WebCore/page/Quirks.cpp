@@ -287,4 +287,20 @@ bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
 #endif
 }
 
+bool Quirks::needsGMailOverflowScrollQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsGMailOverflowScrollQuirk)
+        m_needsGMailOverflowScrollQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "mail.google.com");
+
+    return *m_needsGMailOverflowScrollQuirk;
+#else
+    return false;
+#endif
+}
+
+
 }
