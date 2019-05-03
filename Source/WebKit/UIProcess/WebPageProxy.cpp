@@ -2006,6 +2006,14 @@ void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
     m_maintainsInactiveSelection = newValue;
 }
 
+void WebPageProxy::scheduleFullEditorStateUpdate()
+{
+    if (!hasRunningProcess())
+        return;
+
+    m_process->send(Messages::WebPage::ScheduleFullEditorStateUpdate(), m_pageID);
+}
+
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
@@ -6502,6 +6510,20 @@ void WebPageProxy::editingRangeCallback(const EditingRange& range, CallbackID ca
 
     callback->performCallbackWithReturnValue(range);
 }
+
+void WebPageProxy::editorStateChanged(const EditorState& editorState)
+{
+    updateEditorState(editorState);
+    dispatchDidReceiveEditorStateAfterFocus();
+}
+
+#if !PLATFORM(IOS_FAMILY)
+
+void WebPageProxy::dispatchDidReceiveEditorStateAfterFocus()
+{
+}
+
+#endif
 
 #if ENABLE(APPLICATION_MANIFEST)
 void WebPageProxy::applicationManifestCallback(const Optional<WebCore::ApplicationManifest>& manifestOrNull, CallbackID callbackID)

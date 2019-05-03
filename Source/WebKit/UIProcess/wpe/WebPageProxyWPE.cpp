@@ -64,7 +64,7 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
     notImplemented();
 }
 
-void WebPageProxy::editorStateChanged(const EditorState&)
+void WebPageProxy::updateEditorState(const EditorState&)
 {
     notImplemented();
 }

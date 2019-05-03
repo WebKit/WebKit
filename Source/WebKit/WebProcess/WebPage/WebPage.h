@@ -1183,6 +1183,7 @@ public:
     void setRemoteObjectRegistry(RemoteObjectRegistry&);
 
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
+    void scheduleFullEditorStateUpdate();
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
@@ -1199,7 +1200,6 @@ private:
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
     void sendEditorStateUpdate();
-    void scheduleFullEditorStateUpdate();
 
 #if PLATFORM(COCOA)
     void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);

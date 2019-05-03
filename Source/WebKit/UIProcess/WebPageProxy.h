@@ -1423,6 +1423,9 @@ public:
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles);
 #endif
     void editorStateChanged(const EditorState&);
+    void updateEditorState(const EditorState&);
+    void scheduleFullEditorStateUpdate();
+    void dispatchDidReceiveEditorStateAfterFocus();
 
 #if PLATFORM(COCOA)
     void touchBarMenuDataRemoved();

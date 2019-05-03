@@ -1,3 +1,82 @@
+2019-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: Layout test editing/selection/ios/selection-after-changing-text-with-callout-menu.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=197532
+        <rdar://problem/50177144>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixes layout tests that began failing after r244546. See below for details.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
+        Partially reverts a change in r244546, after which we commit the layer tree and scroll before updating the
+        page's editor state. The purpose of this change was to ensure that UI process-side element focus scrolling logic
+        would not conflict with web-process-driven scrolling logic.
+
+        Instead, we split the existing logic in WebPageProxy::editorStateChanged into two pieces: one that updates the
+        editor state (by setting m_editorState), and a second that dispatches updates to PageClient when the first
+        editor state is received after focusing an element. During a layer tree commit in the UI process, we first
+        update the editor state, then commit the layer tree and apply scroll position changes, and finally scroll to
+        reveal the focused element if necessary.
+
+        When an editor state is delivered to the UI process in an out-of-band update (i.e. not in a layer tree commit),
+        simply dispatch the initial editor state for a focused element immediately.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scheduleFullEditorStateUpdate):
+
+        Add an IPC message to schedule an editor state update in the next remote layer tree commit. See below for more
+        details.
+
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::dispatchDidReceiveEditorStateAfterFocus):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::updateEditorState):
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willFinishIgnoringCalloutBarFadeAfterPerformingAction]):
+
+        Additionally ensure that an editor state update is scheduled. This addresses a potential source of flakiness in
+        the layout test editing/selection/ios/selection-after-changing-text-with-callout-menu.html, where an editor
+        state update may only be scheduled after the next layout timer fires (this is the case in custom callout menu
+        actions that change the DOM but do not otherwise trigger any editing commands).
+
+        In the problematic scenario, the client could make a change that triggers layout soon; but before the layout
+        timer fires, the timer for the next remote layer tree commit could fire, such that the next layer tree commit
+        would not contain the relevant editor state.
+
+        This extra step ensures that we always *schedule* an editor state update when performing a callout menu action
+        that does not automatically dismiss, so that we can prevent the callout bar from dismissing during the correct
+        scope.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::layerTreeCommitComplete):
+        (WebKit::WebPageProxy::updateEditorState):
+
+        Rename editorStateChanged to updateEditorState, and make the editorStateChanged codepath only executed when an
+        out-of-band editor state update is delivered to the UI process.
+
+        (WebKit::WebPageProxy::dispatchDidReceiveEditorStateAfterFocus):
+
+        Notify the UI process that the initial editor state has been received; this prompts us to scroll to reveal the
+        focused element, if needed.
+
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::updateEditorState):
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::updateEditorState):
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::updateEditorState):
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-05-02  Timothy Hatcher  <timothy@apple.com>
 
         NSAttributedString conversion in a loop returns nil and WKUnknownError every other time.

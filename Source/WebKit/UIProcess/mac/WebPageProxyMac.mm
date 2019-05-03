@@ -607,7 +607,7 @@ bool WebPageProxy::appleMailLinesClampEnabled()
     return MacApplication::isAppleMail();
 }
 
-void WebPageProxy::editorStateChanged(const EditorState& editorState)
+void WebPageProxy::updateEditorState(const EditorState& editorState)
 {
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
     

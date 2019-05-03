@@ -202,6 +202,8 @@ messages -> WebPage LegacyReceiver {
     RunJavaScriptInFrame(uint64_t frameID, String script, bool forceUserGesture, WebKit::CallbackID callbackID)
     ForceRepaint(WebKit::CallbackID callbackID)
 
+    ScheduleFullEditorStateUpdate()
+
 #if PLATFORM(COCOA)
     # Dictionary support.
     PerformDictionaryLookupOfCurrentSelection()

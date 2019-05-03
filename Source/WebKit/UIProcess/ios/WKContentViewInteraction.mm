@@ -3920,6 +3920,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction
 {
     _ignoreSelectionCommandFadeCount++;
+    _page->scheduleFullEditorStateUpdate();
     _page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] (auto) {
         if (auto strongSelf = weakSelf.get())
             strongSelf->_ignoreSelectionCommandFadeCount--;

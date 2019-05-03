@@ -430,6 +430,11 @@ bool WebPageProxy::updateLayoutViewportParameters(const WebKit::RemoteLayerTreeT
 void WebPageProxy::layerTreeCommitComplete()
 {
     pageClient().layerTreeCommitComplete();
+
+    if (m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement && !m_editorState.isMissingPostLayoutData) {
+        pageClient().didReceiveEditorStateUpdateAfterFocus();
+        m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
+    }
 }
 
 void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, WTF::Function<void(const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&& callbackFunction)
@@ -1102,7 +1107,7 @@ void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategor
     process().send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), m_pageID);
 }
 
-void WebPageProxy::editorStateChanged(const EditorState& editorState)
+void WebPageProxy::updateEditorState(const EditorState& editorState)
 {
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
     
@@ -1119,11 +1124,15 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     // even during composition to support phrase boundary gesture.
     pageClient().selectionDidChange();
     updateFontAttributesAfterEditorStateChange();
+}
 
-    if (m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement && !m_editorState.isMissingPostLayoutData) {
-        pageClient().didReceiveEditorStateUpdateAfterFocus();
-        m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
-    }
+void WebPageProxy::dispatchDidReceiveEditorStateAfterFocus()
+{
+    if (!m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement || m_editorState.isMissingPostLayoutData)
+        return;
+
+    pageClient().didReceiveEditorStateUpdateAfterFocus();
+    m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
 }
 
 void WebPageProxy::showValidationMessage(const IntRect& anchorClientRect, const String& message)
