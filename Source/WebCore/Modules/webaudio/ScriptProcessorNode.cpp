@@ -222,7 +222,7 @@ void ScriptProcessorNode::fireProcessEvent()
         return;
 
     // Avoid firing the event if the document has already gone away.
-    if (context().scriptExecutionContext()) {
+    if (!context().isStopped()) {
         // Let the audio thread know we've gotten to the point where it's OK for it to make another request.
         m_isRequestOutstanding = false;
 

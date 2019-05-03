@@ -177,15 +177,9 @@ void AudioScheduledSourceNode::finish()
     if (!m_hasEndedListener)
         return;
 
-    auto* scriptExecutionContext = this->scriptExecutionContext();
-    if (!scriptExecutionContext)
-        return;
-
-    scriptExecutionContext->postTask([this, protectedThis = makeRef(*this)] (auto&) {
-        // Make sure ActiveDOMObjects have not been stopped after scheduling this task.
-        if (!this->scriptExecutionContext())
+    context().postTask([this, protectedThis = makeRef(*this)] {
+        if (context().isStopped())
             return;
-
         this->dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }

@@ -1320,6 +1320,25 @@ void AudioContext::mayResumePlayback(bool shouldResume)
     });
 }
 
+void AudioContext::postTask(WTF::Function<void()>&& task)
+{
+    if (m_isStopScheduled)
+        return;
+
+    m_scriptExecutionContext->postTask(WTFMove(task));
+}
+
+const SecurityOrigin* AudioContext::origin() const
+{
+    return m_scriptExecutionContext ? m_scriptExecutionContext->securityOrigin() : nullptr;
+}
+
+void AudioContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+{
+    if (m_scriptExecutionContext)
+        m_scriptExecutionContext->addConsoleMessage(source, level, message);
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& AudioContext::logChannel() const
 {

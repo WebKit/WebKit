@@ -113,10 +113,8 @@ bool MediaElementAudioSourceNode::wouldTaintOrigin()
     if (m_mediaElement->didPassCORSAccessCheck())
         return false;
 
-    if (auto* scriptExecutionContext = context().scriptExecutionContext()) {
-        if (auto* origin = scriptExecutionContext->securityOrigin())
-            return m_mediaElement->wouldTaintOrigin(*origin);
-    }
+    if (auto* origin = context().origin())
+        return m_mediaElement->wouldTaintOrigin(*origin);
 
     return true;
 }

@@ -34,7 +34,9 @@
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
+#include "ScriptExecutionContext.h"
 #include "VisibilityChangeClient.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/Float32Array.h>
 #include <atomic>
 #include <wtf/HashSet.h>
@@ -72,6 +74,7 @@ class OscillatorNode;
 class PannerNode;
 class PeriodicWave;
 class ScriptProcessorNode;
+class SecurityOrigin;
 class WaveShaperNode;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
@@ -249,7 +252,6 @@ public:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return AudioContextEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
 
     // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
     using ThreadSafeRefCounted::ref;
@@ -284,6 +286,11 @@ public:
     const void* nextAudioParameterLogIdentifier() { return childLogIdentifier(++m_nextAudioParameterIdentifier); }
 #endif
 
+    void postTask(WTF::Function<void()>&&);
+    bool isStopped() const { return m_isStopScheduled; }
+    const SecurityOrigin* origin() const;
+    void addConsoleMessage(MessageSource, MessageLevel, const String& message);
+
 protected:
     explicit AudioContext(Document&);
     AudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
@@ -309,6 +316,9 @@ private:
     void scheduleNodeDeletion();
 
     void mediaCanStart(Document&) override;
+
+    // EventTarget
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     // MediaProducer
     MediaProducer::MediaStateFlags mediaState() const override;

@@ -181,10 +181,6 @@ public:
     ChannelCountMode internalChannelCountMode() const { return m_channelCountMode; }
     AudioBus::ChannelInterpretation internalChannelInterpretation() const { return m_channelInterpretation; }
 
-    // EventTarget
-    EventTargetInterface eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const final;
-
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput(std::unique_ptr<AudioNodeInput>);
@@ -206,6 +202,10 @@ protected:
 #endif
 
 private:
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const override;
+    ScriptExecutionContext* scriptExecutionContext() const final;
+
     volatile bool m_isInitialized;
     NodeType m_nodeType;
     Ref<AudioContext> m_context;

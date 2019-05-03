@@ -1,3 +1,39 @@
+2019-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Make AudioContext::scriptExecutionContext() private
+        https://bugs.webkit.org/show_bug.cgi?id=197512
+
+        Reviewed by Eric Carlson.
+
+        Refactor code to make audio nodes not rely on AudioContext::scriptExecutionContext.
+        Instead, let AudioContext provide the necessary API for its nodes.
+        Covered by existing tests.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::postTask):
+        (WebCore::AudioContext::origin const):
+        (WebCore::AudioContext::addConsoleMessage):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::isStopped const):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::scriptExecutionContext const):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::resume):
+        (WebCore::DefaultAudioDestinationNode::suspend):
+        (WebCore::DefaultAudioDestinationNode::close):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::wouldTaintOrigin):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::fireProcessEvent):
+
 2019-05-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable software keyboard for a math field textarea on desmos.com

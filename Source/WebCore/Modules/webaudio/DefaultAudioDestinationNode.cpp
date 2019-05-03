@@ -118,8 +118,7 @@ void DefaultAudioDestinationNode::resume(Function<void ()>&& function)
     ASSERT(isInitialized());
     if (isInitialized())
         m_destination->start();
-    if (auto scriptExecutionContext = context().scriptExecutionContext())
-        scriptExecutionContext->postTask(WTFMove(function));
+    context().postTask(WTFMove(function));
 }
 
 void DefaultAudioDestinationNode::suspend(Function<void ()>&& function)
@@ -127,16 +126,14 @@ void DefaultAudioDestinationNode::suspend(Function<void ()>&& function)
     ASSERT(isInitialized());
     if (isInitialized())
         m_destination->stop();
-    if (auto scriptExecutionContext = context().scriptExecutionContext())
-        scriptExecutionContext->postTask(WTFMove(function));
+    context().postTask(WTFMove(function));
 }
 
 void DefaultAudioDestinationNode::close(Function<void()>&& function)
 {
     ASSERT(isInitialized());
     uninitialize();
-    if (auto scriptExecutionContext = context().scriptExecutionContext())
-        scriptExecutionContext->postTask(WTFMove(function));
+    context().postTask(WTFMove(function));
 }
 
 unsigned DefaultAudioDestinationNode::maxChannelCount() const
