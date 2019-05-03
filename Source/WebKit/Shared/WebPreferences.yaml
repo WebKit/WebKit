@@ -1420,6 +1420,15 @@ AdClickAttributionDebugModeEnabled:
     webcoreBinding: RuntimeEnabledFeatures
     category: experimental
 
+FetchAPIKeepAliveEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Fetch API Request KeepAlive"
+  humanReadableDescription: "Enable Fetch API Request KeepAlive"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: fetchAPIKeepAliveEnabled
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They
@@ -1480,15 +1489,6 @@ LegacyOverflowScrollingTouchEnabled:
   humanReadableDescription: "Support the legacy -webkit-overflow-scrolling CSS property"
   condition: ENABLE(OVERFLOW_SCROLLING_TOUCH)
   category: internal
-
-FetchAPIKeepAliveEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Fetch API Request KeepAlive"
-  humanReadableDescription: "Enable Fetch API Request KeepAlive"
-  category: internal
-  webcoreBinding: RuntimeEnabledFeatures
-  webcoreName: fetchAPIKeepAliveEnabled
 
 WebGLCompressedTextureASTCSupportEnabled:
   type: bool
