@@ -1,5 +1,16 @@
 2019-05-03  Aakash Jain  <aakash_jain@apple.com>
 
+        New EWS: patches on recently added queues listed as #1 for older bugs
+        https://bugs.webkit.org/show_bug.cgi?id=197496
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble):
+        (StatusBubble._queue_position):
+
+2019-05-03  Aakash Jain  <aakash_jain@apple.com>
+
         webkit-patch --no-review upload does not submit patch to New EWS
         https://bugs.webkit.org/show_bug.cgi?id=197519
         <rdar://problem/50424887>

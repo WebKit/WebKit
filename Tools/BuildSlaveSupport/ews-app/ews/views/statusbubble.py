@@ -62,6 +62,8 @@ class StatusBubble(View):
             bubble['state'] = 'none'
             queue_position = self._queue_position(patch, queue, self._get_parent_queue(queue))
             bubble['queue_position'] = queue_position
+            if not queue_position:
+                return None
             bubble['details_message'] = 'Waiting in queue, processing has not started yet.\n\nPosition in queue: {}'.format(queue_position)
             return bubble
 
@@ -180,6 +182,12 @@ class StatusBubble(View):
         # FIXME: Handle retried builds and cancelled build-requests as well.
         DAYS_TO_CHECK = 3
         from_timestamp = timezone.now() - datetime.timedelta(days=DAYS_TO_CHECK)
+
+        if patch.modified < from_timestamp:
+            # Do not display bubble for old patch for which no build has been reported on given queue.
+            # Most likely the patch would never be processed on this queue, since either the queue was
+            # added after the patch was submitted, or build request for that patch was cancelled.
+            return None
 
         previously_sent_patches = set(Patch.objects
                                           .filter(modified__gte=from_timestamp)
