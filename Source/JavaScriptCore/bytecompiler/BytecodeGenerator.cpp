@@ -328,8 +328,8 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+    : m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(programNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
@@ -374,8 +374,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, DebuggerMode debuggerMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+    : m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(functionNode)
     , m_codeBlock(vm, codeBlock)
     , m_codeType(FunctionCode)
@@ -393,9 +393,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 {
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
-
-    if (m_isBuiltinFunction)
-        m_shouldEmitDebugHooks = false;
 
     allocateCalleeSaveSpace();
     
@@ -415,9 +412,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     SourceParseMode parseMode = codeBlock->parseMode();
 
     bool containsArrowOrEvalButNotInArrowBlock = ((functionNode->usesArrowFunction() && functionNode->doAnyInnerArrowFunctionsUseAnyFeature()) || functionNode->usesEval()) && !m_codeBlock->isArrowFunction();
-    bool shouldCaptureSomeOfTheThings = m_shouldEmitDebugHooks || functionNode->needsActivation() || containsArrowOrEvalButNotInArrowBlock;
+    bool shouldCaptureSomeOfTheThings = shouldEmitDebugHooks() || functionNode->needsActivation() || containsArrowOrEvalButNotInArrowBlock;
 
-    bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
+    bool shouldCaptureAllOfTheThings = shouldEmitDebugHooks() || codeBlock->usesEval();
     bool needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction()));
 
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
@@ -488,7 +485,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (shouldCaptureSomeOfTheThings)
         m_lexicalEnvironmentRegister = addVar();
 
-    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode) || shouldCaptureSomeOfTheThings || vm.typeProfiler())
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode) || shouldCaptureSomeOfTheThings || shouldEmitTypeProfilerHooks())
         symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
 
     // We can allocate the "var" environment if we don't have default parameter expressions. If we have
@@ -855,8 +852,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, DebuggerMode debuggerMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+    : m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
@@ -918,8 +915,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+    : m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(moduleProgramNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
@@ -933,16 +930,13 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
 
-    if (m_isBuiltinFunction)
-        m_shouldEmitDebugHooks = false;
-
     allocateCalleeSaveSpace();
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(*m_vm);
     moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     moduleEnvironmentSymbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
 
-    bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
+    bool shouldCaptureAllOfTheThings = shouldEmitDebugHooks() || codeBlock->usesEval();
     if (shouldCaptureAllOfTheThings)
         moduleProgramNode->varDeclarations().markAllVariablesAsCaptured();
 
@@ -995,7 +989,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     // We keep the symbol table in the constant pool.
     RegisterID* constantSymbolTable = nullptr;
-    if (vm.typeProfiler())
+    if (shouldEmitTypeProfilerHooks())
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable);
     else
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable->cloneScopePart(*m_vm));
@@ -1785,7 +1779,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
 
 void BytecodeGenerator::emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot)
 {
-    ASSERT(vm()->typeProfiler());
+    ASSERT(shouldEmitTypeProfilerHooks());
 
     unsigned start = startDivot.offset; // Ranges are inclusive of their endpoints, AND 0 indexed.
     unsigned end = endDivot.offset - 1; // End Ranges already go one past the inclusive range, so subtract 1.
@@ -1795,7 +1789,7 @@ void BytecodeGenerator::emitTypeProfilerExpressionInfo(const JSTextPosition& sta
 
 void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag flag)
 {
-    if (!vm()->typeProfiler())
+    if (!shouldEmitTypeProfilerHooks())
         return;
 
     if (!registerToProfile)
@@ -1815,7 +1809,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const JST
 
 void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag flag, const JSTextPosition& startDivot, const JSTextPosition& endDivot)
 {
-    if (!vm()->typeProfiler())
+    if (!shouldEmitTypeProfilerHooks())
         return;
 
     if (!registerToProfile)
@@ -1827,7 +1821,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTy
 
 void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const Variable& var, const JSTextPosition& startDivot, const JSTextPosition& endDivot)
 {
-    if (!vm()->typeProfiler())
+    if (!shouldEmitTypeProfilerHooks())
         return;
 
     if (!registerToProfile)
@@ -1850,7 +1844,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const Var
 
 void BytecodeGenerator::emitProfileControlFlow(int textOffset)
 {
-    if (vm()->controlFlowProfiler()) {
+    if (shouldEmitControlFlowProfilerHooks()) {
         RELEASE_ASSERT(textOffset >= 0);
 
         OpProfileControlFlow::emit(this, textOffset);
@@ -1996,7 +1990,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     if (!environment.size())
         return;
 
-    if (m_shouldEmitDebugHooks)
+    if (shouldEmitDebugHooks())
         environment.markAllVariablesAsCaptured();
 
     SymbolTable* symbolTable = SymbolTable::create(*m_vm);
@@ -2024,7 +2018,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     RegisterID* newScope = nullptr;
     RegisterID* constantSymbolTable = nullptr;
     int symbolTableConstantIndex = 0;
-    if (vm()->typeProfiler()) {
+    if (shouldEmitTypeProfilerHooks()) {
         constantSymbolTable = addConstantValue(symbolTable);
         symbolTableConstantIndex = constantSymbolTable->index();
     }
@@ -2035,7 +2029,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         } else
             newScope = addVar();
         if (!constantSymbolTable) {
-            ASSERT(!vm()->typeProfiler());
+            ASSERT(!shouldEmitTypeProfilerHooks());
             constantSymbolTable = addConstantValue(symbolTable->cloneScopePart(*m_vm));
             symbolTableConstantIndex = constantSymbolTable->index();
         }
@@ -2190,7 +2184,7 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
     if (!environment.size())
         return;
 
-    if (m_shouldEmitDebugHooks)
+    if (shouldEmitDebugHooks())
         environment.markAllVariablesAsCaptured();
 
     auto stackEntry = m_lexicalScopeStack.takeLast();
@@ -2225,7 +2219,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     VariableEnvironment& environment = node->lexicalVariables();
     if (!environment.size())
         return;
-    if (m_shouldEmitDebugHooks)
+    if (shouldEmitDebugHooks())
         environment.markAllVariablesAsCaptured();
     if (!environment.hasCapturedVariables())
         return;
@@ -3244,7 +3238,7 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
     for (int i = 0; i < CallFrame::headerSizeInRegisters; ++i)
         callFrame.append(newTemporary());
 
-    if (m_shouldEmitDebugHooks && debuggableCall == DebuggableCall::Yes)
+    if (shouldEmitDebugHooks() && debuggableCall == DebuggableCall::Yes)
         emitDebugHook(WillExecuteExpression, divotStart);
 
     emitExpressionInfo(divot, divotStart, divotEnd);
@@ -3293,7 +3287,7 @@ RegisterID* BytecodeGenerator::emitCallForwardArgumentsInTailPosition(RegisterID
 template<typename VarargsOp>
 RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
-    if (m_shouldEmitDebugHooks && debuggableCall == DebuggableCall::Yes)
+    if (shouldEmitDebugHooks() && debuggableCall == DebuggableCall::Yes)
         emitDebugHook(WillExecuteExpression, divotStart);
 
     emitExpressionInfo(divot, divotStart, divotEnd);
@@ -3309,14 +3303,14 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
 
 void BytecodeGenerator::emitLogShadowChickenPrologueIfNecessary()
 {
-    if (!m_shouldEmitDebugHooks && !Options::alwaysUseShadowChicken())
+    if (!shouldEmitDebugHooks() && !Options::alwaysUseShadowChicken())
         return;
     OpLogShadowChickenPrologue::emit(this, scopeRegister());
 }
 
 void BytecodeGenerator::emitLogShadowChickenTailIfNecessary()
 {
-    if (!m_shouldEmitDebugHooks && !Options::alwaysUseShadowChicken())
+    if (!shouldEmitDebugHooks() && !Options::alwaysUseShadowChicken())
         return;
     OpLogShadowChickenTail::emit(this, thisRegister(), scopeRegister());
 }
@@ -3513,7 +3507,7 @@ void BytecodeGenerator::emitPopWithScope()
 
 void BytecodeGenerator::emitDebugHook(DebugHookType debugHookType, const JSTextPosition& divot)
 {
-    if (!m_shouldEmitDebugHooks)
+    if (!shouldEmitDebugHooks())
         return;
 
     emitExpressionInfo(divot, divot, divot);

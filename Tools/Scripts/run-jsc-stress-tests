@@ -1333,6 +1333,13 @@ def prepareExtraAbsoluteFiles(absoluteBase, extraFiles)
     }
 end
 
+def runComplexTest(before, after, *options)
+    prepareExtraRelativeFiles(before.map{|v| (Pathname("..") + v).to_s}, $collection)
+    prepareExtraRelativeFiles(after.map{|v| (Pathname("..") + v).to_s}, $collection)
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
+    addRunCommand("complex", args, silentOutputHandler, simpleErrorHandler)
+end
+
 def runMozillaTest(kind, mode, extraFiles, *options)
     if kind
         kind = "mozilla-" + kind

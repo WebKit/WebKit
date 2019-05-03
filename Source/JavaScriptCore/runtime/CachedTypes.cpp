@@ -1721,7 +1721,6 @@ public:
     unsigned scriptMode() const { return m_scriptMode; }
     unsigned isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     unsigned isClassContext() const { return m_isClassContext; }
-    unsigned wasCompiledWithDebuggingOpcodes() const { return m_wasCompiledWithDebuggingOpcodes; }
     unsigned constructorKind() const { return m_constructorKind; }
     unsigned derivedContextType() const { return m_derivedContextType; }
     unsigned evalContextType() const { return m_evalContextType; }
@@ -1735,6 +1734,7 @@ public:
 
     CodeFeatures features() const { return m_features; }
     SourceParseMode parseMode() const { return m_parseMode; }
+    OptionSet<CodeGenerationMode> codeGenerationMode() const { return m_codeGenerationMode; }
     unsigned codeType() const { return m_codeType; }
 
     UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
@@ -1753,7 +1753,6 @@ private:
     unsigned m_scriptMode: 1;
     unsigned m_isArrowFunctionContext : 1;
     unsigned m_isClassContext : 1;
-    unsigned m_wasCompiledWithDebuggingOpcodes : 1;
     unsigned m_constructorKind : 2;
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
@@ -1762,6 +1761,7 @@ private:
 
     CodeFeatures m_features;
     SourceParseMode m_parseMode;
+    OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
     unsigned m_lineCount;
     unsigned m_endColumn;
@@ -1949,17 +1949,17 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_scriptMode(cachedCodeBlock.scriptMode())
     , m_isArrowFunctionContext(cachedCodeBlock.isArrowFunctionContext())
     , m_isClassContext(cachedCodeBlock.isClassContext())
-    , m_wasCompiledWithDebuggingOpcodes(cachedCodeBlock.wasCompiledWithDebuggingOpcodes())
+    , m_hasTailCalls(cachedCodeBlock.hasTailCalls())
     , m_constructorKind(cachedCodeBlock.constructorKind())
     , m_derivedContextType(cachedCodeBlock.derivedContextType())
     , m_evalContextType(cachedCodeBlock.evalContextType())
-    , m_hasTailCalls(cachedCodeBlock.hasTailCalls())
     , m_codeType(cachedCodeBlock.codeType())
 
     , m_didOptimize(static_cast<unsigned>(MixedTriState))
 
     , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
+    , m_codeGenerationMode(cachedCodeBlock.codeGenerationMode())
 
     , m_lineCount(cachedCodeBlock.lineCount())
     , m_endColumn(cachedCodeBlock.endColumn())
@@ -2131,11 +2131,10 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_scriptMode = codeBlock.m_scriptMode;
     m_isArrowFunctionContext = codeBlock.m_isArrowFunctionContext;
     m_isClassContext = codeBlock.m_isClassContext;
-    m_wasCompiledWithDebuggingOpcodes = codeBlock.m_wasCompiledWithDebuggingOpcodes;
+    m_hasTailCalls = codeBlock.m_hasTailCalls;
     m_constructorKind = codeBlock.m_constructorKind;
     m_derivedContextType = codeBlock.m_derivedContextType;
     m_evalContextType = codeBlock.m_evalContextType;
-    m_hasTailCalls = codeBlock.m_hasTailCalls;
     m_lineCount = codeBlock.m_lineCount;
     m_endColumn = codeBlock.m_endColumn;
     m_numVars = codeBlock.m_numVars;
@@ -2143,6 +2142,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_numParameters = codeBlock.m_numParameters;
     m_features = codeBlock.m_features;
     m_parseMode = codeBlock.m_parseMode;
+    m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;
 
     for (unsigned i = LinkTimeConstantCount; i--;)

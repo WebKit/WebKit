@@ -50,7 +50,7 @@ const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutab
 
 static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
-    CodeSpecializationKind kind, DebuggerMode debuggerMode,
+    CodeSpecializationKind kind, OptionSet<CodeGenerationMode> codeGenerationMode,
     UnlinkedFunctionKind functionKind, ParserError& error, SourceParseMode parseMode)
 {
     JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
@@ -70,10 +70,10 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed;
 
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), false, isClassContext, EvalContextType::FunctionEvalContext), debuggerMode);
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
 
     VariableEnvironment parentScopeTDZVariables = executable->parentScopeTDZVariables();
-    error = BytecodeGenerator::generate(vm, function.get(), source, result, debuggerMode, &parentScopeTDZVariables);
+    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, &parentScopeTDZVariables);
 
     if (error.isValid())
         return nullptr;
@@ -184,8 +184,8 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     VM& vm = exec.vm();
     auto& globalObject = *exec.lexicalGlobalObject();
     CodeCache* codeCache = vm.codeCache();
-    DebuggerMode debuggerMode = globalObject.hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, debuggerMode, functionConstructorParametersEndPosition, error);
+    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject.defaultCodeGenerationMode();
+    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, codeGenerationMode, functionConstructorParametersEndPosition, error);
 
     if (globalObject.hasDebugger())
         globalObject.debugger()->sourceParsed(&exec, source.provider(), error.line(), error.message());
@@ -212,7 +212,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(Code
 
 UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
-    DebuggerMode debuggerMode, ParserError& error, SourceParseMode parseMode)
+    OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, SourceParseMode parseMode)
 {
     if (m_isCached)
         decodeCachedCodeBlocks();
@@ -228,7 +228,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     }
 
     UnlinkedFunctionCodeBlock* result = generateUnlinkedFunctionCodeBlock(
-        vm, this, source, specializationKind, debuggerMode, 
+        vm, this, source, specializationKind, codeGenerationMode, 
         isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, 
         error, parseMode);
     

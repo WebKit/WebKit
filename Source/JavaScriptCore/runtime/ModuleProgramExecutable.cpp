@@ -61,9 +61,9 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(ExecState* exec, const 
     executable->finishCreation(exec->vm());
 
     ParserError error;
-    DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
+    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCode = vm.codeCache()->getUnlinkedModuleProgramCodeBlock(
-        vm, executable, executable->source(), debuggerMode, error);
+        vm, executable, executable->source(), codeGenerationMode, error);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(exec, executable->source().provider(), error.line(), error.message());

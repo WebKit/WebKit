@@ -54,7 +54,7 @@ namespace JSC {
 
 const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedCodeBlock) };
 
-UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
+UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
     : Base(*vm, structure)
     , m_usesEval(info.usesEval())
     , m_isStrictMode(info.isStrictMode())
@@ -65,14 +65,14 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_scriptMode(static_cast<unsigned>(info.scriptMode()))
     , m_isArrowFunctionContext(info.isArrowFunctionContext())
     , m_isClassContext(info.isClassContext())
-    , m_wasCompiledWithDebuggingOpcodes(debuggerMode == DebuggerMode::DebuggerOn || Options::forceDebuggerBytecodeGeneration())
+    , m_hasTailCalls(false)
     , m_constructorKind(static_cast<unsigned>(info.constructorKind()))
     , m_derivedContextType(static_cast<unsigned>(info.derivedContextType()))
     , m_evalContextType(static_cast<unsigned>(info.evalContextType()))
-    , m_hasTailCalls(false)
     , m_codeType(static_cast<unsigned>(codeType))
     , m_didOptimize(static_cast<unsigned>(MixedTriState))
     , m_parseMode(info.parseMode())
+    , m_codeGenerationMode(codeGenerationMode)
     , m_metadata(UnlinkedMetadataTable::create())
 {
     for (auto& constantRegisterIndex : m_linkTimeConstants)

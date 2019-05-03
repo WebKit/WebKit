@@ -38,6 +38,7 @@
 #include "LazyProperty.h"
 #include "LazyClassStructure.h"
 #include "NumberPrototype.h"
+#include "ParserModes.h"
 #include "RegExpGlobalData.h"
 #include "RuntimeFlags.h"
 #include "SpecialPointer.h"
@@ -970,6 +971,7 @@ public:
     VM& vm() const { return m_vm; }
     JSObject* globalThis() const;
     WriteBarrier<JSObject>* addressOfGlobalThis() { return &m_globalThis; }
+    OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
@@ -1137,6 +1139,18 @@ inline JSObject* JSScope::globalThis()
 inline JSObject* JSGlobalObject::globalThis() const
 { 
     return m_globalThis.get();
+}
+
+inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const
+{
+    OptionSet<CodeGenerationMode> codeGenerationMode;
+    if (hasInteractiveDebugger() || Options::forceDebuggerBytecodeGeneration())
+        codeGenerationMode.add(CodeGenerationMode::Debugger);
+    if (m_vm.typeProfiler())
+        codeGenerationMode.add(CodeGenerationMode::TypeProfiler);
+    if (m_vm.controlFlowProfiler())
+        codeGenerationMode.add(CodeGenerationMode::ControlFlowProfiler);
+    return codeGenerationMode;
 }
 
 } // namespace JSC

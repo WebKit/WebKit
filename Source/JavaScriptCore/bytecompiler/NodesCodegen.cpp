@@ -1781,7 +1781,7 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
         if (var.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded(var);
             localReg = generator.move(generator.tempDestination(dst), localReg.get());
-        } else if (generator.vm()->typeProfiler()) {
+        } else if (generator.shouldEmitTypeProfilerHooks()) {
             RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
             generator.move(tempDst.get(), localReg.get());
             emitIncOrDec(generator, tempDst.get(), m_operator);
@@ -2726,7 +2726,7 @@ void DeclarationStatement::emitBytecode(BytecodeGenerator& generator, RegisterID
 RegisterID* EmptyVarExpression::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     // It's safe to return null here because this node will always be a child node of DeclarationStatement which ignores our return value.
-    if (!generator.vm()->typeProfiler())
+    if (!generator.shouldEmitTypeProfilerHooks())
         return nullptr;
 
     Variable var = generator.variable(m_ident);
@@ -3356,7 +3356,7 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitProfileControlFlow(endOffset());
     // Emitting an unreachable return here is needed in case this op_profile_control_flow is the 
     // last opcode in a CodeBlock because a CodeBlock's instructions must end with a terminal opcode.
-    if (generator.vm()->controlFlowProfiler())
+    if (generator.shouldEmitControlFlowProfilerHooks())
         generator.emitReturn(generator.emitLoad(nullptr, jsUndefined()));
 }
 
@@ -3738,7 +3738,7 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    if (generator.vm()->typeProfiler()) {
+    if (generator.shouldEmitTypeProfilerHooks()) {
         // If the parameter list is non simple one, it is handled in bindValue's code.
         if (m_parameters->isSimpleParameterList()) {
             for (size_t i = 0; i < m_parameters->size(); i++) {

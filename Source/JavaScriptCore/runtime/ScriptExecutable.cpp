@@ -57,6 +57,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_neverFTLOptimize(false)
     , m_isArrowFunctionContext(isInArrowFunctionContext)
     , m_canUseOSRExitFuzzing(true)
+    , m_codeForGeneratorBodyWasGenerated(false)
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_evalContextType(static_cast<unsigned>(evalContextType))
 {
@@ -312,10 +313,19 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
     RELEASE_ASSERT(!executable->codeBlockFor(kind));
     ParserError error;
-    DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
+    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
+    // We continue using the same CodeGenerationMode for Generators because live generator objects can
+    // keep the state which is only valid with the CodeBlock compiled with the same CodeGenerationMode.
+    if (isGeneratorOrAsyncFunctionBodyParseMode(executable->parseMode())) {
+        if (!m_codeForGeneratorBodyWasGenerated) {
+            m_codeGenerationModeForGeneratorBody = codeGenerationMode;
+            m_codeForGeneratorBodyWasGenerated = true;
+        } else
+            codeGenerationMode = m_codeGenerationModeForGeneratorBody;
+    }
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock = 
         executable->m_unlinkedExecutable->unlinkedCodeBlockFor(
-            *vm, executable->source(), kind, debuggerMode, error, 
+            *vm, executable->source(), kind, codeGenerationMode, error, 
             executable->parseMode());
     recordParse(
         executable->m_unlinkedExecutable->features(), 

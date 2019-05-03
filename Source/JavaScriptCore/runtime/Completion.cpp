@@ -99,13 +99,12 @@ Ref<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, Pa
     VariableEnvironment variablesUnderTDZ;
     JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
     JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
-    DebuggerMode debuggerMode = DebuggerOff;
     EvalContextType evalContextType = EvalContextType::None;
 
-    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, { }, error, evalContextType, &variablesUnderTDZ);
     if (!unlinkedCodeBlock)
         return CachedBytecode::create();
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, debuggerMode);
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, { });
 }
 
 Ref<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, ParserError& error)
@@ -116,13 +115,12 @@ Ref<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, Par
     VariableEnvironment variablesUnderTDZ;
     JSParserStrictMode strictMode = JSParserStrictMode::Strict;
     JSParserScriptMode scriptMode = JSParserScriptMode::Module;
-    DebuggerMode debuggerMode = DebuggerOff;
     EvalContextType evalContextType = EvalContextType::None;
 
-    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, { }, error, evalContextType, &variablesUnderTDZ);
     if (!unlinkedCodeBlock)
         return CachedBytecode::create();
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, debuggerMode);
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, { });
 }
 
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)

@@ -447,6 +447,7 @@ sub runJSCStressTests
             "JSTests/controlFlowProfiler.yaml",
             "JSTests/es6.yaml",
             "JSTests/modules.yaml",
+            "JSTests/complex.yaml",
             "JSTests/ChakraCore.yaml",
             "JSTests/wasm.yaml");
         $hasTestsToRun = 1;

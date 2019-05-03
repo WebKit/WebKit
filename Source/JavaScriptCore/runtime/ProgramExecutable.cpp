@@ -83,10 +83,9 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     ParserError error;
     JSParserStrictMode strictMode = isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
-    DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-
+    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedProgramCodeBlock(
-        vm, this, source(), strictMode, debuggerMode, error);
+        vm, this, source(), strictMode, codeGenerationMode, error);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(callFrame, source().provider(), error.line(), error.message());

@@ -1,3 +1,129 @@
+2019-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Generator CodeBlock generation should be idempotent
+        https://bugs.webkit.org/show_bug.cgi?id=197552
+
+        Reviewed by Keith Miller.
+
+        ES6 Generator saves and resumes the current execution state. Since ES6 generator can save the execution state at expression
+        granularity (not statement granularity), the saved state involves locals. But if the underlying CodeBlock is jettisoned and
+        recompiled with different code generation option (like, debugger, type profiler etc.), the generated instructions can be largely
+        different and it does not have the same state previously used. If we resume the previously created generator with the newly
+        generator function, resuming is messed up.
+
+            function* gen () { ... }
+            var g = gen();
+            g.next();
+
+            // CodeBlock is destroyed & Debugger is enabled.
+
+            g.next();
+
+        In this patch,
+
+        1. In generatorification, we use index Identifier (localN => Identifier("N")) instead of private symbols to generate the same
+           instructions every time we regenerate the CodeBlock.
+
+        2. We decouple the options which can affect on the generated code (Debugger, TypeProfiler, ControlFlowProfiler) from the BytecodeGenerator,
+           and pass them as a parameter, OptionSet<CodeGeneratorMode>.
+
+        3. Generator ScriptExecutable remembers the previous CodeGeneratorMode and reuses this parameter to regenerate CodeBlock. It means that,
+           even if the debugger is enabled, previously created generators are not debuggable. But newly created generators are debuggable.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::storageForGeneratorLocal):
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::wasCompiledWithDebuggingOpcodes const):
+        (JSC::UnlinkedCodeBlock::wasCompiledWithTypeProfilerOpcodes const):
+        (JSC::UnlinkedCodeBlock::wasCompiledWithControlFlowProfilerOpcodes const):
+        (JSC::UnlinkedCodeBlock::codeGenerationMode const):
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/UnlinkedGlobalCodeBlock.h:
+        (JSC::UnlinkedGlobalCodeBlock::UnlinkedGlobalCodeBlock):
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitTypeProfilerExpressionInfo):
+        (JSC::BytecodeGenerator::emitProfileType):
+        (JSC::BytecodeGenerator::emitProfileControlFlow):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitLogShadowChickenPrologueIfNecessary):
+        (JSC::BytecodeGenerator::emitLogShadowChickenTailIfNecessary):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::shouldEmitDebugHooks const):
+        (JSC::BytecodeGenerator::shouldEmitTypeProfilerHooks const):
+        (JSC::BytecodeGenerator::shouldEmitControlFlowProfilerHooks const):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PrefixNode::emitResolve):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        * parser/ParserModes.h:
+        (): Deleted.
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeFlags::SourceCodeFlags):
+        (JSC::SourceCodeKey::SourceCodeKey):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::isClassContext const):
+        (JSC::CachedCodeBlock::codeGenerationMode const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedCodeBlock::wasCompiledWithDebuggingOpcodes const): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedProgramCodeBlock):
+        (JSC::CodeCache::getUnlinkedEvalCodeBlock):
+        (JSC::CodeCache::getUnlinkedModuleProgramCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        (JSC::generateUnlinkedCodeBlockForFunctions):
+        (JSC::sourceCodeKeyForSerializedBytecode):
+        (JSC::sourceCodeKeyForSerializedProgram):
+        (JSC::sourceCodeKeyForSerializedModule):
+        (JSC::serializeBytecode):
+        * runtime/CodeCache.h:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::generateUnlinkedCodeBlock):
+        * runtime/Completion.cpp:
+        (JSC::generateProgramBytecode):
+        (JSC::generateModuleBytecode):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::defaultCodeGenerationMode const):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::create):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/ScriptExecutable.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::changeDebuggerModeWhenIdle):
+        (JSC::functionEnableDebuggerModeWhenIdle):
+        (JSC::functionDisableDebuggerModeWhenIdle):
+
 2019-05-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Record actions performed on WebGL2RenderingContext

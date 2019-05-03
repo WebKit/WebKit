@@ -331,7 +331,10 @@ public:
 
     void dumpExpressionRangeInfo(); // For debugging purpose only.
 
-    bool wasCompiledWithDebuggingOpcodes() const { return m_wasCompiledWithDebuggingOpcodes; }
+    bool wasCompiledWithDebuggingOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::Debugger); }
+    bool wasCompiledWithTypeProfilerOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::TypeProfiler); }
+    bool wasCompiledWithControlFlowProfilerOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::ControlFlowProfiler); }
+    OptionSet<CodeGenerationMode> codeGenerationMode() const { return m_codeGenerationMode; }
 
     TriState didOptimize() const { return static_cast<TriState>(m_didOptimize); }
     void setDidOptimize(TriState didOptimize) { m_didOptimize = static_cast<unsigned>(didOptimize); }
@@ -369,7 +372,7 @@ public:
 
 
 protected:
-    UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, DebuggerMode);
+    UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
 
     template<typename CodeBlockType>
     UnlinkedCodeBlock(Decoder&, Structure*, const CachedCodeBlock<CodeBlockType>&);
@@ -415,11 +418,10 @@ private:
     unsigned m_scriptMode: 1;
     unsigned m_isArrowFunctionContext : 1;
     unsigned m_isClassContext : 1;
-    unsigned m_wasCompiledWithDebuggingOpcodes : 1;
+    unsigned m_hasTailCalls : 1;
     unsigned m_constructorKind : 2;
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
-    unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2;
     unsigned m_didOptimize : 2;
 public:
@@ -427,6 +429,7 @@ public:
 private:
     CodeFeatures m_features { 0 };
     SourceParseMode m_parseMode;
+    OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
     unsigned m_lineCount { 0 };
     unsigned m_endColumn { UINT_MAX };

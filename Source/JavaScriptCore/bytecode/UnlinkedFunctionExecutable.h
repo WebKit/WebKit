@@ -118,7 +118,7 @@ public:
     UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(CodeSpecializationKind);
 
     UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(
-        VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode,
+        VM&, const SourceCode&, CodeSpecializationKind, OptionSet<CodeGenerationMode>,
         ParserError&, SourceParseMode);
 
     static UnlinkedFunctionExecutable* fromGlobalCode(

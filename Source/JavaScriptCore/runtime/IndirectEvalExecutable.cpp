@@ -51,10 +51,10 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(ExecState* exec, const So
 
     ParserError error;
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
-    DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
+    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     
     UnlinkedEvalCodeBlock* unlinkedEvalCode = vm.codeCache()->getUnlinkedEvalCodeBlock(
-        vm, executable, executable->source(), strictMode, debuggerMode, error, evalContextType);
+        vm, executable, executable->source(), strictMode, codeGenerationMode, error, evalContextType);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(exec, executable->source().provider(), error.line(), error.message());

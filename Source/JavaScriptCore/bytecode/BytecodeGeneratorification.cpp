@@ -146,7 +146,7 @@ public:
     }
 
 private:
-    Storage storageForGeneratorLocal(unsigned index)
+    Storage storageForGeneratorLocal(VM& vm, unsigned index)
     {
         // We assign a symbol to a register. There is one-on-one corresponding between a register and a symbol.
         // By doing so, we allocate the specific storage to save the given register.
@@ -158,7 +158,7 @@ private:
         if (Optional<Storage> storage = m_storages[index])
             return *storage;
 
-        Identifier identifier = Identifier::fromUid(PrivateName());
+        Identifier identifier = Identifier::from(&vm, index);
         unsigned identifierIndex = m_codeBlock->numberOfIdentifiers();
         m_codeBlock->addIdentifier(identifier);
         ScopeOffset scopeOffset = m_generatorFrameSymbolTable->takeNextScopeOffset(NoLockingNecessary);
@@ -211,6 +211,7 @@ void BytecodeGeneratorification::run()
 {
     // We calculate the liveness at each merge point. This gives us the information which registers should be saved and resumed conservatively.
 
+    VM& vm = *m_bytecodeGenerator.vm();
     {
         GeneratorLivenessAnalysis pass(*this);
         pass.run(m_codeBlock, m_instructions);
@@ -244,7 +245,7 @@ void BytecodeGeneratorification::run()
         rewriter.insertFragmentBefore(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
-                Storage storage = storageForGeneratorLocal(index);
+                Storage storage = storageForGeneratorLocal(vm, index);
 
                 fragment.appendInstruction<OpPutToScope>(
                     scope, // scope
@@ -264,7 +265,7 @@ void BytecodeGeneratorification::run()
         rewriter.insertFragmentAfter(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
-                Storage storage = storageForGeneratorLocal(index);
+                Storage storage = storageForGeneratorLocal(vm, index);
 
                 fragment.appendInstruction<OpGetFromScope>(
                     operand, // dst

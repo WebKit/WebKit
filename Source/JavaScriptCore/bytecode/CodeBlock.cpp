@@ -392,7 +392,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (vm.typeProfiler() || vm.controlFlowProfiler())
+    if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes() || m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes())
         vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(vm), ownerExecutable->typeProfilingEndOffset(vm));
 
     setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
@@ -408,14 +408,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
     if (UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock = jsDynamicCast<UnlinkedModuleProgramCodeBlock*>(vm, unlinkedCodeBlock)) {
         SymbolTable* clonedSymbolTable = jsCast<ModuleProgramExecutable*>(ownerExecutable)->moduleEnvironmentSymbolTable();
-        if (vm.typeProfiler()) {
+        if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
             ConcurrentJSLocker locker(clonedSymbolTable->m_lock);
             clonedSymbolTable->prepareForTypeProfiling(locker);
         }
         replaceConstant(unlinkedModuleProgramCodeBlock->moduleEnvironmentSymbolTableConstantRegisterOffset(), clonedSymbolTable);
     }
 
-    bool shouldUpdateFunctionHasExecutedCache = vm.typeProfiler() || vm.controlFlowProfiler();
+    bool shouldUpdateFunctionHasExecutedCache = m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes() || m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes();
     m_functionDecls = RefCountedArray<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
@@ -672,7 +672,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         case op_profile_type: {
-            RELEASE_ASSERT(vm.typeProfiler());
+            RELEASE_ASSERT(m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes());
 
             INITIALIZE_METADATA(OpProfileType)
 
@@ -781,7 +781,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #undef LINK_FIELD
 #undef LINK
 
-    if (vm.controlFlowProfiler())
+    if (m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes())
         insertBasicBlockBoundariesForControlFlowProfiler();
 
     // Set optimization thresholds only after instructions is initialized, since these
@@ -880,7 +880,6 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
     size_t count = constants.size();
     m_constantRegisters.resizeToFit(count);
-    bool hasTypeProfiler = !!vm.typeProfiler();
     for (size_t i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
 
@@ -888,7 +887,7 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
             if (constant.isCell()) {
                 JSCell* cell = constant.asCell();
                 if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(vm, cell)) {
-                    if (hasTypeProfiler) {
+                    if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
                         ConcurrentJSLocker locker(symbolTable->m_lock);
                         symbolTable->prepareForTypeProfiling(locker);
                     }

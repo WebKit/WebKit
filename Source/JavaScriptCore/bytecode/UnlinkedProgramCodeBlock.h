@@ -36,9 +36,9 @@ public:
     typedef UnlinkedGlobalCodeBlock Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedProgramCodeBlock* create(VM* vm, const ExecutableInfo& info, DebuggerMode debuggerMode)
+    static UnlinkedProgramCodeBlock* create(VM* vm, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
     {
-        UnlinkedProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(vm->heap)) UnlinkedProgramCodeBlock(vm, vm->unlinkedProgramCodeBlockStructure.get(), info, debuggerMode);
+        UnlinkedProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(vm->heap)) UnlinkedProgramCodeBlock(vm, vm->unlinkedProgramCodeBlockStructure.get(), info, codeGenerationMode);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -54,8 +54,8 @@ public:
 private:
     friend CachedProgramCodeBlock;
 
-    UnlinkedProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
-        : Base(vm, structure, GlobalCode, info, debuggerMode)
+    UnlinkedProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
+        : Base(vm, structure, GlobalCode, info, codeGenerationMode)
     {
     }
 
