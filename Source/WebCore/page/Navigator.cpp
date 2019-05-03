@@ -81,7 +81,7 @@ const String& Navigator::userAgent() const
     return m_userAgent;
 }
     
-const String& Navigator::platform() const
+String Navigator::platform() const
 {
     auto* frame = this->frame();
     if (!frame || !frame->page())

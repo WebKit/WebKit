@@ -45,20 +45,6 @@
 #include "Device.h"
 #endif
 
-#ifndef WEBCORE_NAVIGATOR_PLATFORM
-#if PLATFORM(IOS_FAMILY)
-#define WEBCORE_NAVIGATOR_PLATFORM deviceName()
-#elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
-#define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"_s
-#elif OS(MAC_OS_X) && (CPU(X86) || CPU(X86_64))
-#define WEBCORE_NAVIGATOR_PLATFORM "MacIntel"_s
-#elif OS(WINDOWS)
-#define WEBCORE_NAVIGATOR_PLATFORM "Win32"_s
-#else
-#define WEBCORE_NAVIGATOR_PLATFORM emptyString()
-#endif
-#endif // ifndef WEBCORE_NAVIGATOR_PLATFORM
-
 #ifndef WEBCORE_NAVIGATOR_PRODUCT
 #define WEBCORE_NAVIGATOR_PRODUCT "Gecko"_s
 #endif // ifndef WEBCORE_NAVIGATOR_PRODUCT
@@ -96,17 +82,26 @@ String NavigatorBase::appVersion() const
     return agent.substring(agent.find('/') + 1);
 }
 
-const String& NavigatorBase::platform() const
+String NavigatorBase::platform() const
 {
-    static NeverDestroyed<String> defaultPlatform = WEBCORE_NAVIGATOR_PLATFORM;
 #if OS(LINUX)
-    if (!String(WEBCORE_NAVIGATOR_PLATFORM).isEmpty())
-        return defaultPlatform;
-    struct utsname osname;
-    static NeverDestroyed<String> platformName(uname(&osname) >= 0 ? String(osname.sysname) + " "_str + String(osname.machine) : emptyString());
-    return platformName;
+    static LazyNeverDestroyed<String> platformName;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        struct utsname osname;
+        platformName.construct(uname(&osname) >= 0 ? String(osname.sysname) + " "_str + String(osname.machine) : String(""_s));
+    });
+    return platformName->isolatedCopy();
+#elif PLATFORM(IOS_FAMILY)
+    return deviceName();
+#elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
+    return "MacPPC"_s;
+#elif OS(MAC_OS_X) && (CPU(X86) || CPU(X86_64))
+    return "MacIntel"_s;
+#elif OS(WINDOWS)
+    return "Win32"_s;
 #else
-    return defaultPlatform;
+    return ""_s;
 #endif
 }
 

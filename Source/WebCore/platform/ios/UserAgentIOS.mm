@@ -63,16 +63,19 @@ static inline String deviceNameForUserAgent()
 {
     if (isClassic()) {
         if (isClassicPad())
-            return "iPad";
-        return "iPhone";
+            return "iPad"_s;
+        return "iPhone"_s;
     }
 
-    String name = deviceName();
+    static NeverDestroyed<String> name = [] {
+        auto name = deviceName();
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-    size_t location = name.find(" Simulator");
-    if (location != notFound) 
-        return name.substring(0, location);
+        size_t location = name.find(" Simulator");
+        if (location != notFound)
+            return name.substring(0, location);
 #endif
+        return name;
+    }();
     return name;
 }
 

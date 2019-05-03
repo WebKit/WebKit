@@ -34,7 +34,7 @@
 namespace WebCore {
 
 WEBCORE_EXPORT MGDeviceClass deviceClass();
-const WTF::String& deviceName();
+String deviceName(); // Thread-safe.
 
 // FIXME: Isn't this the same as deviceClass() == MGDeviceClassiPad?
 bool deviceHasIPadCapability();

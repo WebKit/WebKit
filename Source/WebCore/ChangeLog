@@ -1,5 +1,36 @@
 2019-05-03  Chris Dumez  <cdumez@apple.com>
 
+        [iOS Sim Debug] ASSERTION FAILED The atomic string comes from an other thread! Layout Test imported/w3c/web-platform-tests/workers/WorkerNavigator_appName.htm is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=197530
+        <rdar://problem/50448285>
+
+        Reviewed by Geoffrey Garen.
+
+        The issue is that NavigatorBase::platform() was not thread safe but was called by both Navigator on
+        the main thread and WorkerNavigator on worker threads.
+
+        No new tests, covered by existing tests.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::platform const):
+        * page/Navigator.h:
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform const):
+        * page/NavigatorBase.h:
+        Make NavigatorBase::platform() thread safe.
+
+        * platform/ios/Device.cpp:
+        (WebCore::deviceName):
+        * platform/ios/Device.h:
+        Make WebCore::deviceName() thread safe.
+
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::deviceNameForUserAgent):
+        Cache value returned by WebCore::deviceName() for performance.
+
+2019-05-03  Chris Dumez  <cdumez@apple.com>
+
         Use WeakPtr for JSLazyEventListener::m_originalNode for safety
         https://bugs.webkit.org/show_bug.cgi?id=197576
         <rdar://problem/24314027>

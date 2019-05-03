@@ -54,14 +54,18 @@ MGDeviceClass deviceClass()
     return deviceClass;
 }
 
-const String& deviceName()
+String deviceName()
 {
 #if TARGET_OS_IOS
-    static const NeverDestroyed<String> deviceName = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr))).get();
-#else
-    static const NeverDestroyed<String> deviceName { "iPhone"_s };
-#endif
+    static CFStringRef deviceName;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        deviceName = static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr));
+    });
     return deviceName;
+#else
+    return "iPhone"_s;
+#endif
 }
 
 bool deviceHasIPadCapability()

@@ -44,7 +44,7 @@ public:
     bool cookieEnabled() const;
     bool javaEnabled() const;
     const String& userAgent() const final;
-    const String& platform() const final;
+    String platform() const final;
     void userAgentChanged();
     bool onLine() const final;
     void share(ScriptExecutionContext&, ShareData, Ref<DeferredPromise>&&);
