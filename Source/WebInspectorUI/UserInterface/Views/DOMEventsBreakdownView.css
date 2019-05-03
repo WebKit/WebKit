@@ -76,7 +76,7 @@
     background-color: hsla(0, 0%, 75%, 0.25);
 }
 
-.dom-events-breakdown .graph > .area.low-power {
+.dom-events-breakdown .graph > .area.power-efficient-playback {
     background-color: hsla(83, 100%, 48%, 0.4);
 }
 

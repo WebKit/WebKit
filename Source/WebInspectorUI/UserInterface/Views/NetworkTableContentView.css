@@ -211,7 +211,7 @@ body[dir=rtl] .network-table .cell.name > .status {
     background-color: hsla(0, 0%, 75%, 0.75);
 }
 
-.network-table :not(.header) .cell.waterfall .waterfall-container > .area.low-power {
+.network-table :not(.header) .cell.waterfall .waterfall-container > .area.power-efficient-playback {
     background-color: var(--network-request-color);
 }
 

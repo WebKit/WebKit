@@ -147,7 +147,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         }
 
         this._domEvents = [];
-        this._lowPowerRanges = [];
+        this._powerEfficientPlaybackRanges = [];
 
         if (this._shouldListenForEventListeners())
             WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
@@ -188,7 +188,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get frame() { return this._frame; }
     get domEvents() { return this._domEvents; }
-    get lowPowerRanges() { return this._lowPowerRanges; }
+    get powerEfficientPlaybackRanges() { return this._powerEfficientPlaybackRanges; }
 
     get attached()
     {
@@ -757,30 +757,30 @@ WI.DOMNode = class DOMNode extends WI.Object
         });
     }
 
-    videoLowPowerChanged(timestamp, isLowPower)
+    powerEfficientPlaybackStateChanged(timestamp, isPowerEfficient)
     {
         // Called from WI.DOMManager.
 
-        console.assert(this.canEnterLowPowerMode());
+        console.assert(this.canEnterPowerEfficientPlaybackState());
 
-        let lastValue = this._lowPowerRanges.lastValue;
+        let lastValue = this._powerEfficientPlaybackRanges.lastValue;
 
-        if (isLowPower) {
+        if (isPowerEfficient) {
             console.assert(!lastValue || lastValue.endTimestamp);
             if (!lastValue || lastValue.endTimestamp)
-                this._lowPowerRanges.push({startTimestamp: timestamp});
+                this._powerEfficientPlaybackRanges.push({startTimestamp: timestamp});
         } else {
             console.assert(!lastValue || lastValue.startTimestamp);
             if (!lastValue)
-                this._lowPowerRanges.push({endTimestamp: timestamp});
+                this._powerEfficientPlaybackRanges.push({endTimestamp: timestamp});
             else if (lastValue.startTimestamp)
                 lastValue.endTimestamp = timestamp;
         }
 
-        this.dispatchEventToListeners(WI.DOMNode.Event.LowPowerChanged, {isLowPower, timestamp});
+        this.dispatchEventToListeners(DOMNode.Event.PowerEfficientPlaybackStateChanged, {isPowerEfficient, timestamp});
     }
 
-    canEnterLowPowerMode()
+    canEnterPowerEfficientPlaybackState()
     {
         return this.localName() === "video" || this.nodeName().toLowerCase() === "video";
     }
@@ -957,7 +957,7 @@ WI.DOMNode.Event = {
     AttributeRemoved: "dom-node-attribute-removed",
     EventListenersChanged: "dom-node-event-listeners-changed",
     DidFireEvent: "dom-node-did-fire-event",
-    LowPowerChanged: "dom-node-video-low-power-changed",
+    PowerEfficientPlaybackStateChanged: "dom-node-power-efficient-playback-state-changed",
 };
 
 WI.DOMNode.PseudoElementType = {

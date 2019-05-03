@@ -34,14 +34,13 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
         if (domNodeOrEvents instanceof WI.DOMNode) {
             this._domNode = domNodeOrEvents;
             this._domNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
-            if (this._domNode.canEnterLowPowerMode())
-                this._domNode.addEventListener(WI.DOMNode.Event.LowPowerChanged, this._handleDOMNodeLowPowerChanged, this);
+            if (this._domNode.canEnterPowerEfficientPlaybackState())
+                this._domNode.addEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
 
             this._domEvents = null;
         } else {
             this._domNode = null;
             this._domEvents = domNodeOrEvents;
-            this._lowPowerRanges = [];
         }
 
         this._includeGraph = includeGraph || false;
@@ -112,7 +111,7 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                 fullscreenRanges.lastValue.originator = fullscreenDOMEvent.originator;
         }
 
-        let lowPowerRanges = this._domNode ? this._domNode.lowPowerRanges : [];
+        let powerEfficientPlaybackRanges = this._domNode ? this._domNode.powerEfficientPlaybackRanges : [];
 
         for (let domEvent of domEvents) {
             let rowElement = this._tableBodyElement.appendChild(document.createElement("tr"));
@@ -138,13 +137,13 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                         fullscreenArea.title = WI.UIString("Full-Screen");
                 }
 
-                let lowPowerRange = lowPowerRanges.find((range) => domEvent.timestamp >= range.startTimestamp && domEvent.timestamp <= range.endTimestamp);
-                if (lowPowerRange) {
-                    let lowPowerArea = graphCell.appendChild(document.createElement("div"));
-                    lowPowerArea.classList.add("area", "low-power");
-                    lowPowerArea.title = WI.UIString("Low-Power Mode");
-                    lowPowerArea.style.setProperty(styleAttribute, percentOfTotalTime(lowPowerRange.startTimestamp - startTimestamp) + "%");
-                    lowPowerArea.style.setProperty("width", percentOfTotalTime(lowPowerRange.endTimestamp - lowPowerRange.startTimestamp) + "%");
+                let powerEfficientPlaybackRange = powerEfficientPlaybackRanges.find((range) => domEvent.timestamp >= range.startTimestamp && domEvent.timestamp <= range.endTimestamp);
+                if (powerEfficientPlaybackRange) {
+                    let powerEfficientPlaybackArea = graphCell.appendChild(document.createElement("div"));
+                    powerEfficientPlaybackArea.classList.add("area", "power-efficient-playback");
+                    powerEfficientPlaybackArea.title = WI.UIString("Power Efficient Playback");
+                    powerEfficientPlaybackArea.style.setProperty(styleAttribute, percentOfTotalTime(powerEfficientPlaybackRange.startTimestamp - startTimestamp) + "%");
+                    powerEfficientPlaybackArea.style.setProperty("width", percentOfTotalTime(powerEfficientPlaybackRange.endTimestamp - powerEfficientPlaybackRange.startTimestamp) + "%");
                 }
 
                 let graphImage = graphCell.appendChild(document.createElement("img"));
@@ -183,7 +182,7 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
         this.needsLayout();
     }
 
-    _handleDOMNodeLowPowerChanged(event)
+    _handleDOMNodePowerEfficientPlaybackStateChanged(event)
     {
         this.needsLayout();
     }

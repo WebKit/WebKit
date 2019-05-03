@@ -467,8 +467,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             if (record.eventType === WI.MediaTimelineRecord.EventType.DOMEvent) {
                 if (record.domEvent && record.domEvent.eventName)
                     key += ":" + record.domEvent.eventName;
-            } else if (record.eventType === WI.MediaTimelineRecord.EventType.LowPower)
-                key += ":" + (record.isLowPower ? "enabled" : "disabled");
+            } else if (record.eventType === WI.MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged)
+                key += ":" + (record.isPowerEfficient ? "enabled" : "disabled");
         }
         if (record.sourceCodeLocation)
             key += ":" + record.sourceCodeLocation.lineNumber + ":" + record.sourceCodeLocation.columnNumber;

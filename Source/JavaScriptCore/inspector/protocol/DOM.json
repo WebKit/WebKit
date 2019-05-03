@@ -677,12 +677,12 @@
             ]
         },
         {
-            "name": "videoLowPowerChanged",
-            "description": "Called when a video element enters/exits low power mode.",
+            "name": "powerEfficientPlaybackStateChanged",
+            "description": "Called when an element enters/exits a power efficient playback state.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId" },
-                { "name": "timestamp", "$ref": "Network.Timestamp", "description": "Time when the video element entered/exited low power mode" },
-                { "name": "isLowPower", "type": "boolean" }
+                { "name": "timestamp", "$ref": "Network.Timestamp" },
+                { "name": "isPowerEfficient", "type": "boolean" }
             ]
         }
     ]

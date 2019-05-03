@@ -264,7 +264,7 @@ private:
     Timer m_mediaMetricsTimer;
     struct MediaMetrics {
         unsigned displayCompositedFrames { 0 };
-        bool isLowPower { false };
+        bool isPowerEfficient { false };
 
         MediaMetrics() { }
 

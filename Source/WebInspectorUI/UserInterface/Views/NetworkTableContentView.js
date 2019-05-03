@@ -822,15 +822,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 }
             }
 
-            for (let lowPowerRange of domNode.lowPowerRanges) {
-                let startTimestamp = lowPowerRange.startTimestamp || graphStartTime;
-                let endTimestamp = lowPowerRange.endTimestamp || collection.waterfallEndTime;
+            for (let powerEfficientPlaybackRange of domNode.powerEfficientPlaybackRanges) {
+                let startTimestamp = powerEfficientPlaybackRange.startTimestamp || graphStartTime;
+                let endTimestamp = powerEfficientPlaybackRange.endTimestamp || collection.waterfallEndTime;
 
-                let lowPowerElement = container.appendChild(document.createElement("div"));
-                lowPowerElement.classList.add("area", "low-power");
-                lowPowerElement.title = WI.UIString("Low-Power Mode");
-                positionByStartOffset(lowPowerElement, startTimestamp);
-                setWidthForDuration(lowPowerElement, startTimestamp, endTimestamp);
+                let powerEfficientPlaybackRangeElement = container.appendChild(document.createElement("div"));
+                powerEfficientPlaybackRangeElement.classList.add("area", "power-efficient-playback");
+                powerEfficientPlaybackRangeElement.title = WI.UIString("Power Efficient Playback");
+                positionByStartOffset(powerEfficientPlaybackRangeElement, startTimestamp);
+                setWidthForDuration(powerEfficientPlaybackRangeElement, startTimestamp, endTimestamp);
             }
 
             let playing = false;
@@ -1819,8 +1819,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._domNodeEntries.set(resource.initiatorNode, nodeEntry);
 
             resource.initiatorNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleNodeDidFireEvent, this);
-            if (resource.initiatorNode.canEnterLowPowerMode())
-                resource.initiatorNode.addEventListener(WI.DOMNode.Event.LowPowerChanged, this._handleNodeLowPowerChanged, this);
+            if (resource.initiatorNode.canEnterPowerEfficientPlaybackState())
+                resource.initiatorNode.addEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
         }
 
         if (!this._entriesSortComparator)
@@ -1858,7 +1858,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
     }
 
-    _handleNodeLowPowerChanged(event)
+    _handleDOMNodePowerEfficientPlaybackStateChanged(event)
     {
         this._runForMainCollection((collection, wasMain) => {
             let domNode = event.target;

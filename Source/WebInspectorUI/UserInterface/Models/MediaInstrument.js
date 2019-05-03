@@ -36,8 +36,8 @@ WI.MediaInstrument = class MediaInstrument extends WI.Instrument
 
     static supported()
     {
-        // COMPATIBILITY (iOS 12): DOM.didFireEvent and DOM.videoLowPowerChanged did not exist.
-        return window.DOMAgent && DOMAgent.hasEvent("didFireEvent") && DOMAgent.hasEvent("videoLowPowerChanged");
+        // COMPATIBILITY (iOS 12): DOM.didFireEvent.
+        return InspectorBackend.domains.DOM && InspectorBackend.domains.DOM.hasEvent("didFireEvent");
     }
 
     // Protected

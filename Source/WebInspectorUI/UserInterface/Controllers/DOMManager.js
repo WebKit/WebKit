@@ -166,7 +166,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.didFireEvent(eventName, timestamp, data);
     }
 
-    videoLowPowerChanged(nodeId, timestamp, isLowPower)
+    powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient)
     {
         // Called from WI.DOMObserver.
 
@@ -174,7 +174,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!node)
             return;
 
-        node.videoLowPowerChanged(timestamp, isLowPower);
+        node.powerEfficientPlaybackStateChanged(timestamp, isPowerEfficient);
     }
 
     // Private

@@ -2514,14 +2514,14 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
             continue;
         }
 
-        bool isLowPower = (displayCompositedVideoFrames - iterator->value.displayCompositedFrames) > 0;
-        if (iterator->value.isLowPower != isLowPower) {
-            iterator->value.isLowPower = isLowPower;
+        bool isPowerEfficient = (displayCompositedVideoFrames - iterator->value.displayCompositedFrames) > 0;
+        if (iterator->value.isPowerEfficient != isPowerEfficient) {
+            iterator->value.isPowerEfficient = isPowerEfficient;
 
             int nodeId = pushNodePathToFrontend(mediaElement);
             if (nodeId) {
                 auto timestamp = m_environment.executionStopwatch()->elapsedTime().seconds();
-                m_frontendDispatcher->videoLowPowerChanged(nodeId, timestamp, iterator->value.isLowPower);
+                m_frontendDispatcher->powerEfficientPlaybackStateChanged(nodeId, timestamp, iterator->value.isPowerEfficient);
             }
         }
 

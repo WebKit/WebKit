@@ -119,6 +119,12 @@ WI.DOMObserver = class DOMObserver
 
     videoLowPowerChanged(nodeId, timestamp, isLowPower)
     {
-        WI.domManager.videoLowPowerChanged(nodeId, timestamp, isLowPower);
+        // COMPATIBILITY (iOS 12.2): DOM.videoLowPowerChanged was renamed to DOM.powerEfficientPlaybackStateChanged.
+        WI.domManager.powerEfficientPlaybackStateChanged(nodeId, timestamp, isLowPower);
+    }
+
+    powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient)
+    {
+        WI.domManager.powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient);
     }
 };

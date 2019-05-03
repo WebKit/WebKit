@@ -365,7 +365,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.memoryManager.addEventListener(WI.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
 
         WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
-        WI.DOMNode.addEventListener(WI.DOMNode.Event.LowPowerChanged, this._handleDOMNodeLowPowerChanged, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
 
         this._updateCapturingState(TimelineManager.CapturingState.Active, {startTime: this._capturingStartTime});
     }
@@ -1248,13 +1248,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         }));
     }
 
-    _handleDOMNodeLowPowerChanged(event)
+    _handleDOMNodePowerEfficientPlaybackStateChanged(event)
     {
-        let {timestamp, isLowPower} = event.data;
+        let {timestamp, isPowerEfficient} = event.data;
 
-        this._addRecord(new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.LowPower, timestamp, {
+        this._addRecord(new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged, timestamp, {
             domNode: event.target,
-            isLowPower,
+            isPowerEfficient,
         }));
     }
 };

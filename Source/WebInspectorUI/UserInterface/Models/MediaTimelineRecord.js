@@ -25,7 +25,7 @@
 
 WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, timestamp, {domNode, domEvent, isLowPower} = {})
+    constructor(eventType, timestamp, {domNode, domEvent, isPowerEfficient} = {})
     {
         console.assert(Object.values(WI.MediaTimelineRecord.EventType).includes(eventType));
 
@@ -34,7 +34,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
         this._eventType = eventType;
         this._domNode = domNode || null;
         this._domEvent = domEvent || null;
-        this._isLowPower = isLowPower || false;
+        this._isPowerEfficient = isPowerEfficient || false;
     }
 
     // Import / Export
@@ -42,6 +42,11 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
     static fromJSON(json)
     {
         let {eventType, timestamp} = json;
+
+        // COMPATIBILITY (iOS 12.2): isLowPower was renamed to isPowerEfficient.
+        if ("isLowPower" in json && !("isPowerEfficient" in json))
+            json.isPowerEfficient = json.isLowPower;
+
         return new WI.MediaTimelineRecord(eventType, timestamp, json);
     }
 
@@ -61,7 +66,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
             eventType: this._eventType,
             timestamp: this.startTime,
             domEvent,
-            isLowPower: this._isLowPower,
+            isPowerEfficient: this._isPowerEfficient,
         };
     }
 
@@ -70,7 +75,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
     get eventType() { return this._eventType; }
     get domNode() { return this._domNode; }
     get domEvent() { return this._domEvent; }
-    get isLowPower() { return this._isLowPower; }
+    get isPowerEfficient() { return this._isPowerEfficient; }
 
     get displayName()
     {
@@ -81,8 +86,8 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
             return eventName;
         }
 
-        if (this._eventType === WI.MediaTimelineRecord.EventType.LowPower)
-            return this._isLowPower ? WI.UIString("Entered Low-Power Mode") : WI.UIString("Exited Low-Power Mode");
+        if (this._eventType === MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged)
+            return this._isPowerEfficient ? WI.UIString("Power Efficient Playback Started") : WI.UIString("Power Efficient Playback Stopped");
 
         if (this._domNode)
             return this._domNode.displayName;
@@ -96,16 +101,19 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
         super.saveIdentityToCookie(cookie);
 
         cookie["media-timeline-record-event-type"] = this._eventType;
+        if (this._eventType === MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged)
+            cookie["media-timeline-record-power-efficient-playback"] = this._isPowerEfficient;
         if (this._domNode)
             cookie["media-timeline-record-dom-node"] = this._domNode.path();
-        if (this._domEvent)
+        if (this._domEvent) {
             cookie["media-timeline-record-dom-event"] = this._domEvent.eventName;
-        if (this._isLowPower || (this._domEvent && this._domEvent.data && this._domEvent.data.enabled))
-            cookie["media-timeline-record-active"] = true;
+            if (this._domEvent.data && this._domEvent.data.enabled)
+                cookie["media-timeline-record-dom-event-active"] = true;
+        }
     }
 };
 
 WI.MediaTimelineRecord.EventType = {
     DOMEvent: "dom-event",
-    LowPower: "low-power",
+    PowerEfficientPlaybackStateChanged: "power-efficient-playback-state-changed",
 };

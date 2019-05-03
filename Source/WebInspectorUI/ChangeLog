@@ -1,5 +1,31 @@
 2019-05-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM: rename "low power" to "display composited"
+        https://bugs.webkit.org/show_bug.cgi?id=197296
+
+        Reviewed by Joseph Pecoraro.
+
+        Removed specific ChangeLog entries since it is almost entirely mechanical changes.
+
+        * UserInterface/Protocol/DOMObserver.js:
+        * UserInterface/Controllers/DOMManager.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Models/MediaInstrument.js:
+        * UserInterface/Models/MediaTimelineRecord.js:
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Views/DOMEventsBreakdownView.js:
+        * UserInterface/Views/DOMEventsBreakdownView.css:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/NetworkTableContentView.css:
+        * UserInterface/Views/TimelineIcons.css:
+        * UserInterface/Views/TimelineTabContentView.js:
+        * UserInterface/Images/PowerEfficientPlaybackStateChanged.svg: Added.
+        * UserInterface/Images/LowPower.svg: Removed.
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-05-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Record actions performed on WebGL2RenderingContext
         https://bugs.webkit.org/show_bug.cgi?id=176008
         <rdar://problem/34213884>

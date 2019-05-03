@@ -133,8 +133,8 @@
     content: url(../Images/DOMEventFullscreen.svg);
 }
 
-.low-power-record .icon {
-    content: url(../Images/LowPower.svg);
+.power-efficient-playback-state-changed-record .icon {
+    content: url(../Images/PowerEfficientPlaybackStateChanged.svg);
 }
 
 @media (prefers-color-scheme: dark) {

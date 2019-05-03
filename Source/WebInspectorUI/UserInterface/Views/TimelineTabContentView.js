@@ -251,8 +251,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             switch (timelineRecord.eventType) {
             case WI.MediaTimelineRecord.EventType.DOMEvent:
                 return "dom-event-record";
-            case WI.MediaTimelineRecord.EventType.LowPower:
-                return "low-power-record";
+            case WI.MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged:
+                return "power-efficient-playback-state-changed-record";
             default:
                 console.error("Unknown MediaTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
             }
