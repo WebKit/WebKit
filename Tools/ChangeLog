@@ -1,3 +1,17 @@
+2019-05-03  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] Support adding pretty-printing for qualified types
+        https://bugs.webkit.org/show_bug.cgi?id=197518
+
+        Reviewed by Darin Adler.
+
+        Remove all "::"s from the name of the specified type when computing the name for the Python classes
+        that will provide summary and synthetic details as LLDB is not happy about registering such classes
+        when they contain :: in their name.
+
+        * lldb/lldb_webkit.py:
+        (addSummaryAndSyntheticFormattersForRawBitmaskType):
+
 2019-05-03  Aakash Jain  <aakash_jain@apple.com>
 
         New EWS: patches on recently added queues listed as #1 for older bugs

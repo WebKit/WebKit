@@ -44,8 +44,9 @@ def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enume
 
     # Add the provider class and summary function to the global scope so that LLDB
     # can find them.
-    synthetic_provider_class_name = type_name + 'Provider'
-    summary_provider_function_name = type_name + '_SummaryProvider'
+    python_type_name = type_name.replace('::', '')  # Remove qualifications (e.g. WebCore::X becomes WebCoreX)
+    synthetic_provider_class_name = python_type_name + 'Provider'
+    summary_provider_function_name = python_type_name + '_SummaryProvider'
     globals()[synthetic_provider_class_name] = GeneratedRawBitmaskProvider
     globals()[summary_provider_function_name] = raw_bitmask_summary_provider
 
