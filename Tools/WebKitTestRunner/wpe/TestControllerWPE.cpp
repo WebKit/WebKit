@@ -114,6 +114,10 @@ void TestController::runModal(PlatformWebView*)
 {
 }
 
+void TestController::abortModal()
+{
+}
+
 WKContextRef TestController::platformContext()
 {
     return m_context.get();

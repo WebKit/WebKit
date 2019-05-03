@@ -1,3 +1,10 @@
+2019-05-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix after r244898.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::abortModal): Add the missing (no-op) definition.
+
 2019-05-02  Alex Christensen  <achristensen@webkit.org>
 
         Mark U+01C0 as a homograph of U+006C
