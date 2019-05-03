@@ -7,7 +7,7 @@
         {
             "id": "Type",
             "type": "string",
-            "enum": ["canvas-2d", "canvas-bitmaprenderer", "canvas-webgl"],
+            "enum": ["canvas-2d", "canvas-bitmaprenderer", "canvas-webgl", "canvas-webgl2"],
             "description": "The type of the recording."
         },
         {

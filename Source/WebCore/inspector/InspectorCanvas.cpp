@@ -94,12 +94,23 @@ HTMLCanvasElement* InspectorCanvas::canvasElement()
     return nullptr;
 }
 
+void InspectorCanvas::canvasChanged()
+{
+    if (!m_context.callTracingActive())
+        return;
+
+    // Since 2D contexts are able to be fully reproduced in the frontend, we don't need snapshots.
+    if (is<CanvasRenderingContext2D>(m_context))
+        return;
+
+    m_contentChanged = true;
+}
+
 void InspectorCanvas::resetRecordingData()
 {
     m_initialState = nullptr;
     m_frames = nullptr;
     m_currentActions = nullptr;
-    m_actionNeedingSnapshot = nullptr;
     m_serializedDuplicateData = nullptr;
     m_indexedDuplicateData.clear();
     m_recordingName = { };
@@ -107,6 +118,7 @@ void InspectorCanvas::resetRecordingData()
     m_bufferUsed = 0;
     m_frameCount = WTF::nullopt;
     m_framesCaptured = 0;
+    m_contentChanged = false;
 
     m_context.setCallTracingActive(false);
 }
@@ -131,6 +143,15 @@ static bool shouldSnapshotWebGLAction(const String& name)
     return name == "clear"
         || name == "drawArrays"
         || name == "drawElements";
+}
+
+static bool shouldSnapshotWebGL2Action(const String& name)
+{
+    return name == "clear"
+        || name == "drawArrays"
+        || name == "drawArraysInstanced"
+        || name == "drawElements"
+        || name == "drawElementsInstanced";
 }
 
 void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
@@ -161,15 +182,19 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
 
     appendActionSnapshotIfNeeded();
 
-    auto action = buildAction(name, WTFMove(parameters));
-    m_bufferUsed += action->memoryCost();
-    m_currentActions->addItem(action.ptr());
+    m_lastRecordedAction = buildAction(name, WTFMove(parameters));
+    m_bufferUsed += m_lastRecordedAction->memoryCost();
+    m_currentActions->addItem(m_lastRecordedAction.get());
 
     if (is<ImageBitmapRenderingContext>(m_context) && shouldSnapshotBitmapRendererAction(name))
-        m_actionNeedingSnapshot = WTFMove(action);
+        m_contentChanged = true;
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContext>(m_context) && shouldSnapshotWebGLAction(name))
-        m_actionNeedingSnapshot = WTFMove(action);
+        m_contentChanged = true;
+#endif
+#if ENABLE(WEBGL2)
+    else if (is<WebGL2RenderingContext>(m_context) && shouldSnapshotWebGL2Action(name))
+        m_contentChanged = true;
 #endif
 }
 
@@ -296,10 +321,8 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
 Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectForRecording()
 {
     ASSERT(!m_currentActions);
-    ASSERT(!m_actionNeedingSnapshot);
+    ASSERT(!m_lastRecordedAction);
     ASSERT(!m_frames);
-
-    // FIXME: <https://webkit.org/b/176008> Web Inspector: Record actions performed on WebGL2RenderingContext
 
     Inspector::Protocol::Recording::Type type;
     if (is<CanvasRenderingContext2D>(m_context))
@@ -309,6 +332,10 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContext>(m_context))
         type = Inspector::Protocol::Recording::Type::CanvasWebGL;
+#endif
+#if ENABLE(WEBGL2)
+    else if (is<WebGL2RenderingContext>(m_context))
+        type = Inspector::Protocol::Recording::Type::CanvasWebGL2;
 #endif
     else {
         ASSERT_NOT_REACHED();
@@ -371,17 +398,20 @@ String InspectorCanvas::getCanvasContentAsDataURL(ErrorString& errorString)
 
 void InspectorCanvas::appendActionSnapshotIfNeeded()
 {
-    if (!m_actionNeedingSnapshot)
+    if (!m_lastRecordedAction)
         return;
 
-    m_bufferUsed -= m_actionNeedingSnapshot->memoryCost();
+    if (m_contentChanged) {
+        m_bufferUsed -= m_lastRecordedAction->memoryCost();
 
-    ErrorString ignored;
-    m_actionNeedingSnapshot->addItem(indexForData(getCanvasContentAsDataURL(ignored)));
+        ErrorString ignored;
+        m_lastRecordedAction->addItem(indexForData(getCanvasContentAsDataURL(ignored)));
 
-    m_bufferUsed += m_actionNeedingSnapshot->memoryCost();
+        m_bufferUsed += m_lastRecordedAction->memoryCost();
+    }
 
-    m_actionNeedingSnapshot = nullptr;
+    m_lastRecordedAction = nullptr;
+    m_contentChanged = false;
 }
 
 int InspectorCanvas::indexForData(DuplicateDataVariant data)
@@ -667,10 +697,15 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
             [&] (const WebGLBuffer*) { addParameter(0, RecordingSwizzleTypes::WebGLBuffer); },
             [&] (const WebGLFramebuffer*) { addParameter(0, RecordingSwizzleTypes::WebGLFramebuffer); },
             [&] (const WebGLProgram*) { addParameter(0, RecordingSwizzleTypes::WebGLProgram); },
+            [&] (const WebGLQuery*) { addParameter(0, RecordingSwizzleTypes::WebGLQuery); },
             [&] (const WebGLRenderbuffer*) { addParameter(0, RecordingSwizzleTypes::WebGLRenderbuffer); },
+            [&] (const WebGLSampler*) { addParameter(0, RecordingSwizzleTypes::WebGLSampler); },
             [&] (const WebGLShader*) { addParameter(0, RecordingSwizzleTypes::WebGLShader); },
+            [&] (const WebGLSync*) { addParameter(0, RecordingSwizzleTypes::WebGLSync); },
             [&] (const WebGLTexture*) { addParameter(0, RecordingSwizzleTypes::WebGLTexture); },
+            [&] (const WebGLTransformFeedback*) { addParameter(0, RecordingSwizzleTypes::WebGLTransformFeedback); },
             [&] (const WebGLUniformLocation*) { addParameter(0, RecordingSwizzleTypes::WebGLUniformLocation); },
+            [&] (const WebGLVertexArrayObject*) { addParameter(0, RecordingSwizzleTypes::WebGLVertexArrayObject); },
 #endif
             [&] (const RefPtr<ArrayBuffer>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
             [&] (const RefPtr<ArrayBufferView>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
@@ -688,11 +723,25 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
             [&] (const RefPtr<ImageBitmap>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageBitmap); },
             [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },
             [&] (const RefPtr<Int32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
+            [&] (const RefPtr<Uint32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
+            [&] (const Vector<String>& value) {
+                auto deduplicated = value.map([&] (const String& item) {
+                    return indexForData(item);
+                });
+                addParameter(buildArrayForVector(deduplicated).ptr(), RecordingSwizzleTypes::Array);
+            },
             [&] (const Vector<float>& value) { addParameter(buildArrayForVector(value).ptr(), RecordingSwizzleTypes::Array); },
-            [&] (const Vector<int>& value) { addParameter(buildArrayForVector(value).ptr(), RecordingSwizzleTypes::Array); },
+            [&] (const Vector<uint32_t>& value) {
+                auto mapped = value.map([&] (uint32_t item) {
+                    return static_cast<double>(item);
+                });
+                addParameter(buildArrayForVector(mapped).ptr(), RecordingSwizzleTypes::Array);
+            },
+            [&] (const Vector<int32_t>& value) { addParameter(buildArrayForVector(value).ptr(), RecordingSwizzleTypes::Array); },
             [&] (const String& value) { addParameter(indexForData(value), RecordingSwizzleTypes::String); },
             [&] (double value) { addParameter(value, RecordingSwizzleTypes::Number); },
             [&] (float value) { addParameter(value, RecordingSwizzleTypes::Number); },
+            [&] (uint64_t value) { addParameter(static_cast<double>(value), RecordingSwizzleTypes::Number); },
             [&] (int64_t value) { addParameter(static_cast<double>(value), RecordingSwizzleTypes::Number); },
             [&] (uint32_t value) { addParameter(static_cast<double>(value), RecordingSwizzleTypes::Number); },
             [&] (int32_t value) { addParameter(value, RecordingSwizzleTypes::Number); },

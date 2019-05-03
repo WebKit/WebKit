@@ -210,6 +210,18 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         this.contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.updateRepresentedObjects, this);
         this.updateRepresentedObjects();
+
+        if (this._recording) {
+            this._recordingTreeOutline.updateVirtualizedElementsDebouncer.force();
+
+            let action = this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol];
+            let treeElement = this._recordingTreeOutline.findTreeElement(action);
+            if (treeElement) {
+                const omitFocus = false;
+                const selectedByUser = false;
+                treeElement.revealAndSelect(omitFocus, selectedByUser);
+            }
+        }
     }
 
     hidden()
@@ -361,7 +373,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         const selectedByUser = false;
         canvasTreeElement.revealAndSelect(omitFocus, selectedByUser);
 
-        if (WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL)
+        if (WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2)
             this._recordButtonNavigationItem.enabled = true;
 
         this.recording = null;
@@ -460,7 +472,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     _updateRecordNavigationItem()
     {
-        if (!this._canvas || !(this._canvas.contextType === WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL)) {
+        if (!this._canvas || !(this._canvas.contextType === WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2)) {
             this._recordButtonNavigationItem.enabled = false;
             return;
         }

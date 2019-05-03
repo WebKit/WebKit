@@ -49,6 +49,11 @@ enum class RecordingSwizzleTypes : int {
     WebGLProgram = 17,
     WebGLUniformLocation = 18,
     ImageBitmap = 19,
+    WebGLQuery = 20,
+    WebGLSampler = 21,
+    WebGLSync = 22,
+    WebGLTransformFeedback = 23,
+    WebGLVertexArrayObject = 24,
 };
 
 } // namespace WebCore

@@ -41,6 +41,7 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/Float32Array.h>
 #include <JavaScriptCore/Int32Array.h>
+#include <JavaScriptCore/Uint32Array.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -50,10 +51,15 @@
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
+#include "WebGLQuery.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLSampler.h"
 #include "WebGLShader.h"
+#include "WebGLSync.h"
 #include "WebGLTexture.h"
+#include "WebGLTransformFeedback.h"
 #include "WebGLUniformLocation.h"
+#include "WebGLVertexArrayObject.h"
 #endif
 
 namespace WebCore {
@@ -76,10 +82,15 @@ using RecordCanvasActionVariant = Variant<
     WebGLBuffer*,
     WebGLFramebuffer*,
     WebGLProgram*,
+    WebGLQuery*,
     WebGLRenderbuffer*,
+    WebGLSampler*,
     WebGLShader*,
+    WebGLSync*,
     WebGLTexture*,
+    WebGLTransformFeedback*,
     WebGLUniformLocation*,
+    WebGLVertexArrayObject*,
 #endif
     RefPtr<ArrayBuffer>,
     RefPtr<ArrayBufferView>,
@@ -97,11 +108,15 @@ using RecordCanvasActionVariant = Variant<
 #endif
     RefPtr<ImageData>,
     RefPtr<Int32Array>,
+    RefPtr<Uint32Array>,
+    Vector<String>,
     Vector<float>,
-    Vector<int>,
+    Vector<uint32_t>,
+    Vector<int32_t>,
     String,
     double,
     float,
+    uint64_t,
     int64_t,
     uint32_t,
     int32_t,

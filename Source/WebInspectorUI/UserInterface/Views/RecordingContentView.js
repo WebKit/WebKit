@@ -31,23 +31,25 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         super(representedObject);
 
+        let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
+        let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
+        let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
+        let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
+
         this._index = NaN;
         this._action = null;
         this._snapshots = [];
         this._initialContent = null;
         this._generateContentThrottler = new Throttler(() => {
-            if (this.representedObject.type === WI.Recording.Type.Canvas2D)
+            if (isCanvas2D)
                 this._generateContentCanvas2D(this._index);
-            else if (this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer || this.representedObject.type === WI.Recording.Type.CanvasWebGL)
+            else if (isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2)
                 this._generateContentFromSnapshot(this._index);
         }, 200);
 
         this.element.classList.add("recording", this.representedObject.type);
 
-        let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
-        let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
-        let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL) {
+        if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
             if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging()) {
                 this._pathContext = null;
 
@@ -76,7 +78,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
         let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        if (!isCanvas2D && !isCanvasBitmapRenderer && !isCanvasWebGL)
+        let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
+        if (!isCanvas2D && !isCanvasBitmapRenderer && !isCanvasWebGL && !isCanvasWebGL2)
             return [];
 
         let navigationItems = [this._exportButtonNavigationItem, new WI.DividerNavigationItem];
@@ -122,7 +125,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
         let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL) {
+        let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
+        if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
             if (isCanvas2D)
                 this._updateCanvasPath();
             this._updateImageGrid();
@@ -173,6 +177,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             if (!this.representedObject.processing)
                 this.representedObject.startProcessing();
         }
+
+        this._updateSliderValue();
     }
 
     // Private

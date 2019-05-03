@@ -90,6 +90,11 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case WI.Recording.Swizzle.WebGLShader:
             case WI.Recording.Swizzle.WebGLProgram:
             case WI.Recording.Swizzle.WebGLUniformLocation:
+            case WI.Recording.Swizzle.WebGLQuery:
+            case WI.Recording.Swizzle.WebGLSampler:
+            case WI.Recording.Swizzle.WebGLSync:
+            case WI.Recording.Swizzle.WebGLTransformFeedback:
+            case WI.Recording.Swizzle.WebGLVertexArrayObject:
                 parameterElement.classList.add("swizzled");
                 parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
                 break;

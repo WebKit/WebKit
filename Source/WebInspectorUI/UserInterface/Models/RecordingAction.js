@@ -137,7 +137,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 return null;
         }
 
-        if (value === 0 && type === WI.Recording.Type.CanvasWebGL) {
+        if (value === 0 && (type === WI.Recording.Type.CanvasWebGL || type === WI.Recording.Type.CanvasWebGL2)) {
             if (name === "blendFunc" || name === "blendFuncSeparate")
                 return "ZERO";
             if (index === 0) {
@@ -149,10 +149,12 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         let prototype = WI.RecordingAction._prototypeForType(type);
-        for (let key in prototype) {
-            let descriptor = Object.getOwnPropertyDescriptor(prototype, key);
-            if (descriptor && descriptor.value === value)
-                return key;
+        if (prototype) {
+            for (let key in prototype) {
+                let descriptor = Object.getOwnPropertyDescriptor(prototype, key);
+                if (descriptor && descriptor.value === value)
+                    return key;
+            }
         }
 
         return null;
@@ -170,6 +172,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         case WI.Recording.Type.CanvasWebGL:
             if (window.WebGLRenderingContext)
                 return WebGLRenderingContext.prototype;
+            break;
+        case WI.Recording.Type.CanvasWebGL2:
+            if (window.WebGL2RenderingContext)
+                return WebGL2RenderingContext.prototype;
             break;
         }
 
@@ -205,7 +211,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         this._processed = true;
 
-        if (recording.type === WI.Recording.Type.CanvasWebGL) {
+        if (recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
             // We add each RecordingAction to the list of visualActionIndexes after it is processed.
             if (this._valid && this._isVisual) {
                 let contentBefore = recording.visualActionIndexes.length ? recording.actions[recording.visualActionIndexes.lastValue].snapshot : recording.initialState.content;
@@ -315,7 +321,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
-        if (recording.type === WI.Recording.Type.Canvas2D || recording.type === WI.Recording.Type.CanvasBitmapRenderer || recording.type === WI.Recording.Type.CanvasWebGL) {
+        if (recording.type === WI.Recording.Type.Canvas2D || recording.type === WI.Recording.Type.CanvasBitmapRenderer || recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
             if (this._name === "width" || this._name === "height") {
                 this._contextReplacer = "canvas";
                 this._isFunction = false;
@@ -330,8 +336,12 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
             this._isGetter = !this._isFunction && !this._parameters.length;
 
-            let visualNames = WI.RecordingAction._visualNames[recording.type];
-            this._isVisual = visualNames ? visualNames.has(this._name) : false;
+            if (this._snapshot)
+                this._isVisual = true;
+            else {
+                let visualNames = WI.RecordingAction._visualNames[recording.type];
+                this._isVisual = visualNames ? visualNames.has(this._name) : false;
+            }
 
             if (this._valid) {
                 let prototype = WI.RecordingAction._prototypeForType(recording.type);
@@ -530,6 +540,113 @@ WI.RecordingAction._constantIndexes = {
         },
         "vertexAttribPointer": [2],
     },
+    [WI.Recording.Type.CanvasWebGL2]: {
+        "activeTexture": true,
+        "beginQuery": [0],
+        "beginTransformFeedback": true,
+        "bindBuffer": true,
+        "bindBufferBase": [0],
+        "bindBufferRange": [0],
+        "bindFramebuffer": true,
+        "bindRenderbuffer": true,
+        "bindTexture": true,
+        "bindTransformFeedback": [0],
+        "blendEquation": true,
+        "blendEquationSeparate": true,
+        "blendFunc": true,
+        "blendFuncSeparate": true,
+        "blitFramebuffer": [10],
+        "bufferData": [0, 2],
+        "bufferSubData": [0],
+        "checkFramebufferStatus": true,
+        "clearBufferfi": [0],
+        "clearBufferfv": [0],
+        "clearBufferiv": [0],
+        "clearBufferuiv": [0],
+        "compressedTexImage2D": [0, 2],
+        "compressedTexSubImage2D": [0],
+        "compressedTexSubImage3D": [0],
+        "copyBufferSubData": [0, 1],
+        "copyTexImage2D": [0, 2],
+        "copyTexSubImage2D": [0],
+        "copyTexSubImage3D": [0],
+        "createShader": true,
+        "cullFace": true,
+        "depthFunc": true,
+        "disable": true,
+        "drawArrays": [0],
+        "drawArraysInstanced": [0],
+        "drawBuffers": true,
+        "drawElements": [0, 2],
+        "drawElementsInstanced": [0, 2],
+        "drawRangeElements": [0, 4],
+        "enable": true,
+        "endQuery": true,
+        "fenceSync": [0],
+        "framebufferRenderbuffer": true,
+        "framebufferTexture2D": [0, 1, 2],
+        "framebufferTextureLayer": [0, 1],
+        "frontFace": true,
+        "generateMipmap": true,
+        "getActiveUniformBlockParameter": [2],
+        "getActiveUniforms": [2],
+        "getBufferParameter": true,
+        "getBufferSubData": [0],
+        "getFramebufferAttachmentParameter": true,
+        "getIndexedParameter": [0],
+        "getInternalformatParameter": true,
+        "getParameter": true,
+        "getProgramParameter": true,
+        "getQuery": true,
+        "getQueryParameter": [1],
+        "getRenderbufferParameter": true,
+        "getSamplerParameter": [1],
+        "getShaderParameter": true,
+        "getShaderPrecisionFormat": true,
+        "getSyncParameter": [1],
+        "getTexParameter": true,
+        "getVertexAttrib": [1],
+        "getVertexAttribOffset": [1],
+        "hint": true,
+        "invalidateFramebuffer": [0, 1],
+        "invalidateSubFramebuffer": [0, 1],
+        "isEnabled": true,
+        "pixelStorei": [0],
+        "readBuffer": true,
+        "readPixels": [4, 5],
+        "renderbufferStorage": [0, 1],
+        "renderbufferStorageMultisample": [0, 2],
+        "samplerParameterf": [1],
+        "samplerParameteri": [1],
+        "stencilFunc": [0],
+        "stencilFuncSeparate": [0, 1],
+        "stencilMaskSeparate": [0],
+        "stencilOp": true,
+        "stencilOpSeparate": true,
+        "texImage2D": {
+            5: [0, 2, 3, 4],
+            6: [0, 2, 3, 4],
+            8: [0, 2, 6, 7],
+            9: [0, 2, 6, 7],
+            10: [0, 2, 6, 7],
+            11: [0, 2, 7, 8],
+        },
+        "texParameterf": [0, 1],
+        "texParameteri": [0, 1],
+        "texStorage2D":[0, 2],
+        "texSubImage2D": {
+            6: [0, 4, 5],
+            7: [0, 4, 5],
+            8: [0, 6, 7],
+            9: [0, 6, 7],
+            10: [0, 6, 7],
+            11: [0, 8, 9],
+            12: [0, 8, 9],
+        },
+        "transformFeedbackVaryings": [2],
+        "vertexAttribIPointer": [2],
+        "vertexAttribPointer": [2],
+    },
 };
 
 WI.RecordingAction._visualNames = {
@@ -553,6 +670,13 @@ WI.RecordingAction._visualNames = {
         "clear",
         "drawArrays",
         "drawElements",
+    ]),
+    [WI.Recording.Type.CanvasWebGL2]: new Set([
+        "clear",
+        "drawArrays",
+        "drawArraysInstanced",
+        "drawElements",
+        "drawElementsInstanced",
     ]),
 };
 

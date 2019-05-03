@@ -58,6 +58,8 @@ public:
 
     HTMLCanvasElement* canvasElement();
 
+    void canvasChanged();
+
     void resetRecordingData();
     bool hasRecordingData() const;
     bool currentFrameHasData() const;
@@ -118,7 +120,7 @@ private:
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> m_frames;
     RefPtr<JSON::ArrayOf<JSON::Value>> m_currentActions;
-    RefPtr<JSON::ArrayOf<JSON::Value>> m_actionNeedingSnapshot;
+    RefPtr<JSON::ArrayOf<JSON::Value>> m_lastRecordedAction;
     RefPtr<JSON::ArrayOf<JSON::Value>> m_serializedDuplicateData;
     Vector<DuplicateDataVariant> m_indexedDuplicateData;
 
@@ -128,6 +130,7 @@ private:
     size_t m_bufferUsed { 0 };
     Optional<size_t> m_frameCount;
     size_t m_framesCaptured { 0 };
+    bool m_contentChanged { false };
 };
 
 } // namespace WebCore

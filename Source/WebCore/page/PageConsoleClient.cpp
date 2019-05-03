@@ -64,6 +64,10 @@
 #include "WebGLRenderingContext.h"
 #endif
 
+#if ENABLE(WEBGL2)
+#include "JSWebGL2RenderingContext.h"
+#include "WebGL2RenderingContext.h"
+#endif
 
 namespace WebCore {
 using namespace Inspector;
@@ -224,6 +228,10 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, ScriptArgumen
         return context;
 #if ENABLE(WEBGL)
     if (auto* context = JSWebGLRenderingContext::toWrapped(vm, target))
+        return context;
+#endif
+#if ENABLE(WEBGL2)
+    if (auto* context = JSWebGL2RenderingContext::toWrapped(vm, target))
         return context;
 #endif
     return nullptr;

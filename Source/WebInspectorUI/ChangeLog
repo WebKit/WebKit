@@ -1,3 +1,41 @@
+2019-05-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Record actions performed on WebGL2RenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=176008
+        <rdar://problem/34213884>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.fromPayload):
+        (WI.Recording.displayNameForSwizzleType):
+        (WI.Recording.prototype.async swizzle):
+        (WI.Recording.prototype.createContext):
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.constantNameForParameter):
+        (WI.RecordingAction._prototypeForType):
+        (WI.RecordingAction.prototype.async swizzle):
+        Treat all actions with a snapshot as being a "visible" action.
+
+        * UserInterface/Views/CanvasTabContentView.css:
+        (.content-view.tab.canvas .navigation-bar > .item .canvas:matches(.webgl, .webgl2, .webgpu, .webmetal) .icon): Added.
+        (.content-view.tab.canvas .navigation-bar > .item .canvas.webgl): Deleted.
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.shown):
+        (WI.CanvasSidebarPanel.prototype._canvasChanged):
+        (WI.CanvasSidebarPanel.prototype._updateRecordNavigationItem):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.get navigationItems):
+        (WI.RecordingContentView.prototype.shown):
+        (WI.RecordingContentView.prototype.initialLayout):
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM.createParameterElement):
+
 2019-05-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: borders between section should be lighter than background

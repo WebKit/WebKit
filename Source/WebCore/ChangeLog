@@ -1,3 +1,38 @@
+2019-05-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Record actions performed on WebGL2RenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=176008
+        <rdar://problem/34213884>
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/canvas/recording-webgl2.html
+               inspector/canvas/recording-webgl2-snapshots.html
+
+        * html/canvas/WebGL2RenderingContext.idl:
+
+        * bindings/js/CallTracerTypes.h:
+        * inspector/RecordingSwizzleTypes.h:
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::canvasChanged): Added.
+        (WebCore::InspectorCanvas::resetRecordingData):
+        (WebCore::shouldSnapshotWebGL2Action): Added.
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::releaseObjectForRecording):
+        (WebCore::InspectorCanvas::appendActionSnapshotIfNeeded):
+        (WebCore::InspectorCanvas::buildAction):
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::canvasChanged): Added.
+        (WebCore::InspectorCanvasAgent::startRecording):
+        Provide an actual implementation of `CanvasObserver::canvasChanged` since it can be used to
+        determine whether or not an action needs a snapshot.
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::canvasRenderingContext):
+
 2019-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244881.

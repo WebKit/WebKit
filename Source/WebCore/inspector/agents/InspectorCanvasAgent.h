@@ -99,7 +99,7 @@ public:
 #endif
 
     // CanvasObserver
-    void canvasChanged(CanvasBase&, const FloatRect&) override { }
+    void canvasChanged(CanvasBase&, const FloatRect&) override;
     void canvasResized(CanvasBase&) override { }
     void canvasDestroyed(CanvasBase&) override;
 

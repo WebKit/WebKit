@@ -454,6 +454,20 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
         didFinishRecordingCanvasFrame(inspectorCanvas->context(), true);
 }
 
+void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
+{
+    auto* context = canvasBase.renderingContext();
+    if (!context)
+        return;
+
+    auto inspectorCanvas = findInspectorCanvas(*context);
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    inspectorCanvas->canvasChanged();
+}
+
 void InspectorCanvasAgent::canvasDestroyed(CanvasBase& canvasBase)
 {
     auto* context = canvasBase.renderingContext();
@@ -590,6 +604,9 @@ void InspectorCanvasAgent::startRecording(InspectorCanvas& inspectorCanvas, Insp
     if (!is<CanvasRenderingContext2D>(canvasRenderingContext)
 #if ENABLE(WEBGL)
         && !is<WebGLRenderingContext>(canvasRenderingContext)
+#endif
+#if ENABLE(WEBGL2)
+        && !is<WebGL2RenderingContext>(canvasRenderingContext)
 #endif
         && !is<ImageBitmapRenderingContext>(canvasRenderingContext))
         return;

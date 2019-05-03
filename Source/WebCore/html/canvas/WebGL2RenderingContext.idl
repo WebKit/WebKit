@@ -56,6 +56,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     DoNotCheckConstants,
+    CallTracingCallback=recordCanvasAction,
 ] interface WebGL2RenderingContext {
     const GLenum READ_BUFFER                                   = 0x0C02;
     const GLenum UNPACK_ROW_LENGTH                             = 0x0CF2;
