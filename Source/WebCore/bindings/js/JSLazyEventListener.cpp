@@ -33,6 +33,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -43,7 +44,7 @@ struct JSLazyEventListener::CreationArguments {
     const QualifiedName& attributeName;
     const AtomicString& attributeValue;
     Document& document;
-    ContainerNode* node;
+    WeakPtr<ContainerNode> node;
     JSObject* wrapper;
     bool shouldUseSVGEventName;
 };
@@ -64,21 +65,15 @@ static TextPosition convertZeroToOne(const TextPosition& position)
     return position;
 }
 
-JSLazyEventListener::JSLazyEventListener(const CreationArguments& arguments, const String& sourceURL, const TextPosition& sourcePosition)
+JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const String& sourceURL, const TextPosition& sourcePosition)
     : JSEventListener(nullptr, arguments.wrapper, true, mainThreadNormalWorld())
     , m_functionName(arguments.attributeName.localName().string())
     , m_eventParameterName(eventParameterName(arguments.shouldUseSVGEventName))
     , m_code(arguments.attributeValue)
     , m_sourceURL(sourceURL)
     , m_sourcePosition(convertZeroToOne(sourcePosition))
-    , m_originalNode(arguments.node)
+    , m_originalNode(WTFMove(arguments.node))
 {
-    // We don't ref m_originalNode because we assume it will stay alive as long as this
-    // handler object is around and we need to avoid a reference cycle. If JS transfers
-    // this handler to another node, initializeJSFunction will be called and after that
-    // m_originalNode will never be looked at again.
-    // FIXME: Doesn't seem clear that is guaranteed to be true in the general case.
-
 #ifndef NDEBUG
     eventListenerCounter.increment();
 #endif
@@ -159,7 +154,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     return jsFunction;
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::create(const CreationArguments& arguments)
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& arguments)
 {
     if (arguments.attributeValue.isNull())
         return nullptr;
@@ -174,19 +169,19 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(const CreationArguments&
         sourceURL = arguments.document.url().string();
     }
 
-    return adoptRef(*new JSLazyEventListener(arguments, sourceURL, position));
+    return adoptRef(*new JSLazyEventListener(WTFMove(arguments), sourceURL, position));
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
-    return create({ attributeName, attributeValue, element.document(), &element, nullptr, element.isSVGElement() });
+    return create({ attributeName, attributeValue, element.document(), makeWeakPtr(element), nullptr, element.isSVGElement() });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
     // FIXME: This always passes false for "shouldUseSVGEventName". Is that correct for events dispatched to SVG documents?
     // This has been this way for a long time, but became more obvious when refactoring to separate the Element and Document code paths.
-    return create({ attributeName, attributeValue, document, &document, nullptr, false });
+    return create({ attributeName, attributeValue, document, makeWeakPtr(document), nullptr, false });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(DOMWindow& window, const QualifiedName& attributeName, const AtomicString& attributeValue)
