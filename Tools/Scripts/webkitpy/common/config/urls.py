@@ -1,4 +1,5 @@
 # Copyright (c) 2010, Google Inc. All rights reserved.
+# Copyright (c) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -55,6 +56,7 @@ svn_server_host = "svn.webkit.org"
 svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 
 statusserver_default_host = "webkit-queues.webkit.org"
+ewsserver_default_host = "ews.webkit.org"
 
 
 def parse_bug_id(string):

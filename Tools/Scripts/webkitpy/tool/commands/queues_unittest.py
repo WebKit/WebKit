@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -145,8 +146,8 @@ Feeding commit-queue high priority items [10005], regular items [10000]
 MOCK: update_work_items: commit-queue [10005, 10000]
 Feeding EWS (2 r? patches, 2 new)
 MOCK: upload_attachment: 10008
-MOCK: submit_to_ews: 10008
-MOCK: submit_to_ews: 10002
+MOCK: submit_to_old_ews: 10008
+MOCK: submit_to_old_ews: 10002
 """,
             "handle_unexpected_error": "Mock error message\n",
         }

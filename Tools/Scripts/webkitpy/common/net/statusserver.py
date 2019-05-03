@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -157,7 +157,7 @@ class StatusServer:
         self._browser.submit()
 
     def submit_to_ews(self, attachment_id):
-        _log.info("Submitting attachment %s to EWS queues" % attachment_id)
+        _log.info("Submitting attachment %s to old EWS queues" % attachment_id)
         return NetworkTransaction().run(lambda: self._post_work_item_to_ews(attachment_id))
 
     def next_work_item(self, queue_name):

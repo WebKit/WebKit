@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -77,6 +78,9 @@ class MockBrowser(object):
 
     def __setitem__(self, key, value):
         self.params[key] = value
+
+    def __getitem__(self, key):
+        return self.params.get(key)
 
     def submit(self):
         return StringIO.StringIO()

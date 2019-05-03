@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -66,7 +67,7 @@ class MockStatusServer(object):
         _log.info('MOCK: upload_attachment: {}'.format(attachment.id()))
 
     def submit_to_ews(self, patch_id):
-        _log.info("MOCK: submit_to_ews: %s" % (patch_id))
+        _log.info("MOCK: submit_to_old_ews: %s" % (patch_id))
 
     def update_status(self, queue_name, status, patch=None, results_file=None):
         _log.info("MOCK: update_status: %s %s" % (queue_name, status))

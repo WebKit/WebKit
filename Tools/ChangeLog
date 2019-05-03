@@ -1,3 +1,29 @@
+2019-05-03  Aakash Jain  <aakash_jain@apple.com>
+
+        webkit-patch --no-review upload does not submit patch to New EWS
+        https://bugs.webkit.org/show_bug.cgi?id=197519
+        <rdar://problem/50424887>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/tool/steps/submittoews.py:
+        (SubmitToEWS.run): Submit to both old and new EWS.
+        * Scripts/webkitpy/common/config/urls.py: Added url for new EWS server.
+        * Scripts/webkitpy/common/net/ewsserver.py: Added.
+        (EWSServer._server_url): Method to return server url.
+        (EWSServer._post_patch_to_ews): Method to post patch to ews.
+        (EWSServer.submit_to_ews): Method to submit the patch to ews using NetworkTransaction.
+        * Scripts/webkitpy/common/net/ewsserver_mock.py: Added Mock EWS Server.
+        * Scripts/webkitpy/common/net/ewsserver_unittest.py: Added unit-test for EWS Server.
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        (MockStatusServer.submit_to_ews): Updated the log text.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py: Updated unit-tests.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py: Ditto.
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch.__init__): Initialize ews_server. 
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.__init__): Ditto.
+
 2019-05-03  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: [weakThis->m_view window] == weakThis->m_targetWindowForMovePreparation

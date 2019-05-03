@@ -1,5 +1,5 @@
 # Copyright (c) 2010 Google Inc. All rights reserved.
-# Copyright (c) 2009, 2013 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2013, 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -38,6 +38,7 @@ from webkitpy.common.checkout.scm import Git
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.host import Host
 from webkitpy.common.net.irc import ircproxy
+from webkitpy.common.net.ewsserver import EWSServer
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.tool import commands
@@ -61,6 +62,7 @@ class WebKitPatch(MultiCommandTool, Host):
         Host.__init__(self)
         self._path = path
         self.status_server = StatusServer()
+        self.ews_server = EWSServer()
 
         self.wakeup_event = threading.Event()
         self._irc = None
