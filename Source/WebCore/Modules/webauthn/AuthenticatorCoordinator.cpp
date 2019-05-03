@@ -166,10 +166,7 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
     auto clientDataJsonHash = produceClientDataJsonHash(clientDataJson);
 
     // Step 4, 17-21.
-    // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
-    // Also, resident keys, user verifications and direct attestation are enforced at this tage.
-    // For better performance, transports of options.excludeCredentials are checked in LocalAuthenticator.
-    if (!m_client)  {
+    if (!m_client) {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
@@ -237,10 +234,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
     auto clientDataJsonHash = produceClientDataJsonHash(clientDataJson);
 
     // Step 4, 14-19.
-    // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
-    // Also, resident keys, user verifications and direct attestation are enforced at this tage.
-    // For better performance, filtering of options.allowCredentials is done in LocalAuthenticator.
-    if (!m_client)  {
+    if (!m_client) {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }

@@ -83,6 +83,12 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
+    // Extra.
+    if (!m_document->hasFocus()) {
+        promise.reject(Exception { NotAllowedError, "The document is not focused."_s });
+        return;
+    }
+
     m_document->page()->authenticatorCoordinator().discoverFromExternalSource(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
@@ -109,6 +115,12 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
     // Step 3-7. Shortcut as we only support one kind of credentials.
     if (!options.publicKey) {
         promise.reject(Exception { NotSupportedError, "Only PublicKeyCredential is supported."_s });
+        return;
+    }
+
+    // Extra.
+    if (!m_document->hasFocus()) {
+        promise.reject(Exception { NotAllowedError, "The document is not focused."_s });
         return;
     }
 
