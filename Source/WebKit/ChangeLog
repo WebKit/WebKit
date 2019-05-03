@@ -1,3 +1,26 @@
+2019-05-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Use more efficient path resolution logic
+        https://bugs.webkit.org/show_bug.cgi?id=197389
+        <rdar://problem/50268491>
+
+        Reviewed by Maciej Stachowiak.
+
+        The code in SandboxExtensionsCocoa.mm 'resolveSymlinksInPath' is pretty inefficient, and tries to reproduce (badly)
+        logic that is already provided by the operating system.
+
+        To make matters worse, 'resolvePathForSandboxExtension' was effectively performing the work of fully resolving
+        symlinks twice, since NSString's 'stringByStandardizingPath' method does some of this already.
+
+        Instead, we should just use NSString's 'stringByResolvingSymlinksInPath', which does the symlink resolution
+        using more efficient logic than our 'resolveSymlinksInPath' code.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::resolveSymlinksInPath): Removed.
+        (WebKit::resolvePathForSandboxExtension): Remove redundant call to 'resolveSymlinksInPath', and switches from
+        'stringByStandardizingPath' to 'stringByResolvingSymlinksInPath', which can take the place of both calls.
+        (WebKit::stringByResolvingSymlinksInPath): Switch to call 'stringByResolvingSymlinksInPath'.
+
 2019-05-02  Dean Jackson  <dino@apple.com>
 
         Need additional UIPreviewAction information in WKImagePreviewViewController

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #import "DataReference.h"
 #import "Decoder.h"
 #import "Encoder.h"
-#import <sys/stat.h>
 #import <wtf/FileSystem.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/CString.h>
@@ -225,52 +224,9 @@ RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
     return adoptRef(new SandboxExtension(handle));
 }
 
-static CString resolveSymlinksInPath(const CString& path)
-{
-    struct stat statBuf;
-
-    // Check if this file exists.
-    if (!stat(path.data(), &statBuf)) {
-        char resolvedName[PATH_MAX];
-
-        return realpath(path.data(), resolvedName);
-    }
-
-    const char* slashPtr = strrchr(path.data(), '/');
-    if (slashPtr == path.data())
-        return path;
-
-    size_t parentDirectoryLength = slashPtr - path.data();
-    if (parentDirectoryLength >= PATH_MAX)
-        return CString();
-
-    // Get the parent directory.
-    char parentDirectory[PATH_MAX];
-    memcpy(parentDirectory, path.data(), parentDirectoryLength);
-    parentDirectory[parentDirectoryLength] = '\0';
-
-    // Resolve it.
-    CString resolvedParentDirectory = resolveSymlinksInPath(CString(parentDirectory));
-    if (resolvedParentDirectory.isNull())
-        return CString();
-
-    size_t lastPathComponentLength = path.length() - parentDirectoryLength;
-    size_t resolvedPathLength = resolvedParentDirectory.length() + lastPathComponentLength;
-    if (resolvedPathLength >= PATH_MAX)
-        return CString();
-
-    // Combine the resolved parent directory with the last path component.
-    char* resolvedPathBuffer;
-    CString resolvedPath = CString::newUninitialized(resolvedPathLength, resolvedPathBuffer);
-    memcpy(resolvedPathBuffer, resolvedParentDirectory.data(), resolvedParentDirectory.length());
-    memcpy(resolvedPathBuffer + resolvedParentDirectory.length(), slashPtr, lastPathComponentLength);
-
-    return resolvedPath;
-}
-
 String stringByResolvingSymlinksInPath(const String& path)
 {
-    return String::fromUTF8(resolveSymlinksInPath(path.utf8()));
+    return [(NSString *)path stringByResolvingSymlinksInPath];
 }
 
 String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
@@ -288,15 +244,13 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
 
 String resolvePathForSandboxExtension(const String& path)
 {
-    // FIXME: Do we need both resolveSymlinksInPath() and -stringByStandardizingPath?
-    CString fileSystemPath = FileSystem::fileSystemRepresentation([(NSString *)path stringByStandardizingPath]);
-    if (fileSystemPath.isNull()) {
-        LOG_ERROR("Could not create a valid file system representation for the string '%s' of length %lu", fileSystemPath.data(), fileSystemPath.length());
+    String resolvedPath = stringByResolvingSymlinksInPath(path);
+    if (resolvedPath.isEmpty()) {
+        LOG_ERROR("Could not create a valid file system representation for the string '%s' of length %lu", resolvedPath.utf8().data(), resolvedPath.length());
         return { };
     }
 
-    CString standardizedPath = resolveSymlinksInPath(fileSystemPath);
-    return String::fromUTF8(standardizedPath);
+    return resolvedPath;
 }
 
 bool SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type type, Handle& handle)
