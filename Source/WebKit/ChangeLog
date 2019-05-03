@@ -1,3 +1,21 @@
+2019-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Unresponsive Service Worker processes should get killed
+        https://bugs.webkit.org/show_bug.cgi?id=197580
+        <rdar://problem/50458239>
+
+        Reviewed by Geoffrey Garen.
+
+        Enable the background responsiveness logic for service worker processes so that they get
+        killed if they becomes unresponsive. The logic was previously not enabling the timer for
+        service worker processes because it required having a page.
+
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::shouldBeActive const):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+
 2019-05-03  Youenn Fablet  <youenn@apple.com>
 
         [iOS] set the default maximum camera count to 1 for enumerateDevices

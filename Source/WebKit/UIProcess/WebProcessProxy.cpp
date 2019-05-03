@@ -723,6 +723,12 @@ void WebProcessProxy::didBecomeUnresponsive()
     bool isWebProcessResponsive = false;
     for (auto& callback : isResponsiveCallbacks)
         callback(isWebProcessResponsive);
+
+    // If the service worker process becomes unresponsive, kill it ourselves since there are no native clients to do it.
+    if (isServiceWorkerProcess()) {
+        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didBecomeUnresponsive() Terminating Service Worker process with pid %d because it is unresponsive", this, processIdentifier());
+        terminate();
+    }
 }
 
 void WebProcessProxy::didBecomeResponsive()
@@ -766,6 +772,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     m_webConnection = WebConnectionToWebProcess::create(this);
 
     m_processPool->processDidFinishLaunching(this);
+    m_backgroundResponsivenessTimer.updateState();
 
     for (auto* visitedLinkStore : m_visitedLinkStoresWithUsers.keys())
         visitedLinkStore->addProcess(*this);
