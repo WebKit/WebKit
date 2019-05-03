@@ -49,7 +49,7 @@ void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManagerRef,
 
 void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManagerRef, WKStringRef hostname)
 {
-    toImpl(cookieManagerRef)->deleteCookiesForHostname(PAL::SessionID::defaultSessionID(), toImpl(hostname)->string());
+    toImpl(cookieManagerRef)->deleteCookiesForHostnames(PAL::SessionID::defaultSessionID(), { toImpl(hostname)->string() });
 }
 
 void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManagerRef)

@@ -1328,9 +1328,9 @@ void WebAutomationSession::addSingleCookie(const String& browsingContextHandle, 
 
     // Inherit the domain/host from the main frame's URL if it is not explicitly set.
     if (domain.isEmpty())
-        domain = activeURL.host().toString();
-
-    cookie.domain = domainByAddingDotPrefixIfNeeded(domain);
+        cookie.domain = activeURL.host().toString();
+    else
+        cookie.domain = domainByAddingDotPrefixIfNeeded(domain);
 
     if (!cookieObject.getString("path"_s, cookie.path))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'path' was not found.");
@@ -1368,8 +1368,10 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     URL activeURL = URL(URL(), page->pageLoadState().activeURL());
     ASSERT(activeURL.isValid());
 
+    String host = activeURL.host().toString();
+
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->deleteCookiesForHostname(page->websiteDataStore().sessionID(), domainByAddingDotPrefixIfNeeded(activeURL.host().toString()));
+    cookieManager->deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
 }
 
 void WebAutomationSession::getSessionPermissions(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions)

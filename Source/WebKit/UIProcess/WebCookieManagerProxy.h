@@ -67,7 +67,7 @@ public:
     
     void getHostnamesWithCookies(PAL::SessionID, Function<void (API::Array*, CallbackBase::Error)>&&);
     void deleteCookie(PAL::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
-    void deleteCookiesForHostname(PAL::SessionID, const String& hostname);
+    void deleteCookiesForHostnames(PAL::SessionID, const Vector<String>&);
     void deleteAllCookies(PAL::SessionID);
     void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, Function<void (CallbackBase::Error)>&&);
 

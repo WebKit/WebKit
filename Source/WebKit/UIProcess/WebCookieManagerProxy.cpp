@@ -120,9 +120,9 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
     callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).ptr());
 }
 
-void WebCookieManagerProxy::deleteCookiesForHostname(PAL::SessionID sessionID, const String& hostname)
+void WebCookieManagerProxy::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames)
 {
-    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostname(sessionID, hostname));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostnames(sessionID, hostnames));
 }
 
 void WebCookieManagerProxy::deleteAllCookies(PAL::SessionID sessionID)

@@ -63,12 +63,11 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Callbac
     m_process.send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(copyToVector(hostnames), callbackID), 0);
 }
 
-void WebCookieManager::deleteCookiesForHostname(PAL::SessionID sessionID, const String& hostname)
+void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames)
 {
     if (auto* storageSession = m_process.storageSession(sessionID))
-        storageSession->deleteCookiesForHostnames({ hostname });
+        storageSession->deleteCookiesForHostnames(hostnames);
 }
-
 
 void WebCookieManager::deleteAllCookies(PAL::SessionID sessionID)
 {

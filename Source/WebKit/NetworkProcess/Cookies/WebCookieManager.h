@@ -70,7 +70,7 @@ private:
     void getHostnamesWithCookies(PAL::SessionID, CallbackID);
 
     void deleteCookie(PAL::SessionID, const WebCore::Cookie&, CallbackID);
-    void deleteCookiesForHostname(PAL::SessionID, const String&);
+    void deleteCookiesForHostnames(PAL::SessionID, const Vector<String>&);
     void deleteAllCookies(PAL::SessionID);
     void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, CallbackID);
 
