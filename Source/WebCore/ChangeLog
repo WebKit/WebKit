@@ -1,3 +1,82 @@
+2019-05-03  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [Cairo] Improve ShadowBlur performance using tiling optimization
+        https://bugs.webkit.org/show_bug.cgi?id=197308
+        Reviewed by Žan Doberšek.
+
+        Enable tiling tiling-based optimization for drawRectShadow() and drawInsetShadow().
+        Since r228776, cairo ports doesn't have tiling-based optimization.
+
+        For AppleWin, this patch refactors code and it shares almost same code as cairo port.
+        Only the difference is that AppleWin uses ScratchBuffer, but cairo ports doesn't.
+        This should avoid a performance regression for AppleWin.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::calculateLobes):
+        Fix stylecheck errors
+
+        (WebCore::ShadowBlur::blurLayerImage):
+        Fix stylecheck errors
+
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+        We don't use position of m_sourceRect, so change the type to FloatSize.
+
+        (WebCore::ShadowBlur::drawShadowBuffer):
+        Use m_layerSize instead of m_shadowedResultSize to fillRect, as m_layerSize is always smaller than m_shadowedResultSize.
+        It's because in m_layerSize is equal to m_shadowedResultSize if it's not clipped.
+        Clipping doesn't increase size of m_layerSize, so m_layerSize is always smaller than or equal to m_shadowedResultSize.
+
+        (WebCore::ShadowBlur::templateSize const):
+        Fix stylecheck errors
+
+        (WebCore::ShadowBlur::drawRectShadow):
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        Incorporate tile-based drawing.
+        To accomplish it, this patch abstracts GraphicsContext::drawImageBuffer to ShadowBlur::DrawImageCallback,
+        GraphicsContext::fillRect to ShadowBlur::FillRectCallback, drawing rect with hole to  ShadowBlur::FillRectWithHoleCallback.
+
+        Variants which takes GraphicsContext as parameter now just calls another drawRectShadow.
+
+        (WebCore::ShadowBlur::drawLayerPieces):
+        Instead of graphicsContext.drawImageBuffer, call corresponding callback.
+
+        (WebCore::ShadowBlur::drawLayerPiecesAndFillCenter):
+        This function calls drawLayerPieces and fill center for outer shadow.
+        Drawing outer shadow requires another callback for graphicsContext.fillRect.
+
+        (WebCore::ShadowBlur::drawShadowLayer):
+        Use m_layerSize instead of m_shadowedResultSize to fillRect,
+        as m_layerSize is always smaller than m_shadowedResultSize.
+
+        * platform/graphics/ShadowBlur.h:
+        Rename m_sourceRect to m_shadowedResultSize, and change it to FloatSize from FloatRect.
+        Remove GraphicsContext usage as much as possible and replace them by corresponding callbacks.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowImage):
+        This function corresponds to ShadowBlur::DrawImageCallback.
+
+        (WebCore::Cairo::fillShadowBuffer):
+        Erase sourceRect, as it's always bigger than layerSize.
+
+        (WebCore::Cairo::drawPathShadow):
+        (WebCore::Cairo::drawGlyphsShadow):
+        Erase unused parameter.
+
+        (WebCore::Cairo::fillRect):
+        (WebCore::Cairo::fillRoundedRect):
+        (WebCore::Cairo::fillRectWithRoundedHole):
+        For tile-based optimization, add extra arguments to drawRectShadow.
+
+        (WebCore::Cairo::drawSurface):
+        Erase unused parameter.
+
 2019-05-03  Antti Koivisto  <antti@apple.com>
 
         Add a quirk to make youtube navigation bar scrollable without mouse hover on iOS
