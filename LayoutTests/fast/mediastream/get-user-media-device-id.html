@@ -11,15 +11,14 @@
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    promise_test((test) => {
-        return navigator.mediaDevices.enumerateDevices()
-            .then((devices) => {
-                devices.forEach((device) => {
-                    assert_true(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
-                });
-            });
+    promise_test(async (test) => {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        assert_true(devices.length <= 2, "before getting permission, at most 1 camera and 1 microphone are exposed");
+        devices.forEach((device) => {
+            assert_true(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
+        });
     }, "Device IDs should be empty initially");
-    
+
     promise_test((test) => {
         return navigator.mediaDevices.getUserMedia({ audio:true, video:true })
             .then((stream) => {

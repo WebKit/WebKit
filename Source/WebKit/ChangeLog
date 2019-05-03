@@ -1,3 +1,19 @@
+2019-05-03  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] set the default maximum camera count to 1 for enumerateDevices
+        https://bugs.webkit.org/show_bug.cgi?id=197566
+
+        Reviewed by Eric Carlson.
+
+        The previous number for iOS was 2 as there is a front and a back camera.
+        Since we are by default setting deviceIds to "", it is better to just have one,
+        as it might confuse applications to have two devices with the same ID.
+
+        Covered by updated test.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+
 2019-05-03  Daniel Bates  <dabates@apple.com>
 
         Pass KeyboardEvent by reference in more places

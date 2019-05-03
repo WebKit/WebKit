@@ -537,11 +537,7 @@ bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(uint64
 
 Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool revealIdsAndLabels, const String& deviceIDHashSalt)
 {
-#if PLATFORM(IOS_FAMILY)
-    static const int defaultMaximumCameraCount = 2;
-#else
     static const int defaultMaximumCameraCount = 1;
-#endif
     static const int defaultMaximumMicrophoneCount = 1;
 
     auto devices = RealtimeMediaSourceCenter::singleton().getMediaStreamDevices();
