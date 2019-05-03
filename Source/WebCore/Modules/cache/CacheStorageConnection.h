@@ -47,7 +47,7 @@ public:
     void retrieveRecords(uint64_t cacheIdentifier, const URL&, DOMCacheEngine::RecordsCallback&&);
     void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&);
     void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&);
-    uint64_t computeRecordBodySize(const FetchResponse&, const DOMCacheEngine::ResponseBody&, ResourceResponse::Tainting);
+    uint64_t computeRecordBodySize(const FetchResponse&, const DOMCacheEngine::ResponseBody&);
 
     virtual void reference(uint64_t /* cacheIdentifier */) { }
     virtual void dereference(uint64_t /* cacheIdentifier */) { }

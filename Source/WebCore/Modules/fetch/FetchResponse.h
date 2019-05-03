@@ -102,6 +102,7 @@ public:
     void consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&&);
 
     WEBCORE_EXPORT ResourceResponse resourceResponse() const;
+    ResourceResponse::Tainting tainting() const { return m_internalResponse.tainting(); }
 
     uint64_t bodySizeWithPadding() const { return m_bodySizeWithPadding; }
     void setBodySizeWithPadding(uint64_t size) { m_bodySizeWithPadding = size; }

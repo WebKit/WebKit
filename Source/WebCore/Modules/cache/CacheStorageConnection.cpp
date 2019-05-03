@@ -104,10 +104,10 @@ static inline uint64_t computeRealBodySize(const DOMCacheEngine::ResponseBody& b
     return result;
 }
 
-uint64_t CacheStorageConnection::computeRecordBodySize(const FetchResponse& response, const DOMCacheEngine::ResponseBody& body, ResourceResponse::Tainting tainting)
+uint64_t CacheStorageConnection::computeRecordBodySize(const FetchResponse& response, const DOMCacheEngine::ResponseBody& body)
 {
     if (!response.opaqueLoadIdentifier()) {
-        ASSERT_UNUSED(tainting, tainting != ResourceResponse::Tainting::Opaque);
+        ASSERT(response.tainting() != ResourceResponse::Tainting::Opaque);
         return computeRealBodySize(body);
     }
 

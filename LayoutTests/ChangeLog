@@ -1,5 +1,16 @@
 2019-05-03  Youenn Fablet  <youenn@apple.com>
 
+        Cache.add and Cache.addAll should compute a correct response body size
+        https://bugs.webkit.org/show_bug.cgi?id=197464
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/cache-storage/cache-quota-add.any-expected.txt: Added.
+        * http/wpt/cache-storage/cache-quota-add.any.html: Added.
+        * http/wpt/cache-storage/cache-quota-add.any.js: Added.
+
+2019-05-03  Youenn Fablet  <youenn@apple.com>
+
         LayoutTest imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=182849
         <rdar://problem/50353372>

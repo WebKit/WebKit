@@ -59,6 +59,8 @@ public:
     using MatchCallback = WTF::Function<void(ExceptionOr<FetchResponse*>)>;
     void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
 
+    CacheStorageConnection& connection() { return m_connection.get(); }
+
 private:
     DOMCache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
 
