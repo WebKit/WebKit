@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        body {
+            margin: 0;
+        }
+        iframe {
+            position: relative;
+            margin: 10px;
+            border: none;
+            width: 300px;
+            height: 300px;
+        }
+        .scrollbar-hider {
+            position: absolute;
+            width: 16px;
+            height: 300px;
+            top: 10px;
+            left: calc(310px - 16px);
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="test-frame" srcdoc="
+        <style>
+            body {
+                height: 2000px;
+                margin: 0;
+            }
+            .box {
+                width: 300px;
+                height: 300px;
+                background-color: green;
+            }
+        </style>
+        <body>
+            <div class='box'></div>
+        </body>
+    "></iframe>
+    <div class="scrollbar-hider"></div>
+</body>
+</html>

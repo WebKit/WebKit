@@ -1,3 +1,17 @@
+2019-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS] Fix programmatic scrolling with async overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=197590
+
+        Reviewed by Sam Weinig.
+
+        Tests for programmatic scrolling of overflow and iframes.
+
+        * scrollingcoordinator/mac/programmatic-frame-scroll-expected.html: Added.
+        * scrollingcoordinator/mac/programmatic-frame-scroll.html: Added.
+        * scrollingcoordinator/mac/programmatic-overflow-scroll-expected.html: Added.
+        * scrollingcoordinator/mac/programmatic-overflow-scroll.html: Added.
+
 2019-05-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] A focused document should be required

@@ -57,8 +57,13 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const Scro
 void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
-    
-    // FIXME: RequestedScrollPosition etc.
+
+    const auto& overflowStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
+
+    if (overflowStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+        auto scrollType = overflowStateNode.requestedScrollPositionRepresentsProgrammaticScroll() ? ScrollType::Programmatic : ScrollType::User;
+        scrollTo(overflowStateNode.requestedScrollPosition(), scrollType);
+    }
 }
 
 ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
