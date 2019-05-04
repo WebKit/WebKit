@@ -2786,13 +2786,20 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     return WTF::areEssentiallyEqual(a, b);
 }
 
+FloatSize WebPage::viewLayoutSizeAdjustedForQuirks(const FloatSize& size)
+{
+    if (auto* document = m_page->mainFrame().document())
+        return { document->quirks().overriddenViewLayoutWidth(size.width()).valueOr(size.width()), size.height() };
+    return size;
+}
+
 void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
 {
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
 
     auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
     auto clampedMinimumEffectiveDevice = m_viewportConfiguration.isKnownToLayOutWiderThanViewport() ? WTF::nullopt : Optional<double>(minimumEffectiveDeviceWidth);
-    if (!m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, WTFMove(clampedMinimumEffectiveDevice)))
+    if (!m_viewportConfiguration.setViewLayoutSize(viewLayoutSizeAdjustedForQuirks(size), scaleFactor, WTFMove(clampedMinimumEffectiveDevice)))
         return;
 
     auto zoomToInitialScale = ZoomToInitialScale::No;
@@ -2875,7 +2882,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage::dynamicViewportSizeUpdate setting view layout size to " << viewLayoutSize);
     bool viewportChanged = m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
-    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(viewLayoutSize);
+    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(viewLayoutSizeAdjustedForQuirks(viewLayoutSize));
     if (viewportChanged)
         viewportConfigurationChanged();
 
@@ -3044,7 +3051,7 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return;
     }
 
-    Document* document = frame->coreFrame()->document();
+    auto* document = frame->coreFrame()->document();
     if (document->isImageDocument())
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
     else if (document->isTextDocument())
@@ -3052,6 +3059,9 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
     else
         m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
     m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
+
+    if (auto overriddenViewLayoutWidth = document->quirks().overriddenViewLayoutWidth(m_viewportConfiguration.layoutWidth()))
+        m_viewportConfiguration.setViewLayoutSize(FloatSize(*overriddenViewLayoutWidth, m_viewportConfiguration.layoutHeight()));
 }
 
 #if ENABLE(VIEWPORT_RESIZING)
@@ -3085,6 +3095,9 @@ bool WebPage::immediatelyShrinkToFitContent()
     auto view = makeRefPtr(mainFrame->view());
     auto mainDocument = makeRefPtr(mainFrame->document());
     if (!view || !mainDocument)
+        return false;
+
+    if (mainDocument->quirks().shouldIgnoreShrinkToFitContent())
         return false;
 
     mainDocument->updateLayout();

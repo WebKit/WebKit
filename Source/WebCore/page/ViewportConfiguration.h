@@ -118,6 +118,7 @@ public:
 
     WEBCORE_EXPORT IntSize layoutSize() const;
     WEBCORE_EXPORT int layoutWidth() const;
+    WEBCORE_EXPORT int layoutHeight() const;
     WEBCORE_EXPORT double initialScale() const;
     WEBCORE_EXPORT double initialScaleIgnoringContentSize() const;
     WEBCORE_EXPORT double minimumScale() const;
@@ -146,7 +147,6 @@ private:
     void updateConfiguration();
     double viewportArgumentsLength(double length) const;
     double initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const;
-    int layoutHeight() const;
 
     bool shouldOverrideDeviceWidthAndShrinkToFit() const;
     bool shouldIgnoreScalingConstraintsRegardlessOfContentSize() const;

@@ -39,6 +39,8 @@ public:
     ~Quirks();
 
     bool shouldIgnoreInvalidSignal() const;
+    WEBCORE_EXPORT bool shouldIgnoreShrinkToFitContent() const;
+    WEBCORE_EXPORT Optional<LayoutUnit> overriddenViewLayoutWidth(LayoutUnit currentViewLayoutWidth) const;
     bool needsFormControlToBeMouseFocusable() const;
     bool needsAutoplayPlayPauseEvents() const;
     bool needsSeekingSupportDisabled() const;
