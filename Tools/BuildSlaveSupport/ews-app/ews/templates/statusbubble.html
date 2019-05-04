@@ -77,7 +77,9 @@ window.addEventListener("message", function(e) {
   {% else %}
   {% for bubble in bubbles %}
   <a class="status {{ bubble.state }}" target="_top"
+  {% if bubble.url %}
       href="{{ bubble.url }}"
+  {% endif %}
   {% if bubble.details_message %}
       title="{{ bubble.details_message }}"
   {% endif %}
