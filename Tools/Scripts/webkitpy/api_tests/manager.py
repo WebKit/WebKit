@@ -182,10 +182,16 @@ class Manager(object):
                 self._stream.writeln(test)
             return Manager.SUCCESS
 
+        test_names = [test for test in test_names for _ in xrange(self._options.repeat_each)]
+        if self._options.repeat_each != 1:
+            _log.debug('Repeating each test {} times'.format(self._options.iterations))
+
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream)
-            runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else self._port.default_child_processes())
+            for i in xrange(self._options.iterations):
+                _log.debug('\nIteration {}'.format(i + 1))
+                runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else self._port.default_child_processes())
         except KeyboardInterrupt:
             # If we receive a KeyboardInterrupt, print results.
             self._stream.writeln('')
@@ -205,7 +211,7 @@ class Manager(object):
 
         self._stream.writeln('-' * 30)
         result = Manager.SUCCESS
-        if len(successful) + disabled == len(test_names):
+        if len(successful) * self._options.repeat_each + disabled == len(test_names):
             self._stream.writeln('All tests successfully passed!')
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))

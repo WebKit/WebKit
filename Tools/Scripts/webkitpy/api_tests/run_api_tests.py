@@ -123,6 +123,8 @@ def parse_args(args):
                              help='Number of seconds to wait before a test times out'),
         optparse.make_option('--no-timeout', dest='timeout', action='store_false',
                              help='Disable timeouts for all tests'),
+        optparse.make_option('--iterations', type='int', default=1, help='Number of times to run the set of tests (e.g. ABCABCABC)'),
+        optparse.make_option('--repeat-each', type='int', default=1, help='Number of times to run each test (e.g. AAABBBCCC)'),
 
         # FIXME: Remove the default, API tests should be multiprocess
         optparse.make_option('--child-processes', default=1,
