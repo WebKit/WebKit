@@ -485,6 +485,9 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         if (!treeElement)
             return false;
 
+        event.dataTransfer.effectAllowed = "copyMove";
+        event.dataTransfer.setData(DOMTreeOutline.DOMNodeIdDragType, treeElement.representedObject.id);
+
         if (!this._isValidDragSourceOrTarget(treeElement))
             return false;
 
@@ -492,7 +495,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             return false;
 
         event.dataTransfer.setData("text/plain", treeElement.listItemElement.textContent);
-        event.dataTransfer.effectAllowed = "copyMove";
         this._nodeBeingDragged = treeElement.representedObject;
 
         WI.domManager.hideDOMNodeHighlight();
@@ -648,3 +650,5 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 WI.DOMTreeOutline.Event = {
     SelectedNodeChanged: "dom-tree-outline-selected-node-changed"
 };
+
+WI.DOMTreeOutline.DOMNodeIdDragType = "web-inspector/dom-node-id";

@@ -47,6 +47,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this.messagesElement.addEventListener("keydown", this._keyDown.bind(this));
         this.messagesElement.addEventListener("keypress", this._keyPress.bind(this));
         this.messagesElement.addEventListener("dragstart", this._ondragstart.bind(this), true);
+        this.messagesElement.addEventListener("dragover", this._handleDragOver.bind(this));
+        this.messagesElement.addEventListener("drop", this._handleDrop.bind(this));
         this.element.appendChild(this.messagesElement);
 
         this.prompt = WI.quickConsole.prompt;
@@ -615,6 +617,32 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (event.target.closest("." + WI.DOMTreeOutline.StyleClassName)) {
             event.stopPropagation();
             event.preventDefault();
+        }
+    }
+
+    _handleDragOver(event)
+    {
+        if (event.dataTransfer.types.includes(WI.DOMTreeOutline.DOMNodeIdDragType)) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        }
+    }
+
+    _handleDrop(event)
+    {
+        let domNodeId = event.dataTransfer.getData(WI.DOMTreeOutline.DOMNodeIdDragType);
+        if (domNodeId) {
+            event.preventDefault();
+
+            let domNode = WI.domManager.nodeForId(domNodeId);
+            WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup)
+            .then((remoteObject) => {
+                let text = domNode.nodeType() === Node.ELEMENT_NODE ? WI.UIString("Dropped Element") : WI.UIString("Dropped Node");
+                const addSpecialUserLogClass = true;
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+
+                this.prompt.focus();
+            });
         }
     }
 

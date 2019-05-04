@@ -463,4 +463,4 @@ WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName = "filter-sec
 WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName = "filter-property-non-matching";
 
 WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol = Symbol("css-style-details-sidebar-panel-toggled-classes-symbol");
-WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType = "text/classname";
+WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType = "web-inspector/css-class";
