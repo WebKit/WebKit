@@ -59,6 +59,8 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)title;
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 
++ (UIImage *)imageForElementActionType:(_WKElementActionType)actionType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(ios(9_0));
 
 @property (nonatomic, readonly) _WKElementActionType type;
@@ -66,15 +68,5 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, copy) WKElementActionDismissalHandler dismissalHandler;
 
 @end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT UIImage *_WKUIImageForElementActionType(_WKElementActionType) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // TARGET_OS_IPHONE

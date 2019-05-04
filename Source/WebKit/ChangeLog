@@ -1,3 +1,19 @@
+2019-05-03  Dean Jackson  <dino@apple.com>
+
+        Make imageForElementActionType a class method on _WKElementAction
+        https://bugs.webkit.org/show_bug.cgi?id=197588
+        <rdar://problem/50463157>
+
+        Reviewed by Wenson Hsieh.
+
+        Make this helper function a class method, so that it can
+        be more easily detected.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction imageForElementActionType:]):
+        (_WKUIImageForElementActionType): Deleted.
+
 2019-05-03  Chris Dumez  <cdumez@apple.com>
 
         Unresponsive Service Worker processes should get killed
