@@ -1,3 +1,14 @@
+2019-05-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        TypedArrays should not store properties that are canonical numeric indices
+        https://bugs.webkit.org/show_bug.cgi?id=197228
+        <rdar://problem/49557381>
+
+        Reviewed by Saam Barati.
+
+        * fast/canvas/canvas-ImageData-behaviour-expected.txt:
+        * fast/canvas/canvas-ImageData-behaviour.js:
+
 2019-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         [Win10] Some tests are failing only on specific machines

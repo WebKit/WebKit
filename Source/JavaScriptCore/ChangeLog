@@ -1,3 +1,33 @@
+2019-05-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        TypedArrays should not store properties that are canonical numeric indices
+        https://bugs.webkit.org/show_bug.cgi?id=197228
+        <rdar://problem/49557381>
+
+        Reviewed by Saam Barati.
+
+        According to the spec[1]:
+        - TypedArrays should not perform an ordinary GetOwnProperty/SetOwnProperty if the index is a
+        CanonicalNumericIndexString, but invalid according to IntegerIndexedElementGet and similar
+        functions. I.e., there are a few properties that should not be set in a TypedArray, like NaN,
+        Infinity and -0.
+        - On DefineOwnProperty, the out-of-bounds check should be performed before validating the property
+        descriptor.
+        - On GetOwnProperty, the returned descriptor for numeric properties should have writable set to true.
+
+        [1]: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-integer-indexed-exotic-objects-defineownproperty-p-desc
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot):
+        (JSC::JSGenericTypedArrayView<Adaptor>::put):
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex):
+        * runtime/PropertyName.h:
+        (JSC::isCanonicalNumericIndexString):
+
 2019-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Need to emit SetLocal if we emit MovHint in DFGByteCodeParser

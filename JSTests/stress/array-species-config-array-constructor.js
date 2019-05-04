@@ -32,7 +32,7 @@ function shouldThrow(f, m) {
 
 function test() {
     const message = "TypeError: Attempting to configure non-configurable property on a typed array at index: 0";
-    shouldThrow(() => foo.concat([1]), message);
+    foo.concat([1]);
     foo = [1,2,3,4];
     shouldThrow(() => foo.slice(0), message);
     foo = [1,2,3,4];

@@ -1,3 +1,31 @@
+2019-05-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        TypedArrays should not store properties that are canonical numeric indices
+        https://bugs.webkit.org/show_bug.cgi?id=197228
+        <rdar://problem/49557381>
+
+        Reviewed by Saam Barati.
+
+        * stress/array-species-config-array-constructor.js:
+        (test):
+        * stress/put-direct-index-broken-2.js:
+        * stress/typed-array-canonical-numeric-index-string.js: Added.
+        (makeTest.assert):
+        (makeTest):
+        (const.testInvalidIndices.makeTest.set assert):
+        (const.testInvalidIndices.makeTest):
+        (const.makeTestValidIndex.configurable.set assert):
+        (const.makeTestValidIndex.configurable):
+        * stress/typedarray-access-monomorphic-neutered.js:
+        (checkNoException):
+        (testNoException):
+        (testFTLNoException):
+        * stress/typedarray-access-neutered.js:
+        (testNoException):
+        * stress/typedarray-getownproperty-not-configurable.js:
+        (foo):
+        * test262/expectations.yaml:
+
 2019-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Need to emit SetLocal if we emit MovHint in DFGByteCodeParser

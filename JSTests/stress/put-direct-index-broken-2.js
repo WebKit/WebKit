@@ -57,7 +57,7 @@ test(function() {
     } catch(e) {
         err = e;
     }
-    assert(err.toString() ===  "TypeError: Attempting to configure non-configurable property on a typed array at index: 0");
+    assert(!err);
 });
 
 test(function() {

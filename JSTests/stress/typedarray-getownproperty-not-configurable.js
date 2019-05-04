@@ -10,7 +10,7 @@ function foo() {
         let a = new constructor(10);
         let b = Object.getOwnPropertyDescriptor(a, 0);
         assert(b.value === 0);
-        assert(b.writable === false);
+        assert(b.writable === true);
         assert(b.enumerable === true);
         assert(b.configurable === false);
     }
