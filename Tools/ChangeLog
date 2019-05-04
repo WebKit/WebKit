@@ -1,3 +1,31 @@
+2019-05-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a tool to block spammer accounts
+        https://bugs.webkit.org/show_bug.cgi?id=197537
+
+        Reviewed by Darin Adler.
+
+        Usage: block-spammers email1 email2 ...
+
+        The tool finds and hides all bugs and comments from this account. Before any work
+        is done, these bugs and comments are displayed for confirmation.
+
+        * Scripts/block-spammers: Added.
+        (get_bugzilla_token):
+        (invalidate_bugzilla_token):
+        (get_user_info):
+        (get_user_info_self):
+        (can_use_this_tool):
+        (disable_user):
+        (get_bugs_created_by_user):
+        (get_bugs_commented_on_by_user):
+        (get_comments):
+        (hide_bug):
+        (hide_comments):
+        (ask_yes_no):
+        (sanitized_string):
+        (main):
+
 2019-05-03  Jonathan Bedard  <jbedard@apple.com>
 
         run-apit-tests: Add --iterations and --repeat-each
