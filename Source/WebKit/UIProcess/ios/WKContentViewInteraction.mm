@@ -934,7 +934,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
-    _isZoomingToRevealFocusedElement = NO;
 
 #if ENABLE(POINTER_EVENTS)
     [self _resetPanningPreventionFlags];
@@ -1030,12 +1029,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     }
 
     [self _updateTapHighlight];
-
-    if (_isZoomingToRevealFocusedElement) {
-        // When zooming to the focused element, avoid additionally scrolling to reveal the selection. Since the scale transform has not yet been
-        // applied to the content view at this point, we'll end up scrolling to reveal a rect that is computed using the wrong scale.
-        return;
-    }
 
     _selectionNeedsUpdate = YES;
     [self _updateChangedSelection:YES];
@@ -1671,7 +1664,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_suppressSelectionAssistantReasons.contains(WebKit::EditableRootIsTransparentOrFullyClipped) || _suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTooSmall))
         return;
 
-    SetForScope<BOOL> isZoomingToRevealFocusedElementForScope { _isZoomingToRevealFocusedElement, YES };
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
     // Zooming above the page's default scale factor should only happen when the user performs it.
     [self _zoomToFocusRect:_focusedElementInformation.elementRect

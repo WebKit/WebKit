@@ -321,7 +321,6 @@ struct WKAutoCorrectionData {
     BOOL _didAccessoryTabInitiateFocus;
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
-    BOOL _isZoomingToRevealFocusedElement;
 
     BOOL _keyboardDidRequestDismissal;
 

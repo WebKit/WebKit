@@ -213,25 +213,18 @@ TEST(KeyboardInputTests, ModifyInputAssistantItemBarButtonGroups)
     item.leadingBarButtonGroups = @[ leadingItems ];
     item.trailingBarButtonGroups = @[ trailingItems ];
 
-    bool doneWaitingForInputSession = false;
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
-        doneWaitingForInputSession = true;
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
-    [webView evaluateJavaScript:@"document.body.focus()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&doneWaitingForInputSession);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
 
     EXPECT_EQ([webView firstResponder], [webView textInputContentView]);
     EXPECT_TRUE([[webView firstResponder].inputAssistantItem.leadingBarButtonGroups containsObject:leadingItems]);
     EXPECT_TRUE([[webView firstResponder].inputAssistantItem.trailingBarButtonGroups containsObject:trailingItems]);
 
     // Now blur and refocus the editable area, and check that the same leading and trailing button items are present.
-    [webView resignFirstResponder];
-    [webView waitForNextPresentationUpdate];
-
-    doneWaitingForInputSession = false;
-    [webView evaluateJavaScript:@"document.body.focus()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&doneWaitingForInputSession);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.blur()"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
 
     EXPECT_EQ([webView firstResponder], [webView textInputContentView]);
     EXPECT_TRUE([[webView firstResponder].inputAssistantItem.leadingBarButtonGroups containsObject:leadingItems]);
@@ -244,14 +237,10 @@ TEST(KeyboardInputTests, OverrideInputAssistantItemBarButtonGroups)
     auto webView = adoptNS([[InputAssistantItemTestingWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadHTMLString:@"<body contenteditable>"];
-
-    bool doneWaitingForInputSession = false;
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
-        doneWaitingForInputSession = true;
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
-    [webView evaluateJavaScript:@"document.body.focus()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&doneWaitingForInputSession);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
 
     UIBarButtonItemGroup *leadingItems = [InputAssistantItemTestingWebView leadingItemsForWebView:webView.get()];
     UIBarButtonItemGroup *trailingItems = [InputAssistantItemTestingWebView trailingItemsForWebView:webView.get()];
@@ -260,12 +249,8 @@ TEST(KeyboardInputTests, OverrideInputAssistantItemBarButtonGroups)
     EXPECT_TRUE([[webView firstResponder].inputAssistantItem.trailingBarButtonGroups containsObject:trailingItems]);
 
     // Now blur and refocus the editable area, and check that the same leading and trailing button items are present.
-    [webView resignFirstResponder];
-    [webView waitForNextPresentationUpdate];
-
-    doneWaitingForInputSession = false;
-    [webView evaluateJavaScript:@"document.body.focus()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&doneWaitingForInputSession);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.blur()"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
 
     EXPECT_EQ([webView firstResponder], [webView textInputContentView]);
     EXPECT_TRUE([[webView firstResponder].inputAssistantItem.leadingBarButtonGroups containsObject:leadingItems]);

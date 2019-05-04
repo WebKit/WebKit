@@ -1,3 +1,44 @@
+2019-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r244897): Caret may appear wider than normal after zooming to focus an editable element
+        https://bugs.webkit.org/show_bug.cgi?id=197579
+
+        Reviewed by Tim Horton.
+
+        Fixes a couple of flaky tests (CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState and
+        CaretSelectionRectAfterRestoringFirstResponder) that began failing after r244897. These tests both begin by
+        focusing an editable element, which causes the web view to zoom in. The tests subsequently check that the caret
+        rect is {{ 16, 13 }, { 2, 15 }}. While the specified caret rect (coming from EditorState) is {{ 16, 13 }, { 3,
+        15 }}, the narrower caret rect is used because we take measures to preserve the width of the caret relative to
+        the view (see the inverse scaling logic in -[WKContentView selectedTextRange] for more details).
+
+        See below for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Remove _isZoomingToRevealFocusedElement, now that we don't need it anymore (see -observeValueForKeyPath:).
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView observeValueForKeyPath:ofObject:change:context:]):
+
+        Stop bailing from a selection update when changing scale, while zooming to reveal the focused element. This
+        check was added in r239441 to prevent UIWKTextInteractionAssistant's selection scrolling logic from interfering
+        with WKContentView-driven logic for zooming to the focused element. However, since r244141, this is no longer
+        necessary since selection scrolling is only driven by code in the web process.
+
+        This new update while zooming to reveal the focused element ensures that the WKTextRange returned by
+        -selectedTextRange after zooming will have a width that is inversely scaled using the content view's current
+        scale, such that it has a consistent width (relative to the web view) across different scales.
+
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::layerTreeCommitComplete):
+
+        Remove any attempt here to notify PageClient about editor states after focus. This logic was actually incorrect,
+        since it didn't ensure that the layer tree commit that is being completed actually contained an editor state; as
+        such, the "editor state" received here could be stale.
+
 2019-05-03  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] outlook.live.com: Compose email frame not fully visible and not scrollable
