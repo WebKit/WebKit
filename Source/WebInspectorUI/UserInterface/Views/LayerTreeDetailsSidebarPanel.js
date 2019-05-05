@@ -136,7 +136,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         columns.name.title = WI.UIString("Node");
         columns.name.sortable = false;
 
-        columns.paintCount.title = WI.UIString("Paints");
+        columns.paintCount.title = WI.UIString("Paints", "Paints @ Column title", "A count of how many times an element was painted (rendered)");
         columns.paintCount.sortable = true;
         columns.paintCount.aligned = "right";
         columns.paintCount.width = "70px";

@@ -256,7 +256,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         let addSection = (section) => {
             if (section.style.inherited && (!previousStyle || previousStyle.node !== section.style.node))
-                addHeader(WI.UIString("Inherited From"), section.style.node);
+                addHeader(WI.UIString("Inherited From", "A section of CSS rules matching an ancestor DOM node"), section.style.node);
 
             if (!section.isDescendantOf(this)) {
                 let referenceView = this.subviews[this._sections.length];

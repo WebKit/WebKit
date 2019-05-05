@@ -61,7 +61,7 @@ WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
 
         contextMenu.appendSeparator();
 
-        contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
+        contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
             WI.domManager.inspectElement(this.representedObject.id);
         });
     }

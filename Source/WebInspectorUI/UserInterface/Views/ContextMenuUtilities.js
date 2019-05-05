@@ -216,10 +216,10 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     contextMenu.appendSeparator();
 
     if (!options.excludeLogElement && !domNode.isInUserAgentShadowTree() && !domNode.isPseudoElement()) {
-        let label = isElement ? WI.UIString("Log Element") : WI.UIString("Log Node");
+        let label = isElement ? WI.UIString("Log Element", "Log (print) DOM element to Console") : WI.UIString("Log Node", "Log (print) DOM node to Console");
         contextMenu.appendItem(label, () => {
             WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
-                let text = isElement ? WI.UIString("Selected Element") : WI.UIString("Selected Node");
+                let text = isElement ? WI.UIString("Selected Element", "Selected DOM element") : WI.UIString("Selected Node", "Selected DOM node");
                 const addSpecialUserLogClass = true;
                 WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
@@ -227,19 +227,19 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     }
 
     if (!options.excludeRevealElement && window.DOMAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
+        contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
             WI.domManager.inspectElement(domNode.id);
         });
     }
 
     if (WI.settings.experimentalEnableLayersTab.value && window.LayerTreeAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Reveal in Layers Tab"), () => {
+        contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
             WI.showLayersTab({nodeToSelect: domNode});
         });
     }
 
     if (window.PageAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Capture Screenshot"), () => {
+        contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
             PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
                 if (error) {
                     const target = WI.mainTarget;
@@ -262,7 +262,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     }
 
     if (isElement && attached) {
-        contextMenu.appendItem(WI.UIString("Scroll Into View"), () => {
+        contextMenu.appendItem(WI.UIString("Scroll into View", "Scroll selected DOM node into view on the inspected web page"), () => {
             domNode.scrollIntoView();
         });
     }
