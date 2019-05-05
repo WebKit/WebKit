@@ -84,13 +84,13 @@
 }
 
 .changes-panel .css-property-line.added {
-    color: hsl(90, 61%, 25%);
-    background-color: hsl(70, 90%, 86%);
+    color: var(--diff-addition-text-color);
+    background-color: var(--diff-addition-background-color);
 }
 
 .changes-panel .css-property-line.removed {
-    color: hsl(0, 100%, 35%);
-    background-color: hsl(5, 100%, 94%);
+    color: var(--diff-deletion-text-color);
+    background-color: var(--diff-deletion-background-color);
 }
 
 .changes-panel .css-property-line.removed::before {
@@ -105,16 +105,4 @@
     position: absolute;
     left: var(--css-declaration-horizontal-padding);
     pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    .changes-panel .css-property-line.added {
-        color: hsl(70, 64%, 70%);
-        background-color: hsl(89, 40%, 19%);
-    }
-
-    .changes-panel .css-property-line.removed {
-        color: hsl(0, 84%, 75%);
-        background-color: hsl(5, 40%, 28%);
-    }
 }

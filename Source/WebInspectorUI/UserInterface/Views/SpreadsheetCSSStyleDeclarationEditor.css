@@ -131,11 +131,11 @@
 }
 
 .spreadsheet-style-declaration-editor .property.modified {
-    border-right-color: hsl(120, 100%, 40%);
+    border-right-color: var(--diff-addition-border-color);
 }
 
 .spreadsheet-style-declaration-editor .property.modified:not(.selected) {
-    background-color: hsl(90, 100%, 93%);
+    background-color: var(--diff-addition-background-color);
 }
 
 .spreadsheet-style-declaration-editor .property.selected {
@@ -214,10 +214,6 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
 @media (prefers-color-scheme: dark) {
     .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
         outline-color: var(--background-color-secondary) !important;
-    }
-
-    .spreadsheet-style-declaration-editor .property.modified:not(.selected) {
-        background-color: hsl(106, 13%, 25%);
     }
 
     .spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property::after,

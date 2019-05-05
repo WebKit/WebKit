@@ -178,6 +178,12 @@
 
     --css-declaration-vertical-padding: 4px;
     --css-declaration-horizontal-padding: 6px;
+
+    --diff-addition-text-color: hsl(90, 61%, 25%);
+    --diff-addition-background-color: hsl(70, 90%, 86%);
+    --diff-deletion-text-color: hsl(0, 100%, 35%);
+    --diff-deletion-background-color: hsl(5, 100%, 94%);
+    --diff-addition-border-color: hsl(90, 100%, 40%);
 }
 
 body.window-inactive {
@@ -327,6 +333,11 @@ body.window-inactive * {
         --overlay-background: hsla(0, 0%, 24%, 0.9);
 
         --console-message-separator: var(--text-color-quaternary);
+
+        --diff-addition-text-color: hsl(70, 64%, 70%);
+        --diff-addition-background-color: hsl(90, 40%, 19%);
+        --diff-deletion-text-color: hsl(0, 84%, 75%);
+        --diff-deletion-background-color: hsl(5, 40%, 28%);
     }
 
     body.window-inactive {
