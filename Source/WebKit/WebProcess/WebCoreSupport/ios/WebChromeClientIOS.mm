@@ -30,7 +30,6 @@
 
 #import "DrawingArea.h"
 #import "EditableImageControllerMessages.h"
-#import "UIKitSPI.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
 #import "WebIconUtilities.h"
@@ -40,6 +39,7 @@
 #import <WebCore/ContentChangeObserver.h>
 #import <WebCore/Icon.h>
 #import <WebCore/NotImplemented.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RefPtr.h>
 
 namespace WebKit {

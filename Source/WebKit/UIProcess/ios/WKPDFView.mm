@@ -31,7 +31,6 @@
 #import "APIUIClient.h"
 #import "FindClient.h"
 #import "PDFKitSPI.h"
-#import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKKeyboardScrollingAnimator.h"
 #import "WKUIDelegatePrivate.h"
@@ -41,6 +40,7 @@
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/DataDetection.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>

@@ -28,10 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import "VersionChecks.h"
 #import "WKWebViewInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(WATCHOS)

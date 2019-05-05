@@ -28,10 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKWebViewContentProvider.h"
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 

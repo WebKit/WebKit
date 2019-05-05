@@ -33,8 +33,8 @@
 #import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

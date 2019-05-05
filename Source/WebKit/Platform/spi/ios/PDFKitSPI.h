@@ -29,7 +29,7 @@
 
 #else
 
-#import "UIKitSPI.h"
+#import <pal/spi/ios/UIKitSPI.h>
 
 @interface _UIRemoteViewController : UIViewController
 @end

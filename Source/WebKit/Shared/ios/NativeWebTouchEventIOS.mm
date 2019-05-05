@@ -28,10 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import <UIKit/UITouch.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/WAKAppKitStubs.h>
+#import <pal/spi/ios/UIKitSPI.h>
 
 namespace WebKit {
 

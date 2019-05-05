@@ -31,10 +31,10 @@
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
+#import <pal/spi/ios/UIKitSPI.h>
 
 @interface InputAssistantItemTestingWebView : TestWKWebView
 + (UIBarButtonItemGroup *)leadingItemsForWebView:(WKWebView *)webView;

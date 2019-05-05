@@ -267,7 +267,7 @@ long PlatformPasteboard::setStringForType(const String&, const String&)
 
 long PlatformPasteboard::changeCount() const
 {
-    return [m_pasteboard changeCount];
+    return [(id<AbstractPasteboard>)m_pasteboard.get() changeCount];
 }
 
 String PlatformPasteboard::uniqueName()
@@ -585,7 +585,7 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
     }
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
-    return [m_pasteboard changeCount];
+    return [(id<AbstractPasteboard>)m_pasteboard.get() changeCount];
 }
 
 #else

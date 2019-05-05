@@ -35,8 +35,8 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 namespace TestWebKitAPI {

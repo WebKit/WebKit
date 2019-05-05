@@ -32,7 +32,6 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeWindow.h"
 #import "PixelDumpSupportCG.h"
-#import "UIKitSPI.h"
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
@@ -44,6 +43,7 @@
 #import <WebKit/WebCoreThread.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>

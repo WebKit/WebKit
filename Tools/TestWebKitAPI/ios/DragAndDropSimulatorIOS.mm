@@ -30,7 +30,6 @@
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
-#import "UIKitSPI.h"
 
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
@@ -38,6 +37,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

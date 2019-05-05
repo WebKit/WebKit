@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import <mach/mach_time.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>

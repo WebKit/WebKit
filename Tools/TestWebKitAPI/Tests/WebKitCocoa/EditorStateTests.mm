@@ -32,8 +32,8 @@
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 static void* const SelectionAttributesObservationContext = (void*)&SelectionAttributesObservationContext;

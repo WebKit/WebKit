@@ -36,12 +36,12 @@
 #import <wtf/Variant.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowControllerIOS.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/LengthBox.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

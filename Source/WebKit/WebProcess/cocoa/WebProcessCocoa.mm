@@ -78,7 +78,7 @@
 #import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS)
-#import "UIKitSPI.h"
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

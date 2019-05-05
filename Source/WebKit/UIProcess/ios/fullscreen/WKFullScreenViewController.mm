@@ -30,7 +30,6 @@
 
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
-#import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewInternal.h"
@@ -38,6 +37,7 @@
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 static const NSTimeInterval showHideAnimationDuration = 0.1;

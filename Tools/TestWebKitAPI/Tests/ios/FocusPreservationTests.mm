@@ -31,9 +31,9 @@
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKInputDelegate.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestInputDelegate>> webViewForTestingFocusPreservation(void(^focusHandler)(id <_WKFocusedElementInfo>))

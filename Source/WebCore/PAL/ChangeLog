@@ -1,3 +1,13 @@
+2019-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Merge the three UIKitSPI.h files into a single one in PAL
+        https://bugs.webkit.org/show_bug.cgi?id=197534
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/ios/UIKitSPI.h:
+        (currentUserInterfaceIdiomIsPad):
+
 2019-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244881.

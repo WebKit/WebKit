@@ -28,17 +28,17 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreMedia/CoreMedia.h>
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <wtf/MathExtras.h>
-#import <wtf/RetainPtr.h>
-
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
+#import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/MathExtras.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 

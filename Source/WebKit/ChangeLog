@@ -1,3 +1,78 @@
+2019-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Merge the three UIKitSPI.h files into a single one in PAL
+        https://bugs.webkit.org/show_bug.cgi?id=197534
+
+        Reviewed by Darin Adler.
+
+        * Platform/spi/ios/PDFKitSPI.h:
+        * Platform/spi/ios/UIKitSPI.h: Removed.
+        * Shared/DocumentEditingContext.mm:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        * Shared/ios/NativeWebKeyboardEventIOS.mm:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        * Shared/ios/WebIconUtilities.mm:
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        * UIProcess/WKImagePreviewViewController.mm:
+        * UIProcess/_WKTouchEventGenerator.mm:
+        * UIProcess/ios/DragDropInteractionState.h:
+        * UIProcess/ios/InputViewUpdateDeferrer.mm:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        * UIProcess/ios/WKActionSheet.mm:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        * UIProcess/ios/WKPDFView.mm:
+        * UIProcess/ios/WKPasswordView.mm:
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.h:
+        * UIProcess/ios/WKWebEvent.mm:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        * UIProcess/ios/forms/WKFocusedFormControlView.h:
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        * UIProcess/ios/forms/WKNumberPadViewController.mm:
+        * UIProcess/ios/forms/WKQuickboardListViewController.h:
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2019-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r244897): Caret may appear wider than normal after zooming to focus an editable element

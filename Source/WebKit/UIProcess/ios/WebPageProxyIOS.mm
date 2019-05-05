@@ -46,7 +46,6 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
-#import "UIKitSPI.h"
 #import "UserData.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
@@ -62,6 +61,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/text/TextStream.h>
 
 #if USE(QUICK_LOOK)

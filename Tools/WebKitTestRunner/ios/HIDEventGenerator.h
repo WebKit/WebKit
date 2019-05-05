@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UIKitSPI.h"
-
 #import <CoreGraphics/CGGeometry.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 // Keys for sendEventStream:completionBlock:.

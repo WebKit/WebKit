@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
@@ -37,6 +36,7 @@
 #import <UIKit/UIPickerView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;

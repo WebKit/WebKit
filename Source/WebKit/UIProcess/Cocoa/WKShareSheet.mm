@@ -35,8 +35,8 @@
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
+#import <pal/spi/ios/UIKitSPI.h>
 #else
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif

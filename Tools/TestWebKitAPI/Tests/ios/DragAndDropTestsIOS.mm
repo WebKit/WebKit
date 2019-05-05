@@ -31,7 +31,6 @@
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <Contacts/Contacts.h>
 #import <MapKit/MapKit.h>
@@ -43,6 +42,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebItemProviderPasteboard.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
 

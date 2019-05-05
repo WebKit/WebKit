@@ -61,7 +61,7 @@
 #if PLATFORM(MAC)
 #import <QuartzCore/CARemoteLayerServer.h>
 #else
-#import "UIKitSPI.h"
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";

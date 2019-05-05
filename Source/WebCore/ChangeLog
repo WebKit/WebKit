@@ -1,3 +1,14 @@
+2019-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Merge the three UIKitSPI.h files into a single one in PAL
+        https://bugs.webkit.org/show_bug.cgi?id=197534
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::changeCount const):
+        (WebCore::PlatformPasteboard::write):
+
 2019-05-04  Youenn Fablet  <youenn@apple.com>
 
         Convert some RealtimeOutgoingVideoSourceCocoa logging to ERROR_LOG

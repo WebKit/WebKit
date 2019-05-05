@@ -30,8 +30,8 @@
 #import <WebKit/WKWebViewPrivate.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitSPI.h"
 #import <UIKit/UIFontDescriptor.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 @interface TestWKWebView (EditActionTesting)

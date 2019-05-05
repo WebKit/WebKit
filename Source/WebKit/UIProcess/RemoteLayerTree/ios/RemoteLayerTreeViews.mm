@@ -30,10 +30,10 @@
 
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
-#import "UIKitSPI.h"
 #import "WKDrawingView.h"
 #import <WebCore/Region.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 namespace WebKit {

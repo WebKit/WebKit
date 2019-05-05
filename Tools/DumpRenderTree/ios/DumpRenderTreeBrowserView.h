@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
-#import "UIKitSPI.h"
+#import <pal/spi/ios/UIKitSPI.h>
 
 @interface DumpRenderTreeBrowserView : UIWebBrowserView {
     BOOL _scrollingUsesUIWebScrollView;
