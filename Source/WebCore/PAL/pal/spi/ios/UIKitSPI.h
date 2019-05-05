@@ -987,14 +987,6 @@ typedef NSInteger UICompositingMode;
 @property (nonatomic, readonly) CGPoint centroid;
 @end
 
-@interface UIWebFormAccessory (Staging_49666643)
-- (void)setNextPreviousItemsVisible:(BOOL)visible;
-@end
-
-@interface UIGestureRecognizer (Staging_45970040)
-@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
-@end
-
 typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
     UIScrollViewIndicatorInsetAdjustmentAutomatic,
     UIScrollViewIndicatorInsetAdjustmentAlways,
@@ -1029,6 +1021,14 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@interface UIGestureRecognizer (Staging_45970040)
+@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+@end
+
+@interface UIWebFormAccessory (Staging_49666643)
+- (void)setNextPreviousItemsVisible:(BOOL)visible;
+@end
 
 @class UIKeyboardRotationState;
 
