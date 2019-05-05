@@ -30,6 +30,7 @@
 
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingTree.h"
+#import "UIKitSPI.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIPanGestureRecognizer.h>
@@ -38,7 +39,6 @@
 #import <WebCore/ScrollingTree.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
 

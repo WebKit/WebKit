@@ -34,9 +34,8 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
-#import <pal/spi/ios/UIKitSPI.h>
-
 @interface WKWebView ()
 
 // FIXME: move these to WKWebView_Private.h

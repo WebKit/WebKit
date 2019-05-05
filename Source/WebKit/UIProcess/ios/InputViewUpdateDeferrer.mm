@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
 
 namespace WebKit {
 

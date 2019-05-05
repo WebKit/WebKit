@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
 
 // The purpose of this class is to call a target/action when
 // the gesture is recognized, as well as the typical time when

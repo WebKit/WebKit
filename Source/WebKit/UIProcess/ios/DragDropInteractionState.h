@@ -27,12 +27,12 @@
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import <WebCore/DragActions.h>
 #import <WebCore/DragData.h>
 #import <WebCore/Path.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/WebItemProviderPasteboard.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>

@@ -32,6 +32,7 @@
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
+#import "UIKitSPI.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -43,7 +44,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <objc/runtime.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/MainThread.h>
 
 static BOOL overrideIsInHardwareKeyboardMode()

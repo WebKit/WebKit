@@ -29,13 +29,14 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "AccessibilitySupportSPI.h"
+#import "UIKitSPI.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/RectEdges.h>
 #import <WebCore/WebEvent.h>
+#import <WebKit/UIKitSPI.h>
 #import <algorithm>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 

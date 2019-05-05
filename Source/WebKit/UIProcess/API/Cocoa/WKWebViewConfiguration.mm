@@ -47,8 +47,8 @@
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
 #import <WebCore/Device.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 template<typename T> class LazyInitialized {

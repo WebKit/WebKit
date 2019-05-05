@@ -27,7 +27,7 @@
 
 #if PLATFORM(WATCHOS)
 
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
 
 @class WKFocusedFormControlView;
 

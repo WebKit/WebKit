@@ -44,7 +44,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
 #import <wtf/SoftLinking.h>
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIWindow)

@@ -43,6 +43,7 @@
 #import "RemoteLayerTreeDrawingArea.h"
 #import "SandboxUtilities.h"
 #import "TextCheckingControllerProxy.h"
+#import "UIKitSPI.h"
 #import "UserData.h"
 #import "ViewGestureGeometryCollector.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -119,7 +120,6 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/SetForScope.h>

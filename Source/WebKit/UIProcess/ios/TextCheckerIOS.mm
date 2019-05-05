@@ -29,8 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "TextCheckerState.h"
+#import "UIKitSPI.h"
 #import <WebCore/NotImplemented.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>

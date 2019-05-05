@@ -30,8 +30,8 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
-#import <pal/spi/ios/UIKitSPI.h>
 
 @interface AsyncPolicyDelegateForInsetTest : NSObject<WKNavigationDelegate> {
     @public BOOL _navigationComplete;

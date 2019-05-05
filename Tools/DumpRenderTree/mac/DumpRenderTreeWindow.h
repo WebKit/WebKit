@@ -31,8 +31,8 @@
 #if !PLATFORM(IOS_FAMILY)
 #import <AppKit/AppKit.h>
 #else
+#import "UIKitSPI.h"
 #import <WebKit/WAKWindow.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 @class WebView;

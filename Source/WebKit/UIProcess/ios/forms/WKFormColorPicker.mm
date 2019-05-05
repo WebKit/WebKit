@@ -29,12 +29,12 @@
 #if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
 #import "FocusedElementInformation.h"
+#import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WebPageProxy.h"
 
 #import <WebCore/Color.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PencilKit)

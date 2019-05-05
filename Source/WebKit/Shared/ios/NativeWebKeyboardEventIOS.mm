@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <pal/spi/ios/UIKitSPI.h>
 
 namespace WebKit {
 

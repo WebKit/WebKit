@@ -28,10 +28,10 @@
 
 #if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKFormColorPicker.h"
 #import "WKFormPopover.h"
-#import <pal/spi/ios/UIKitSPI.h>
 
 #pragma mark - WKColorPopover
 

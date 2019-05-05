@@ -28,10 +28,10 @@
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 #include "WKFullscreenStackView.h"
 
+#import "UIKitSPI.h"
 #import <UIKit/UIVisualEffectView.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 

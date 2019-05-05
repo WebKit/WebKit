@@ -37,7 +37,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
-#import <pal/spi/ios/UIKitSPI.h>
+#import <UIKitSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

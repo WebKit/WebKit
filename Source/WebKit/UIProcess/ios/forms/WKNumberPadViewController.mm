@@ -28,12 +28,12 @@
 
 #if PLATFORM(WATCHOS)
 
+#import "UIKitSPI.h"
 #import "WKNumberPadView.h"
 #import <PepperUICore/PUICQuickboardViewController_Private.h>
 #import <PepperUICore/PUICResources.h>
 #import <PepperUICore/UIDevice+PUICAdditions.h>
 #import <WebCore/LocalizedStrings.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>

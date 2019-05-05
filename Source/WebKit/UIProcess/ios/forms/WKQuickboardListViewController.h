@@ -27,10 +27,10 @@
 
 #if PLATFORM(WATCHOS)
 
+#import "UIKitSPI.h"
 #import <PepperUICore/PUICQuickboardListViewController.h>
 #import <PepperUICore/PUICQuickboardListViewControllerSubclass.h>
 #import <PepperUICore/PUICTableViewCell.h>
-#import <pal/spi/ios/UIKitSPI.h>
 
 @interface WKQuickboardListItemCell : PUICQuickboardListItemCell
 @end

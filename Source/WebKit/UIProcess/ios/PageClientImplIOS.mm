@@ -36,6 +36,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
 #import "StringUtilities.h"
+#import "UIKitSPI.h"
 #import "UndoOrRedo.h"
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
@@ -63,7 +64,6 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView.get()->_page->process().connection())

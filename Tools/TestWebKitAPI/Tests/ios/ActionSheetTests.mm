@@ -34,12 +34,12 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "TestWKWebViewController.h"
+#import "UIKitSPI.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKElementAction.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>

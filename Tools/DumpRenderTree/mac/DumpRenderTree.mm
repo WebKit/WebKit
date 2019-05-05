@@ -108,6 +108,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "DumpRenderTreeBrowserView.h"
 #import "IOSLayoutTestCommunication.h"
+#import "UIKitSPI.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebCoreThread.h>
@@ -115,7 +116,6 @@
 #import <WebKit/WebDOMOperations.h>
 #import <fcntl.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 extern "C" {

@@ -33,7 +33,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "ClassMethodSwizzler.h"
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
 #endif
 
 static bool isDone;

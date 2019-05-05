@@ -1,5 +1,42 @@
 2019-05-04  Alex Christensen  <achristensen@webkit.org>
 
+        Revert r244953 and r244954 because they broke internal builds.
+        https://bugs.webkit.org/show_bug.cgi?id=197534
+
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.h:
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyURL.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SystemColors.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewFindString.mm:
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h: Added.
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        * WebKitTestRunner/ios/GeneratedTouchesDebugWindow.mm:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        * WebKitTestRunner/ios/mainIOS.mm:
+
+2019-05-04  Alex Christensen  <achristensen@webkit.org>
+
         Merge the three UIKitSPI.h files into a single one in PAL
         https://bugs.webkit.org/show_bug.cgi?id=197534
 

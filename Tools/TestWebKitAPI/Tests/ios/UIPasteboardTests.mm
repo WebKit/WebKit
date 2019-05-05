@@ -29,11 +29,11 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIPasteboard.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);

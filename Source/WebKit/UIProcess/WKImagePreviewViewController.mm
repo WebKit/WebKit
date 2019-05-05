@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <UIKitSPI.h>
 #import <WebCore/IntSize.h>
 #import <_WKElementAction.h>
-#import <pal/spi/ios/UIKitSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKImagePreviewViewControllerAdditions.mm>)
 #include <WebKitAdditions/WKImagePreviewViewControllerAdditions.mm>

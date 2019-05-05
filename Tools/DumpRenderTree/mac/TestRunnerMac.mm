@@ -78,10 +78,10 @@
 #import <wtf/WallTime.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
 #import <WebKit/WebCoreThread.h>
 #import <WebKit/WebCoreThreadMessage.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

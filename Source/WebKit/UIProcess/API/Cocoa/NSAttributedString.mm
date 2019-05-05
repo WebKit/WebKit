@@ -41,7 +41,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/UIKitSPI.h>
+#import <UIKitSPI.h>
 #endif
 
 NSString * const NSReadAccessURLDocumentOption = @"ReadAccessURL";

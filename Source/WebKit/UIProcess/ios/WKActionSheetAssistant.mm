@@ -30,6 +30,7 @@
 
 #import "APIUIClient.h"
 #import "TCCSPI.h"
+#import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WKNSURLExtras.h"
@@ -40,7 +41,6 @@
 #import <WebCore/DataDetection.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/Entitlements.h>

@@ -1,5 +1,13 @@
 2019-05-04  Alex Christensen  <achristensen@webkit.org>
 
+        Revert r244953 and r244954 because they broke internal builds.
+        https://bugs.webkit.org/show_bug.cgi?id=197534
+
+        * pal/spi/ios/UIKitSPI.h:
+        (currentUserInterfaceIdiomIsPad): Deleted.
+
+2019-05-04  Alex Christensen  <achristensen@webkit.org>
+
         Fix internal build.
         https://bugs.webkit.org/show_bug.cgi?id=197534
 

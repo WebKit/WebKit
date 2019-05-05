@@ -31,11 +31,11 @@
 #import "EditableImageController.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
+#import "UIKitSPI.h"
 #import "WKDrawingView.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 namespace WebKit {

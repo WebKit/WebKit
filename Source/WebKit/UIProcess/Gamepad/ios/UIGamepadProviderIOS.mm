@@ -28,8 +28,8 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import "WKWebViewInternal.h"
-#import <pal/spi/ios/UIKitSPI.h>
 
 namespace WebKit {
 

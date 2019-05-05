@@ -30,7 +30,7 @@
 
 #import "AssertionServicesSPI.h"
 #import "SandboxUtilities.h"
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>

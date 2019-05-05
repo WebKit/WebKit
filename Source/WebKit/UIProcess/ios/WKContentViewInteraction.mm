@@ -39,6 +39,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "SmartMagnificationController.h"
 #import "TextInputSPI.h"
+#import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKDatePickerViewController.h"
 #import "WKDrawingCoordinator.h"
@@ -101,7 +102,6 @@
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>

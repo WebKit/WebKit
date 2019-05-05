@@ -37,6 +37,7 @@
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
 #import "TextCheckingController.h"
+#import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKAirPlayRoutePicker.h"
 #import "WKFileUploadPanel.h"
@@ -49,7 +50,6 @@
 #import <WebCore/ActivityState.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>

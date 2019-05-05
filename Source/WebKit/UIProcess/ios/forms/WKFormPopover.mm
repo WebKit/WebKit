@@ -28,10 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;

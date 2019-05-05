@@ -34,8 +34,8 @@
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import <MobileCoreServices/MobileCoreServices.h>
-#import <pal/spi/ios/UIKitSPI.h>
+#import "UIKitSPI.h"
+#include <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 @interface WKWebView ()

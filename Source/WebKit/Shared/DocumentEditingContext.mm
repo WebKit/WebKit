@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "TextInputContext.h"
-#import "WebCoreArgumentCoders.h"
-#import <pal/spi/ios/UIKitSPI.h>
+#include "TextInputContext.h"
+#include "UIKitSPI.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

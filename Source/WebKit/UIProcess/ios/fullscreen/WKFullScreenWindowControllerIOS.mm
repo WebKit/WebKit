@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(FULLSCREEN_API)
 #import "WKFullScreenWindowControllerIOS.h"
 
+#import "UIKitSPI.h"
 #import "WKFullScreenViewController.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebView.h"
@@ -48,7 +49,6 @@
 #import <pal/spi/cocoa/NSStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>

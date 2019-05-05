@@ -44,8 +44,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "UIKitSPI.h"
 #import <pal/spi/cocoa/AVKitSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 @interface WKLayerHostView : PlatformView
