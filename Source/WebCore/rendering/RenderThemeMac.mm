@@ -71,6 +71,7 @@
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
+#import <CoreServices/CoreServices.h>
 #import <math.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
@@ -2745,7 +2746,7 @@ static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
     
     if (!attachmentType.isEmpty()) {
         if (equalIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
-            if (auto icon = Icon::createIconForUTI("public.directory"))
+            if (auto icon = Icon::createIconForUTI(kUTTypeFolder))
                 return icon;
         } else {
             String UTI;

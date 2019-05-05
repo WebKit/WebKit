@@ -1,3 +1,20 @@
+2019-05-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/attachment/attachment-folder-icon.html is an Image Only failure on recent macOS builds
+        https://bugs.webkit.org/show_bug.cgi?id=197593
+        <rdar://problem/50379267>
+
+        Reviewed by Tim Horton.
+
+        On recent versions of macOS, -[NSWorkspace iconForFileType:] returns the generic document icon for
+        "public.directory". Instead of using this UTI to generate attachment icons for "multipart/x-folder" and
+        "application/vnd.apple.folder", we should instead be using "public.folder", which has a folder icon. This fixes
+        the existing test fast/attachment/attachment-folder-icon.html, which currently results in an image diff on these
+        builds of macOS.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::iconForAttachment):
+
 2019-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Revert r244953 and r244954 because they broke internal builds.
