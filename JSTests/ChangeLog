@@ -1,3 +1,21 @@
+2019-05-06  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] JSC Stress tests failing due to timezone printing
+        https://bugs.webkit.org/show_bug.cgi?id=197615
+
+        PlayStation's strftime does not give timezone strings, which
+        results in time strings like "Wed Oct 23 1974 11:45:01 GMT-0700"
+        rather than "Wed Oct 23 1974 11:45:01 GMT-0700 (Pacific Daylight Time)"
+        which causes diff failures with the expectations. Add expectations
+        without the timezone string and use those on playstation.
+
+        Reviewed by Ross Kirsling.
+
+        * ChakraCore.yaml: Update these tests to use alternate expectation file on PlayStation
+        * ChakraCore/test/GlobalFunctions/InternalToString.baseline-jsc-playstation: Added.
+        * ChakraCore/test/Operators/equals.baseline-jsc-playstation: Added.
+        * ChakraCore/test/fieldopts/objtypespec-newobj.2.baseline-jsc-playstation: Added.
+
 2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add more tests for DFG SetLocal emission for adhoc SetterCall frame

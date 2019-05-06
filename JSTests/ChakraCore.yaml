@@ -689,6 +689,8 @@
   cmd: |
       if ($hostOS == "windows")
           skip
+      elsif ($hostOS == "playstation")
+          runChakra :baseline, "NoException", "InternalToString.baseline-jsc-playstation", []
       else
           runChakra :baseline, "NoException", "InternalToString.baseline", []
       end
@@ -1084,6 +1086,8 @@
   cmd: |
       if ($hostOS == "windows")
           skip
+      elsif ($hostOS == "playstation")
+          runChakra :baseline, "NoException", "equals.baseline-jsc-playstation", []
       else
           runChakra :baseline, "NoException", "equals.baseline", []
       end
@@ -2059,6 +2063,8 @@
   cmd: |
       if ($hostOS == "windows")
           skip
+      elsif ($hostOS == "playstation")
+          runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline-jsc-playstation", []
       else
           runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline", []
       end
