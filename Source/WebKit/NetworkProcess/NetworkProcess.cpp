@@ -1322,8 +1322,11 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (storageSession(sessionID))
-            callbackAggregator->m_websiteData.originsWithCredentials = storageSession(sessionID)->credentialStorage().originsWithCredentials();
+        if (storageSession(sessionID)) {
+            auto securityOrigins = storageSession(sessionID)->credentialStorage().originsWithCredentials();
+            for (auto& securityOrigin : securityOrigins)
+                callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        }
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
@@ -1503,6 +1506,13 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCacheEntries(cache(), originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+
+    if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
+        if (auto* session = storageSession(sessionID)) {
+            for (auto& originData : originDatas)
+                session->credentialStorage().removeCredentialsWithOrigin(originData);
+        }
+    }
 
     // FIXME: Implement storage quota clearing for these origins.
 }
@@ -1778,8 +1788,11 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (auto* networkStorageSession = storageSession(sessionID))
-            websiteDataStore.originsWithCredentials = networkStorageSession->credentialStorage().originsWithCredentials();
+        if (auto* networkStorageSession = storageSession(sessionID)) {
+            auto securityOrigins = networkStorageSession->credentialStorage().originsWithCredentials();
+            for (auto& securityOrigin : securityOrigins)
+                callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        }
     }
     
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {

@@ -86,6 +86,54 @@ void CredentialStorage::remove(const String& partitionName, const ProtectionSpac
     m_protectionSpaceToCredentialMap.remove(std::make_pair(partitionName, protectionSpace));
 }
 
+void CredentialStorage::removeCredentialsWithOrigin(const SecurityOriginData& origin)
+{
+    Vector<std::pair<String, ProtectionSpace>> keysToRemove;
+    for (auto& keyValuePair : m_protectionSpaceToCredentialMap) {
+        auto& protectionSpace = keyValuePair.key.second;
+        if (protectionSpace.host() == origin.host
+            && ((origin.port && protectionSpace.port() == *origin.port)
+                || (!origin.port && protectionSpace.port() == 80))
+            && ((protectionSpace.serverType() == ProtectionSpaceServerHTTP && origin.protocol == "http"_s)
+                || (protectionSpace.serverType() == ProtectionSpaceServerHTTPS && origin.protocol == "https"_s)))
+            keysToRemove.append(keyValuePair.key);
+    }
+    for (auto& key : keysToRemove)
+        remove(key.first, key.second);
+}
+
+Vector<SecurityOriginData> CredentialStorage::originsWithCredentials() const
+{
+    Vector<SecurityOriginData> origins;
+    for (auto& keyValuePair : m_protectionSpaceToCredentialMap) {
+        auto& protectionSpace = keyValuePair.key.second;
+        if (protectionSpace.isProxy())
+            continue;
+        String protocol;
+        switch (protectionSpace.serverType()) {
+        case ProtectionSpaceServerHTTP:
+            protocol = "http"_s;
+            break;
+        case ProtectionSpaceServerHTTPS:
+            protocol = "https"_s;
+            break;
+        case ProtectionSpaceServerFTP:
+            protocol = "ftp"_s;
+            break;
+        case ProtectionSpaceServerFTPS:
+            protocol = "ftps"_s;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        SecurityOriginData origin { protocol, protectionSpace.host(), static_cast<uint16_t>(protectionSpace.port())};
+        origins.append(WTFMove(origin));
+    }
+    return origins;
+}
+
 HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtectionSpaceForURL(const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
