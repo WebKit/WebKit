@@ -7160,6 +7160,7 @@
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
 		3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportStyleResolver.h; sourceTree = "<group>"; };
+		410626A72280A22A006D1B59 /* JSAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		4107908A1FC3E4F20061B27A /* ClientOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientOrigin.h; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
 		41103AA71E39790A00769F03 /* RealtimeOutgoingAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingAudioSource.cpp; sourceTree = "<group>"; };
@@ -20574,6 +20575,7 @@
 				71EFCEDE202B39C700D7C411 /* JSAnimationEffectCustom.cpp */,
 				71025ED51F99F147004A250C /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
+				410626A72280A22A006D1B59 /* JSAudioNodeCustom.cpp */,
 				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
 				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
 				576082562011BE0200116678 /* JSAuthenticatorResponseCustom.cpp */,

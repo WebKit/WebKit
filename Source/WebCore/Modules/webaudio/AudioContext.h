@@ -133,6 +133,7 @@ public:
 
     enum class State { Suspended, Running, Interrupted, Closed };
     State state() const;
+    bool isClosed() const { return m_state == State::Closed; }
 
     bool wouldTaintOrigin(const URL&) const;
 

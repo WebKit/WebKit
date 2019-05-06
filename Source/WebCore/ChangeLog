@@ -1,3 +1,29 @@
+2019-05-06  Youenn Fablet  <youenn@apple.com>
+
+        WebAudio Node JS wrappers should not be collected if events can be fired
+        https://bugs.webkit.org/show_bug.cgi?id=197533
+
+        Reviewed by Jer Noble.
+
+        Before the patch, some web audio nodes could fire event listeners, but were not protected from GC.
+        Use CustomIsReachable to ensure theses nodes can be collected if:
+        - their AudioContext is stopped (typically due to document being navigated away).
+        - their AudioContext is closed.
+        - nodes do not have event listeners.
+
+        Covered by WPT mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html and
+        WPT webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html
+        and web audio WebRTC tests.
+        Specific newly added test: webaudio/webaudio-gc.html
+
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::isClosed const):
+        * Modules/webaudio/AudioNode.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioNodeCustom.cpp: Added.
+        (WebCore::JSAudioNodeOwner::isReachableFromOpaqueRoots):
+
 2019-05-06  Daniel Bates  <dabates@apple.com>
 
         Google Docs & Yahoo! Japan: Can’t compose characters with Chinese or Japanese keyboard

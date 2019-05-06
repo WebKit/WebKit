@@ -1,3 +1,13 @@
+2019-05-06  Youenn Fablet  <youenn@apple.com>
+
+        WebAudio Node JS wrappers should not be collected if events can be fired
+        https://bugs.webkit.org/show_bug.cgi?id=197533
+
+        Reviewed by Jer Noble.
+
+        * webaudio/webaudio-gc-expected.txt: Added.
+        * webaudio/webaudio-gc.html: Added.
+
 2019-05-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: Layout test imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html is frequently failing on EWS

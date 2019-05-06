@@ -24,7 +24,7 @@
 
 [
     Conditional=WEB_AUDIO,
-    GenerateIsReachable=Impl,
+    CustomIsReachable,
 ] interface AudioNode : EventTarget {
     readonly attribute AudioContext context;
     readonly attribute unsigned long numberOfInputs;

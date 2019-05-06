@@ -431,6 +431,7 @@ animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
 animation/WebAnimation.cpp
 
+bindings/js/JSAudioNodeCustom.cpp
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp
 bindings/js/CallTracer.cpp
