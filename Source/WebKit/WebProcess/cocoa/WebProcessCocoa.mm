@@ -199,6 +199,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     [NSApplication _accessibilityInitialize];
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    // App nap must be manually enabled when not running the NSApplication run loop.
+    __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
+#endif
+
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).
     pthread_set_fixedpriority_self();

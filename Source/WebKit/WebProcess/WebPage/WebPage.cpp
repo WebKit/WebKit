@@ -766,15 +766,6 @@ void WebPage::updateThrottleState()
     bool isVisuallyIdle = m_activityState.contains(ActivityState::IsVisuallyIdle);
     bool pageSuppressed = m_processSuppressionEnabled && !isActive && isVisuallyIdle;
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (!pageSuppressed) {
-        // App nap must be manually enabled when not running the NSApplication run loop.
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [] {
-            __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
-        });
-    }
-#endif
     // The UserActivity keeps the processes runnable. So if the page should be suppressed, stop the activity.
     // If the page should not be supressed, start it.
     if (pageSuppressed)
