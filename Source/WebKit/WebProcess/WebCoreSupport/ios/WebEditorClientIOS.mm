@@ -44,7 +44,12 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 {
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    if (event->handledByInputMethod())
+        event->setDefaultHandled();
+#else
     notImplemented();
+#endif
 }
 
 void WebEditorClient::setInsertionPasteboard(const String&)

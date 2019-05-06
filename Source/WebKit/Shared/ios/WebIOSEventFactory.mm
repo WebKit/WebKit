@@ -64,7 +64,7 @@ static OptionSet<WebKit::WebEvent::Modifier> modifiersForEvent(::WebEvent *event
     return modifiers;
 }
 
-WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event)
+WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
 {
     WebKit::WebEvent::Type type = (event.type == WebEventKeyUp) ? WebKit::WebEvent::KeyUp : WebKit::WebEvent::KeyDown;
     String text;
@@ -109,7 +109,7 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
         unmodifiedText = text;
     }
 
-    return WebKit::WebKeyboardEvent(type, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, WallTime::fromRawSeconds(timestamp));
+    return WebKit::WebKeyboardEvent { type, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, autoRepeat, isKeypad, isSystemKey, modifiers, WallTime::fromRawSeconds(timestamp) };
 }
 
 WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)

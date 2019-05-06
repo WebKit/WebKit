@@ -1,3 +1,67 @@
+2019-05-06  Daniel Bates  <dabates@apple.com>
+
+        Google Docs & Yahoo! Japan: Can’t compose characters with Chinese or Japanese keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=197474
+        <rdar://problem/47219324>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adopt UIKit SPI (added in <rdar://problem/50181162>) to ask the Input Manager to handle
+        the key event. If the Input Manager handled it then we pass along this information to
+        WebCore, just as we do for Mac, so that it can alter its event handling logic. Otherwise,
+        we handle the event as we do now.
+
+        A large part of this patch is fixing up #if defs to compile more Mac code when building
+        on iOS.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose more SPI.
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/WebEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::encode const):
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/ios/NativeWebKeyboardEventIOS.mm:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+        Compile more Mac code on iOS. Just like on Mac we maintain some bookkeeping on
+        whether an event was handled by the Input Manager.
+
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage): Pass NativeWebKeyboardEvent::HandledByInputMethod::No
+        to keep the behavior we have now.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView shouldSuppressUpdateCandidateView]): Added. Used to tell UIKit whether to
+        suppress updating/showing the candidate view.
+        (-[WKContentView setMarkedText:selectedRange:]):
+        Bookkeeping to track whether we need to delay showing/updating the inline candidate view.
+        The concept in UIKit is deferment, but at the time of writing its simply a request to delay
+        the update for 0.4 seconds. We opt into this delay only for the first key that begins
+        marked text (i.e. the transition from no marked text to marked text). We do this because we
+        may not have up-to-date editor state at the time UIKit is ready to show/update the inline
+        candidate view for us to answer -textFirstRect and -textLastRect, which UIKit calls as part
+        of computing the frame rect for the inline candidate view on screen. Once we receive up-to-date
+        editor state, in -selectionChanged, we tell UIKit to layout the keyboard, which ultimately
+        causes it to re-compute the frame rect for the inline candidate view and show it.
+
+        (-[WKContentView handleKeyWebEvent:]): Pass NativeWebKeyboardEvent::HandledByInputMethod::No
+        to keep the behavior we have now. 
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]): Ask the keyboard to handle the
+        event using the Input Manager. If it was handled then there is no need to delay calling the
+        completion handler, call it, then tell the web process about the key event and that it was
+        already handled by the Input Manager.
+        (-[WKContentView _selectionChanged]): Tell the keyboard to update the candidate view, if needed.
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::handleInputMethodKeydown): Mark the event as default handled if
+        the UI process told us that the event was handled by the Input Manager just like we do on Mac.
+
 2019-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Null check m_mainFrame in WebPageProxy.cpp

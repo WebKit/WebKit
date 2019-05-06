@@ -34,8 +34,8 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(::WebEvent *event)
-    : WebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event))
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(::WebEvent *event, HandledByInputMethod handledByInputMethod)
+    : WebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event, handledByInputMethod == HandledByInputMethod::Yes))
     , m_nativeEvent(event)
 {
 }

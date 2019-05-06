@@ -83,7 +83,7 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
 
 #elif PLATFORM(IOS_FAMILY)
 
-WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
+WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(unmodifiedText)
@@ -97,6 +97,9 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
     , m_macCharCode(macCharCode)
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    , m_handledByInputMethod(handledByInputMethod)
+#endif
     , m_isAutoRepeat(isAutoRepeat)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(isSystemKey)
@@ -166,8 +169,10 @@ void WebKeyboardEvent::encode(IPC::Encoder& encoder) const
     encoder << m_windowsVirtualKeyCode;
     encoder << m_nativeVirtualKeyCode;
     encoder << m_macCharCode;
-#if USE(APPKIT) || PLATFORM(GTK)
+#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)
     encoder << m_handledByInputMethod;
+#endif
+#if USE(APPKIT) || PLATFORM(GTK)
     encoder << m_commands;
 #endif
     encoder << m_isAutoRepeat;
@@ -200,9 +205,11 @@ bool WebKeyboardEvent::decode(IPC::Decoder& decoder, WebKeyboardEvent& result)
         return false;
     if (!decoder.decode(result.m_macCharCode))
         return false;
-#if USE(APPKIT) || PLATFORM(GTK)
+#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)
     if (!decoder.decode(result.m_handledByInputMethod))
         return false;
+#endif
+#if USE(APPKIT) || PLATFORM(GTK)
     if (!decoder.decode(result.m_commands))
         return false;
 #endif

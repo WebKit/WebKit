@@ -221,8 +221,10 @@ public:
 #endif
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
-#if USE(APPKIT) || PLATFORM(GTK)
+#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)
         m_handledByInputMethod = webEvent.handledByInputMethod();
+#endif
+#if USE(APPKIT) || PLATFORM(GTK)
         m_commands = webEvent.commands();
 #endif
         m_autoRepeat = webEvent.isAutoRepeat();
