@@ -1462,6 +1462,9 @@ public:
     TextAutoSizing& textAutoSizing();
 #endif
 
+    // For debugging rdar://problem/49877867.
+    void setMayBeDetachedFromFrame(bool mayBeDetachedFromFrame) { m_mayBeDetachedFromFrame = mayBeDetachedFromFrame; }
+
     Logger& logger();
 
     void hasStorageAccess(Ref<DeferredPromise>&& passedPromise);
@@ -2059,6 +2062,7 @@ private:
 
     bool m_hasEvaluatedUserAgentScripts { false };
     bool m_isRunningUserScripts { false };
+    bool m_mayBeDetachedFromFrame { true };
 #if ENABLE(APPLE_PAY)
     bool m_hasStartedApplePaySession { false };
 #endif

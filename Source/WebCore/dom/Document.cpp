@@ -8130,6 +8130,10 @@ bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
 
 void Document::detachFromFrame()
 {
+    // Assertion to help pinpint rdar://problem/49877867. If this hits, the crash trace should tell us
+    // which piece of code is detaching the document from its frame while constructing the CachedFrames.
+    RELEASE_ASSERT(m_mayBeDetachedFromFrame);
+
     observeFrame(nullptr);
 }
 
