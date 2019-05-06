@@ -1,3 +1,17 @@
+2019-05-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r244917.
+
+        Caused
+        TestWebKitAPI.WKWebView.InitializingWebViewWithEphemeralStorageDoesNotLog
+        failure on debug bots.
+
+        Reverted changeset:
+
+        "Use more efficient path resolution logic"
+        https://bugs.webkit.org/show_bug.cgi?id=197389
+        https://trac.webkit.org/changeset/244917
+
 2019-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Revert r244953 and r244954 because they broke internal builds.
