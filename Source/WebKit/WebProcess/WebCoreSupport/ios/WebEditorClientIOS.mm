@@ -42,13 +42,14 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
         event.setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent& event)
 {
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
-    if (event->handledByInputMethod())
-        event->setDefaultHandled();
+    if (event.handledByInputMethod())
+        event.setDefaultHandled();
 #else
     notImplemented();
+    UNUSED_PARAM(event);
 #endif
 }
 
