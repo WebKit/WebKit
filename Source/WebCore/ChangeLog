@@ -1,3 +1,15 @@
+2019-05-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] WebCore::MainThreadSharedTimer should use the appropriate GSource priority, name
+        https://bugs.webkit.org/show_bug.cgi?id=197606
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/MainThreadSharedTimer.cpp:
+        (WebCore::MainThreadSharedTimer::MainThreadSharedTimer):
+        Use the MainThreadSharedTimer GLib priority for this timer. The name is
+        also adjusted accordingly.
+
 2019-05-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/attachment/attachment-folder-icon.html is an Image Only failure on recent macOS builds

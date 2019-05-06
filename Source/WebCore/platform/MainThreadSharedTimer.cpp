@@ -50,8 +50,8 @@ MainThreadSharedTimer::MainThreadSharedTimer()
     : m_timer(RunLoop::main(), this, &MainThreadSharedTimer::fired)
 {
 #if USE(GLIB)
-    m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
-    m_timer.setName("[WebKit] MainThreadDispatcherTimer");
+    m_timer.setPriority(RunLoopSourcePriority::MainThreadSharedTimer);
+    m_timer.setName("[WebKit] MainThreadSharedTimer");
 #endif
 }
 
