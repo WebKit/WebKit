@@ -3257,3 +3257,5 @@ webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.h
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Skip ]
 
 webkit.org/b/191711 quicklook/numbers.html [ ImageOnlyFailure ]
+
+webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
