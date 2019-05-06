@@ -121,6 +121,7 @@ using namespace WebCore;
 
 #if PLATFORM(MAC)
 static const Seconds cpuMonitoringInterval { 8_min };
+static const double serviceWorkerCPULimit { 0.5 }; // 50% average CPU usage over 8 minutes.
 #endif
 
 void WebProcess::platformSetCacheModel(CacheModel)
@@ -577,16 +578,19 @@ void WebProcess::updateCPULimit()
 {
 #if PLATFORM(MAC)
     Optional<double> cpuLimit;
-
-    // Use the largest limit among all pages in this process.
-    for (auto& page : m_pageMap.values()) {
-        auto pageCPULimit = page->cpuLimit();
-        if (!pageCPULimit) {
-            cpuLimit = WTF::nullopt;
-            break;
+    if (m_processType == ProcessType::ServiceWorker)
+        cpuLimit = serviceWorkerCPULimit;
+    else {
+        // Use the largest limit among all pages in this process.
+        for (auto& page : m_pageMap.values()) {
+            auto pageCPULimit = page->cpuLimit();
+            if (!pageCPULimit) {
+                cpuLimit = WTF::nullopt;
+                break;
+            }
+            if (!cpuLimit || pageCPULimit > cpuLimit.value())
+                cpuLimit = pageCPULimit;
         }
-        if (!cpuLimit || pageCPULimit > cpuLimit.value())
-            cpuLimit = pageCPULimit;
     }
 
     if (m_cpuLimit == cpuLimit)
@@ -608,7 +612,10 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
 
     if (!m_cpuMonitor) {
         m_cpuMonitor = std::make_unique<CPUMonitor>(cpuMonitoringInterval, [this](double cpuUsage) {
-            RELEASE_LOG(PerformanceLogging, "%p - WebProcess exceeded CPU limit of %.1f%% (was using %.1f%%) hasVisiblePages? %d", this, m_cpuLimit.value() * 100, cpuUsage * 100, hasVisibleWebPage());
+            if (m_processType == ProcessType::ServiceWorker)
+                RELEASE_LOG_ERROR(PerformanceLogging, "%p - Service worker process exceeded CPU limit of %.1f%% (was using %.1f%%)", this, m_cpuLimit.value() * 100, cpuUsage * 100);
+            else
+                RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcess exceeded CPU limit of %.1f%% (was using %.1f%%) hasVisiblePages? %d", this, m_cpuLimit.value() * 100, cpuUsage * 100, hasVisibleWebPage());
             parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedCPULimit(), 0);
         });
     } else if (reason == CPUMonitorUpdateReason::VisibilityHasChanged) {

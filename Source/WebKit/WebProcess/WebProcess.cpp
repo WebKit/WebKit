@@ -237,6 +237,7 @@ void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
     MessagePortChannelProvider::setSharedProvider(WebMessagePortChannelProvider::singleton());
     
     platformInitializeProcess(parameters);
+    updateCPULimit();
 }
 
 void WebProcess::initializeConnection(IPC::Connection* connection)

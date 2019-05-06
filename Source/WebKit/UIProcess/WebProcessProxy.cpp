@@ -1338,7 +1338,10 @@ void WebProcessProxy::didExceedCPULimit()
     if (hasVisiblePage)
         return;
 
-    RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess with pid %d that has exceeded the background CPU limit", this, processIdentifier());
+    if (isServiceWorkerProcess())
+        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating Service Worker process with pid %d that has exceeded the background CPU limit", this, processIdentifier());
+    else
+        RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedCPULimit() Terminating background WebProcess with pid %d that has exceeded the background CPU limit", this, processIdentifier());
     logDiagnosticMessageForResourceLimitTermination(DiagnosticLoggingKeys::exceededBackgroundCPULimitKey());
     requestTermination(ProcessTerminationReason::ExceededCPULimit);
 }
