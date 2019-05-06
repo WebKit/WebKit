@@ -1599,10 +1599,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return CGPointZero;
-    
-    auto rect = FloatRect(snappedIntRect(m_object->boundingBoxRect()));
-    CGRect cgRect = [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen];
-    return CGPointMake(CGRectGetMidX(cgRect), CGRectGetMidY(cgRect));
+
+    IntPoint point = m_object->clickPoint();
+    return [self _accessibilityConvertPointToViewSpace:point];
 }
 
 - (CGRect)accessibilityFrame

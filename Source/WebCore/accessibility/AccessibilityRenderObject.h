@@ -168,7 +168,6 @@ public:
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
     IntRect boundsForRange(const RefPtr<Range>) const override;
-    IntRect boundsForRects(LayoutRect&, LayoutRect&, RefPtr<Range>) const;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
     bool hasPopup() const override;
@@ -292,6 +291,10 @@ private:
 
     RenderObject* targetElementForActiveDescendant(const QualifiedName&, AccessibilityObject*) const;
     bool canHavePlainText() const;
+    // Special handling of click point for links.
+    IntPoint linkClickPoint();
+    // Rects utilities.
+    static IntRect boundsForRects(LayoutRect const&, LayoutRect const&, RefPtr<Range> const&);
 };
 
 } // namespace WebCore

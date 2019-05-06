@@ -1,3 +1,28 @@
+2019-05-06  Andres Gonzalez  <andresg_22@apple.com>
+
+        Hitpoint for link which spans two lines in web content is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=197511
+        <rdar://problem/49971483>
+
+        Reviewed by Chris Fleizach.
+
+        - Special case for links to return first char location as clickPoint instead of middle point of bounding rect.
+        - Modified iOS ActivationPoint to use clickPoint. This way all code paths go through the same function.
+        - Made boundsForRects to return content coordinates in all platforms. Adjusted all callers, directly or indirectly, appropriately.
+
+        Tests: accessibility/ios-simulator/links-activation.html
+               accessibility/links-activation.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::clickPoint):
+        (WebCore::AccessibilityRenderObject::boundsForRects):
+        (WebCore::AccessibilityRenderObject::boundsForRects const): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityActivationPoint]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2019-05-06  Jer Noble  <jer.noble@apple.com>
 
         Adopt AVStreamDataParser.audiovisualMIMETypes

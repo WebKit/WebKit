@@ -4259,7 +4259,8 @@ IGNORE_WARNINGS_END
     
     if ([attribute isEqualToString:@"AXBoundsForTextMarkerRange"]) {
         RefPtr<Range> range = [self rangeForTextMarkerRange:textMarkerRange];
-        NSRect rect = m_object->boundsForRange(range);
+        auto bounds = FloatRect(m_object->boundsForRange(range));
+        NSRect rect = [self convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         return [NSValue valueWithRect:rect];
     }
     
@@ -4269,7 +4270,8 @@ IGNORE_WARNINGS_END
         if (start.isNull() || end.isNull())
             return nil;
         RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
-        NSRect rect = m_object->boundsForRange(range);
+        auto bounds = FloatRect(m_object->boundsForRange(range));
+        NSRect rect = [self convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         return [NSValue valueWithRect:rect];
     }
     
@@ -4504,7 +4506,8 @@ IGNORE_WARNINGS_END
             if (!rangeSet)
                 return nil;
             PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
-            NSRect rect = m_object->doAXBoundsForRangeUsingCharacterOffset(plainTextRange);
+            auto bounds = FloatRect(m_object->doAXBoundsForRangeUsingCharacterOffset(plainTextRange));
+            NSRect rect = [self convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
             return [NSValue valueWithRect:rect];
         }
         

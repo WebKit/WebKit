@@ -899,11 +899,38 @@ Path AccessibilityRenderObject::elementPath() const
     return Path();
 }
 
+IntPoint AccessibilityRenderObject::linkClickPoint()
+{
+    ASSERT(isLink());
+    /* A link bounding rect can contain points that are not part of the link.
+     For instance, a link that starts at the end of a line and finishes at the
+     beginning of the next line will have a bounding rect that includes the
+     entire two lines. In such a case, the middle point of the bounding rect
+     may not belong to the link element and thus may not activate the link.
+     Hence, return the middle point of the first character in the link if exists.
+     */
+    if (RefPtr<Range> range = elementRange()) {
+        VisiblePosition start = range->startPosition();
+        VisiblePosition end = nextVisiblePosition(start);
+        if (start.isNull() || !range->contains(end))
+            return AccessibilityObject::clickPoint();
+
+        RefPtr<Range> charRange = makeRange(start, end);
+        IntRect rect = boundsForRange(charRange);
+        return { rect.x() + rect.width() / 2, rect.y() + rect.height() / 2 };
+    }
+    return AccessibilityObject::clickPoint();
+}
+
 IntPoint AccessibilityRenderObject::clickPoint()
 {
     // Headings are usually much wider than their textual content. If the mid point is used, often it can be wrong.
-    if (isHeading() && children().size() == 1)
-        return children()[0]->clickPoint();
+    AccessibilityChildrenVector children = this->children();
+    if (isHeading() && children.size() == 1)
+        return children[0]->clickPoint();
+
+    if (isLink())
+        return linkClickPoint();
 
     // use the default position unless this is an editable web area, in which case we use the selection bounds.
     if (!isWebArea() || !canSetValueAttribute())
@@ -912,10 +939,7 @@ IntPoint AccessibilityRenderObject::clickPoint()
     VisibleSelection visSelection = selection();
     VisiblePositionRange range = VisiblePositionRange(visSelection.visibleStart(), visSelection.visibleEnd());
     IntRect bounds = boundsForVisiblePositionRange(range);
-#if PLATFORM(COCOA)
-    bounds.setLocation(m_renderer->view().frameView().screenToContents(bounds.location()));
-#endif        
-    return IntPoint(bounds.x() + (bounds.width() / 2), bounds.y() - (bounds.height() / 2));
+    return { bounds.x() + (bounds.width() / 2), bounds.y() + (bounds.height() / 2) };
 }
     
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
@@ -2042,7 +2066,7 @@ bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
     return false;
 }
 
-IntRect AccessibilityRenderObject::boundsForRects(LayoutRect& rect1, LayoutRect& rect2, RefPtr<Range> dataRange) const
+IntRect AccessibilityRenderObject::boundsForRects(LayoutRect const& rect1, LayoutRect const& rect2, RefPtr<Range> const& dataRange)
 {
     LayoutRect ourRect = rect1;
     ourRect.unite(rect2);
@@ -2054,12 +2078,8 @@ IntRect AccessibilityRenderObject::boundsForRects(LayoutRect& rect1, LayoutRect&
         if (rangeString.length() > 1 && !boundingBox.isEmpty())
             ourRect = boundingBox;
     }
-    
-#if PLATFORM(MAC)
-    return m_renderer->view().frameView().contentsToScreen(snappedIntRect(ourRect));
-#else
+
     return snappedIntRect(ourRect);
-#endif
 }
 
 IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
