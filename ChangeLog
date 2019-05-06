@@ -1,3 +1,14 @@
+2019-05-06  Christopher Reid  <chris.reid@sony.com>
+
+        [CMake] fuse-ld should also be set in module linker flags
+        https://bugs.webkit.org/show_bug.cgi?id=197583
+
+        Reviewed by Michael Catanzaro.
+
+        Add fuse-ld to CMAKE_MODULE_LINKER_FLAGS.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2019-05-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Implement and enable RemoteInspector Server.
