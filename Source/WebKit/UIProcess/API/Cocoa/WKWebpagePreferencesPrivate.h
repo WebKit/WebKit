@@ -67,5 +67,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy)
 @property (nonatomic, copy, setter=_setCustomJavaScriptUserAgentAsSiteSpecificQuirks:) NSString *_customJavaScriptUserAgentAsSiteSpecificQuirks;
 @property (nonatomic, copy, setter=_setCustomNavigatorPlatform:) NSString *_customNavigatorPlatform;
 @property (nonatomic, setter=_setDeviceOrientationAndMotionAccessPolicy:) _WKWebsiteDeviceOrientationAndMotionAccessPolicy _deviceOrientationAndMotionAccessPolicy;
+@property (nonatomic, setter=_setAllowSiteSpecificQuirksToOverrideCompatibilityMode:) BOOL _allowSiteSpecificQuirksToOverrideCompatibilityMode;
 
 @end

@@ -1,3 +1,27 @@
+2019-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce SPI to request modern compatibility mode but defer to site-specific quirks
+        https://bugs.webkit.org/show_bug.cgi?id=197614
+        <rdar://problem/50208577>
+
+        Reviewed by Tim Horton.
+
+        Add plumbing for a new _allowSiteSpecificQuirksToOverrideCompatibilityMode SPI property on
+        WKWebpagePreferences.
+
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _allowSiteSpecificQuirksToOverrideCompatibilityMode]):
+        (-[WKWebpagePreferences _setAllowSiteSpecificQuirksToOverrideCompatibilityMode:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+
+        Use currentRequest instead of originalRequest; see internal change for more details.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-05-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r244917.

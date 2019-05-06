@@ -101,6 +101,9 @@ public:
     WebKit::WebsiteSimulatedMouseEventsDispatchPolicy simulatedMouseEventsDispatchPolicy() const { return m_simulatedMouseEventsDispatchPolicy; }
     void setSimulatedMouseEventsDispatchPolicy(WebKit::WebsiteSimulatedMouseEventsDispatchPolicy policy) { m_simulatedMouseEventsDispatchPolicy = policy; }
 
+    bool allowSiteSpecificQuirksToOverrideCompatibilityMode() const { return m_allowSiteSpecificQuirksToOverrideCompatibilityMode; }
+    void setAllowSiteSpecificQuirksToOverrideCompatibilityMode(bool value) { m_allowSiteSpecificQuirksToOverrideCompatibilityMode = value; }
+
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
@@ -120,6 +123,7 @@ private:
     WebKit::WebsiteMetaViewportPolicy m_metaViewportPolicy { WebKit::WebsiteMetaViewportPolicy::Default };
     WebKit::WebsiteMediaSourcePolicy m_mediaSourcePolicy { WebKit::WebsiteMediaSourcePolicy::Default };
     WebKit::WebsiteSimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Default };
+    bool m_allowSiteSpecificQuirksToOverrideCompatibilityMode { false };
 };
 
 } // namespace API

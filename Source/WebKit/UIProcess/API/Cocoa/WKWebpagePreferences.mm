@@ -276,6 +276,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return _websitePolicies->customNavigatorPlatform();
 }
 
+- (BOOL)_allowSiteSpecificQuirksToOverrideCompatibilityMode
+{
+    return _websitePolicies->allowSiteSpecificQuirksToOverrideCompatibilityMode();
+}
+
+- (void)_setAllowSiteSpecificQuirksToOverrideCompatibilityMode:(BOOL)value
+{
+    _websitePolicies->setAllowSiteSpecificQuirksToOverrideCompatibilityMode(value);
+}
+
 - (API::Object&)_apiObject
 {
     return *_websitePolicies;

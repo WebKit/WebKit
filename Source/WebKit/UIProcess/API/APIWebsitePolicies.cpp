@@ -65,6 +65,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     for (auto& field : m_customHeaderFields)
         customHeaderFields.append(WebCore::HTTPHeaderField(field));
     policies->setCustomHeaderFields(WTFMove(customHeaderFields));
+    policies->setAllowSiteSpecificQuirksToOverrideCompatibilityMode(m_allowSiteSpecificQuirksToOverrideCompatibilityMode);
     return policies;
 }
 

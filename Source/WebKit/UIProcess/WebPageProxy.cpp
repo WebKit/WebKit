@@ -4614,7 +4614,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                         policies = defaultPolicies->copy();
                 }
                 if (policies)
-                    navigation->setEffectiveCompatibilityMode(effectiveCompatibilityModeAfterAdjustingPolicies(*policies, navigation->originalRequest()));
+                    navigation->setEffectiveCompatibilityMode(effectiveCompatibilityModeAfterAdjustingPolicies(*policies, navigation->currentRequest()));
             }
             receivedNavigationPolicyDecision(policyAction, navigation.get(), processSwapRequestedByClient, frame, policies.get(), WTFMove(sender));
         };
