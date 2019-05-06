@@ -39,12 +39,16 @@ async_test(test => {
 
     assert_equals(iframe.contentWindow.location.href, "about:blank", "The iframe initially has no URL.");
 
-    iframe.addEventListener("load", () => {
-        assert_true(iframe.contentWindow.location.href.includes("disabled.html"), "Upon navigation the URL has a location.");
-        test.done();
+    const loaded = new Promise(resolve => {
+        iframe.addEventListener("load", () => {
+            assert_true(iframe.contentWindow.location.href.includes("disabled.html"), "Upon navigation the URL has a location.");
+            resolve();
+        });
     });
 
-    ui.tap({ x: 100, y: 100 });
+    const tapped = ui.tap({ x: 100, y: 100 });
+
+    Promise.all([loaded, tapped]).then(() => test.done());
 }, "Testing that setting touch-action: none allows link traversal.");
 
 </script>

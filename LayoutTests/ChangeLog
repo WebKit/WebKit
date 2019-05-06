@@ -1,3 +1,44 @@
+2019-05-06  Antoine Quint  <graouts@apple.com>
+
+        Tests under pointerevents/ios are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=197624
+
+        Reviewed by Dean Jackson.
+
+        Tests under pointerevents/ios generate touches that use UIScriptController may not succeed if ran in multiple iterations or in a specific
+        order due to not ensuring that all touches are released when the test completes. We now ensure that we do when running swipes, taps, and pinches.
+
+        * pointerevents/ios/pointer-events-dispatch-on-stylus.html: Use the new ui.tapStylus() method to generate a tap with the stylus which ensures all
+        touches are removed upon completion.
+        * pointerevents/ios/pointer-events-dispatch-on-touch.html: Use a tap to ensure all touches are removed upon completion.
+        * pointerevents/ios/pointer-events-implicit-capture-has-pointer-capture-in-pointer-down.html: Use a tap to ensure all touches are removed upon completion.
+        * pointerevents/ios/pointer-events-implicit-capture-release-exception.html: Use a tap to ensure all touches are removed upon completion.
+        * pointerevents/ios/pointer-events-implicit-capture-release.html: Use a tap to ensure all touches are removed upon completion.
+        * pointerevents/ios/pointer-events-prevent-default-allows-click-event.html: Ensure both the "click" event and the tap generation have succeeded before
+        marking the test as complete.
+        * pointerevents/ios/pointer-events-set-pointer-capture-exceptions.html: Use a tap to ensure all touches are removed upon completion.
+        * pointerevents/ios/touch-action-none-link-traversal.html: Ensure both the "load" event and the tap generation have succeeded before marking the test
+        as complete.
+        * pointerevents/ios/touch-action-pan-x-pan-y.html: Remove the requestAnimationFrame() call since ui.swipe() now resolves its promise once all touches
+        have completed.
+        * pointerevents/ios/touch-action-pan-x.html: Remove the requestAnimationFrame() call since ui.swipe() now resolves its promise once all touches
+        have completed.
+        * pointerevents/ios/touch-action-pan-y.html: Remove the requestAnimationFrame() call since ui.swipe() now resolves its promise once all touches
+        have completed.
+        * pointerevents/ios/touch-action-pinch-zoom-allows-zooming.html: Remove the requestAnimationFrame() call since ui.pinchOut() now resolves its promise
+        once all touches have completed.
+        * pointerevents/ios/touch-action-pointercancel-pan-x.html: We don't need to track "pointermove" events since dispatch of "pointercancel" is asynchronous
+        and the number of "pointermove" events prior to its dispatch can legitimately vary.
+        * pointerevents/ios/touch-action-pointercancel-pan-y.html: We don't need to track "pointermove" events since dispatch of "pointercancel" is asynchronous
+        and the number of "pointermove" events prior to its dispatch can legitimately vary.
+        * pointerevents/utils.js:
+        (const.ui.new.UIController.prototype.swipe): Wait until the swipe is complete before resolving the promise.
+        (const.ui.new.UIController.prototype.pinchOut): Use a custom sequence to ensure that the pinch releases touches upon completion.
+        (const.ui.new.UIController.prototype.tapStylus): Introduce this new method to perform a stylus tap which ensures all touches are complete before resolving
+        the promise.
+        (const.ui.new.UIController.prototype.beginTouches): Deleted.
+        (const.ui.new.UIController.prototype.beginStylus): Deleted.
+
 2019-05-06  Truitt Savell  <tsavell@apple.com>
 
         Fix typo in https://trac.webkit.org/changeset/244962/webkit

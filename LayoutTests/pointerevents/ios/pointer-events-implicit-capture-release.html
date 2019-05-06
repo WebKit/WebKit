@@ -18,7 +18,7 @@ target_test((target, test) => {
         target.releasePointerCapture(event.pointerId);
         assert_false(target.hasPointerCapture(event.pointerId));
     });
-    ui.beginTouches({ x: 50, y: 50 }).then(() => test.done());
+    ui.tap({ x: 50, y: 50 }).then(() => test.done());
 }, "Calling releasePointerCapture() in the 'pointerdown' event handler makes hasPointerCapture() return false.");
 
 </script>

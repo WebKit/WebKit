@@ -27,7 +27,7 @@ target_test((target, test) => {
         assert_approx_equals(event.tiltY, 20, 1);
         test.done();
     });
-    ui.beginStylus({ x: 50, y: 50, pressure: 0.75, azimuthAngle: fifteenDegrees, altitudeAngle: thirtyDegrees });
+    ui.tapStylus({ x: 50, y: 50, pressure: 0.75, azimuthAngle: fifteenDegrees, altitudeAngle: thirtyDegrees });
 }, "Pointer events get dispatched in response to a stylus.");
 
 </script>

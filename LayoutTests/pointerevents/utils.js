@@ -107,15 +107,12 @@ const ui = new (class UIController {
         return this.fingers[id] = new Finger(id);
     }
 
-    beginTouches(options)
-    {
-        return this._run(`uiController.touchDownAtPoint(${options.x}, ${options.y}, ${options.numberOfTouches || 1})`);
-    }
-
     swipe(from, to)
     {
-        const durationInSeconds = 0.5;
-        return this._run(`uiController.dragFromPointToPoint(${from.x}, ${from.y}, ${to.x}, ${to.y}, ${durationInSeconds})`);
+        const durationInSeconds = 0.1;
+        return new Promise(resolve => this._run(`uiController.dragFromPointToPoint(${from.x}, ${from.y}, ${to.x}, ${to.y}, ${durationInSeconds})`).then(() =>
+            setTimeout(resolve, durationInSeconds * 1000)
+        ));
     }
 
     tap(options)
@@ -132,55 +129,30 @@ const ui = new (class UIController {
         options.x = options.x || 0;
         options.y = options.y || 0;
 
-        const startEvent = {
-            inputType : "hand",
-            timeOffset : 0,
-            touches : [
-                { inputType : "finger",
-                  phase : "moved",
-                  id : 1,
-                  x : options.x,
-                  y : options.y,
-                  pressure : 0
-                },
-                { inputType : "finger",
-                  phase : "moved",
-                  id : 2,
-                  x : (options.x + options.width) / options.scale,
-                  y : (options.y + options.height) / options.scale,
-                  pressure : 0
-                }
-            ]
-        };
+        const startPoint = { x: options.x + options.width, y: options.y + options.height };
+        const endPoint = { x: options.x + options.width * options.scale, y: options.y + options.height * options.scale };
 
-        const endEvent = {
-            inputType : "hand",
-            timeOffset : 0.5,
-            touches : [
-                { inputType : "finger",
-                  phase : "moved",
-                  id : 1,
-                  x : options.x,
-                  y : options.y,
-                  pressure : 0
-                },
-                { inputType : "finger",
-                  phase : "moved",
-                  id : 2,
-                  x : options.x + options.width,
-                  y : options.y + options.height,
-                  pressure : 0
-                }
-            ]
-        };
+        function step(factor)
+        {
+            return {
+                x: endPoint.x + (startPoint.x - endPoint.x) * (1 - factor),
+                y: endPoint.y + (startPoint.y - endPoint.y) * (1 - factor)
+            };
+        }
 
-        return this._runEvents([{
-            interpolate : "linear",
-            timestep: 0.1,
-            coordinateSpace : "content",
-            startEvent: startEvent,
-            endEvent: endEvent
-        }]);
+        const one = this.finger();
+        const two = this.finger();
+        return this.sequence([
+            one.begin({ x: options.x, y: options.y }),
+            two.begin(step(0)),
+            two.move(step(0.2)),
+            two.move(step(0.4)),
+            two.move(step(0.6)),
+            two.move(step(0.8)),
+            two.move(step(1)),
+            one.end(),
+            two.end()
+        ]);
     }
 
     sequence(touches)
@@ -217,12 +189,12 @@ const ui = new (class UIController {
         }));
     }
 
-    beginStylus(options)
+    tapStylus(options)
     {
         options.azimuthAngle = options.azimuthAngle || 0;
         options.altitudeAngle = options.altitudeAngle || 0;
         options.pressure = options.pressure || 0;
-        return this._run(`uiController.stylusDownAtPoint(${options.x}, ${options.y}, ${options.azimuthAngle}, ${options.altitudeAngle}, ${options.pressure})`);
+        return this._run(`uiController.stylusTapAtPoint(${options.x}, ${options.y}, ${options.azimuthAngle}, ${options.altitudeAngle}, ${options.pressure})`);
     }
 
     _runEvents(events)

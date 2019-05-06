@@ -14,8 +14,9 @@
 
 target_test((target, test) => {
     target.addEventListener("pointerdown", event => event.preventDefault());
-    target.addEventListener("click", event => test.done());
-    ui.tap({ x: 100, y: 100 });
+    const clicked = new Promise(resolve => target.addEventListener("click", resolve));
+    const tapped = ui.tap({ x: 100, y: 100 });
+    Promise.all([clicked, tapped]).then(() => test.done());
 }, "A 'click' event is dispatched when tapping even if preventDefault() was called for a pointer event.");
 
 </script>

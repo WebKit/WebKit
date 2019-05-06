@@ -18,7 +18,7 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
 
     target.style.touchAction = "pan-x";
 
-    const eventTracker = new EventTracker(target, ["pointerdown", "pointermove", "pointerup", "pointercancel"]);
+    const eventTracker = new EventTracker(target, ["pointerdown", "pointerup", "pointercancel"]);
 
     const one = ui.finger();
     ui.sequence([
@@ -31,9 +31,6 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
     ]).then(() => {
         eventTracker.assertMatchesEvents([
             { type: "pointerdown" },
-            { type: "pointermove" },
-            { type: "pointermove" },
-            { type: "pointermove" },
             { type: "pointercancel" }
         ]);
         test.done();

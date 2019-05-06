@@ -21,7 +21,7 @@ target_test((target, test) => {
         assert_equals(event.pointerType, "touch");
         test.done();
     });
-    ui.beginTouches({ x: 50, y: 50 });
+    ui.tap({ x: 50, y: 50 });
 }, "Pointer events get dispatched in response to a touch.");
 
 </script>
