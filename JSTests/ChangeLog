@@ -1,3 +1,14 @@
+2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add more tests for DFG SetLocal emission for adhoc SetterCall frame
+        https://bugs.webkit.org/show_bug.cgi?id=197587
+
+        Reviewed by Sam Weinig.
+
+        This patch adds more tests to r244939. It also inlines setter calls, and eventually see that no PutStack is emitted because MovHint's KillStack kills it.
+
+        * stress/adhoc-setter-frame-should-not-be-killed.js: Added.
+
 2019-05-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         TypedArrays should not store properties that are canonical numeric indices
