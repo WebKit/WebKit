@@ -80,6 +80,10 @@ void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ConnectionID c
     });
 }
 
+void RemoteInspectorConnectionClient::didAccept(ConnectionID, ConnectionID, Socket::Domain)
+{
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)

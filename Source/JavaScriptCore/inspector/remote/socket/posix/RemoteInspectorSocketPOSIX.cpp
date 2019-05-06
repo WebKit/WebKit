@@ -167,7 +167,7 @@ uint16_t getPort(PlatformSocketType socket)
     ASSERT(isValid(socket));
 
     struct sockaddr_in address = { };
-    int len = sizeof(address);
+    socklen_t len = sizeof(address);
     getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len);
     return address.sin_port;
 }

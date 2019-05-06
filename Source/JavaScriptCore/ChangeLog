@@ -1,3 +1,17 @@
+2019-05-06  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [PlayStation] Fix build break since r244919
+        https://bugs.webkit.org/show_bug.cgi?id=197627
+
+        Reviewed by Ross Kirsling.
+
+        Bugfix for POSIX socket implementation and suppress warnings.
+
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        (Inspector::RemoteInspectorConnectionClient::didAccept):
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp:
+        (Inspector::Socket::getPort):
+
 2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         TemplateObject passed to template literal tags are not always identical for the same source location.
