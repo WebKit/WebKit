@@ -1889,3 +1889,5 @@ webkit.org/b/197058 imported/w3c/web-platform-tests/pointerevents/pointerevent_m
 webkit.org/b/192501 [ Debug ] animations/play-state-in-shorthand.html [ Pass Failure ]
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
+
+webkit-org/b/136627 [ Mojave+ ] media/track/track-cue-rendering-vertical.html [ Failure ]
