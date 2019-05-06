@@ -1,3 +1,16 @@
+2019-05-06  Saam Barati  <sbarati@apple.com>
+
+        JS2 should print scores for different categories
+        https://bugs.webkit.org/show_bug.cgi?id=197605
+
+        Reviewed by Yusuke Suzuki.
+
+        * JetStream2/JetStreamDriver.js:
+        (displayCategoryScores):
+        (isInBrowser.document.onkeydown):
+        (Driver.prototype.async.start):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+
 2019-04-16  Jon Lee  <jonlee@apple.com>
 
         [MotionMark] The text "kkkj" is causing Firefox console warning: `unreachable code after return statement`

@@ -41,6 +41,31 @@ this.currentReject = null;
 const defaultIterationCount = 120;
 const defaultWorstCaseCount = 4;
 
+let showScoreDetails = false;
+let categoryScores = null;
+
+function displayCategoryScores() {
+    if (!categoryScores)
+        return;
+
+    let summaryElement = document.getElementById("result-summary");
+    for (let [category, scores] of categoryScores)
+        summaryElement.innerHTML += `<p> ${category}: ${uiFriendlyNumber(geomean(scores))}</p>`
+
+    categoryScores = null;
+}
+
+if (isInBrowser) {
+    document.onkeydown = (keyboardEvent) => {
+        let key = keyboardEvent.key;
+        if (key === "d" || key === "D") {
+            showScoreDetails = true;
+
+            displayCategoryScores();
+        }
+    };
+}
+
 function assert(b, m = "") {
     if (!b)
         throw new Error("Bad assertion: " + m);
@@ -174,7 +199,6 @@ class Driver {
             await updateUI();
 
             try {
-
                 await benchmark.run();
             } catch(e) {
                 JetStream.reportError(benchmark);
@@ -197,12 +221,33 @@ class Driver {
         for (let benchmark of this.benchmarks)
             allScores.push(benchmark.score);
 
+        categoryScores = new Map;
+        for (let benchmark of this.benchmarks) {
+            for (let category of Object.keys(benchmark.subTimes()))
+                categoryScores.set(category, []);
+        }
+
+        for (let benchmark of this.benchmarks) {
+            for (let [category, value] of Object.entries(benchmark.subTimes())) {
+                let arr = categoryScores.get(category);
+                arr.push(value);
+            }
+        }
+
         if (isInBrowser) {
             summaryElement.classList.add('done');
             summaryElement.innerHTML = "<div class=\"score\">" + uiFriendlyNumber(geomean(allScores)) + "</div><label>Score</label>";
+            summaryElement.onclick = displayCategoryScores;
+            if (showScoreDetails)
+                displayCategoryScores();
             statusElement.innerHTML = '';
-        } else
+        } else {
+            console.log("\n");
+            for (let [category, scores] of categoryScores)
+                console.log(`${category}: ${uiFriendlyNumber(geomean(scores))}`);
+
             console.log("\nTotal Score: ", uiFriendlyNumber(geomean(allScores)), "\n");
+        }
 
         this.reportScoreToRunBenchmarkRunner();
     }
@@ -331,7 +376,7 @@ class Driver {
                     "Time": ["Geometric"],
                 },
                 "tests": subResults,
-            };;
+            };
         }
 
         results = {"JetStream2.0": {"metrics" : {"Score" : ["Geometric"]}, "tests" : results}};
