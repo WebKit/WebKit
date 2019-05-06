@@ -28,8 +28,9 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "AVAssetMIMETypeCache.h"
 #import "AVAssetTrackUtilities.h"
-#import "AVFoundationMIMETypeCache.h"
+#import "AVStreamDataParserMIMETypeCache.h"
 #import "CDMSessionAVStreamSession.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
@@ -174,7 +175,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
 
     registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateMediaSourceAVFObjC>(player); },
         getSupportedTypes, supportsType, 0, 0, 0, 0);
-    ASSERT(AVFoundationMIMETypeCache::singleton().isAvailable());
+    ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
@@ -189,7 +190,15 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    types = AVFoundationMIMETypeCache::singleton().types();
+    auto& streamDataParserCache = AVStreamDataParserMIMETypeCache::singleton();
+    if (streamDataParserCache.isAvailable()) {
+        types = streamDataParserCache.types();
+        return;
+    }
+
+    auto& assetCache = AVAssetMIMETypeCache::singleton();
+    if (assetCache.isAvailable())
+        types = assetCache.types();
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
@@ -202,7 +211,16 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
         return MediaPlayer::IsNotSupported;
 #endif
 
-    if (parameters.type.isEmpty() || !AVFoundationMIMETypeCache::singleton().canDecodeType(parameters.type.containerType()))
+    if (parameters.type.isEmpty())
+        return MediaPlayer::IsNotSupported;
+
+    if (AVStreamDataParserMIMETypeCache::singleton().isAvailable()) {
+        if (!AVStreamDataParserMIMETypeCache::singleton().supportsContentType(parameters.type))
+            return MediaPlayer::IsNotSupported;
+    } else if (AVAssetMIMETypeCache::singleton().isAvailable()) {
+        if (!AVAssetMIMETypeCache::singleton().supportsContentType(parameters.type))
+            return MediaPlayer::IsNotSupported;
+    } else
         return MediaPlayer::IsNotSupported;
 
     // The spec says:
@@ -211,15 +229,17 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
     if (codecs.isEmpty())
         return MediaPlayer::MayBeSupported;
 
-    NSString *outputCodecs = codecs;
+    String outputCodecs = codecs;
     if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)])
         outputCodecs = [PAL::getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
 
     if (!contentTypeMeetsHardwareDecodeRequirements(parameters.type, parameters.contentTypesRequiringHardwareSupport))
         return MediaPlayer::IsNotSupported;
 
-    NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)parameters.type.containerType(), (NSString *)outputCodecs];
-    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
+    String type = makeString(parameters.type.containerType(), "; codecs=\"", outputCodecs, "\"");
+    if (AVStreamDataParserMIMETypeCache::singleton().isAvailable())
+        return AVStreamDataParserMIMETypeCache::singleton().canDecodeType(type) ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;
+    return AVAssetMIMETypeCache::singleton().canDecodeType(type) ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;
 }
 
 #pragma mark -

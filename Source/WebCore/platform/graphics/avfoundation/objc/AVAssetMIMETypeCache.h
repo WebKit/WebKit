@@ -35,9 +35,9 @@ namespace WebCore {
 
 class ContentType;
 
-class AVFoundationMIMETypeCache {
+class AVAssetMIMETypeCache {
 public:
-    WEBCORE_EXPORT static AVFoundationMIMETypeCache& singleton();
+    WEBCORE_EXPORT static AVAssetMIMETypeCache& singleton();
 
     bool supportsContentType(const ContentType&);
     bool canDecodeType(const String&);
@@ -52,8 +52,8 @@ public:
     WEBCORE_EXPORT void setSupportedTypes(const Vector<String>&);
 
 private:
-    friend NeverDestroyed<AVFoundationMIMETypeCache>;
-    AVFoundationMIMETypeCache() = default;
+    friend NeverDestroyed<AVAssetMIMETypeCache>;
+    AVAssetMIMETypeCache() = default;
 
     void loadMIMETypes();
 

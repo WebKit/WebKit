@@ -1,3 +1,49 @@
+2019-05-06  Jer Noble  <jer.noble@apple.com>
+
+        Adopt AVStreamDataParser.audiovisualMIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=197581
+        <rdar://problem/50458981>
+
+        Reviewed by Eric Carlson.
+
+        Add a new singleton class, AVStreamDataParserMIMETypeCache, and rename AVFoundationMIMETypeCache to the more precise
+        AVAssetMIMETypeCache.  Update all the old AVFoundationMIMETypeCache with the new name.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.h: Renamed from Source/WebCore/platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.h.
+        (WebCore::AVAssetMIMETypeCache::setCacheMIMETypesCallback):
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm: Renamed from Source/WebCore/platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm.
+        (WebCore::AVAssetMIMETypeCache::singleton):
+        (WebCore::AVAssetMIMETypeCache::setSupportedTypes):
+        (WebCore::AVAssetMIMETypeCache::types):
+        (WebCore::AVAssetMIMETypeCache::supportsContentType):
+        (WebCore::AVAssetMIMETypeCache::canDecodeType):
+        (WebCore::AVAssetMIMETypeCache::isAvailable const):
+        (WebCore::AVAssetMIMETypeCache::loadMIMETypes):
+        * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.h: Added.
+        * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm: Added.
+        (WebCore::AVStreamDataParserMIMETypeCache::singleton):
+        (WebCore::AVStreamDataParserMIMETypeCache::types):
+        (WebCore::AVStreamDataParserMIMETypeCache::supportsContentType):
+        (WebCore::AVStreamDataParserMIMETypeCache::canDecodeType):
+        (WebCore::AVStreamDataParserMIMETypeCache::isAvailable const):
+        (WebCore::AVStreamDataParserMIMETypeCache::loadMIMETypes):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::create):
+        (WebCore::ImageDecoderAVFObjC::supportsMediaType):
+        (WebCore::ImageDecoderAVFObjC::supportsContentType):
+        (WebCore::ImageDecoderAVFObjC::canDecodeType):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+
 2019-05-06  Youenn Fablet  <youenn@apple.com>
 
         WebAudio Node JS wrappers should not be collected if events can be fired

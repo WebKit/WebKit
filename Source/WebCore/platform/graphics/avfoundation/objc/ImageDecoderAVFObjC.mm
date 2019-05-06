@@ -28,7 +28,7 @@
 
 #if HAVE(AVASSETREADER)
 
-#import "AVFoundationMIMETypeCache.h"
+#import "AVAssetMIMETypeCache.h"
 #import "AffineTransform.h"
 #import "ContentType.h"
 #import "FloatQuad.h"
@@ -337,7 +337,7 @@ ImageDecoderAVFObjCSample* toSample(Iterator iter)
 RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     // AVFoundation may not be available at runtime.
-    if (!AVFoundationMIMETypeCache::singleton().isAvailable())
+    if (!AVAssetMIMETypeCache::singleton().isAvailable())
         return nullptr;
 
     if (!canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
@@ -368,17 +368,17 @@ ImageDecoderAVFObjC::~ImageDecoderAVFObjC() = default;
 
 bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
 {
-    return type == MediaType::Video && AVFoundationMIMETypeCache::singleton().isAvailable();
+    return type == MediaType::Video && AVAssetMIMETypeCache::singleton().isAvailable();
 }
 
 bool ImageDecoderAVFObjC::supportsContentType(const ContentType& type)
 {
-    return AVFoundationMIMETypeCache::singleton().supportsContentType(type);
+    return AVAssetMIMETypeCache::singleton().supportsContentType(type);
 }
 
 bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 {
-    return AVFoundationMIMETypeCache::singleton().canDecodeType(mimeType);
+    return AVAssetMIMETypeCache::singleton().canDecodeType(mimeType);
 }
 
 AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()

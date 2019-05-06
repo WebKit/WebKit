@@ -231,8 +231,9 @@ platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp @no-unify
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @no-unify
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp @no-unify
 
+platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm @no-unify
 platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify
-platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm @no-unify
+platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm @no-unify
 platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp @no-unify
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm @no-unify

@@ -24,15 +24,14 @@
  */
 
 #import "config.h"
-#import "AVFoundationMIMETypeCache.h"
+#import "AVAssetMIMETypeCache.h"
 
 #if PLATFORM(COCOA)
 
 #import "ContentType.h"
-#import <wtf/HashSet.h>
-
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <wtf/HashSet.h>
 
 #if !PLATFORM(IOSMAC)
 SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
@@ -40,13 +39,13 @@ SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
 
 namespace WebCore {
 
-AVFoundationMIMETypeCache& AVFoundationMIMETypeCache::singleton()
+AVAssetMIMETypeCache& AVAssetMIMETypeCache::singleton()
 {
-    static NeverDestroyed<AVFoundationMIMETypeCache> cache;
+    static NeverDestroyed<AVAssetMIMETypeCache> cache;
     return cache.get();
 }
 
-void AVFoundationMIMETypeCache::setSupportedTypes(const Vector<String>& types)
+void AVAssetMIMETypeCache::setSupportedTypes(const Vector<String>& types)
 {
     if (m_cache)
         return;
@@ -56,7 +55,7 @@ void AVFoundationMIMETypeCache::setSupportedTypes(const Vector<String>& types)
         m_cache->add(type);
 }
 
-const HashSet<String, ASCIICaseInsensitiveHash>& AVFoundationMIMETypeCache::types()
+const HashSet<String, ASCIICaseInsensitiveHash>& AVAssetMIMETypeCache::types()
 {
     if (!m_cache)
         loadMIMETypes();
@@ -64,7 +63,7 @@ const HashSet<String, ASCIICaseInsensitiveHash>& AVFoundationMIMETypeCache::type
     return *m_cache;
 }
 
-bool AVFoundationMIMETypeCache::supportsContentType(const ContentType& contentType)
+bool AVAssetMIMETypeCache::supportsContentType(const ContentType& contentType)
 {
     if (contentType.isEmpty())
         return false;
@@ -72,7 +71,7 @@ bool AVFoundationMIMETypeCache::supportsContentType(const ContentType& contentTy
     return types().contains(contentType.containerType());
 }
 
-bool AVFoundationMIMETypeCache::canDecodeType(const String& mimeType)
+bool AVAssetMIMETypeCache::canDecodeType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
@@ -87,7 +86,7 @@ bool AVFoundationMIMETypeCache::canDecodeType(const String& mimeType)
     return false;
 }
 
-bool AVFoundationMIMETypeCache::isAvailable() const
+bool AVAssetMIMETypeCache::isAvailable() const
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #if PLATFORM(IOSMAC)
@@ -102,7 +101,7 @@ bool AVFoundationMIMETypeCache::isAvailable() const
 #endif
 }
 
-void AVFoundationMIMETypeCache::loadMIMETypes()
+void AVAssetMIMETypeCache::loadMIMETypes()
 {
     m_cache = HashSet<String, ASCIICaseInsensitiveHash>();
 

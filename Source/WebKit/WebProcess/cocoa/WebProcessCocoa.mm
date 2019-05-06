@@ -49,7 +49,7 @@
 #import "WebsiteDataStoreParameters.h"
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
-#import <WebCore/AVFoundationMIMETypeCache.h>
+#import <WebCore/AVAssetMIMETypeCache.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
@@ -207,7 +207,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (!parameters.mediaMIMETypes.isEmpty())
         setMediaMIMETypes(parameters.mediaMIMETypes);
     else {
-        AVFoundationMIMETypeCache::singleton().setCacheMIMETypesCallback([this](const Vector<String>& types) {
+        AVAssetMIMETypeCache::singleton().setCacheMIMETypesCallback([this](const Vector<String>& types) {
             parentProcessConnection()->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
         });
     }
@@ -470,7 +470,7 @@ void WebProcess::stopRunLoop()
 
 void WebProcess::platformTerminate()
 {
-    AVFoundationMIMETypeCache::singleton().setCacheMIMETypesCallback(nullptr);
+    AVAssetMIMETypeCache::singleton().setCacheMIMETypesCallback(nullptr);
 }
 
 RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
@@ -806,7 +806,7 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
 
 void WebProcess::setMediaMIMETypes(const Vector<String> types)
 {
-    AVFoundationMIMETypeCache::singleton().setSupportedTypes(types);
+    AVAssetMIMETypeCache::singleton().setSupportedTypes(types);
 }
 
 } // namespace WebKit
