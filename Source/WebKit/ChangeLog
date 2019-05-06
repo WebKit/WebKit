@@ -1,3 +1,19 @@
+2019-05-06  Keith Rollin  <krollin@apple.com>
+
+        Temporarily disable generate-xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=197619
+        <rdar://problem/50507392>
+
+        Reviewed by Alex Christensen.
+
+        We need to perform a significant update to the generate-xcfilelist
+        scripts. This work involves coordinated work with another facility. If
+        the work does not occur in tandem, the build will be broken. To avoid
+        this, disable the invoking of the scripts during the transition. The
+        checking will be restored once the new scripts are in place.
+
+        * Scripts/check-xcfilelists.sh:
+
 2019-05-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r244984.
