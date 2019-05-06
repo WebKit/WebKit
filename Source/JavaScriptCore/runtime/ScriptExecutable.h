@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+class JSArray;
+class JSTemplateObjectDescriptor;
 class IsoCellSet;
 
 class ScriptExecutable : public ExecutableBase {
@@ -37,6 +39,8 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags;
 
     static void destroy(JSCell*);
+
+    using TemplateObjectMap = HashMap<uint64_t, WriteBarrier<JSArray>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
         
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
@@ -112,11 +116,16 @@ public:
     template <typename ExecutableType>
     Exception* prepareForExecution(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*& resultCodeBlock);
 
+    ScriptExecutable* topLevelExecutable();
+    JSArray* createTemplateObject(ExecState*, JSTemplateObjectDescriptor*);
+
 private:
     friend class ExecutableBase;
     Exception* prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
     bool hasClearableCode(VM&) const;
+
+    TemplateObjectMap& ensureTemplateObjectMap(VM&);
 
 protected:
     ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, EvalContextType, Intrinsic);
@@ -136,6 +145,8 @@ protected:
         m_features = features;
         m_hasCapturedVariables = hasCapturedVariables;
     }
+
+    static TemplateObjectMap& ensureTemplateObjectMapImpl(std::unique_ptr<TemplateObjectMap>& dest);
 
     SourceCode m_source;
     Intrinsic m_intrinsic { NoIntrinsic };

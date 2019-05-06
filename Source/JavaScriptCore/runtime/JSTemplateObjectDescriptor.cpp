@@ -36,15 +36,16 @@ namespace JSC {
 const ClassInfo JSTemplateObjectDescriptor::s_info = { "TemplateObjectDescriptor", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSTemplateObjectDescriptor) };
 
 
-JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor)
+JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int startOffset)
     : Base(vm, vm.templateObjectDescriptorStructure.get())
     , m_descriptor(WTFMove(descriptor))
+    , m_startOffset(startOffset)
 {
 }
 
-JSTemplateObjectDescriptor* JSTemplateObjectDescriptor::create(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor)
+JSTemplateObjectDescriptor* JSTemplateObjectDescriptor::create(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int startOffset)
 {
-    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm.heap)) JSTemplateObjectDescriptor(vm, WTFMove(descriptor));
+    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm.heap)) JSTemplateObjectDescriptor(vm, WTFMove(descriptor), startOffset);
     result->finishCreation(vm);
     return result;
 }

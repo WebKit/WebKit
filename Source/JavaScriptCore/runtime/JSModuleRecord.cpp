@@ -200,7 +200,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
                     unlinkedFunctionExecutable->typeProfilingStartOffset(),
                     unlinkedFunctionExecutable->typeProfilingEndOffset());
             }
-            JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable->source()), moduleEnvironment);
+            JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable, moduleProgramExecutable->source()), moduleEnvironment);
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
             RETURN_IF_EXCEPTION(scope, void());

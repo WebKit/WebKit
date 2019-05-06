@@ -1,3 +1,90 @@
+2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        TemplateObject passed to template literal tags are not always identical for the same source location.
+        https://bugs.webkit.org/show_bug.cgi?id=190756
+
+        Reviewed by Saam Barati.
+
+        Tagged template literal requires that the site object is allocated per source location. Previously, we create the site object
+        when linking CodeBlock and cache it in CodeBlock. But this is wrong because,
+
+        1. CodeBlock can be jettisoned and regenerated. So every time CodeBlock is regenerated, we get the different site object.
+        2. Call and Construct can have different CodeBlock. Even if the function is called in call-form or construct-form, we should return the same site object.
+
+        In this patch, we start caching these site objects in the top-level ScriptExecutable, this matches the spec's per source location since the only one top-level
+        ScriptExecutable is created for the given script code. Each ScriptExecutable of JSFunction can be created multiple times because CodeBlock creates it.
+        But the top-level one is not created by CodeBlock. This top-level ScriptExecutable is well-aligned to the Script itself. The top-level ScriptExecutable now has HashMap,
+        which maps source locations to cached site objects.
+
+        1. This patch threads the top-level ScriptExecutable to each FunctionExecutable creation. Each FunctionExecutable has a reference to the top-level ScriptExecutable.
+        2. We put TemplateObjectMap in ScriptExecutable, which manages cached template objects.
+        3. We move FunctionExecutable::m_cachedPolyProtoStructure to the FunctionExecutable::RareDate to keep FunctionExecutable 128 bytes.
+
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * Scripts/wkbuiltins/builtins_templates.py:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateObjectConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        * bytecompiler/BytecodeGenerator.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedTemplateObjectDescriptor::encode):
+        (JSC::CachedTemplateObjectDescriptor::decode const):
+        (JSC::CachedJSValue::encode):
+        (JSC::CachedJSValue::decode const):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::ensureTemplateObjectMap):
+        (JSC::EvalExecutable::visitChildren):
+        * runtime/EvalExecutable.h:
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::finishCreation):
+        (JSC::FunctionExecutable::visitChildren):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        (JSC::FunctionExecutable::ensureRareDataSlow):
+        (JSC::FunctionExecutable::ensureTemplateObjectMap):
+        * runtime/FunctionExecutable.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSTemplateObjectDescriptor.cpp:
+        (JSC::JSTemplateObjectDescriptor::JSTemplateObjectDescriptor):
+        (JSC::JSTemplateObjectDescriptor::create):
+        * runtime/JSTemplateObjectDescriptor.h:
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::ensureTemplateObjectMap):
+        (JSC::ModuleProgramExecutable::visitChildren):
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::ensureTemplateObjectMap):
+        (JSC::ProgramExecutable::visitChildren):
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::topLevelExecutable):
+        (JSC::ScriptExecutable::createTemplateObject):
+        (JSC::ScriptExecutable::ensureTemplateObjectMap):
+        * runtime/ScriptExecutable.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCreateBuiltin):
+        (JSC::functionDeleteAllCodeWhenIdle):
+        (JSC::JSDollarVM::finishCreation):
+
 2019-05-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         TypedArrays should not store properties that are canonical numeric indices
