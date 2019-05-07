@@ -48,6 +48,8 @@ class ResourceRequest;
 struct ResourceLoadStatistics;
 enum class ShouldSample : bool;
 enum class IncludeHttpOnlyCookies : bool;
+enum class StorageAccessPromptWasShown : bool;
+enum class StorageAccessWasGranted : bool;
 }
 
 namespace WebKit {
@@ -83,6 +85,8 @@ public:
     using OpenerPageID = uint64_t;
     using PageID = uint64_t;
     using FrameID = uint64_t;
+    using StorageAccessWasGranted = WebCore::StorageAccessWasGranted;
+    using StorageAccessPromptWasShown = WebCore::StorageAccessPromptWasShown;
 
     static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost)
     {
@@ -100,7 +104,7 @@ public:
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
     void setShouldSubmitTelemetry(bool);
 
-    void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&);
+    void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
 
     void applicationWillTerminate();
 
@@ -114,12 +118,11 @@ public:
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, HashMap<RegistrableDomain, WebsiteDataToRemove>&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    bool grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID);
+    StorageAccessWasGranted grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
-    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&& callback);
+    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&);
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID);
-    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessStatus)>&&);
-    void requestStorageAccessGranted(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
@@ -162,7 +165,7 @@ public:
     void setPrevalentResourceForDebugMode(const RegistrableDomain&, CompletionHandler<void()>&&);
 
     void logTestingEvent(const String&);
-    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&);
+    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
     void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     void callRemoveDomainsHandler(const Vector<RegistrableDomain>&);

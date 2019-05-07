@@ -47,6 +47,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -314,52 +315,47 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const R
     callback(false);
 }
 
-void WebResourceLoadStatisticsStore::requestStorageAccessGranted(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
+void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
+    if (subFrameDomain == topFrameDomain) {
+        completionHandler(StorageAccessWasGranted::Yes, StorageAccessPromptWasShown::No);
+        return;
+    }
+    
     auto statusHandler = [this, protectedThis = makeRef(*this), subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
         switch (status) {
         case StorageAccessStatus::CannotRequestAccess:
-            completionHandler(false);
+            completionHandler(StorageAccessWasGranted::No, StorageAccessPromptWasShown::No);
             return;
         case StorageAccessStatus::RequiresUserPrompt:
             {
             CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = protectedThis.copyRef(), subFrameDomain, topFrameDomain, frameID, pageID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
                 if (userDidGrantAccess)
-                    grantStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, userDidGrantAccess, WTFMove(completionHandler));
+                    grantStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, StorageAccessPromptWasShown::Yes, WTFMove(completionHandler));
                 else
-                    completionHandler(false);
+                    completionHandler(StorageAccessWasGranted::No, StorageAccessPromptWasShown::Yes);
             };
             m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(pageID, frameID, subFrameDomain, topFrameDomain), WTFMove(requestConfirmationCompletionHandler));
             }
             return;
         case StorageAccessStatus::HasAccess:
-            completionHandler(true);
+            completionHandler(StorageAccessWasGranted::Yes, StorageAccessPromptWasShown::No);
             return;
         }
     };
 
-    requestStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(statusHandler));
-}
-
-void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
-{
-    if (subFrameDomain == topFrameDomain) {
-        completionHandler(StorageAccessStatus::HasAccess);
-        return;
-    }
-
-    postTask([this, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, statusHandler = WTFMove(statusHandler)]() mutable {
         if (!m_statisticsStore) {
-            postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
-                completionHandler(StorageAccessStatus::CannotRequestAccess);
+            postTaskReply([statusHandler = WTFMove(statusHandler)]() mutable {
+                statusHandler(StorageAccessStatus::CannotRequestAccess);
             });
             return;
         }
 
         if (m_statisticsStore) {
-            m_statisticsStore->requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID.value(), pageID, [completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
-                postTaskReply([completionHandler = WTFMove(completionHandler), status]() mutable {
-                    completionHandler(status);
+            m_statisticsStore->requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, [statusHandler = WTFMove(statusHandler)](StorageAccessStatus status) mutable {
+                postTaskReply([statusHandler = WTFMove(statusHandler), status]() mutable {
+                    statusHandler(status);
                 });
             });
         }
@@ -379,28 +375,28 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(Registrable
     });
 }
 
-void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&& completionHandler)
+void WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, StorageAccessPromptWasShown promptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    postTask([this, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, userWasPromptedNow, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, promptWasShown, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
-            postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
-                completionHandler(false);
+            postTaskReply([promptWasShown, completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(StorageAccessWasGranted::No, promptWasShown);
             });
             return;
         }
 
         if (m_statisticsStore) {
-            m_statisticsStore->grantStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedNow, [completionHandler = WTFMove(completionHandler)](bool wasGrantedAccess) mutable {
-                postTaskReply([completionHandler = WTFMove(completionHandler), wasGrantedAccess]() mutable {
-                    completionHandler(wasGrantedAccess);
+            m_statisticsStore->grantStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, [promptWasShown, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted wasGrantedAccess) mutable {
+                postTaskReply([wasGrantedAccess, promptWasShown, completionHandler = WTFMove(completionHandler)]() mutable {
+                    completionHandler(wasGrantedAccess, promptWasShown);
                 });
             });
         }
     });
 }
 
-bool WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID)
+StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID)
 {
     bool isStorageGranted = false;
 
@@ -410,14 +406,14 @@ bool WebResourceLoadStatisticsStore::grantStorageAccess(const RegistrableDomain&
         isStorageGranted = true;
     }
 
-    return isStorageGranted;
+    return isStorageGranted ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::No;
 }
 
-void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback)
+void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    callback(grantStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID));
+    completionHandler(grantStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID));
 }
 
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()

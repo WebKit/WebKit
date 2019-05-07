@@ -112,7 +112,6 @@
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
-#include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
@@ -7731,147 +7730,6 @@ Optional<uint64_t> Document::pageID() const
     return m_frame->loader().client().pageID();
 }
 
-void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
-{
-    ASSERT(settings().storageAccessAPIEnabled());
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_frame && hasFrameSpecificStorageAccess()) {
-        promise->resolve<IDLBoolean>(true);
-        return;
-    }
-
-    if (!m_frame || securityOrigin().isUnique()) {
-        promise->resolve<IDLBoolean>(false);
-        return;
-    }
-    
-    if (m_frame->isMainFrame()) {
-        promise->resolve<IDLBoolean>(true);
-        return;
-    }
-    
-    auto& securityOrigin = this->securityOrigin();
-    auto& topSecurityOrigin = topDocument().securityOrigin();
-    if (securityOrigin.equal(&topSecurityOrigin)) {
-        promise->resolve<IDLBoolean>(true);
-        return;
-    }
-
-    auto frameID = m_frame->loader().client().frameID();
-    auto pageID = m_frame->loader().client().pageID();
-    if (!frameID || !pageID) {
-        promise->reject();
-        return;
-    }
-
-    if (Page* page = this->page()) {
-        auto iframeHost = securityOrigin.host();
-        auto topHost = topSecurityOrigin.host();
-        page->chrome().client().hasStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = makeWeakPtr(*this), promise = WTFMove(promise)] (bool hasAccess) {
-            Document* document = documentReference.get();
-            if (!document)
-                return;
-            
-            promise->resolve<IDLBoolean>(hasAccess);
-        });
-        return;
-    }
-#endif
-
-    promise->reject();
-}
-
-void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
-{
-    ASSERT(settings().storageAccessAPIEnabled());
-    
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_frame && hasFrameSpecificStorageAccess()) {
-        promise->resolve();
-        return;
-    }
-    
-    if (!m_frame || securityOrigin().isUnique()) {
-        promise->reject();
-        return;
-    }
-    
-    if (m_frame->isMainFrame()) {
-        promise->resolve();
-        return;
-    }
-    
-    auto& topDocument = this->topDocument();
-    auto& topSecurityOrigin = topDocument.securityOrigin();
-    auto& securityOrigin = this->securityOrigin();
-    if (securityOrigin.equal(&topSecurityOrigin)) {
-        promise->resolve();
-        return;
-    }
-    
-    // If there is a sandbox, it has to allow the storage access API to be called.
-    if (sandboxFlags() != SandboxNone && isSandboxed(SandboxStorageAccessByUserActivation)) {
-        promise->reject();
-        return;
-    }
-
-    // The iframe has to be a direct child of the top document.
-    if (&topDocument != parentDocument()) {
-        promise->reject();
-        return;
-    }
-
-    if (!UserGestureIndicator::processingUserGesture()) {
-        promise->reject();
-        return;
-    }
-    
-    auto iframeHost = securityOrigin.host();
-    auto topHost = topSecurityOrigin.host();
-
-    Page* page = this->page();
-    auto frameID = m_frame->loader().client().frameID();
-    auto pageID = m_frame->loader().client().pageID();
-    if (!page || !frameID || !pageID) {
-        promise->reject();
-        return;
-    }
-
-    page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = makeWeakPtr(*this), promise = WTFMove(promise)] (bool wasGranted) mutable {
-        Document* document = documentReference.get();
-        if (!document)
-            return;
-        
-        if (wasGranted) {
-            document->setHasFrameSpecificStorageAccess(true);
-            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = makeWeakPtr(*document)] () {
-                if (auto* document = documentReference.get())
-                    document->enableTemporaryTimeUserGesture();
-            }));
-            promise->resolve();
-            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([documentReference = WTFMove(documentReference)] () {
-                if (auto* document = documentReference.get())
-                    document->consumeTemporaryTimeUserGesture();
-            }));
-        } else
-            promise->reject();
-    });
-#else
-    promise->reject();
-#endif
-}
-
-void Document::enableTemporaryTimeUserGesture()
-{
-    m_temporaryUserGesture = std::make_unique<UserGestureIndicator>(ProcessingUserGesture, this);
-}
-
-void Document::consumeTemporaryTimeUserGesture()
-{
-    m_temporaryUserGesture = nullptr;
-}
-
 void Document::registerArticleElement(Element& article)
 {
     m_articleElements.add(&article);
@@ -7939,17 +7797,6 @@ void Document::updateMainArticleElementAfterLayout()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-bool Document::hasFrameSpecificStorageAccess() const
-{
-    return m_frame && m_frame->loader().client().hasFrameSpecificStorageAccess();
-}
-    
-void Document::setHasFrameSpecificStorageAccess(bool value)
-{
-    if (m_frame)
-        m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
-}
-
 bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain& domain)
 {
     return m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction == domain;

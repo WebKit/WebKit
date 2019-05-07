@@ -1975,6 +1975,7 @@
 		6B3480940EEF50D400AC1B41 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B4E8613221B713F0022F389 /* RegistrableDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4E8612221B713F0022F389 /* RegistrableDomain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B693A2E1C51A82E00B03BEF /* ResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6BDB5DC2227BD3B800919770 /* DocumentStorageAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BDB5DC0227BD3B800919770 /* DocumentStorageAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C4C96DF1AD4483500363F64 /* JSReadableByteStreamController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C4C96DB1AD4483500363F64 /* JSReadableByteStreamController.h */; };
 		6C4C96DF1AD4483500365672 /* JSReadableStreamBYOBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C4C96DB1AD4483500365672 /* JSReadableStreamBYOBRequest.h */; };
 		6C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9037,6 +9038,9 @@
 		6B4E8612221B713F0022F389 /* RegistrableDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegistrableDomain.h; sourceTree = "<group>"; };
 		6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadObserver.h; sourceTree = "<group>"; };
 		6B693A331C51A95D00B03BEF /* ResourceLoadObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadObserver.cpp; sourceTree = "<group>"; };
+		6BDB5DC0227BD3B800919770 /* DocumentStorageAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocumentStorageAccess.h; sourceTree = "<group>"; };
+		6BDB5DC1227BD3B800919770 /* DocumentStorageAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentStorageAccess.cpp; sourceTree = "<group>"; };
+		6BDB5DC5227CA0EB00919770 /* DocumentStorageAccess.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentStorageAccess.idl; sourceTree = "<group>"; };
 		6C4C96DA1AD4483500363F64 /* JSReadableByteStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableByteStreamController.cpp; sourceTree = "<group>"; };
 		6C4C96DA1AD4483500365672 /* JSReadableStreamBYOBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamBYOBRequest.cpp; sourceTree = "<group>"; };
 		6C4C96DA1AD4483500365A50 /* JSReadableStreamDefaultController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamDefaultController.cpp; sourceTree = "<group>"; };
@@ -25921,10 +25925,10 @@
 				CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */,
 				CD54A760180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp */,
 				CD54A761180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h */,
-				CDECA8991EDF447D00DCB08B /* AVAssetTrackUtilities.h */,
-				CDECA8981EDF447D00DCB08B /* AVAssetTrackUtilities.mm */,
 				07C8AD121D073D630087C5CE /* AVAssetMIMETypeCache.h */,
 				07C8AD111D073D630087C5CE /* AVAssetMIMETypeCache.mm */,
+				CDECA8991EDF447D00DCB08B /* AVAssetTrackUtilities.h */,
+				CDECA8981EDF447D00DCB08B /* AVAssetTrackUtilities.mm */,
 				CD11B3DF227CAAA90023AFC7 /* AVStreamDataParserMIMETypeCache.h */,
 				CD11B3E0227CAAA90023AFC7 /* AVStreamDataParserMIMETypeCache.mm */,
 				CD78A2EE1F75648600DE371B /* CDMInstanceFairPlayStreamingAVFObjC.h */,
@@ -27227,6 +27231,9 @@
 				BCCFBAE70B5152ED0001F1D7 /* DocumentParser.h */,
 				AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */,
 				AD6E71AB1668899D00320C13 /* DocumentSharedObjectPool.h */,
+				6BDB5DC1227BD3B800919770 /* DocumentStorageAccess.cpp */,
+				6BDB5DC0227BD3B800919770 /* DocumentStorageAccess.h */,
+				6BDB5DC5227CA0EB00919770 /* DocumentStorageAccess.idl */,
 				86D982F6125C154000AD9E3D /* DocumentTiming.h */,
 				7CE7FA5B1EF882300060C9D6 /* DocumentTouch.cpp */,
 				7CE7FA591EF882300060C9D6 /* DocumentTouch.h */,
@@ -28234,11 +28241,11 @@
 				C9D467051E60C465008195FB /* AutoplayEvent.h in Headers */,
 				45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
+				07F4E93320B3587F002E3803 /* AVAssetMIMETypeCache.h in Headers */,
 				CDECA89B1EDF447D00DCB08B /* AVAssetTrackUtilities.h in Headers */,
 				CDC675271EAEA9D400727C84 /* AVAudioSessionCaptureDevice.h in Headers */,
 				CDC675231EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h in Headers */,
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
-				07F4E93320B3587F002E3803 /* AVAssetMIMETypeCache.h in Headers */,
 				CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */,
 				070363E6181A1CDC00C074A5 /* AVVideoCaptureSource.h in Headers */,
 				29AE212D21AB9EEB00869283 /* AXIsolatedTree.h in Headers */,
@@ -28795,6 +28802,7 @@
 				BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */,
 				4A4F48AA16B0DFC000EDBB29 /* DocumentRuleSets.h in Headers */,
 				AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */,
+				6BDB5DC2227BD3B800919770 /* DocumentStorageAccess.h in Headers */,
 				0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */,
 				71025ED01F99F0CE004A250C /* DocumentTimeline.h in Headers */,
 				71729F7B20F3BA4900801CE6 /* DocumentTimelineOptions.h in Headers */,
@@ -32575,10 +32583,11 @@
 				CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */,
 				CD54A762180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp in Sources */,
 				A5F6E16B132ED46E008EDAE3 /* Autocapitalize.cpp in Sources */,
+				0719427F1D088F21002AA51D /* AVAssetMIMETypeCache.mm in Sources */,
 				CDECA89A1EDF447D00DCB08B /* AVAssetTrackUtilities.mm in Sources */,
 				CDC675221EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm in Sources */,
 				070363E3181A1CDC00C074A5 /* AVCaptureDeviceManager.mm in Sources */,
-				0719427F1D088F21002AA51D /* AVAssetMIMETypeCache.mm in Sources */,
+				CD11B3E1227CE6F30023AFC7 /* AVStreamDataParserMIMETypeCache.mm in Sources */,
 				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
 				070363E7181A1CDC00C074A5 /* AVVideoCaptureSource.mm in Sources */,
 				7A45032F18DB717200377B34 /* BufferedLineReader.cpp in Sources */,
@@ -33021,7 +33030,6 @@
 				DECA80391F9FED6A00E3B661 /* UnifiedSource248.cpp in Sources */,
 				DECA803A1F9FED6A00E3B661 /* UnifiedSource249.cpp in Sources */,
 				DECA803B1F9FED6A00E3B661 /* UnifiedSource250.cpp in Sources */,
-				CD11B3E1227CE6F30023AFC7 /* AVStreamDataParserMIMETypeCache.mm in Sources */,
 				DECA803C1F9FED6A00E3B661 /* UnifiedSource251.cpp in Sources */,
 				DECA803D1F9FED6A00E3B661 /* UnifiedSource252.cpp in Sources */,
 				DECA803E1F9FED6A00E3B661 /* UnifiedSource253.cpp in Sources */,

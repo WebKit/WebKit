@@ -173,10 +173,6 @@ typedef (
     // FIXME: This is not standard and has been dropped from Blink already.
     RenderingContext? getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
 
-    // Non standard, to bring up with standards working group.
-    [EnabledBySetting=StorageAccessAPI] Promise<bool> hasStorageAccess();
-    [EnabledBySetting=StorageAccessAPI] Promise<void> requestStorageAccess();
-
     // Obsolete features from https://html.spec.whatwg.org/multipage/obsolete.html
 
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString fgColor;

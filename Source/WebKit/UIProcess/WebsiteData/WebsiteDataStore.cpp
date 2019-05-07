@@ -1683,56 +1683,6 @@ void WebsiteDataStore::getAllStorageAccessEntries(uint64_t pageID, CompletionHan
     networkProcess.getAllStorageAccessEntries(m_sessionID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::hasStorageAccess(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!resourceLoadStatisticsEnabled()) {
-        completionHandler(false);
-        return;
-    }
-
-    auto* webPage = WebProcessProxy::webPage(pageID);
-    if (!webPage) {
-        completionHandler(false);
-        return;
-    }
-
-    if (auto networkProcess = webPage->process().processPool().networkProcess())
-        networkProcess->hasStorageAccess(m_sessionID, WebCore::RegistrableDomain::uncheckedCreateFromHost(subFrameHost), WebCore::RegistrableDomain::uncheckedCreateFromHost(topFrameHost), frameID, pageID, WTFMove(completionHandler));
-}
-
-void WebsiteDataStore::requestStorageAccess(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
-{
-    if (!resourceLoadStatisticsEnabled()) {
-        completionHandler(StorageAccessStatus::CannotRequestAccess);
-        return;
-    }
-    
-    auto* webPage = WebProcessProxy::webPage(pageID);
-    if (!webPage) {
-        completionHandler(StorageAccessStatus::CannotRequestAccess);
-        return;
-    }
-
-    if (auto networkProcess = webPage->process().processPool().networkProcess())
-        networkProcess->requestStorageAccess(m_sessionID, WebCore::RegistrableDomain::uncheckedCreateFromHost(subFrameHost), WebCore::RegistrableDomain::uncheckedCreateFromHost(topFrameHost), frameID, pageID, WTFMove(completionHandler));
-}
-
-void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!resourceLoadStatisticsEnabled()) {
-        completionHandler(false);
-        return;
-    }
-    
-    auto* webPage = WebProcessProxy::webPage(pageID);
-    if (!webPage) {
-        completionHandler(false);
-        return;
-    }
-
-    if (auto networkProcess = webPage->process().processPool().networkProcess())
-        networkProcess->grantStorageAccess(m_sessionID, WebCore::RegistrableDomain::uncheckedCreateFromHost(subFrameHost), WebCore::RegistrableDomain::uncheckedCreateFromHost(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
-}
 
 void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {

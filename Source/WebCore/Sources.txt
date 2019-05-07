@@ -844,6 +844,7 @@ dom/DocumentFragment.cpp
 dom/DocumentMarkerController.cpp
 dom/DocumentParser.cpp
 dom/DocumentSharedObjectPool.cpp
+dom/DocumentStorageAccess.cpp
 dom/DocumentTouch.cpp @no-unify
 dom/DocumentType.cpp
 dom/Element.cpp

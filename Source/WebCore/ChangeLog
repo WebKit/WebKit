@@ -1,3 +1,64 @@
+2019-05-07  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make two changes requested by developers and complete refactoring and cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=197648
+        <rdar://problem/50527493>
+
+        Reviewed by Chris Dumez.
+
+        Developers have requested two minor changes to the Storage Access API:
+        - Only consume the user gesture when the user explicitly denies access.
+        - Make document.hasStorageAccess() return true instead of false when the feature is off.
+
+        In addition to this, we have refactoring and cleanup to do. Namely:
+        - Make use of WebCore::RegistrableDomain all the way.
+        - Remove dead code in WebKit::NetworkProcess since the calls now go through NetworkConnectionToWebProcess.
+        - Introduce boolean enums for state handling.
+        - Break out the Storage Access API functionality into a supplement of WebCore::Document.
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html
+               http/tests/storageAccess/deny-without-prompt-preserves-gesture.html
+               http/tests/storageAccess/grant-with-prompt-preserves-gesture.html
+               http/tests/storageAccess/has-storage-access-true-if-feature-off.html
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::hasStorageAccess): Deleted.
+        (WebCore::Document::requestStorageAccess): Deleted.
+        (WebCore::Document::enableTemporaryTimeUserGesture): Deleted.
+        (WebCore::Document::consumeTemporaryTimeUserGesture): Deleted.
+        (WebCore::Document::hasFrameSpecificStorageAccess const): Deleted.
+        (WebCore::Document::setHasFrameSpecificStorageAccess): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::setUserGrantsStorageAccessOverride): Deleted.
+            All of this has been moved to the supplement WebCore::DocumentStorageAccess.
+        * dom/Document.idl:
+            The Storage Access API has been moved to DocumentStorageAccess.idl.
+        * dom/DocumentStorageAccess.cpp: Added.
+        (WebCore::DocumentStorageAccess::from):
+        (WebCore::DocumentStorageAccess::supplementName):
+        (WebCore::DocumentStorageAccess::hasStorageAccess):
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+        (WebCore::DocumentStorageAccess::enableTemporaryTimeUserGesture):
+        (WebCore::DocumentStorageAccess::consumeTemporaryTimeUserGesture):
+        (WebCore::DocumentStorageAccess::hasFrameSpecificStorageAccess const):
+        (WebCore::DocumentStorageAccess::setHasFrameSpecificStorageAccess):
+        * dom/DocumentStorageAccess.h: Added.
+        * dom/DocumentStorageAccess.idl: Added.
+        * page/ChromeClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setUserGrantsStorageAccess): Deleted.
+            This was dead code.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-05-07  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] isPrimary property of pointercancel events should match previous events for that pointer

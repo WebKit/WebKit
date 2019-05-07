@@ -18,7 +18,7 @@
                 if (event.data.indexOf("PASS ") !== -1)
                     testPassed(event.data.replace("PASS ", ""));
                 else
-                    testFailed(event.data);
+                    testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
             setEnableFeature(false, finishJSTest);
@@ -62,7 +62,6 @@
                             iframeElement.id = "TheIframeThatRequestsStorageAccess";
                             iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe-and-pop-window.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
                             document.body.appendChild(iframeElement);
-
                         });
                     });
                 });

@@ -28,6 +28,7 @@
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "DisabledAdaptations.h"
 #include "DisplayRefreshMonitor.h"
+#include "DocumentStorageAccess.h"
 #include "FocusDirection.h"
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
@@ -40,6 +41,7 @@
 #include "MediaProducer.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
+#include "RegistrableDomain.h"
 #include "RenderEmbeddedObject.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
@@ -483,8 +485,10 @@ public:
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
-    virtual void hasStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
-    virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void requestStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler) { completionHandler(StorageAccessWasGranted::No, StorageAccessPromptWasShown::No); }
+#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     virtual void shouldAllowDeviceOrientationAndMotionAccess(Frame&, bool /* mayPrompt */, WTF::CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }

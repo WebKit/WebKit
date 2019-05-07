@@ -1,9 +1,6 @@
 <html>
 <head>
     <script>
-        if (internals)
-            internals.setUserGrantsStorageAccess(true);
-
         function makeRequestWithUserGesture() {
             document.requestStorageAccess();
             top.postMessage("API called.", "http://127.0.0.1:8000");

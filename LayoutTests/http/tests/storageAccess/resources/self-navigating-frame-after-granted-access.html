@@ -7,9 +7,6 @@
         const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
         const sameSiteNavigation = hashArguments[3] === "sameSiteNavigation";
 
-        if (internals && userShouldGrantAccess)
-            internals.setUserGrantsStorageAccess(true);
-
         var requestStorageAccessResolved;
 
         function makeRequestWithUserGesture() {

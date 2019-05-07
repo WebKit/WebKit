@@ -8,9 +8,6 @@
         const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
         const originIsNull = hashArguments[4] === "originIsNull";
 
-        if (window.internals)
-            internals.setUserGrantsStorageAccess(userShouldGrantAccess);
-
         if (window.testRunner) {
             testRunner.setCanOpenWindows(false);
             testRunner.setPopupBlockingEnabled(true);
@@ -25,10 +22,14 @@
 
         function windowWasOpened()
         {
-            if (userShouldGrantAccess)
+            if (userShouldBeConsulted && userShouldGrantAccess)
                 messageToTop("PASS Window was successfully opened with user interaction.");
+            else if (userShouldBeConsulted && !userShouldGrantAccess)
+                messageToTop("FAIL Window was opened even though the user explicitly declined permission.");
+            else if (!userShouldBeConsulted && !userShouldGrantAccess)
+                messageToTop("PASS Window was successfully opened with user interaction since the user was never consulted/prompted.");
             else
-                messageToTop("Window was opened even though the user declined permission.");
+                messageToTop("FAIL Conflicting instructions: !userShouldBeConsulted && userShouldGrantAccess .");
         }
 
         function makeRequestWithUserGesture() {
@@ -48,12 +49,14 @@
         function continueAfterRequestWithUserGesture() {
             var win = window.open("request-storage-access-second-window.html", "test window");
             if (!win) {
-                if (userShouldGrantAccess)
-                    messageToTop("Window was not opened even though the user granted permission.");
-                else
+                if (userShouldBeConsulted && userShouldGrantAccess)
+                    messageToTop("FAIL Window was not opened even though the user explicitly granted permission.");
+                else if (userShouldBeConsulted && !userShouldGrantAccess)
                     messageToTop("PASS Window was blocked from opening.");
-            } else if (!userShouldGrantAccess) {
-                messageToTop("Window was opened even though the user did not grant permission.");
+                else if (!userShouldBeConsulted && !userShouldGrantAccess)
+                    messageToTop("FAIL Window was blocked from opening even though the user was never consulted/prompted.");
+                else
+                    messageToTop("FAIL Conflicting instructions: !userShouldBeConsulted && userShouldGrantAccess .");
             }
         }
     </script>

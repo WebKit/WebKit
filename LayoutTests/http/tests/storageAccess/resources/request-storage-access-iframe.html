@@ -8,9 +8,6 @@
         const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
         const originIsNull = hashArguments[4] === "originIsNull";
 
-        if (internals && userShouldGrantAccess)
-                internals.setUserGrantsStorageAccess(true);
-
         var requestStorageAccessResolved;
 
         function messageToTop(messagePrefix, fetchData) {

@@ -6,9 +6,6 @@
         const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
         const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
 
-        if (internals && userShouldGrantAccess)
-                internals.setUserGrantsStorageAccess(true);
-
         var requestStorageAccessResolved;
 
         function makeRequestWithoutUserGesture() {

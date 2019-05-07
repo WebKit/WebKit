@@ -726,36 +726,6 @@ void NetworkProcessProxy::setGrandfathered(PAL::SessionID sessionID, const Regis
     sendWithAsyncReply(Messages::NetworkProcess::SetGrandfathered(sessionID, resourceDomain, isGrandfathered), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::hasStorageAccessForFrame(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler(false);
-        return;
-    }
-
-    sendWithAsyncReply(Messages::NetworkProcess::HasStorageAccessForFrame(sessionID, resourceDomain, topFrameDomain, frameID, pageID), WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::hasStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler(false);
-        return;
-    }
-    
-    sendWithAsyncReply(Messages::NetworkProcess::HasStorageAccess(sessionID, resourceDomain, topFrameDomain, frameID, pageID), WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler(StorageAccessStatus::CannotRequestAccess);
-        return;
-    }
-
-    sendWithAsyncReply(Messages::NetworkProcess::RequestStorageAccess(sessionID, resourceDomain, topFrameDomain, frameID, pageID), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::requestStorageAccessConfirm(uint64_t pageID, uint64_t frameID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
@@ -765,32 +735,6 @@ void NetworkProcessProxy::requestStorageAccessConfirm(uint64_t pageID, uint64_t 
     }
     
     page->requestStorageAccessConfirm(subFrameDomain, topFrameDomain, frameID, WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler(false);
-        return;
-    }
-
-    // FIXME: We should not accept an optional frame ID since we call frameID.value() unconditionally.
-    if (!frameID) {
-        completionHandler(false);
-        return;
-    }
-
-    sendWithAsyncReply(Messages::NetworkProcess::GrantStorageAccess(sessionID, resourceDomain, topFrameDomain, frameID.value(), pageID, userWasPrompted), WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler();
-        return;
-    }
-
-    sendWithAsyncReply(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String> domains)>&& completionHandler)

@@ -1,5 +1,108 @@
 2019-05-07  John Wilander  <wilander@apple.com>
 
+        Storage Access API: Make two changes requested by developers and complete refactoring and cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=197648
+        <rdar://problem/50527493>
+
+        Reviewed by Chris Dumez.
+
+        Developers have requested two minor changes to the Storage Access API:
+        - Only consume the user gesture when the user explicitly denies access.
+        - Make document.hasStorageAccess() return true instead of false when the feature is off.
+
+        In addition to this, we have refactoring and cleanup to do. Namely:
+        - Make use of WebCore::RegistrableDomain all the way.
+        - Remove dead code in WebKit::NetworkProcess since the calls now go through NetworkConnectionToWebProcess.
+        - Introduce boolean enums for state handling.
+        - Break out the Storage Access API functionality into a supplement of WebCore::Document.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt const):
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasUserGrantedStorageAccessThroughPrompt):
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown.
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessGranted): Deleted.
+            This function is now no longer exposed and its functionality could be folded into
+            the existing WebResourceLoadStatisticsStore::requestStorageAccess() which is more
+            clearly named.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::hasStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::hasStorageAccessForFrame): Deleted.
+        (WebKit::NetworkProcess::hasStorageAccess): Deleted.
+        (WebKit::NetworkProcess::requestStorageAccess): Deleted.
+        (WebKit::NetworkProcess::requestStorageAccessGranted): Deleted.
+        (WebKit::NetworkProcess::grantStorageAccess): Deleted.
+        (WebKit::NetworkProcess::removeAllStorageAccess): Deleted.
+            These functions were left behind in the move of ITP to the network process.
+            This communication goes through WebKit::NetworkConnectionToWebProcess since a while back.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Scripts/webkit/messages.py:
+            Instructions for derived IPC code on how to include the new enums
+            WebCore::StorageAccessWasGranted and WebCore::StorageAccessPromptWasShown.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasStorageAccessForFrame): Deleted.
+        (WebKit::NetworkProcessProxy::hasStorageAccess): Deleted.
+        (WebKit::NetworkProcessProxy::requestStorageAccess): Deleted.
+        (WebKit::NetworkProcessProxy::grantStorageAccess): Deleted.
+        (WebKit::NetworkProcessProxy::removeAllStorageAccess): Deleted.
+            These functions were left behind in the move of ITP to the network process.
+            This communication goes through WebKit::NetworkConnectionToWebProcess since a while back.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasStorageAccess): Deleted.
+        (WebKit::WebsiteDataStore::requestStorageAccess): Deleted.
+        (WebKit::WebsiteDataStore::grantStorageAccess): Deleted.
+            These functions were left behind in the move of ITP to the network process.
+            This communication goes through WebKit::NetworkConnectionToWebProcess since a while back.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hasStorageAccess):
+        (WebKit::WebChromeClient::requestStorageAccess):
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown. They also receive WebCore::RegistrableDomain
+            objects instead of Strings now.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasStorageAccess):
+        (WebKit::WebPage::requestStorageAccess):
+            These changes are due to the new enums WebCore::StorageAccessWasGranted and
+            WebCore::StorageAccessPromptWasShown. They also receive WebCore::RegistrableDomain
+            objects instead of Strings now.
+        * WebProcess/WebPage/WebPage.h:
+
+2019-05-07  John Wilander  <wilander@apple.com>
+
         Change IsITPFirstPartyWebsiteDataRemovalEnabled from DEFAULT_EXPERIMENTAL_FEATURES_ENABLED to true.
         https://bugs.webkit.org/show_bug.cgi?id=197667
         <rdar://problem/50549288>

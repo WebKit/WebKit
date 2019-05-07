@@ -368,6 +368,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DocumentIdentifier.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
+    dom/DocumentStorageAccess.h
     dom/DocumentTiming.h
     dom/DocumentType.h
     dom/Element.h

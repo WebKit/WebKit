@@ -1,3 +1,34 @@
+2019-05-07  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make two changes requested by developers and complete refactoring and cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=197648
+        <rdar://problem/50527493>
+
+        Reviewed by Chris Dumez.
+
+        The changed test cases have had calls to WebCore::Internals::setUserGrantsStorageAccess() removed
+        since it was dead code.
+
+        One of the new tests, deny-with-prompt-does-not-preserve-gesture.html, is marked [ Skip ] for now since
+        we lack the ability to click "Don't allow" in the prompt. I wanted to include the test anyway so that
+        we have it. I have done a manual test to make sure the code does the right thing for this case.
+
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-expected.txt: Added.
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window.html.
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture-expected.txt: Added.
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture.html: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window.html.
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window-expected.txt.
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window.html.
+        * http/tests/storageAccess/has-storage-access-true-if-feature-off-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-true-if-feature-off.html: Added.
+        * http/tests/storageAccess/resources/request-storage-access-and-immediately-postmessage-iframe.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe-and-pop-window.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/request-storage-access-without-user-gesture-iframe.html:
+        * http/tests/storageAccess/resources/self-navigating-frame-after-granted-access.html:
+        * platform/mac-wk2/TestExpectations:
+            Added expectations for the new tests.
+
 2019-05-07  Antti Koivisto  <antti@apple.com>
 
         <body> with overflow:hidden shouldn't be keyboard scrollable on iOS

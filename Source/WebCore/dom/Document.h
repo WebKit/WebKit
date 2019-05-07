@@ -108,7 +108,6 @@ class DOMWindow;
 class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
-class DeferredPromise;
 class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
@@ -1465,10 +1464,6 @@ public:
 
     Logger& logger();
 
-    void hasStorageAccess(Ref<DeferredPromise>&& passedPromise);
-    void requestStorageAccess(Ref<DeferredPromise>&& passedPromise);
-    void setUserGrantsStorageAccessOverride(bool value) { m_grantStorageAccessOverride = value; }
-
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
     WEBCORE_EXPORT DocumentTimeline& timeline();
@@ -1501,8 +1496,6 @@ public:
 #endif
 
     String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
-
-    void consumeTemporaryTimeUserGesture();
 
     void registerArticleElement(Element&);
     void unregisterArticleElement(Element&);
@@ -1644,8 +1637,6 @@ private:
     bool shouldEnforceHTTP09Sandbox() const;
 
     void platformSuspendOrStopActiveDOMObjects();
-
-    void enableTemporaryTimeUserGesture();
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
@@ -1851,11 +1842,6 @@ private:
 
     void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool hasFrameSpecificStorageAccess() const;
-    void setHasFrameSpecificStorageAccess(bool);
-#endif
-
 #if ENABLE(DEVICE_ORIENTATION)
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
@@ -2033,8 +2019,6 @@ private:
 
     static bool hasEverCreatedAnAXObjectCache;
 
-    bool m_grantStorageAccessOverride { false };
-
     RefPtr<DocumentTimeline> m_timeline;
     DocumentIdentifier m_identifier;
 
@@ -2048,8 +2032,6 @@ private:
     RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
 #endif
     
-    std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
-
     CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
 
 #if ENABLE(CSS_PAINTING_API)
