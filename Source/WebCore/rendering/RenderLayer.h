@@ -1369,9 +1369,7 @@ void makeMatrixRenderable(TransformationMatrix&, bool has3DRendering);
 
 bool compositedWithOwnBackingStore(const RenderLayer&);
 
-WTF::TextStream& operator<<(WTF::TextStream&, ClipRectsType);
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer&);
-WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer::ClipRectsContext&);
 
 } // namespace WebCore
 

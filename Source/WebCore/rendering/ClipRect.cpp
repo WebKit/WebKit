@@ -38,17 +38,4 @@ bool ClipRect::intersects(const HitTestLocation& hitTestLocation) const
     return hitTestLocation.intersects(m_rect);
 }
 
-TextStream& operator<<(TextStream& ts, const ClipRect& clipRect)
-{
-    ts << "rect ";
-    if (clipRect.isInfinite())
-        ts << "infinite";
-    else
-        ts << clipRect.rect();
-
-    if (clipRect.affectedByRadius())
-        ts << " affected by radius";
-    return ts;
-}
-
 }
