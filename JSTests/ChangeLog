@@ -1,5 +1,15 @@
 2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] We should check OOM for description string of Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=197634
+
+        Reviewed by Keith Miller.
+
+        * stress/check-symbol-description-oom.js: Added.
+        (shouldThrow):
+
+2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, land one more test
         https://bugs.webkit.org/show_bug.cgi?id=197587
 

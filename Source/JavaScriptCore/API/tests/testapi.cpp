@@ -130,6 +130,7 @@ public:
 
     void basicSymbol();
     void symbolsTypeof();
+    void symbolsDescription();
     void symbolsGetPropertyForKey();
     void symbolsSetPropertyForKey();
     void symbolsHasPropertyForKey();
@@ -268,6 +269,7 @@ APIVector<JSValueRef> TestAPI::interestingKeys()
 }
 
 static const char* isSymbolFunction = "(function isSymbol(symbol) { return typeof(symbol) === 'symbol'; })";
+static const char* getSymbolDescription = "(function getSymbolDescription(symbol) { return symbol.description; })";
 static const char* getFunction = "(function get(object, key) { return object[key]; })";
 static const char* setFunction = "(function set(object, key, value) { object[key] = value; })";
 
@@ -281,9 +283,30 @@ void TestAPI::basicSymbol()
 
 void TestAPI::symbolsTypeof()
 {
-    APIString description("dope");
-    JSValueRef symbol = JSValueMakeSymbol(context, description);
-    check(functionReturnsTrue(isSymbolFunction, symbol), "JSValueMakeSymbol makes a symbol value");
+    {
+        JSValueRef symbol = JSValueMakeSymbol(context, nullptr);
+        check(functionReturnsTrue(isSymbolFunction, symbol), "JSValueMakeSymbol makes a symbol value");
+    }
+    {
+        APIString description("dope");
+        JSValueRef symbol = JSValueMakeSymbol(context, description);
+        check(functionReturnsTrue(isSymbolFunction, symbol), "JSValueMakeSymbol makes a symbol value");
+    }
+}
+
+void TestAPI::symbolsDescription()
+{
+    {
+        JSValueRef symbol = JSValueMakeSymbol(context, nullptr);
+        auto result = callFunction(getSymbolDescription, symbol);
+        check(JSValueIsStrictEqual(context, result.value(), JSValueMakeUndefined(context)), "JSValueMakeSymbol with nullptr description produces a symbol value without description");
+    }
+    {
+        APIString description("dope");
+        JSValueRef symbol = JSValueMakeSymbol(context, description);
+        auto result = callFunction(getSymbolDescription, symbol);
+        check(JSValueIsStrictEqual(context, result.value(), JSValueMakeString(context, description)), "JSValueMakeSymbol with description string produces a symbol value with description");
+    }
 }
 
 void TestAPI::symbolsGetPropertyForKey()
@@ -491,6 +514,7 @@ int testCAPIViaCpp(const char* filter)
 
     RUN(basicSymbol());
     RUN(symbolsTypeof());
+    RUN(symbolsDescription());
     RUN(symbolsGetPropertyForKey());
     RUN(symbolsSetPropertyForKey());
     RUN(symbolsHasPropertyForKey());
