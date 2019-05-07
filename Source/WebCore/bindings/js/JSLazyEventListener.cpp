@@ -79,6 +79,18 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const St
 #endif
 }
 
+#if !ASSERT_DISABLED
+// This is to help find the underlying cause of <rdar://problem/24314027>.
+void JSLazyEventListener::checkValidityForEventTarget(EventTarget& eventTarget)
+{
+    if (eventTarget.isNode()) {
+        ASSERT(m_originalNode);
+        ASSERT(static_cast<EventTarget*>(m_originalNode.get()) == &eventTarget);
+    } else
+        ASSERT(!m_originalNode);
+}
+#endif
+
 JSLazyEventListener::~JSLazyEventListener()
 {
 #ifndef NDEBUG

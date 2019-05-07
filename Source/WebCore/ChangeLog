@@ -1,3 +1,22 @@
+2019-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Add assertions to JSLazyEventListener to help catch the cause of a crash
+        https://bugs.webkit.org/show_bug.cgi?id=197617
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add assertions to JSLazyEventListener to help catch the cause of <rdar://problem/24314027>.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::checkValidityForEventTarget):
+        * bindings/js/JSLazyEventListener.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::checkValidityForEventTarget):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::setAttributeEventListener):
+        (WebCore::EventTarget::innerInvokeEventListeners):
+
 2019-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials

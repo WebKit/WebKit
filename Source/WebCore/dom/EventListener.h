@@ -31,6 +31,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class Event;
+class EventTarget;
 
 class EventListener : public RefCounted<EventListener> {
 public:
@@ -54,6 +55,10 @@ public:
 
     virtual bool isAttribute() const { return false; }
     Type type() const { return m_type; }
+
+#if !ASSERT_DISABLED
+    virtual void checkValidityForEventTarget(EventTarget&) { }
+#endif
 
 protected:
     explicit EventListener(Type type)

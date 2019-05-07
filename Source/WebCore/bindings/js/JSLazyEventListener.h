@@ -46,6 +46,10 @@ private:
     static RefPtr<JSLazyEventListener> create(CreationArguments&&);
     JSLazyEventListener(CreationArguments&&, const String& sourceURL, const TextPosition&);
 
+#if !ASSERT_DISABLED
+    void checkValidityForEventTarget(EventTarget&) final;
+#endif
+
     JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const final;
     bool wasCreatedFromMarkup() const final { return true; }
 
