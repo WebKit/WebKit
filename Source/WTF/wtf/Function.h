@@ -30,6 +30,32 @@
 
 namespace WTF {
 
+namespace Detail {
+
+template<typename Out, typename... In>
+class CallableWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    virtual ~CallableWrapperBase() { }
+    virtual Out call(In...) = 0;
+};
+
+template<typename, typename, typename...> class CallableWrapper;
+
+template<typename CallableType, typename Out, typename... In>
+class CallableWrapper : public CallableWrapperBase<Out, In...> {
+public:
+    explicit CallableWrapper(CallableType&& callable)
+        : m_callable(WTFMove(callable)) { }
+    CallableWrapper(const CallableWrapper&) = delete;
+    CallableWrapper& operator=(const CallableWrapper&) = delete;
+    Out call(In... in) final { return m_callable(std::forward<In>(in)...); }
+private:
+    CallableType m_callable;
+};
+
+} // namespace Detail
+
 template<typename> class Function;
 
 template <typename Out, typename... In>
@@ -41,15 +67,11 @@ public:
 
     template<typename CallableType, class = typename std::enable_if<!(std::is_pointer<CallableType>::value && std::is_function<typename std::remove_pointer<CallableType>::type>::value) && std::is_rvalue_reference<CallableType&&>::value>::type>
     Function(CallableType&& callable)
-        : m_callableWrapper(std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable)))
-    {
-    }
+        : m_callableWrapper(std::make_unique<Detail::CallableWrapper<CallableType, Out, In...>>(WTFMove(callable))) { }
 
     template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
     Function(FunctionType f)
-        : m_callableWrapper(std::make_unique<CallableWrapper<FunctionType>>(WTFMove(f)))
-    {
-    }
+        : m_callableWrapper(std::make_unique<Detail::CallableWrapper<FunctionType, Out, In...>>(WTFMove(f))) { }
 
     Out operator()(In... in) const
     {
@@ -62,14 +84,14 @@ public:
     template<typename CallableType, class = typename std::enable_if<!(std::is_pointer<CallableType>::value && std::is_function<typename std::remove_pointer<CallableType>::type>::value) && std::is_rvalue_reference<CallableType&&>::value>::type>
     Function& operator=(CallableType&& callable)
     {
-        m_callableWrapper = std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable));
+        m_callableWrapper = std::make_unique<Detail::CallableWrapper<CallableType, Out, In...>>(WTFMove(callable));
         return *this;
     }
 
     template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
     Function& operator=(FunctionType f)
     {
-        m_callableWrapper = std::make_unique<CallableWrapper<FunctionType>>(WTFMove(f));
+        m_callableWrapper = std::make_unique<Detail::CallableWrapper<FunctionType, Out, In...>>(WTFMove(f));
         return *this;
     }
 
@@ -80,32 +102,7 @@ public:
     }
 
 private:
-    class CallableWrapperBase {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual ~CallableWrapperBase() { }
-
-        virtual Out call(In...) = 0;
-    };
-
-    template<typename CallableType>
-    class CallableWrapper : public CallableWrapperBase {
-    public:
-        explicit CallableWrapper(CallableType&& callable)
-            : m_callable(WTFMove(callable))
-        {
-        }
-
-        CallableWrapper(const CallableWrapper&) = delete;
-        CallableWrapper& operator=(const CallableWrapper&) = delete;
-
-        Out call(In... in) final { return m_callable(std::forward<In>(in)...); }
-
-    private:
-        CallableType m_callable;
-    };
-
-    std::unique_ptr<CallableWrapperBase> m_callableWrapper;
+    std::unique_ptr<Detail::CallableWrapperBase<Out, In...>> m_callableWrapper;
 };
 
 } // namespace WTF

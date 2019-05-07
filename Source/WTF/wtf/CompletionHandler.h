@@ -63,6 +63,23 @@ private:
     Function<Out(In...)> m_function;
 };
 
+namespace Detail {
+
+template<typename Out, typename... In>
+class CallableWrapper<CompletionHandler<Out(In...)>, Out, In...> : public CallableWrapperBase<Out, In...> {
+public:
+    explicit CallableWrapper(CompletionHandler<Out(In...)>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    {
+        RELEASE_ASSERT(m_completionHandler);
+    }
+    Out call(In... in) final { return m_completionHandler(std::forward<In>(in)...); }
+private:
+    CompletionHandler<Out(In...)> m_completionHandler;
+};
+
+} // namespace Detail
+
 class CompletionHandlerCallingScope {
 public:
     CompletionHandlerCallingScope() = default;

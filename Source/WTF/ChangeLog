@@ -1,3 +1,21 @@
+2019-05-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add a release assertion that Functions can only be constructed from non-null CompletionHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=197641
+
+        Reviewed by Chris Dumez.
+
+        This will help us find the cause of rdar://problem/48679972 by seeing the crash when the Function is dispatched,
+        not when it's called with no interesting stack trace.  I manually verified this assertion is hit in such a case.
+        We should also have no legitimate use of creating a Function out of a null CompletionHandler then never calling it.
+
+        * wtf/CompletionHandler.h:
+        (WTF::Detail::CallableWrapper<CompletionHandler<Out):
+        * wtf/Function.h:
+        (WTF::Detail::CallableWrapperBase::~CallableWrapperBase):
+        (WTF::Detail::CallableWrapper::CallableWrapper):
+        (WTF::Function<Out):
+
 2019-05-06  Christopher Reid  <chris.reid@sony.com>
 
         [JSC] Respect already defined USE_LLINT_EMBEDDED_OPCODE_ID compiler variable.
