@@ -1,3 +1,14 @@
+2019-05-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        media/W3C/video/events/event_progress.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=175678
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/wk2/TestExpectations: Remove old WK2-only expectation.
+
 2019-05-07  Chris Dumez  <cdumez@apple.com>
 
         fast/dom/frame-src-javascript-url-async.html is flaky
