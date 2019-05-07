@@ -44,6 +44,16 @@ ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
 	endif
 endif
 
+ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
+	CAN_USE_XCBUILD = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print canUseXCBuild()')
+	ifeq ($(CAN_USE_XCBUILD),1)
+		XCODE_OPTIONS += -UseNewBuildSystem=YES
+		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=YES
+	else
+		XCODE_OPTIONS += -UseNewBuildSystem=NO
+	endif
+endif
+
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
 

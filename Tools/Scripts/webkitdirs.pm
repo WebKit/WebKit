@@ -849,7 +849,6 @@ sub XcodeOptions
     determineXcodeSDK();
 
     my @options;
-    push @options, "-UseNewBuildSystem=NO";
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
@@ -893,6 +892,11 @@ sub XcodeCoverageSupportOptions()
 sub XcodeStaticAnalyzerOption()
 {
     return "RUN_CLANG_STATIC_ANALYZER=YES";
+}
+
+sub canUseXCBuild()
+{
+    return 0;
 }
 
 my $passedConfiguration;

@@ -73,6 +73,7 @@ my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
 my $ltoMode = "default";
+my $xcbuild = undef;
 my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
@@ -115,6 +116,7 @@ Usage: $programName [options] [options to pass to build system]
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (iOS and Mac only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
+  --[no-]xcbuild                    Force the use of XCBuild or not
 
   --gtk                             Build the GTK+ port
   --wpe                             Build the WPE port
@@ -153,6 +155,7 @@ my %options = (
     'analyze' => \$shouldRunStaticAnalyzer,
     'no-experimental-features' => \$noExperimentalFeatures,
     'lto-mode=s' => \$ltoMode,
+    'xcbuild!' => \$xcbuild,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
 );
@@ -207,6 +210,18 @@ my @options = ();
 
 if (isAppleCocoaWebKit()) {
     push @options, XcodeOptions();
+
+    if (not defined $xcbuild) {
+        $xcbuild = canUseXCBuild();
+    }
+
+    if ($xcbuild) {
+        push @options, "-UseNewBuildSystem=YES";
+        push @options, "USE_NEW_BUILD_SYSTEM=YES";
+    } else {
+        push @options, "-UseNewBuildSystem=NO";
+    }
+
     sub option($$)
     {
         my ($feature, $isEnabled) = @_;

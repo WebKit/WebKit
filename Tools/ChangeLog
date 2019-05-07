@@ -1,3 +1,22 @@
+2019-05-07  Keith Rollin  <krollin@apple.com>
+
+        Add option to build-webkit to control whether or not XCBuild is used
+        https://bugs.webkit.org/show_bug.cgi?id=197668
+        <rdar://problem/50549728>
+
+        Reviewed by Tim Horton.
+
+        Add --[no-]xcbuild to build-webkit to force the use of XCBuild or not.
+        Also update build-webkit and the makefiles with the foundation for
+        automatically using XCBuild when the conditions allow it. This latter
+        facility is currently turned off until Xcode fully supports building
+        WebKit with XCBuild.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        (canUseXCBuild):
+
 2019-05-07  Andy Estes  <aestes@apple.com>
 
         run-bindings-tests should test global scope constructor generation
