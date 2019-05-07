@@ -1353,6 +1353,10 @@ void WebPage::close()
     m_determinePrimarySnapshottedPlugInTimer.stop();
 #endif
 
+#if ENABLE(VIEWPORT_RESIZING)
+    m_shrinkToFitContentTimer.stop();
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     m_contextMenuClient = std::make_unique<API::InjectedBundle::PageContextMenuClient>();
 #endif

@@ -1,3 +1,16 @@
+2019-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Occasional crashes in layout tests when firing the shrink-to-fit-content timer
+        https://bugs.webkit.org/show_bug.cgi?id=197629
+        <rdar://problem/50514382>
+
+        Reviewed by Tim Horton.
+
+        Fixes several crashing layout tests by stopping the shrink-to-fit-content timer when the page closes.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
 2019-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials
