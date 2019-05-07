@@ -1,3 +1,16 @@
+2019-05-07  Antti Koivisto  <antti@apple.com>
+
+        <body> with overflow:hidden shouldn't be keyboard scrollable on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197659
+        <rdar://problem/50541453>
+
+        Reviewed by Antoine Quint.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView isScrollableForKeyboardScrollViewAnimator:]):
+
+        Disable also keyboard scrolling when touch scrolling is disabled.
+
 2019-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Avoid crashing the UI process when writing empty data to the pasteboard

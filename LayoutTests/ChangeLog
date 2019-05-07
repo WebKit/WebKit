@@ -1,3 +1,13 @@
+2019-05-07  Antti Koivisto  <antti@apple.com>
+
+        <body> with overflow:hidden shouldn't be keyboard scrollable on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197659
+
+        Reviewed by Antoine Quint.
+
+        * fast/scrolling/ios/body-overflow-hidden-keyboard-expected.html: Added.
+        * fast/scrolling/ios/body-overflow-hidden-keyboard.html: Added.
+
 2019-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         media/W3C/video/events/event_progress.html is flaky.

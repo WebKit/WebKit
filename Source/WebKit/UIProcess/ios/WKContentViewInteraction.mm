@@ -4620,6 +4620,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (_focusedElementInformation.elementType == WebKit::InputType::Select)
         return NO;
 
+    if (!_webView.scrollView.scrollEnabled)
+        return NO;
+
     return YES;
 }
 
