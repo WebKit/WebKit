@@ -1,3 +1,45 @@
+2019-05-06  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Add demos to webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=196951
+
+        Reviewed by Dean Jackson.
+
+        Add simple triangle and spinning textured cube demos to the website.
+        Add Web GPU to experimental-features.html.
+
+        * demos/webgpu/css/style.css: Added.
+        (body):
+        (canvas):
+        (body.error canvas):
+        (h1):
+        (#container):
+        (select):
+        (div#log):
+        (body.error):
+        (body.error #contents):
+        (#error):
+        (@media (max-width: 480px)):
+        (body.error #error):
+        (#error h2):
+        (#error p):
+        * demos/webgpu/hello-cube.html: Added.
+        * demos/webgpu/hello-triangle.html: Added.
+        * demos/webgpu/index.html: Added.
+        * demos/webgpu/resources/circle.svg: Added.
+        * demos/webgpu/resources/hello-cube.png: Added.
+        * demos/webgpu/resources/hello-triangle.png: Added.
+        * demos/webgpu/resources/safari-alpha.png: Added.
+        * demos/webgpu/scripts/gl-matrix-min.js: Added.
+        (return.n):
+        (return.n.d):
+        (return.):
+        (return.get n.n):
+        (return.n.o):
+        * demos/webgpu/scripts/hello-triangle.js: Added.
+        (async.helloTriangle):
+        * experimental-features.html:
+
 2019-03-28  Jon Davis  <jond@apple.com>
 
         Fix font family for WebKit.org
