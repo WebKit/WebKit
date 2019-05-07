@@ -44,11 +44,6 @@ void EvalExecutable::destroy(JSCell* cell)
     static_cast<EvalExecutable*>(cell)->EvalExecutable::~EvalExecutable();
 }
 
-auto EvalExecutable::ensureTemplateObjectMap(VM&) -> TemplateObjectMap&
-{
-    return ensureTemplateObjectMapImpl(m_templateObjectMap);
-}
-
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
@@ -56,11 +51,6 @@ void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_unlinkedEvalCodeBlock);
     visitor.append(thisObject->m_evalCodeBlock);
-    if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
-        auto locker = holdLock(thisObject->cellLock());
-        for (auto& entry : *map)
-            visitor.append(entry.value);
-    }
 }
 
 } // namespace JSC

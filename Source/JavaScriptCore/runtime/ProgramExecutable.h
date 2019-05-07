@@ -73,8 +73,6 @@ public:
 
     ExecutableInfo executableInfo() const { return ExecutableInfo(usesEval(), isStrictMode(), false, false, ConstructorKind::None, JSParserScriptMode::Classic, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, derivedContextType(), isArrowFunctionContext(), false, EvalContextType::None); }
 
-    TemplateObjectMap& ensureTemplateObjectMap(VM&);
-
 private:
     friend class ExecutableBase;
     friend class ScriptExecutable;
@@ -85,7 +83,6 @@ private:
 
     WriteBarrier<UnlinkedProgramCodeBlock> m_unlinkedProgramCodeBlock;
     WriteBarrier<ExecutableToCodeBlockEdge> m_programCodeBlock;
-    std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
 };
 
 } // namespace JSC

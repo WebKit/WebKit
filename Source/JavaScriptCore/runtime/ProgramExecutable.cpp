@@ -216,11 +216,6 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     return nullptr;
 }
 
-auto ProgramExecutable::ensureTemplateObjectMap(VM&) -> TemplateObjectMap&
-{
-    return ensureTemplateObjectMapImpl(m_templateObjectMap);
-}
-
 void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ProgramExecutable* thisObject = jsCast<ProgramExecutable*>(cell);
@@ -228,11 +223,6 @@ void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_unlinkedProgramCodeBlock);
     visitor.append(thisObject->m_programCodeBlock);
-    if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
-        auto locker = holdLock(thisObject->cellLock());
-        for (auto& entry : *map)
-            visitor.append(entry.value);
-    }
 }
 
 } // namespace JSC

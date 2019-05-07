@@ -25,6 +25,3 @@
 
 - path: complex/generator-regeneration.js
   cmd: runComplexTest [], ["generator-regeneration-after.js"], "--useDollarVM=1"
-
-- path: complex/tagged-template-regeneration.js
-  cmd: runComplexTest [], ["tagged-template-regeneration-after.js"], "--useDollarVM=1"

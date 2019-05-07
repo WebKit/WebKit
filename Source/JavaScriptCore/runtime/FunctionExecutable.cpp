@@ -54,10 +54,9 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
         m_singletonFunctionState = ClearWatchpoint;
 }
 
-void FunctionExecutable::finishCreation(VM& vm, ScriptExecutable* topLevelExecutable)
+void FunctionExecutable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    m_topLevelExecutable.set(vm, this, topLevelExecutable ? topLevelExecutable : this);
     if (VM::canUseJIT())
         m_singletonFunction.set(vm, this, InferredValue::create(vm));
 }
@@ -86,20 +85,12 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_topLevelExecutable);
     visitor.append(thisObject->m_codeBlockForCall);
     visitor.append(thisObject->m_codeBlockForConstruct);
     visitor.append(thisObject->m_unlinkedExecutable);
     if (VM::canUseJIT())
         visitor.append(thisObject->m_singletonFunction);
-    if (RareData* rareData = thisObject->m_rareData.get()) {
-        visitor.append(rareData->m_cachedPolyProtoStructure);
-        if (TemplateObjectMap* map = rareData->m_templateObjectMap.get()) {
-            auto locker = holdLock(thisObject->cellLock());
-            for (auto& entry : *map)
-                visitor.append(entry.value);
-        }
-    }
+    visitor.append(thisObject->m_cachedPolyProtoStructure);
 }
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
@@ -112,7 +103,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(
     if (!unlinkedExecutable)
         return nullptr;
 
-    return unlinkedExecutable->link(exec.vm(), nullptr, source, overrideLineNumber);
+    return unlinkedExecutable->link(exec.vm(), source, overrideLineNumber);
 }
 
 FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
@@ -124,7 +115,6 @@ FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
     rareData->m_parametersStartOffset = parametersStartOffset();
     rareData->m_typeProfilingStartOffset = typeProfilingStartOffset();
     rareData->m_typeProfilingEndOffset = typeProfilingEndOffset();
-    WTF::storeStoreFence();
     m_rareData = WTFMove(rareData);
     return *m_rareData;
 }
@@ -138,12 +128,6 @@ void FunctionExecutable::overrideInfo(const FunctionOverrideInfo& overrideInfo)
     rareData.m_parametersStartOffset = overrideInfo.parametersStartOffset;
     rareData.m_typeProfilingStartOffset = overrideInfo.typeProfilingStartOffset;
     rareData.m_typeProfilingEndOffset = overrideInfo.typeProfilingEndOffset;
-}
-
-auto FunctionExecutable::ensureTemplateObjectMap(VM&) -> TemplateObjectMap&
-{
-    RareData& rareData = ensureRareData();
-    return ensureTemplateObjectMapImpl(rareData.m_templateObjectMap);
 }
 
 } // namespace JSC

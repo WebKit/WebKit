@@ -69,8 +69,6 @@ public:
 
     SymbolTable* moduleEnvironmentSymbolTable() { return m_moduleEnvironmentSymbolTable.get(); }
 
-    TemplateObjectMap& ensureTemplateObjectMap(VM&);
-
 private:
     friend class ExecutableBase;
     friend class ScriptExecutable;
@@ -82,7 +80,6 @@ private:
     WriteBarrier<UnlinkedModuleProgramCodeBlock> m_unlinkedModuleProgramCodeBlock;
     WriteBarrier<SymbolTable> m_moduleEnvironmentSymbolTable;
     WriteBarrier<ExecutableToCodeBlockEdge> m_moduleProgramCodeBlock;
-    std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
 };
 
 } // namespace JSC

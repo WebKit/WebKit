@@ -2948,12 +2948,12 @@ JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
     return stringInMap;
 }
 
-RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&& descriptor, int startOffset)
+RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&& descriptor)
 {
-    auto result = m_templateObjectDescriptorSet.add(WTFMove(descriptor));
-    JSTemplateObjectDescriptor* descriptorValue = m_templateDescriptorMap.ensure(startOffset, [&] {
-        return JSTemplateObjectDescriptor::create(*vm(), result.iterator->copyRef(), startOffset);
+    JSTemplateObjectDescriptor* descriptorValue = m_templateObjectDescriptorMap.ensure(descriptor.copyRef(), [&] {
+        return JSTemplateObjectDescriptor::create(*vm(), WTFMove(descriptor));
     }).iterator->value;
+
     int index = addConstantIndex();
     m_codeBlock->addConstant(descriptorValue);
     return &m_constantPoolRegisters[index];
@@ -4141,7 +4141,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         else
             cookedStrings.append(string->cooked()->impl());
     }
-    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTFMove(rawStrings), WTFMove(cookedStrings)), taggedTemplate->startOffset());
+    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTFMove(rawStrings), WTFMove(cookedStrings)));
     if (!dst)
         return constant.get();
     return move(dst, constant.get());

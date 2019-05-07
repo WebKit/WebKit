@@ -85,11 +85,6 @@ void ModuleProgramExecutable::destroy(JSCell* cell)
     static_cast<ModuleProgramExecutable*>(cell)->ModuleProgramExecutable::~ModuleProgramExecutable();
 }
 
-auto ModuleProgramExecutable::ensureTemplateObjectMap(VM&) -> TemplateObjectMap&
-{
-    return ensureTemplateObjectMapImpl(m_templateObjectMap);
-}
-
 void ModuleProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ModuleProgramExecutable* thisObject = jsCast<ModuleProgramExecutable*>(cell);
@@ -98,11 +93,6 @@ void ModuleProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_unlinkedModuleProgramCodeBlock);
     visitor.append(thisObject->m_moduleEnvironmentSymbolTable);
     visitor.append(thisObject->m_moduleProgramCodeBlock);
-    if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
-        auto locker = holdLock(thisObject->cellLock());
-        for (auto& entry : *map)
-            visitor.append(entry.value);
-    }
 }
 
 } // namespace JSC

@@ -48,10 +48,10 @@ public:
         return &vm.functionExecutableSpace.space;
     }
 
-    static FunctionExecutable* create(VM& vm, ScriptExecutable* topLevelExecutable, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic)
+    static FunctionExecutable* create(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic)
     {
         FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, intrinsic);
-        executable->finishCreation(vm, topLevelExecutable);
+        executable->finishCreation(vm);
         return executable;
     }
     static FunctionExecutable* fromGlobalCode(
@@ -282,16 +282,8 @@ public:
     }
 
     // Cached poly proto structure for the result of constructing this executable.
-    Structure* cachedPolyProtoStructure()
-    {
-        if (UNLIKELY(m_rareData))
-            return m_rareData->m_cachedPolyProtoStructure.get();
-        return nullptr;
-    }
-    void setCachedPolyProtoStructure(VM& vm, Structure* structure)
-    {
-        ensureRareData().m_cachedPolyProtoStructure.set(vm, this, structure);
-    }
+    Structure* cachedPolyProtoStructure() { return m_cachedPolyProtoStructure.get(); }
+    void setCachedPolyProtoStructure(VM& vm, Structure* structure) { m_cachedPolyProtoStructure.set(vm, this, structure); }
 
     InlineWatchpointSet& ensurePolyProtoWatchpoint()
     {
@@ -302,15 +294,11 @@ public:
 
     Box<InlineWatchpointSet> sharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
 
-    ScriptExecutable* topLevelExecutable() const { return m_topLevelExecutable.get(); }
-
-    TemplateObjectMap& ensureTemplateObjectMap(VM&);
-
 private:
     friend class ExecutableBase;
     FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic);
     
-    void finishCreation(VM&, ScriptExecutable* topLevelExecutable);
+    void finishCreation(VM&);
 
     friend class ScriptExecutable;
 
@@ -323,8 +311,6 @@ private:
         unsigned m_parametersStartOffset { 0 };
         unsigned m_typeProfilingStartOffset { UINT_MAX };
         unsigned m_typeProfilingEndOffset { UINT_MAX };
-        std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
-        WriteBarrier<Structure> m_cachedPolyProtoStructure;
     };
 
     RareData& ensureRareData()
@@ -335,11 +321,7 @@ private:
     }
     RareData& ensureRareDataSlow();
 
-    // FIXME: We can merge rareData pointer and top-level executable pointer. First time, setting parent.
-    // If RareData is required, materialize RareData, swap it, and store top-level executable pointer inside RareData.
-    // https://bugs.webkit.org/show_bug.cgi?id=197625
     std::unique_ptr<RareData> m_rareData;
-    WriteBarrier<ScriptExecutable> m_topLevelExecutable;
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForCall;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForConstruct;
@@ -347,6 +329,7 @@ private:
         WriteBarrier<InferredValue> m_singletonFunction;
         WatchpointState m_singletonFunctionState;
     };
+    WriteBarrier<Structure> m_cachedPolyProtoStructure;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 };
 

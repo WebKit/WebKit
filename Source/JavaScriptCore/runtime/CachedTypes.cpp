@@ -1152,26 +1152,24 @@ private:
 
 class CachedTemplateObjectDescriptor : public CachedObject<TemplateObjectDescriptor> {
 public:
-    void encode(Encoder& encoder, const JSTemplateObjectDescriptor& descriptor)
+    void encode(Encoder& encoder, const TemplateObjectDescriptor& templateObjectDescriptor)
     {
-        m_rawStrings.encode(encoder, descriptor.descriptor().rawStrings());
-        m_cookedStrings.encode(encoder, descriptor.descriptor().cookedStrings());
-        m_startOffset = descriptor.startOffset();
+        m_rawStrings.encode(encoder, templateObjectDescriptor.rawStrings());
+        m_cookedStrings.encode(encoder, templateObjectDescriptor.cookedStrings());
     }
 
-    JSTemplateObjectDescriptor* decode(Decoder& decoder) const
+    Ref<TemplateObjectDescriptor> decode(Decoder& decoder) const
     {
         TemplateObjectDescriptor::StringVector decodedRawStrings;
         TemplateObjectDescriptor::OptionalStringVector decodedCookedStrings;
         m_rawStrings.decode(decoder, decodedRawStrings);
         m_cookedStrings.decode(decoder, decodedCookedStrings);
-        return JSTemplateObjectDescriptor::create(decoder.vm(), TemplateObjectDescriptor::create(WTFMove(decodedRawStrings), WTFMove(decodedCookedStrings)), m_startOffset);
+        return TemplateObjectDescriptor::create(WTFMove(decodedRawStrings), WTFMove(decodedCookedStrings));
     }
 
 private:
     CachedVector<CachedString, 4> m_rawStrings;
     CachedVector<CachedOptional<CachedString>, 4> m_cookedStrings;
-    int m_startOffset;
 };
 
 class CachedBigInt : public VariableLengthObject<JSBigInt> {
@@ -1245,7 +1243,7 @@ public:
 
         if (auto* templateObjectDescriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
             m_type = EncodedType::TemplateObjectDescriptor;
-            this->allocate<CachedTemplateObjectDescriptor>(encoder)->encode(encoder, *templateObjectDescriptor);
+            this->allocate<CachedTemplateObjectDescriptor>(encoder)->encode(encoder, templateObjectDescriptor->descriptor());
             return;
         }
 
@@ -1280,7 +1278,7 @@ public:
             v = this->buffer<CachedRegExp>()->decode(decoder);
             break;
         case EncodedType::TemplateObjectDescriptor:
-            v = this->buffer<CachedTemplateObjectDescriptor>()->decode(decoder);
+            v = JSTemplateObjectDescriptor::create(decoder.vm(), this->buffer<CachedTemplateObjectDescriptor>()->decode(decoder));
             break;
         case EncodedType::BigInt:
             v = this->buffer<CachedBigInt>()->decode(decoder);

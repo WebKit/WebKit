@@ -69,8 +69,6 @@ public:
     unsigned numTopLevelFunctionDecls() { return m_unlinkedEvalCodeBlock->numberOfFunctionDecls(); }
     bool allowDirectEvalCache() const { return m_unlinkedEvalCodeBlock->allowDirectEvalCache(); }
 
-    TemplateObjectMap& ensureTemplateObjectMap(VM&);
-
 protected:
     friend class ExecutableBase;
     friend class ScriptExecutable;
@@ -82,7 +80,6 @@ protected:
 
     WriteBarrier<ExecutableToCodeBlockEdge> m_evalCodeBlock;
     WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
-    std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
 };
 
 } // namespace JSC
