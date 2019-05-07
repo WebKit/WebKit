@@ -299,11 +299,6 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
     m_pendingPreset = nullptr;
     m_pendingFrameRate = 0;
 
-    auto* frameRateRange = frameDurationForFrameRate(requestedFrameRate);
-    ASSERT(frameRateRange);
-    if (!frameRateRange)
-        return;
-
     if (!avPreset)
         return;
 
@@ -316,11 +311,6 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
             if (!m_currentPreset || ![m_currentPreset->format.get() isEqual:avPreset->format.get()]) {
                 [device() setActiveFormat:avPreset->format.get()];
 
-                frameRateRange = frameDurationForFrameRate(requestedFrameRate);
-                ASSERT(frameRateRange);
-                if (!frameRateRange)
-                    return;
-
 #if PLATFORM(MAC)
                 auto settingsDictionary = @{
                     (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
@@ -331,10 +321,20 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
                 [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
             }
+            auto* frameRateRange = frameDurationForFrameRate(requestedFrameRate);
+            ASSERT(frameRateRange);
+            if (!frameRateRange)
+                return;
 
-            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate ", CMTimeGetSeconds([frameRateRange minFrameDuration]), " .. ", CMTimeGetSeconds([frameRateRange maxFrameDuration]));
-            [device() setActiveVideoMinFrameDuration:[frameRateRange minFrameDuration]];
-            [device() setActiveVideoMaxFrameDuration:[frameRateRange maxFrameDuration]];
+            if (requestedFrameRate < frameRateRange.minFrameRate)
+                requestedFrameRate = frameRateRange.minFrameRate;
+            else if (requestedFrameRate > frameRateRange.maxFrameRate)
+                requestedFrameRate = frameRateRange.maxFrameRate;
+
+            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", requestedFrameRate);
+            [device() setActiveVideoMinFrameDuration: CMTimeMake(1, requestedFrameRate)];
+            [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, requestedFrameRate)];
+
             [device() unlockForConfiguration];
         }
     } @catch(NSException *exception) {

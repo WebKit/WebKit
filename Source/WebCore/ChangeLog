@@ -1,3 +1,23 @@
+2019-05-07  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia framerate unusable under low light in iOS 12.2
+        https://bugs.webkit.org/show_bug.cgi?id=196214
+        <rdar://problem/49232193>
+
+        Reviewed by Geoffrey Garen.
+
+        When setting the frame rate, set it to the exact value instead of a range.
+        Otherwise, the capture device might use the lowest frame rate according the light conditions
+        for best picture quality which is not what is expected by most web pages.
+
+        Move frame rate range computation to closer where actually used.
+        Since frame rate matching is fuzzy, add some checks in case the expected frame rate is slightly out of min/max range.
+
+        Manually tested on a real device.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSizeAndFrameRateWithPreset):
+
 2019-05-07  Robin Morisset  <rmorisset@apple.com>
 
         All prototypes should call didBecomePrototype()
