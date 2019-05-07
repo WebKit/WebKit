@@ -1,3 +1,14 @@
+2019-05-06  Tim Horton  <timothy_horton@apple.com>
+
+        _overrideViewportWithArguments does not work when called before loading
+        https://bugs.webkit.org/show_bug.cgi?id=197638
+        <rdar://problem/50505111>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/OverrideViewportArguments.mm:
+        (TEST):
+
 2019-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore removeDataOfTypes:forDataRecords:completionHandler:] doesn't delete _WKWebsiteDataTypeCredentials

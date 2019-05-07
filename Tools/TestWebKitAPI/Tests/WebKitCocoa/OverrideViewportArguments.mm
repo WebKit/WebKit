@@ -75,6 +75,14 @@ TEST(WebKit, OverrideViewportArguments)
 
     setViewport(@{ @"width" : @"500", @"initial-scale": @"1", @"garbage": @"nonsense" });
     EXPECT_WK_STREQ("500", bodyWidth());
+
+    // Call overrideViewportWithArguments before loading anything in the
+    // view and ensure it is respected.
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 20, 20)]);
+    setViewport(@{ @"width" : @"1000", @"initial-scale": @"1" });
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'><div id='divWithViewportUnits' style='width: 100vw;'></div>"];
+    EXPECT_WK_STREQ("1000", bodyWidth());
+    EXPECT_EQ(1., [webView scrollView].zoomScale);
 }
 
 #endif

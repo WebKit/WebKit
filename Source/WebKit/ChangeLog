@@ -1,3 +1,14 @@
+2019-05-06  Tim Horton  <timothy_horton@apple.com>
+
+        _overrideViewportWithArguments does not work when called before loading
+        https://bugs.webkit.org/show_bug.cgi?id=197638
+        <rdar://problem/50505111>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setOverrideViewportArguments):
+
 2019-05-06  Chris Dumez  <cdumez@apple.com>
 
         ASSERT at WebKit::NetworkCache::makeSafeToUseMemoryMapForPath under Storage::StoreBodyAsBlob when running WebDriver tests

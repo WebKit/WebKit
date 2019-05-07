@@ -2829,8 +2829,7 @@ void WebPage::setDeviceOrientation(int32_t deviceOrientation)
 
 void WebPage::setOverrideViewportArguments(const Optional<WebCore::ViewportArguments>& arguments)
 {
-    if (auto* document = m_page->mainFrame().document())
-        document->setOverrideViewportArguments(arguments);
+    m_page->setOverrideViewportArguments(arguments);
 }
 
 void WebPage::resetTextAutosizing()

@@ -3554,15 +3554,6 @@ void Document::dispatchDisabledAdaptationsDidChangeForMainFrame()
     page()->chrome().dispatchDisabledAdaptationsDidChange(m_disabledAdaptations);
 }
 
-void Document::setOverrideViewportArguments(const Optional<ViewportArguments>& viewportArguments)
-{
-    if (viewportArguments == m_overrideViewportArguments)
-        return;
-
-    m_overrideViewportArguments = viewportArguments;
-    updateViewportArguments();
-}
-
 void Document::processViewport(const String& features, ViewportArguments::Type origin)
 {
     ASSERT(!features.isNull());
@@ -3581,6 +3572,14 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
     });
 
     updateViewportArguments();
+}
+
+ViewportArguments Document::viewportArguments() const
+{
+    auto* page = this->page();
+    if (!page)
+        return m_viewportArguments;
+    return page->overrideViewportArguments().valueOr(m_viewportArguments);
 }
 
 void Document::updateViewportArguments()

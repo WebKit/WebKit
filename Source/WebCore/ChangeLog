@@ -1,3 +1,25 @@
+2019-05-06  Tim Horton  <timothy_horton@apple.com>
+
+        _overrideViewportWithArguments does not work when called before loading
+        https://bugs.webkit.org/show_bug.cgi?id=197638
+        <rdar://problem/50505111>
+
+        Reviewed by Wenson Hsieh.
+
+        * dom/Document.cpp:
+        (WebCore::Document::viewportArguments const):
+        (WebCore::Document::updateViewportArguments):
+        (WebCore::Document::setOverrideViewportArguments): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::viewportArguments const): Deleted.
+        * page/Page.cpp:
+        (WebCore::Page::setOverrideViewportArguments):
+        * page/Page.h:
+        (WebCore::Page::overrideViewportArguments const):
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::setViewportArguments):
+        Move overrideViewportArguments to Page, since it is view-global in the API.
+
 2019-05-06  Chris Dumez  <cdumez@apple.com>
 
         Add assertions to JSLazyEventListener to help catch the cause of a crash

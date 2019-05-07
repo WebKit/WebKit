@@ -193,6 +193,9 @@ public:
     WEBCORE_EXPORT OptionSet<DisabledAdaptations> disabledAdaptations() const;
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
+    const Optional<ViewportArguments>& overrideViewportArguments() const { return m_overrideViewportArguments; }
+    WEBCORE_EXPORT void setOverrideViewportArguments(const Optional<ViewportArguments>&);
+
     static void refreshPlugins(bool reload);
     WEBCORE_EXPORT PluginData& pluginData();
     void clearPluginData();
@@ -977,6 +980,8 @@ private:
 #if ENABLE(APPLICATION_MANIFEST)
     Optional<ApplicationManifest> m_applicationManifest;
 #endif
+
+    Optional<ViewportArguments> m_overrideViewportArguments;
 
     bool m_shouldEnableICECandidateFilteringByDefault { true };
     bool m_mediaPlaybackIsSuspended { false };
