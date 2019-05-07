@@ -1,3 +1,17 @@
+2019-05-06  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT at WebKit::NetworkCache::makeSafeToUseMemoryMapForPath under Storage::StoreBodyAsBlob when running WebDriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=197635
+        <rdar://problem/50473149>
+
+        Reviewed by Geoffrey Garen.
+
+        We need to make sure the the path at blobPathString exists before calling FileSystem::makeSafeToUseMemoryMapForPath().
+        If the blob does not already exist when BlobStorage::add() is called, what will create it is the call to Data::mapToFile().
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::add):
+
 2019-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Occasional crashes in layout tests when firing the shrink-to-fit-content timer

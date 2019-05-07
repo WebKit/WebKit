@@ -94,7 +94,6 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
         return { data, hash };
 
     String blobPathString = blobPathForHash(hash);
-    FileSystem::makeSafeToUseMemoryMapForPath(blobPathString);
     
     auto blobPath = FileSystem::fileSystemRepresentation(blobPathString);
     auto linkPath = FileSystem::fileSystemRepresentation(path);
@@ -102,6 +101,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
 
     bool blobExists = access(blobPath.data(), F_OK) != -1;
     if (blobExists) {
+        FileSystem::makeSafeToUseMemoryMapForPath(blobPathString);
         auto existingData = mapFile(blobPath.data());
         if (bytesEqual(existingData, data)) {
             if (link(blobPath.data(), linkPath.data()) == -1)
@@ -114,6 +114,8 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     auto mappedData = data.mapToFile(blobPath.data());
     if (mappedData.isNull())
         return { };
+
+    FileSystem::makeSafeToUseMemoryMapForPath(blobPathString);
 
     if (link(blobPath.data(), linkPath.data()) == -1)
         WTFLogAlways("Failed to create hard link from %s to %s", blobPath.data(), linkPath.data());
