@@ -181,6 +181,17 @@ size_t BitVector::bitCountSlow() const
     return result;
 }
 
+bool BitVector::isEmptySlow() const
+{
+    ASSERT(!isInline());
+    const OutOfLineBits* bits = outOfLineBits();
+    for (unsigned i = bits->numWords(); i--;) {
+        if (bits->bits()[i])
+            return false;
+    }
+    return true;
+}
+
 bool BitVector::equalsSlowCase(const BitVector& other) const
 {
     bool result = equalsSlowCaseFast(other);

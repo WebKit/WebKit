@@ -1,3 +1,15 @@
+2019-05-07  Robin Morisset  <rmorisset@apple.com>
+
+        WTF::BitVector should have an isEmpty() method
+        https://bugs.webkit.org/show_bug.cgi?id=197637
+
+        Reviewed by Keith Miller.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::isEmptySlow const):
+        * wtf/BitVector.h:
+        (WTF::BitVector::isEmpty const):
+
 2019-05-07  Brent Fulgham  <bfulgham@apple.com>
 
         Correct JSON parser to address unterminated escape character
