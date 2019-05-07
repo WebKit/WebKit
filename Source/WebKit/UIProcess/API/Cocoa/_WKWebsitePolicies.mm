@@ -95,16 +95,6 @@
     return [_webpagePreferences _popUpPolicy];
 }
 
-- (NSDictionary<NSString *, NSString *> *)customHeaderFields
-{
-    return [_webpagePreferences _customHeaderFields];
-}
-
-- (void)setCustomHeaderFields:(NSDictionary<NSString *, NSString *> *)fields
-{
-    [_webpagePreferences _setCustomHeaderFields:fields];
-}
-
 - (WKWebsiteDataStore *)websiteDataStore
 {
     return [_webpagePreferences _websiteDataStore];

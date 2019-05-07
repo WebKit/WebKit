@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-#import <WebKit/WKWebpagePreferencesPrivate.h>
+#pragma once
 
-@class WKWebsiteDataStore;
+#include "APIObject.h"
+#include <WebCore/CustomHeaderFields.h>
 
-WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
-@interface _WKWebsitePolicies : NSObject
+namespace API {
 
-@property (nonatomic) BOOL contentBlockersEnabled;
-@property (nonatomic) _WKWebsiteAutoplayQuirk allowedAutoplayQuirks WK_API_AVAILABLE(macos(10.13), ios(11.0));
-@property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy WK_API_AVAILABLE(macos(10.13), ios(11.0));
-@property (nonatomic) _WKWebsitePopUpPolicy popUpPolicy WK_API_AVAILABLE(macos(10.14), ios(12.0));
-@property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, copy) NSString *customUserAgent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, copy) NSString *customJavaScriptUserAgentAsSiteSpecificQuirks WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, copy) NSString *customNavigatorPlatform WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) _WKWebsiteDeviceOrientationAndMotionAccessPolicy deviceOrientationAndMotionAccessPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+class CustomHeaderFields final : public ObjectImpl<Object::Type::CustomHeaderFields> {
+public:
+    template<typename... Args> static Ref<CustomHeaderFields> create(Args&&... args)
+    {
+        return adoptRef(*new CustomHeaderFields(std::forward<Args>(args)...));
+    }
 
-@end
+    CustomHeaderFields() = default;
+
+    const Vector<WebCore::HTTPHeaderField>& fields() const { return m_fields.fields; }
+    void setFields(Vector<WebCore::HTTPHeaderField>&& fields) { m_fields.fields = WTFMove(fields); }
+
+    const Vector<WTF::String> thirdPartyDomains() const { return m_fields.thirdPartyDomains; }
+    void setThirdPartyDomains(Vector<WTF::String>&& domains) { m_fields.thirdPartyDomains = WTFMove(domains); }
+
+    const WebCore::CustomHeaderFields& coreFields() const { return m_fields; }
+
+private:
+    CustomHeaderFields(const WebCore::CustomHeaderFields& fields)
+        : m_fields(fields) { }
+
+    WebCore::CustomHeaderFields m_fields;
+};
+
+} // namespace API

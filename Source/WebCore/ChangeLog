@@ -1,3 +1,34 @@
+2019-05-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to set a list of hosts to which to send custom header fields cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=197397
+
+        Reviewed by Geoff Garen.
+
+        In r223001 I added the ability to send custom headers, but with a restriction that they will not be sent except to the origin of the main document.
+        We need the ability to specify what origins to send these headers to even if they are not first party requests.
+        We get this information in a list of strings which are the hosts to send the headers to.  Some of the strings have an asterisk at the beginning,
+        indicating that the headers are to be sent to all subdomains.
+
+        I repurposed some ObjC SPI that was never adopted, but I keep testing the C API that was to verify no regression.
+        I also added some new API tests for the new behavior.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CustomHeaderFields.cpp: Added.
+        (WebCore::CustomHeaderFields::thirdPartyDomainsMatch const):
+        * loader/CustomHeaderFields.h: Added.
+        (WebCore::CustomHeaderFields::encode const):
+        (WebCore::CustomHeaderFields::decode):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setCustomHeaderFields): Deleted.
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomHeaderFields):
+        (WebCore::DocumentLoader::customHeaderFields const):
+        (WebCore::DocumentLoader::customHeaderFields): Deleted.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
 2019-05-07  Andy Estes  <aestes@apple.com>
 
         run-bindings-tests should test global scope constructor generation

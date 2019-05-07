@@ -26,9 +26,11 @@
 #import "config.h"
 #import "WKWebpagePreferences.h"
 
+#import "APICustomHeaderFields.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebCompatibilityMode.h"
+#import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <wtf/RetainPtr.h>
 
@@ -214,26 +216,22 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     }
 }
 
-- (NSDictionary<NSString *, NSString *> *)_customHeaderFields
+- (NSArray<_WKCustomHeaderFields *> *)_customHeaderFields
 {
     const auto& fields = _websitePolicies->customHeaderFields();
-    auto dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:fields.size()]);
+    NSMutableArray *array = [[[NSMutableArray alloc] initWithCapacity:fields.size()] autorelease];
     for (const auto& field : fields)
-        [dictionary setObject:field.value() forKey:field.name()];
-    return dictionary.autorelease();
+        [array addObject:wrapper(API::CustomHeaderFields::create(field))];
+    return array;
 }
 
-- (void)_setCustomHeaderFields:(NSDictionary<NSString *, NSString *> *)fields
+- (void)_setCustomHeaderFields:(NSArray<_WKCustomHeaderFields *> *)fields
 {
-    Vector<WebCore::HTTPHeaderField> parsedFields;
-    parsedFields.reserveInitialCapacity(fields.count);
-
-    for (NSString *name in fields) {
-        auto field = WebCore::HTTPHeaderField::create(name, [fields objectForKey:name]);
-        if (field && startsWithLettersIgnoringASCIICase(field->name(), "x-"))
-            parsedFields.uncheckedAppend(WTFMove(*field));
-    }
-    _websitePolicies->setCustomHeaderFields(WTFMove(parsedFields));
+    Vector<WebCore::CustomHeaderFields> vector;
+    vector.reserveInitialCapacity(fields.count);
+    for (_WKCustomHeaderFields *element in fields)
+        vector.uncheckedAppend(static_cast<API::CustomHeaderFields&>([element _apiObject]).coreFields());
+    _websitePolicies->setCustomHeaderFields(WTFMove(vector));
 }
 
 - (WKWebsiteDataStore *)_websiteDataStore

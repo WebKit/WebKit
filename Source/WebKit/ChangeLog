@@ -1,3 +1,50 @@
+2019-05-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to set a list of hosts to which to send custom header fields cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=197397
+
+        Reviewed by Geoff Garen.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::decode):
+        * Shared/WebsitePoliciesData.h:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APICustomHeaderFields.h: Added.
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::WebsitePolicies):
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesCopyCustomHeaderFields):
+        (WKWebsitePoliciesSetCustomHeaderFields):
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _customHeaderFields]):
+        (-[WKWebpagePreferences _setCustomHeaderFields:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+        * UIProcess/API/Cocoa/_WKCustomHeaderFields.h: Added.
+        * UIProcess/API/Cocoa/_WKCustomHeaderFields.mm: Added.
+        (-[_WKCustomHeaderFields init]):
+        (-[_WKCustomHeaderFields dealloc]):
+        (-[_WKCustomHeaderFields fields]):
+        (-[_WKCustomHeaderFields setFields:]):
+        (-[_WKCustomHeaderFields thirdPartyDomains]):
+        (-[_WKCustomHeaderFields setThirdPartyDomains:]):
+        (-[_WKCustomHeaderFields _apiObject]):
+        * UIProcess/API/Cocoa/_WKCustomHeaderFieldsInternal.h: Added.
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies customHeaderFields]): Deleted.
+        (-[_WKWebsitePolicies setCustomHeaderFields:]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::takeFocus):
+        (WebKit::WebViewImpl::accessibilityAttributeValue):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-05-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Cannot build documentation with gtk-doc

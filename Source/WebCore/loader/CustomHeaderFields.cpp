@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-#import <WebKit/WKWebpagePreferencesPrivate.h>
+#include "config.h"
+#include "CustomHeaderFields.h"
 
-@class WKWebsiteDataStore;
+#include "HTTPHeaderField.h"
+#include "RegistrableDomain.h"
 
-WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
-@interface _WKWebsitePolicies : NSObject
+namespace WebCore {
 
-@property (nonatomic) BOOL contentBlockersEnabled;
-@property (nonatomic) _WKWebsiteAutoplayQuirk allowedAutoplayQuirks WK_API_AVAILABLE(macos(10.13), ios(11.0));
-@property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy WK_API_AVAILABLE(macos(10.13), ios(11.0));
-@property (nonatomic) _WKWebsitePopUpPolicy popUpPolicy WK_API_AVAILABLE(macos(10.14), ios(12.0));
-@property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, copy) NSString *customUserAgent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, copy) NSString *customJavaScriptUserAgentAsSiteSpecificQuirks WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, copy) NSString *customNavigatorPlatform WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) _WKWebsiteDeviceOrientationAndMotionAccessPolicy deviceOrientationAndMotionAccessPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+bool CustomHeaderFields::thirdPartyDomainsMatch(const URL& url) const
+{
+    if (thirdPartyDomains.isEmpty())
+        return false;
 
-@end
+    auto registrableDomainLength = RegistrableDomain(url).string().length();
+    for (const auto& domainOrPattern : thirdPartyDomains) {
+        if (domainOrPattern == url.host())
+            return true;
+        if (domainOrPattern.startsWith("*.")
+            && url.host().endsWith(StringView(domainOrPattern).substring(1))
+            && domainOrPattern.length() > registrableDomainLength)
+            return true;
+    }
+
+    return false;
+}
+
+}
