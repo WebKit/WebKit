@@ -129,8 +129,9 @@ void AuthenticatorManager::makeCredential(const Vector<uint8_t>& hash, const Pub
     using namespace AuthenticatorManagerInternal;
 
     if (m_pendingCompletionHandler) {
-        callback(ExceptionData { NotAllowedError, "A request is pending."_s });
-        return;
+        m_pendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
+        clearState();
+        m_requestTimeOutTimer.stop();
     }
 
     // 1. Save request for async operations.
@@ -147,8 +148,9 @@ void AuthenticatorManager::getAssertion(const Vector<uint8_t>& hash, const Publi
     using namespace AuthenticatorManagerInternal;
 
     if (m_pendingCompletionHandler) {
-        callback(ExceptionData { NotAllowedError, "A request is pending."_s });
-        return;
+        m_pendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
+        clearState();
+        m_requestTimeOutTimer.stop();
     }
 
     // 1. Save request for async operations.
@@ -166,11 +168,16 @@ void AuthenticatorManager::clearStateAsync()
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
-        weakThis->m_pendingRequestData = { };
-        ASSERT(!weakThis->m_pendingCompletionHandler);
-        weakThis->m_services.clear();
-        weakThis->m_authenticators.clear();
+        weakThis->clearState();
     });
+}
+
+void AuthenticatorManager::clearState()
+{
+    m_pendingRequestData = { };
+    ASSERT(!m_pendingCompletionHandler);
+    m_services.clear();
+    m_authenticators.clear();
 }
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
@@ -231,7 +238,7 @@ void AuthenticatorManager::timeOutTimerFired()
 {
     ASSERT(m_requestTimeOutTimer.isActive());
     m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
-    clearStateAsync();
+    clearState();
 }
 
 } // namespace WebKit

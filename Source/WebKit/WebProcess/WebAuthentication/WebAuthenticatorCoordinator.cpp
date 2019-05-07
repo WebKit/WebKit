@@ -50,18 +50,14 @@ WebAuthenticatorCoordinator::~WebAuthenticatorCoordinator()
 
 void WebAuthenticatorCoordinator::makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options, WebCore::RequestCompletionHandler&& handler)
 {
-    if (!setRequestCompletionHandler(WTFMove(handler)))
-        return;
-
-    m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(hash, options));
+    auto messageId = setRequestCompletionHandler(WTFMove(handler));
+    m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(messageId, hash, options));
 }
 
 void WebAuthenticatorCoordinator::getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options, WebCore::RequestCompletionHandler&& handler)
 {
-    if (!setRequestCompletionHandler(WTFMove(handler)))
-        return;
-
-    m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(hash, options));
+    auto messageId = setRequestCompletionHandler(WTFMove(handler));
+    m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(messageId, hash, options));
 }
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&& handler)

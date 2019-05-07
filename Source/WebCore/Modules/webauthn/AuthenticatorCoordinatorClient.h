@@ -56,18 +56,19 @@ public:
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
 
     // Receivers.
-    void requestReply(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
+    void requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
     void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
 
 protected:
-    // Only one request is allowed at one time. It returns false whenever there is an existing pending request.
-    // And invokes the provided handler with NotAllowedError.
-    bool setRequestCompletionHandler(RequestCompletionHandler&&);
+    // Only one request is allowed at one time. A new request will cancel any pending request.
+    // A message id that is tied to the request wil be generated each time to prevent mismatching responses.
+    uint64_t setRequestCompletionHandler(RequestCompletionHandler&&);
     uint64_t addQueryCompletionHandler(QueryCompletionHandler&&);
 
 private:
+    uint64_t m_accumulatedRequestMessageId { 1 };
     RequestCompletionHandler m_pendingCompletionHandler;
-    uint64_t m_accumulatedMessageId { 1 };
+    uint64_t m_accumulatedQueryMessageId { 1 };
     HashMap<uint64_t, QueryCompletionHandler> m_pendingQueryCompletionHandlers;
 };
 

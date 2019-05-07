@@ -26,7 +26,7 @@
 
 messages -> WebAuthenticatorCoordinator {
 
-    RequestReply(struct WebCore::PublicKeyCredentialData data, struct WebCore::ExceptionData exception);
+    RequestReply(uint64_t messageId, struct WebCore::PublicKeyCredentialData data, struct WebCore::ExceptionData exception);
     IsUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result);
 }
 

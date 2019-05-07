@@ -32,8 +32,10 @@
 
 namespace WebCore {
 
-void AuthenticatorCoordinatorClient::requestReply(const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception)
+void AuthenticatorCoordinatorClient::requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception)
 {
+    if (messageId != m_accumulatedRequestMessageId - 1)
+        return;
     m_pendingCompletionHandler(data, exception);
 }
 
@@ -43,20 +45,18 @@ void AuthenticatorCoordinatorClient::isUserVerifyingPlatformAuthenticatorAvailab
     handler(result);
 }
 
-bool AuthenticatorCoordinatorClient::setRequestCompletionHandler(RequestCompletionHandler&& handler)
+uint64_t AuthenticatorCoordinatorClient::setRequestCompletionHandler(RequestCompletionHandler&& handler)
 {
-    if (m_pendingCompletionHandler) {
-        handler({ }, { NotAllowedError, "A request is pending."_s });
-        return false;
-    }
+    if (m_pendingCompletionHandler)
+        m_pendingCompletionHandler({ }, { NotAllowedError, "This request has been voided by a new request."_s });
 
     m_pendingCompletionHandler = WTFMove(handler);
-    return true;
+    return m_accumulatedRequestMessageId++;
 }
 
 uint64_t AuthenticatorCoordinatorClient::addQueryCompletionHandler(QueryCompletionHandler&& handler)
 {
-    uint64_t messageId = m_accumulatedMessageId++;
+    uint64_t messageId = m_accumulatedQueryMessageId++;
     auto addResult = m_pendingQueryCompletionHandlers.add(messageId, WTFMove(handler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     return messageId;

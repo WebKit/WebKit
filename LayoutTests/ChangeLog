@@ -1,3 +1,21 @@
+2019-05-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] A new request should always suppress the pending request if any
+        https://bugs.webkit.org/show_bug.cgi?id=191517
+        <rdar://problem/46888222>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * http/wpt/webauthn/resources/new-page.html: Added.
+
 2019-05-07  Youenn Fablet  <youenn@apple.com>
 
         Video stream freeze on front camera orientation changing

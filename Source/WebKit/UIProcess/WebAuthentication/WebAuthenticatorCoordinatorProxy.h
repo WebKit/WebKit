@@ -54,12 +54,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
-    void getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&);
+    void makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
+    void getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&);
     void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
 
     // Senders.
-    void requestReply(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
+    void requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
 
     WebPageProxy& m_webPageProxy;
 };

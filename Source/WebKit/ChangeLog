@@ -1,3 +1,57 @@
+2019-05-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] A new request should always suppress the pending request if any
+        https://bugs.webkit.org/show_bug.cgi?id=191517
+        <rdar://problem/46888222>
+
+        Reviewed by Brent Fulgham.
+
+        Previously we blocked new WebAuthN requests whenever a pending request was in progress
+        to prevent background tabs from DoS foreground tabs. However, in r244938, the WebAuthN
+        API was changed to restrict request handling to the focused document. Therefore, we no
+        longer have a risk of DoS.
+
+        Apart from the vanished benefit, this behavoir actually blocks new pages to use
+        WebAuthN API in the period between [the previous initating page is closed, the pending
+        request is hanedled/timeout].
+
+        Also, it makes sense to have the current focused document preempt the pending request.
+        Therefore, the policy will be to always cancel any pending requests whenever a new
+        request is made. This will enforce the policy of handling only one request at a time.
+
+        Note that the current implementation doesn't explicitly cancel pending requests in the
+        Authenticators, which means that we could receive responses from the Authenticator that
+        were meant for a previous (now cancelled) request. A follow-up patch (see Bug 191523)
+        will implement an Authenticator feature to support immediate cancellation.
+
+        In the meantime, to protect the atomicity of the request/response pair, i.e., preventing an old
+        response being used for a new request, there are two safeguards:
+        1) In web process, each request to UI process is paired with an incremental ID, and therefore an old
+        response from UI process would have a different ID than the current request, which will then be ignored.
+        2) In UI process, all responses from authenticators will be piped to the main run loop for processing.
+        Therefore, when the new request comes in, the old response is either processed or waiting in the pipe.
+        To prevent the latter being processed, the new request will immediately destroy any authenticators bound
+        to the old response in the current run loop. Hence, in the next run loop when dealing the old response,
+        the lambda will have no where to hand the response over.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::makeCredential):
+        (WebKit::AuthenticatorManager::getAssertion):
+        (WebKit::AuthenticatorManager::clearStateAsync):
+        (WebKit::AuthenticatorManager::clearState):
+        (WebKit::AuthenticatorManager::timeOutTimerFired):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        (WebKit::WebAuthenticatorCoordinatorProxy::requestReply):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in:
+
 2019-05-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Crash with sandbox error

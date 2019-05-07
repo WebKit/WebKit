@@ -1,3 +1,25 @@
+2019-05-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] A new request should always suppress the pending request if any
+        https://bugs.webkit.org/show_bug.cgi?id=191517
+        <rdar://problem/46888222>
+
+        Reviewed by Brent Fulgham.
+
+        Blocking new requests from the same page when there is a pending request could DoS the
+        WebAuthN API in the period between [the page is refreshed, the pending request is
+        hanedled/timeout]. Therefore, the policy will be to always cancel any pending requests
+        whenever a new request is made. This will enforce the policy of handling only one
+        request at a time.
+
+        Covered by new tests in existing files.
+
+        * Modules/webauthn/AuthenticatorCoordinatorClient.cpp:
+        (WebCore::AuthenticatorCoordinatorClient::requestReply):
+        (WebCore::AuthenticatorCoordinatorClient::setRequestCompletionHandler):
+        (WebCore::AuthenticatorCoordinatorClient::addQueryCompletionHandler):
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+
 2019-05-07  Eric Carlson  <eric.carlson@apple.com>
 
         Define media buffering policy
