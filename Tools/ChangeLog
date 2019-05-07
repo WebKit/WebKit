@@ -1,3 +1,16 @@
+2019-05-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak] webkit-build fails due to missing GTK2 in build environment
+        https://bugs.webkit.org/show_bug.cgi?id=197352
+
+        Reviewed by Philippe Normand.
+
+        The Flatpak runtimes do not include GTK 2.x anymore, which means that we need
+        to build it ourselves on top in order to be able to build the GTK 2.x plugin
+        process.
+
+        * flatpak/org.webkit.GTK.yaml: Add gtk2 package.
+
 2019-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Avoid crashing the UI process when writing empty data to the pasteboard
