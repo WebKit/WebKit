@@ -1,3 +1,33 @@
+2019-05-06  Keith Miller  <keith_miller@apple.com>
+
+        JSWrapperMap should check if existing prototype properties are wrappers when copying exported methods.
+        https://bugs.webkit.org/show_bug.cgi?id=197324
+        <rdar://problem/50253144>
+
+        Reviewed by Saam Barati.
+
+        The current implementation prevents using JSExport to shadow a
+        method from a super class. This was because we would only add a
+        method if the prototype didn't already claim to have the
+        property. Normally this would only happen if an Objective-C super
+        class already exported a ObjCCallbackFunction for the method,
+        however, if the user exports a property that is already on
+        Object.prototype the overriden method won't be exported.
+
+        This patch fixes the object prototype issue by checking if the
+        property on the prototype chain is an ObjCCallbackFunction, if
+        it's not then it adds an override.
+
+        * API/JSWrapperMap.mm:
+        (copyMethodsToObject):
+        * API/tests/testapi.mm:
+        (-[ToStringClass toString]):
+        (-[ToStringClass other]):
+        (-[ToStringSubclass toString]):
+        (-[ToStringSubclassNoProtocol toString]):
+        (testToString):
+        (testObjectiveCAPI):
+
 2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] We should check OOM for description string of Symbol

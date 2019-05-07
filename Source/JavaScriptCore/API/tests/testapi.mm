@@ -2535,6 +2535,62 @@ static void testJSScriptURL()
     }
 }
 
+
+@protocol ToString <JSExport>
+- (NSString *)toString;
+@end
+
+@interface ToStringClass : NSObject<ToString>
+@end
+
+@implementation ToStringClass
+- (NSString *)toString
+{
+    return @"foo";
+}
+@end
+
+@interface ToStringSubclass : ToStringClass<ToString>
+@end
+
+@implementation ToStringSubclass
+- (NSString *)toString
+{
+    return @"baz";
+}
+@end
+
+@interface ToStringSubclassNoProtocol : ToStringClass
+@end
+
+@implementation ToStringSubclassNoProtocol
+- (NSString *)toString
+{
+    return @"baz";
+}
+@end
+
+static void testToString()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        JSValue *toStringClass = [JSValue valueWithObject:[[ToStringClass alloc] init] inContext:context];
+        checkResult(@"exporting a property with the same name as a builtin on Object.prototype should still be exported", [[toStringClass invokeMethod:@"toString" withArguments:@[]] isEqualToObject:@"foo"]);
+        checkResult(@"converting an object with an exported custom toObject property should use that method", [[toStringClass toString] isEqualToString:@"foo"]);
+
+        toStringClass = [JSValue valueWithObject:[[ToStringSubclass alloc] init] inContext:context];
+        checkResult(@"Calling a method on a derived class should call the derived implementation", [[toStringClass invokeMethod:@"toString" withArguments:@[]] isEqualToObject:@"baz"]);
+        checkResult(@"Converting an object with an exported custom toObject property should use that method", [[toStringClass toString] isEqualToString:@"baz"]);
+        context[@"toStringValue"] = toStringClass;
+        JSValue *hasOwnProperty = [context evaluateScript:@"toStringValue.__proto__.hasOwnProperty('toString')"];
+        checkResult(@"A subclass that exports a method exported by a super class shouldn't have a duplicate prototype method", [hasOwnProperty toBool]);
+
+        toStringClass = [JSValue valueWithObject:[[ToStringSubclassNoProtocol alloc] init] inContext:context];
+        checkResult(@"Calling a method on a derived class should call the derived implementation even when not exported on the derived class", [[toStringClass invokeMethod:@"toString" withArguments:@[]] isEqualToObject:@"baz"]);
+    }
+}
+
 #define RUN(test) do { \
         if (!shouldRun(#test)) \
             break; \
@@ -2555,6 +2611,7 @@ void testObjectiveCAPI(const char* filter)
 
     RUN(checkNegativeNSIntegers());
     RUN(runJITThreadLimitTests());
+    RUN(testToString());
 
     RUN(testLoaderResolvesAbsoluteScriptURL());
     RUN(testFetch());

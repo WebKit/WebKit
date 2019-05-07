@@ -268,7 +268,16 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
             name = renameMap[name];
             if (!name)
                 name = selectorToPropertyName(nameCStr);
-            if ([object hasProperty:name])
+            auto exec = toJS([context JSGlobalContextRef]);
+            JSValue *existingMethod = object[name];
+            // ObjCCallbackFunction does a dynamic lookup for the
+            // selector before calling the method. In order to save
+            // memory we only put one callback object in any givin
+            // prototype chain. However, to handle the client trying
+            // to override normal builtins e.g. "toString" we check if
+            // the existing value on the prototype chain is an ObjC
+            // callback already.
+            if ([existingMethod isObject] && JSC::jsDynamicCast<JSC::ObjCCallbackFunction*>(exec->vm(), toJS(exec, [existingMethod JSValueRef])))
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
