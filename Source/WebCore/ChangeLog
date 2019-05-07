@@ -1,3 +1,14 @@
+2019-05-07  Antoine Quint  <graouts@apple.com>
+
+        Mouse event simulation should be limited to the graphing calculator on Desmos.com
+        https://bugs.webkit.org/show_bug.cgi?id=197652
+        <rdar://problem/47068176>
+
+        Reviewed by Antti Koivisto.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDispatchSimulatedMouseEvents const):
+
 2019-05-06  James Savage  <james.savage@apple.com>
 
         Improve coordination for creating UIWindow instances.
