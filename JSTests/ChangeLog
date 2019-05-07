@@ -1,3 +1,14 @@
+2019-05-06  Dean Jackson  <dino@apple.com>
+
+        Update test262 expectations for Proxy passes
+        https://bugs.webkit.org/show_bug.cgi?id=197628
+
+        Reviewed by Yusuke Suzuki.
+
+        There are two consistent passes in Proxy.ownKeys.
+
+        * test262/expectations.yaml:
+
 2019-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] We should check OOM for description string of Symbol
