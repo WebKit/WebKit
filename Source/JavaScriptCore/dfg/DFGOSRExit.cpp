@@ -452,7 +452,7 @@ void OSRExit::executeOSRExit(Context& context)
 
     context.sp() = context.fp<uint8_t*>() + exitState.stackPointerOffset;
 
-    // The only reason for using this do while look is so we can break out midway when appropriate.
+    // The only reason for using this do while loop is so we can break out midway when appropriate.
     do {
         auto extraInitializationLevel = static_cast<ExtraInitializationLevel>(exitState.extraInitializationLevel);
 

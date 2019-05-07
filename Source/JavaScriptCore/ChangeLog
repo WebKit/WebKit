@@ -1,5 +1,39 @@
 2019-05-07  Robin Morisset  <rmorisset@apple.com>
 
+        [B3] Constants should be hoisted to the root block until moveConstants
+        https://bugs.webkit.org/show_bug.cgi?id=197265
+
+        Reviewed by Saam Barati.
+
+        This patch does the following:
+        - B3ReduceStrength now hoists all constants to the root BB, and de-duplicates them along the way
+        - B3PureCSE no longer bothers with constants, since they are already de-duplicated by the time it gets to see them
+        - We now run eliminateDeadCode just after moveConstants, so that the Nops that moveConstants generates are freed instead of staying live throughout Air compilation, reducing memory pressure.
+        - I also took the opportunity to fix typos in comments in various parts of the code base.
+
+        Here are a few numbers to justify this patch:
+        - In JetStream2, about 27% of values at the beginning of B3 are constants
+        - In JetStream2, about 11% of values at the end of B3 are Nops
+        - In JetStream2, this patch increases the number of times that tail duplication happens from a bit less than 24k to a bit more than 25k (hoisting constants makes blocks smaller).
+
+        When I tried measuring the total effect on JetStream2 I got a tiny and almost certainly non-significant progression.
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3PureCSE.cpp:
+        (JSC::B3::PureCSE::process):
+        * b3/B3PureCSE.h:
+        * b3/B3ReduceStrength.cpp:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+
+2019-05-07  Robin Morisset  <rmorisset@apple.com>
+
         All prototypes should call didBecomePrototype()
         https://bugs.webkit.org/show_bug.cgi?id=196315
 

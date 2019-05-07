@@ -33,7 +33,7 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Computes BasicBlock::ssa->availabiltiyAtHead/Tail. This is a forward flow type inference
+// Computes BasicBlock::ssa->availabilityAtHead/Tail. This is a forward flow type inference
 // over MovHints and SetLocals. This analysis is run directly by the Plan for preparing for
 // lowering to B3 IR, but it can also be used as a utility. Note that if you run it before
 // stack layout, all of the flush availability will omit the virtual register - but it will

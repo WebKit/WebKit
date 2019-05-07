@@ -402,6 +402,7 @@ public:
         : m_proc(proc)
         , m_insertionSet(proc)
         , m_blockInsertionSet(proc)
+        , m_root(proc.at(0))
     {
     }
 
@@ -442,6 +443,7 @@ public:
             // keep @thing. That's better, since we usually want things to stay wherever the client
             // put them. We're not actually smart enough to move things around at random.
             m_changed |= eliminateDeadCodeImpl(m_proc);
+            m_valueForConstant.clear();
             
             simplifySSA();
             
@@ -2145,7 +2147,29 @@ private:
             }
             break;
         }
-            
+
+        case Const32:
+        case Const64:
+        case ConstFloat:
+        case ConstDouble: {
+            ValueKey key = m_value->key();
+            if (Value* constInRoot = m_valueForConstant.get(key)) {
+                if (constInRoot != m_value) {
+                    m_value->replaceWithIdentity(constInRoot);
+                    m_changed = true;
+                }
+            } else if (m_block == m_root)
+                m_valueForConstant.add(key, m_value);
+            else {
+                Value* constInRoot = m_proc.clone(m_value);
+                m_root->appendNonTerminal(constInRoot);
+                m_valueForConstant.add(key, constInRoot);
+                m_value->replaceWithIdentity(constInRoot);
+                m_changed = true;
+            }
+            break;
+        }
+
         default:
             break;
         }
@@ -2794,6 +2818,8 @@ private:
     Procedure& m_proc;
     InsertionSet m_insertionSet;
     BlockInsertionSet m_blockInsertionSet;
+    HashMap<ValueKey, Value*> m_valueForConstant;
+    BasicBlock* m_root { nullptr };
     BasicBlock* m_block { nullptr };
     unsigned m_index { 0 };
     Value* m_value { nullptr };

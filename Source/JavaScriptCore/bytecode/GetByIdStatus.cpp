@@ -276,7 +276,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     return GetByIdStatus(JSC::slowVersion(summary));
 
                 if (domAttribute) {
-                    // Give up when cutom accesses are not merged into one.
+                    // Give up when custom accesses are not merged into one.
                     if (result.numVariants() != 1)
                         return GetByIdStatus(JSC::slowVersion(summary));
                 } else {

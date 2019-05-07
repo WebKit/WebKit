@@ -68,7 +68,7 @@ Value* PureCSE::findMatch(const ValueKey& key, BasicBlock* block, Dominators& do
 
 bool PureCSE::process(Value* value, Dominators& dominators)
 {
-    if (value->opcode() == Identity)
+    if (value->opcode() == Identity || value->isConstant())
         return false;
 
     ValueKey key = value->key();

@@ -257,7 +257,7 @@ private:
         });
     }
 
-    // The majority of Impure Stack Slotsare unique per value.
+    // The majority of Impure Stack Slots are unique per value.
     // This is very useful for fast clobber(), we can just remove the slot addressed by AbstractHeap
     // in O(1).
     //

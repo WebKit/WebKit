@@ -154,7 +154,7 @@ private:
                 };
                 
                 // We call this when we have found a constant that we'd like to use. It's possible that
-                // we have computed that the constant should be meterialized in this block, but we
+                // we have computed that the constant should be materialized in this block, but we
                 // haven't inserted it yet. This inserts the constant if necessary.
                 auto materialize = [&] (Value* child) {
                     ValueKey key = child->key();
