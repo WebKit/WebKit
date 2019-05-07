@@ -1,3 +1,18 @@
+2019-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Avoid crashing the UI process when writing empty data to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=197644
+        <rdar://problem/50526364>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise a possible scenario where we may crash while writing data to the pasteboard.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleEditingDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleEditingDelegatePlugIn.mm:
+        (-[BundleEditingDelegatePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[BundleEditingDelegatePlugIn _webProcessPlugInBrowserContextController:pasteboardDataForRange:]):
+
 2019-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] MiniBrowser: load about:blank for new web views in automation mode

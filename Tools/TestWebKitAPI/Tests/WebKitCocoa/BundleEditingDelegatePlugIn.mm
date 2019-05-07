@@ -45,6 +45,7 @@
     RetainPtr<id <BundleEditingDelegateProtocol>> _remoteObject;
     BOOL _editingDelegateShouldInsertText;
     BOOL _shouldOverridePerformTwoStepDrop;
+    BOOL _shouldWriteEmptyData;
 }
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
@@ -60,6 +61,7 @@
     } else
         _editingDelegateShouldInsertText = YES;
 
+    _shouldWriteEmptyData = [[plugInController.parameters valueForKey:@"EditingDelegateShouldWriteEmptyData"] boolValue];
     _shouldOverridePerformTwoStepDrop = [[plugInController.parameters valueForKey:@"BundleOverridePerformTwoStepDrop"] boolValue];
 
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleEditingDelegateProtocol)];
@@ -83,7 +85,7 @@
 
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range
 {
-    return @{ @"org.webkit.data" : [NSData dataWithBytesNoCopy:(void*)"hello" length:5 freeWhenDone:NO] };
+    return @{ @"org.webkit.data" : _shouldWriteEmptyData ? NSData.data : [NSData dataWithBytesNoCopy:(void*)"hello" length:5 freeWhenDone:NO] };
 }
 
 - (void)_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:(WKWebProcessPlugInBrowserContextController *)controller

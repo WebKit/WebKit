@@ -202,7 +202,7 @@ long WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, cons
 long WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName)
 {
     SharedMemory::Handle handle;
-    if (buffer) {
+    if (buffer && buffer->size()) {
         RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
         // FIXME: Null check prevents crashing, but it is not great that we will have empty pasteboard content for this type,
         // because we've already set the types.

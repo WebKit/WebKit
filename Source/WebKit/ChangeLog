@@ -1,3 +1,19 @@
+2019-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Avoid crashing the UI process when writing empty data to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=197644
+        <rdar://problem/50526364>
+
+        Reviewed by Tim Horton.
+
+        Test: WebKit.WKWebProcessPlugInDoNotCrashWhenCopyingEmptyClientData
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::setBufferForType):
+
+        Make this function robust by not attempting to create a shared memory buffer in the case where the given data
+        buffer is empty.
+
 2019-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash in webkitWebViewBaseSetEnableBackForwardNavigationGesture

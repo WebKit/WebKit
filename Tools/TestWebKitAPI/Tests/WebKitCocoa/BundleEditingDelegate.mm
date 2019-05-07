@@ -115,4 +115,21 @@ TEST(WebKit, WKWebProcessPlugInEditingDelegate)
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 }
 
-#endif
+TEST(WebKit, WKWebProcessPlugInDoNotCrashWhenCopyingEmptyClientData)
+{
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
+    [[configuration processPool] _setObject:@YES forBundleParameter:@"EditingDelegateShouldWriteEmptyData"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:@"<body style='-webkit-user-modify: read-write-plaintext-only'>Just something to copy <script> var textNode = document.body.firstChild; document.getSelection().setBaseAndExtent(textNode, 5, textNode, 14) </script>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto object = adoptNS([[BundleEditingDelegateRemoteObject alloc] init]);
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleEditingDelegateProtocol)];
+    [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+
+    [webView performSelector:@selector(copy:) withObject:nil];
+    TestWebKitAPI::Util::run(&didWriteToPasteboard);
+}
+
+#endif // PLATFORM(MAC)
