@@ -1231,8 +1231,10 @@ WebKitWebView *browser_window_get_or_create_web_view_for_automation(void)
 
     BrowserWindow *window = (BrowserWindow *)windowList->data;
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
-    if (gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook)) == 1 && !webkit_web_view_get_uri(webView))
+    if (gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook)) == 1 && !webkit_web_view_get_uri(webView)) {
+        webkit_web_view_load_uri(webView, "about:blank");
         return webView;
+    }
 
     WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_view_get_context(webView),
@@ -1241,6 +1243,7 @@ WebKitWebView *browser_window_get_or_create_web_view_for_automation(void)
         "is-controlled-by-automation", TRUE,
         NULL));
     browser_window_append_view(window, newWebView);
+    webkit_web_view_load_uri(newWebView, "about:blank");
     gtk_widget_grab_focus(GTK_WIDGET(newWebView));
     return newWebView;
 }

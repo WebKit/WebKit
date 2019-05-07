@@ -266,7 +266,9 @@ int main(int argc, char *argv[])
         g_object_unref(file);
         webkit_web_view_load_uri(webView, url);
         g_free(url);
-    } else if (!automationMode)
+    } else if (automationMode)
+        webkit_web_view_load_uri(webView, "about:blank");
+    else
         webkit_web_view_load_uri(webView, "https://wpewebkit.org");
 
     g_main_loop_run(loop);
