@@ -1174,6 +1174,15 @@ void VideoFullscreenInterfaceAVKit::setInlineRect(const IntRect& inlineRect, boo
         doExitFullscreen();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/VideoFullscreenInterfaceAVKitAdditions.mm>
+#else
+static RetainPtr<UIWindow> makeWindowFromView(UIView *)
+{
+    return adoptNS([PAL::allocUIWindowInstance() initWithFrame:[[PAL::getUIScreenClass() mainScreen] bounds]]);
+}
+#endif
+
 void VideoFullscreenInterfaceAVKit::doSetup()
 {
     Mode changes { m_currentMode.mode() ^ m_targetMode.mode() };
@@ -1196,8 +1205,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
 
 #if !PLATFORM(WATCHOS)
     if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window) {
-        if (!m_window)
-            m_window = adoptNS([PAL::allocUIWindowInstance() initWithFrame:[[PAL::getUIScreenClass() mainScreen] bounds]]);
+        m_window = makeWindowFromView(m_parentView.get());
         [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)
             m_viewController = adoptNS([PAL::allocUIViewControllerInstance() init]);
