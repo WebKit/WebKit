@@ -1,3 +1,14 @@
+2019-05-07  Andy Estes  <aestes@apple.com>
+
+        run-bindings-tests should test global scope constructor generation
+        https://bugs.webkit.org/show_bug.cgi?id=197669
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/bindings/main.py:
+        Updated to specify --testGlobalContextName and --testGlobalScopeConstructorsFile when
+        invoking preprocess-idls.pl.
+
 2019-05-07  Youenn Fablet  <youenn@apple.com>
 
         Flaky API Test: TestWebKitAPI.ServiceWorkers.ServiceWorkerAndCacheStorageDefaultDirectories
