@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImportanceAssertion_h
-#define ImportanceAssertion_h
+#pragma once
 
-#if PLATFORM(MAC)
-
-#include <mach/message.h>
+#include "Attachment.h"
+#include "Decoder.h"
+#include "Encoder.h"
 
 namespace IPC {
 
-class ImportanceAssertion {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ImportanceAssertion);
-
+class MachPort {
 public:
-    explicit ImportanceAssertion(mach_msg_header_t* header)
-        : m_voucher(0)
+    MachPort()
+        : m_port(MACH_PORT_NULL)
+        , m_disposition(0)
     {
-        if (MACH_MSGH_BITS_HAS_VOUCHER(header->msgh_bits)) {
-            m_voucher = header->msgh_voucher_port;
-            header->msgh_voucher_port = MACH_VOUCHER_NULL;
-            header->msgh_bits &= ~(MACH_MSGH_BITS_VOUCHER_MASK | MACH_MSGH_BITS_RAISEIMP);
-        }
     }
 
-    ~ImportanceAssertion()
+    MachPort(mach_port_name_t port, mach_msg_type_name_t disposition)
+        : m_port(port)
+        , m_disposition(disposition)
     {
-        if (m_voucher) {
-            kern_return_t kr = mach_voucher_deallocate(m_voucher);
-            ASSERT_UNUSED(kr, !kr);
-        }
     }
+
+    void encode(Encoder& encoder) const
+    {
+        encoder << Attachment(m_port, m_disposition);
+    }
+
+    static bool decode(Decoder& decoder, MachPort& p)
+    {
+        Attachment attachment;
+        if (!decoder.decode(attachment))
+            return false;
+        
+        p.m_port = attachment.port();
+        p.m_disposition = attachment.disposition();
+        return true;
+    }
+
+    mach_port_name_t port() const { return m_port; }
+    mach_msg_type_name_t disposition() const { return m_disposition; }
 
 private:
-    mach_voucher_t m_voucher;
+    mach_port_name_t m_port;
+    mach_msg_type_name_t m_disposition;
 };
 
-}
-
-#endif // PLATFORM(MAC)
-
-#endif // ImportanceAssertion_h
+} // namespace IPC

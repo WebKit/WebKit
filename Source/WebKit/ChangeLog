@@ -1,3 +1,58 @@
+2019-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Rename ConnectionMac.mm to ConnectionCocoa.mm since it is used on both macOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197661
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm: Renamed from Source/WebKit/Platform/IPC/mac/ConnectionMac.mm.
+        (IPC::ConnectionTerminationWatchdog::createConnectionTerminationWatchdog):
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::cancelReceiveSource):
+        (IPC::Connection::terminateSoon):
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::open):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::platformCanSendOutgoingMessages const):
+        (IPC::Connection::sendOutgoingMessage):
+        (IPC::Connection::initializeSendSource):
+        (IPC::Connection::resumeSendSource):
+        (IPC::createMessageDecoder):
+        (IPC::readFromMachPort):
+        (IPC::Connection::receiveSourceEventHandler):
+        (IPC::Connection::identifier const):
+        (IPC::Connection::getAuditToken):
+        (IPC::Connection::kill):
+        (IPC::AccessibilityProcessSuspendedNotification):
+        (IPC::Connection::willSendSyncMessage):
+        (IPC::Connection::didReceiveSyncReply):
+        (IPC::Connection::remoteProcessID const):
+        * Platform/IPC/cocoa/ImportanceAssertion.h: Renamed from Source/WebKit/Platform/IPC/mac/ImportanceAssertion.h.
+        (IPC::ImportanceAssertion::ImportanceAssertion):
+        (IPC::ImportanceAssertion::~ImportanceAssertion):
+        * Platform/IPC/cocoa/MachMessage.cpp: Renamed from Source/WebKit/Platform/IPC/mac/MachMessage.cpp.
+        (IPC::MachMessage::create):
+        (IPC::MachMessage::MachMessage):
+        (IPC::MachMessage::~MachMessage):
+        (IPC::MachMessage::messageSize):
+        (IPC::MachMessage::leakDescriptors):
+        * Platform/IPC/cocoa/MachMessage.h: Renamed from Source/WebKit/Platform/IPC/mac/MachMessage.h.
+        (IPC::MachMessage::size const):
+        (IPC::MachMessage::header):
+        (IPC::MachMessage::messageReceiverName const):
+        (IPC::MachMessage::messageName const):
+        * Platform/IPC/cocoa/MachPort.h: Renamed from Source/WebKit/Platform/IPC/mac/MachPort.h.
+        (IPC::MachPort::MachPort):
+        (IPC::MachPort::encode const):
+        (IPC::MachPort::decode):
+        (IPC::MachPort::port const):
+        (IPC::MachPort::disposition const):
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-05-07  Antti Koivisto  <antti@apple.com>
 
         <body> with overflow:hidden shouldn't be keyboard scrollable on iOS

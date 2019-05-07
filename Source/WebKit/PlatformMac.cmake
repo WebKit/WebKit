@@ -42,8 +42,8 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkProcessMac.mm
     NetworkProcess/mac/RemoteNetworkingContext.mm
 
-    Platform/IPC/mac/ConnectionMac.mm
-    Platform/IPC/mac/MachMessage.cpp
+    Platform/IPC/cocoa/ConnectionCocoa.mm
+    Platform/IPC/cocoa/MachMessage.cpp
 
     Platform/cf/ModuleCF.cpp
 

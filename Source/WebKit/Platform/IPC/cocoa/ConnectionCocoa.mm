@@ -231,16 +231,13 @@ bool Connection::open()
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
-    RefPtr<Connection> connection(this);
     m_receiveSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue());
-    dispatch_source_set_event_handler(m_receiveSource, [connection] {
-        connection->receiveSourceEventHandler();
+    dispatch_source_set_event_handler(m_receiveSource, [this, protectedThis = makeRefPtr(this)] {
+        receiveSourceEventHandler();
     });
-    dispatch_source_set_cancel_handler(m_receiveSource, [connection, receivePort = m_receivePort] {
-#if PLATFORM(WATCHOS)
-        UNUSED_PARAM(connection);
-#else
-        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(connection.get()));
+    dispatch_source_set_cancel_handler(m_receiveSource, [protectedThis = makeRefPtr(this), receivePort = m_receivePort] {
+#if !PLATFORM(WATCHOS)
+        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.get()));
 #endif
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
@@ -298,7 +295,11 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 
     auto attachments = encoder->releaseAttachments();
     
-    auto numberOfPortDescriptors = std::count_if(attachments.begin(), attachments.end(), [](auto& attachment) { return attachment.type() == Attachment::MachPortType; });
+    auto numberOfPortDescriptors = std::count_if(attachments.begin(), attachments.end(), [](auto& attachment)
+    {
+        return attachment.type() == Attachment::MachPortType;
+    });
+
     bool messageBodyIsOOL = false;
     auto messageSize = MachMessage::messageSize(encoder->bufferSize(), numberOfPortDescriptors, messageBodyIsOOL);
     if (messageSize > inlineMessageMaxSize) {
@@ -364,27 +365,26 @@ void Connection::initializeSendSource()
     m_sendSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue());
     m_isInitializingSendSource = true;
 
-    RefPtr<Connection> connection(this);
-    dispatch_source_set_registration_handler(m_sendSource, [connection] {
-        if (!connection->m_sendSource)
+    dispatch_source_set_registration_handler(m_sendSource, [this, protectedThis = makeRefPtr(this)] {
+        if (!m_sendSource)
             return;
-        connection->m_isInitializingSendSource = false;
-        connection->resumeSendSource();
+        m_isInitializingSendSource = false;
+        resumeSendSource();
     });
-    dispatch_source_set_event_handler(m_sendSource, [connection] {
-        if (!connection->m_sendSource)
+    dispatch_source_set_event_handler(m_sendSource, [this, protectedThis = makeRefPtr(this)] {
+        if (!m_sendSource)
             return;
 
-        unsigned long data = dispatch_source_get_data(connection->m_sendSource);
+        unsigned long data = dispatch_source_get_data(m_sendSource);
 
         if (data & DISPATCH_MACH_SEND_DEAD) {
-            connection->connectionDidClose();
+            connectionDidClose();
             return;
         }
 
         if (data & DISPATCH_MACH_SEND_POSSIBLE) {
             // FIXME: Figure out why we get spurious DISPATCH_MACH_SEND_POSSIBLE events.
-            connection->resumeSendSource();
+            resumeSendSource();
             return;
         }
     });

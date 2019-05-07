@@ -74,8 +74,8 @@ Platform/foundation/LoggingFoundation.mm
 Platform/ios/AccessibilityIOS.mm
 Platform/ios/PaymentAuthorizationController.mm
 
-Platform/IPC/mac/ConnectionMac.mm
-Platform/IPC/mac/MachMessage.cpp
+Platform/IPC/cocoa/ConnectionCocoa.mm
+Platform/IPC/cocoa/MachMessage.cpp
 
 Platform/mac/LayerHostingContext.mm
 Platform/mac/MachUtilities.cpp

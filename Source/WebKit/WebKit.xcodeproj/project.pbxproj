@@ -2063,7 +2063,7 @@
 		1A2D956D12848564001EB962 /* AuxiliaryProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcess.h; sourceTree = "<group>"; };
 		1A2D956E12848564001EB962 /* AuxiliaryProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuxiliaryProcess.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
-		1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionMac.mm; sourceTree = "<group>"; };
+		1A30EAC5115D7DA30053E937 /* ConnectionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionCocoa.mm; sourceTree = "<group>"; };
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
 		1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaMapMessageReceiver.cpp; path = DerivedSources/WebKit2/StorageAreaMapMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaMapMessages.h; path = DerivedSources/WebKit2/StorageAreaMapMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5490,7 +5490,7 @@
 		1AE00D6818327C1200087DD7 /* IPC */ = {
 			isa = PBXGroup;
 			children = (
-				BCC56F751159955E001CCAF9 /* mac */,
+				BCC56F751159955E001CCAF9 /* cocoa */,
 				1AEFD27811D16C81008219D3 /* ArgumentCoder.h */,
 				1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */,
 				1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */,
@@ -8332,16 +8332,16 @@
 			path = WebContentService;
 			sourceTree = "<group>";
 		};
-		BCC56F751159955E001CCAF9 /* mac */ = {
+		BCC56F751159955E001CCAF9 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */,
+				1A30EAC5115D7DA30053E937 /* ConnectionCocoa.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
 				BCC56F771159957D001CCAF9 /* MachPort.h */,
 			);
-			path = mac;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		BCCF085C113F3B7500C650C5 /* mac */ = {
