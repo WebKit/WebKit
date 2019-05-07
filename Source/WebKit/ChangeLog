@@ -1,3 +1,16 @@
+2019-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash in webkitWebViewBaseSetEnableBackForwardNavigationGesture
+        https://bugs.webkit.org/show_bug.cgi?id=197653
+
+        Reviewed by Žan Doberšek.
+
+        We still need to null-check the ViewGestureController there, since it can be called with a running process but
+        not yet attached when using a related view.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetEnableBackForwardNavigationGesture):
+
 2019-05-07  Antti Koivisto  <antti@apple.com>
 
         <body> with overflow:hidden CSS is scrollable on iOS

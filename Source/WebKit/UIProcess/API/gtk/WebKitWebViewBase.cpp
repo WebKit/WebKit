@@ -1196,8 +1196,8 @@ void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase* w
 
     priv->isBackForwardNavigationGestureEnabled = enabled;
 
-    if (priv->pageProxy->hasRunningProcess())
-        webViewBase->priv->viewGestureController->setSwipeGestureEnabled(enabled);
+    if (auto* controller = webkitWebViewBaseViewGestureController(webViewBase))
+        controller->setSwipeGestureEnabled(enabled);
 
     priv->pageProxy->setShouldRecordNavigationSnapshots(enabled);
 }
