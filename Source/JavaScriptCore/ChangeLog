@@ -1,3 +1,26 @@
+2019-05-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        tryCachePutByID should not crash if target offset changes
+        https://bugs.webkit.org/show_bug.cgi?id=197311
+        <rdar://problem/48033612>
+
+        Reviewed by Filip Pizlo.
+
+        When tryCachePutID is called with a cacheable setter, if the target object where the setter was
+        found is still in the prototype chain and there's no poly protos in the chain, we use
+        generateConditionsForPrototypePropertyHit to validate that the target object remains the same.
+        It checks for the absence of the property in every object in the prototype chain from the base
+        down to the target object and checks that the property is still present in the target object. It
+        also bails if there are any uncacheable objects, proxies or dictionary objects in the prototype
+        chain. However, it does not consider two edge cases:
+        - It asserts that the property should still be at the same offset in the target object, but this
+        assertion does not hold if the setter deletes properties of the object and causes the structure
+        to be flattened after the deletion. Instead of asserting, we just use the updated offset.
+        - It does not check whether the new slot is also a setter, which leads to a crash in case it's not.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+
 2019-05-07  Saam Barati  <sbarati@apple.com>
 
         Don't OSR enter into an FTL CodeBlock that has been jettisoned

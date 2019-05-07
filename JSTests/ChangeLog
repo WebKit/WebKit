@@ -1,3 +1,44 @@
+2019-05-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        tryCachePutByID should not crash if target offset changes
+        https://bugs.webkit.org/show_bug.cgi?id=197311
+        <rdar://problem/48033612>
+
+        Reviewed by Filip Pizlo.
+
+        Add a series of tests related tryCachePutByID. Two of these tests used to crash and were fixed
+        by this patch: `cache-put-by-id-different-attributes.js` and `cache-put-by-id-different-offset.js`
+
+        * stress/cache-put-by-id-delete-prototype.js: Added.
+        (A.prototype.set y):
+        (A):
+        (B.prototype.set y):
+        (B):
+        (C):
+        * stress/cache-put-by-id-different-__proto__.js: Added.
+        (A.prototype.set y):
+        (A):
+        (B1):
+        (B2.prototype.set y):
+        (B2):
+        (C):
+        (D):
+        * stress/cache-put-by-id-different-attributes.js: Added.
+        (Foo):
+        (set x):
+        * stress/cache-put-by-id-different-offset.js: Added.
+        (Foo):
+        (set x):
+        * stress/cache-put-by-id-insert-prototype.js: Added.
+        (A.prototype.set y):
+        (A):
+        (C):
+        * stress/cache-put-by-id-poly-proto.js: Added.
+        (Foo):
+        (set _):
+        (createBar.Bar):
+        (createBar):
+
 2019-05-07  Saam Barati  <sbarati@apple.com>
 
         Don't OSR enter into an FTL CodeBlock that has been jettisoned
