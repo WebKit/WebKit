@@ -1390,7 +1390,7 @@ MediaCapabilitiesExtensionsEnabled:
 
 IsITPFirstPartyWebsiteDataRemovalEnabled:
     type: bool
-    defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+    defaultValue: true
     humanReadableName: "ITP First Party Website Data Removal"
     humanReadableDescription: "Enable Intelligent Tracking Prevention First Party Website Data Removal"
     webcoreBinding: RuntimeEnabledFeatures
