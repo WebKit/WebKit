@@ -974,6 +974,8 @@
         (syscall-number SYS_psynch_rw_rdlock) ;; <rdar://problem/49060359>
         (syscall-number SYS_terminate_with_payload) ;; <rdar://problem/50026580>
         (syscall-number SYS_quotactl) ;; <rdar://problem/49945031>
+        (syscall-number SYS_stat64_extended) ;; <rdar://problem/50473330>
+        (syscall-number SYS_lstat64_extended)
     )
 )
 

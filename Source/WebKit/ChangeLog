@@ -1,3 +1,15 @@
+2019-05-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash with sandbox error
+        https://bugs.webkit.org/show_bug.cgi?id=197675
+        <rdar://problem/50473330>
+
+        Reviewed by Geoffrey Garen.
+
+        This crash is caused by missing syscall rules in the sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-05-07  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to set a list of hosts to which to send custom header fields cross-origin
