@@ -1060,7 +1060,8 @@ namespace JSC {
         using NumberMap = HashMap<double, JSValue>;
         using IdentifierStringMap = HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
         using IdentifierBigIntMap = HashMap<BigIntMapEntry, JSBigInt*>;
-        using TemplateObjectDescriptorMap = HashMap<Ref<TemplateObjectDescriptor>, JSTemplateObjectDescriptor*>;
+        using TemplateObjectDescriptorSet = HashSet<Ref<TemplateObjectDescriptor>>;
+        using TemplateDescriptorMap = HashMap<uint64_t, JSTemplateObjectDescriptor*, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
         // Helper for emitCall() and emitConstruct(). This works because the set of
         // expected functions have identical behavior for both call and construct
@@ -1152,7 +1153,7 @@ namespace JSC {
     public:
         JSString* addStringConstant(const Identifier&);
         JSValue addBigIntConstant(const Identifier&, uint8_t radix, bool sign);
-        RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&);
+        RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&, int);
 
         const InstructionStream& instructions() const { return m_writer; }
 
@@ -1270,7 +1271,8 @@ namespace JSC {
         JSValueMap m_jsValueMap;
         IdentifierStringMap m_stringMap;
         IdentifierBigIntMap m_bigIntMap;
-        TemplateObjectDescriptorMap m_templateObjectDescriptorMap;
+        TemplateObjectDescriptorSet m_templateObjectDescriptorSet;
+        TemplateDescriptorMap m_templateDescriptorMap;
 
         StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 

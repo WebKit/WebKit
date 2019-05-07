@@ -38,7 +38,7 @@ public:
     static const bool needsDestruction = true;
     DECLARE_INFO;
 
-    static JSTemplateObjectDescriptor* create(VM&, Ref<TemplateObjectDescriptor>&&);
+    static JSTemplateObjectDescriptor* create(VM&, Ref<TemplateObjectDescriptor>&&, int);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -49,13 +49,16 @@ public:
 
     JSArray* createTemplateObject(ExecState*);
 
+    int endOffset() const { return m_endOffset; }
+
 protected:
     static void destroy(JSCell*);
 
 private:
-    JSTemplateObjectDescriptor(VM&, Ref<TemplateObjectDescriptor>&&);
+    JSTemplateObjectDescriptor(VM&, Ref<TemplateObjectDescriptor>&&, int);
 
     Ref<TemplateObjectDescriptor> m_descriptor;
+    int m_endOffset { 0 };
 };
 
 } // namespace JSC

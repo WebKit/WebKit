@@ -1846,7 +1846,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const SourceCode& source = makeSource(functionText, { });
-    JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, source), exec->lexicalGlobalObject());
+    JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, nullptr, source), exec->lexicalGlobalObject());
 
     return JSValue::encode(func);
 }
@@ -2087,6 +2087,15 @@ static EncodedJSValue JSC_HOST_CALL functionDisableDebuggerModeWhenIdle(ExecStat
     return changeDebuggerModeWhenIdle(exec, { });
 }
 
+static EncodedJSValue JSC_HOST_CALL functionDeleteAllCodeWhenIdle(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    vm->whenIdle([=] () {
+        vm->deleteAllCode(PreventCollectionAndDeleteAllCode);
+    });
+    return JSValue::encode(jsUndefined());
+}
+
 static EncodedJSValue JSC_HOST_CALL functionGlobalObjectCount(ExecState* exec)
 {
     return JSValue::encode(jsNumber(exec->vm().heap.globalObjectCount()));
@@ -2275,6 +2284,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "enableDebuggerModeWhenIdle", functionEnableDebuggerModeWhenIdle, 0);
     addFunction(vm, "disableDebuggerModeWhenIdle", functionDisableDebuggerModeWhenIdle, 0);
+
+    addFunction(vm, "deleteAllCodeWhenIdle", functionDeleteAllCodeWhenIdle, 0);
 
     addFunction(vm, "globalObjectCount", functionGlobalObjectCount, 0);
     addFunction(vm, "globalObjectForObject", functionGlobalObjectForObject, 1);

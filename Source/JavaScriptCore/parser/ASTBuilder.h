@@ -331,6 +331,7 @@ public:
     {
         auto node = new (m_parserArena) TaggedTemplateNode(location, base, templateLiteral);
         setExceptionLocation(node, start, divot, end);
+        setEndOffset(node, end.offset);
         return node;
     }
 

@@ -158,7 +158,7 @@ SourceCode UnlinkedFunctionExecutable::linkedSourceCode(const SourceCode& passed
     return SourceCode(parentSource.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& passedParentSource, Optional<int> overrideLineNumber, Intrinsic intrinsic)
+FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, ScriptExecutable* topLevelExecutable, const SourceCode& passedParentSource, Optional<int> overrideLineNumber, Intrinsic intrinsic)
 {
     SourceCode source = linkedSourceCode(passedParentSource);
     FunctionOverrides::OverrideInfo overrideInfo;
@@ -166,7 +166,7 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& p
     if (UNLIKELY(Options::functionOverrides()))
         hasFunctionOverride = FunctionOverrides::initializeOverrideFor(source, overrideInfo);
 
-    FunctionExecutable* result = FunctionExecutable::create(vm, source, this, intrinsic);
+    FunctionExecutable* result = FunctionExecutable::create(vm, topLevelExecutable, source, this, intrinsic);
     if (overrideLineNumber)
         result->setOverrideLineNumber(*overrideLineNumber);
 
