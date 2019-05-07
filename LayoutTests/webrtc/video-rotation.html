@@ -86,6 +86,15 @@ promise_test((test) => {
         return waitForVideoSize(video, 240, 320);
     });
 }, "Track is enabled and rotated, video should not be black and should change size");
+
+promise_test((test) => {
+    if (window.internals)
+        window.internals.setCameraMediaStreamTrackOrientation(track, 180);
+
+    return checkVideoBlack(false, "canvas1").then(() => {
+        return waitForVideoSize(video, 320, 240);
+    });
+}, "Track is enabled and rotated again, video should not be black and should change size");
         </script>
     </body>
 </html>

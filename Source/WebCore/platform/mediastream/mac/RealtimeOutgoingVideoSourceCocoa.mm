@@ -71,7 +71,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
     if (!rotation)
         return pixelBuffer;
 
-    if (!m_rotationSession || rotation != m_currentRotation) {
+    if (!m_rotationSession || rotation != m_currentRotationSessionAngle) {
         VTImageRotationSessionRef rawRotationSession = nullptr;
         auto status = VTImageRotationSessionCreate(kCFAllocatorDefault, rotation, &rawRotationSession);
         if (status != noErr) {
@@ -80,7 +80,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
         }
 
         m_rotationSession = adoptCF(rawRotationSession);
-        m_currentRotation = rotation;
+        m_currentRotationSessionAngle = rotation;
 
         VTImageRotationSessionSetProperty(rawRotationSession, kVTImageRotationPropertyKey_EnableHighSpeedTransfer, kCFBooleanTrue);
     }
