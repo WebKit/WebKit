@@ -308,6 +308,10 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.parse('false');
     });
+    result.push(function(jsonObject){
+        return jsonObject.parse('\\')
+    });
+    result[result.length - 1].throws = true;
     var simpleArray = ['a', 'b', 'c'];
     var simpleObject = {a:"1", b:"2", c:"3"};
     var complexArray = ['a', 'b', 'c',,,simpleObject, simpleArray, [simpleObject,simpleArray]];
