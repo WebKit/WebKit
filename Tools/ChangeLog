@@ -1,3 +1,15 @@
+2019-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Flaky API Test: TestWebKitAPI.ServiceWorkers.ServiceWorkerAndCacheStorageDefaultDirectories
+        https://bugs.webkit.org/show_bug.cgi?id=195997
+        <rdar://problem/50509884>
+
+        Reviewed by Chris Dumez.
+
+        Spin test until successful.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-05-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak] webkit-build fails due to missing GTK2 in build environment

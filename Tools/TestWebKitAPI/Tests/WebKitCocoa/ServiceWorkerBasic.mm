@@ -1396,7 +1396,8 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE([[configuration websiteDataStore] _hasRegisteredServiceWorker]);
+    while (![[configuration websiteDataStore] _hasRegisteredServiceWorker])
+        TestWebKitAPI::Util::spinRunLoop(0.1);
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
