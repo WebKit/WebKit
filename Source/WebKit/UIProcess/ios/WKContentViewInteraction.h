@@ -230,6 +230,7 @@ struct WKAutoCorrectionData {
 #if PLATFORM(IOSMAC)
     RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
+    CGPoint _lastHoverLocation;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;

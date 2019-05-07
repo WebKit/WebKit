@@ -1,3 +1,19 @@
+2019-05-07  Tim Horton  <timothy_horton@apple.com>
+
+        iOSMac Share Sheet shows up at the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=197649
+        <rdar://problem/49922942>
+
+        Reviewed by Megan Gardner.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showShareSheet:inRect:completionHandler:]):
+        (-[WKContentView _hoverGestureRecognizerChanged:]):
+        Pass the last mouse-over location as the presentation location for the 
+        share sheet, if we don't have a rect to present from. Centering the popover
+        like we do on iPad doesn't work so well (at all) with a macOS context menu.
+
 2019-05-07  Chris Dumez  <cdumez@apple.com>
 
         Rename ConnectionMac.mm to ConnectionCocoa.mm since it is used on both macOS and iOS

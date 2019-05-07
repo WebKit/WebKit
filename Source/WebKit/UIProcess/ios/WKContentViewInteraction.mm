@@ -5864,6 +5864,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:_webView]);
     [_shareSheet setDelegate:self];
+
+#if PLATFORM(IOSMAC)
+    if (!rect) {
+        auto hoverLocationInWebView = [self convertPoint:_lastHoverLocation toView:_webView];
+        rect = WebCore::FloatRect(hoverLocationInWebView.x, hoverLocationInWebView.y, 1, 1);
+    }
+#endif
     
     [_shareSheet presentWithParameters:data inRect:rect completionHandler:WTFMove(completionHandler)];
 #endif
@@ -7075,6 +7082,7 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
     case UIGestureRecognizerStateBegan:
     case UIGestureRecognizerStateChanged:
         point = [gestureRecognizer locationInView:self];
+        _lastHoverLocation = point;
         break;
     case UIGestureRecognizerStateEnded:
     case UIGestureRecognizerStateCancelled:
