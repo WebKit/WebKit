@@ -982,7 +982,7 @@
 #define ENABLE_COMPUTED_GOTO_OPCODES 1
 #endif
 
-#if !ENABLE(C_LOOP) && !COMPILER(MSVC) && \
+#if !defined(USE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && \
     (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)))
 /* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
    that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
