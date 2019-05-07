@@ -1,3 +1,9 @@
+2019-05-07  Joonghun Park  <pjh0718@gmail.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-05-07  Eric Carlson  <eric.carlson@apple.com>
 
         Define media buffering policy

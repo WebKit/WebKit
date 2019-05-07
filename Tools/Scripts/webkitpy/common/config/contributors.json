@@ -3201,12 +3201,13 @@
    "Joonghun Park" : {
       "emails" : [
          "jh718.park@samsung.com",
-         "jh718.park@gmail.com"
+         "jh718.park@gmail.com",
+         "pjh0718@gmail.com"
       ],
       "nicks" : [
          "joonghunpark"
       ],
-      "status" : "contributor"
+      "status" : "committer"
    },
    "Joost de Valk" : {
       "emails" : [
