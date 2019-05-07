@@ -33,11 +33,10 @@ namespace API {
 
 WebsitePolicies::WebsitePolicies() = default;
 
-WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& legacyCustomHeaderFields, Vector<WebCore::CustomHeaderFields>&& customHeaderFields, WebKit::WebsitePopUpPolicy popUpPolicy, RefPtr<WebsiteDataStore>&& websiteDataStore)
+WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields, WebKit::WebsitePopUpPolicy popUpPolicy, RefPtr<WebsiteDataStore>&& websiteDataStore)
     : m_contentBlockersEnabled(contentBlockersEnabled)
     , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
     , m_autoplayPolicy(autoplayPolicy)
-    , m_legacyCustomHeaderFields(WTFMove(legacyCustomHeaderFields))
     , m_customHeaderFields(WTFMove(customHeaderFields))
     , m_popUpPolicy(popUpPolicy)
     , m_websiteDataStore(WTFMove(websiteDataStore))
@@ -61,17 +60,10 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setMetaViewportPolicy(m_metaViewportPolicy);
     policies->setMediaSourcePolicy(m_mediaSourcePolicy);
     policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
-    
-    Vector<WebCore::HTTPHeaderField> legacyCustomHeaderFields;
-    legacyCustomHeaderFields.reserveInitialCapacity(m_legacyCustomHeaderFields.size());
-    for (auto& field : m_legacyCustomHeaderFields)
-        legacyCustomHeaderFields.uncheckedAppend(field);
-    policies->setLegacyCustomHeaderFields(WTFMove(legacyCustomHeaderFields));
-
-    Vector<WebCore::CustomHeaderFields> customHeaderFields;
+    Vector<WebCore::HTTPHeaderField> customHeaderFields;
     customHeaderFields.reserveInitialCapacity(m_customHeaderFields.size());
     for (auto& field : m_customHeaderFields)
-        customHeaderFields.uncheckedAppend(field);
+        customHeaderFields.append(WebCore::HTTPHeaderField(field));
     policies->setCustomHeaderFields(WTFMove(customHeaderFields));
     policies->setAllowSiteSpecificQuirksToOverrideCompatibilityMode(m_allowSiteSpecificQuirksToOverrideCompatibilityMode);
     return policies;
@@ -88,14 +80,6 @@ void WebsitePolicies::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteData
 
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
-    bool hasLegacyCustomHeaderFields = legacyCustomHeaderFields().size();
-    Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    customHeaderFields.reserveInitialCapacity(this->customHeaderFields().size() + hasLegacyCustomHeaderFields);
-    for (auto& field : this->customHeaderFields())
-        customHeaderFields.uncheckedAppend(field);
-    if (hasLegacyCustomHeaderFields)
-        customHeaderFields.uncheckedAppend({ legacyCustomHeaderFields(), { }});
-
     return {
         contentBlockersEnabled(),
         allowedAutoplayQuirks(),
@@ -103,7 +87,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
 #if ENABLE(DEVICE_ORIENTATION)
         deviceOrientationAndMotionAccessState(),
 #endif
-        WTFMove(customHeaderFields),
+        customHeaderFields(),
         popUpPolicy(),
         m_websiteDataStore ? Optional<WebKit::WebsiteDataStoreParameters> { m_websiteDataStore->websiteDataStore().parameters() } : WTF::nullopt,
         m_customUserAgent,

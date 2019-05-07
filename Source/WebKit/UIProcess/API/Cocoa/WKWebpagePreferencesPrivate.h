@@ -55,14 +55,12 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy)
     _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny,
 } WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
-@class _WKCustomHeaderFields;
-
 @interface WKWebpagePreferences (WKPrivate)
 
 @property (nonatomic, setter=_setContentBlockersEnabled:) BOOL _contentBlockersEnabled;
 @property (nonatomic, setter=_setAllowedAutoplayQuirks:) _WKWebsiteAutoplayQuirk _allowedAutoplayQuirks;
 @property (nonatomic, setter=_setAutoplayPolicy:) _WKWebsiteAutoplayPolicy _autoplayPolicy;
-@property (nonatomic, copy, setter=_setCustomHeaderFields:) NSArray<_WKCustomHeaderFields *> *_customHeaderFields;
+@property (nonatomic, copy, setter=_setCustomHeaderFields:) NSDictionary<NSString *, NSString *> *_customHeaderFields;
 @property (nonatomic, setter=_setPopUpPolicy:) _WKWebsitePopUpPolicy _popUpPolicy;
 @property (nonatomic, strong, setter=_setWebsiteDataStore:) WKWebsiteDataStore *_websiteDataStore;
 @property (nonatomic, copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;

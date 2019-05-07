@@ -32,8 +32,8 @@
 #include "WebsiteMetaViewportPolicy.h"
 #include "WebsitePopUpPolicy.h"
 #include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
-#include <WebCore/CustomHeaderFields.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/HTTPHeaderField.h>
 #include <wtf/OptionSet.h>
 
 namespace IPC {
@@ -56,7 +56,7 @@ struct WebsitePoliciesData {
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState;
 #endif
-    Vector<WebCore::CustomHeaderFields> customHeaderFields;
+    Vector<WebCore::HTTPHeaderField> customHeaderFields;
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
     String customUserAgent;

@@ -34,6 +34,7 @@ WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
 @property (nonatomic) BOOL contentBlockersEnabled;
 @property (nonatomic) _WKWebsiteAutoplayQuirk allowedAutoplayQuirks WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy WK_API_AVAILABLE(macos(10.13), ios(11.0));
+@property (nonatomic, copy) NSDictionary<NSString *, NSString *> *customHeaderFields WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic) _WKWebsitePopUpPolicy popUpPolicy WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, copy) NSString *customUserAgent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

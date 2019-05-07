@@ -111,7 +111,6 @@ public:
         ContentRuleListStore,
         ContextMenuListener,
         CookieManager,
-        CustomHeaderFields,
         InternalDebugFeature,
         Download,
         ExperimentalFeature,

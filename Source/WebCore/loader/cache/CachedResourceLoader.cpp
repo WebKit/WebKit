@@ -43,7 +43,6 @@
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
-#include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -859,11 +858,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             sameOriginRequest = document()->topDocument().securityOrigin().isSameSchemeHostPort(requestedOrigin.get())
                 && document()->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
         }
-        for (auto& fields : m_documentLoader->customHeaderFields()) {
-            if (sameOriginRequest || fields.thirdPartyDomainsMatch(url)) {
-                for (auto& field : fields.fields)
-                    request.resourceRequest().setHTTPHeaderField(field.name(), field.value());
-            }
+        if (sameOriginRequest) {
+            for (auto& field : m_documentLoader->customHeaderFields())
+                request.resourceRequest().setHTTPHeaderField(field.name(), field.value());
         }
     }
 
