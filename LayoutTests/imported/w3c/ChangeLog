@@ -1,3 +1,14 @@
+2019-05-07  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] isPrimary property of pointercancel events should match previous events for that pointer
+        https://bugs.webkit.org/show_bug.cgi?id=197665
+
+        Reviewed by Dean Jackson.
+
+        Record WPT progressions.
+
+        * web-platform-tests/pointerevents/pointerevent_pointercancel_touch-expected.txt:
+
 2019-05-07  Youenn Fablet  <youenn@apple.com>
 
         Import WPT referrer-policy tests

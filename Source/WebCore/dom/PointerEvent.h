@@ -52,6 +52,8 @@ public:
         bool isPrimary { false };
     };
 
+    enum class IsPrimary : uint8_t { No, Yes };
+
     static Ref<PointerEvent> create(const AtomicString& type, Init&& initializer)
     {
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
@@ -73,7 +75,7 @@ public:
     }
 
     static RefPtr<PointerEvent> create(const MouseEvent&);
-    static Ref<PointerEvent> create(const String& type, PointerID, const String& pointerType);
+    static Ref<PointerEvent> create(const String& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
@@ -106,7 +108,7 @@ private:
     PointerEvent();
     PointerEvent(const AtomicString&, Init&&);
     PointerEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, const MouseEvent&);
-    PointerEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, PointerID, const String& pointerType);
+    PointerEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif

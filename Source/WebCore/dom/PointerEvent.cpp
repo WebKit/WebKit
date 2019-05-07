@@ -84,9 +84,9 @@ RefPtr<PointerEvent> PointerEvent::create(const MouseEvent& mouseEvent)
     return adoptRef(*new PointerEvent(type, canBubble, isCancelable, isComposed, mouseEvent));
 }
 
-Ref<PointerEvent> PointerEvent::create(const String& type, PointerID pointerId, const String& pointerType)
+Ref<PointerEvent> PointerEvent::create(const String& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
 {
-    return adoptRef(*new PointerEvent(type, CanBubble::Yes, IsCancelable::No, IsComposed::Yes, pointerId, pointerType));
+    return adoptRef(*new PointerEvent(type, CanBubble::Yes, IsCancelable::No, IsComposed::Yes, pointerId, pointerType, isPrimary));
 }
 
 PointerEvent::PointerEvent() = default;
@@ -112,10 +112,11 @@ PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCanc
 {
 }
 
-PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, PointerID pointerId, const String& pointerType)
+PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
     : MouseEvent(type, canBubble, isCancelable, isComposed, nullptr, 0, { }, { }, { }, 0, 0, 0, nullptr)
     , m_pointerId(pointerId)
     , m_pointerType(pointerType)
+    , m_isPrimary(isPrimary == IsPrimary::Yes)
 {
 }
 

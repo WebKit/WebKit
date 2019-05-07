@@ -234,6 +234,8 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
     auto iterator = m_activePointerIdsToCapturingData.find(event.pointerId());
     if (iterator != m_activePointerIdsToCapturingData.end()) {
         auto& capturingData = iterator->value;
+        capturingData.isPrimary = event.isPrimary();
+
         // Immediately after firing the pointerup or pointercancel events, a user agent MUST clear the pending pointer capture target
         // override for the pointerId of the pointerup or pointercancel event that was just dispatched, and then run Process Pending
         // Pointer Capture steps to fire lostpointercapture if necessary.
@@ -281,7 +283,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     if (!target)
         return;
 
-    auto event = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType);
+    auto event = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType, capturingData.isPrimary ? PointerEvent::IsPrimary::Yes : PointerEvent::IsPrimary::No);
     target->dispatchEvent(event);
     processPendingPointerCapture(WTFMove(event));
 }

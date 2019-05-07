@@ -1,3 +1,26 @@
+2019-05-07  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] isPrimary property of pointercancel events should match previous events for that pointer
+        https://bugs.webkit.org/show_bug.cgi?id=197665
+
+        Reviewed by Dean Jackson.
+
+        The test at web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html would fail early because one of the first assertions
+        would check that isPrimary for a pointercancel event would match the isPrimary property of the previous pointer event dispatched for that
+        pointer id. This prevented many further assertions from passing and also was the cause of flakiness for the next test since this test was
+        ended early and the state of touches created using UIScriptController were not in a clean state.
+
+        We now track the isPrimary state for a given pointer using the CapturingData and use that value when dispatching a pointercancel event.
+
+        * dom/PointerEvent.cpp:
+        (WebCore::PointerEvent::create):
+        (WebCore::PointerEvent::PointerEvent):
+        * dom/PointerEvent.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::pointerEventWasDispatched):
+        (WebCore::PointerCaptureController::cancelPointer):
+        * page/PointerCaptureController.h:
+
 2019-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r244900.

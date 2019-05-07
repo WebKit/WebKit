@@ -63,6 +63,7 @@ private:
         RefPtr<Element> targetOverride;
         String pointerType;
         bool cancelled { false };
+        bool isPrimary { false };
     };
 
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
