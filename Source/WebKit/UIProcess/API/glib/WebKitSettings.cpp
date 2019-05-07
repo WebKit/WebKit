@@ -1505,7 +1505,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * WebKitSettings:enable-media:
      *
      * Enable or disable support for media playback on pages. This setting is enabled by
-     * default. Disabling it means <audio>, <track> and <video> elements will have
+     * default. Disabling it means `<audio>`, `<track>` and `<video>` elements will have
      * playback support disabled.
      *
      * Since: 2.26
