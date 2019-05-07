@@ -1,3 +1,29 @@
+2019-05-07  Antti Koivisto  <antti@apple.com>
+
+        <body> with overflow:hidden CSS is scrollable on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=153852
+        <rdar://problem/38715356>
+
+        Reviewed by Antoine Quint.
+
+        Disable touch scrolling of the main scroll view when <body> has overflow:hidden.
+
+        This already works for subframes where we don't create a scrollview in the first place.
+        The patch also adds a test for that.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+
+        Update scrollability after scrolling tree commits.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+
+        Base the decision on root ScrollingTreeScrollingNode::canHaveScrollbars() which is computed from overflow.
+        This matches Mac where wheel event dispatch is similarly blocked based on this property.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+
 2019-05-06  James Savage  <james.savage@apple.com>
 
         Improve coordination for creating UIWindow instances.

@@ -240,6 +240,12 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
     return emptyString();
 }
 
+bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
+{
+    auto* rootNode = m_scrollingTree->rootNode();
+    return rootNode && rootNode->canHaveScrollbars();
+}
+
 #if ENABLE(POINTER_EVENTS)
 Optional<TouchActionData> RemoteScrollingCoordinatorProxy::touchActionDataAtPoint(const IntPoint p) const
 {

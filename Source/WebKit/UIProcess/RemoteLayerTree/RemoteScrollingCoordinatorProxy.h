@@ -84,6 +84,7 @@ public:
     void setPropagatesMainFrameScrolls(bool propagatesMainFrameScrolls) { m_propagatesMainFrameScrolls = propagatesMainFrameScrolls; }
     bool propagatesMainFrameScrolls() const { return m_propagatesMainFrameScrolls; }
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
+    bool hasScrollableMainFrame() const;
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect currentLayoutViewport() const;
