@@ -3319,12 +3319,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, bool ca
         // OSR entry failed. Oh no! This implies that we need to retry. We retry
         // without exponential backoff and we only do this for the entry code block.
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed too many times"));
-        unsigned osrEntryBytecode = entryBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
-        jitCode->clearOSREntryBlock();
-        jitCode->osrEntryRetry = 0;
-        jitCode->tierUpEntryTriggers.set(osrEntryBytecode, JITCode::TriggerReason::DontTrigger);
-        jitCode->setOptimizationThresholdBasedOnCompilationResult(
-            codeBlock, CompilationDeferred);
+        jitCode->clearOSREntryBlockAndResetThresholds(codeBlock);
         return nullptr;
     }
 

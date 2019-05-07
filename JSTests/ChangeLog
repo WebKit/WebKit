@@ -1,3 +1,13 @@
+2019-05-07  Saam Barati  <sbarati@apple.com>
+
+        Don't OSR enter into an FTL CodeBlock that has been jettisoned
+        https://bugs.webkit.org/show_bug.cgi?id=197531
+        <rdar://problem/50162379>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dont-osr-enter-into-jettisoned-ftl-code-block.js: Added.
+
 2019-05-06  Dean Jackson  <dino@apple.com>
 
         Update test262 expectations for Proxy passes

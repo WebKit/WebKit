@@ -98,6 +98,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
+    ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid);
 
     if (!Options::useOSREntryToDFG())
         return nullptr;
@@ -342,6 +343,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 { 
     ASSERT(codeBlock->jitType() == JITType::DFGJIT || codeBlock->jitType() == JITType::FTLJIT);
+    ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid);
 
     if (!Options::useOSREntryToDFG() && codeBlock->jitCode()->jitType() == JITType::DFGJIT)
         return nullptr;

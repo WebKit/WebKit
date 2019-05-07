@@ -121,7 +121,7 @@ public:
 #if ENABLE(FTL_JIT)
     CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
     void setOSREntryBlock(VM&, const JSCell* owner, CodeBlock* osrEntryBlock);
-    void clearOSREntryBlock() { m_osrEntryBlock.clear(); }
+    void clearOSREntryBlockAndResetThresholds(CodeBlock* dfgCodeBlock);
 #endif
 
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }

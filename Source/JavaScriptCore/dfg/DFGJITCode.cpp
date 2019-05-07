@@ -211,6 +211,17 @@ void JITCode::setOSREntryBlock(VM& vm, const JSCell* owner, CodeBlock* osrEntryB
     }
     m_osrEntryBlock.set(vm, owner, osrEntryBlock);
 }
+
+void JITCode::clearOSREntryBlockAndResetThresholds(CodeBlock *dfgCodeBlock)
+{ 
+    ASSERT(m_osrEntryBlock);
+
+    unsigned osrEntryBytecode = m_osrEntryBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
+    m_osrEntryBlock.clear();
+    osrEntryRetry = 0;
+    tierUpEntryTriggers.set(osrEntryBytecode, JITCode::TriggerReason::DontTrigger);
+    setOptimizationThresholdBasedOnCompilationResult(dfgCodeBlock, CompilationDeferred);
+}
 #endif // ENABLE(FTL_JIT)
 
 void JITCode::validateReferences(const TrackedReferences& trackedReferences)
