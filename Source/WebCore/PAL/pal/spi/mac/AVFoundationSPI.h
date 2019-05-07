@@ -324,3 +324,16 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif
 
+#if !USE(APPLE_INTERNAL_SDK) && HAVE(AVPLAYER_RESOURCE_CONSERVATION_LEVEL)
+@interface AVPlayer (AVPlayerPrivate)
+
+@property (nonatomic) AVPlayerResourceConservationLevel resourceConservationLevelWhilePaused;
+
+typedef NS_ENUM(NSInteger, AVPlayerResourceConservationLevel) {
+    AVPlayerResourceConservationLevelNone                                 = 0,
+    AVPlayerResourceConservationLevelReduceReadAhead                      = 1,
+    AVPlayerResourceConservationLevelReuseActivePlayerResources           = 2,
+    AVPlayerResourceConservationLevelRecycleBuffer                        = 3,
+};
+@end
+#endif

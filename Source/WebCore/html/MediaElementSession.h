@@ -73,7 +73,7 @@ public:
     SuccessOr<MediaPlaybackDenialReason> playbackPermitted() const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted() const;
-    bool dataBufferingPermitted() const;
+    MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;
     bool fullscreenPermitted() const;
     bool pageAllowsDataLoading() const;
     bool pageAllowsPlaybackAfterResuming() const;
@@ -104,6 +104,7 @@ public:
     void suspendBuffering() override;
     void resumeBuffering() override;
     bool bufferingSuspended() const;
+    void updateBufferingPolicy() { scheduleClientDataBufferingCheck(); }
 
     // Restrictions to modify default behaviors.
     enum BehaviorRestrictionFlags : unsigned {

@@ -121,7 +121,7 @@ public:
     void canPlayFastReverseDidChange(bool);
     void canPlayFastForwardDidChange(bool);
 
-    void setShouldBufferData(bool) override;
+    void setBufferingPolicy(MediaPlayerEnums::BufferingPolicy) override;
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
@@ -424,11 +424,11 @@ private:
     mutable long long m_cachedTotalBytes;
     unsigned m_pendingStatusChanges;
     int m_cachedItemStatus;
+    MediaPlayer::BufferingPolicy m_bufferingPolicy { MediaPlayer::BufferingPolicy::Default };
     bool m_cachedLikelyToKeepUp;
     bool m_cachedBufferEmpty;
     bool m_cachedBufferFull;
     bool m_cachedHasEnabledAudio;
-    bool m_shouldBufferData;
     bool m_cachedIsReadyForDisplay;
     bool m_haveBeenAskedToCreateLayer;
     bool m_cachedCanPlayFastForward;

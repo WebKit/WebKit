@@ -312,7 +312,9 @@ public:
     void prepareToPlay();
     void play();
     void pause();
-    void setShouldBufferData(bool);
+
+    using MediaPlayerEnums::BufferingPolicy;
+    void setBufferingPolicy(BufferingPolicy);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.

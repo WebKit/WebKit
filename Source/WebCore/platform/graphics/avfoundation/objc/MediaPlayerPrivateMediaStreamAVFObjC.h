@@ -154,7 +154,6 @@ private:
     
     void enqueueVideoSample(MediaStreamTrackPrivate&, MediaSample&);
     void enqueueCorrectedVideoSample(MediaSample&);
-    void flushAndRemoveVideoSampleBuffers();
     void requestNotificationWhenReadyForVideoData();
 
     void paint(GraphicsContext&, const FloatRect&) override;
@@ -174,7 +173,7 @@ private:
 
     bool ended() const override { return m_ended; }
 
-    void setShouldBufferData(bool) override;
+    void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
 
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();

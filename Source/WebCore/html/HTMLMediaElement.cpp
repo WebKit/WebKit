@@ -449,7 +449,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
-    , m_shouldBufferData(true)
     , m_elementIsHidden(document.hidden())
     , m_creatingControls(false)
     , m_receivedLayoutSizeChanged(false)
@@ -5779,7 +5778,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
     case ReasonForSuspension::PageCache:
         stopWithoutDestroyingMediaPlayer();
         m_asyncEventQueue.suspend();
-        setShouldBufferData(false);
+        setBufferingPolicy(BufferingPolicy::MakeResourcesPurgeable);
         m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
         break;
     case ReasonForSuspension::PageWillBeSuspended:
@@ -5798,14 +5797,13 @@ void HTMLMediaElement::resume()
 
     m_asyncEventQueue.resume();
 
-    setShouldBufferData(true);
-
     if (!m_mediaSession->pageAllowsPlaybackAfterResuming())
         document().addMediaCanStartListener(*this);
     else
         setPausedInternal(false);
 
     m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
+    m_mediaSession->updateBufferingPolicy();
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED && !m_resumeTaskQueue.hasPendingTask()) {
         // Restart the load if it was aborted in the middle by moving the document to the page cache.
@@ -6705,7 +6703,7 @@ void HTMLMediaElement::createMediaPlayer()
 #endif
 
     m_player = MediaPlayer::create(*this);
-    m_player->setShouldBufferData(m_shouldBufferData);
+    m_player->setBufferingPolicy(m_bufferingPolicy);
     schedulePlaybackControlsManagerUpdate();
 
 #if ENABLE(WEB_AUDIO)
@@ -7882,20 +7880,23 @@ bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicSt
     return true;
 }
 
-void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
+void HTMLMediaElement::setBufferingPolicy(BufferingPolicy policy)
 {
-    if (shouldBuffer == m_shouldBufferData)
+    if (policy == m_bufferingPolicy)
         return;
 
-    m_shouldBufferData = shouldBuffer;
+    INFO_LOG(LOGIDENTIFIER, policy);
+
+    m_bufferingPolicy = policy;
     if (m_player)
-        m_player->setShouldBufferData(shouldBuffer);
+        m_player->setBufferingPolicy(policy);
 }
 
 void HTMLMediaElement::purgeBufferedDataIfPossible()
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && m_mediaSession->dataBufferingPermitted())
+    INFO_LOG(LOGIDENTIFIER);
+
+    if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && m_mediaSession->preferredBufferingPolicy() == BufferingPolicy::Default)
         return;
 
     if (isPlayingToExternalTarget()) {
@@ -7903,13 +7904,7 @@ void HTMLMediaElement::purgeBufferedDataIfPossible()
         return;
     }
 
-    // This is called to relieve memory pressure. Turning off buffering causes the media playback
-    // daemon to release memory associated with queued-up video frames.
-    // We turn it back on right away, but new frames won't get loaded unless playback is resumed.
-    INFO_LOG(LOGIDENTIFIER, "toggling data buffering");
-    setShouldBufferData(false);
-    setShouldBufferData(true);
-#endif
+    setBufferingPolicy(BufferingPolicy::PurgeResources);
 }
 
 bool HTMLMediaElement::canSaveMediaData() const
@@ -8129,6 +8124,11 @@ void HTMLMediaElement::setInActiveDocument(bool inActiveDocument)
 
     m_inActiveDocument = inActiveDocument;
     m_mediaSession->inActiveDocumentChanged();
+}
+
+HTMLMediaElementEnums::BufferingPolicy HTMLMediaElement::bufferingPolicy() const
+{
+    return m_bufferingPolicy;    
 }
 
 }

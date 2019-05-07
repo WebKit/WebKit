@@ -457,11 +457,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers()
         [m_sampleBufferDisplayLayer flush];
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::flushAndRemoveVideoSampleBuffers()
-{
-    [m_sampleBufferDisplayLayer flushAndRemoveImage];
-}
-
 void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
 {
     if (m_sampleBufferDisplayLayer)
@@ -1149,10 +1144,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setNetworkState(MediaPlayer::NetworkS
     m_player->networkStateChanged();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setShouldBufferData(bool shouldBuffer)
+void MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
 {
-    if (!shouldBuffer)
-        flushAndRemoveVideoSampleBuffers();
+    if (policy != MediaPlayer::BufferingPolicy::Default)
+        [m_sampleBufferDisplayLayer flushAndRemoveImage];
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(Function<void ()>&& function)

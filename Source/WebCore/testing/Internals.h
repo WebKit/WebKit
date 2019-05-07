@@ -540,6 +540,7 @@ public:
     void endSimulatedHDCPError(HTMLMediaElement&);
 
     bool elementShouldBufferData(HTMLMediaElement&);
+    String elementBufferingPolicy(HTMLMediaElement&);
 #endif
 
     bool isSelectPopupVisible(HTMLSelectElement&);

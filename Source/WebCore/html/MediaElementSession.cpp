@@ -216,7 +216,7 @@ void MediaElementSession::updateClientDataBuffering()
     if (m_clientDataBufferingTimer.isActive())
         m_clientDataBufferingTimer.stop();
 
-    m_element.setShouldBufferData(dataBufferingPermitted());
+    m_element.setBufferingPolicy(preferredBufferingPolicy());
 }
 
 void MediaElementSession::addBehaviorRestriction(BehaviorRestrictions restrictions)
@@ -356,29 +356,29 @@ bool MediaElementSession::dataLoadingPermitted() const
     return true;
 }
 
-bool MediaElementSession::dataBufferingPermitted() const
+MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() const
 {
     if (isSuspended())
-        return false;
+        return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
     if (bufferingSuspended())
-        return false;
+        return MediaPlayer::BufferingPolicy::LimitReadAhead;
 
     if (state() == PlatformMediaSession::Playing)
-        return true;
+        return MediaPlayer::BufferingPolicy::Default;
 
     if (shouldOverrideBackgroundLoadingRestriction())
-        return true;
+        return MediaPlayer::BufferingPolicy::Default;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_shouldPlayToPlaybackTarget)
-        return true;
+        return MediaPlayer::BufferingPolicy::Default;
 #endif
 
     if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || m_element.elementIsHidden())
-        return false;
+        return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
-    return true;
+    return MediaPlayer::BufferingPolicy::Default;
 }
 
 bool MediaElementSession::fullscreenPermitted() const

@@ -268,13 +268,14 @@ public:
 
     WEBCORE_EXPORT void play() override;
     WEBCORE_EXPORT void pause() override;
-    void setShouldBufferData(bool);
-    WEBCORE_EXPORT bool shouldBufferData() const { return m_shouldBufferData; }
     WEBCORE_EXPORT void fastSeek(double);
     double minFastReverseRate() const;
     double maxFastForwardRate() const;
 
-    void purgeBufferedDataIfPossible();
+    using HTMLMediaElementEnums::BufferingPolicy;
+    void setBufferingPolicy(BufferingPolicy);
+    WEBCORE_EXPORT BufferingPolicy bufferingPolicy() const;
+    WEBCORE_EXPORT void purgeBufferedDataIfPossible();
 
 // captions
     WEBCORE_EXPORT bool webkitHasClosedCaptions() const;
@@ -1072,6 +1073,8 @@ private:
     ScanType m_scanType { Scan };
     ScanDirection m_scanDirection { Forward };
 
+    BufferingPolicy m_bufferingPolicy { BufferingPolicy::Default };
+
     bool m_firstTimePlaying : 1;
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
@@ -1099,7 +1102,6 @@ private:
     bool m_completelyLoaded : 1;
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;
-    bool m_shouldBufferData : 1;
     bool m_elementIsHidden : 1;
     bool m_elementWasRemovedFromDOM : 1;
     bool m_creatingControls : 1;

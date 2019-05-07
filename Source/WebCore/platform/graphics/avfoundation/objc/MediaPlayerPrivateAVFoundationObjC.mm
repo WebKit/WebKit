@@ -348,7 +348,6 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_cachedBufferEmpty(false)
     , m_cachedBufferFull(false)
     , m_cachedHasEnabledAudio(false)
-    , m_shouldBufferData(true)
     , m_cachedIsReadyForDisplay(false)
     , m_haveBeenAskedToCreateLayer(false)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -379,7 +378,7 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 
 void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
     tearDownVideoRendering();
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
@@ -543,7 +542,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     updateVideoLayerGravity();
     [m_videoLayer setContentsScale:player()->client().mediaPlayerContentsScale()];
     IntSize defaultSize = snappedIntRect(player()->client().mediaPlayerContentBoxRect()).size();
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_videoFullscreenLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
 
@@ -558,7 +557,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     if (!m_videoLayer)
         return;
 
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     [m_videoLayer removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
     [m_videoLayer setPlayer:nil];
@@ -698,7 +697,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     if (m_avAsset)
         return;
 
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     setDelayCallbacks(true);
 
@@ -835,7 +834,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     if (m_avPlayer)
         return;
 
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     setDelayCallbacks(true);
 
@@ -884,7 +883,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     if (m_avPlayerItem)
         return;
 
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     setDelayCallbacks(true);
 
@@ -1112,9 +1111,10 @@ void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
     
 void MediaPlayerPrivateAVFoundationObjC::platformPlay()
 {
-    INFO_LOG(LOGIDENTIFIER);
     if (!metaDataAvailable())
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_requestedPlaying = true;
     setPlayerRate(m_requestedRate);
@@ -1122,9 +1122,10 @@ void MediaPlayerPrivateAVFoundationObjC::platformPlay()
 
 void MediaPlayerPrivateAVFoundationObjC::platformPause()
 {
-    INFO_LOG(LOGIDENTIFIER);
     if (!metaDataAvailable())
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_requestedPlaying = false;
     setPlayerRate(0);
@@ -1215,6 +1216,8 @@ void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
     if (!m_avPlayer)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, volume);
+
     [m_avPlayer.get() setVolume:volume];
 #endif
 }
@@ -1224,7 +1227,7 @@ void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
     if (m_muted == muted)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, muted);
+    ALWAYS_LOG(LOGIDENTIFIER, muted);
 
     m_muted = muted;
 
@@ -1241,7 +1244,7 @@ void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCap
     if (!metaDataAvailable())
         return;
 
-    INFO_LOG(LOGIDENTIFIER, closedCaptionsVisible);
+    ALWAYS_LOG(LOGIDENTIFIER, closedCaptionsVisible);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
@@ -2859,19 +2862,45 @@ void MediaPlayerPrivateAVFoundationObjC::trackEnabledDidChange(bool)
     updateStates();
 }
 
-void MediaPlayerPrivateAVFoundationObjC::setShouldBufferData(bool shouldBuffer)
+void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
 {
-    INFO_LOG(LOGIDENTIFIER, shouldBuffer);
+    ALWAYS_LOG(LOGIDENTIFIER, policy);
 
-    if (m_shouldBufferData == shouldBuffer)
+    if (m_bufferingPolicy == policy)
         return;
 
-    m_shouldBufferData = shouldBuffer;
+    m_bufferingPolicy = policy;
     
     if (!m_avPlayer)
         return;
 
-    setAVPlayerItem(shouldBuffer ? m_avPlayerItem.get() : nil);
+#if HAVE(AVPLAYER_RESOURCE_CONSERVATION_LEVEL)
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::Default) == AVPlayerResourceConservationLevelNone, "MediaPlayer::BufferingPolicy::Default is not AVPlayerResourceConservationLevelNone as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::LimitReadAhead) == AVPlayerResourceConservationLevelReduceReadAhead, "MediaPlayer::BufferingPolicy::LimitReadAhead is not AVPlayerResourceConservationLevelReduceReadAhead as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::MakeResourcesPurgeable) == AVPlayerResourceConservationLevelReuseActivePlayerResources, "MediaPlayer::BufferingPolicy::MakeResourcesPurgeable is not AVPlayerResourceConservationLevelReuseActivePlayerResources as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::PurgeResources) == AVPlayerResourceConservationLevelRecycleBuffer, "MediaPlayer::BufferingPolicy::PurgeResources is not AVPlayerResourceConservationLevelRecycleBuffer as expected");
+
+    if ([m_avPlayer respondsToSelector:@selector(setResourceConservationLevelWhilePaused:)]) {
+        m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
+        updateStates();
+        return;
+    }
+#endif
+
+    switch (policy) {
+    case MediaPlayer::BufferingPolicy::Default:
+        setAVPlayerItem(m_avPlayerItem.get());
+        break;
+    case MediaPlayer::BufferingPolicy::LimitReadAhead:
+    case MediaPlayer::BufferingPolicy::MakeResourcesPurgeable:
+        setAVPlayerItem(nil);
+        break;
+    case MediaPlayer::BufferingPolicy::PurgeResources:
+        setAVPlayerItem(nil);
+        setAVPlayerItem(m_avPlayerItem.get());
+        break;
+    }
+
     updateStates();
 }
 

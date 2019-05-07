@@ -68,7 +68,7 @@ public:
 
     virtual void play() = 0;
     virtual void pause() = 0;    
-    virtual void setShouldBufferData(bool) { }
+    virtual void setBufferingPolicy(MediaPlayer::BufferingPolicy) { }
 
     virtual bool supportsPictureInPicture() const { return false; }
     virtual bool supportsFullscreen() const { return false; }

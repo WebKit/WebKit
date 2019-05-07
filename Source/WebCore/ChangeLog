@@ -1,3 +1,55 @@
+2019-05-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Define media buffering policy
+        https://bugs.webkit.org/show_bug.cgi?id=196979
+        <rdar://problem/28383861>
+
+        Reviewed by Jer Noble.
+
+        Test: MediaBufferingPolicy API test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::setBufferingPolicy):
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible):
+        (WebCore::HTMLMediaElement::bufferingPolicy const):
+        (WebCore::HTMLMediaElement::setShouldBufferData): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::shouldBufferData const): Deleted.
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::updateClientDataBuffering):
+        (WebCore::MediaElementSession::preferredBufferingPolicy const):
+        (WebCore::MediaElementSession::dataBufferingPermitted const): Deleted.
+        * html/MediaElementSession.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setBufferingPolicy):
+        (WebCore::convertEnumerationToString):
+        (WebCore::MediaPlayer::setShouldBufferData): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerEnums.h:
+        (WTF::LogArgument<WebCore::MediaPlayerEnums::BufferingPolicy>::toString):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setBufferingPolicy):
+        (WebCore::MediaPlayerPrivateInterface::setShouldBufferData): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldBufferData): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::flushAndRemoveVideoSampleBuffers): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setShouldBufferData): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementShouldBufferData):
+        (WebCore::Internals::elementBufferingPolicy):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-05-07  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to set a list of hosts to which to send custom header fields cross-origin
