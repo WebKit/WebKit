@@ -1,0 +1,21 @@
+Image decoding - cross-origin image request
+
+If you can read JSON encoded HTTP headers of the image below, the decoding works as expected.
+
+http://127.0.0.1:8800/common/security-features/subresource/image.py?cache_destroyer=1556308330222:
+
+{
+  "origin": "http://localhost:8800",
+  "accept-language": "fr-fr",
+  "accept-encoding": "gzip, deflate",
+  "host": "127.0.0.1:8800",
+  "accept": "image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+  "connection": "keep-alive",
+  "referer": "http://localhost:8800/referrer-policy/generic/subresource-test/image-decoding.html"
+}
+
+
+
+PASS Image is encoding headers as JSON. 
+

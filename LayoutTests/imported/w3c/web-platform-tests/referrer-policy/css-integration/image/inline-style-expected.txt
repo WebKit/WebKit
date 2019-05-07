@@ -1,0 +1,6 @@
+Check that resources from inline styles are loaded with the referrer and referrer policy from the document.
+
+
+
+PASS Image from inline styles. 
+

@@ -1,3 +1,16 @@
+2019-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Import WPT referrer-policy tests
+        https://bugs.webkit.org/show_bug.cgi?id=197321
+
+        Reviewed by Alex Christensen.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/common/: Refreshed.
+        * web-platform-tests/custom-elements/custom-element-registry/per-global-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/navigated-named-objects.window-expected.txt:
+        * web-platform-tests/referrer-policy/: Added.
+
 2019-05-03  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm is a flaky failure

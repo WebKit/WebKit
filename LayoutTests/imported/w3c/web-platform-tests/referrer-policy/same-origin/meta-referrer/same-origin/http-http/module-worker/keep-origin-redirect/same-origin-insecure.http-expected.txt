@@ -1,0 +1,7 @@
+
+PASS The referrer URL is stripped-referrer when a
+                                 document served over http requires an http
+                                 sub-resource via module-worker using the meta-referrer
+                                 delivery method with keep-origin-redirect and when
+                                 the target request is same-origin. 
+

@@ -1,0 +1,18 @@
+
+
+FAIL The referrer URL is origin when a
+                                 document served over http requires an http
+                                 sub-resource via img-tag using the attr-referrer
+                                 delivery method with keep-origin-redirect and when
+                                 the target request is same-origin. assert_equals: Reported Referrer URL is 'origin'. expected "http://localhost:8800/" but got "http://localhost:8800/referrer-policy/origin/attr-referrer/same-origin/http-http/img-tag/keep-origin-redirect/generic.http.html"
+FAIL The referrer URL is origin when a
+                                 document served over http requires an http
+                                 sub-resource via img-tag using the attr-referrer
+                                 delivery method with keep-origin-redirect and when
+                                 the target request is same-origin. (srcdoc iframe inherits parent) assert_equals: Reported Referrer URL is 'origin'. expected "http://localhost:8800/" but got "http://localhost:8800/referrer-policy/origin/attr-referrer/same-origin/http-http/img-tag/keep-origin-redirect/generic.http.html"
+PASS The referrer URL is origin when a
+                                 document served over http requires an http
+                                 sub-resource via img-tag using the attr-referrer
+                                 delivery method with keep-origin-redirect and when
+                                 the target request is same-origin. (overridden by srcdoc iframe) 
+

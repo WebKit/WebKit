@@ -1,0 +1,6 @@
+Invalid referrerPolicy attribute value
+
+Running...
+
+FAIL Invalid referrerpolicy values not reflected assert_equals: expected "" but got "not-valid-value"
+

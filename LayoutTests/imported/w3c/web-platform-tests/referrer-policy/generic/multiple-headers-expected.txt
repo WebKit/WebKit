@@ -1,0 +1,7 @@
+Referrer Policy: multiple Referrer-Policy headers are allowed
+
+Running...
+
+
+PASS Image uses the last recognized Referrer-Policy header 
+

@@ -1,0 +1,19 @@
+Worker messaging - same-origin Worker request
+
+If you can read JSON encoded HTTP request headers of the Worker below, the messaging works as expected.
+
+http://localhost:8800/common/security-features/subresource/worker.py:
+
+{
+  "accept-language": "fr-fr",
+  "accept-encoding": "gzip, deflate",
+  "connection": "keep-alive",
+  "accept": "*/*",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+  "host": "localhost:8800",
+  "referer": "http://localhost:8800/referrer-policy/generic/subresource-test/worker-messaging.html"
+}
+
+
+PASS Worker is responding with HTTP headers 
+

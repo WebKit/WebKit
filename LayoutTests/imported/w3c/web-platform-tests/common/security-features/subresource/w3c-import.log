@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/audio.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/document.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/empty.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/font.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/image.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/script.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/shared-worker.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/stylesheet.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/subresource.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/svg.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/video.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/worker.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/subresource/xhr.py

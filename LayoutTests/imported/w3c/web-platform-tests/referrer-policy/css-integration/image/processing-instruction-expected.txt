@@ -1,0 +1,5 @@
+Check that resources from external stylesheets (referenced from a ProcessingInstruction) are loaded with the referrer and referrer policy from the external stylesheet.
+
+
+FAIL Image from external stylesheet (from ProcessingInstruction). assert_equals: expected (string) "http://127.0.0.1:8800/common/security-features/subresource/stylesheet.py?id=abcd8a36-2e12-4c9b-bb0d-b5f336dda4f3" but got (undefined) undefined
+

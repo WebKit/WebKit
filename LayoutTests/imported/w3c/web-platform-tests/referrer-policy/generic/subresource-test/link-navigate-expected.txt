@@ -1,0 +1,21 @@
+Link messaging - cross-origin Link navigation
+
+If you can read JSON encoded HTTP request headers of the Link below, the messaging works as expected.
+
+http://127.0.0.1:8800/common/security-features/subresource/document.py:
+
+{
+  "accept-language": "fr-fr",
+  "accept-encoding": "gzip, deflate",
+  "connection": "keep-alive",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+  "host": "127.0.0.1:8800",
+  "referer": "http://localhost:8800/referrer-policy/generic/subresource-test/link-navigate.html",
+  "upgrade-insecure-requests": "1"
+}
+
+
+
+PASS Link is responding with HTTP headers 
+

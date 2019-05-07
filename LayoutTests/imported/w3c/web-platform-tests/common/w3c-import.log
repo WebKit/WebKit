@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/common/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/common/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedLocalStorage.js
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedLocalStorage.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedPostMessage.js
@@ -36,11 +36,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/domain-setter.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xml
+/LayoutTests/imported/w3c/web-platform-tests/common/echo.py
 /LayoutTests/imported/w3c/web-platform-tests/common/entities.json
 /LayoutTests/imported/w3c/web-platform-tests/common/form-submission.py
 /LayoutTests/imported/w3c/web-platform-tests/common/get-host-info.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/common/get-host-info.sub.js.headers
-/LayoutTests/imported/w3c/web-platform-tests/common/large.py
 /LayoutTests/imported/w3c/web-platform-tests/common/media.js
 /LayoutTests/imported/w3c/web-platform-tests/common/media.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/namespaces.js
@@ -52,8 +52,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/sleep.py
+/LayoutTests/imported/w3c/web-platform-tests/common/slow.py
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/common/subset-tests-by-key.js
 /LayoutTests/imported/w3c/web-platform-tests/common/subset-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js
 /LayoutTests/imported/w3c/web-platform-tests/common/test-setting-immutable-prototype.js.headers

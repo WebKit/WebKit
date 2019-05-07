@@ -1,0 +1,5 @@
+Check that resources from stylesheets (imported from internal stylesheets) are loaded with the referrer and referrer policy from the document.
+
+
+FAIL Image from imported stylesheet (internal). assert_equals: expected "http://127.0.0.1:8800/common/security-features/subresource/stylesheet.py?id=5c9f19c1-739d-483e-a690-d37231c8b44c" but got "http://localhost:8800/"
+
