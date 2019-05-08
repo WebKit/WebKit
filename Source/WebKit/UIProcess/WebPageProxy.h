@@ -595,6 +595,7 @@ public:
 
     void addMIMETypeWithCustomContentProvider(const String& mimeType);
 
+    void selectAll();
     void executeEditCommand(const String& commandName, const String& argument = String());
     void validateCommand(const String& commandName, WTF::Function<void (const String&, bool, int32_t, CallbackBase::Error)>&&);
 

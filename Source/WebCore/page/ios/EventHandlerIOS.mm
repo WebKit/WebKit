@@ -671,6 +671,8 @@ bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
     if (!document)
         return false;
 
+    SetForScope<bool> shouldAllowMouseDownToStartDrag { m_shouldAllowMouseDownToStartDrag, true };
+
     document->updateLayoutIgnorePendingStylesheets();
 
     FloatPoint adjustedClientPositionAsFloatPoint(clientPosition);
@@ -699,7 +701,17 @@ bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
     return handledDrag;
 }
 
-#endif
+bool EventHandler::supportsSelectionUpdatesOnMouseDrag() const
+{
+    return false;
+}
+
+bool EventHandler::shouldAllowMouseDownToStartDrag() const
+{
+    return m_shouldAllowMouseDownToStartDrag;
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 }
 

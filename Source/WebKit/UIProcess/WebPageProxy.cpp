@@ -2014,6 +2014,14 @@ void WebPageProxy::scheduleFullEditorStateUpdate()
     m_process->send(Messages::WebPage::ScheduleFullEditorStateUpdate(), m_pageID);
 }
 
+void WebPageProxy::selectAll()
+{
+    if (!hasRunningProcess())
+        return;
+
+    m_process->send(Messages::WebPage::SelectAll(), m_pageID);
+}
+
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {

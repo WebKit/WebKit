@@ -827,6 +827,19 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static waitForMenuToHide()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (uiController.isShowingMenu)
+                        uiController.didHideMenuCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
     static isShowingMenu()
     {
         return new Promise(resolve => {

@@ -1,3 +1,58 @@
+2019-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a quirk to synthesize mouse events when modifying the selection
+        https://bugs.webkit.org/show_bug.cgi?id=197683
+        <rdar://problem/48003980>
+
+        Reviewed by Tim Horton.
+
+        Introduces support for dispatching synthetic mouse events when modifying the selection on some websites. See
+        below for more details.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::selectAll):
+        * UIProcess/WebPageProxy.h:
+
+        Instead of executing a "SelectAll" editing command using the generic WebPage::executeEditCommand method,
+        introduce a separate method for selectAll that executes the "SelectAll" edit command and then does some
+        platform-specific work. See platformDidSelectAll.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectAllForWebView:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::selectAll):
+        (WebKit::WebPage::shouldDispatchSyntheticMouseEventsWhenModifyingSelection const):
+
+        Add a helper method to determine whether the quirk should be enabled.
+
+        (WebKit::WebPage::platformDidSelectAll):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::elementRectInRootViewCoordinates):
+
+        Move this function closer to the top of the file so that it can be used in
+        dispatchSyntheticMouseEventsForSelectionGesture.
+
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::dispatchSyntheticMouseEventsForSelectionGesture):
+
+        Add a helper method to dispatch a synthetic mouse event for a given selection gesture type. Used in several
+        places in WebPageIOS to synthesize and dispatch mouse events during selection.
+
+        (WebKit::WebPage::updateSelectionWithTouches):
+
+        When changing the selection with selection handles, fake mousedown when the user first touches down on the
+        selection handle; mousemove as the user is moving the handle around; and finally, mouseup when the user lets go.
+
+        (WebKit::WebPage::extendSelection):
+        (WebKit::WebPage::platformDidSelectAll):
+
+        When tapping "Select All" and/or "Select" in the callout menu, fake a mousedown at the selection start, then a
+        mousemove at selection end, and finally, a mouseup at selection end.
+
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-05-08  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Pinch Zooming has no maximum

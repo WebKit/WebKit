@@ -599,6 +599,7 @@ public:
     void disabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&);
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void executeEditCommandWithCallback(const String&, const String& argument, CallbackID);
+    void selectAll();
 
     void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebKit::TextInputContext>&)>&&);
     void focusTextInputContext(const TextInputContext&, CompletionHandler<void(bool)>&&);
@@ -1228,6 +1229,7 @@ private:
     void resetTextAutosizing();
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
     RefPtr<WebCore::Range> rangeForGranularityAtPoint(WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement);
+    void dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch, const WebCore::IntPoint&);
 
     void sendPositionInformation(InteractionInformationAtPosition&&);
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
@@ -1465,6 +1467,9 @@ private:
     void lowercaseWord();
     void capitalizeWord();
 #endif
+
+    bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
+    void platformDidSelectAll();
 
 #if ENABLE(CONTEXT_MENUS)
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);

@@ -103,6 +103,7 @@ public:
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
     ExceptionOr<void> setIncompleteImageBorderEnabled(bool);
+    ExceptionOr<void> setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(bool);
 
     using FrameFlatteningValue = FrameFlattening;
     ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
@@ -198,6 +199,7 @@ private:
         bool m_deferredCSSParserEnabled;
         bool m_inputEventsEnabled;
         bool m_incompleteImageBorderEnabled;
+        bool m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection;
         bool m_shouldDeactivateAudioSession;
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;

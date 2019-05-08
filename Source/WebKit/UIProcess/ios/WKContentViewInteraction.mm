@@ -3079,7 +3079,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (void)selectAllForWebView:(id)sender
 {
     [_textSelectionAssistant selectAll:sender];
-    _page->executeEditCommand("selectAll"_s);
+    _page->selectAll();
 }
 
 - (void)toggleBoldfaceForWebView:(id)sender

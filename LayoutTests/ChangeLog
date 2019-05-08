@@ -1,3 +1,22 @@
+2019-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a quirk to synthesize mouse events when modifying the selection
+        https://bugs.webkit.org/show_bug.cgi?id=197683
+        <rdar://problem/48003980>
+
+        Reviewed by Tim Horton.
+
+        Adds a new layout test to enable the site-specific quirk and verify that mouse events are dispatched when
+        changing selection, both via the callout menu and by moving the selection grabber using gestures.
+
+        * editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk-expected.txt: Added.
+        * editing/selection/ios/dispatch-mouse-events-when-modifying-selection-quirk.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForMenuToHide.return.new.Promise):
+        (window.UIHelper.waitForMenuToHide):
+
+        Introduce a new helper method to wait for the menu to hide (on iOS, this refers to the callout menu).
+
 2019-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for Mojave.

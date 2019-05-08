@@ -365,6 +365,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);
+    bool shouldAllowMouseDownToStartDrag() const;
 #endif
 
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
@@ -457,6 +458,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     DragSourceAction updateDragSourceActionsAllowed() const;
+    bool supportsSelectionUpdatesOnMouseDrag() const;
 #endif
 
     // The following are called at the beginning of handleMouseUp and handleDrag.  
@@ -615,6 +617,10 @@ private:
     double m_maxMouseMovedDuration { 0 };
     bool m_didStartDrag { false };
     bool m_isHandlingWheelEvent { false };
+
+#if PLATFORM(IOS_FAMILY)
+    bool m_shouldAllowMouseDownToStartDrag { false };
+#endif
 
 #if ENABLE(CURSOR_VISIBILITY)
     Timer m_autoHideCursorTimer;

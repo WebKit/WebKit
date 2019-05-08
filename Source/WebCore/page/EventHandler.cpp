@@ -776,7 +776,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     // Single mouse down on links or images can always trigger drag-n-drop.
     bool isMouseDownOnLinkOrImage = event.isOverLink() || event.hitTestResult().image();
-    m_mouseDownMayStartDrag = singleClick && (!event.event().shiftKey() || isMouseDownOnLinkOrImage);
+    m_mouseDownMayStartDrag = singleClick && (!event.event().shiftKey() || isMouseDownOnLinkOrImage) && shouldAllowMouseDownToStartDrag();
 #endif
 
     m_mouseDownWasSingleClickInSelection = false;
@@ -847,6 +847,21 @@ VisiblePosition EventHandler::selectionExtentRespectingEditingBoundary(const Vis
 }
 
 #if ENABLE(DRAG_SUPPORT)
+
+#if !PLATFORM(IOS_FAMILY)
+
+bool EventHandler::supportsSelectionUpdatesOnMouseDrag() const
+{
+    return true;
+}
+
+bool EventHandler::shouldAllowMouseDownToStartDrag() const
+{
+    return true;
+}
+
+#endif
+
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)
 {
     if (!m_mousePressed)
@@ -926,6 +941,9 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
 
 void EventHandler::updateSelectionForMouseDrag()
 {
+    if (!supportsSelectionUpdatesOnMouseDrag())
+        return;
+
     FrameView* view = m_frame.view();
     if (!view)
         return;
@@ -941,6 +959,9 @@ void EventHandler::updateSelectionForMouseDrag()
 
 void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResult)
 {
+    if (!supportsSelectionUpdatesOnMouseDrag())
+        return;
+
     if (!m_mouseDownMayStartSelect)
         return;
 

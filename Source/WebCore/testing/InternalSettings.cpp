@@ -100,6 +100,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_deferredCSSParserEnabled(settings.deferredCSSParserEnabled())
     , m_inputEventsEnabled(settings.inputEventsEnabled())
     , m_incompleteImageBorderEnabled(settings.incompleteImageBorderEnabled())
+    , m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection(settings.shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
     , m_shouldDeactivateAudioSession(PlatformMediaSessionManager::shouldDeactivateAudioSession())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
@@ -207,6 +208,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
     settings.setFrameFlattening(m_frameFlattening);
     settings.setIncompleteImageBorderEnabled(m_incompleteImageBorderEnabled);
+    settings.setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(m_shouldDispatchSyntheticMouseEventsWhenModifyingSelection);
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
@@ -923,6 +925,14 @@ ExceptionOr<void> InternalSettings::setIncompleteImageBorderEnabled(bool enabled
     if (!m_page)
         return Exception { InvalidAccessError };
     settings().setIncompleteImageBorderEnabled(enabled);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(bool shouldDispatch)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    settings().setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(shouldDispatch);
     return { };
 }
 

@@ -237,6 +237,24 @@ static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAre
 
 #endif
 
+bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
+{
+    if (m_document->settings().shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
+        return true;
+
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    if (equalLettersIgnoringASCIICase(host, "medium.com") || host.endsWithIgnoringASCIICase(".medium.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "weebly.com") || host.endsWithIgnoringASCIICase(".weebly.com"))
+        return true;
+
+    return false;
+}
+
 bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const
 {
     if (!needsQuirks())

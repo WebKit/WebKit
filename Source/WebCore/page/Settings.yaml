@@ -834,6 +834,9 @@ blockingOfSmallPluginsEnabled:
 shouldDecidePolicyBeforeLoadingQuickLookPreview:
   initial: false
 
+shouldDispatchSyntheticMouseEventsWhenModifyingSelection:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

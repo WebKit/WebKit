@@ -1101,6 +1101,26 @@ void WebPage::executeEditCommandWithCallback(const String& commandName, const St
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
+void WebPage::selectAll()
+{
+    executeEditingCommand("SelectAll"_s, { });
+    platformDidSelectAll();
+}
+
+bool WebPage::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
+{
+    auto* document = m_page->mainFrame().document();
+    return document && document->quirks().shouldDispatchSyntheticMouseEventsWhenModifyingSelection();
+}
+
+#if !PLATFORM(IOS_FAMILY)
+
+void WebPage::platformDidSelectAll()
+{
+}
+
+#endif // !PLATFORM(IOS_FAMILY)
+
 void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
 {
     // FIXME: We should update EditorStateIsContentEditable to track whether the state is richly
