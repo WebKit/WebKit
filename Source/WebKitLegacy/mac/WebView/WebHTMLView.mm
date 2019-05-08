@@ -146,6 +146,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(MAC)
 #import "WebNSEventExtras.h"
@@ -820,10 +821,12 @@ static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdate
 static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     ASSERT(observer);
+    auto weakWebView = WeakObjCPtr<WebHTMLView>((__bridge WebHTMLView *)observer);
     WebThreadRun(^{
-        WebHTMLView *webView = (__bridge WebHTMLView *)observer;
-        if (Frame* coreFrame = core([webView _frame]))
-            coreFrame->eventHandler().capsLockStateMayHaveChanged();
+        if (auto webView = weakWebView.get()) {
+            if (auto* coreFrame = core([webView _frame]))
+                coreFrame->eventHandler().capsLockStateMayHaveChanged();
+        }
     });
 }
 #endif

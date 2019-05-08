@@ -1,3 +1,19 @@
+2019-05-08  Daniel Bates  <dabates@apple.com>
+
+        [Legacy WebKit] REGRESSION (r238078): Crash in hardwareKeyboardAvailabilityChangedCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=197724
+        <rdar://problem/49725959>
+
+        Reviewed by Tim Horton.
+
+        Speculative fix for race condition. Between the time we receive a kGSEventHardwareKeyboardAvailabilityChangedNotification
+        notification and when we schedule execution to run on the WebThread the WebView that notification
+        was for may no longer exist. Take out a weak ptr on the WebView when we receive the notification
+        and check that we still have it once we are running on the WebThread.
+
+        * WebView/WebHTMLView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback):
+
 2019-05-08  Timothy Hatcher  <timothy@apple.com>
 
         Add plumbing for inactive system colors in RenderTheme cache.
