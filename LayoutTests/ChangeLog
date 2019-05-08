@@ -1,3 +1,11 @@
+2019-05-08  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed test rebaselines.
+
+        * platform/ios/editing/deleting/smart-delete-paragraph-003-expected.txt:
+        * platform/ios/editing/pasteboard/smart-paste-paragraph-003-expected.txt:
+        I over-did it with my rebaselines earlier.
+
 2019-05-08  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening
