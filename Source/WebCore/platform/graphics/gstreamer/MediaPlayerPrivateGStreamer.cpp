@@ -1351,9 +1351,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         }
 #endif
         else if (gst_structure_has_name(structure, "http-headers")) {
-            const char* redirectionUri = gst_structure_get_string(structure, "redirection-uri");
-            const char* uri = redirectionUri ? redirectionUri : gst_structure_get_string(structure, "uri");
-            if (uri) {
+            GST_DEBUG_OBJECT(pipeline(), "Processing HTTP headers: %" GST_PTR_FORMAT, structure);
+            if (const char* uri = gst_structure_get_string(structure, "uri")) {
                 URL url(URL(), uri);
                 convertToInternalProtocol(url);
                 m_origins.add(SecurityOrigin::create(url));

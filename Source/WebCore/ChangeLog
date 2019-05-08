@@ -1,3 +1,19 @@
+2019-05-08  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r243197): [GStreamer] Error playing redirected streams
+        https://bugs.webkit.org/show_bug.cgi?id=197410
+
+        Reviewed by Carlos Garcia Campos.
+
+        Revert the change introduced in r243197 that was checking the
+        redirected URI instead of the original URI. Non-main URIs should
+        be ignored only when they are HLS (or similar) fragments.
+
+        Test http/tests/security/canvas-remote-read-remote-video-hls.html still passes.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2019-05-08  Rob Buis  <rbuis@igalia.com>
 
         Link prefetch not useful for top-level navigation
