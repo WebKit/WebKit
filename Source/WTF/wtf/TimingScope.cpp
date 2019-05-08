@@ -73,7 +73,7 @@ void TimingScope::scopeDidEnd()
 {
     const auto& data = state().addToTotal(m_name, MonotonicTime::now() - m_startTime);
     if (!(data.callCount % m_logIterationInterval))
-        WTFLogAlways("%s: %u calls, mean duration: %.6fms", m_name, data.callCount, data.meanDuration().milliseconds());
+        WTFLogAlways("%s: %u calls, mean duration: %.6fms, total duration: %.6fms", m_name, data.callCount, data.meanDuration().milliseconds(), data.totalDuration.milliseconds());
 }
 
 } // namespace WebCore
