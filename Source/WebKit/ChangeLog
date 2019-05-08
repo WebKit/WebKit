@@ -1,3 +1,17 @@
+2019-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r244230): Web Automation: use null instead of empty string as success result of scripts when alert is open
+        https://bugs.webkit.org/show_bug.cgi?id=197655
+
+        Reviewed by Devin Rousso.
+
+        This regressed in r244230, the case of an alert open while running a script is now handled in WebKit side, but
+        an empty string is returned as a result, which is not a valid JSON serialized string. That made all user prompts
+        tests to fail.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog): Use null as script result instead of an empty string.
+
 2019-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245038.

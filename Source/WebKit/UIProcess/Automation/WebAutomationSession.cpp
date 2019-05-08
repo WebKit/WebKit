@@ -654,7 +654,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
         if (!m_evaluateJavaScriptFunctionCallbacks.isEmpty()) {
             for (auto key : copyToVector(m_evaluateJavaScriptFunctionCallbacks.keys())) {
                 auto callback = m_evaluateJavaScriptFunctionCallbacks.take(key);
-                callback->sendSuccess(emptyString());
+                callback->sendSuccess("null"_s);
             }
         }
 
