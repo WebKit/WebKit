@@ -4563,6 +4563,15 @@
       ],
       "status" : "contributor"
    },
+   "Oriol Brufau" : {
+      "emails" : [
+         "obrufau@igalia.com"
+      ],
+      "nicks" : [
+         "obrufau"
+      ],
+      "status" : "committer"
+   },
    "Pablo Flouret" : {
       "emails" : [
          "pf@parb.es",
