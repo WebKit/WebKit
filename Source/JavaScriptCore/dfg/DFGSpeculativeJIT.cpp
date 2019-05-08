@@ -5221,6 +5221,44 @@ void SpeculativeJIT::compileArithFRound(Node* node)
     doubleResult(result.fpr(), node);
 }
 
+void SpeculativeJIT::compileValueMod(Node* node)
+{
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (node->binaryUseKind() == BigIntUse) {
+        SpeculateCellOperand left(this, leftChild);
+        SpeculateCellOperand right(this, rightChild);
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+
+        speculateBigInt(leftChild, leftGPR);
+        speculateBigInt(rightChild, rightGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+
+        callOperation(operationModBigInt, resultGPR, leftGPR, rightGPR);
+
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    DFG_ASSERT(m_jit.graph(), node, node->binaryUseKind() == UntypedUse, node->binaryUseKind());
+    JSValueOperand op1(this, leftChild);
+    JSValueOperand op2(this, rightChild);
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    JSValueRegs op2Regs = op2.jsValueRegs();
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(operationValueMod, resultRegs, op1Regs, op2Regs);
+    m_jit.exceptionCheck();
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileArithMod(Node* node)
 {
     switch (node->binaryUseKind()) {

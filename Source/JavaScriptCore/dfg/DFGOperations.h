@@ -50,6 +50,7 @@ JSCell* JIT_OPERATION operationObjectCreateObject(ExecState*, JSObject*) WTF_INT
 JSCell* JIT_OPERATION operationCreateThis(ExecState*, JSObject* constructor, uint32_t inlineCapacity) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToThis(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueMod(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueBitNot(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
@@ -168,6 +169,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState*, JSGlobalObject*, Enc
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationSubBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationMulBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationModBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationDivBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitNotBigInt(ExecState*, JSCell* op1) WTF_INTERNAL;

@@ -2087,6 +2087,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ValueMod: {
+        compileValueMod(node);
+        break;
+    }
+
     case ArithMod: {
         compileArithMod(node);
         break;

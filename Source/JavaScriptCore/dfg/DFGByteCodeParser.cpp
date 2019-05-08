@@ -935,7 +935,7 @@ private:
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             node->mergeFlags(NodeMayNegZeroInDFG);
         
-        if (!isX86() && node->op() == ArithMod)
+        if (!isX86() && (node->op() == ArithMod || node->op() == ValueMod))
             return node;
 
         {
@@ -996,6 +996,7 @@ private:
             case ArithAdd:
             case ArithSub:
             case ValueAdd:
+            case ValueMod:
             case ArithMod: // for ArithMod "MayOverflow" means we tried to divide by zero, or we saw double.
                 node->mergeFlags(NodeMayOverflowInt32InBaseline);
                 break;
@@ -5106,7 +5107,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpMod>();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
-            set(bytecode.m_dst, makeSafe(addToGraph(ArithMod, op1, op2)));
+            if (op1->hasNumberResult() && op2->hasNumberResult())
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithMod, op1, op2)));
+            else
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueMod, op1, op2)));
             NEXT_OPCODE(op_mod);
         }
 

@@ -213,6 +213,33 @@ static ALWAYS_INLINE void putWithThis(ExecState* exec, EncodedJSValue encodedBas
     baseValue.putInline(exec, ident, putValue, slot);
 }
 
+template<typename BigIntOperation, typename NumberOperation>
+static ALWAYS_INLINE EncodedJSValue binaryOp(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, NumberOperation&& numberOp, const char* errorMessage)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    auto leftNumeric = op1.toNumeric(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto rightNumeric = op2.toNumeric(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
+            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
+
+        return throwVMTypeError(exec, scope, errorMessage);
+    }
+
+    scope.release();
+
+    return JSValue::encode(jsNumber(numberOp(WTF::get<double>(leftNumeric), WTF::get<double>(rightNumeric))));
+}
+
 template<typename BigIntOperation, typename Int32Operation>
 static ALWAYS_INLINE EncodedJSValue bitwiseBinaryOp(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, Int32Operation&& int32Op, const char* errorMessage)
 {
@@ -380,6 +407,19 @@ JSCell* JIT_OPERATION operationToObject(ExecState* exec, JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, value.toObject(exec, globalObject));
 }
 
+EncodedJSValue JIT_OPERATION operationValueMod(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::remainder(exec, left, right);
+    };
+
+    auto numberOp = [] (double left, double right) -> double {
+        return jsMod(left, right);
+    };
+
+    return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in remainder operation.");
+}
+
 EncodedJSValue JIT_OPERATION operationValueBitNot(ExecState* exec, EncodedJSValue encodedOp1)
 {
     VM* vm = &exec->vm();
@@ -497,33 +537,15 @@ EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
 
 EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
+    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::divide(exec, left, right);
+    };
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-    JSValue op2 = JSValue::decode(encodedOp2);
+    auto numberOp = [] (double left, double right) -> double {
+        return left / right;
+    };
 
-    auto leftNumeric = op1.toNumeric(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto rightNumeric = op2.toNumeric(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::divide(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            return JSValue::encode(result);
-        }
-
-        return throwVMTypeError(exec, scope, "Invalid mix of BigInt and other type in division operation.");
-    }
-
-    scope.release();
-
-    double a = WTF::get<double>(leftNumeric);
-    double b = WTF::get<double>(rightNumeric);
-    return JSValue::encode(jsNumber(a / b));
+    return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in division operation.");
 }
 
 double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp1)
@@ -1352,6 +1374,17 @@ JSCell* JIT_OPERATION operationMulBigInt(ExecState* exec, JSCell* op1, JSCell* o
     return JSBigInt::multiply(exec, leftOperand, rightOperand);
 }
     
+JSCell* JIT_OPERATION operationModBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
+    JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
+    
+    return JSBigInt::remainder(exec, leftOperand, rightOperand);
+}
+
 JSCell* JIT_OPERATION operationDivBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
 {
     VM* vm = &exec->vm();

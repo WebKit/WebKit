@@ -363,6 +363,7 @@ private:
             break;
         }
             
+        case ValueMod:
         case ArithMod: {
             flags |= NodeBytecodeUsesAsNumber;
             flags &= ~NodeBytecodeUsesAsOther;

@@ -780,6 +780,9 @@ private:
         case ArithDiv:
             compileArithDiv();
             break;
+        case ValueMod:
+            compileValueMod();
+            break;
         case ArithMod:
             compileArithMod();
             break;
@@ -2546,6 +2549,24 @@ private:
         }
     }
     
+    void compileValueMod()
+    {
+        if (m_node->binaryUseKind() == BigIntUse) {
+            LValue left = lowBigInt(m_node->child1());
+            LValue right = lowBigInt(m_node->child2());
+
+            LValue result = vmCall(pointerType(), m_out.operation(operationModBigInt), m_callFrame, left, right);
+            setJSValue(result);
+            return;
+        }
+
+        DFG_ASSERT(m_graph, m_node, m_node->binaryUseKind() == UntypedUse, m_node->binaryUseKind());
+        LValue left = lowJSValue(m_node->child1());
+        LValue right = lowJSValue(m_node->child2());
+        LValue result = vmCall(Int64, m_out.operation(operationValueMod), m_callFrame, left, right);
+        setJSValue(result);
+    }
+
     void compileArithMod()
     {
         switch (m_node->binaryUseKind()) {

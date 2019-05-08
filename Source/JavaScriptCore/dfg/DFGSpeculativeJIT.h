@@ -1356,6 +1356,7 @@ public:
     void compileValueDiv(Node*);
     void compileArithDiv(Node*);
     void compileArithFRound(Node*);
+    void compileValueMod(Node*);
     void compileArithMod(Node*);
     void compileArithPow(Node*);
     void compileArithRounding(Node*);

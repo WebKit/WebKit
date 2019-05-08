@@ -75,36 +75,43 @@ public:
     }
 
 private:
-    void fixupArithDiv(Node* node, Edge& leftChild, Edge& rightChild)
+
+    void fixupArithDivInt32(Node* node, Edge& leftChild, Edge& rightChild)
     {
-        if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
-            if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
-                fixIntOrBooleanEdge(leftChild);
-                fixIntOrBooleanEdge(rightChild);
-                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
-                    node->setArithMode(Arith::Unchecked);
-                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-                    node->setArithMode(Arith::CheckOverflow);
-                else
-                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
-                return;
-            }
-            
-            // This will cause conversion nodes to be inserted later.
-            fixDoubleOrBooleanEdge(leftChild);
-            fixDoubleOrBooleanEdge(rightChild);
-            
-            // We don't need to do ref'ing on the children because we're stealing them from
-            // the original division.
-            Node* newDivision = m_insertionSet.insertNode(m_indexInBlock, SpecBytecodeDouble, *node);
-            newDivision->setResult(NodeResultDouble);
-            
-            node->setOp(DoubleAsInt32);
-            node->children.initialize(Edge(newDivision, DoubleRepUse), Edge(), Edge());
-            if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+        if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
+            fixIntOrBooleanEdge(leftChild);
+            fixIntOrBooleanEdge(rightChild);
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->setArithMode(Arith::Unchecked);
+            else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::CheckOverflow);
             else
                 node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            return;
+        }
+
+        // This will cause conversion nodes to be inserted later.
+        fixDoubleOrBooleanEdge(leftChild);
+        fixDoubleOrBooleanEdge(rightChild);
+
+        // We don't need to do ref'ing on the children because we're stealing them from
+        // the original division.
+        Node* newDivision = m_insertionSet.insertNode(m_indexInBlock, SpecBytecodeDouble, *node);
+        newDivision->setResult(NodeResultDouble);
+
+        node->setOp(DoubleAsInt32);
+        node->children.initialize(Edge(newDivision, DoubleRepUse), Edge(), Edge());
+        if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            node->setArithMode(Arith::CheckOverflow);
+        else
+            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+
+    }
+
+    void fixupArithDiv(Node* node, Edge& leftChild, Edge& rightChild)
+    {
+        if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
+            fixupArithDivInt32(node, leftChild, rightChild);
             return;
         }
         
@@ -474,6 +481,7 @@ private:
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<BigIntUse>(node->child1());
                 fixEdge<BigIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
 
@@ -508,6 +516,7 @@ private:
             break;
         }
 
+        case ValueMod: 
         case ValueDiv: {
             Edge& leftChild = node->child1();
             Edge& rightChild = node->child2();
@@ -515,6 +524,7 @@ private:
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<BigIntUse>(leftChild);
                 fixEdge<BigIntUse>(rightChild);
+                node->clearFlags(NodeMustGenerate);
                 break; 
             }
 
@@ -523,7 +533,12 @@ private:
                 fixEdge<UntypedUse>(rightChild);
                 break;
             }
-            node->setOp(ArithDiv);
+
+            if (op == ValueDiv)
+                node->setOp(ArithDiv);
+            else
+                node->setOp(ArithMod);
+
             node->setResult(NodeResultNumber);
             fixupArithDiv(node, leftChild, rightChild);
             break;

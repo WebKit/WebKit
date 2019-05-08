@@ -253,6 +253,8 @@ private:
     void verifyEdges(Node*);
     void executeDoubleUnaryOpEffects(Node*, double(*equivalentFunction)(double));
     
+    bool handleConstantDivOp(Node*);
+
     CodeBlock* m_codeBlock;
     Graph& m_graph;
     VM& m_vm;

@@ -179,6 +179,7 @@ namespace JSC { namespace DFG {
     macro(ValueSub, NodeResultJS | NodeMustGenerate) \
     macro(ValueMul, NodeResultJS | NodeMustGenerate) \
     macro(ValueDiv, NodeResultJS | NodeMustGenerate) \
+    macro(ValueMod, NodeResultJS | NodeMustGenerate) \
     \
     /* Add of values that always convers its inputs to strings. May have two or three kids. */\
     macro(StrCat, NodeResultJS | NodeMustGenerate) \

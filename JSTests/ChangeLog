@@ -1,3 +1,15 @@
+2019-05-08  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueMod into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186174
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/mod-untyped.js: Added.
+        * stress/big-int-mod-osr.js: Added.
+        * stress/value-div-ai-rule.js: Added.
+        * stress/value-mod-ai-rule.js: Added.
+
 2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG_ASSERT failed in lowInt52

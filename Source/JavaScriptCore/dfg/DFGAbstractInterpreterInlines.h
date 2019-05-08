@@ -234,6 +234,57 @@ inline ToThisResult isToThisAnIdentity(VM& vm, bool isStrictMode, AbstractValue&
 }
 
 template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::handleConstantDivOp(Node* node)
+{
+    JSValue left = forNode(node->child1()).value();
+    JSValue right = forNode(node->child2()).value();
+
+    if (left && right) {
+        NodeType op = node->op();
+        bool isDivOperation = op == ValueDiv || op == ArithDiv;
+
+        // Only possible case of ValueOp below is UntypedUse,
+        // so we need to reflect clobberize rules.
+        bool isClobbering = op == ValueDiv || op == ValueMod;
+
+        if (left.isInt32() && right.isInt32()) {
+            double doubleResult;
+            if (isDivOperation)
+                doubleResult = left.asNumber() / right.asNumber();
+            else
+                doubleResult = fmod(left.asNumber(), right.asNumber());
+
+            if (node->hasArithMode()) {
+                if (!shouldCheckOverflow(node->arithMode()))
+                    doubleResult = toInt32(doubleResult);
+                else if (!shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult += 0; // Sanitizes zero.
+            }
+
+            JSValue valueResult = jsNumber(doubleResult);
+            if (valueResult.isInt32()) {
+                if (isClobbering)
+                    didFoldClobberWorld();
+                setConstant(node, valueResult);
+                return true;
+            }
+        } else if (left.isNumber() && right.isNumber()) {
+            if (isClobbering)
+                didFoldClobberWorld();
+
+            if (isDivOperation)
+                setConstant(node, jsDoubleNumber(left.asNumber() / right.asNumber()));
+            else
+                setConstant(node, jsDoubleNumber(fmod(left.asNumber(), right.asNumber())));
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimit, Node* node)
 {
     verifyEdges(node);
@@ -911,7 +962,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case ValueMod:
     case ValueDiv: {
+        if (handleConstantDivOp(node))
+            break;
+
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
@@ -921,68 +976,26 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ArithMod:
     case ArithDiv: {
-        JSValue left = forNode(node->child1()).value();
-        JSValue right = forNode(node->child2()).value();
-        switch (node->binaryUseKind()) {
-        case Int32Use:
-            if (left && right && left.isInt32() && right.isInt32()) {
-                double doubleResult = left.asNumber() / right.asNumber();
-                if (!shouldCheckOverflow(node->arithMode()))
-                    doubleResult = toInt32(doubleResult);
-                else if (!shouldCheckNegativeZero(node->arithMode()))
-                    doubleResult += 0; // Sanitizes zero.
-                JSValue valueResult = jsNumber(doubleResult);
-                if (valueResult.isInt32()) {
-                    setConstant(node, valueResult);
-                    break;
-                }
-            }
-            setNonCellTypeForNode(node, SpecInt32Only);
+        if (handleConstantDivOp(node))
             break;
-        case DoubleRepUse:
-            if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsDoubleNumber(left.asNumber() / right.asNumber()));
-                break;
-            }
-            setNonCellTypeForNode(node, 
-                typeOfDoubleQuotient(
-                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        break;
-    }
 
-    case ArithMod: {
-        JSValue left = forNode(node->child1()).value();
-        JSValue right = forNode(node->child2()).value();
         switch (node->binaryUseKind()) {
         case Int32Use:
-            if (left && right && left.isInt32() && right.isInt32()) {
-                double doubleResult = fmod(left.asNumber(), right.asNumber());
-                if (!shouldCheckOverflow(node->arithMode()))
-                    doubleResult = toInt32(doubleResult);
-                else if (!shouldCheckNegativeZero(node->arithMode()))
-                    doubleResult += 0; // Sanitizes zero.
-                JSValue valueResult = jsNumber(doubleResult);
-                if (valueResult.isInt32()) {
-                    setConstant(node, valueResult);
-                    break;
-                }
-            }
             setNonCellTypeForNode(node, SpecInt32Only);
             break;
         case DoubleRepUse:
-            if (left && right && left.isNumber() && right.isNumber()) {
-                setConstant(node, jsDoubleNumber(fmod(left.asNumber(), right.asNumber())));
-                break;
+            if (node->op() == ArithDiv) {
+                setNonCellTypeForNode(node, 
+                    typeOfDoubleQuotient(
+                        forNode(node->child1()).m_type, forNode(node->child2()).m_type));
+            } else {
+                setNonCellTypeForNode(node, 
+                    typeOfDoubleBinaryOp(
+                        forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             }
-            setNonCellTypeForNode(node, 
-                typeOfDoubleBinaryOp(
-                    forNode(node->child1()).m_type, forNode(node->child2()).m_type));
+            
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

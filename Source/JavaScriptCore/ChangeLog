@@ -1,3 +1,84 @@
+2019-05-08  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueMod into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186174
+
+        Reviewed by Saam Barati.
+
+        This patch is introducing a new DFG node called ValueMod, that is
+        responsible to handle BigInt and Untyped specialization of op_mod.
+        With the introduction of BigInt, we think that cases with
+        ValueMod(Untyped, Untyped) can be more common and we introduced
+        support for such kind of node.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::handleConstantDivOp):
+
+        We are abstracting the constant rules of division operations. It
+        includes ArithDiv, ValueDiv, ArithMod and ValueMod, since they perform
+        the same analysis.
+
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+        Here we check if lhs and rhs have number result to emit ArithMod.
+        Otherwise, we need to fallback to ValueMod and let fixup replace this
+        operation when possible.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+        ValueMod(BigIntUse) doesn't clobberize world because it only calls
+        `operationModBigInt`.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
+        ValueMod(BigIntUse) can trigger GC since it allocates intermediate
+        JSBigInt to perform calculation. ValueMod(UntypedUse) can trigger GC
+        because it can execute arbritary code from user.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupArithDivInt32):
+
+        Function created to simplify readability of ArithDiv/AirthMod fixup
+        operation.
+
+        (JSC::DFG::FixupPhase::fixupArithDiv):
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        Following the same fixup rules of ArithDiv.
+
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::binaryOp):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
+        ValueMod follows the same prediction propagation rules of ArithMod and
+        the same rules for `doDoubleVoting`.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueMod):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMod):
+
 2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG_ASSERT failed in lowInt52

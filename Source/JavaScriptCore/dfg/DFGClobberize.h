@@ -680,6 +680,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ValueSub:
     case ValueMul:
     case ValueDiv:
+    case ValueMod:
         if (node->isBinaryUseKind(BigIntUse)) {
             def(PureValue(node));
             return;

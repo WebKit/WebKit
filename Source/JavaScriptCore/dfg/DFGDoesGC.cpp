@@ -379,6 +379,7 @@ bool doesGC(Graph& graph, Node* node)
     case ValueSub:
     case ValueMul:
     case ValueDiv:
+    case ValueMod:
     case ValueBitNot:
     case ValueNegate:
 #else
