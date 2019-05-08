@@ -1,3 +1,16 @@
+2019-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        TestRunnerWKWebView's menu callbacks should be cleared upon UI script completion
+        https://bugs.webkit.org/show_bug.cgi?id=197685
+
+        Reviewed by Alex Christensen.
+
+        Fixes a bug in the test runner wherein didShowMenuCallback and didHideMenuCallback are not reset upon UI script
+        completion. See LayoutTests/ChangeLog for more details.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformClearAllCallbacks):
+
 2019-05-07  Oriol Brufau  <obrufau@igalia.com>
 
         Unreviewed. Add myself as a committer.

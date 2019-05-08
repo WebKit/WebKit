@@ -43,17 +43,28 @@ const editor = document.getElementById("editor");
 
 description("Verifies that no callout is shown when the page programmatically triggers paste outside the scope of user interaction. This test requires WebKitTestRunner.");
 
-addEventListener("load", async () => {
-    UIHelper.activateAt(160, 125).then(() => {
-        editor.focus();
-        waitForPasteMenu().then(finishJSTest);
+function checkDone() {
+    if (!window.doneCount)
+        doneCount = 0;
 
-        UIHelper.ensurePresentationUpdate().then(() => {
-            internals.withUserGesture(() => shouldBe("document.execCommand('Paste')", "true"));
-            shouldBe("document.execCommand('Paste')", "false");
-            shouldBeEqualToString("editor.textContent", "Click here to copy");
-        });
+    if (++doneCount == 2)
+        finishJSTest();
+}
+
+editor.addEventListener("click", event => {
+    editor.focus();
+    shouldBe("document.execCommand('Paste')", "true");
+    requestAnimationFrame(() => {
+        shouldBe("document.execCommand('Paste')", "false")
+        shouldBeEqualToString("editor.textContent", "Click here to copy");
+        checkDone();
     });
+});
+
+addEventListener("load", async () => {
+    await UIHelper.activateAt(160, 125);
+    await triggerPasteMenuAfterTapAt(160, 50);
+    checkDone();
 });
 </script>
 </body>

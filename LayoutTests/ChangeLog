@@ -1,3 +1,32 @@
+2019-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        TestRunnerWKWebView's menu callbacks should be cleared upon UI script completion
+        https://bugs.webkit.org/show_bug.cgi?id=197685
+
+        Reviewed by Alex Christensen.
+
+        Adjust a couple of existing layout tests such that they don't rely on didShowMenuCallback and
+        didHideMenuCallback sticking around across UI scripts. Currently, these layout tests do the following:
+
+        1. Run a UI script that registers menu callback handlers.
+        2. Run a subsequent UI script that will cause the callback handlers to be fired (e.g. clicking on an element).
+
+        After making the change in the test runner to clear menu callbacks upon script completion, callbacks registered
+        in step (1) are now unregistered when step (2) completes. Instead, we can rewrite this test logic so that
+        they're driven by a single UI script.
+
+        * editing/pasteboard/ios/dom-paste-consecutive-confirmations.html:
+        * editing/pasteboard/ios/dom-paste-requires-user-gesture.html:
+
+        Instead of using internals.withUserGesture, put the test logic under a click handler (which is inside the scope
+        of a user gesture token), and then use requestAnimationFrame to schedule a second programmatic paste that is
+        outside the scope of user interaction. As opposed to setTimeout, requestAnimationFrame does not propagate the
+        current user gesture token.
+
+        * editing/pasteboard/ios/resources/dom-paste-helper.js:
+        (return.new.Promise.):
+        (async._waitForOrTriggerPasteMenu):
+
 2019-05-08  Rob Buis  <rbuis@igalia.com>
 
         Link prefetch not useful for top-level navigation

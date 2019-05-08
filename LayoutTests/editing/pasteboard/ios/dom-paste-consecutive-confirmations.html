@@ -49,15 +49,19 @@ async function waitForAndTapPasteMenuTwice() {
             (() => {
                 doneCount = 0;
                 function incrementProgress() {
-                    if (++doneCount === 4)
+                    if (++doneCount === 5)
                         uiController.uiScriptComplete();
                 }
 
                 uiController.didHideMenuCallback = incrementProgress;
-                uiController.didShowMenuCallback = () => {
+                uiController.didShowMenuCallback = tapPasteMenuAction;
+
+                function tapPasteMenuAction() {
                     const rect = uiController.rectForMenuAction("Paste");
                     uiController.singleTapAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2, incrementProgress);
-                };
+                }
+
+                uiController.singleTapAtPoint(160, 50, incrementProgress);
             })()`, resolve);
     });
 }
@@ -80,9 +84,9 @@ addEventListener("load", async () => {
     if (!window.testRunner || !window.internals)
         return;
 
-    waitForAndTapPasteMenuTwice().then(finishJSTest);
     await UIHelper.activateAt(160, 125);
-    await UIHelper.activateAt(160, 50);
+    await waitForAndTapPasteMenuTwice();
+    finishJSTest();
 });
 </script>
 </body>

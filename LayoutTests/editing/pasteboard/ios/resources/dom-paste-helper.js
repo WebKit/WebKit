@@ -10,7 +10,8 @@ async function _waitForOrTriggerPasteMenu(x, y, proceedWithPaste, shouldTap) {
                 }
 
                 uiController.didHideMenuCallback = checkDone;
-                uiController.didShowMenuCallback = () => {
+
+                function tapPasteMenuAction() {
                     if (${proceedWithPaste}) {
                         const rect = uiController.rectForMenuAction("Paste");
                         uiController.singleTapAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2, checkDone);
@@ -18,7 +19,12 @@ async function _waitForOrTriggerPasteMenu(x, y, proceedWithPaste, shouldTap) {
                         uiController.resignFirstResponder();
                         checkDone();
                     }
-                };
+                }
+
+                if (uiController.isShowingMenu)
+                    tapPasteMenuAction();
+                else
+                    uiController.didShowMenuCallback = tapPasteMenuAction;
 
                 if (${shouldTap})
                     uiController.singleTapAtPoint(${x}, ${y}, checkDone);

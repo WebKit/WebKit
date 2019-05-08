@@ -993,20 +993,7 @@ void UIScriptController::platformSetDidEndScrollingCallback()
 
 void UIScriptController::platformClearAllCallbacks()
 {
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    
-    webView.didStartFormControlInteractionCallback = nil;
-    webView.didEndFormControlInteractionCallback = nil;
-    webView.didShowForcePressPreviewCallback = nil;
-    webView.didDismissForcePressPreviewCallback = nil;
-    webView.didEndZoomingCallback = nil;
-    webView.willBeginZoomingCallback = nil;
-    webView.didHideKeyboardCallback = nil;
-    webView.didShowKeyboardCallback = nil;
-    webView.willPresentPopoverCallback = nil;
-    webView.didDismissPopoverCallback = nil;
-    webView.didEndScrollingCallback = nil;
-    webView.rotationDidEndCallback = nil;
+    [TestController::singleton().mainWebView()->platformView() resetInteractionCallbacks];
 }
 
 void UIScriptController::setSafeAreaInsets(double top, double right, double bottom, double left)
