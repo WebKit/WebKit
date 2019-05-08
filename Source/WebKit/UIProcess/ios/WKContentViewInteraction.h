@@ -36,6 +36,7 @@
 #import "FocusedElementInformation.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
+#import "SyntheticEditingCommandType.h"
 #import "TextCheckingController.h"
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
@@ -470,6 +471,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didChangeWebViewEditability;
 
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction;
+
+- (BOOL)hasHiddenContentEditable;
+- (void)generateSyntheticEditingCommand:(WebKit::SyntheticEditingCommandType)command;
 
 // UIWebFormAccessoryDelegate protocol
 - (void)accessoryDone;

@@ -4476,6 +4476,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [super _handleKeyUIEvent:event];
 }
 
+- (void)generateSyntheticEditingCommand:(WebKit::SyntheticEditingCommandType)command
+{
+    _page->generateSyntheticEditingCommand(command);
+}
+
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
 - (void)handleKeyEvent:(::UIEvent *)event
 {
@@ -5166,6 +5171,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     BOOL editableChanged = [self setIsEditable:NO];
 
     _focusedElementInformation.elementType = WebKit::InputType::None;
+    _focusedElementInformation.shouldSynthesizeKeyEventsForUndoAndRedo = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
 
@@ -5728,6 +5734,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 {
     ASSERT(_ignoreSelectionCommandFadeCount >= 0);
     return !_ignoreSelectionCommandFadeCount;
+}
+
+- (BOOL)hasHiddenContentEditable
+{
+    return _suppressSelectionAssistantReasons.contains(WebKit::EditableRootIsTransparentOrFullyClipped);
 }
 
 - (BOOL)_shouldSuppressSelectionCommands

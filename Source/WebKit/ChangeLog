@@ -1,3 +1,37 @@
+2019-05-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Add quirks to emulate undo and redo in hidden editable areas on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=197452
+
+        Reviewed by Alex Christensen.
+
+        We need to make our own undo manager to allow undo even when 
+        the manager is empty. This is to interface with rich editing 
+        websites that don't actually interface with our undo abilities.
+        Then we need to generate synthetic undo and redo in the web process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isCurrentURLHost const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKNSUndoManager initWithContentView:]):
+        (-[WKNSUndoManager canUndo]):
+        (-[WKNSUndoManager canRedo]):
+        (-[WKNSUndoManager undo]):
+        (-[WKNSUndoManager redo]):
+        (-[WKContentView undoManager]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView generateSyntheticUndoRedo:]):
+        (-[WKContentView hasHiddenContentEditable]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::generateSyntheticUndoRedo):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::generateSyntheticUndoRedo):
+
 2019-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to set HSTS storage directory

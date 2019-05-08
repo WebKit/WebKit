@@ -1102,6 +1102,14 @@ void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategor
     process().send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), m_pageID);
 }
 
+void WebPageProxy::generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType command)
+{
+    if (!hasRunningProcess())
+        return;
+
+    process().send(Messages::WebPage::GenerateSyntheticEditingCommand(command), m_pageID);
+}
+
 void WebPageProxy::updateEditorState(const EditorState& editorState)
 {
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;

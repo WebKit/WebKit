@@ -42,6 +42,7 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "SandboxUtilities.h"
+#import "SyntheticEditingCommandType.h"
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
@@ -419,6 +420,11 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     auto* platformEvent = event.underlyingPlatformEvent();
     if (!platformEvent)
         return false;
+    
+    // Don't send synthetic events to the UIProcess. They are only
+    // used for interacting with JavaScript.
+    if (platformEvent->isSyntheticEvent())
+        return false;
 
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     bool eventWasHandled = false;
@@ -578,6 +584,46 @@ static bool nodeAlwaysTriggersClick(const Node& targetNode)
 
     auto ariaRole = AccessibilityObject::ariaRoleToWebCoreRole(downcast<Element>(targetNode).getAttribute(HTMLNames::roleAttr));
     return AccessibilityObject::isARIAControl(ariaRole) || AccessibilityObject::isARIAInput(ariaRole);
+}
+
+void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType command)
+{
+    PlatformKeyboardEvent keyEvent;
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    
+    OptionSet<PlatformEvent::Modifier> modifiers;
+    modifiers.add(PlatformEvent::Modifier::MetaKey);
+    
+    switch (command) {
+    case SyntheticEditingCommandType::Undo:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "z", "z",
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+        "z",
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        "KeyZ"_s,
+#endif
+        @"U+005A", 90, false, false, false, modifiers, WallTime::now());
+        break;
+    case SyntheticEditingCommandType::Redo:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "y", "y",
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+        "y",
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        "KeyY"_s,
+#endif
+        @"U+0059", 89, false, false, false, modifiers, WallTime::now());
+        break;
+    default:
+        break;
+    }
+
+    keyEvent.setIsSyntheticEvent();
+    
+    PlatformKeyboardEvent::setCurrentModifierState(modifiers);
+    
+    frame.eventHandler().keyEvent(keyEvent);
 }
 
 void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
@@ -2824,6 +2870,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             information.isAutocorrect = focusedElement.shouldAutocorrect();
             information.autocapitalizeType = focusedElement.autocapitalizeType();
             information.inputMode = focusedElement.canonicalInputMode();
+            information.shouldSynthesizeKeyEventsForUndoAndRedo = focusedElement.document().quirks().shouldEmulateUndoRedoInHiddenEditableAreas();
         } else {
             information.isAutocorrect = true;
             information.autocapitalizeType = AutocapitalizeTypeDefault;

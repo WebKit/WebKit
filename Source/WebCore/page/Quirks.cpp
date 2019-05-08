@@ -235,6 +235,11 @@ static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAre
     return false;
 }
 
+static bool shouldEmulateUndoRedoInHiddenEditableAreasForHost(const StringView&)
+{
+    return false;
+}
+
 #endif
 
 bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
@@ -253,6 +258,14 @@ bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
         return true;
 
     return false;
+}
+
+bool Quirks::shouldEmulateUndoRedoInHiddenEditableAreas() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return shouldEmulateUndoRedoInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
 bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const

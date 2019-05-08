@@ -59,6 +59,7 @@
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/Quirks.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/TextStream.h>
@@ -172,6 +173,41 @@ private:
 
 @end
 
+@interface WKQuirkyNSUndoManager : NSUndoManager
+@property (readonly, weak) WKContentView *contentView;
+@end
+
+@implementation WKQuirkyNSUndoManager
+- (instancetype)initWithContentView:(WKContentView *)contentView
+{
+    if (!(self = [super init]))
+        return nil;
+    _contentView = contentView;
+    return self;
+}
+
+- (BOOL)canUndo 
+{
+    return YES;
+}
+
+- (BOOL)canRedo 
+{
+    return YES;
+}
+
+- (void)undo 
+{
+    [self.contentView generateSyntheticEditingCommand:WebKit::SyntheticEditingCommandType::Undo];
+}
+
+- (void)redo 
+{
+    [self.contentView generateSyntheticEditingCommand:WebKit::SyntheticEditingCommandType::Redo];
+}
+
+@end
+
 @implementation WKContentView {
     std::unique_ptr<WebKit::PageClientImpl> _pageClient;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -190,6 +226,7 @@ private:
     WebKit::HistoricalVelocityData _historicalKinematicData;
 
     RetainPtr<NSUndoManager> _undoManager;
+    RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
 
     BOOL _isPrintingToPDF;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
@@ -498,9 +535,13 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (NSUndoManager *)undoManager
 {
+    if (self.focusedElementInformation.shouldSynthesizeKeyEventsForUndoAndRedo && self.hasHiddenContentEditable) {
+        if (!_quirkyUndoManager)
+            _quirkyUndoManager = adoptNS([[WKQuirkyNSUndoManager alloc] initWithContentView:self]);
+        return _quirkyUndoManager.get();
+    }
     if (!_undoManager)
         _undoManager = adoptNS([[NSUndoManager alloc] init]);
-
     return _undoManager.get();
 }
 
