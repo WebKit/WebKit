@@ -3148,10 +3148,11 @@
       "emails" : [
          "jbedard@apple.com"
       ],
+      "expertise" : "webkitpy",
       "nicks" : [
          "jbedard"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Jonathan Davis" : {
       "emails" : [
