@@ -948,3 +948,7 @@ webkit.org/b/197286 imported/w3c/web-platform-tests/visual-viewport/viewport-res
 webkit.org/b/197425 [ Mojave Debug ] scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame.html [ Pass Failure ]
 
 webkit.org/b/197662 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Pass Failure ]
+
+webkit.org/b/197289 [ Mojave Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ]
+
+webkit.org/b/189672 [ Mojave Debug ] webgl/2.0.0/conformance2/textures/misc/tex-new-formats.html [ Skip ]
