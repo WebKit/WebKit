@@ -1,3 +1,41 @@
+2019-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression: Crash at WebKit: PAL::HysteresisActivity::start
+        https://bugs.webkit.org/show_bug.cgi?id=197666
+        <rdar://problem/50037153>
+
+        Reviewed by Geoffrey Garen.
+
+        We've recently made it so that the WebContent process destroys its WebSQLiteDatabaseTracker when preparing
+        for process suspension and then re-constructs it when resuming. The issue is that the WebSQLiteDatabaseTracker
+        internal implementation was calling callOnMainThread() and capturing |this| to start/stop its HysteresisActivity.
+        As a result, |this| could be dead by the time we're on the main thread and we'd crash.
+
+        To address the issue, we no longer destroy the WebSQLiteDatabaseTracker when preparing to suspend. Instead, we
+        set a 'isSuspended' flag on the WebSQLiteDatabaseTracker so that it stops notifying the WebProcess of changes.
+
+        Also clean up the class a bit so that:
+        1. The constructor takes in a WTF::Function instead of a NetworkProcess / WebProcess reference. This is provides
+           better layering. The WebSQLiteDatabaseTracker should not need to know anything about those objects.
+        2. Use RunLoop::main().dispatch() instead of callOnMainThread() since we're in WebKit2 code.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::~WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::willBeginFirstTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::didFinishLastTransaction):
+        (WebKit::WebSQLiteDatabaseTracker::hysteresisUpdated): Deleted.
+        * Shared/WebSQLiteDatabaseTracker.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_nonVisibleProcessCleanupTimer):
+        (WebKit::WebProcess::initializeSQLiteDatabaseTracker):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::processDidResume):
+        (WebKit::m_webSQLiteDatabaseTracker): Deleted.
+        * WebProcess/WebProcess.h:
+
 2019-05-08  Tim Horton  <timothy_horton@apple.com>
 
         iOS: Selection is dismissed even if click is preventDefault()'d

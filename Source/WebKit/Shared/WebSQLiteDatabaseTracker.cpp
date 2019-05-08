@@ -31,24 +31,15 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/SQLiteDatabaseTracker.h>
-#include <wtf/MainThread.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(WebProcess& process)
-    : m_process(process)
-    , m_processType(AuxiliaryProcess::ProcessType::WebContent)
-    , m_hysteresis([this](PAL::HysteresisState state) { hysteresisUpdated(state); })
+WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&& isHoldingLockedFilesHandler)
+    : m_isHoldingLockedFilesHandler(WTFMove(isHoldingLockedFilesHandler))
+    , m_hysteresis([this](PAL::HysteresisState state) { setIsHoldingLockedFiles(state == PAL::HysteresisState::Started); })
 {
-    SQLiteDatabaseTracker::setClient(this);
-}
-
-WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(NetworkProcess& process)
-    : m_process(process)
-    , m_processType(AuxiliaryProcess::ProcessType::Network)
-    , m_hysteresis([this](PAL::HysteresisState state) { hysteresisUpdated(state); })
-{
+    ASSERT(RunLoop::isMain());
     SQLiteDatabaseTracker::setClient(this);
 }
 
@@ -58,35 +49,37 @@ WebSQLiteDatabaseTracker::~WebSQLiteDatabaseTracker()
     SQLiteDatabaseTracker::setClient(nullptr);
 
     if (m_hysteresis.state() == PAL::HysteresisState::Started)
-        hysteresisUpdated(PAL::HysteresisState::Stopped);
+        setIsHoldingLockedFiles(false);
+}
+
+void WebSQLiteDatabaseTracker::setIsSuspended(bool isSuspended)
+{
+    ASSERT(RunLoop::isMain());
+    m_isSuspended = isSuspended;
 }
 
 void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
 {
-    callOnMainThread([this] {
+    RunLoop::main().dispatch([this] {
         m_hysteresis.start();
     });
 }
 
 void WebSQLiteDatabaseTracker::didFinishLastTransaction()
 {
-    callOnMainThread([this] {
+    RunLoop::main().dispatch([this] {
         m_hysteresis.stop();
     });
 }
 
-void WebSQLiteDatabaseTracker::hysteresisUpdated(PAL::HysteresisState state)
+void WebSQLiteDatabaseTracker::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
-    switch (m_processType) {
-    case AuxiliaryProcess::ProcessType::WebContent:
-        m_process.parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(state == PAL::HysteresisState::Started), 0);
-        break;
-    case AuxiliaryProcess::ProcessType::Network:
-        m_process.parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsHoldingLockedFiles(state == PAL::HysteresisState::Started), 0);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    ASSERT(RunLoop::isMain());
+
+    if (m_isSuspended)
+        return;
+
+    m_isHoldingLockedFilesHandler(isHoldingLockedFiles);
 }
 
 } // namespace WebKit

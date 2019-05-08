@@ -188,7 +188,7 @@ WebProcess::WebProcess()
 #endif
     , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 #if PLATFORM(IOS_FAMILY)
-    , m_webSQLiteDatabaseTracker(std::make_unique<WebSQLiteDatabaseTracker>(*this))
+    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
 {
     // Initialize our platform strategies.
@@ -1468,7 +1468,7 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker = nullptr;
+    m_webSQLiteDatabaseTracker.setIsSuspended(true);
     SQLiteDatabase::setIsDatabaseOpeningForbidden(true);
     if (DatabaseTracker::isInitialized())
         DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
@@ -1519,7 +1519,7 @@ void WebProcess::cancelPrepareToSuspend()
     unfreezeAllLayerTrees();
 
 #if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
+    m_webSQLiteDatabaseTracker.setIsSuspended(false);
     SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
     accessibilityProcessSuspendedNotification(false);
 #endif
@@ -1595,7 +1595,7 @@ void WebProcess::processDidResume()
     unfreezeAllLayerTrees();
     
 #if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
+    m_webSQLiteDatabaseTracker.setIsSuspended(false);
     SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
     accessibilityProcessSuspendedNotification(false);
 #endif

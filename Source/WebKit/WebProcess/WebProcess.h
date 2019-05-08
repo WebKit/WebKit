@@ -37,6 +37,7 @@
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebProcessCreationParameters.h"
+#include "WebSQLiteDatabaseTracker.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/RegistrableDomain.h>
 #if PLATFORM(MAC)
@@ -112,7 +113,6 @@ enum class WebsiteDataType;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
-class WebSQLiteDatabaseTracker;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
@@ -512,7 +512,7 @@ private:
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
     ProcessTaskStateObserver m_taskStateObserver { *this };
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
