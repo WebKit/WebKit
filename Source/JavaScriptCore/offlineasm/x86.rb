@@ -49,7 +49,8 @@ require "config"
 # rdx => t2, a2, r1
 # rcx => t3, a3
 #  r8 => t4
-# r10 => t5
+#  r9 => t5
+# r10 => t6
 # rbx =>             csr0 (callee-save, PB, unused in baseline)
 # r12 =>             csr1 (callee-save)
 # r13 =>             csr2 (callee-save)

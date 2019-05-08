@@ -101,7 +101,7 @@ void DirectArguments::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     visitor.append(thisObject->m_callee);
 
     if (thisObject->m_mappedArguments)
-        visitor.markAuxiliary(thisObject->m_mappedArguments.get());
+        visitor.markAuxiliary(thisObject->m_mappedArguments.get(thisObject->internalLength()));
     GenericArguments<DirectArguments>::visitChildren(thisCell, visitor);
 }
 
@@ -120,8 +120,8 @@ void DirectArguments::overrideThings(VM& vm)
     
     void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocateNonVirtual(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::Assert);
     bool* overrides = static_cast<bool*>(backingStore);
-    m_mappedArguments.set(vm, this, overrides);
-    for (unsigned i = m_length; i--;)
+    m_mappedArguments.set(vm, this, overrides, internalLength());
+    for (unsigned i = internalLength(); i--;)
         overrides[i] = false;
 }
 
@@ -134,7 +134,7 @@ void DirectArguments::overrideThingsIfNecessary(VM& vm)
 void DirectArguments::unmapArgument(VM& vm, unsigned index)
 {
     overrideThingsIfNecessary(vm);
-    m_mappedArguments[index] = true;
+    m_mappedArguments.at(index, internalLength()) = true;
 }
 
 void DirectArguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)

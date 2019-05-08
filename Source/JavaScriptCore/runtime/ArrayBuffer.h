@@ -48,14 +48,16 @@ typedef Function<void(void*)> ArrayBufferDestructorFunction;
 
 class SharedArrayBufferContents : public ThreadSafeRefCounted<SharedArrayBufferContents> {
 public:
-    SharedArrayBufferContents(void* data, ArrayBufferDestructorFunction&&);
+    SharedArrayBufferContents(void* data, unsigned size, ArrayBufferDestructorFunction&&);
     ~SharedArrayBufferContents();
     
-    void* data() const { return m_data.getMayBeNull(); }
+    void* data() const { return m_data.getMayBeNull(m_sizeInBytes); }
     
 private:
-    CagedPtr<Gigacage::Primitive, void> m_data;
+    using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    DataType m_data;
     ArrayBufferDestructorFunction m_destructor;
+    unsigned m_sizeInBytes;
 };
 
 class ArrayBufferContents {
@@ -73,7 +75,7 @@ public:
     
     explicit operator bool() { return !!m_data; }
     
-    void* data() const { return m_data.getMayBeNull(); }
+    void* data() const { return m_data.getMayBeNull(sizeInBytes()); }
     unsigned sizeInBytes() const { return m_sizeInBytes; }
     
     bool isShared() const { return m_shared; }
@@ -98,7 +100,8 @@ private:
 
     ArrayBufferDestructorFunction m_destructor;
     RefPtr<SharedArrayBufferContents> m_shared;
-    CagedPtr<Gigacage::Primitive, void> m_data;
+    using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    DataType m_data;
     unsigned m_sizeInBytes;
 };
 
@@ -174,17 +177,17 @@ public:
 
 void* ArrayBuffer::data()
 {
-    return m_contents.m_data.getMayBeNull();
+    return m_contents.data();
 }
 
 const void* ArrayBuffer::data() const
 {
-    return m_contents.m_data.getMayBeNull();
+    return m_contents.data();
 }
 
 unsigned ArrayBuffer::byteLength() const
 {
-    return m_contents.m_sizeInBytes;
+    return m_contents.sizeInBytes();
 }
 
 bool ArrayBuffer::isShared() const

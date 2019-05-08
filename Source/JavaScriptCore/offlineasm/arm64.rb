@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -123,7 +123,9 @@ class RegisterID
         when 't4'
             arm64GPRName('x4', kind)
         when 't5'
-            arm64GPRName('x5', kind)
+          arm64GPRName('x5', kind)
+        when 't6'
+          arm64GPRName('x6', kind)
         when 'cfr'
             arm64GPRName('x29', kind)
         when 'csr0'
@@ -361,8 +363,7 @@ def arm64CortexA53Fix835769(list)
 end
 
 class Sequence
-    def getModifiedListARM64
-        result = @list
+    def getModifiedListARM64(result = @list)
         result = riscLowerNot(result)
         result = riscLowerSimpleBranchOps(result)
 
@@ -387,7 +388,7 @@ class Sequence
                 "jmp", "call", "leap", "leaq"
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
             else
-                raise "Bad instruction #{node.opcode} for heap access at #{node.codeOriginString}"
+                raise "Bad instruction #{node.opcode} for heap access at #{node.codeOriginString}: #{node.dump}"
             end
             
             if address.is_a? BaseIndex

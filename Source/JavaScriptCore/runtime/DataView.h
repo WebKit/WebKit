@@ -38,11 +38,6 @@ public:
     JS_EXPORT_PRIVATE static Ref<DataView> create(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
     static Ref<DataView> create(RefPtr<ArrayBuffer>&&);
     
-    unsigned byteLength() const override
-    {
-        return m_byteLength;
-    }
-    
     TypedArrayType getType() const override
     {
         return TypeDataView;
@@ -62,7 +57,7 @@ public:
         } else
             RELEASE_ASSERT(offset + sizeof(T) <= byteLength());
         return flipBytesIfLittleEndian(
-            *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get()) + offset),
+            *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get(byteLength())) + offset),
             littleEndian);
     }
     
@@ -86,12 +81,9 @@ public:
             *status = true;
         } else
             RELEASE_ASSERT(offset + sizeof(T) <= byteLength());
-        *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get()) + offset) =
+        *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get(byteLength())) + offset) =
             flipBytesIfLittleEndian(value, littleEndian);
     }
-
-private:
-    unsigned m_byteLength;
 };
 
 } // namespace JSC

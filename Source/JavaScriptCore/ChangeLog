@@ -1,3 +1,191 @@
+2019-05-08  Keith Miller  <keith_miller@apple.com>
+
+        Remove Gigacage from arm64 and use PAC for arm64e instead
+        https://bugs.webkit.org/show_bug.cgi?id=197110
+
+        Reviewed by Saam Barati.
+
+        This patch makes a bunch of changes. I'll start with global changes then go over changes to each tier and finish with bug fixes.
+
+        Global Changes:
+        Change CagedBarrierPtr to work with PAC so constructors and accessors now expect to receive a length.
+        Update assembler helper methods to use do PAC when caging.
+
+        LLInt:
+        Add arm64e.rb backend as we missed that when originally open sourcing our arm64e code.
+        Add a new optional t6 temporary, which is only used currently on arm64e for GetByVal on a TypedArray.
+        Refactor caging into two helper macros for Primitive/JSValue cages.
+
+        Baseline/DFG:
+        Add authentication where needed for GetByVal and inline object construction.
+
+        FTL:
+        Add a new ValueRep that allows for a late register use. We want this for the authentication patchpoint since we use the length register at the same time as we are defing the authenticated pointer.
+
+        Wasm:
+        Use the TaggedArrayStoragePtr class for the memory base pointer. In theory we should be caging those pointers but I don't want to risk introducing a performance regression with the rest of this change. I've filed https://bugs.webkit.org/show_bug.cgi?id=197620 to do this later.
+        As we no longer have the Gigacage using most of our VA memory, we can enable fast memories on iOS.
+        Using fast memories leads to roughly a 2% JetStream2 speedup.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::tagArrayPtr):
+        (JSC::MacroAssemblerARM64E::untagArrayPtr):
+        (JSC::MacroAssemblerARM64E::removeArrayPtrTag):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::addUsedRegistersTo const):
+        (JSC::B3::ValueRep::dump const):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep):
+        (JSC::B3::ValueRep::isReg const):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithSize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewGet):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewSet):
+        (JSC::FTL::DFG::LowerDFGToB3::untagArrayPtr):
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageConditionally):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::clearCallLinkInfo):
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/arm64e.rb: Added.
+        * offlineasm/ast.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/registers.rb:
+        * offlineasm/x86.rb:
+        * runtime/ArrayBuffer.cpp:
+        (JSC::SharedArrayBufferContents::SharedArrayBufferContents):
+        (JSC::SharedArrayBufferContents::~SharedArrayBufferContents):
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::destroy):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::makeShared):
+        (JSC::ArrayBufferContents::copyTo):
+        * runtime/ArrayBuffer.h:
+        (JSC::SharedArrayBufferContents::data const):
+        (JSC::ArrayBufferContents::data const):
+        (JSC::ArrayBuffer::data):
+        (JSC::ArrayBuffer::data const):
+        (JSC::ArrayBuffer::byteLength const):
+        * runtime/ArrayBufferView.cpp:
+        (JSC::ArrayBufferView::ArrayBufferView):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::baseAddress const):
+        (JSC::ArrayBufferView::byteLength const):
+        (JSC::ArrayBufferView::setRangeImpl):
+        (JSC::ArrayBufferView::getRangeImpl):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedScopedArgumentsTable::encode):
+        (JSC::CachedScopedArgumentsTable::decode const):
+        * runtime/CagedBarrierPtr.h:
+        (JSC::CagedBarrierPtr::CagedBarrierPtr):
+        (JSC::CagedBarrierPtr::set):
+        (JSC::CagedBarrierPtr::get const):
+        (JSC::CagedBarrierPtr::getMayBeNull const):
+        (JSC::CagedBarrierPtr::getUnsafe const):
+        (JSC::CagedBarrierPtr::at const):
+        (JSC::CagedBarrierPtr::operator== const):
+        (JSC::CagedBarrierPtr::operator bool const):
+        (JSC::CagedBarrierPtr::setWithoutBarrier):
+        (JSC::CagedBarrierPtr::operator* const): Deleted.
+        (JSC::CagedBarrierPtr::operator-> const): Deleted.
+        (JSC::CagedBarrierPtr::operator[] const): Deleted.
+        (): Deleted.
+        * runtime/DataView.cpp:
+        (JSC::DataView::DataView):
+        * runtime/DataView.h:
+        (JSC::DataView::get):
+        (JSC::DataView::set):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::unmapArgument):
+        * runtime/DirectArguments.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::visitChildren):
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        (JSC::GenericArguments<Type>::setModifiedArgumentDescriptor):
+        (JSC::GenericArguments<Type>::isModifiedArgumentDescriptor):
+        * runtime/GenericTypedArrayView.h:
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::GenericTypedArrayView):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        (JSC::JSArrayBufferView::finalize):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::ConstructionContext::vector const):
+        (JSC::JSArrayBufferView::isNeutered):
+        (JSC::JSArrayBufferView::hasVector const):
+        (JSC::JSArrayBufferView::vector const):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::createUninitialized):
+        (JSC::JSGenericTypedArrayView<Adaptor>::estimatedSize):
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/Options.h:
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::clone):
+        (JSC::ScopedArgumentsTable::setLength):
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/SymbolTable.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::cachedMemory const):
+        (JSC::Wasm::Instance::updateCachedMemory):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::dump const):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::memory const):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-05-08  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueMod into DFG

@@ -1,3 +1,55 @@
+2019-05-08  Keith Miller  <keith_miller@apple.com>
+
+        Remove Gigacage from arm64 and use PAC for arm64e instead
+        https://bugs.webkit.org/show_bug.cgi?id=197110
+
+        Reviewed by Saam Barati.
+
+        This patch changes the Gigacage to use PAC on arm64e. As part of
+        this process all platforms must provide their length when
+        materializing the caged pointer. Since it would be somewhat
+        confusing to have two parameters for an operator [] those methods
+        have been removed. Lastly, this patch removes the specializations
+        for void* caged pointers, instead opting to use enable_if on the
+        methods that would normally fail on void* e.g. anything that
+        returns a T&.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::CagedPtr):
+        (WTF::CagedPtr::get const):
+        (WTF::CagedPtr::getMayBeNull const):
+        (WTF::CagedPtr::getUnsafe const):
+        (WTF::CagedPtr::at const):
+        (WTF::CagedPtr::reauthenticate):
+        (WTF::CagedPtr::operator=):
+        (WTF::CagedPtr::operator== const):
+        (WTF::CagedPtr::operator bool const):
+        (WTF::CagedPtr::operator* const): Deleted.
+        (WTF::CagedPtr::operator-> const): Deleted.
+        (WTF::CagedPtr::operator[] const): Deleted.
+        (): Deleted.
+        * wtf/CagedUniquePtr.h:
+        (WTF::CagedUniquePtr::CagedUniquePtr):
+        (WTF::CagedUniquePtr::create):
+        (WTF::CagedUniquePtr::~CagedUniquePtr):
+        (WTF::CagedUniquePtr::destroy):
+        (): Deleted.
+        * wtf/Gigacage.h:
+        (Gigacage::cagedMayBeNull):
+        * wtf/PtrTag.h:
+        (WTF::tagArrayPtr):
+        (WTF::untagArrayPtr):
+        (WTF::removeArrayPtrTag):
+        (WTF::retagArrayPtr):
+        * wtf/TaggedArrayStoragePtr.h: Copied from Source/JavaScriptCore/runtime/ArrayBufferView.cpp.
+        (WTF::TaggedArrayStoragePtr::TaggedArrayStoragePtr):
+        (WTF::TaggedArrayStoragePtr::get const):
+        (WTF::TaggedArrayStoragePtr::getUnsafe const):
+        (WTF::TaggedArrayStoragePtr::resize):
+        (WTF::TaggedArrayStoragePtr::operator bool const):
+
 2019-05-08  Robin Morisset  <rmorisset@apple.com>
 
         WTF::TimingScope should show the total duration and not just the mean

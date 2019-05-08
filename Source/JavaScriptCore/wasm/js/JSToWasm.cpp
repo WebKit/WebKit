@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
+#include "DisallowMacroScratchRegisterUsage.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
@@ -214,10 +215,23 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
             jit.loadWasmContextInstance(baseMemory);
 
         GPRReg currentInstanceGPR = Context::useFastTLS() ? baseMemory : wasmContextInstanceGPR;
-        if (mode != MemoryMode::Signaling)
+        if (mode != MemoryMode::Signaling) {
             jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+#if CPU(ARM64E)
+            jit.untagArrayPtr(pinnedRegs.sizeRegister, baseMemory);
+#endif
+        } else {
+#if CPU(ARM64E)
+            GPRReg scratch = wasmCallingConventionAir().prologueScratch(0);
 
-        jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemorySize()), scratch);
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+            jit.untagArrayPtr(scratch, baseMemory);
+#else
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+#endif
+        }
     }
 
     CCallHelpers::Call call = jit.threadSafePatchableNearCall();

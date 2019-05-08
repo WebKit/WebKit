@@ -34,8 +34,7 @@
 #include <cstddef>
 #include <inttypes.h>
 
-#if ((BOS(DARWIN) || BOS(LINUX)) && \
-(BCPU(X86_64) || (BCPU(ARM64) && !defined(__ILP32__) && (!BPLATFORM(IOS_FAMILY) || BPLATFORM(IOS)))))
+#if ((BOS(DARWIN) || BOS(LINUX)) && BCPU(X86_64))
 #define GIGACAGE_ENABLED 1
 #else
 #define GIGACAGE_ENABLED 0
@@ -200,6 +199,14 @@ BINLINE T* caged(Kind kind, T* ptr)
             reinterpret_cast<uintptr_t>(ptr) & mask(kind)));
 }
 
+template<typename T>
+BINLINE T* cagedMayBeNull(Kind kind, T* ptr)
+{
+    if (!ptr)
+        return ptr;
+    return caged(kind, ptr);
+}
+
 BINLINE bool isCaged(Kind kind, const void* ptr)
 {
     return caged(kind, ptr) == ptr;
@@ -221,6 +228,7 @@ BINLINE bool wasEnabled() { return false; }
 BINLINE bool isCaged(Kind, const void*) { return true; }
 BINLINE bool isEnabled() { return false; }
 template<typename T> BINLINE T* caged(Kind, T* ptr) { return ptr; }
+template<typename T> BINLINE T* cagedMayBeNull(Kind, T* ptr) { return ptr; }
 BINLINE void disableDisablingPrimitiveGigacageIfShouldBeEnabled() { }
 BINLINE bool canPrimitiveGigacageBeDisabled() { return false; }
 BINLINE void disablePrimitiveGigacage() { }

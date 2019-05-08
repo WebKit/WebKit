@@ -114,6 +114,8 @@ ALWAYS_INLINE size_t mask(Kind) { return 0; }
 
 template<typename T>
 inline T* caged(Kind, T* ptr) { return ptr; }
+template<typename T>
+inline T* cagedMayBeNull(Kind, T* ptr) { return ptr; }
 
 inline bool isCaged(Kind, const void*) { return false; }
 

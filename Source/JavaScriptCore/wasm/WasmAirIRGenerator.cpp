@@ -833,6 +833,9 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
         patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemorySize()), pinnedRegs->sizeRegister);
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), pinnedRegs->baseMemoryPointer);
+#if CPU(ARM64E)
+            jit.untagArrayPtr(pinnedRegs->sizeRegister, pinnedRegs->baseMemoryPointer);
+#endif
         });
 
         emitPatchpoint(block, patchpoint, Tmp(), instance);
@@ -1856,6 +1859,9 @@ auto AirIRGenerator::addCallIndirect(const Signature& signature, Vector<Expressi
             ASSERT(pinnedRegs.sizeRegister != newContextInstance);
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
+#if CPU(ARM64E)
+            jit.untagArrayPtr(pinnedRegs.sizeRegister, baseMemory);
+#endif
         });
 
         emitPatchpoint(doContextSwitch, patchpoint, Tmp(), newContextInstance, instanceValue());

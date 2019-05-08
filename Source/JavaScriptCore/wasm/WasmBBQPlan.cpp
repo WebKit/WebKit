@@ -318,7 +318,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 }
 
                 m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = std::make_unique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly function[%i] %s", functionIndex, signature.toString().ascii().data()),
+                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s", functionIndex, signature.toString().ascii().data()),
                     WTFMove(context.wasmEntrypointByproducts));
             }
 

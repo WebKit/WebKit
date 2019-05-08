@@ -408,19 +408,28 @@ macro checkSwitchToJITForLoop()
         end)
 end
 
-macro uncage(basePtr, mask, ptr, scratch)
+macro uncage(basePtr, mask, ptr, scratchOrLength)
     if GIGACAGE_ENABLED and not C_LOOP
-        loadp basePtr, scratch
-        btpz scratch, .done
+        loadp basePtr, scratchOrLength
+        btpz scratchOrLength, .done
         andp mask, ptr
-        addp scratch, ptr
+        addp scratchOrLength, ptr
     .done:
     end
 end
 
-macro loadCaged(basePtr, mask, source, dest, scratch)
+macro loadCagedPrimitive(source, dest, scratchOrLength)
     loadp source, dest
-    uncage(basePtr, mask, dest, scratch)
+    if GIGACAGE_ENABLED
+        uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, dest, scratchOrLength)
+    elsif ARM64E
+        untagArrayPtr scratchOrLength, dest
+    end
+end
+
+macro loadCagedJSValue(source, dest, scratchOrLength)
+    loadp source, dest
+    uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
 end
 
 macro loadVariable(get, fieldName, valueReg)
@@ -1310,7 +1319,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     arrayProfile(OpGetById::Metadata::m_modeMetadata.arrayLengthMode.arrayProfile, t0, t2, t5)
     btiz t0, IsArray, .opGetByIdSlow
     btiz t0, IndexingShapeMask, .opGetByIdSlow
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, JSObject::m_butterfly[t3], t0, t1)
+    loadCagedJSValue(JSObject::m_butterfly[t3], t0, t1)
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetByIdSlow
     orq tagTypeNumber, t0
@@ -1433,7 +1442,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     loadConstantOrVariableInt32(size, t3, t1, .opGetByValSlow)
     sxi2q t1, t1
 
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, JSObject::m_butterfly[t0], t3, tagTypeNumber)
+    loadCagedJSValue(JSObject::m_butterfly[t0], t3, tagTypeNumber)
     move TagTypeNumber, tagTypeNumber
 
     andi IndexingShapeMask, t2
@@ -1477,7 +1486,17 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     biaeq t2, NumberOfTypedArrayTypesExcludingDataView, .opGetByValSlow
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
-    biaeq t1, JSArrayBufferView::m_length[t0], .opGetByValSlow
+
+    if ARM64E
+        const scratchOrLength = t6
+        loadi JSArrayBufferView::m_length[t0], scratchOrLength
+        biaeq t1, scratchOrLength, .opGetByValSlow
+    else
+        const scratchOrLength = t0
+        biaeq t1, JSArrayBufferView::m_length[t0], .opGetByValSlow
+    end
+
+    loadCagedPrimitive(JSArrayBufferView::m_vector[t0], t3, scratchOrLength)
 
     # Now bisect through the various types:
     #    Int8ArrayType,
@@ -1499,7 +1518,6 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bia t2, Int8ArrayType - FirstTypedArrayType, .opGetByValUint8ArrayOrUint8ClampedArray
 
     # We have Int8ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadbs [t3, t1], t0
     finishIntGetByVal(t0, t1)
 
@@ -1507,13 +1525,11 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bia t2, Uint8ArrayType - FirstTypedArrayType, .opGetByValUint8ClampedArray
 
     # We have Uint8ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadb [t3, t1], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint8ClampedArray:
     # We have Uint8ClampedArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadb [t3, t1], t0
     finishIntGetByVal(t0, t1)
 
@@ -1522,13 +1538,11 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bia t2, Int16ArrayType - FirstTypedArrayType, .opGetByValUint16Array
 
     # We have Int16ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadhs [t3, t1, 2], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint16Array:
     # We have Uint16ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadh [t3, t1, 2], t0
     finishIntGetByVal(t0, t1)
 
@@ -1540,13 +1554,11 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bia t2, Int32ArrayType - FirstTypedArrayType, .opGetByValUint32Array
 
     # We have Int32ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadi [t3, t1, 4], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint32Array:
     # We have Uint32ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     # This is the hardest part because of large unsigned values.
     loadi [t3, t1, 4], t0
     bilt t0, 0, .opGetByValSlow # This case is still awkward to implement in LLInt.
@@ -1558,7 +1570,6 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bieq t2, Float32ArrayType - FirstTypedArrayType, .opGetByValSlow
 
     # We have Float64ArrayType.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, JSArrayBufferView::m_vector[t0], t3, t2)
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValSlow
     finishDoubleGetByVal(ft0, t0, t1)
@@ -1594,7 +1605,7 @@ macro putByValOp(opcodeName, opcodeStruct)
         get(m_property, t0)
         loadConstantOrVariableInt32(size, t0, t3, .opPutByValSlow)
         sxi2q t3, t3
-        loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr Gigacage::jsValueGigacageMask, JSObject::m_butterfly[t1], t0, tagTypeNumber)
+        loadCagedJSValue(JSObject::m_butterfly[t1], t0, tagTypeNumber)
         move TagTypeNumber, tagTypeNumber
         btinz t2, CopyOnWrite, .opPutByValSlow
         andi IndexingShapeMask, t2

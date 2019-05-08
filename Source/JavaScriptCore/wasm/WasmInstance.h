@@ -64,7 +64,7 @@ public:
     Memory* memory() { return m_memory.get(); }
     Table* table() { return m_table.get(); }
 
-    void* cachedMemory() const { return m_cachedMemory; }
+    void* cachedMemory() const { return m_cachedMemory.get(cachedMemorySize()); }
     size_t cachedMemorySize() const { return m_cachedMemorySize; }
 
     void setMemory(Ref<Memory>&& memory)
@@ -76,7 +76,7 @@ public:
     void updateCachedMemory()
     {
         if (m_memory != nullptr) {
-            m_cachedMemory = memory()->memory();
+            m_cachedMemory = TaggedArrayStoragePtr<void>(memory()->memory(), memory()->size());
             m_cachedMemorySize = memory()->size();
         }
     }
@@ -143,7 +143,7 @@ private:
     }
     void* m_owner { nullptr }; // In a JS embedding, this is a JSWebAssemblyInstance*.
     Context* m_context { nullptr };
-    void* m_cachedMemory { nullptr };
+    TaggedArrayStoragePtr<void> m_cachedMemory;
     size_t m_cachedMemorySize { 0 };
     Ref<Module> m_module;
     RefPtr<CodeBlock> m_codeBlock;

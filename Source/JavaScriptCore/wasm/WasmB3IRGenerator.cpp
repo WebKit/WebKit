@@ -482,6 +482,9 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restor
             GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemorySize()), pinnedRegs->sizeRegister);
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), baseMemory);
+#if CPU(ARM64E)
+            jit.untagArrayPtr(pinnedRegs->sizeRegister, baseMemory);
+#endif
         });
     }
 }
@@ -1285,6 +1288,9 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             ASSERT(pinnedRegs.sizeRegister != newContextInstance);
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
+#if CPU(ARM64E)
+            jit.untagArrayPtr(pinnedRegs.sizeRegister, baseMemory);
+#endif
         });
         doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
 

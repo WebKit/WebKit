@@ -1569,7 +1569,7 @@ public:
 #endif
     }
     
-    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg scratch)
+    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg scratchOrLength)
     {
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
@@ -1578,15 +1578,18 @@ public:
         if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageDisabled())
             return cage(kind, storage);
         
-        loadPtr(&Gigacage::basePtr(kind), scratch);
-        Jump done = branchTestPtr(Zero, scratch);
+        loadPtr(&Gigacage::basePtr(kind), scratchOrLength);
+        Jump done = branchTestPtr(Zero, scratchOrLength);
         andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
-        addPtr(scratch, storage);
+        addPtr(scratchOrLength, storage);
         done.link(this);
+#elif CPU(ARM64E)
+        if (kind == Gigacage::Primitive)
+            untagArrayPtr(scratchOrLength, storage);
 #else
         UNUSED_PARAM(kind);
         UNUSED_PARAM(storage);
-        UNUSED_PARAM(scratch);
+        UNUSED_PARAM(scratchOrLength);
 #endif
     }
 

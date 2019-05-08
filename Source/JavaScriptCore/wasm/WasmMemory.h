@@ -34,6 +34,7 @@
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TaggedArrayStoragePtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -68,7 +69,7 @@ public:
     static size_t fastMappedBytes(); // Includes redzone.
     static bool addressIsInActiveFastMemory(void*);
 
-    void* memory() const { return m_memory; }
+    void* memory() const { ASSERT(m_memory.get(size()) == m_memory.getUnsafe()); return m_memory.get(size()); }
     size_t size() const { return m_size; }
     PageCount sizeInPages() const { return PageCount::fromBytes(m_size); }
 
@@ -96,7 +97,7 @@ private:
     Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
     Memory(PageCount initial, PageCount maximum, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
 
-    void* m_memory { nullptr };
+    TaggedArrayStoragePtr<void> m_memory;
     size_t m_size { 0 };
     PageCount m_initial;
     PageCount m_maximum;

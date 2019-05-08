@@ -57,9 +57,6 @@ void PolymorphicCallNode::unlink(VM& vm)
 
 void PolymorphicCallNode::clearCallLinkInfo()
 {
-    if (Options::dumpDisassembly())
-        dataLog("Clearing call link info for polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin(), "\n");
-
     m_callLinkInfo = nullptr;
 }
 

@@ -33,8 +33,7 @@
 namespace JSC {
 
 DataView::DataView(RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
-    : ArrayBufferView(WTFMove(buffer), byteOffset)
-    , m_byteLength(byteLength)
+    : ArrayBufferView(WTFMove(buffer), byteOffset, byteLength)
 {
 }
 

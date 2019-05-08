@@ -1589,7 +1589,7 @@ JIT::JumpList JIT::emitDirectArgumentsGetByVal(const Instruction*, PatchableJump
     load32(Address(base, DirectArguments::offsetOfLength()), scratch2);
     slowCases.append(branch32(AboveOrEqual, property, scratch2));
     slowCases.append(branchTestPtr(NonZero, Address(base, DirectArguments::offsetOfMappedArguments())));
-    
+
     loadValue(BaseIndex(base, property, TimesEight, DirectArguments::storageOffset()), result);
     
     return slowCases;
@@ -1669,7 +1669,8 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(const Instruction*, PatchableJump& 
     
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
-    slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
+    load32(Address(base, JSArrayBufferView::offsetOfLength()), scratch2);
+    slowCases.append(branch32(AboveOrEqual, property, scratch2));
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
     cageConditionally(Gigacage::Primitive, scratch, scratch2);
 
@@ -1732,7 +1733,8 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(const Instruction*, PatchableJump
 
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
-    slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
+    load32(Address(base, JSArrayBufferView::offsetOfLength()), scratch2);
+    slowCases.append(branch32(AboveOrEqual, property, scratch2));
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
     cageConditionally(Gigacage::Primitive, scratch, scratch2);
     
@@ -1782,7 +1784,8 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Op bytecode, PatchableJump& badType
     
     load8(Address(base, JSCell::typeInfoTypeOffset()), earlyScratch);
     badType = patchableBranch32(NotEqual, earlyScratch, TrustedImm32(typeForTypedArrayType(type)));
-    Jump inBounds = branch32(Below, property, Address(base, JSArrayBufferView::offsetOfLength()));
+    load32(Address(base, JSArrayBufferView::offsetOfLength()), lateScratch2);
+    Jump inBounds = branch32(Below, property, lateScratch2);
     emitArrayProfileOutOfBoundsSpecialCase(profile);
     slowCases.append(jump());
     inBounds.link(this);
@@ -1857,7 +1860,8 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Op bytecode, PatchableJump& badTy
     
     load8(Address(base, JSCell::typeInfoTypeOffset()), earlyScratch);
     badType = patchableBranch32(NotEqual, earlyScratch, TrustedImm32(typeForTypedArrayType(type)));
-    Jump inBounds = branch32(Below, property, Address(base, JSArrayBufferView::offsetOfLength()));
+    load32(Address(base, JSArrayBufferView::offsetOfLength()), lateScratch2);
+    Jump inBounds = branch32(Below, property, lateScratch2);
     emitArrayProfileOutOfBoundsSpecialCase(profile);
     slowCases.append(jump());
     inBounds.link(this);

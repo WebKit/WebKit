@@ -580,6 +580,7 @@ private:
             break;
         case ValueRep::Register:
         case ValueRep::LateRegister:
+        case ValueRep::SomeLateRegister:
             if (value.rep().kind() == ValueRep::LateRegister)
                 VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
             if (value.rep().reg().isGPR())

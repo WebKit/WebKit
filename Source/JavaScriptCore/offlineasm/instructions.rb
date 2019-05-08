@@ -253,7 +253,8 @@ MACRO_INSTRUCTIONS =
      "memfence",
      "tagReturnAddress",
      "untagReturnAddress",
-     "removeCodePtrTag"
+     "removeCodePtrTag",
+     "untagArrayPtr",    
     ]
 
 X86_INSTRUCTIONS =
