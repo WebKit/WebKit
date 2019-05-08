@@ -1,3 +1,17 @@
+2019-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct delayed load event handling
+        https://bugs.webkit.org/show_bug.cgi?id=197679
+        <rdar://problem/50423334>
+
+        Reviewed by Alex Christensen.
+
+        We need to properly account for the fact that JavaScript might run
+        while performing loads.
+
+        * dom/Document.cpp:
+        (WebCore::Document::loadEventDelayTimerFired):
+
 2019-05-08  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r243197): [GStreamer] Error playing redirected streams
