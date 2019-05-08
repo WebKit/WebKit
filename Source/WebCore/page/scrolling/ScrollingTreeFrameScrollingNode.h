@@ -69,7 +69,7 @@ private:
     LayoutPoint parentToLocalPoint(LayoutPoint) const final;
     LayoutPoint localToContentsPoint(LayoutPoint) const final;
 
-    WEBCORE_EXPORT void updateViewportForCurrentScrollPosition(Optional<FloatRect>) override;
+    void updateViewportForCurrentScrollPosition(Optional<FloatRect>) override;
     bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport) override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;

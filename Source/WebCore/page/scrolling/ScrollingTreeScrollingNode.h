@@ -101,11 +101,11 @@ protected:
     virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges) const;
 
     virtual void currentScrollPositionChanged();
-    WEBCORE_EXPORT virtual void updateViewportForCurrentScrollPosition(Optional<FloatRect> = { }) { }
+    virtual void updateViewportForCurrentScrollPosition(Optional<FloatRect> = { }) { }
     virtual bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport);
 
-    WEBCORE_EXPORT virtual void repositionScrollingLayers() { }
-    WEBCORE_EXPORT virtual void repositionRelatedLayers() { }
+    virtual void repositionScrollingLayers() { }
+    virtual void repositionRelatedLayers() { }
 
     void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
 
