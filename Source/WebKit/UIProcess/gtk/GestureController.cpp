@@ -34,6 +34,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+static const double maximumZoom = 3.0;
+
 GestureController::GestureController(GtkWidget* widget, std::unique_ptr<GestureControllerClient>&& client)
     : m_client(WTFMove(client))
     , m_dragGesture(widget, *m_client)
@@ -214,6 +216,8 @@ void GestureController::ZoomGesture::scaleChanged(ZoomGesture* zoomGesture, doub
     zoomGesture->m_scale = zoomGesture->m_initialScale * scale;
     if (zoomGesture->m_scale < 1.0)
         zoomGesture->m_scale = 1.0;
+    if (zoomGesture->m_scale > maximumZoom)
+        zoomGesture->m_scale = maximumZoom;
 
     zoomGesture->m_viewPoint = zoomGesture->center();
 
