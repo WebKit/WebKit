@@ -57,9 +57,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         case WI.CPUTimelineView.SampleType.Script:
             return WI.UIString("Script");
         case WI.CPUTimelineView.SampleType.Layout:
-            return WI.repeatedUIString.timelineRecordLayout();
+            return WI.UIString("Layout");
         case WI.CPUTimelineView.SampleType.Paint:
-            return WI.repeatedUIString.timelineRecordPaint();
+            return WI.UIString("Paint");
         case WI.CPUTimelineView.SampleType.Style:
             return WI.UIString("Style Resolution");
         }

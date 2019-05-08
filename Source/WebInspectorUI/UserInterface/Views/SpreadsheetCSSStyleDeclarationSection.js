@@ -315,7 +315,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             break;
 
         case WI.CSSStyleDeclaration.Type.Inline:
-            this._selectorElement.textContent = WI.UIString("Style Attribute", "CSS properties defined via HTML style attribute");
+            this._selectorElement.textContent = WI.UIString("Style Attribute");
             this._selectorElement.classList.add("style-attribute");
             break;
 

@@ -156,8 +156,8 @@ WI.Resource = class Resource extends WI.SourceCode
             return WI.UIString("XHR");
         case WI.Resource.Type.Fetch:
             if (plural)
-                return WI.UIString("Fetches", "Resources loaded via 'fetch' method");
-            return WI.repeatedUIString.fetch();
+                return WI.UIString("Fetches");
+            return WI.UIString("Fetch");
         case WI.Resource.Type.Ping:
             if (plural)
                 return WI.UIString("Pings");

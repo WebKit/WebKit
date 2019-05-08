@@ -211,7 +211,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         case WI.Resource.Type.XHR:
             return "XHR";
         case WI.Resource.Type.Fetch:
-            return WI.repeatedUIString.fetch();
+            return WI.UIString("Fetch");
         case WI.Resource.Type.Ping:
             return WI.UIString("Ping");
         case WI.Resource.Type.Beacon:
@@ -1172,7 +1172,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             align: "right",
         });
 
-        this._transferSizeColumn = new WI.TableColumn("transferSize", WI.UIString("Transfer Size", "Amount of data sent over the network for a single resource"), {
+        this._transferSizeColumn = new WI.TableColumn("transferSize", WI.UIString("Transfer Size"), {
             minWidth: 100,
             maxWidth: 150,
             initialWidth: 100,

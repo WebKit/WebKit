@@ -777,14 +777,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             node.removeAttribute(attributeName);
         }, !attribute || !isNonShadowEditable);
 
-        subMenus.edit.appendItem(WI.UIString("Tag", "A submenu item of 'Edit' to change DOM element's tag name"), () => {
+        subMenus.edit.appendItem(WI.UIString("Tag"), () => {
             this._startEditingTagName();
         }, !isNonShadowEditable);
 
         contextMenu.appendSeparator();
 
         if (WI.cssManager.canForcePseudoClasses() && attached) {
-            let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes", "A context menu item to force (override) a DOM node's pseudo-classes"));
+            let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes"));
 
             let enabledPseudoClasses = node.enabledPseudoClasses;
             WI.CSSManager.ForceablePseudoClasses.forEach((pseudoClass) => {
@@ -815,9 +815,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         let isEditableNode = node.nodeType() === Node.ELEMENT_NODE && this.editable;
         let forbiddenClosingTag = WI.DOMTreeElement.ForbiddenClosingTagElements.has(node.nodeNameInCorrectCase());
-        subMenus.add.appendItem(WI.UIString("Child", "A submenu item of 'Add' to append DOM nodes to the selected DOM node"), this._addHTML.bind(this), forbiddenClosingTag || !isEditableNode);
-        subMenus.add.appendItem(WI.UIString("Previous Sibling", "A submenu item of 'Add' to add DOM nodes before the selected DOM node"), this._addPreviousSibling.bind(this), !isEditableNode);
-        subMenus.add.appendItem(WI.UIString("Next Sibling", "A submenu item of 'Add' to add DOM nodes after the selected DOM node"), this._addNextSibling.bind(this), !isEditableNode);
+        subMenus.add.appendItem(WI.UIString("Child"), this._addHTML.bind(this), forbiddenClosingTag || !isEditableNode);
+        subMenus.add.appendItem(WI.UIString("Previous Sibling"), this._addPreviousSibling.bind(this), !isEditableNode);
+        subMenus.add.appendItem(WI.UIString("Next Sibling"), this._addNextSibling.bind(this), !isEditableNode);
 
         subMenus.edit.appendItem(WI.UIString("HTML"), this._editAsHTML.bind(this), !this.editable);
         subMenus.copy.appendItem(WI.UIString("HTML"), this._copyHTML.bind(this), node.isPseudoElement());

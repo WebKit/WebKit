@@ -474,13 +474,13 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
         if (breakpoint === WI.debuggerManager.allExceptionsBreakpoint) {
             options.className = WI.DebuggerSidebarPanel.ExceptionIconStyleClassName;
-            options.title = WI.repeatedUIString.allExceptions();
+            options.title = WI.UIString("All Exceptions");
         } else if (breakpoint === WI.debuggerManager.uncaughtExceptionsBreakpoint) {
             options.className = WI.DebuggerSidebarPanel.ExceptionIconStyleClassName;
-            options.title = WI.repeatedUIString.uncaughtExceptions();
+            options.title = WI.UIString("Uncaught Exceptions");
         } else if (breakpoint === WI.debuggerManager.assertionFailuresBreakpoint) {
             options.className = WI.DebuggerSidebarPanel.AssertionIconStyleClassName;
-            options.title = WI.repeatedUIString.assertionFailures();
+            options.title = WI.UIString("Assertion Failures");
         } else if (breakpoint instanceof WI.DOMBreakpoint) {
             if (!breakpoint.domNodeIdentifier)
                 return null;
@@ -514,7 +514,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
             if (breakpoint === WI.domDebuggerManager.allRequestsBreakpoint) {
                 options.className = WI.DebuggerSidebarPanel.AssertionIconStyleClassName;
-                options.title = WI.repeatedUIString.allRequests();
+                options.title = WI.UIString("All Requests");
             }
         } else {
             let sourceCode = breakpoint.sourceCodeLocation && breakpoint.sourceCodeLocation.displaySourceCode;
@@ -1457,7 +1457,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (InspectorBackend.domains.Debugger.setPauseOnAssertions) {
             let assertionFailuresBreakpointShown = WI.settings.showAssertionFailuresBreakpoint.value;
 
-            contextMenu.appendCheckboxItem(WI.repeatedUIString.assertionFailures(), () => {
+            contextMenu.appendCheckboxItem(WI.UIString("Assertion Failures"), () => {
                 if (assertionFailuresBreakpointShown)
                     WI.debuggerManager.removeBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
                 else {
@@ -1479,7 +1479,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
             let allRequestsBreakpointShown = WI.settings.showAllRequestsBreakpoint.value;
 
-            contextMenu.appendCheckboxItem(WI.repeatedUIString.allRequests(), () => {
+            contextMenu.appendCheckboxItem(WI.UIString("All Requests"), () => {
                 if (allRequestsBreakpointShown)
                     WI.domDebuggerManager.removeURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
                 else {
