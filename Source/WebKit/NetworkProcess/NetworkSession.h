@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PrefetchCache.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/RegistrableDomain.h>
@@ -93,6 +94,9 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
+    PrefetchCache& prefetchCache() { return m_prefetchCache; }
+    void clearPrefetchCache() { m_prefetchCache.clear(); }
+
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID);
 
@@ -109,6 +113,8 @@ protected:
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
+
+    PrefetchCache m_prefetchCache;
 };
 
 } // namespace WebKit

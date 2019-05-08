@@ -4395,3 +4395,6 @@ webkit.org/b/197310 fast/harness/render-tree-as-text-options.html [ Failure ]
 [ Win10 ] svg/repaint/change-background-color.html [ ImageOnlyFailure ]
 [ Win10 ] svg/repaint/remove-background-property-on-root.html [ ImageOnlyFailure ]
 [ Win10 ] fast/spatial-navigation/snav-media-elements.html [ Crash ]
+
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]

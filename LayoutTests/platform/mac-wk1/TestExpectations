@@ -702,3 +702,6 @@ webkit.org/b/196448 [ Debug ] inspector/audit/basic.html [ Pass Timeout ]
 webkit.org/b/196502 media/video-background-tab-playback.html [ Pass Failure ]
 
 webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass Failure ]
+
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]

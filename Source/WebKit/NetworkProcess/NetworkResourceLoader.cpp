@@ -211,6 +211,13 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     ASSERT(canUseCache(request));
 
     RefPtr<NetworkResourceLoader> loader(this);
+    if (isMainFrameLoad()) {
+        ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
+        if (auto session = m_connection->networkProcess().networkSession(sessionID())) {
+            if (auto entry = session->prefetchCache().take(request.url()))
+                m_cache->store(request, entry->response, entry->releaseBuffer(), nullptr);
+        }
+    }
     m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request = ResourceRequest { request }](auto entry, auto info) mutable {
         if (loader->hasOneRef()) {
             // The loader has been aborted and is only held alive by this lambda.
@@ -469,6 +476,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         return completionHandler(PolicyAction::Use);
     }
 
+    if (isCrossOriginPrefetch())
+        return completionHandler(PolicyAction::Use);
+
     // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
     // a main resource because the embedding client must decide whether to allow the load.
     bool willWaitForContinueDidReceiveResponse = isMainResource();
@@ -506,6 +516,8 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
         else
             m_bufferedDataForCache = nullptr;
     }
+    if (isCrossOriginPrefetch())
+        return;
     // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
     unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer->size();
 
@@ -797,6 +809,11 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (!m_bufferedDataForCache)
         return;
 
+    if (isCrossOriginPrefetch()) {
+        if (auto session = m_connection->networkProcess().networkSession(sessionID()))
+            session->prefetchCache().store(m_networkLoad->currentRequest().url(), WTFMove(m_response), WTFMove(m_bufferedDataForCache));
+        return;
+    }
     m_cache->store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = makeRef(*this)](auto& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (mappedBody.shareableResourceHandle.isNull())
@@ -1125,6 +1142,12 @@ void NetworkResourceLoader::logSlowCacheRetrieveIfNeeded(const NetworkCache::Cac
     if (info.storageTimings.wasCanceled)
         RELEASE_LOG_IF_ALLOWED("logSlowCacheRetrieveIfNeeded: Retrieve was canceled");
 #endif
+}
+
+bool NetworkResourceLoader::isCrossOriginPrefetch() const
+{
+    auto request = originalRequest();
+    return request.httpHeaderField(HTTPHeaderName::Purpose) == "prefetch" && !m_parameters.sourceOrigin->canRequest(request.url());
 }
 
 } // namespace WebKit

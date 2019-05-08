@@ -1,0 +1,16 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function loadAfterPrefetch()
+{
+     window.location.assign('http://localhost:8000/cache/resources/prefetched-main-resource.php');
+}
+</script>
+<body>
+<link rel="prefetch" href="http://localhost:8000/cache/resources/prefetched-main-resource.php" onload="loadAfterPrefetch();">
+</body>
+</html>

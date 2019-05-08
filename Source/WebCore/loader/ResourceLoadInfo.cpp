@@ -37,6 +37,7 @@ namespace ContentExtensions {
 ResourceType toResourceType(CachedResource::Type type)
 {
     switch (type) {
+    case CachedResource::Type::LinkPrefetch:
     case CachedResource::Type::MainResource:
         return ResourceType::Document;
     case CachedResource::Type::SVGDocumentResource:
@@ -71,9 +72,6 @@ ResourceType toResourceType(CachedResource::Type type)
     case CachedResource::Type::TextTrackResource:
         return ResourceType::Media;
 #endif
-    case CachedResource::Type::LinkPrefetch:
-        ASSERT_NOT_REACHED();
-        break;
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
         return ResourceType::Raw;

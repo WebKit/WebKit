@@ -1,3 +1,42 @@
+2019-05-08  Rob Buis  <rbuis@igalia.com>
+
+        Link prefetch not useful for top-level navigation
+        https://bugs.webkit.org/show_bug.cgi?id=195623
+
+        Reviewed by Youenn Fablet.
+
+        Cache cross-domain top-level prefetches in a dedicated cache. When a navigation
+        to the same url is done within a threshold (5 seconds), reuse the
+        prefetch cache entry, move it to the disk cache and navigate to
+        the url, meaning no extra network trip is needed. When not used within
+        the threshold period, the prefetch entry will be erased using a timer.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        (WebKit::NetworkResourceLoader::isCrossOriginPrefetch const):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::prefetchCache):
+        (WebKit::NetworkSession::clearPrefetchCache):
+        * NetworkProcess/cache/PrefetchCache.cpp: Added.
+        (WebKit::PrefetchCache::Entry::Entry):
+        (WebKit::PrefetchCache::PrefetchCache):
+        (WebKit::PrefetchCache::~PrefetchCache):
+        (WebKit::PrefetchCache::clear):
+        (WebKit::PrefetchCache::take):
+        (WebKit::PrefetchCache::store):
+        (WebKit::PrefetchCache::clearExpiredEntries):
+        * NetworkProcess/cache/PrefetchCache.h: Added.
+        (WebKit::PrefetchCache::Entry::releaseBuffer):
+        * Shared/WebPreferences.yaml:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-05-07  Chris Dumez  <cdumez@apple.com>
 
         Simplify logic to prevent App Nap in WebPage

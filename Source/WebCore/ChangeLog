@@ -1,3 +1,22 @@
+2019-05-08  Rob Buis  <rbuis@igalia.com>
+
+        Link prefetch not useful for top-level navigation
+        https://bugs.webkit.org/show_bug.cgi?id=195623
+
+        Reviewed by Youenn Fablet.
+
+        Cache cross-domain top-level prefetches in a dedicated cache and not in the
+        memory cache.
+
+        Tests: http/tests/cache/link-prefetch-main-resource-iframe.html
+               http/tests/cache/link-prefetch-main-resource.html
+               http/tests/contentextensions/prefetch-blocked.html
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::prefetchIfNeeded):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+
 2019-05-07  Don Olmstead  <don.olmstead@sony.com>
 
         Fix !HAVE(ACCESSIBILITY) build
