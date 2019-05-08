@@ -5,6 +5,7 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+compositing/shared-backing/overflow-scroll [ Pass ]
 editing/find [ Pass ]
 editing/undo-manager [ Pass ]
 fast/forms/select/mac-wk2 [ Pass ]
