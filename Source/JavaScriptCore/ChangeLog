@@ -1,5 +1,18 @@
 2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG_ASSERT failed in lowInt52
+        https://bugs.webkit.org/show_bug.cgi?id=197569
+
+        Reviewed by Saam Barati.
+
+        GetStack with FlushedInt52 should load the flushed value in Int52 form and put the result in m_int52Values / m_strictInt52Values. Previously,
+        we load it in JSValue / Int32 form and lowInt52 fails to get appropriate one since GetStack does not put the result in m_int52Values / m_strictInt52Values.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetStack):
+
+2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] LLIntPrototypeLoadAdaptiveStructureWatchpoint does not require Bag<>
         https://bugs.webkit.org/show_bug.cgi?id=197645
 

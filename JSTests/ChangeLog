@@ -1,5 +1,16 @@
 2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG_ASSERT failed in lowInt52
+        https://bugs.webkit.org/show_bug.cgi?id=197569
+
+        Reviewed by Saam Barati.
+
+        * stress/getstack-int52.js: Added.
+        (opt):
+        (main):
+
+2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         JSC: A bug in BytecodeGenerator::emitEqualityOpImpl
         https://bugs.webkit.org/show_bug.cgi?id=197479
 

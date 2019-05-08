@@ -1923,12 +1923,20 @@ private:
         
         DFG_ASSERT(m_graph, m_node, isConcrete(data->format), data->format);
         
-        if (data->format == FlushedDouble)
+        switch (data->format) {
+        case FlushedDouble:
             setDouble(m_out.loadDouble(addressFor(data->machineLocal)));
-        else if (isInt32Speculation(value.m_type))
-            setInt32(m_out.load32(payloadFor(data->machineLocal)));
-        else
-            setJSValue(m_out.load64(addressFor(data->machineLocal)));
+            break;
+        case FlushedInt52:
+            setInt52(m_out.load64(addressFor(data->machineLocal)));
+            break;
+        default:
+            if (isInt32Speculation(value.m_type))
+                setInt32(m_out.load32(payloadFor(data->machineLocal)));
+            else
+                setJSValue(m_out.load64(addressFor(data->machineLocal)));
+            break;
+        }
     }
     
     void compilePutStack()
