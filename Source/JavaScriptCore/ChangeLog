@@ -1,3 +1,30 @@
+2019-05-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Invalid DFG JIT genereation in high CPU usage state
+        https://bugs.webkit.org/show_bug.cgi?id=197453
+
+        Reviewed by Saam Barati.
+
+        We have a DFG graph like this.
+
+            a: JSConstant(rope JSString)
+            b: CheckStringIdent(Check:StringUse:@a)
+            ... AI think this is unreachable ...
+
+        When executing StringUse edge filter onto @a, AbstractValue::filterValueByType clears AbstractValue and makes it None.
+        This is because @a constant produces SpecString (SpecStringVar | SpecStringIdent) while StringUse edge filter requires
+        SpecStringIdent. AbstractValue::filterValueByType has an assumption that the JS constant always produces the same
+        SpeculatedType. So it clears AbstractValue completely.
+        But this assumption is wrong. JSString can produce SpecStringIdent later if the string is resolved to AtomicStringImpl.
+        AI think that we always fail. But once the string is resolved to AtomicStringImpl, we pass this check. So we execute
+        the breakpoint emitted by DFG since DFG think this is unreachable.
+
+        In this patch, we just clear the `m_value` if AbstractValue type filter fails with the held constant, since the constant
+        may produce a narrower type which can meet the type filter later.
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterValueByType):
+
 2019-05-08  Robin Morisset  <rmorisset@apple.com>
 
         All prototypes should call didBecomePrototype()

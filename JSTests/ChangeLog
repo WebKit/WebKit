@@ -1,3 +1,14 @@
+2019-05-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Invalid DFG JIT genereation in high CPU usage state
+        https://bugs.webkit.org/show_bug.cgi?id=197453
+
+        Reviewed by Saam Barati.
+
+        * stress/string-ident-use-clears-abstract-value-if-rope-string-constant-is-held.js: Added.
+        (trigger):
+        (main):
+
 2019-05-08  Robin Morisset  <rmorisset@apple.com>
 
         All prototypes should call didBecomePrototype()
