@@ -1231,6 +1231,9 @@ webkit.org/b/191005 inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 # No support for resource load statistics yet
 http/tests/resourceLoadStatistics/ [ Skip ]
 
+# No support for screen capture
+fast/mediastream/screencapture-user-gesture.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2196,6 +2199,12 @@ webkit.org/b/197507 legacy-animation-engine/imported/blink/css3/calc/transition-
 webkit.org/b/197507 media/destructor-logging-crash.html [ Timeout Pass ]
 
 webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure Timeout ]
+
+webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Failure ]
+
+webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
+webkit.org/b/197714 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html [ Pass Failure ]
+webkit.org/b/197716 webgl/1.0.2/conformance/canvas/buffer-preserve-test.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3848,6 +3857,15 @@ webkit.org/b/197251 fast/images/animated-image-loop-count.html [ ImageOnlyFailur
 webkit.org/b/197251 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
 
 webkit.org/b/197252 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure ]
+
+webkit.org/b/197706 css-dark-mode/default-colors.html [ Failure ]
+
+webkit.org/b/197708 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
+webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
+
+webkit.org/b/197709 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Failure ]
+
+webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
