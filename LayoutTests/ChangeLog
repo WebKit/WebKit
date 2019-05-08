@@ -1,3 +1,10 @@
+2019-05-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r245043
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+
 2019-05-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] A new request should always suppress the pending request if any
