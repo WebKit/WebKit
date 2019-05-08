@@ -32,8 +32,8 @@
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
-#import "EditingRange.h"
 #import "EditorState.h"
+#import "InsertTextOptions.h"
 #import "MenuUtilities.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PDFContextMenu.h"
@@ -198,13 +198,19 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     }
 
     if (dictationAlternatives.isEmpty()) {
-        insertTextAsync(text, replacementRange, registerUndoGroup);
+        InsertTextOptions options;
+        options.registerUndoGroup = registerUndoGroup;
+
+        insertTextAsync(text, replacementRange, WTFMove(options));
         return;
     }
 
     process().send(Messages::WebPage::InsertDictatedTextAsync(text, replacementRange, dictationAlternatives, registerUndoGroup), m_pageID);
 #else
-    insertTextAsync(text, replacementRange, registerUndoGroup);
+    InsertTextOptions options;
+    options.registerUndoGroup = registerUndoGroup;
+
+    insertTextAsync(text, replacementRange, WTFMove(options));
 #endif
 }
 

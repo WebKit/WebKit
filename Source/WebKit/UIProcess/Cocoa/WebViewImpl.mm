@@ -36,6 +36,7 @@
 #import "ColorSpaceData.h"
 #import "FullscreenClient.h"
 #import "GenericCallback.h"
+#import "InsertTextOptions.h"
 #import "Logging.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
@@ -4759,8 +4760,14 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
     if (!dictationAlternatives.isEmpty())
         m_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
-    else
-        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup, m_isTextInsertionReplacingSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot, m_isTextInsertionReplacingSoftSpace);
+    else {
+        InsertTextOptions options;
+        options.registerUndoGroup = registerUndoGroup;
+        options.editingRangeIsRelativeTo = m_isTextInsertionReplacingSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot;
+        options.suppressSelectionUpdate = m_isTextInsertionReplacingSoftSpace;
+
+        m_page->insertTextAsync(eventText, replacementRange, WTFMove(options));
+    }
 }
 
 void WebViewImpl::selectedRangeWithCompletionHandler(void(^completionHandlerPtr)(NSRange selectedRange))
@@ -4957,7 +4964,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         notifyInputContextAboutDiscardedComposition();
         // FIXME: We should store the command to handle it after DOM event processing, as it's regular keyboard input now, not a composition.
         if ([text length] == 1 && isASCII([text characterAtIndex:0]))
-            m_page->insertTextAsync(text, replacementRange);
+            m_page->insertTextAsync(text, replacementRange, { });
         else
             NSBeep();
         return;

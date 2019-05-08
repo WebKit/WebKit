@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -89,5 +90,11 @@ namespace IPC {
 template<> struct ArgumentCoder<WebKit::EditingRange> {
     static void encode(Encoder&, const WebKit::EditingRange&);
     static Optional<WebKit::EditingRange> decode(Decoder&);
+};
+}
+
+namespace WTF {
+template<> struct EnumTraits<WebKit::EditingRangeIsRelativeTo> {
+    using values = EnumValues<WebKit::EditingRangeIsRelativeTo, WebKit::EditingRangeIsRelativeTo::EditableRoot, WebKit::EditingRangeIsRelativeTo::Paragraph>;
 };
 }

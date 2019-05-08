@@ -252,9 +252,10 @@ enum FindOptions : uint16_t;
 enum class DragControllerAction : uint8_t;
 
 struct AttributedString;
-struct DataDetectionResult;
 struct BackForwardListItemState;
+struct DataDetectionResult;
 struct EditorState;
+struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
 struct LoadParameters;
@@ -785,7 +786,7 @@ public:
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
     void setTextAsync(const String&);
-    void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false, uint32_t editingRangeIsRelativeTo = (uint32_t)EditingRangeIsRelativeTo::EditableRoot, bool suppressSelectionUpdate = false);
+    void insertTextAsync(const String& text, const EditingRange& replacementRange, InsertTextOptions&&);
     void getMarkedRangeAsync(CallbackID);
     void getSelectedRangeAsync(CallbackID);
     void characterIndexForPointAsync(const WebCore::IntPoint&, CallbackID);

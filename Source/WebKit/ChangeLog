@@ -1,3 +1,36 @@
+2019-05-08  Daniel Bates  <dabates@apple.com>
+
+        Pass insertTextAsync options as a struct
+        https://bugs.webkit.org/show_bug.cgi?id=197710
+
+        Reviewed by Brent Fulgham.
+
+        WebPageProxy::insertTextAsync() is becoming unwieldy to work with given the large number of
+        optional arguments that can be passed to it. Let's pass a struct instead.
+
+        * Shared/Cocoa/InsertTextOptions.cpp: Added.
+        (IPC::ArgumentCoder<WebKit::InsertTextOptions>::encode):
+        (IPC::ArgumentCoder<WebKit::InsertTextOptions>::decode):
+        * Shared/Cocoa/InsertTextOptions.h: Added.
+        * Shared/EditingRange.h: Add EnumTrait so that we can encode the EditingRangeIsRelativeTo
+        enumeration.
+        * SourcesCocoa.txt: Add a new file.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::insertText): Update code now that we pass a struct.
+        (WebKit::WebViewImpl::setMarkedText): Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::insertTextAsync): Ditto.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertText:]): Ditto.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertDictatedTextAsync): Ditto.
+        * WebKit.xcodeproj/project.pbxproj: Add new files.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync): Ditto.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
 2019-05-08  Timothy Hatcher  <timothy@apple.com>
 
         Add plumbing for inactive system colors in RenderTheme cache.

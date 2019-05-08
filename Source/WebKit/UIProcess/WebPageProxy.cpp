@@ -188,6 +188,7 @@
 
 #if PLATFORM(COCOA)
 #include "AttributedString.h"
+#include "InsertTextOptions.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "TouchBarMenuData.h"
@@ -7912,12 +7913,12 @@ void WebPageProxy::setTextAsync(const String& text)
         process().send(Messages::WebPage::SetTextAsync(text), m_pageID);
 }
 
-void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup, EditingRangeIsRelativeTo editingRangeIsRelativeTo, bool suppressSelectionUpdate)
+void WebPageProxy::insertTextAsync(const String& text, const EditingRange& replacementRange, InsertTextOptions&& options)
 {
     if (!hasRunningProcess())
         return;
 
-    process().send(Messages::WebPage::InsertTextAsync(text, replacementRange, registerUndoGroup, static_cast<uint32_t>(editingRangeIsRelativeTo), suppressSelectionUpdate), m_pageID);
+    process().send(Messages::WebPage::InsertTextAsync(text, replacementRange, WTFMove(options)), m_pageID);
 }
 
 void WebPageProxy::getMarkedRangeAsync(WTF::Function<void (EditingRange, CallbackBase::Error)>&& callbackFunction)

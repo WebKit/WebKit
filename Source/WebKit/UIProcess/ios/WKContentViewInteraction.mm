@@ -31,8 +31,8 @@
 #import "APIUIClient.h"
 #import "DocumentEditingContext.h"
 #import "EditableImageController.h"
-#import "EditingRange.h"
 #import "InputViewUpdateDeferrer.h"
+#import "InsertTextOptions.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
@@ -4165,7 +4165,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
-    _page->insertTextAsync(aStringValue, WebKit::EditingRange());
+    _page->insertTextAsync(aStringValue, WebKit::EditingRange(), { });
 }
 
 - (BOOL)hasText
