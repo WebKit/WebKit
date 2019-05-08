@@ -1191,7 +1191,6 @@ private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
     void updateThrottleState();
-    void updateUserActivity();
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
@@ -1854,9 +1853,8 @@ private:
 
     OptionSet<WebCore::ActivityState::Flag> m_activityState;
 
-    bool m_processSuppressionEnabled;
+    bool m_isAppNapEnabled { true };
     UserActivity m_userActivity;
-    PAL::HysteresisActivity m_userActivityHysteresis;
 
     uint64_t m_pendingNavigationID { 0 };
     Optional<WebsitePoliciesData> m_pendingWebsitePolicies;

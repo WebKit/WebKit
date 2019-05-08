@@ -416,9 +416,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)
-    , m_processSuppressionEnabled(true)
-    , m_userActivity("Process suppression disabled for page.")
-    , m_userActivityHysteresis([this](PAL::HysteresisState) { updateUserActivity(); })
+    , m_userActivity("App nap disabled for page due to user activity")
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
@@ -765,22 +763,15 @@ void WebPage::updateThrottleState()
 {
     bool isActive = m_activityState.containsAny({ ActivityState::IsLoading, ActivityState::IsAudible, ActivityState::IsCapturingMedia, ActivityState::WindowIsActive });
     bool isVisuallyIdle = m_activityState.contains(ActivityState::IsVisuallyIdle);
-    bool pageSuppressed = m_processSuppressionEnabled && !isActive && isVisuallyIdle;
 
-    // The UserActivity keeps the processes runnable. So if the page should be suppressed, stop the activity.
-    // If the page should not be supressed, start it.
-    if (pageSuppressed)
-        m_userActivityHysteresis.stop();
-    else
-        m_userActivityHysteresis.start();
-}
+    bool shouldAllowAppNap = m_isAppNapEnabled && !isActive && isVisuallyIdle;
 
-void WebPage::updateUserActivity()
-{
-    if (m_userActivityHysteresis.state() == PAL::HysteresisState::Started)
-        m_userActivity.start();
-    else
+    // The UserActivity prevents App Nap. So if we want to allow App Nap of the page, stop the activity.
+    // If the page should not be app nap'd, start it.
+    if (shouldAllowAppNap)
         m_userActivity.stop();
+    else
+        m_userActivity.start();
 }
 
 WebPage::~WebPage()
@@ -2662,7 +2653,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
-    m_userActivityHysteresis.impulse();
+    m_userActivity.impulse();
 
     bool shouldHandleEvent = true;
 
@@ -2710,7 +2701,7 @@ static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
-    m_userActivityHysteresis.impulse();
+    m_userActivity.impulse();
 
     CurrentEvent currentEvent(wheelEvent);
 
@@ -2733,7 +2724,7 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
-    m_userActivityHysteresis.impulse();
+    m_userActivity.impulse();
 
     PlatformKeyboardEvent::setCurrentModifierState(platform(keyboardEvent).modifiers());
 
@@ -3519,9 +3510,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     else if (!store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && sessionID() == PAL::SessionID::legacyPrivateSessionID())
         setSessionID(PAL::SessionID::defaultSessionID());
 
-    bool processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
-    if (m_processSuppressionEnabled != processSuppressionEnabled) {
-        m_processSuppressionEnabled = processSuppressionEnabled;
+    bool isAppNapEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
+    if (m_isAppNapEnabled != isAppNapEnabled) {
+        m_isAppNapEnabled = isAppNapEnabled;
         updateThrottleState();
     }
 
