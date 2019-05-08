@@ -328,6 +328,20 @@
     return _processPoolConfiguration->downloadMonitorSpeedMultiplier();
 }
 
+- (void)setHSTSStorageDirectory:(NSURL *)directory
+{
+    if (directory && ![directory isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", directory];
+
+    // FIXME: Move this to _WKWebsiteDataStoreConfiguration once rdar://problem/50109631 is fixed.
+    _processPoolConfiguration->setHSTSStorageDirectory(directory.path);
+}
+
+- (NSURL *)hstsStorageDirectory
+{
+    return [NSURL fileURLWithPath:_processPoolConfiguration->hstsStorageDirectory() isDirectory:YES];
+}
+
 - (void)setDownloadMonitorSpeedMultiplierForTesting:(NSUInteger)multiplier
 {
     _processPoolConfiguration->setDownloadMonitorSpeedMultiplier(multiplier);

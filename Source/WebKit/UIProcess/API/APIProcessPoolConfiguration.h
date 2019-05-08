@@ -180,6 +180,9 @@ public:
     const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
     void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
 
+    const WTF::String& hstsStorageDirectory() const { return m_hstsStorageDirectory; }
+    void setHSTSStorageDirectory(WTF::String&& directory) { m_hstsStorageDirectory = WTFMove(directory); }
+    
 #if PLATFORM(COCOA)
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     void setSuppressesConnectionTerminationOnSystemChange(bool suppressesConnectionTerminationOnSystemChange) { m_suppressesConnectionTerminationOnSystemChange = suppressesConnectionTerminationOnSystemChange; }
@@ -227,6 +230,7 @@ private:
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };
+    WTF::String m_hstsStorageDirectory;
 
 #if PLATFORM(IOS_FAMILY)
     WTF::String m_ctDataConnectionServiceType;

@@ -1,3 +1,33 @@
+2019-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to set HSTS storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=197259
+        <rdar://problem/48797895>
+
+        Reviewed by Brady Eidson.
+
+        It is with great sadness that I lament the design of this SPI, which is necessitated by the process-global nature of the SPI that
+        I must call and the time at which I must call it (before any networking calls have been made).
+        I'm also not thrilled about the fact that the unit test infrastructure I developed for this in r244594 cannot be used because
+        the SPI that I must call does not work on iOS simulator or Mac.  I have verified the SPI is being called and that when called on iOS,
+        and that CFNetwork does the right thing with it.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setHSTSStorageDirectory:]):
+        (-[_WKProcessPoolConfiguration hstsStorageDirectory]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-05-08  Daniel Bates  <dabates@apple.com>
 
         Pass insertTextAsync options as a struct

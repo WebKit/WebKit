@@ -131,6 +131,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #endif
     copy->m_customWebContentServiceBundleIdentifier = this->m_customWebContentServiceBundleIdentifier;
     copy->m_usesSingleWebProcess = m_usesSingleWebProcess;
+    copy->m_hstsStorageDirectory = m_hstsStorageDirectory;
 
     return copy;
 }

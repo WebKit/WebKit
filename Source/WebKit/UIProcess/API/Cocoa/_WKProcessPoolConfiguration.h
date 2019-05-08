@@ -70,6 +70,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) BOOL suppressesConnectionTerminationOnSystemChange WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, getter=isJITEnabled) BOOL JITEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic) NSUInteger downloadMonitorSpeedMultiplierForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy, setter=setHSTSStorageDirectory:) NSURL *hstsStorageDirectory WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

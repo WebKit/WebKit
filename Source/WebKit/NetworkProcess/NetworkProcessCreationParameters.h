@@ -110,6 +110,8 @@ struct NetworkProcessCreationParameters {
     bool isITPFirstPartyWebsiteDataRemovalEnabled { true };
     uint32_t downloadMonitorSpeedMultiplier { 1 };
     bool enableAdClickAttributionDebugMode { false };
+    String hstsStorageDirectory;
+    SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
 };
 
 } // namespace WebKit
