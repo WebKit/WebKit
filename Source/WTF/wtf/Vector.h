@@ -775,6 +775,7 @@ public:
 
     void uncheckedAppend(ValueType&& value) { uncheckedAppend<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> void uncheckedAppend(U&&);
+    template<typename... Args> void uncheckedConstructAndAppend(Args&&...);
 
     template<typename U> void append(const U*, size_t);
     template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
@@ -1388,6 +1389,18 @@ ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::unch
     asanBufferSizeWillChangeTo(m_size + 1);
 
     new (NotNull, end()) T(std::forward<U>(value));
+    ++m_size;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+template<typename... Args>
+ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::uncheckedConstructAndAppend(Args&&... args)
+{
+    ASSERT(size() < capacity());
+
+    asanBufferSizeWillChangeTo(m_size + 1);
+
+    new (NotNull, end()) T(std::forward<Args>(args)...);
     ++m_size;
 }
 

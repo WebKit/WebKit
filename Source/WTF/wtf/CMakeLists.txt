@@ -139,6 +139,7 @@ set(WTF_PUBLIC_HEADERS
     NoLock.h
     NoTailCalls.h
     Noncopyable.h
+    Nonmovable.h
     NotFound.h
     NumberOfCores.h
     OSAllocator.h

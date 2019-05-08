@@ -1,5 +1,32 @@
 2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] LLIntPrototypeLoadAdaptiveStructureWatchpoint does not require Bag<>
+        https://bugs.webkit.org/show_bug.cgi?id=197645
+
+        Reviewed by Saam Barati.
+
+        We are using HashMap<std::tuple<Structure*, const Instruction*>, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> for LLIntPrototypeLoadAdaptiveStructureWatchpoint,
+        but this has several memory inefficiency.
+
+        1. Structure* and Instruction* are too large. We can just use StructureID and bytecodeOffset (unsigned).
+        2. While we are using Bag<>, we do not add a new LLIntPrototypeLoadAdaptiveStructureWatchpoint after constructing this Bag first. So we can
+           use Vector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> instead. We ensure that new entry won't be added to this Vector by making Watchpoint
+           non-movable.
+        3. Instead of having OpGetById::Metadata&, we just hold `unsigned` bytecodeOffset, and get Metadata& from the owner CodeBlock when needed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/CodeBlock.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * bytecode/Watchpoint.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+
+2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         JSC: A bug in BytecodeGenerator::emitEqualityOpImpl
         https://bugs.webkit.org/show_bug.cgi?id=197479
 

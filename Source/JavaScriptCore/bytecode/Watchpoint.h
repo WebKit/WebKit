@@ -28,6 +28,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/SentinelLinkedList.h>
@@ -91,6 +92,7 @@ class WatchpointSet;
 
 class Watchpoint : public BasicRawSentinelNode<Watchpoint> {
     WTF_MAKE_NONCOPYABLE(Watchpoint);
+    WTF_MAKE_NONMOVABLE(Watchpoint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Watchpoint() = default;

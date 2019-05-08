@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,8 @@
 
 #pragma once
 
-#include "BytecodeStructs.h"
-#include "ObjectPropertyCondition.h"
-#include "Watchpoint.h"
+#define WTF_MAKE_NONMOVABLE(ClassName) \
+    private: \
+        ClassName(ClassName&&) = delete; \
+        ClassName& operator=(ClassName&&) = delete; \
 
-namespace JSC {
-
-class LLIntPrototypeLoadAdaptiveStructureWatchpoint final : public Watchpoint {
-public:
-    LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock*, const ObjectPropertyCondition&, unsigned bytecodeOffset);
-
-    void install(VM&);
-
-    static void clearLLIntGetByIdCache(OpGetById::Metadata&);
-
-    const ObjectPropertyCondition& key() const { return m_key; }
-
-protected:
-    void fireInternal(VM&, const FireDetail&) override;
-
-private:
-    CodeBlock* m_owner;
-    ObjectPropertyCondition m_key;
-    unsigned m_bytecodeOffset;
-};
-
-} // namespace JSC

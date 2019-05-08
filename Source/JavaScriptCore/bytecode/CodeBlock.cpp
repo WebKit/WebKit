@@ -1302,7 +1302,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
     // then cleared the cache without GCing in between.
     m_llintGetByIdWatchpointMap.removeIf([&] (const StructureWatchpointMap::KeyValuePairType& pair) -> bool {
         auto clear = [&] () {
-            const Instruction* instruction = std::get<1>(pair.key);
+            auto& instruction = instructions().at(std::get<1>(pair.key));
             OpcodeID opcode = instruction->opcodeID();
             if (opcode == op_get_by_id) {
                 if (Options::verboseOSR())
@@ -1312,11 +1312,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             return true;
         };
 
-        if (!vm.heap.isMarked(std::get<0>(pair.key)))
+        if (!vm.heap.isMarked(vm.heap.structureIDTable().get(std::get<0>(pair.key))))
             return clear();
 
-        for (const LLIntPrototypeLoadAdaptiveStructureWatchpoint* watchpoint : pair.value) {
-            if (!watchpoint->key().isStillLive(vm))
+        for (const LLIntPrototypeLoadAdaptiveStructureWatchpoint& watchpoint : pair.value) {
+            if (!watchpoint.key().isStillLive(vm))
                 return clear();
         }
 
