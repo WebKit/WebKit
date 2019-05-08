@@ -199,6 +199,8 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
 #if ENABLE(SVG_FONTS)
     bool usesInDocumentSVGFont = m_hasSVGFontFaceElement;
+#else
+    bool usesInDocumentSVGFont = false;
 #endif
 
     if (!m_font && !usesInDocumentSVGFont) {
