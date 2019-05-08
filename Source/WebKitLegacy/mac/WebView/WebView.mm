@@ -1589,7 +1589,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if HAVE(OS_DARK_MODE_SUPPORT) && PLATFORM(MAC)
-    _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
+    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveAppearanceIsInactive);
 #endif
 
     _private->page->settings().setContentDispositionAttachmentSandboxEnabled(true);
@@ -2500,7 +2500,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_private || !_private->page)
         return;
-    _private->page->setUseDarkAppearance(useDarkAppearance);
+    [self _setUseDarkAppearance:useDarkAppearance useInactiveAppearance:_private->page->useInactiveAppearance()];
+}
+
+- (BOOL)_useInactiveAppearance
+{
+    if (!_private || !_private->page)
+        return NO;
+    return _private->page->useInactiveAppearance();
+}
+
+- (void)_setUseInactiveAppearance:(BOOL)useInactiveAppearance
+{
+    if (!_private || !_private->page)
+        return;
+    [self _setUseDarkAppearance:_private->page->useDarkAppearance() useInactiveAppearance:useInactiveAppearance];
+}
+
+- (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useInactiveAppearance:(BOOL)useInactiveAppearance
+{
+    if (!_private || !_private->page)
+        return;
+    _private->page->effectiveAppearanceDidChange(useDarkAppearance, useInactiveAppearance);
 }
 
 + (void)_setIconLoadingEnabled:(BOOL)enabled
@@ -5330,6 +5351,12 @@ static Vector<String> toStringVector(NSArray* patterns)
     NSAppearanceName appearance = [[self effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
     return [appearance isEqualToString:NSAppearanceNameDarkAqua];
 }
+
+- (bool)_effectiveAppearanceIsInactive
+{
+    // FIXME: Use the window isKeyWindow state or view first responder status?
+    return false;
+}
 #endif
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
@@ -5354,7 +5381,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!_private || !_private->page)
         return;
 
-    _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
+    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveAppearanceIsInactive);
 }
 #endif
 

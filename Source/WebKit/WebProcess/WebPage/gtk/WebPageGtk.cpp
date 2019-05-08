@@ -195,11 +195,11 @@ void WebPage::collapseSelectionInFrame(uint64_t frameID)
     frame->coreFrame()->selection().setBase(selection.extent(), selection.affinity());
 }
 
-void WebPage::setUseDarkAppearance(bool useDarkAppearance)
+void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance)
 {
     if (auto* settings = gtk_settings_get_default())
         g_object_set(settings, "gtk-application-prefer-dark-theme", useDarkAppearance, nullptr);
-    corePage()->setUseDarkAppearance(useDarkAppearance);
+    corePage()->effectiveAppearanceDidChange(useDarkAppearance, useInactiveAppearance);
 }
 
 } // namespace WebKit

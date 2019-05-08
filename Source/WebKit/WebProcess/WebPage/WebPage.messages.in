@@ -488,7 +488,7 @@ messages -> WebPage LegacyReceiver {
     SetFooterBannerHeightForTesting(int height);
 #endif
 
-    SetUseDarkAppearance(bool useDarkAppearance);
+    EffectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance);
 
 #if PLATFORM(COCOA)
     RequestActiveNowPlayingSessionInfo(WebKit::CallbackID callbackID)

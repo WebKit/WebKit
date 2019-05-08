@@ -5316,6 +5316,12 @@ bool WebViewImpl::effectiveAppearanceIsDark()
 #endif
 }
 
+bool WebViewImpl::effectiveAppearanceIsInactive()
+{
+    // FIXME: Use the window isKeyWindow state or view first responder status?
+    return false;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

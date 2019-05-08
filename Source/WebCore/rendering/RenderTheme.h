@@ -441,8 +441,7 @@ protected:
     virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;
 
 private:
-    mutable ColorCache m_colorCache;
-    mutable ColorCache m_darkColorCache;
+    mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
 };
 
 } // namespace WebCore

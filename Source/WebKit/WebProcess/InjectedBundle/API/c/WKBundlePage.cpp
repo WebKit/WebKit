@@ -593,7 +593,7 @@ void WKBundlePageSetUseDarkAppearance(WKBundlePageRef pageRef, bool useDarkAppea
 {
     WebKit::WebPage* webPage = WebKit::toImpl(pageRef);
     if (WebCore::Page* page = webPage ? webPage->corePage() : nullptr)
-        page->setUseDarkAppearance(useDarkAppearance);
+        page->effectiveAppearanceDidChange(useDarkAppearance, page->useInactiveAppearance());
 }
 
 bool WKBundlePageIsUsingDarkAppearance(WKBundlePageRef pageRef)

@@ -77,6 +77,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << controlledByAutomation;
     encoder << isProcessSwap;
     encoder << useDarkAppearance;
+    encoder << useInactiveAppearance;
 
 #if PLATFORM(MAC)
     encoder << colorSpace;
@@ -246,6 +247,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.isProcessSwap))
         return WTF::nullopt;
     if (!decoder.decode(parameters.useDarkAppearance))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.useInactiveAppearance))
         return WTF::nullopt;
 
 #if PLATFORM(MAC)

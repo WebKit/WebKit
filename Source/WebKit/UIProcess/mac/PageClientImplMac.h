@@ -241,6 +241,7 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
     bool effectiveAppearanceIsDark() const override;
+    bool effectiveAppearanceIsInactive() const override;
 
 #if ENABLE(DRAG_SUPPORT)
     void didPerformDragOperation(bool handled) final;

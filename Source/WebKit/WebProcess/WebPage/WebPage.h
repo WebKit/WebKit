@@ -547,7 +547,7 @@ public:
     void setUseSystemAppearance(bool);
 #endif
 
-    void setUseDarkAppearance(bool);
+    void effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance);
 
     bool windowIsFocused() const;
     bool windowAndWebPageAreFocused() const;

@@ -2726,19 +2726,27 @@ void Page::setUseSystemAppearance(bool value)
     }
 }
 
-void Page::setUseDarkAppearance(bool value)
+void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    if (m_useDarkAppearance == value)
+    if (m_useDarkAppearance == useDarkAppearance && m_useInactiveAppearance == useInactiveAppearance)
         return;
 
-    m_useDarkAppearance = value;
+    m_useDarkAppearance = useDarkAppearance;
+    m_useInactiveAppearance = useInactiveAppearance;
 
-    InspectorInstrumentation::defaultAppearanceDidChange(*this, value);
+    InspectorInstrumentation::defaultAppearanceDidChange(*this, useDarkAppearance);
 
     appearanceDidChange();
 #else
-    UNUSED_PARAM(value);
+    UNUSED_PARAM(useDarkAppearance);
+
+    if (m_useInactiveAppearance == useInactiveAppearance)
+        return;
+
+    m_useInactiveAppearance = useInactiveAppearance;
+
+    appearanceDidChange();
 #endif
 }
 

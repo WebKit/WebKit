@@ -557,7 +557,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     setGapBetweenPages(parameters.gapBetweenPages);
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 
-    setUseDarkAppearance(parameters.useDarkAppearance);
+    effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useInactiveAppearance);
 
     if (parameters.isEditable)
         setEditable(true);
@@ -4621,9 +4621,9 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 #endif
 
 #if !PLATFORM(GTK)
-void WebPage::setUseDarkAppearance(bool useDarkAppearance)
+void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance)
 {
-    corePage()->setUseDarkAppearance(useDarkAppearance);
+    corePage()->effectiveAppearanceDidChange(useDarkAppearance, useInactiveAppearance);
 }
 #endif
 

@@ -943,6 +943,7 @@ public:
 
     void effectiveAppearanceDidChange();
     bool useDarkAppearance() const;
+    bool useInactiveAppearance() const;
 
 #if PLATFORM(COCOA)
     // Called by the web process through a message.

@@ -136,6 +136,7 @@ struct WebPageCreationParameters {
     bool isProcessSwap { false };
 
     bool useDarkAppearance { false };
+    bool useInactiveAppearance { false };
 
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;

@@ -54,7 +54,8 @@ public:
     enum class Options : uint8_t {
         ForVisitedLink = 1 << 0,
         UseSystemAppearance = 1 << 1,
-        UseDarkAppearance = 1 << 2
+        UseDarkAppearance = 1 << 2,
+        UseInactiveAppearance = 1 << 3
     };
 
     static Color colorFromKeyword(CSSValueID, OptionSet<Options>);
