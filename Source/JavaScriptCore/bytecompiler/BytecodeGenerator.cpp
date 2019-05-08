@@ -1406,6 +1406,7 @@ void ALWAYS_INLINE BytecodeGenerator::rewind()
 template<typename BinOp, typename JmpOp>
 bool BytecodeGenerator::fuseCompareAndJump(RegisterID* cond, Label& target, bool swapOperands)
 {
+    ASSERT(canDoPeepholeOptimization());
     auto binop = m_lastInstruction->as<BinOp>();
     if (cond->index() == binop.m_dst.offset() && cond->isTemporary() && !cond->refCount()) {
         rewind();
@@ -1422,6 +1423,7 @@ bool BytecodeGenerator::fuseCompareAndJump(RegisterID* cond, Label& target, bool
 template<typename UnaryOp, typename JmpOp>
 bool BytecodeGenerator::fuseTestAndJmp(RegisterID* cond, Label& target)
 {
+    ASSERT(canDoPeepholeOptimization());
     auto unop = m_lastInstruction->as<UnaryOp>();
     if (cond->index() == unop.m_dst.offset() && cond->isTemporary() && !cond->refCount()) {
         rewind();
@@ -1434,43 +1436,44 @@ bool BytecodeGenerator::fuseTestAndJmp(RegisterID* cond, Label& target)
 
 void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
 {
-
-    if (m_lastOpcodeID == op_less) {
-        if (fuseCompareAndJump<OpLess, OpJless>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_lesseq) {
-        if (fuseCompareAndJump<OpLesseq, OpJlesseq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_greater) {
-        if (fuseCompareAndJump<OpGreater, OpJgreater>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_greatereq) {
-        if (fuseCompareAndJump<OpGreatereq, OpJgreatereq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_eq) {
-        if (fuseCompareAndJump<OpEq, OpJeq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_stricteq) {
-        if (fuseCompareAndJump<OpStricteq, OpJstricteq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_neq) {
-        if (fuseCompareAndJump<OpNeq, OpJneq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_nstricteq) {
-        if (fuseCompareAndJump<OpNstricteq, OpJnstricteq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_below) {
-        if (fuseCompareAndJump<OpBelow, OpJbelow>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_beloweq) {
-        if (fuseCompareAndJump<OpBeloweq, OpJbeloweq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
-        if (fuseTestAndJmp<OpEqNull, OpJeqNull>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
-        if (fuseTestAndJmp<OpNeqNull, OpJneqNull>(cond, target))
-            return;
+    if (canDoPeepholeOptimization()) {
+        if (m_lastOpcodeID == op_less) {
+            if (fuseCompareAndJump<OpLess, OpJless>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_lesseq) {
+            if (fuseCompareAndJump<OpLesseq, OpJlesseq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_greater) {
+            if (fuseCompareAndJump<OpGreater, OpJgreater>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_greatereq) {
+            if (fuseCompareAndJump<OpGreatereq, OpJgreatereq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_eq) {
+            if (fuseCompareAndJump<OpEq, OpJeq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_stricteq) {
+            if (fuseCompareAndJump<OpStricteq, OpJstricteq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_neq) {
+            if (fuseCompareAndJump<OpNeq, OpJneq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_nstricteq) {
+            if (fuseCompareAndJump<OpNstricteq, OpJnstricteq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_below) {
+            if (fuseCompareAndJump<OpBelow, OpJbelow>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_beloweq) {
+            if (fuseCompareAndJump<OpBeloweq, OpJbeloweq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
+            if (fuseTestAndJmp<OpEqNull, OpJeqNull>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
+            if (fuseTestAndJmp<OpNeqNull, OpJneqNull>(cond, target))
+                return;
+        }
     }
 
     OpJtrue::emit(this, cond, target.bind(this));
@@ -1478,45 +1481,47 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
 
 void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
 {
-    if (m_lastOpcodeID == op_less && target.isForward()) {
-        if (fuseCompareAndJump<OpLess, OpJnless>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_lesseq && target.isForward()) {
-        if (fuseCompareAndJump<OpLesseq, OpJnlesseq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_greater && target.isForward()) {
-        if (fuseCompareAndJump<OpGreater, OpJngreater>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_greatereq && target.isForward()) {
-        if (fuseCompareAndJump<OpGreatereq, OpJngreatereq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_eq && target.isForward()) {
-        if (fuseCompareAndJump<OpEq, OpJneq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_stricteq && target.isForward()) {
-        if (fuseCompareAndJump<OpStricteq, OpJnstricteq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_neq && target.isForward()) {
-        if (fuseCompareAndJump<OpNeq, OpJeq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_nstricteq && target.isForward()) {
-        if (fuseCompareAndJump<OpNstricteq, OpJstricteq>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_below && target.isForward()) {
-        if (fuseCompareAndJump<OpBelow, OpJbeloweq>(cond, target, true))
-            return;
-    } else if (m_lastOpcodeID == op_beloweq && target.isForward()) {
-        if (fuseCompareAndJump<OpBeloweq, OpJbelow>(cond, target, true))
-            return;
-    } else if (m_lastOpcodeID == op_not) {
-        if (fuseTestAndJmp<OpNot, OpJtrue>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
-        if (fuseTestAndJmp<OpEqNull, OpJneqNull>(cond, target))
-            return;
-    } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
-        if (fuseTestAndJmp<OpNeqNull, OpJeqNull>(cond, target))
-            return;
+    if (canDoPeepholeOptimization()) {
+        if (m_lastOpcodeID == op_less && target.isForward()) {
+            if (fuseCompareAndJump<OpLess, OpJnless>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_lesseq && target.isForward()) {
+            if (fuseCompareAndJump<OpLesseq, OpJnlesseq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_greater && target.isForward()) {
+            if (fuseCompareAndJump<OpGreater, OpJngreater>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_greatereq && target.isForward()) {
+            if (fuseCompareAndJump<OpGreatereq, OpJngreatereq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_eq && target.isForward()) {
+            if (fuseCompareAndJump<OpEq, OpJneq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_stricteq && target.isForward()) {
+            if (fuseCompareAndJump<OpStricteq, OpJnstricteq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_neq && target.isForward()) {
+            if (fuseCompareAndJump<OpNeq, OpJeq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_nstricteq && target.isForward()) {
+            if (fuseCompareAndJump<OpNstricteq, OpJstricteq>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_below && target.isForward()) {
+            if (fuseCompareAndJump<OpBelow, OpJbeloweq>(cond, target, true))
+                return;
+        } else if (m_lastOpcodeID == op_beloweq && target.isForward()) {
+            if (fuseCompareAndJump<OpBeloweq, OpJbelow>(cond, target, true))
+                return;
+        } else if (m_lastOpcodeID == op_not) {
+            if (fuseTestAndJmp<OpNot, OpJtrue>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
+            if (fuseTestAndJmp<OpEqNull, OpJneqNull>(cond, target))
+                return;
+        } else if (m_lastOpcodeID == op_neq_null && target.isForward()) {
+            if (fuseTestAndJmp<OpNeqNull, OpJeqNull>(cond, target))
+                return;
+        }
     }
 
     OpJfalse::emit(this, cond, target.bind(this));
@@ -1724,6 +1729,9 @@ RegisterID* BytecodeGenerator::emitDec(RegisterID* srcDst)
 
 bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, RegisterID* src2)
 {
+    if (!canDoPeepholeOptimization())
+        return false;
+
     if (m_lastInstruction->is<OpTypeof>()) {
         auto op = m_lastInstruction->as<OpTypeof>();
         if (src1->index() == op.m_dst.offset()

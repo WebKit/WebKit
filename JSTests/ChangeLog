@@ -1,5 +1,15 @@
 2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        JSC: A bug in BytecodeGenerator::emitEqualityOpImpl
+        https://bugs.webkit.org/show_bug.cgi?id=197479
+
+        Reviewed by Saam Barati.
+
+        * stress/do-not-perform-bytecode-peephole-optimization-in-jump-target.js: Added.
+        (shouldBe):
+
+2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         TemplateObject passed to template literal tags are not always identical for the same source location.
         https://bugs.webkit.org/show_bug.cgi?id=190756
 
