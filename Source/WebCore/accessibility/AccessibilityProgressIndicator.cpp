@@ -154,8 +154,10 @@ float AccessibilityProgressIndicator::minValueForRange() const
     
 AccessibilityRole AccessibilityProgressIndicator::roleValue() const
 {
+#if ENABLE(METER_ELEMENT)
     if (meterElement())
         return AccessibilityRole::Meter;
+#endif
     return AccessibilityRole::ProgressIndicator;
 }
 

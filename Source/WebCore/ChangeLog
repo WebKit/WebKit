@@ -1,3 +1,19 @@
+2019-05-07  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix !HAVE(ACCESSIBILITY) build
+        https://bugs.webkit.org/show_bug.cgi?id=197680
+
+        Reviewed by Fujii Hironori.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        Update declaration for !HAVE(ACCESSIBILITY)
+        * accessibility/AccessibilityObject.h:
+        Add wrapper implementation for !HAVE(ACCESSIBILITY)
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::roleValue const):
+        Add ENABLE(METER_ELEMENT) guard.
+
 2019-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245038.
