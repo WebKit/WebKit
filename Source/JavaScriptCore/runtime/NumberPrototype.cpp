@@ -82,6 +82,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, numberProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, NumberPrototypeToStringIntrinsic);
     ASSERT(inherits(vm, info()));
+    didBecomePrototype();
 }
 
 // ------------------------------ Functions ---------------------------

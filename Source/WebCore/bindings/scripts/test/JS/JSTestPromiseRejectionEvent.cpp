@@ -147,6 +147,7 @@ private:
     JSTestPromiseRejectionEventPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
+        didBecomePrototype();
     }
 
     void finishCreation(JSC::VM&);
@@ -174,7 +175,9 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::
 
 template<> JSValue JSTestPromiseRejectionEventConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    return JSEvent::getConstructor(vm, &globalObject);
+    auto result = JSEvent::getConstructor(vm, &globalObject);
+    result.getObject()->didBecomePrototype();
+    return result;
 }
 
 template<> void JSTestPromiseRejectionEventConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)

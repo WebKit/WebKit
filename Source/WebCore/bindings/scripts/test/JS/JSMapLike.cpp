@@ -81,6 +81,7 @@ private:
     JSMapLikePrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
+        didBecomePrototype();
     }
 
     void finishCreation(JSC::VM&);

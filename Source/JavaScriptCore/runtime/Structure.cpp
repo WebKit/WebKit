@@ -321,6 +321,11 @@ Structure* Structure::create(PolyProtoTag, VM& vm, JSGlobalObject* globalObject,
     return result;
 }
 
+bool Structure::isValidPrototype(JSValue prototype)
+{
+    return prototype.isNull() || (prototype.isObject() && prototype.getObject()->mayBePrototype());
+}
+
 void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*& structure, PropertyTable*& table)
 {
     ASSERT(structures.isEmpty());
@@ -544,7 +549,7 @@ Structure* Structure::removePropertyTransition(VM& vm, Structure* structure, Pro
 
 Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JSValue prototype, DeferredStructureTransitionWatchpointFire& deferred)
 {
-    ASSERT(prototype.isObject() || prototype.isNull());
+    ASSERT(isValidPrototype(prototype));
 
     DeferGC deferGC(vm.heap);
     Structure* transition = create(vm, structure, &deferred);

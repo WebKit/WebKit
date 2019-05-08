@@ -75,6 +75,7 @@ void IntlPluralRulesPrototype::finishCreation(VM& vm, Structure*)
     Base::finishCreation(vm);
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Object"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    didBecomePrototype();
 }
 
 EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(ExecState* state)

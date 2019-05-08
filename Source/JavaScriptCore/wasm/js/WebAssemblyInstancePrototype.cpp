@@ -86,6 +86,7 @@ Structure* WebAssemblyInstancePrototype::createStructure(VM& vm, JSGlobalObject*
 void WebAssemblyInstancePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
+    didBecomePrototype();
 }
 
 WebAssemblyInstancePrototype::WebAssemblyInstancePrototype(VM& vm, Structure* structure)

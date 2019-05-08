@@ -56,6 +56,7 @@ Structure* WebAssemblyModulePrototype::createStructure(VM& vm, JSGlobalObject* g
 void WebAssemblyModulePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
+    didBecomePrototype();
 }
 
 WebAssemblyModulePrototype::WebAssemblyModulePrototype(VM& vm, Structure* structure)

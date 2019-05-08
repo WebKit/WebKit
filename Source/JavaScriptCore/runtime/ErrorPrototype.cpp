@@ -66,6 +66,7 @@ void ErrorPrototype::finishCreation(VM& vm, const String& name)
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(&vm, name), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(&vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    didBecomePrototype();
 }
 
 // ------------------------------ Functions ---------------------------

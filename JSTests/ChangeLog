@@ -1,3 +1,14 @@
+2019-05-08  Robin Morisset  <rmorisset@apple.com>
+
+        All prototypes should call didBecomePrototype()
+        https://bugs.webkit.org/show_bug.cgi?id=196315
+
+        Reviewed by Saam Barati.
+
+        This changelog already landed, but the commit was missing the actual changes.
+
+        * stress/function-prototype-indexed-accessor.js: Added.
+
 2019-05-08  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueMod into DFG
