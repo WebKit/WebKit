@@ -2348,12 +2348,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     ASSERT(_potentialTapInProgress);
 
-    // We don't want to clear the selection if it is in editable content.
-    // The selection could have been set by autofocusing on page load and not
-    // reflected in the UI process since the user was not interacting with the page.
-    if (!_page->editorState().isContentEditable)
-        _page->clearSelection();
-
     _lastInteractionLocation = gestureRecognizer.location;
 
     [self _endPotentialTapAndEnableDoubleTapGesturesIfNecessary];

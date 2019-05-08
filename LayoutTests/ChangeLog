@@ -1,3 +1,21 @@
+2019-05-08  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Selection is dismissed even if click is preventDefault()'d
+        https://bugs.webkit.org/show_bug.cgi?id=197686
+        <rdar://problem/49398824>
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/selection/ios/clear-selection-after-tapping-on-element-with-no-click-handler-expected.txt: Added.
+        * editing/selection/ios/clear-selection-after-tapping-on-element-with-no-click-handler.html: Added.
+        * editing/selection/ios/persist-selection-after-tapping-on-element-with-click-handler-expected.txt: Added.
+        * editing/selection/ios/persist-selection-after-tapping-on-element-with-click-handler.html: Added.
+        New tests.
+
+        * platform/ios/editing/deleting/smart-delete-paragraph-003-expected.txt:
+        * platform/ios/editing/pasteboard/smart-paste-paragraph-003-expected.txt:
+        Rebaseline since we changed the timing of editing callbacks by changing where the selection happens.
+
 2019-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a quirk to synthesize mouse events when modifying the selection

@@ -947,6 +947,9 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64
 
 void WebPage::commitPotentialTapFailed()
 {
+    if (!m_page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
+        clearSelection();
+
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
     send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
 }
@@ -1367,7 +1370,6 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         if (wkGestureState == GestureRecognizerState::Began) {
             m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
             m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
-            m_currentBlockSelection = nullptr;
         }
         range = rangeForWebSelectionAtPosition(point, position, flags);
         break;
@@ -1499,7 +1501,6 @@ static IntRect elementRectInRootViewCoordinates(const Element& element)
 void WebPage::clearSelection()
 {
     m_startingGestureRange = nullptr;
-    m_currentBlockSelection = nullptr;
     m_page->focusController().focusedOrMainFrame().selection().clear();
 }
 
@@ -1958,7 +1959,6 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     if (!isInteractingWithFocusedElement) {
         m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
         m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
-        m_currentBlockSelection = nullptr;
         auto* renderer = range ? range->startContainer().renderer() : nullptr;
         if (renderer && renderer->style().preserveNewline())
             m_blockRectForTextSelection = renderer->absoluteBoundingBoxRect(true);

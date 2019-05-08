@@ -1,3 +1,28 @@
+2019-05-08  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Selection is dismissed even if click is preventDefault()'d
+        https://bugs.webkit.org/show_bug.cgi?id=197686
+        <rdar://problem/49398824>
+
+        Reviewed by Wenson Hsieh.
+
+        We currently unconditionally dismiss the selection on any tap; however
+        if a site preventDefault()s on click, we shouldn't perform the default
+        action of dismissing the selection.
+
+        Instead of clearing the selection in the UI process, clear it in the
+        Web content process if we don't dispatch a synthetic click; the normal
+        WebCore machinery will handle it in the case that we do.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapRecognized:]):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::commitPotentialTapFailed):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+
 2019-05-08  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Support navigation gesture on touchscreens
