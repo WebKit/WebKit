@@ -32,12 +32,14 @@
 #import <WebCore/IntSize.h>
 #import <_WKElementAction.h>
 
+#if HAVE(LINK_PREVIEW)
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKImagePreviewViewControllerAdditions.mm>)
 #include <WebKitAdditions/WKImagePreviewViewControllerAdditions.mm>
 #else
 static void setAdditionalPreviewActionInfo(UIPreviewAction *, _WKElementAction *)
 {
 }
+#endif
 #endif
 
 @implementation WKImagePreviewViewController {
