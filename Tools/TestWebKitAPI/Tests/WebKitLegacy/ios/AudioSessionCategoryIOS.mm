@@ -71,15 +71,6 @@ static void waitUntilAudioSessionCategoryIsEqualTo(NSString *expectedValue)
     } while (++tries <= 100);
 }
 
-static AVAudioSessionRouteSharingPolicy routeSharingPolicyLongFormVideo()
-{
-#if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
-    return AVAudioSessionRouteSharingPolicyLongFormVideo;
-#else
-    return AVAudioSessionRouteSharingPolicyLongForm;
-#endif
-}
-
 static AVAudioSessionRouteSharingPolicy routeSharingPolicyLongFormAudio()
 {
 #if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
@@ -110,7 +101,10 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryPlayback());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryPlayback(), [[getAVAudioSessionClass() sharedInstance] category]);
-    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormVideo());
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormAudio());
+#if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
+    EXPECT_NE([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], AVAudioSessionRouteSharingPolicyLongFormVideo);
+#endif
 
     didBeginPlaying = false;
 
@@ -150,7 +144,10 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryPlayback());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryPlayback(), [[getAVAudioSessionClass() sharedInstance] category]);
-    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormVideo());
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormAudio());
+#if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
+    EXPECT_NE([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], AVAudioSessionRouteSharingPolicyLongFormVideo);
+#endif
 
     didBeginPlaying = false;
 

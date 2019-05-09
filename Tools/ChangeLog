@@ -1,3 +1,14 @@
+2019-05-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Refine AudioSession route sharing policy
+        https://bugs.webkit.org/show_bug.cgi?id=197742
+        <rdar://problem/50590818>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2019-05-09  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary test SPI after r244883
