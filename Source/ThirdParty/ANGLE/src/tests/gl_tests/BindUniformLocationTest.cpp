@@ -7,6 +7,7 @@
 // BindUniformLocationTest.cpp : Tests of the GL_CHROMIUM_bind_uniform_location extension.
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 #include <cmath>
 
@@ -28,13 +29,6 @@ class BindUniformLocationTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
-    {
-        ANGLETest::SetUp();
-        mBindUniformLocation = reinterpret_cast<PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC>(
-            eglGetProcAddress("glBindUniformLocationCHROMIUM"));
-    }
-
     void TearDown() override
     {
         if (mProgram != 0)
@@ -44,68 +38,33 @@ class BindUniformLocationTest : public ANGLETest
         ANGLETest::TearDown();
     }
 
-    typedef void(GL_APIENTRYP PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC)(GLuint mProgram,
-                                                                    GLint location,
-                                                                    const GLchar *name);
-    PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC mBindUniformLocation = nullptr;
-
     GLuint mProgram = 0;
 };
 
 // Test basic functionality of GL_CHROMIUM_bind_uniform_location
 TEST_P(BindUniformLocationTest, Basic)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    ASSERT_NE(mBindUniformLocation, nullptr);
-
-    const std::string vsSource =
-        R"(attribute vec4 a_position;
-        void main()
-        {
-            gl_Position = a_position;
-        })";
-
-    const std::string fsSource =
-        R"(precision mediump float;
-        uniform vec4 u_colorC;
-        uniform vec4 u_colorB[2];
-        uniform vec4 u_colorA;
-        void main()
-        {
-            gl_FragColor = u_colorA + u_colorB[0] + u_colorB[1] + u_colorC;
-        })";
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec4 u_colorC;
+uniform vec4 u_colorB[2];
+uniform vec4 u_colorA;
+void main()
+{
+    gl_FragColor = u_colorA + u_colorB[0] + u_colorB[1] + u_colorC;
+})";
 
     GLint colorALocation = 3;
     GLint colorBLocation = 10;
     GLint colorCLocation = 5;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
-
-    mProgram = glCreateProgram();
-
-    mBindUniformLocation(mProgram, colorALocation, "u_colorA");
-    mBindUniformLocation(mProgram, colorBLocation, "u_colorB[0]");
-    mBindUniformLocation(mProgram, colorCLocation, "u_colorC");
-
-    glAttachShader(mProgram, vs);
-    glDeleteShader(vs);
-
-    glAttachShader(mProgram, fs);
-    glDeleteShader(fs);
-
-    // Link the mProgram
-    glLinkProgram(mProgram);
-    // Check the link status
-    GLint linked = 0;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    ASSERT_EQ(1, linked);
+    mProgram = CompileProgram(essl1_shaders::vs::Simple(), kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, colorALocation, "u_colorA");
+        glBindUniformLocationCHROMIUM(program, colorBLocation, "u_colorB[0]");
+        glBindUniformLocationCHROMIUM(program, colorCLocation, "u_colorC");
+    });
+    ASSERT_NE(0u, mProgram);
 
     glUseProgram(mProgram);
 
@@ -117,32 +76,67 @@ TEST_P(BindUniformLocationTest, Basic)
     glUniform4fv(colorBLocation, 2, colorB);
     glUniform4f(colorCLocation, 0.0f, 0.0f, 0.0f, 1.0f);
 
-    drawQuad(mProgram, "a_position", 0.5f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
 
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_NEAR(0, 0, 64, 128, 192, 255, 1.0);
 }
 
+// Force a sampler location and make sure it samples the correct texture
+TEST_P(BindUniformLocationTest, SamplerLocation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
+
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec4 u_colorA;
+uniform vec4 u_colorB[2];
+uniform sampler2D u_sampler;
+void main()
+{
+    gl_FragColor = u_colorA + u_colorB[0] + u_colorB[1] + texture2D(u_sampler, vec2(0, 0));
+})";
+
+    GLint colorALocation  = 3;
+    GLint colorBLocation  = 10;
+    GLint samplerLocation = 1;
+
+    mProgram = CompileProgram(essl1_shaders::vs::Simple(), kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, colorALocation, "u_colorA");
+        glBindUniformLocationCHROMIUM(program, colorBLocation, "u_colorB[0]");
+        glBindUniformLocationCHROMIUM(program, samplerLocation, "u_sampler");
+    });
+    ASSERT_NE(0u, mProgram);
+
+    glUseProgram(mProgram);
+
+    static const float colorB[] = {
+        0.0f, 0.50f, 0.0f, 0.0f, 0.0f, 0.0f, 0.75f, 0.0f,
+    };
+
+    glUniform4f(colorALocation, 0.25f, 0.0f, 0.0f, 0.0f);
+    glUniform4fv(colorBLocation, 2, colorB);
+
+    // Point the texture at texture unit 2
+    glUniform1i(samplerLocation, 2);
+
+    GLTexture texture;
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    constexpr GLubyte kTextureData[] = {32, 32, 32, 255};
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kTextureData);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, 96, 160, 224, 255, 1.0);
+}
+
 // Test that conflicts are detected when two uniforms are bound to the same location
 TEST_P(BindUniformLocationTest, ConflictsDetection)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    ASSERT_NE(nullptr, mBindUniformLocation);
-
-    const std::string vsSource =
-        R"(attribute vec4 a_position;
-        void main()
-        {
-            gl_Position = a_position;
-        })";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         R"(precision mediump float;
         uniform vec4 u_colorA;
         uniform vec4 u_colorB;
@@ -154,8 +148,8 @@ TEST_P(BindUniformLocationTest, ConflictsDetection)
     GLint colorALocation = 3;
     GLint colorBLocation = 4;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
+    GLuint vs = CompileShader(GL_VERTEX_SHADER, essl1_shaders::vs::Simple());
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
 
     mProgram = glCreateProgram();
     glAttachShader(mProgram, vs);
@@ -163,16 +157,16 @@ TEST_P(BindUniformLocationTest, ConflictsDetection)
     glAttachShader(mProgram, fs);
     glDeleteShader(fs);
 
-    mBindUniformLocation(mProgram, colorALocation, "u_colorA");
+    glBindUniformLocationCHROMIUM(mProgram, colorALocation, "u_colorA");
     // Bind u_colorB to location a, causing conflicts, link should fail.
-    mBindUniformLocation(mProgram, colorALocation, "u_colorB");
+    glBindUniformLocationCHROMIUM(mProgram, colorALocation, "u_colorB");
     glLinkProgram(mProgram);
     GLint linked = 0;
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
     ASSERT_EQ(0, linked);
 
     // Bind u_colorB to location b, no conflicts, link should succeed.
-    mBindUniformLocation(mProgram, colorBLocation, "u_colorB");
+    glBindUniformLocationCHROMIUM(mProgram, colorBLocation, "u_colorB");
     glLinkProgram(mProgram);
     linked = 0;
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
@@ -182,16 +176,9 @@ TEST_P(BindUniformLocationTest, ConflictsDetection)
 // Test a use case of the chromium compositor
 TEST_P(BindUniformLocationTest, Compositor)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    ASSERT_NE(nullptr, mBindUniformLocation);
-
-    const std::string vsSource =
+    constexpr char kVS[] =
         R"(attribute vec4 a_position;
         attribute vec2 a_texCoord;
         uniform mat4 matrix;
@@ -206,7 +193,7 @@ TEST_P(BindUniformLocationTest, Compositor)
             gl_Position = matrix * a_position;
         })";
 
-    const std::string fsSource =
+    constexpr char kFS[] =
         R"(precision mediump float;
         varying vec4 v_color;
         uniform float alpha;
@@ -236,29 +223,15 @@ TEST_P(BindUniformLocationTest, Compositor)
     int multiplierLocation = counter++;
     int colorCLocation     = counter++;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
-
-    mProgram = glCreateProgram();
-
-    mBindUniformLocation(mProgram, matrixLocation, "matrix");
-    mBindUniformLocation(mProgram, colorALocation, "color_a");
-    mBindUniformLocation(mProgram, colorBLocation, "color_b");
-    mBindUniformLocation(mProgram, alphaLocation, "alpha");
-    mBindUniformLocation(mProgram, multiplierLocation, "multiplier");
-    mBindUniformLocation(mProgram, colorCLocation, "color_c");
-
-    glAttachShader(mProgram, vs);
-    glDeleteShader(vs);
-    glAttachShader(mProgram, fs);
-    glDeleteShader(fs);
-
-    // Link the mProgram
-    glLinkProgram(mProgram);
-    // Check the link status
-    GLint linked = 0;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    ASSERT_EQ(1, linked);
+    mProgram = CompileProgram(kVS, kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, matrixLocation, "matrix");
+        glBindUniformLocationCHROMIUM(program, colorALocation, "color_a");
+        glBindUniformLocationCHROMIUM(program, colorBLocation, "color_b");
+        glBindUniformLocationCHROMIUM(program, alphaLocation, "alpha");
+        glBindUniformLocationCHROMIUM(program, multiplierLocation, "multiplier");
+        glBindUniformLocationCHROMIUM(program, colorCLocation, "color_c");
+    });
+    ASSERT_NE(0u, mProgram);
 
     glUseProgram(mProgram);
 
@@ -292,53 +265,32 @@ TEST_P(BindUniformLocationTest, Compositor)
 // Test that unused uniforms don't conflict when bound to the same location
 TEST_P(BindUniformLocationTest, UnusedUniformUpdate)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    ASSERT_NE(nullptr, mBindUniformLocation);
+    ASSERT_NE(nullptr, glBindUniformLocationCHROMIUM);
 
-    const std::string vsSource =
-        R"(attribute vec4 a_position;
-        void main()
-        {
-            gl_Position = a_position;
-        })";
-
-    const std::string fsSource =
-        R"(precision mediump float;
-        uniform vec4 u_colorA;
-        uniform float u_colorU;
-        uniform vec4 u_colorC;
-        void main()
-        {
-            gl_FragColor = u_colorA + u_colorC;
-        })";
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec4 u_colorA;
+uniform float u_colorU;
+uniform vec4 u_colorC;
+void main()
+{
+    gl_FragColor = u_colorA + u_colorC;
+})";
 
     const GLint colorULocation      = 1;
     const GLint nonexistingLocation = 5;
     const GLint unboundLocation     = 6;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
+    mProgram = CompileProgram(essl1_shaders::vs::Simple(), kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, colorULocation, "u_colorU");
+        // The non-existing uniform should behave like existing, but optimized away
+        // uniform.
+        glBindUniformLocationCHROMIUM(program, nonexistingLocation, "nonexisting");
+        // Let A and C be assigned automatic locations.
+    });
+    ASSERT_NE(0u, mProgram);
 
-    mProgram = glCreateProgram();
-    mBindUniformLocation(mProgram, colorULocation, "u_colorU");
-    // The non-existing uniform should behave like existing, but optimized away
-    // uniform.
-    mBindUniformLocation(mProgram, nonexistingLocation, "nonexisting");
-    // Let A and C be assigned automatic locations.
-    glAttachShader(mProgram, vs);
-    glDeleteShader(vs);
-    glAttachShader(mProgram, fs);
-    glDeleteShader(fs);
-    glLinkProgram(mProgram);
-    GLint linked = 0;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    ASSERT_EQ(1, linked);
     glUseProgram(mProgram);
 
     // No errors on bound locations, since caller does not know
@@ -397,22 +349,9 @@ TEST_P(BindUniformLocationTest, UnusedUniformUpdate)
 // binding the sampler to a location higher than the amount of active uniforms.
 TEST_P(BindUniformLocationTest, UseSamplerWhenUnusedUniforms)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    ASSERT_NE(nullptr, mBindUniformLocation);
-
-    const std::string vsSource =
-        R"(void main()
-        {
-            gl_Position = vec4(0);
-        })";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         R"(uniform sampler2D tex;
         void main()
         {
@@ -421,22 +360,11 @@ TEST_P(BindUniformLocationTest, UseSamplerWhenUnusedUniforms)
 
     const GLuint texLocation = 54;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
+    mProgram = CompileProgram(essl1_shaders::vs::Simple(), kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, texLocation, "tex");
+    });
+    ASSERT_NE(0u, mProgram);
 
-    mProgram = glCreateProgram();
-    mBindUniformLocation(mProgram, texLocation, "tex");
-
-    glAttachShader(mProgram, vs);
-    glDeleteShader(vs);
-    glAttachShader(mProgram, fs);
-    glDeleteShader(fs);
-
-    glLinkProgram(mProgram);
-
-    GLint linked = 0;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    EXPECT_NE(0, linked);
     glUseProgram(mProgram);
     glUniform1i(texLocation, 0);
     EXPECT_GL_NO_ERROR();
@@ -446,22 +374,9 @@ TEST_P(BindUniformLocationTest, UseSamplerWhenUnusedUniforms)
 // This is valid according to the extension spec.
 TEST_P(BindUniformLocationTest, SameLocationForUsedAndUnusedUniform)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    ASSERT_NE(nullptr, mBindUniformLocation);
-
-    const std::string vsSource =
-        R"(void main()
-        {
-            gl_Position = vec4(0);
-        })";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         R"(precision mediump float;
         uniform vec4 a;
         uniform vec4 b;
@@ -472,23 +387,12 @@ TEST_P(BindUniformLocationTest, SameLocationForUsedAndUnusedUniform)
 
     const GLuint location = 54;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
+    mProgram = CompileProgram(essl1_shaders::vs::Zero(), kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, location, "a");
+        glBindUniformLocationCHROMIUM(program, location, "b");
+    });
+    ASSERT_NE(0u, mProgram);
 
-    mProgram = glCreateProgram();
-    mBindUniformLocation(mProgram, location, "a");
-    mBindUniformLocation(mProgram, location, "b");
-
-    glAttachShader(mProgram, vs);
-    glDeleteShader(vs);
-    glAttachShader(mProgram, fs);
-    glDeleteShader(fs);
-
-    glLinkProgram(mProgram);
-
-    GLint linked = GL_FALSE;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    ASSERT_GL_TRUE(linked);
     glUseProgram(mProgram);
     glUniform4f(location, 0.0, 1.0, 0.0, 1.0);
     EXPECT_GL_NO_ERROR();
@@ -499,20 +403,14 @@ class BindUniformLocationES31Test : public BindUniformLocationTest
   protected:
     BindUniformLocationES31Test() : BindUniformLocationTest() {}
 
-    void linkProgramWithUniformLocation(GLuint vs,
-                                        GLuint fs,
+    void linkProgramWithUniformLocation(const char *vs,
+                                        const char *fs,
                                         const char *uniformName,
                                         GLint uniformLocation)
     {
-        mProgram = glCreateProgram();
-        mBindUniformLocation(mProgram, uniformLocation, uniformName);
-
-        glAttachShader(mProgram, vs);
-        glDeleteShader(vs);
-        glAttachShader(mProgram, fs);
-        glDeleteShader(fs);
-
-        glLinkProgram(mProgram);
+        mProgram = CompileProgram(vs, fs, [&](GLuint program) {
+            glBindUniformLocationCHROMIUM(program, uniformLocation, uniformName);
+        });
     }
 };
 
@@ -520,21 +418,9 @@ class BindUniformLocationES31Test : public BindUniformLocationTest
 // bindUniformLocation API sets a consistent location.
 TEST_P(BindUniformLocationES31Test, ConsistentWithLocationLayoutQualifier)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    const std::string vsSource =
-        "#version 310 es\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = vec4(0);\n"
-        "}\n";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         "#version 310 es\n"
         "uniform layout(location=2) highp sampler2D tex;\n"
         "out highp vec4 my_FragColor;\n"
@@ -545,11 +431,7 @@ TEST_P(BindUniformLocationES31Test, ConsistentWithLocationLayoutQualifier)
 
     const GLuint texLocation = 2;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    EXPECT_NE(0u, vs);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
-    EXPECT_NE(0u, fs);
-    linkProgramWithUniformLocation(vs, fs, "tex", texLocation);
+    linkProgramWithUniformLocation(essl31_shaders::vs::Zero(), kFS, "tex", texLocation);
 
     GLint linked = GL_FALSE;
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
@@ -566,21 +448,9 @@ TEST_P(BindUniformLocationES31Test, ConsistentWithLocationLayoutQualifier)
 // location should prevail.
 TEST_P(BindUniformLocationES31Test, LocationLayoutQualifierOverridesAPIBinding)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    const std::string vsSource =
-        "#version 310 es\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = vec4(0);\n"
-        "}\n";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         "#version 310 es\n"
         "uniform layout(location=2) highp sampler2D tex;\n"
         "out highp vec4 my_FragColor;\n"
@@ -592,11 +462,7 @@ TEST_P(BindUniformLocationES31Test, LocationLayoutQualifierOverridesAPIBinding)
     const GLuint shaderTexLocation = 2;
     const GLuint texLocation       = 3;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    EXPECT_NE(0u, vs);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
-    EXPECT_NE(0u, fs);
-    linkProgramWithUniformLocation(vs, fs, "tex", texLocation);
+    linkProgramWithUniformLocation(essl31_shaders::vs::Zero(), kFS, "tex", texLocation);
 
     GLint linked = GL_FALSE;
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
@@ -615,21 +481,9 @@ TEST_P(BindUniformLocationES31Test, LocationLayoutQualifierOverridesAPIBinding)
 // fail.
 TEST_P(BindUniformLocationES31Test, LocationLayoutQualifierConflictsWithAPIBinding)
 {
-    if (!extensionEnabled("GL_CHROMIUM_bind_uniform_location"))
-    {
-        std::cout << "Test skipped because GL_CHROMIUM_bind_uniform_location is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    const std::string vsSource =
-        "#version 310 es\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = vec4(0);\n"
-        "}\n";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         "#version 310 es\n"
         "uniform layout(location=2) highp sampler2D tex;\n"
         "uniform highp sampler2D tex2;\n"
@@ -641,11 +495,7 @@ TEST_P(BindUniformLocationES31Test, LocationLayoutQualifierConflictsWithAPIBindi
 
     const GLuint tex2Location = 2;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    EXPECT_NE(0u, vs);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
-    EXPECT_NE(0u, fs);
-    linkProgramWithUniformLocation(vs, fs, "tex2", tex2Location);
+    linkProgramWithUniformLocation(essl31_shaders::vs::Zero(), kFS, "tex2", tex2Location);
 
     GLint linked = GL_FALSE;
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
@@ -655,19 +505,9 @@ TEST_P(BindUniformLocationES31Test, LocationLayoutQualifierConflictsWithAPIBindi
 // Test for binding a location for an array of arrays uniform.
 TEST_P(BindUniformLocationES31Test, ArrayOfArrays)
 {
-    ANGLE_SKIP_TEST_IF(!extensionEnabled("GL_CHROMIUM_bind_uniform_location"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
 
-    const std::string vsSource =
-        R"(#version 310 es
-
-        in vec4 a_position;
-
-        void main()
-        {
-            gl_Position = a_position;
-        })";
-
-    const std::string fsSource =
+    constexpr char kFS[] =
         R"(#version 310 es
         precision highp float;
         uniform vec4 sourceColor[2][1];
@@ -679,11 +519,7 @@ TEST_P(BindUniformLocationES31Test, ArrayOfArrays)
 
     const GLuint location = 8;
 
-    GLuint vs = CompileShader(GL_VERTEX_SHADER, vsSource);
-    EXPECT_NE(0u, vs);
-    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsSource);
-    EXPECT_NE(0u, fs);
-    linkProgramWithUniformLocation(vs, fs, "sourceColor[1]", location);
+    linkProgramWithUniformLocation(essl31_shaders::vs::Simple(), kFS, "sourceColor[1]", location);
 
     GLint linked = GL_FALSE;
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
@@ -692,7 +528,7 @@ TEST_P(BindUniformLocationES31Test, ArrayOfArrays)
     glUseProgram(mProgram);
     glUniform4f(location, 0.0f, 1.0f, 0.0f, 1.0f);
 
-    drawQuad(mProgram, "a_position", 0.5f);
+    drawQuad(mProgram, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -705,8 +541,9 @@ ANGLE_INSTANTIATE_TEST(BindUniformLocationTest,
                        ES2_D3D11(),
                        ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
-                       ES2_OPENGLES());
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());
 
-ANGLE_INSTANTIATE_TEST(BindUniformLocationES31Test, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES())
+ANGLE_INSTANTIATE_TEST(BindUniformLocationES31Test, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
 
 }  // namespace

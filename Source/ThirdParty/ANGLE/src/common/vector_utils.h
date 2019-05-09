@@ -367,7 +367,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator+=(
     {
         mData[i] += other.mData[i];
     }
-    return *reinterpret_cast<Vector<Dimension, Type> *>(this);
+    return *static_cast<Vector<Dimension, Type> *>(this);
 }
 
 template <size_t Dimension, typename Type>
@@ -378,7 +378,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator-=(
     {
         mData[i] -= other.mData[i];
     }
-    return *reinterpret_cast<Vector<Dimension, Type> *>(this);
+    return *static_cast<Vector<Dimension, Type> *>(this);
 }
 
 template <size_t Dimension, typename Type>
@@ -389,7 +389,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator*=(
     {
         mData[i] *= other.mData[i];
     }
-    return *reinterpret_cast<Vector<Dimension, Type> *>(this);
+    return *static_cast<Vector<Dimension, Type> *>(this);
 }
 
 template <size_t Dimension, typename Type>
@@ -400,7 +400,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator/=(
     {
         mData[i] /= other.mData[i];
     }
-    return *reinterpret_cast<Vector<Dimension, Type> *>(this);
+    return *static_cast<Vector<Dimension, Type> *>(this);
 }
 
 template <size_t Dimension, typename Type>
@@ -410,7 +410,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator*=(Type other)
     {
         mData[i] *= other;
     }
-    return *reinterpret_cast<Vector<Dimension, Type> *>(this);
+    return *static_cast<Vector<Dimension, Type> *>(this);
 }
 
 template <size_t Dimension, typename Type>
@@ -420,7 +420,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator/=(Type other)
     {
         mData[i] /= other;
     }
-    return *reinterpret_cast<Vector<Dimension, Type> *>(this);
+    return *static_cast<Vector<Dimension, Type> *>(this);
 }
 
 // Implementation of comparison operators

@@ -24,10 +24,10 @@ namespace sh
 // This class is used to precompute that function call DAG so that it
 // can be reused by multiple analyses.
 //
-// It stores a vector of function records, with one record per function.
+// It stores a vector of function records, with one record per defined function.
 // Records are accessed by index but a function symbol id can be converted
-// to the index of the corresponding record. The records mostly contain the
-// AST node of the function and the indices of the function's callees.
+// to the index of the corresponding record. The records contain the AST node
+// of the function definition and the indices of the function's callees.
 //
 // In addition, records are in reverse topological order: a function F being
 // called by a function G will have index index(F) < index(G), that way
@@ -41,8 +41,7 @@ class CallDAG : angle::NonCopyable
 
     struct Record
     {
-        std::string name;
-        TIntermFunctionDefinition *node;
+        TIntermFunctionDefinition *node;  // Guaranteed to be non-null.
         std::vector<int> callees;
     };
 
@@ -58,10 +57,9 @@ class CallDAG : angle::NonCopyable
     InitResult init(TIntermNode *root, TDiagnostics *diagnostics);
 
     // Returns InvalidIndex if the function wasn't found
-    size_t findIndex(const TFunctionSymbolInfo *functionInfo) const;
+    size_t findIndex(const TSymbolUniqueId &id) const;
 
     const Record &getRecordFromIndex(size_t index) const;
-    const Record &getRecord(const TIntermAggregate *function) const;
     size_t size() const;
     void clear();
 

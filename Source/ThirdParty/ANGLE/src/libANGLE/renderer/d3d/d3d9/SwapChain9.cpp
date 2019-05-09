@@ -9,9 +9,9 @@
 #include "libANGLE/renderer/d3d/d3d9/SwapChain9.h"
 
 #include "libANGLE/features.h"
-#include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/d3d/d3d9/NativeWindow9.h"
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
+#include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 
 namespace rx
@@ -65,27 +65,33 @@ static DWORD convertInterval(EGLint interval)
 #if ANGLE_VSYNC == ANGLE_DISABLED
     return D3DPRESENT_INTERVAL_IMMEDIATE;
 #else
-    switch(interval)
+    switch (interval)
     {
-      case 0: return D3DPRESENT_INTERVAL_IMMEDIATE;
-      case 1: return D3DPRESENT_INTERVAL_ONE;
-      case 2: return D3DPRESENT_INTERVAL_TWO;
-      case 3: return D3DPRESENT_INTERVAL_THREE;
-      case 4: return D3DPRESENT_INTERVAL_FOUR;
-      default: UNREACHABLE();
+        case 0:
+            return D3DPRESENT_INTERVAL_IMMEDIATE;
+        case 1:
+            return D3DPRESENT_INTERVAL_ONE;
+        case 2:
+            return D3DPRESENT_INTERVAL_TWO;
+        case 3:
+            return D3DPRESENT_INTERVAL_THREE;
+        case 4:
+            return D3DPRESENT_INTERVAL_FOUR;
+        default:
+            UNREACHABLE();
     }
 
     return D3DPRESENT_INTERVAL_DEFAULT;
 #endif
 }
 
-EGLint SwapChain9::resize(const gl::Context *context, int backbufferWidth, int backbufferHeight)
+EGLint SwapChain9::resize(DisplayD3D *displayD3D, int backbufferWidth, int backbufferHeight)
 {
     // D3D9 does not support resizing swap chains without recreating them
-    return reset(context, backbufferWidth, backbufferHeight, mSwapInterval);
+    return reset(displayD3D, backbufferWidth, backbufferHeight, mSwapInterval);
 }
 
-EGLint SwapChain9::reset(const gl::Context *context,
+EGLint SwapChain9::reset(DisplayD3D *displayD3D,
                          int backbufferWidth,
                          int backbufferHeight,
                          EGLint swapInterval)
@@ -151,11 +157,7 @@ EGLint SwapChain9::reset(const gl::Context *context,
 
     if (oldRenderTarget)
     {
-        RECT rect =
-        {
-            0, 0,
-            mWidth, mHeight
-        };
+        RECT rect = {0, 0, mWidth, mHeight};
 
         if (rect.right > static_cast<LONG>(backbufferWidth))
         {
@@ -175,36 +177,39 @@ EGLint SwapChain9::reset(const gl::Context *context,
         SafeRelease(oldRenderTarget);
     }
 
-    const d3d9::TextureFormat &depthBufferd3dFormatInfo = d3d9::GetTextureFormatInfo(mDepthBufferFormat);
+    const d3d9::TextureFormat &depthBufferd3dFormatInfo =
+        d3d9::GetTextureFormatInfo(mDepthBufferFormat);
 
     // Don't create a swapchain for NULLREF devices
-    D3DDEVTYPE deviceType = mRenderer->getD3D9DeviceType();
+    D3DDEVTYPE deviceType      = mRenderer->getD3D9DeviceType();
     EGLNativeWindowType window = mNativeWindow->getNativeWindow();
     if (window && deviceType != D3DDEVTYPE_NULLREF)
     {
-        D3DPRESENT_PARAMETERS presentParameters = {0};
+        D3DPRESENT_PARAMETERS presentParameters  = {0};
         presentParameters.AutoDepthStencilFormat = depthBufferd3dFormatInfo.renderFormat;
-        presentParameters.BackBufferCount = 1;
-        presentParameters.BackBufferFormat = backBufferd3dFormatInfo.renderFormat;
+        presentParameters.BackBufferCount        = 1;
+        presentParameters.BackBufferFormat       = backBufferd3dFormatInfo.renderFormat;
         presentParameters.EnableAutoDepthStencil = FALSE;
-        presentParameters.Flags = 0;
-        presentParameters.hDeviceWindow = window;
-        presentParameters.MultiSampleQuality = 0;                  // FIXME: Unimplemented
-        presentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;   // FIXME: Unimplemented
-        presentParameters.PresentationInterval = convertInterval(swapInterval);
-        presentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-        presentParameters.Windowed = TRUE;
-        presentParameters.BackBufferWidth = backbufferWidth;
-        presentParameters.BackBufferHeight = backbufferHeight;
+        presentParameters.Flags                  = 0;
+        presentParameters.hDeviceWindow          = window;
+        presentParameters.MultiSampleQuality     = 0;                    // FIXME: Unimplemented
+        presentParameters.MultiSampleType        = D3DMULTISAMPLE_NONE;  // FIXME: Unimplemented
+        presentParameters.PresentationInterval   = convertInterval(swapInterval);
+        presentParameters.SwapEffect             = D3DSWAPEFFECT_DISCARD;
+        presentParameters.Windowed               = TRUE;
+        presentParameters.BackBufferWidth        = backbufferWidth;
+        presentParameters.BackBufferHeight       = backbufferHeight;
 
         // http://crbug.com/140239
         // http://crbug.com/143434
         //
-        // Some AMD/Intel switchable systems / drivers appear to round swap chain surfaces to a multiple of 64 pixels in width
-        // when using the integrated Intel. This rounds the width up rather than down.
+        // Some AMD/Intel switchable systems / drivers appear to round swap chain surfaces to a
+        // multiple of 64 pixels in width when using the integrated Intel. This rounds the width up
+        // rather than down.
         //
-        // Some non-switchable AMD GPUs / drivers do not respect the source rectangle to Present. Therefore, when the vendor ID
-        // is not Intel, the back buffer width must be exactly the same width as the window or horizontal scaling will occur.
+        // Some non-switchable AMD GPUs / drivers do not respect the source rectangle to Present.
+        // Therefore, when the vendor ID is not Intel, the back buffer width must be exactly the
+        // same width as the window or horizontal scaling will occur.
         if (IsIntel(mRenderer->getVendorId()))
         {
             presentParameters.BackBufferWidth = (presentParameters.BackBufferWidth + 63) / 64 * 64;
@@ -214,7 +219,8 @@ EGLint SwapChain9::reset(const gl::Context *context,
 
         if (FAILED(result))
         {
-            ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_INVALIDCALL || result == D3DERR_DEVICELOST);
+            ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY ||
+                   result == D3DERR_INVALIDCALL || result == D3DERR_DEVICELOST);
 
             ERR() << "Could not create additional swap chains or offscreen surfaces, "
                   << gl::FmtHR(result);
@@ -243,7 +249,8 @@ EGLint SwapChain9::reset(const gl::Context *context,
 
         if (FAILED(result))
         {
-            ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_INVALIDCALL);
+            ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY ||
+                   result == D3DERR_INVALIDCALL);
 
             ERR() << "Could not create depthstencil surface for new swap chain, "
                   << gl::FmtHR(result);
@@ -260,19 +267,15 @@ EGLint SwapChain9::reset(const gl::Context *context,
         }
     }
 
-    mWidth = backbufferWidth;
-    mHeight = backbufferHeight;
+    mWidth        = backbufferWidth;
+    mHeight       = backbufferHeight;
     mSwapInterval = swapInterval;
 
     return EGL_SUCCESS;
 }
 
 // parameters should be validated/clamped by caller
-EGLint SwapChain9::swapRect(const gl::Context *context,
-                            EGLint x,
-                            EGLint y,
-                            EGLint width,
-                            EGLint height)
+EGLint SwapChain9::swapRect(DisplayD3D *displayD3D, EGLint x, EGLint y, EGLint width, EGLint height)
 {
     if (!mSwapChain)
     {
@@ -289,7 +292,9 @@ EGLint SwapChain9::swapRect(const gl::Context *context,
     device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
     device->SetRenderState(D3DRS_STENCILENABLE, FALSE);
     device->SetRenderState(D3DRS_CLIPPLANEENABLE, 0);
-    device->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_ALPHA | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_RED);
+    device->SetRenderState(D3DRS_COLORWRITEENABLE,
+                           D3DCOLORWRITEENABLE_ALPHA | D3DCOLORWRITEENABLE_BLUE |
+                               D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_RED);
     device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
     device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
     device->SetPixelShader(nullptr);
@@ -313,7 +318,8 @@ EGLint SwapChain9::swapRect(const gl::Context *context,
         device->SetStreamSourceFreq(streamIndex, 1);
     }
 
-    D3DVIEWPORT9 viewport = {0, 0, static_cast<DWORD>(mWidth), static_cast<DWORD>(mHeight), 0.0f, 1.0f};
+    D3DVIEWPORT9 viewport = {0,    0,   static_cast<DWORD>(mWidth), static_cast<DWORD>(mHeight),
+                             0.0f, 1.0f};
     device->SetViewport(&viewport);
 
     float x1 = x - 0.5f;
@@ -329,7 +335,7 @@ EGLint SwapChain9::swapRect(const gl::Context *context,
     float quad[4][6] = {{x1, y1, 0.0f, 1.0f, u1, v2},
                         {x2, y1, 0.0f, 1.0f, u2, v2},
                         {x2, y2, 0.0f, 1.0f, u2, v1},
-                        {x1, y2, 0.0f, 1.0f, u1, v1}};   // x, y, z, rhw, u, v
+                        {x1, y2, 0.0f, 1.0f, u1, v1}};  // x, y, z, rhw, u, v
 
     mRenderer->startScene();
     device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, quad, 6 * sizeof(float));
@@ -337,24 +343,23 @@ EGLint SwapChain9::swapRect(const gl::Context *context,
 
     device->SetTexture(0, nullptr);
 
-    RECT rect =
-    {
-        static_cast<LONG>(x), static_cast<LONG>(mHeight - y - height),
-        static_cast<LONG>(x + width), static_cast<LONG>(mHeight - y)
-    };
+    RECT rect = {static_cast<LONG>(x), static_cast<LONG>(mHeight - y - height),
+                 static_cast<LONG>(x + width), static_cast<LONG>(mHeight - y)};
 
     HRESULT result = mSwapChain->Present(&rect, &rect, nullptr, nullptr, 0);
 
     mRenderer->markAllStateDirty();
 
-    if (result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_DRIVERINTERNALERROR)
+    if (result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY ||
+        result == D3DERR_DRIVERINTERNALERROR)
     {
         return EGL_BAD_ALLOC;
     }
 
-    // On Windows 8 systems, IDirect3DSwapChain9::Present sometimes returns 0x88760873 when the windows is
-    // in the process of entering/exiting fullscreen. This code doesn't seem to have any documentation.  The
-    // device appears to be ok after emitting this error so simply return a failure to swap.
+    // On Windows 8 systems, IDirect3DSwapChain9::Present sometimes returns 0x88760873 when the
+    // windows is in the process of entering/exiting fullscreen. This code doesn't seem to have any
+    // documentation.  The device appears to be ok after emitting this error so simply return a
+    // failure to swap.
     if (result == static_cast<HRESULT>(0x88760873))
     {
         return EGL_BAD_MATCH;
@@ -464,4 +469,4 @@ RenderTargetD3D *SwapChain9::getDepthStencilRenderTarget()
 {
     return &mDepthStencilRenderTarget;
 }
-}
+}  // namespace rx

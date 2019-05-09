@@ -39,4 +39,4 @@ TEST(InfoLogTest, AppendingNewline)
     EXPECT_EQ(expected, infoLog.str());
 }
 
-} // namespace
+}  // namespace

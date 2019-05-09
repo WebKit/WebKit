@@ -14,12 +14,8 @@
 namespace rx
 {
 
-SamplerVk::SamplerVk(const gl::SamplerState &state) : SamplerImpl(state)
-{
-}
+SamplerVk::SamplerVk(const gl::SamplerState &state) : SamplerImpl(state) {}
 
-SamplerVk::~SamplerVk()
-{
-}
+SamplerVk::~SamplerVk() {}
 
 }  // namespace rx

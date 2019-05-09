@@ -14,11 +14,8 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/win"
 )
 
-# FIXME: ANGLE should put its headers into a single directory
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
-    "${THIRDPARTY_DIR}/ANGLE/include"
-    "${THIRDPARTY_DIR}/ANGLE/include/egl"
 )
 
 list(APPEND WebCore_SOURCES
@@ -244,7 +241,4 @@ set(WebCore_OUTPUT_NAME
 )
 
 list(APPEND WebCore_LIBRARIES WTF${DEBUG_SUFFIX})
-if (TARGET libEGL)
-    list(APPEND WebCore_LIBRARIES libEGL)
-endif ()
 list(APPEND WebCoreTestSupport_LIBRARIES WTF${DEBUG_SUFFIX})

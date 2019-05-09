@@ -18,6 +18,7 @@
 #include "common/mathutil.h"
 #include "common/matrix_utils.h"
 #include "compiler/translator/Diagnostics.h"
+#include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/util.h"
@@ -41,7 +42,7 @@ TConstantUnion *Vectorize(const TConstantUnion &constant, size_t size)
 {
     TConstantUnion *constUnion = new TConstantUnion[size];
     for (unsigned int i = 0; i < size; ++i)
-        constUnion[i]   = constant;
+        constUnion[i] = constant;
 
     return constUnion;
 }
@@ -95,23 +96,19 @@ float VectorDotProduct(const TConstantUnion *paramArray1,
     return result;
 }
 
-TIntermTyped *CreateFoldedNode(const TConstantUnion *constArray,
-                               const TIntermTyped *originalNode,
-                               TQualifier qualifier)
+TIntermTyped *CreateFoldedNode(const TConstantUnion *constArray, const TIntermTyped *originalNode)
 {
-    if (constArray == nullptr)
-    {
-        return nullptr;
-    }
+    ASSERT(constArray != nullptr);
+    // Note that we inherit whatever qualifier the folded node had. Nodes may be constant folded
+    // without being qualified as constant.
     TIntermTyped *folded = new TIntermConstantUnion(constArray, originalNode->getType());
-    folded->getTypePointer()->setQualifier(qualifier);
     folded->setLine(originalNode->getLine());
     return folded;
 }
 
 angle::Matrix<float> GetMatrix(const TConstantUnion *paramArray,
-                               const unsigned int &rows,
-                               const unsigned int &cols)
+                               const unsigned int rows,
+                               const unsigned int cols)
 {
     std::vector<float> elements;
     for (size_t i = 0; i < rows * cols; i++)
@@ -122,7 +119,7 @@ angle::Matrix<float> GetMatrix(const TConstantUnion *paramArray,
     return angle::Matrix<float>(elements, cols, rows).transpose();
 }
 
-angle::Matrix<float> GetMatrix(const TConstantUnion *paramArray, const unsigned int &size)
+angle::Matrix<float> GetMatrix(const TConstantUnion *paramArray, const unsigned int size)
 {
     std::vector<float> elements;
     for (size_t i = 0; i < size * size; i++)
@@ -142,7 +139,43 @@ void SetUnionArrayFromMatrix(const angle::Matrix<float> &m, TConstantUnion *resu
         resultArray[i].setFConst(resultElements[i]);
 }
 
-}  // namespace anonymous
+bool CanFoldAggregateBuiltInOp(TOperator op)
+{
+    switch (op)
+    {
+        case EOpAtan:
+        case EOpPow:
+        case EOpMod:
+        case EOpMin:
+        case EOpMax:
+        case EOpClamp:
+        case EOpMix:
+        case EOpStep:
+        case EOpSmoothstep:
+        case EOpLdexp:
+        case EOpMulMatrixComponentWise:
+        case EOpOuterProduct:
+        case EOpEqualComponentWise:
+        case EOpNotEqualComponentWise:
+        case EOpLessThanComponentWise:
+        case EOpLessThanEqualComponentWise:
+        case EOpGreaterThanComponentWise:
+        case EOpGreaterThanEqualComponentWise:
+        case EOpDistance:
+        case EOpDot:
+        case EOpCross:
+        case EOpFaceforward:
+        case EOpReflect:
+        case EOpRefract:
+        case EOpBitfieldExtract:
+        case EOpBitfieldInsert:
+            return true;
+        default:
+            return false;
+    }
+}
+
+}  // namespace
 
 ////////////////////////////////////////////////////////////////
 //
@@ -150,7 +183,9 @@ void SetUnionArrayFromMatrix(const angle::Matrix<float> &m, TConstantUnion *resu
 //
 ////////////////////////////////////////////////////////////////
 
-void TIntermTyped::setTypePreservePrecision(const TType &t)
+TIntermExpression::TIntermExpression(const TType &t) : TIntermTyped(), mType(t) {}
+
+void TIntermExpression::setTypePreservePrecision(const TType &t)
 {
     TPrecision precision = getPrecision();
     mType                = t;
@@ -159,11 +194,69 @@ void TIntermTyped::setTypePreservePrecision(const TType &t)
 }
 
 #define REPLACE_IF_IS(node, type, original, replacement) \
-    if (node == original)                                \
+    do                                                   \
     {                                                    \
-        node = static_cast<type *>(replacement);         \
-        return true;                                     \
+        if (node == original)                            \
+        {                                                \
+            node = static_cast<type *>(replacement);     \
+            return true;                                 \
+        }                                                \
+    } while (0)
+
+size_t TIntermSymbol::getChildCount() const
+{
+    return 0;
+}
+
+TIntermNode *TIntermSymbol::getChildNode(size_t index) const
+{
+    UNREACHABLE();
+    return nullptr;
+}
+
+size_t TIntermConstantUnion::getChildCount() const
+{
+    return 0;
+}
+
+TIntermNode *TIntermConstantUnion::getChildNode(size_t index) const
+{
+    UNREACHABLE();
+    return nullptr;
+}
+
+size_t TIntermLoop::getChildCount() const
+{
+    return (mInit ? 1 : 0) + (mCond ? 1 : 0) + (mExpr ? 1 : 0) + (mBody ? 1 : 0);
+}
+
+TIntermNode *TIntermLoop::getChildNode(size_t index) const
+{
+    TIntermNode *children[4];
+    unsigned int childIndex = 0;
+    if (mInit)
+    {
+        children[childIndex] = mInit;
+        ++childIndex;
     }
+    if (mCond)
+    {
+        children[childIndex] = mCond;
+        ++childIndex;
+    }
+    if (mExpr)
+    {
+        children[childIndex] = mExpr;
+        ++childIndex;
+    }
+    if (mBody)
+    {
+        children[childIndex] = mBody;
+        ++childIndex;
+    }
+    ASSERT(index < childIndex);
+    return children[index];
+}
 
 bool TIntermLoop::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
@@ -175,10 +268,34 @@ bool TIntermLoop::replaceChildNode(TIntermNode *original, TIntermNode *replaceme
     return false;
 }
 
+size_t TIntermBranch::getChildCount() const
+{
+    return (mExpression ? 1 : 0);
+}
+
+TIntermNode *TIntermBranch::getChildNode(size_t index) const
+{
+    ASSERT(mExpression);
+    ASSERT(index == 0);
+    return mExpression;
+}
+
 bool TIntermBranch::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mExpression, TIntermTyped, original, replacement);
     return false;
+}
+
+size_t TIntermSwizzle::getChildCount() const
+{
+    return 1;
+}
+
+TIntermNode *TIntermSwizzle::getChildNode(size_t index) const
+{
+    ASSERT(mOperand);
+    ASSERT(index == 0);
+    return mOperand;
 }
 
 bool TIntermSwizzle::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
@@ -188,11 +305,38 @@ bool TIntermSwizzle::replaceChildNode(TIntermNode *original, TIntermNode *replac
     return false;
 }
 
+size_t TIntermBinary::getChildCount() const
+{
+    return 2;
+}
+
+TIntermNode *TIntermBinary::getChildNode(size_t index) const
+{
+    ASSERT(index < 2);
+    if (index == 0)
+    {
+        return mLeft;
+    }
+    return mRight;
+}
+
 bool TIntermBinary::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mLeft, TIntermTyped, original, replacement);
     REPLACE_IF_IS(mRight, TIntermTyped, original, replacement);
     return false;
+}
+
+size_t TIntermUnary::getChildCount() const
+{
+    return 1;
+}
+
+TIntermNode *TIntermUnary::getChildNode(size_t index) const
+{
+    ASSERT(mOperand);
+    ASSERT(index == 0);
+    return mOperand;
 }
 
 bool TIntermUnary::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
@@ -202,10 +346,37 @@ bool TIntermUnary::replaceChildNode(TIntermNode *original, TIntermNode *replacem
     return false;
 }
 
+size_t TIntermInvariantDeclaration::getChildCount() const
+{
+    return 1;
+}
+
+TIntermNode *TIntermInvariantDeclaration::getChildNode(size_t index) const
+{
+    ASSERT(mSymbol);
+    ASSERT(index == 0);
+    return mSymbol;
+}
+
 bool TIntermInvariantDeclaration::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mSymbol, TIntermSymbol, original, replacement);
     return false;
+}
+
+size_t TIntermFunctionDefinition::getChildCount() const
+{
+    return 2;
+}
+
+TIntermNode *TIntermFunctionDefinition::getChildNode(size_t index) const
+{
+    ASSERT(index < 2);
+    if (index == 0)
+    {
+        return mPrototype;
+    }
+    return mBody;
 }
 
 bool TIntermFunctionDefinition::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
@@ -215,9 +386,29 @@ bool TIntermFunctionDefinition::replaceChildNode(TIntermNode *original, TIntermN
     return false;
 }
 
+size_t TIntermAggregate::getChildCount() const
+{
+    return mArguments.size();
+}
+
+TIntermNode *TIntermAggregate::getChildNode(size_t index) const
+{
+    return mArguments[index];
+}
+
 bool TIntermAggregate::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     return replaceChildNodeInternal(original, replacement);
+}
+
+size_t TIntermBlock::getChildCount() const
+{
+    return mStatements.size();
+}
+
+TIntermNode *TIntermBlock::getChildNode(size_t index) const
+{
+    return mStatements[index];
 }
 
 bool TIntermBlock::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
@@ -225,9 +416,30 @@ bool TIntermBlock::replaceChildNode(TIntermNode *original, TIntermNode *replacem
     return replaceChildNodeInternal(original, replacement);
 }
 
+size_t TIntermFunctionPrototype::getChildCount() const
+{
+    return 0;
+}
+
+TIntermNode *TIntermFunctionPrototype::getChildNode(size_t index) const
+{
+    UNREACHABLE();
+    return nullptr;
+}
+
 bool TIntermFunctionPrototype::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    return replaceChildNodeInternal(original, replacement);
+    return false;
+}
+
+size_t TIntermDeclaration::getChildCount() const
+{
+    return mDeclarators.size();
+}
+
+TIntermNode *TIntermDeclaration::getChildNode(size_t index) const
+{
+    return mDeclarators[index];
 }
 
 bool TIntermDeclaration::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
@@ -271,69 +483,83 @@ bool TIntermAggregateBase::insertChildNodes(TIntermSequence::size_type position,
     return true;
 }
 
+TIntermSymbol::TIntermSymbol(const TVariable *variable) : TIntermTyped(), mVariable(variable) {}
+
+bool TIntermSymbol::hasConstantValue() const
+{
+    return variable().getConstPointer() != nullptr;
+}
+
+const TConstantUnion *TIntermSymbol::getConstantValue() const
+{
+    return variable().getConstPointer();
+}
+
+const TSymbolUniqueId &TIntermSymbol::uniqueId() const
+{
+    return mVariable->uniqueId();
+}
+
+ImmutableString TIntermSymbol::getName() const
+{
+    return mVariable->name();
+}
+
+const TType &TIntermSymbol::getType() const
+{
+    return mVariable->getType();
+}
+
 TIntermAggregate *TIntermAggregate::CreateFunctionCall(const TFunction &func,
                                                        TIntermSequence *arguments)
 {
-    TIntermAggregate *callNode =
-        new TIntermAggregate(func.getReturnType(), EOpCallFunctionInAST, arguments);
-    callNode->getFunctionSymbolInfo()->setFromFunction(func);
-    return callNode;
+    return new TIntermAggregate(&func, func.getReturnType(), EOpCallFunctionInAST, arguments);
 }
 
-TIntermAggregate *TIntermAggregate::CreateFunctionCall(const TType &type,
-                                                       const TSymbolUniqueId &id,
-                                                       const TName &name,
-                                                       TIntermSequence *arguments)
+TIntermAggregate *TIntermAggregate::CreateRawFunctionCall(const TFunction &func,
+                                                          TIntermSequence *arguments)
 {
-    TIntermAggregate *callNode = new TIntermAggregate(type, EOpCallFunctionInAST, arguments);
-    callNode->getFunctionSymbolInfo()->setId(id);
-    callNode->getFunctionSymbolInfo()->setNameObj(name);
-    return callNode;
+    return new TIntermAggregate(&func, func.getReturnType(), EOpCallInternalRawFunction, arguments);
 }
 
 TIntermAggregate *TIntermAggregate::CreateBuiltInFunctionCall(const TFunction &func,
                                                               TIntermSequence *arguments)
 {
-    TIntermAggregate *callNode =
-        new TIntermAggregate(func.getReturnType(), EOpCallBuiltInFunction, arguments);
-    callNode->getFunctionSymbolInfo()->setFromFunction(func);
-    // Note that name needs to be set before texture function type is determined.
-    callNode->setBuiltInFunctionPrecision();
-    return callNode;
+    // op should be either EOpCallBuiltInFunction or a specific math op.
+    ASSERT(func.getBuiltInOp() != EOpNull);
+    return new TIntermAggregate(&func, func.getReturnType(), func.getBuiltInOp(), arguments);
 }
 
-TIntermAggregate *TIntermAggregate::CreateConstructor(const TType &type,
-                                                      TIntermSequence *arguments)
+TIntermAggregate *TIntermAggregate::CreateConstructor(const TType &type, TIntermSequence *arguments)
 {
-    return new TIntermAggregate(type, EOpConstruct, arguments);
+    return new TIntermAggregate(nullptr, type, EOpConstruct, arguments);
 }
 
-TIntermAggregate *TIntermAggregate::Create(const TType &type,
-                                           TOperator op,
-                                           TIntermSequence *arguments)
-{
-    TIntermAggregate *node = new TIntermAggregate(type, op, arguments);
-    ASSERT(op != EOpCallFunctionInAST);    // Should use CreateFunctionCall
-    ASSERT(op != EOpCallBuiltInFunction);  // Should use CreateBuiltInFunctionCall
-    ASSERT(!node->isConstructor());        // Should use CreateConstructor
-    return node;
-}
-
-TIntermAggregate::TIntermAggregate(const TType &type, TOperator op, TIntermSequence *arguments)
-    : TIntermOperator(op), mUseEmulatedFunction(false), mGotPrecisionFromChildren(false)
+TIntermAggregate::TIntermAggregate(const TFunction *func,
+                                   const TType &type,
+                                   TOperator op,
+                                   TIntermSequence *arguments)
+    : TIntermOperator(op, type),
+      mUseEmulatedFunction(false),
+      mGotPrecisionFromChildren(false),
+      mFunction(func)
 {
     if (arguments != nullptr)
     {
         mArguments.swap(*arguments);
     }
-    setTypePrecisionAndQualifier(type);
+    ASSERT(mFunction == nullptr || mFunction->symbolType() != SymbolType::Empty);
+    setPrecisionAndQualifier();
 }
 
-void TIntermAggregate::setTypePrecisionAndQualifier(const TType &type)
+void TIntermAggregate::setPrecisionAndQualifier()
 {
-    setType(type);
     mType.setQualifier(EvqTemporary);
-    if (!isFunctionCall())
+    if (mOp == EOpCallBuiltInFunction)
+    {
+        setBuiltInFunctionPrecision();
+    }
+    else if (!isFunctionCall())
     {
         if (isConstructor())
         {
@@ -440,13 +666,13 @@ void TIntermAggregate::setBuiltInFunctionPrecision()
     }
     // ESSL 3.0 spec section 8: textureSize always gets highp precision.
     // All other functions that take a sampler are assumed to be texture functions.
-    if (mFunctionInfo.getName().find("textureSize") == 0)
+    if (mFunction->name() == "textureSize")
         mType.setPrecision(EbpHigh);
     else
         mType.setPrecision(precision);
 }
 
-TString TIntermAggregate::getSymbolTableMangledName() const
+const char *TIntermAggregate::functionName() const
 {
     ASSERT(!isConstructor());
     switch (mOp)
@@ -454,16 +680,161 @@ TString TIntermAggregate::getSymbolTableMangledName() const
         case EOpCallInternalRawFunction:
         case EOpCallBuiltInFunction:
         case EOpCallFunctionInAST:
-            return TFunction::GetMangledNameFromCall(mFunctionInfo.getName(), mArguments);
+            return mFunction->name().data();
         default:
-            TString opString = GetOperatorString(mOp);
-            return TFunction::GetMangledNameFromCall(opString, mArguments);
+            return GetOperatorString(mOp);
     }
+}
+
+bool TIntermAggregate::hasConstantValue() const
+{
+    if (!isConstructor())
+    {
+        return false;
+    }
+    for (TIntermNode *constructorArg : mArguments)
+    {
+        if (!constructorArg->getAsTyped()->hasConstantValue())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+const TConstantUnion *TIntermAggregate::getConstantValue() const
+{
+    if (!hasConstantValue())
+    {
+        return nullptr;
+    }
+    ASSERT(isConstructor());
+    ASSERT(mArguments.size() > 0u);
+
+    TConstantUnion *constArray = nullptr;
+    if (isArray())
+    {
+        size_t elementSize = mArguments.front()->getAsTyped()->getType().getObjectSize();
+        constArray         = new TConstantUnion[elementSize * getOutermostArraySize()];
+
+        size_t elementOffset = 0u;
+        for (TIntermNode *constructorArg : mArguments)
+        {
+            const TConstantUnion *elementConstArray =
+                constructorArg->getAsTyped()->getConstantValue();
+            ASSERT(elementConstArray);
+            size_t elementSizeBytes = sizeof(TConstantUnion) * elementSize;
+            memcpy(static_cast<void *>(&constArray[elementOffset]),
+                   static_cast<const void *>(elementConstArray), elementSizeBytes);
+            elementOffset += elementSize;
+        }
+        return constArray;
+    }
+
+    size_t resultSize    = getType().getObjectSize();
+    constArray           = new TConstantUnion[resultSize];
+    TBasicType basicType = getBasicType();
+
+    size_t resultIndex = 0u;
+
+    if (mArguments.size() == 1u)
+    {
+        TIntermNode *argument                       = mArguments.front();
+        TIntermTyped *argumentTyped                 = argument->getAsTyped();
+        const TConstantUnion *argumentConstantValue = argumentTyped->getConstantValue();
+        // Check the special case of constructing a matrix diagonal from a single scalar,
+        // or a vector from a single scalar.
+        if (argumentTyped->getType().getObjectSize() == 1u)
+        {
+            if (isMatrix())
+            {
+                int resultCols = getType().getCols();
+                int resultRows = getType().getRows();
+                for (int col = 0; col < resultCols; ++col)
+                {
+                    for (int row = 0; row < resultRows; ++row)
+                    {
+                        if (col == row)
+                        {
+                            constArray[resultIndex].cast(basicType, argumentConstantValue[0]);
+                        }
+                        else
+                        {
+                            constArray[resultIndex].setFConst(0.0f);
+                        }
+                        ++resultIndex;
+                    }
+                }
+            }
+            else
+            {
+                while (resultIndex < resultSize)
+                {
+                    constArray[resultIndex].cast(basicType, argumentConstantValue[0]);
+                    ++resultIndex;
+                }
+            }
+            ASSERT(resultIndex == resultSize);
+            return constArray;
+        }
+        else if (isMatrix() && argumentTyped->isMatrix())
+        {
+            // The special case of constructing a matrix from a matrix.
+            int argumentCols = argumentTyped->getType().getCols();
+            int argumentRows = argumentTyped->getType().getRows();
+            int resultCols   = getType().getCols();
+            int resultRows   = getType().getRows();
+            for (int col = 0; col < resultCols; ++col)
+            {
+                for (int row = 0; row < resultRows; ++row)
+                {
+                    if (col < argumentCols && row < argumentRows)
+                    {
+                        constArray[resultIndex].cast(
+                            basicType, argumentConstantValue[col * argumentRows + row]);
+                    }
+                    else if (col == row)
+                    {
+                        constArray[resultIndex].setFConst(1.0f);
+                    }
+                    else
+                    {
+                        constArray[resultIndex].setFConst(0.0f);
+                    }
+                    ++resultIndex;
+                }
+            }
+            ASSERT(resultIndex == resultSize);
+            return constArray;
+        }
+    }
+
+    for (TIntermNode *argument : mArguments)
+    {
+        TIntermTyped *argumentTyped                 = argument->getAsTyped();
+        size_t argumentSize                         = argumentTyped->getType().getObjectSize();
+        const TConstantUnion *argumentConstantValue = argumentTyped->getConstantValue();
+        for (size_t i = 0u; i < argumentSize; ++i)
+        {
+            if (resultIndex >= resultSize)
+                break;
+            constArray[resultIndex].cast(basicType, argumentConstantValue[i]);
+            ++resultIndex;
+        }
+    }
+    ASSERT(resultIndex == resultSize);
+    return constArray;
 }
 
 bool TIntermAggregate::hasSideEffects() const
 {
-    if (isFunctionCall() && mFunctionInfo.isKnownToNotHaveSideEffects())
+    if (getQualifier() == EvqConst)
+    {
+        return false;
+    }
+    bool calledFunctionHasNoSideEffects =
+        isFunctionCall() && mFunction != nullptr && mFunction->isKnownToNotHaveSideEffects();
+    if (calledFunctionHasNoSideEffects || isConstructor())
     {
         for (TIntermNode *arg : mArguments)
         {
@@ -490,10 +861,10 @@ void TIntermBlock::appendStatement(TIntermNode *statement)
     }
 }
 
-void TIntermFunctionPrototype::appendParameter(TIntermSymbol *parameter)
+void TIntermBlock::insertStatement(size_t insertPosition, TIntermNode *statement)
 {
-    ASSERT(parameter != nullptr);
-    mParameters.push_back(parameter);
+    ASSERT(statement != nullptr);
+    mStatements.insert(mStatements.begin() + insertPosition, statement);
 }
 
 void TIntermDeclaration::appendDeclarator(TIntermTyped *declarator)
@@ -507,12 +878,49 @@ void TIntermDeclaration::appendDeclarator(TIntermTyped *declarator)
     mDeclarators.push_back(declarator);
 }
 
+size_t TIntermTernary::getChildCount() const
+{
+    return 3;
+}
+
+TIntermNode *TIntermTernary::getChildNode(size_t index) const
+{
+    ASSERT(index < 3);
+    if (index == 0)
+    {
+        return mCondition;
+    }
+    if (index == 1)
+    {
+        return mTrueExpression;
+    }
+    return mFalseExpression;
+}
+
 bool TIntermTernary::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mCondition, TIntermTyped, original, replacement);
     REPLACE_IF_IS(mTrueExpression, TIntermTyped, original, replacement);
     REPLACE_IF_IS(mFalseExpression, TIntermTyped, original, replacement);
     return false;
+}
+
+size_t TIntermIfElse::getChildCount() const
+{
+    return 1 + (mTrueBlock ? 1 : 0) + (mFalseBlock ? 1 : 0);
+}
+
+TIntermNode *TIntermIfElse::getChildNode(size_t index) const
+{
+    if (index == 0)
+    {
+        return mCondition;
+    }
+    if (mTrueBlock && index == 1)
+    {
+        return mTrueBlock;
+    }
+    return mFalseBlock;
 }
 
 bool TIntermIfElse::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
@@ -523,6 +931,21 @@ bool TIntermIfElse::replaceChildNode(TIntermNode *original, TIntermNode *replace
     return false;
 }
 
+size_t TIntermSwitch::getChildCount() const
+{
+    return 2;
+}
+
+TIntermNode *TIntermSwitch::getChildNode(size_t index) const
+{
+    ASSERT(index < 2);
+    if (index == 0)
+    {
+        return mInit;
+    }
+    return mStatementList;
+}
+
 bool TIntermSwitch::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mInit, TIntermTyped, original, replacement);
@@ -531,90 +954,64 @@ bool TIntermSwitch::replaceChildNode(TIntermNode *original, TIntermNode *replace
     return false;
 }
 
+size_t TIntermCase::getChildCount() const
+{
+    return (mCondition ? 1 : 0);
+}
+
+TIntermNode *TIntermCase::getChildNode(size_t index) const
+{
+    ASSERT(index == 0);
+    ASSERT(mCondition);
+    return mCondition;
+}
+
 bool TIntermCase::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mCondition, TIntermTyped, original, replacement);
     return false;
 }
 
-TIntermTyped::TIntermTyped(const TIntermTyped &node) : TIntermNode(), mType(node.mType)
+TIntermTyped::TIntermTyped(const TIntermTyped &node) : TIntermNode()
 {
     // Copy constructor is disallowed for TIntermNode in order to disallow it for subclasses that
     // don't explicitly allow it, so normal TIntermNode constructor is used to construct the copy.
-    // We need to manually copy any fields of TIntermNode besides handling fields in TIntermTyped.
+    // We need to manually copy any fields of TIntermNode.
     mLine = node.mLine;
 }
 
-bool TIntermTyped::isConstructorWithOnlyConstantUnionParameters()
+bool TIntermTyped::hasConstantValue() const
 {
-    TIntermAggregate *constructor = getAsAggregate();
-    if (!constructor || !constructor->isConstructor())
-    {
-        return false;
-    }
-    for (TIntermNode *&node : *constructor->getSequence())
-    {
-        if (!node->getAsConstantUnion())
-            return false;
-    }
-    return true;
+    return false;
 }
 
-TIntermConstantUnion::TIntermConstantUnion(const TIntermConstantUnion &node) : TIntermTyped(node)
+const TConstantUnion *TIntermTyped::getConstantValue() const
+{
+    return nullptr;
+}
+
+TIntermConstantUnion::TIntermConstantUnion(const TIntermConstantUnion &node)
+    : TIntermExpression(node)
 {
     mUnionArrayPointer = node.mUnionArrayPointer;
 }
 
-void TFunctionSymbolInfo::setFromFunction(const TFunction &function)
+TIntermFunctionPrototype::TIntermFunctionPrototype(const TFunction *function)
+    : TIntermTyped(), mFunction(function)
 {
-    setName(function.getName());
-    setId(TSymbolUniqueId(function));
+    ASSERT(mFunction->symbolType() != SymbolType::Empty);
 }
 
-TFunctionSymbolInfo::TFunctionSymbolInfo(const TSymbolUniqueId &id)
-    : mId(new TSymbolUniqueId(id)), mKnownToNotHaveSideEffects(false)
+const TType &TIntermFunctionPrototype::getType() const
 {
-}
-
-TFunctionSymbolInfo::TFunctionSymbolInfo(const TFunctionSymbolInfo &info)
-    : mName(info.mName), mId(nullptr), mKnownToNotHaveSideEffects(info.mKnownToNotHaveSideEffects)
-{
-    if (info.mId)
-    {
-        mId = new TSymbolUniqueId(*info.mId);
-    }
-}
-
-TFunctionSymbolInfo &TFunctionSymbolInfo::operator=(const TFunctionSymbolInfo &info)
-{
-    mName = info.mName;
-    if (info.mId)
-    {
-        mId = new TSymbolUniqueId(*info.mId);
-    }
-    else
-    {
-        mId = nullptr;
-    }
-    return *this;
-}
-
-void TFunctionSymbolInfo::setId(const TSymbolUniqueId &id)
-{
-    mId = new TSymbolUniqueId(id);
-}
-
-const TSymbolUniqueId &TFunctionSymbolInfo::getId() const
-{
-    ASSERT(mId);
-    return *mId;
+    return mFunction->getReturnType();
 }
 
 TIntermAggregate::TIntermAggregate(const TIntermAggregate &node)
     : TIntermOperator(node),
       mUseEmulatedFunction(node.mUseEmulatedFunction),
       mGotPrecisionFromChildren(node.mGotPrecisionFromChildren),
-      mFunctionInfo(node.mFunctionInfo)
+      mFunction(node.mFunction)
 {
     for (TIntermNode *arg : node.mArguments)
     {
@@ -629,18 +1026,18 @@ TIntermAggregate *TIntermAggregate::shallowCopy() const
 {
     TIntermSequence *copySeq = new TIntermSequence();
     copySeq->insert(copySeq->begin(), getSequence()->begin(), getSequence()->end());
-    TIntermAggregate *copyNode         = new TIntermAggregate(mType, mOp, copySeq);
-    *copyNode->getFunctionSymbolInfo() = mFunctionInfo;
+    TIntermAggregate *copyNode = new TIntermAggregate(mFunction, mType, mOp, copySeq);
     copyNode->setLine(mLine);
     return copyNode;
 }
 
-TIntermSwizzle::TIntermSwizzle(const TIntermSwizzle &node) : TIntermTyped(node)
+TIntermSwizzle::TIntermSwizzle(const TIntermSwizzle &node) : TIntermExpression(node)
 {
     TIntermTyped *operandCopy = node.mOperand->deepCopy();
     ASSERT(operandCopy != nullptr);
-    mOperand = operandCopy;
-    mSwizzleOffsets = node.mSwizzleOffsets;
+    mOperand                   = operandCopy;
+    mSwizzleOffsets            = node.mSwizzleOffsets;
+    mHasFoldedDuplicateOffsets = node.mHasFoldedDuplicateOffsets;
 }
 
 TIntermBinary::TIntermBinary(const TIntermBinary &node)
@@ -654,14 +1051,16 @@ TIntermBinary::TIntermBinary(const TIntermBinary &node)
 }
 
 TIntermUnary::TIntermUnary(const TIntermUnary &node)
-    : TIntermOperator(node), mUseEmulatedFunction(node.mUseEmulatedFunction)
+    : TIntermOperator(node),
+      mUseEmulatedFunction(node.mUseEmulatedFunction),
+      mFunction(node.mFunction)
 {
     TIntermTyped *operandCopy = node.mOperand->deepCopy();
     ASSERT(operandCopy != nullptr);
     mOperand = operandCopy;
 }
 
-TIntermTernary::TIntermTernary(const TIntermTernary &node) : TIntermTyped(node)
+TIntermTernary::TIntermTernary(const TIntermTernary &node) : TIntermExpression(node)
 {
     TIntermTyped *conditionCopy = node.mCondition->deepCopy();
     TIntermTyped *trueCopy      = node.mTrueExpression->deepCopy();
@@ -861,8 +1260,8 @@ void TIntermUnary::promote()
                           static_cast<unsigned char>(mOperand->getType().getRows()),
                           static_cast<unsigned char>(mOperand->getType().getCols())));
             break;
-        case EOpIsInf:
-        case EOpIsNan:
+        case EOpIsinf:
+        case EOpIsnan:
             setType(TType(EbtBool, EbpUndefined, resultQualifier, operandPrimarySize));
             break;
         case EOpBitfieldReverse:
@@ -885,27 +1284,42 @@ void TIntermUnary::promote()
 }
 
 TIntermSwizzle::TIntermSwizzle(TIntermTyped *operand, const TVector<int> &swizzleOffsets)
-    : TIntermTyped(TType(EbtFloat, EbpUndefined)),
+    : TIntermExpression(TType(EbtFloat, EbpUndefined)),
       mOperand(operand),
-      mSwizzleOffsets(swizzleOffsets)
+      mSwizzleOffsets(swizzleOffsets),
+      mHasFoldedDuplicateOffsets(false)
 {
+    ASSERT(mOperand);
     ASSERT(mSwizzleOffsets.size() <= 4);
     promote();
 }
 
-TIntermUnary::TIntermUnary(TOperator op, TIntermTyped *operand)
-    : TIntermOperator(op), mOperand(operand), mUseEmulatedFunction(false)
+TIntermUnary::TIntermUnary(TOperator op, TIntermTyped *operand, const TFunction *function)
+    : TIntermOperator(op), mOperand(operand), mUseEmulatedFunction(false), mFunction(function)
 {
+    ASSERT(mOperand);
     promote();
 }
 
 TIntermBinary::TIntermBinary(TOperator op, TIntermTyped *left, TIntermTyped *right)
     : TIntermOperator(op), mLeft(left), mRight(right), mAddIndexClamp(false)
 {
+    ASSERT(mLeft);
+    ASSERT(mRight);
     promote();
 }
 
-TIntermInvariantDeclaration::TIntermInvariantDeclaration(TIntermSymbol *symbol, const TSourceLoc &line)
+TIntermBinary *TIntermBinary::CreateComma(TIntermTyped *left,
+                                          TIntermTyped *right,
+                                          int shaderVersion)
+{
+    TIntermBinary *node = new TIntermBinary(EOpComma, left, right);
+    node->getTypePointer()->setQualifier(GetCommaQualifier(shaderVersion, left, right));
+    return node;
+}
+
+TIntermInvariantDeclaration::TIntermInvariantDeclaration(TIntermSymbol *symbol,
+                                                         const TSourceLoc &line)
     : TIntermNode(), mSymbol(symbol)
 {
     ASSERT(symbol);
@@ -915,11 +1329,14 @@ TIntermInvariantDeclaration::TIntermInvariantDeclaration(TIntermSymbol *symbol, 
 TIntermTernary::TIntermTernary(TIntermTyped *cond,
                                TIntermTyped *trueExpression,
                                TIntermTyped *falseExpression)
-    : TIntermTyped(trueExpression->getType()),
+    : TIntermExpression(trueExpression->getType()),
       mCondition(cond),
       mTrueExpression(trueExpression),
       mFalseExpression(falseExpression)
 {
+    ASSERT(mCondition);
+    ASSERT(mTrueExpression);
+    ASSERT(mFalseExpression);
     getTypePointer()->setQualifier(
         TIntermTernary::DetermineQualifier(cond, trueExpression, falseExpression));
 }
@@ -943,6 +1360,7 @@ TIntermLoop::TIntermLoop(TLoopType type,
 TIntermIfElse::TIntermIfElse(TIntermTyped *cond, TIntermBlock *trueB, TIntermBlock *falseB)
     : TIntermNode(), mCondition(cond), mTrueBlock(trueB), mFalseBlock(falseB)
 {
+    ASSERT(mCondition);
     // Prune empty false blocks so that there won't be unnecessary operations done on it.
     if (mFalseBlock && mFalseBlock->getSequence()->empty())
     {
@@ -953,6 +1371,7 @@ TIntermIfElse::TIntermIfElse(TIntermTyped *cond, TIntermBlock *trueB, TIntermBlo
 TIntermSwitch::TIntermSwitch(TIntermTyped *init, TIntermBlock *statementList)
     : TIntermNode(), mInit(init), mStatementList(statementList)
 {
+    ASSERT(mInit);
     ASSERT(mStatementList);
 }
 
@@ -975,18 +1394,16 @@ TQualifier TIntermTernary::DetermineQualifier(TIntermTyped *cond,
     return EvqTemporary;
 }
 
-TIntermTyped *TIntermTernary::fold()
+TIntermTyped *TIntermTernary::fold(TDiagnostics * /* diagnostics */)
 {
     if (mCondition->getAsConstantUnion())
     {
         if (mCondition->getAsConstantUnion()->getBConst(0))
         {
-            mTrueExpression->getTypePointer()->setQualifier(mType.getQualifier());
             return mTrueExpression;
         }
         else
         {
-            mFalseExpression->getTypePointer()->setQualifier(mType.getQualifier());
             return mFalseExpression;
         }
     }
@@ -1006,6 +1423,10 @@ void TIntermSwizzle::promote()
 
 bool TIntermSwizzle::hasDuplicateOffsets() const
 {
+    if (mHasFoldedDuplicateOffsets)
+    {
+        return true;
+    }
     int offsetCount[4] = {0u, 0u, 0u, 0u};
     for (const auto offset : mSwizzleOffsets)
     {
@@ -1016,6 +1437,11 @@ bool TIntermSwizzle::hasDuplicateOffsets() const
         }
     }
     return false;
+}
+
+void TIntermSwizzle::setHasFoldedDuplicateOffsets(bool hasFoldedDuplicateOffsets)
+{
+    mHasFoldedDuplicateOffsets = hasFoldedDuplicateOffsets;
 }
 
 bool TIntermSwizzle::offsetsMatch(int offset) const
@@ -1269,26 +1695,38 @@ void TIntermBinary::promote()
     }
 }
 
-const TConstantUnion *TIntermConstantUnion::foldIndexing(int index)
+bool TIntermConstantUnion::hasConstantValue() const
 {
-    if (isArray())
+    return true;
+}
+
+const TConstantUnion *TIntermConstantUnion::getConstantValue() const
+{
+    return mUnionArrayPointer;
+}
+
+const TConstantUnion *TIntermConstantUnion::FoldIndexing(const TType &type,
+                                                         const TConstantUnion *constArray,
+                                                         int index)
+{
+    if (type.isArray())
     {
-        ASSERT(index < static_cast<int>(getType().getOutermostArraySize()));
-        TType arrayElementType = getType();
+        ASSERT(index < static_cast<int>(type.getOutermostArraySize()));
+        TType arrayElementType(type);
         arrayElementType.toArrayElementType();
         size_t arrayElementSize = arrayElementType.getObjectSize();
-        return &mUnionArrayPointer[arrayElementSize * index];
+        return &constArray[arrayElementSize * index];
     }
-    else if (isMatrix())
+    else if (type.isMatrix())
     {
-        ASSERT(index < getType().getCols());
-        int size = getType().getRows();
-        return &mUnionArrayPointer[size * index];
+        ASSERT(index < type.getCols());
+        int size = type.getRows();
+        return &constArray[size * index];
     }
-    else if (isVector())
+    else if (type.isVector())
     {
-        ASSERT(index < getType().getNominalSize());
-        return &mUnionArrayPointer[index];
+        ASSERT(index < type.getNominalSize());
+        return &constArray[index];
     }
     else
     {
@@ -1297,8 +1735,26 @@ const TConstantUnion *TIntermConstantUnion::foldIndexing(int index)
     }
 }
 
-TIntermTyped *TIntermSwizzle::fold()
+TIntermTyped *TIntermSwizzle::fold(TDiagnostics * /* diagnostics */)
 {
+    TIntermSwizzle *operandSwizzle = mOperand->getAsSwizzleNode();
+    if (operandSwizzle)
+    {
+        // We need to fold the two swizzles into one, so that repeated swizzling can't cause stack
+        // overflow in ParseContext::checkCanBeLValue().
+        bool hadDuplicateOffsets = operandSwizzle->hasDuplicateOffsets();
+        TVector<int> foldedOffsets;
+        for (int offset : mSwizzleOffsets)
+        {
+            // Offset should already be validated.
+            ASSERT(static_cast<size_t>(offset) < operandSwizzle->mSwizzleOffsets.size());
+            foldedOffsets.push_back(operandSwizzle->mSwizzleOffsets[offset]);
+        }
+        operandSwizzle->mSwizzleOffsets = foldedOffsets;
+        operandSwizzle->setType(getType());
+        operandSwizzle->setHasFoldedDuplicateOffsets(hadDuplicateOffsets);
+        return operandSwizzle;
+    }
     TIntermConstantUnion *operandConstant = mOperand->getAsConstantUnion();
     if (operandConstant == nullptr)
     {
@@ -1308,15 +1764,15 @@ TIntermTyped *TIntermSwizzle::fold()
     TConstantUnion *constArray = new TConstantUnion[mSwizzleOffsets.size()];
     for (size_t i = 0; i < mSwizzleOffsets.size(); ++i)
     {
-        constArray[i] = *operandConstant->foldIndexing(mSwizzleOffsets.at(i));
+        constArray[i] = *TIntermConstantUnion::FoldIndexing(
+            operandConstant->getType(), operandConstant->getConstantValue(), mSwizzleOffsets.at(i));
     }
-    return CreateFoldedNode(constArray, this, mType.getQualifier());
+    return CreateFoldedNode(constArray, this);
 }
 
 TIntermTyped *TIntermBinary::fold(TDiagnostics *diagnostics)
 {
-    TIntermConstantUnion *leftConstant  = mLeft->getAsConstantUnion();
-    TIntermConstantUnion *rightConstant = mRight->getAsConstantUnion();
+    const TConstantUnion *rightConstant = mRight->getConstantValue();
     switch (mOp)
     {
         case EOpComma:
@@ -1325,63 +1781,127 @@ TIntermTyped *TIntermBinary::fold(TDiagnostics *diagnostics)
             {
                 return this;
             }
-            mRight->getTypePointer()->setQualifier(mType.getQualifier());
             return mRight;
         }
         case EOpIndexDirect:
-        {
-            if (leftConstant == nullptr || rightConstant == nullptr)
-            {
-                return this;
-            }
-            int index = rightConstant->getIConst(0);
-
-            const TConstantUnion *constArray = leftConstant->foldIndexing(index);
-            if (!constArray)
-            {
-                return this;
-            }
-            return CreateFoldedNode(constArray, this, mType.getQualifier());
-        }
         case EOpIndexDirectStruct:
         {
-            if (leftConstant == nullptr || rightConstant == nullptr)
+            if (rightConstant == nullptr)
             {
                 return this;
             }
-            const TFieldList &fields = mLeft->getType().getStruct()->fields();
-            size_t index             = static_cast<size_t>(rightConstant->getIConst(0));
-
-            size_t previousFieldsSize = 0;
-            for (size_t i = 0; i < index; ++i)
+            size_t index                    = static_cast<size_t>(rightConstant->getIConst());
+            TIntermAggregate *leftAggregate = mLeft->getAsAggregate();
+            if (leftAggregate && leftAggregate->isConstructor() && leftAggregate->isArray() &&
+                !leftAggregate->hasSideEffects())
             {
-                previousFieldsSize += fields[i]->type()->getObjectSize();
+                ASSERT(index < leftAggregate->getSequence()->size());
+                // This transformation can't add complexity as we're eliminating the constructor
+                // entirely.
+                return leftAggregate->getSequence()->at(index)->getAsTyped();
             }
 
-            const TConstantUnion *constArray = leftConstant->getUnionArrayPointer();
-            return CreateFoldedNode(constArray + previousFieldsSize, this, mType.getQualifier());
+            // If the indexed value is already a constant union, we can't increase duplication of
+            // data by folding the indexing. Also fold the node in case it's generally beneficial to
+            // replace this type of node with a constant union even if that would mean duplicating
+            // data.
+            if (mLeft->getAsConstantUnion() || getType().canReplaceWithConstantUnion())
+            {
+                const TConstantUnion *constantValue = getConstantValue();
+                if (constantValue == nullptr)
+                {
+                    return this;
+                }
+                return CreateFoldedNode(constantValue, this);
+            }
+            return this;
         }
         case EOpIndexIndirect:
         case EOpIndexDirectInterfaceBlock:
+        case EOpInitialize:
             // Can never be constant folded.
             return this;
         default:
         {
-            if (leftConstant == nullptr || rightConstant == nullptr)
+            if (rightConstant == nullptr)
             {
                 return this;
             }
-            TConstantUnion *constArray =
-                leftConstant->foldBinary(mOp, rightConstant, diagnostics, mLeft->getLine());
+            const TConstantUnion *leftConstant = mLeft->getConstantValue();
+            if (leftConstant == nullptr)
+            {
+                return this;
+            }
+            const TConstantUnion *constArray =
+                TIntermConstantUnion::FoldBinary(mOp, leftConstant, mLeft->getType(), rightConstant,
+                                                 mRight->getType(), diagnostics, mLeft->getLine());
             if (!constArray)
             {
                 return this;
             }
-
-            // Nodes may be constant folded without being qualified as constant.
-            return CreateFoldedNode(constArray, this, mType.getQualifier());
+            return CreateFoldedNode(constArray, this);
         }
     }
+}
+
+bool TIntermBinary::hasConstantValue() const
+{
+    switch (mOp)
+    {
+        case EOpIndexDirect:
+        case EOpIndexDirectStruct:
+        {
+            if (mLeft->hasConstantValue() && mRight->hasConstantValue())
+            {
+                return true;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    return false;
+}
+
+const TConstantUnion *TIntermBinary::getConstantValue() const
+{
+    if (!hasConstantValue())
+    {
+        return nullptr;
+    }
+
+    const TConstantUnion *leftConstantValue   = mLeft->getConstantValue();
+    int index                                 = mRight->getConstantValue()->getIConst();
+    const TConstantUnion *constIndexingResult = nullptr;
+    if (mOp == EOpIndexDirect)
+    {
+        constIndexingResult =
+            TIntermConstantUnion::FoldIndexing(mLeft->getType(), leftConstantValue, index);
+    }
+    else
+    {
+        ASSERT(mOp == EOpIndexDirectStruct);
+        const TFieldList &fields = mLeft->getType().getStruct()->fields();
+
+        size_t previousFieldsSize = 0;
+        for (int i = 0; i < index; ++i)
+        {
+            previousFieldsSize += fields[i]->type()->getObjectSize();
+        }
+        constIndexingResult = leftConstantValue + previousFieldsSize;
+    }
+    return constIndexingResult;
+}
+
+const ImmutableString &TIntermBinary::getIndexStructFieldName() const
+{
+    ASSERT(mOp == EOpIndexDirectStruct);
+
+    const TType &lhsType        = mLeft->getType();
+    const TStructure *structure = lhsType.getStruct();
+    const int index             = mRight->getAsConstantUnion()->getIConst(0);
+
+    return structure->fields()[index]->name();
 }
 
 TIntermTyped *TIntermUnary::fold(TDiagnostics *diagnostics)
@@ -1435,9 +1955,7 @@ TIntermTyped *TIntermUnary::fold(TDiagnostics *diagnostics)
     {
         return this;
     }
-
-    // Nodes may be constant folded without being qualified as constant.
-    return CreateFoldedNode(constArray, this, mType.getQualifier());
+    return CreateFoldedNode(constArray, this);
 }
 
 TIntermTyped *TIntermAggregate::fold(TDiagnostics *diagnostics)
@@ -1450,14 +1968,49 @@ TIntermTyped *TIntermAggregate::fold(TDiagnostics *diagnostics)
             return this;
         }
     }
-    TConstantUnion *constArray = nullptr;
+    const TConstantUnion *constArray = nullptr;
     if (isConstructor())
-        constArray = TIntermConstantUnion::FoldAggregateConstructor(this);
-    else
+    {
+        if (mType.canReplaceWithConstantUnion())
+        {
+            constArray = getConstantValue();
+            if (constArray && mType.getBasicType() == EbtUInt)
+            {
+                // Check if we converted a negative float to uint and issue a warning in that case.
+                size_t sizeRemaining = mType.getObjectSize();
+                for (TIntermNode *arg : mArguments)
+                {
+                    TIntermTyped *typedArg = arg->getAsTyped();
+                    if (typedArg->getBasicType() == EbtFloat)
+                    {
+                        const TConstantUnion *argValue = typedArg->getConstantValue();
+                        size_t castSize =
+                            std::min(typedArg->getType().getObjectSize(), sizeRemaining);
+                        for (size_t i = 0; i < castSize; ++i)
+                        {
+                            if (argValue[i].getFConst() < 0.0f)
+                            {
+                                // ESSL 3.00.6 section 5.4.1.
+                                diagnostics->warning(
+                                    mLine, "casting a negative float to uint is undefined",
+                                    mType.getBuiltInTypeNameString());
+                            }
+                        }
+                    }
+                    sizeRemaining -= typedArg->getType().getObjectSize();
+                }
+            }
+        }
+    }
+    else if (CanFoldAggregateBuiltInOp(mOp))
+    {
         constArray = TIntermConstantUnion::FoldAggregateBuiltIn(this, diagnostics);
-
-    // Nodes may be constant folded without being qualified as constant.
-    return CreateFoldedNode(constArray, this, getQualifier());
+    }
+    if (constArray == nullptr)
+    {
+        return this;
+    }
+    return CreateFoldedNode(constArray, this);
 }
 
 //
@@ -1466,28 +2019,28 @@ TIntermTyped *TIntermAggregate::fold(TDiagnostics *diagnostics)
 //
 // Returns the constant value to keep using or nullptr.
 //
-TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
-                                                 TIntermConstantUnion *rightNode,
-                                                 TDiagnostics *diagnostics,
-                                                 const TSourceLoc &line)
+const TConstantUnion *TIntermConstantUnion::FoldBinary(TOperator op,
+                                                       const TConstantUnion *leftArray,
+                                                       const TType &leftType,
+                                                       const TConstantUnion *rightArray,
+                                                       const TType &rightType,
+                                                       TDiagnostics *diagnostics,
+                                                       const TSourceLoc &line)
 {
-    const TConstantUnion *leftArray  = getUnionArrayPointer();
-    const TConstantUnion *rightArray = rightNode->getUnionArrayPointer();
-
     ASSERT(leftArray && rightArray);
 
-    size_t objectSize = getType().getObjectSize();
+    size_t objectSize = leftType.getObjectSize();
 
     // for a case like float f = vec4(2, 3, 4, 5) + 1.2;
-    if (rightNode->getType().getObjectSize() == 1 && objectSize > 1)
+    if (rightType.getObjectSize() == 1 && objectSize > 1)
     {
-        rightArray = Vectorize(*rightNode->getUnionArrayPointer(), objectSize);
+        rightArray = Vectorize(*rightArray, objectSize);
     }
-    else if (rightNode->getType().getObjectSize() > 1 && objectSize == 1)
+    else if (rightType.getObjectSize() > 1 && objectSize == 1)
     {
         // for a case like float f = 1.2 + vec4(2, 3, 4, 5);
-        leftArray  = Vectorize(*getUnionArrayPointer(), rightNode->getType().getObjectSize());
-        objectSize = rightNode->getType().getObjectSize();
+        leftArray  = Vectorize(*leftArray, rightType.getObjectSize());
+        objectSize = rightType.getObjectSize();
     }
 
     TConstantUnion *resultArray = nullptr;
@@ -1519,12 +2072,12 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
         case EOpMatrixTimesMatrix:
         {
             // TODO(jmadll): This code should check for overflows.
-            ASSERT(getType().getBasicType() == EbtFloat && rightNode->getBasicType() == EbtFloat);
+            ASSERT(leftType.getBasicType() == EbtFloat && rightType.getBasicType() == EbtFloat);
 
-            const int leftCols   = getCols();
-            const int leftRows   = getRows();
-            const int rightCols  = rightNode->getType().getCols();
-            const int rightRows  = rightNode->getType().getRows();
+            const int leftCols   = leftType.getCols();
+            const int leftRows   = leftType.getRows();
+            const int rightCols  = rightType.getCols();
+            const int rightRows  = rightType.getRows();
             const int resultCols = rightCols;
             const int resultRows = leftRows;
 
@@ -1552,7 +2105,7 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
             resultArray = new TConstantUnion[objectSize];
             for (size_t i = 0; i < objectSize; i++)
             {
-                switch (getType().getBasicType())
+                switch (leftType.getBasicType())
                 {
                     case EbtFloat:
                     {
@@ -1564,15 +2117,15 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
                             if (dividend == 0.0f)
                             {
                                 diagnostics->warning(
-                                    getLine(),
+                                    line,
                                     "Zero divided by zero during constant folding generated NaN",
                                     "/");
                                 resultArray[i].setFConst(std::numeric_limits<float>::quiet_NaN());
                             }
                             else
                             {
-                                diagnostics->warning(getLine(),
-                                                     "Divide by zero during constant folding", "/");
+                                diagnostics->warning(line, "Divide by zero during constant folding",
+                                                     "/");
                                 bool negativeResult =
                                     std::signbit(dividend) != std::signbit(divisor);
                                 resultArray[i].setFConst(
@@ -1582,7 +2135,7 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
                         }
                         else if (gl::isInf(dividend) && gl::isInf(divisor))
                         {
-                            diagnostics->warning(getLine(),
+                            diagnostics->warning(line,
                                                  "Infinity divided by infinity during constant "
                                                  "folding generated NaN",
                                                  "/");
@@ -1594,8 +2147,7 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
                             if (!gl::isInf(dividend) && gl::isInf(result))
                             {
                                 diagnostics->warning(
-                                    getLine(), "Constant folded division overflowed to infinity",
-                                    "/");
+                                    line, "Constant folded division overflowed to infinity", "/");
                             }
                             resultArray[i].setFConst(result);
                         }
@@ -1605,7 +2157,7 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
                         if (rightArray[i] == 0)
                         {
                             diagnostics->warning(
-                                getLine(), "Divide by zero error during constant folding", "/");
+                                line, "Divide by zero error during constant folding", "/");
                             resultArray[i].setIConst(INT_MAX);
                         }
                         else
@@ -1637,11 +2189,11 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
                                 if (lhs < 0 || divisor < 0)
                                 {
                                     // ESSL 3.00.6 section 5.9: Results of modulus are undefined
-                                    // when
-                                    // either one of the operands is negative.
-                                    diagnostics->warning(getLine(),
+                                    // when either one of the operands is negative.
+                                    diagnostics->warning(line,
                                                          "Negative modulus operator operand "
-                                                         "encountered during constant folding",
+                                                         "encountered during constant folding. "
+                                                         "Results are undefined.",
                                                          "%");
                                     resultArray[i].setIConst(0);
                                 }
@@ -1657,7 +2209,7 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
                         if (rightArray[i] == 0)
                         {
                             diagnostics->warning(
-                                getLine(), "Divide by zero error during constant folding", "/");
+                                line, "Divide by zero error during constant folding", "/");
                             resultArray[i].setUConst(UINT_MAX);
                         }
                         else
@@ -1687,10 +2239,10 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
         case EOpMatrixTimesVector:
         {
             // TODO(jmadll): This code should check for overflows.
-            ASSERT(rightNode->getBasicType() == EbtFloat);
+            ASSERT(rightType.getBasicType() == EbtFloat);
 
-            const int matrixCols = getCols();
-            const int matrixRows = getRows();
+            const int matrixCols = leftType.getCols();
+            const int matrixRows = leftType.getRows();
 
             resultArray = new TConstantUnion[matrixRows];
 
@@ -1711,10 +2263,10 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
         case EOpVectorTimesMatrix:
         {
             // TODO(jmadll): This code should check for overflows.
-            ASSERT(getType().getBasicType() == EbtFloat);
+            ASSERT(leftType.getBasicType() == EbtFloat);
 
-            const int matrixCols = rightNode->getType().getCols();
-            const int matrixRows = rightNode->getType().getRows();
+            const int matrixCols = rightType.getCols();
+            const int matrixRows = rightType.getRows();
 
             resultArray = new TConstantUnion[matrixCols];
 
@@ -1754,7 +2306,7 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
 
         case EOpLogicalXor:
         {
-            ASSERT(getType().getBasicType() == EbtBool);
+            ASSERT(leftType.getBasicType() == EbtBool);
             resultArray = new TConstantUnion[objectSize];
             for (size_t i = 0; i < objectSize; i++)
             {
@@ -1765,17 +2317,17 @@ TConstantUnion *TIntermConstantUnion::foldBinary(TOperator op,
 
         case EOpBitwiseAnd:
             resultArray = new TConstantUnion[objectSize];
-            for (size_t i      = 0; i < objectSize; i++)
+            for (size_t i = 0; i < objectSize; i++)
                 resultArray[i] = leftArray[i] & rightArray[i];
             break;
         case EOpBitwiseXor:
             resultArray = new TConstantUnion[objectSize];
-            for (size_t i      = 0; i < objectSize; i++)
+            for (size_t i = 0; i < objectSize; i++)
                 resultArray[i] = leftArray[i] ^ rightArray[i];
             break;
         case EOpBitwiseOr:
             resultArray = new TConstantUnion[objectSize];
-            for (size_t i      = 0; i < objectSize; i++)
+            for (size_t i = 0; i < objectSize; i++)
                 resultArray[i] = leftArray[i] | rightArray[i];
             break;
         case EOpBitShiftLeft:
@@ -1853,7 +2405,7 @@ TConstantUnion *TIntermConstantUnion::foldUnaryNonComponentWise(TOperator op)
     // Do operations where the return type may have a different number of components compared to the
     // operand type.
 
-    const TConstantUnion *operandArray = getUnionArrayPointer();
+    const TConstantUnion *operandArray = getConstantValue();
     ASSERT(operandArray);
 
     size_t objectSize           = getType().getObjectSize();
@@ -2040,7 +2592,7 @@ TConstantUnion *TIntermConstantUnion::foldUnaryComponentWise(TOperator op,
     // component of the operand. Also folds normalize, though the divisor in that case takes all
     // components into account.
 
-    const TConstantUnion *operandArray = getUnionArrayPointer();
+    const TConstantUnion *operandArray = getConstantValue();
     ASSERT(operandArray);
 
     size_t objectSize = getType().getObjectSize();
@@ -2299,12 +2851,12 @@ TConstantUnion *TIntermConstantUnion::foldUnaryComponentWise(TOperator op,
                 break;
             }
 
-            case EOpIsNan:
+            case EOpIsnan:
                 ASSERT(getType().getBasicType() == EbtFloat);
                 resultArray[i].setBConst(gl::isNaN(operandArray[0].getFConst()));
                 break;
 
-            case EOpIsInf:
+            case EOpIsinf:
                 ASSERT(getType().getBasicType() == EbtFloat);
                 resultArray[i].setBConst(gl::isInf(operandArray[0].getFConst()));
                 break;
@@ -2369,7 +2921,7 @@ TConstantUnion *TIntermConstantUnion::foldUnaryComponentWise(TOperator op,
                     foldFloatTypeUnary(operandArray[i], &sqrtf, &resultArray[i]);
                 break;
 
-            case EOpInverseSqrt:
+            case EOpInversesqrt:
                 // There is no stdlib built-in function equavalent for GLES built-in inversesqrt(),
                 // so getting the square root first using builtin function sqrt() and then taking
                 // its inverse.
@@ -2505,145 +3057,10 @@ void TIntermConstantUnion::foldFloatTypeUnary(const TConstantUnion &parameter,
 }
 
 // static
-TConstantUnion *TIntermConstantUnion::FoldAggregateConstructor(TIntermAggregate *aggregate)
-{
-    ASSERT(aggregate->getSequence()->size() > 0u);
-    size_t resultSize           = aggregate->getType().getObjectSize();
-    TConstantUnion *resultArray = new TConstantUnion[resultSize];
-    TBasicType basicType        = aggregate->getBasicType();
-
-    size_t resultIndex = 0u;
-
-    if (aggregate->getSequence()->size() == 1u)
-    {
-        TIntermNode *argument                    = aggregate->getSequence()->front();
-        TIntermConstantUnion *argumentConstant   = argument->getAsConstantUnion();
-        const TConstantUnion *argumentUnionArray = argumentConstant->getUnionArrayPointer();
-        // Check the special case of constructing a matrix diagonal from a single scalar,
-        // or a vector from a single scalar.
-        if (argumentConstant->getType().getObjectSize() == 1u)
-        {
-            if (aggregate->isMatrix())
-            {
-                int resultCols = aggregate->getType().getCols();
-                int resultRows = aggregate->getType().getRows();
-                for (int col = 0; col < resultCols; ++col)
-                {
-                    for (int row = 0; row < resultRows; ++row)
-                    {
-                        if (col == row)
-                        {
-                            resultArray[resultIndex].cast(basicType, argumentUnionArray[0]);
-                        }
-                        else
-                        {
-                            resultArray[resultIndex].setFConst(0.0f);
-                        }
-                        ++resultIndex;
-                    }
-                }
-            }
-            else
-            {
-                while (resultIndex < resultSize)
-                {
-                    resultArray[resultIndex].cast(basicType, argumentUnionArray[0]);
-                    ++resultIndex;
-                }
-            }
-            ASSERT(resultIndex == resultSize);
-            return resultArray;
-        }
-        else if (aggregate->isMatrix() && argumentConstant->isMatrix())
-        {
-            // The special case of constructing a matrix from a matrix.
-            int argumentCols = argumentConstant->getType().getCols();
-            int argumentRows = argumentConstant->getType().getRows();
-            int resultCols   = aggregate->getType().getCols();
-            int resultRows   = aggregate->getType().getRows();
-            for (int col = 0; col < resultCols; ++col)
-            {
-                for (int row = 0; row < resultRows; ++row)
-                {
-                    if (col < argumentCols && row < argumentRows)
-                    {
-                        resultArray[resultIndex].cast(basicType,
-                                                      argumentUnionArray[col * argumentRows + row]);
-                    }
-                    else if (col == row)
-                    {
-                        resultArray[resultIndex].setFConst(1.0f);
-                    }
-                    else
-                    {
-                        resultArray[resultIndex].setFConst(0.0f);
-                    }
-                    ++resultIndex;
-                }
-            }
-            ASSERT(resultIndex == resultSize);
-            return resultArray;
-        }
-    }
-
-    for (TIntermNode *&argument : *aggregate->getSequence())
-    {
-        TIntermConstantUnion *argumentConstant   = argument->getAsConstantUnion();
-        size_t argumentSize                      = argumentConstant->getType().getObjectSize();
-        const TConstantUnion *argumentUnionArray = argumentConstant->getUnionArrayPointer();
-        for (size_t i = 0u; i < argumentSize; ++i)
-        {
-            if (resultIndex >= resultSize)
-                break;
-            resultArray[resultIndex].cast(basicType, argumentUnionArray[i]);
-            ++resultIndex;
-        }
-    }
-    ASSERT(resultIndex == resultSize);
-    return resultArray;
-}
-
-bool TIntermAggregate::CanFoldAggregateBuiltInOp(TOperator op)
-{
-    switch (op)
-    {
-        case EOpAtan:
-        case EOpPow:
-        case EOpMod:
-        case EOpMin:
-        case EOpMax:
-        case EOpClamp:
-        case EOpMix:
-        case EOpStep:
-        case EOpSmoothStep:
-        case EOpLdexp:
-        case EOpMulMatrixComponentWise:
-        case EOpOuterProduct:
-        case EOpEqualComponentWise:
-        case EOpNotEqualComponentWise:
-        case EOpLessThanComponentWise:
-        case EOpLessThanEqualComponentWise:
-        case EOpGreaterThanComponentWise:
-        case EOpGreaterThanEqualComponentWise:
-        case EOpDistance:
-        case EOpDot:
-        case EOpCross:
-        case EOpFaceforward:
-        case EOpReflect:
-        case EOpRefract:
-        case EOpBitfieldExtract:
-        case EOpBitfieldInsert:
-            return true;
-        default:
-            return false;
-    }
-}
-
-// static
 TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *aggregate,
                                                            TDiagnostics *diagnostics)
 {
-    TOperator op              = aggregate->getOp();
+    TOperator op               = aggregate->getOp();
     TIntermSequence *arguments = aggregate->getSequence();
     unsigned int argsCount     = static_cast<unsigned int>(arguments->size());
     std::vector<const TConstantUnion *> unionArrays(argsCount);
@@ -2661,7 +3078,7 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
             basicType = argConstant->getType().getBasicType();
             loc       = argConstant->getLine();
         }
-        unionArrays[i] = argConstant->getUnionArrayPointer();
+        unionArrays[i] = argConstant->getConstantValue();
         objectSizes[i] = argConstant->getType().getObjectSize();
         if (objectSizes[i] > maxObjectSize)
             maxObjectSize = objectSizes[i];
@@ -3021,10 +3438,12 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
             ASSERT(basicType == EbtFloat && (*arguments)[0]->getAsTyped()->isMatrix() &&
                    (*arguments)[1]->getAsTyped()->isMatrix());
             // Perform component-wise matrix multiplication.
-            resultArray = new TConstantUnion[maxObjectSize];
-            int size    = (*arguments)[0]->getAsTyped()->getNominalSize();
-            angle::Matrix<float> result =
-                GetMatrix(unionArrays[0], size).compMult(GetMatrix(unionArrays[1], size));
+            resultArray                 = new TConstantUnion[maxObjectSize];
+            int rows                    = (*arguments)[0]->getAsTyped()->getRows();
+            int cols                    = (*arguments)[0]->getAsTyped()->getCols();
+            angle::Matrix<float> lhs    = GetMatrix(unionArrays[0], rows, cols);
+            angle::Matrix<float> rhs    = GetMatrix(unionArrays[1], rows, cols);
+            angle::Matrix<float> result = lhs.compMult(rhs);
             SetUnionArrayFromMatrix(result, resultArray);
             break;
         }
@@ -3127,7 +3546,7 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
             break;
         }
 
-        case EOpSmoothStep:
+        case EOpSmoothstep:
         {
             ASSERT(basicType == EbtFloat);
             resultArray = new TConstantUnion[maxObjectSize];
@@ -3327,4 +3746,22 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
     return resultArray;
 }
 
+// TIntermPreprocessorDirective implementation.
+TIntermPreprocessorDirective::TIntermPreprocessorDirective(PreprocessorDirective directive,
+                                                           ImmutableString command)
+    : mDirective(directive), mCommand(std::move(command))
+{}
+
+TIntermPreprocessorDirective::~TIntermPreprocessorDirective() = default;
+
+size_t TIntermPreprocessorDirective::getChildCount() const
+{
+    return 0;
+}
+
+TIntermNode *TIntermPreprocessorDirective::getChildNode(size_t index) const
+{
+    UNREACHABLE();
+    return nullptr;
+}
 }  // namespace sh

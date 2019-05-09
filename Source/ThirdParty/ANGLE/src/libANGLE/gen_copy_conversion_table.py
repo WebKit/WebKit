@@ -5,6 +5,7 @@
 #
 # gen_copy_conversion_table.py:
 #  Code generation for ES3 valid copy conversions table format map.
+#  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
 from datetime import date
 import sys
@@ -64,28 +65,51 @@ def parse_texture_format_case(texture_format, framebuffer_formats):
     return template_format_case.format(
         texture_format = texture_format, framebuffer_format_cases = framebuffer_format_cases)
 
-data_source_name = 'es3_copy_conversion_formats.json'
 
-json_data = angle_format.load_json(data_source_name)
+def main():
 
-format_map = {}
+    data_source_name = 'es3_copy_conversion_formats.json'
+    out_file_name = 'es3_copy_conversion_table_autogen.cpp'
 
-for description, data in json_data.iteritems():
-    for texture_format, framebuffer_format in data:
-        if texture_format not in format_map:
-            format_map[texture_format] = []
-        format_map[texture_format] += [ framebuffer_format ]
+    # auto_script parameters.
+    if len(sys.argv) > 1:
+        inputs = [data_source_name]
+        outputs = [out_file_name]
 
-texture_format_cases = ""
+        if sys.argv[1] == 'inputs':
+            print ','.join(inputs)
+        elif sys.argv[1] == 'outputs':
+            print ','.join(outputs)
+        else:
+            print('Invalid script parameters')
+            return 1
+        return 0
 
-for texture_format, framebuffer_formats in sorted(format_map.iteritems()):
-    texture_format_cases += parse_texture_format_case(texture_format, framebuffer_formats)
+    json_data = angle_format.load_json(data_source_name)
 
-with open('es3_copy_conversion_table_autogen.cpp', 'wt') as out_file:
-    output_cpp = template_cpp.format(
-        script_name = sys.argv[0],
-        data_source_name = data_source_name,
-        copyright_year = date.today().year,
-        texture_format_cases = texture_format_cases)
-    out_file.write(output_cpp)
-    out_file.close()
+    format_map = {}
+
+    for description, data in json_data.iteritems():
+        for texture_format, framebuffer_format in data:
+            if texture_format not in format_map:
+                format_map[texture_format] = []
+            format_map[texture_format] += [ framebuffer_format ]
+
+    texture_format_cases = ""
+
+    for texture_format, framebuffer_formats in sorted(format_map.iteritems()):
+        texture_format_cases += parse_texture_format_case(texture_format, framebuffer_formats)
+
+    with open(out_file_name, 'wt') as out_file:
+        output_cpp = template_cpp.format(
+            script_name = sys.argv[0],
+            data_source_name = data_source_name,
+            copyright_year = date.today().year,
+            texture_format_cases = texture_format_cases)
+        out_file.write(output_cpp)
+        out_file.close()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

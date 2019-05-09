@@ -3,10 +3,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+
 #include "gtest/gtest.h"
+
 #include "angle_gl.h"
-#include "common/utilities.h"
 #include "common/angleutils.h"
+#include "common/utilities.h"
 #include "compiler/translator/VariablePacker.h"
 
 namespace

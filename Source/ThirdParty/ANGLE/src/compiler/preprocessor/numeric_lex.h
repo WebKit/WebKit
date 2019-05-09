@@ -9,8 +9,10 @@
 #ifndef COMPILER_PREPROCESSOR_NUMERICLEX_H_
 #define COMPILER_PREPROCESSOR_NUMERICLEX_H_
 
-#include <cmath>
 #include <sstream>
+
+namespace angle
+{
 
 namespace pp
 {
@@ -45,28 +47,8 @@ bool numeric_lex_int(const std::string &str, IntType *value)
     return !stream.fail();
 }
 
-template <typename FloatType>
-bool numeric_lex_float(const std::string &str, FloatType *value)
-{
-// On 64-bit Intel Android, istringstream is broken.  Until this is fixed in
-// a newer NDK, don't use it.  Android doesn't have locale support, so this
-// doesn't have to force the C locale.
-// TODO(thakis): Remove this once this bug has been fixed in the NDK and
-// that NDK has been rolled into chromium.
-#if defined(ANGLE_PLATFORM_ANDROID) && __x86_64__
-    *value = strtod(str.c_str(), nullptr);
-    return errno != ERANGE;
-#else
-    std::istringstream stream(str);
-    // Force "C" locale so that decimal character is always '.', and
-    // not dependent on the current locale.
-    stream.imbue(std::locale::classic());
+}  // namespace pp
 
-    stream >> (*value);
-    return !stream.fail() && std::isfinite(*value);
-#endif
-}
-
-}  // namespace pp.
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_NUMERICLEX_H_

@@ -7,11 +7,12 @@
 // Tests for images
 //
 
-#include "angle_gl.h"
-#include "gtest/gtest.h"
 #include "GLSLANG/ShaderLang.h"
-#include "tests/test_utils/compiler_test.h"
+#include "angle_gl.h"
+#include "compiler/translator/StaticType.h"
+#include "gtest/gtest.h"
 #include "tests/test_utils/ShaderCompileTreeTest.h"
+#include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
 
@@ -86,7 +87,7 @@ void CheckExportedImageUniform(const std::vector<sh::Uniform> &uniforms,
 // Checks whether the image is saved in the AST as a node with the correct properties given the
 // shader.
 void CheckImageDeclaration(TIntermNode *astRoot,
-                           const TString &imageName,
+                           const ImmutableString &imageName,
                            TBasicType imageType,
                            TLayoutImageInternalFormat internalFormat,
                            bool readonly,
@@ -96,9 +97,10 @@ void CheckImageDeclaration(TIntermNode *astRoot,
                            bool volatileQualifier,
                            int binding)
 {
-    const TIntermSymbol *myImageNode = FindSymbolNode(astRoot, imageName, imageType);
+    const TIntermSymbol *myImageNode = FindSymbolNode(astRoot, imageName);
     ASSERT_NE(nullptr, myImageNode);
 
+    ASSERT_EQ(imageType, myImageNode->getBasicType());
     const TType &myImageType                = myImageNode->getType();
     TLayoutQualifier myImageLayoutQualifier = myImageType.getLayoutQualifier();
     ASSERT_EQ(internalFormat, myImageLayoutQualifier.imageInternalFormat);
@@ -145,8 +147,8 @@ TEST_F(ShaderImageTest, Image2DDeclaration)
     }
 
     CheckExportedImageUniform(getUniforms(), 0, GL_IMAGE_2D, "myImage");
-    CheckImageDeclaration(mASTRoot, "myImage", EbtImage2D, EiifRGBA32F, true, false, false, false,
-                          false, 1);
+    CheckImageDeclaration(mASTRoot, ImmutableString("myImage"), EbtImage2D, EiifRGBA32F, true,
+                          false, false, false, false, 1);
 }
 
 // Test that an image3D is properly parsed and exported as a uniform.
@@ -165,8 +167,8 @@ TEST_F(ShaderImageTest, Image3DDeclaration)
     }
 
     CheckExportedImageUniform(getUniforms(), 0, GL_UNSIGNED_INT_IMAGE_3D, "myImage");
-    CheckImageDeclaration(mASTRoot, "myImage", EbtUImage3D, EiifRGBA32UI, true, true, false, false,
-                          false, 3);
+    CheckImageDeclaration(mASTRoot, ImmutableString("myImage"), EbtUImage3D, EiifRGBA32UI, true,
+                          true, false, false, false, 3);
 }
 
 // Check that imageLoad calls get correctly parsed.
@@ -187,10 +189,16 @@ TEST_F(ShaderImageTest, ImageLoad)
     }
 
     // imageLoad call with image2D passed
-    CheckImageLoadCall(mASTRoot, "imageLoad(im21;vi2;", EbtImage2D, 2);
+    std::string mangledName2D = "imageLoad(";
+    mangledName2D += StaticType::GetBasic<EbtImage2D>()->getMangledName();
+    mangledName2D += StaticType::GetBasic<EbtInt, 2>()->getMangledName();
+    CheckImageLoadCall(mASTRoot, mangledName2D.c_str(), EbtImage2D, 2);
 
     // imageLoad call with image3D passed
-    CheckImageLoadCall(mASTRoot, "imageLoad(iim31;vi3;", EbtIImage3D, 3);
+    std::string mangledName3D = "imageLoad(";
+    mangledName3D += StaticType::GetBasic<EbtIImage3D>()->getMangledName();
+    mangledName3D += StaticType::GetBasic<EbtInt, 3>()->getMangledName();
+    CheckImageLoadCall(mASTRoot, mangledName3D.c_str(), EbtIImage3D, 3);
 }
 
 // Check that imageStore calls get correctly parsed.
@@ -211,10 +219,18 @@ TEST_F(ShaderImageTest, ImageStore)
     }
 
     // imageStore call with image2D
-    CheckImageStoreCall(mASTRoot, "imageStore(im21;vi2;vf4;", EbtImage2D, 2, EbtFloat, 4);
+    std::string mangledName2D = "imageStore(";
+    mangledName2D += StaticType::GetBasic<EbtImage2D>()->getMangledName();
+    mangledName2D += StaticType::GetBasic<EbtInt, 2>()->getMangledName();
+    mangledName2D += StaticType::GetBasic<EbtFloat, 4>()->getMangledName();
+    CheckImageStoreCall(mASTRoot, mangledName2D.c_str(), EbtImage2D, 2, EbtFloat, 4);
 
     // imageStore call with image2DArray
-    CheckImageStoreCall(mASTRoot, "imageStore(uim2a1;vi3;vu4;", EbtUImage2DArray, 3, EbtUInt, 4);
+    std::string mangledName2DArray = "imageStore(";
+    mangledName2DArray += StaticType::GetBasic<EbtUImage2DArray>()->getMangledName();
+    mangledName2DArray += StaticType::GetBasic<EbtInt, 3>()->getMangledName();
+    mangledName2DArray += StaticType::GetBasic<EbtUInt, 4>()->getMangledName();
+    CheckImageStoreCall(mASTRoot, mangledName2DArray.c_str(), EbtUImage2DArray, 3, EbtUInt, 4);
 }
 
 // Check that memory qualifiers are correctly parsed.
@@ -233,10 +249,10 @@ TEST_F(ShaderImageTest, ImageMemoryQualifiers)
         FAIL() << "Shader compilation failed" << mInfoLog;
     }
 
-    CheckImageDeclaration(mASTRoot, "image1", EbtImage2D, EiifRGBA32F, true, false, true, false,
-                          false, -1);
-    CheckImageDeclaration(mASTRoot, "image2", EbtImage2D, EiifRGBA32F, false, true, true, false,
-                          true, -1);
-    CheckImageDeclaration(mASTRoot, "image3", EbtImage2D, EiifRGBA32F, true, true, true, true, true,
-                          -1);
+    CheckImageDeclaration(mASTRoot, ImmutableString("image1"), EbtImage2D, EiifRGBA32F, true, false,
+                          true, false, false, -1);
+    CheckImageDeclaration(mASTRoot, ImmutableString("image2"), EbtImage2D, EiifRGBA32F, false, true,
+                          true, false, true, -1);
+    CheckImageDeclaration(mASTRoot, ImmutableString("image3"), EbtImage2D, EiifRGBA32F, true, true,
+                          true, true, true, -1);
 }

@@ -4,7 +4,6 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/Cache.h"
 #include "compiler/translator/InitializeDll.h"
 #include "compiler/translator/InitializeGlobals.h"
 
@@ -23,15 +22,12 @@ bool InitProcess()
         return false;
     }
 
-    TCache::initialize();
-
     return true;
 }
 
 void DetachProcess()
 {
     FreePoolIndex();
-    TCache::destroy();
 }
 
 }  // namespace sh

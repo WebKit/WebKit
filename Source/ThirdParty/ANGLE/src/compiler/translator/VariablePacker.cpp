@@ -10,8 +10,8 @@
 
 #include "angle_gl.h"
 
-#include "compiler/translator/VariablePacker.h"
 #include "common/utilities.h"
+#include "compiler/translator/VariablePacker.h"
 
 namespace sh
 {
@@ -80,7 +80,7 @@ void ExpandVariable(const ShaderVariable &variable,
     else
     {
         ShaderVariable expandedVar = variable;
-        expandedVar.name       = name;
+        expandedVar.name           = name;
 
         expanded->push_back(expandedVar);
     }

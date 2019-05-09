@@ -5,6 +5,7 @@
 #
 # gen_uniform_type_table.py:
 #  Code generation for OpenGL uniform type info tables.
+#  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
 from datetime import date
 
@@ -41,6 +42,7 @@ all_uniform_types = [
     "GL_INT_SAMPLER_2D",
     "GL_INT_SAMPLER_2D_ARRAY",
     "GL_INT_SAMPLER_2D_MULTISAMPLE",
+    "GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY",
     "GL_INT_SAMPLER_3D",
     "GL_INT_SAMPLER_CUBE",
     "GL_INT_VEC2",
@@ -50,6 +52,7 @@ all_uniform_types = [
     "GL_SAMPLER_2D_ARRAY",
     "GL_SAMPLER_2D_ARRAY_SHADOW",
     "GL_SAMPLER_2D_MULTISAMPLE",
+    "GL_SAMPLER_2D_MULTISAMPLE_ARRAY",
     "GL_SAMPLER_2D_RECT_ANGLE",
     "GL_SAMPLER_2D_SHADOW",
     "GL_SAMPLER_3D",
@@ -65,6 +68,7 @@ all_uniform_types = [
     "GL_UNSIGNED_INT_SAMPLER_2D",
     "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY",
     "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE",
+    "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY",
     "GL_UNSIGNED_INT_SAMPLER_3D",
     "GL_UNSIGNED_INT_SAMPLER_CUBE",
     "GL_UNSIGNED_INT_VEC2",
@@ -79,6 +83,7 @@ texture_types = {
     "2D_ARRAY": "2D_ARRAY",
     "2D_ARRAY_SHADOW": "2D_ARRAY",
     "2D_MULTISAMPLE": "2D_MULTISAMPLE",
+    "2D_MULTISAMPLE_ARRAY": "2D_MULTISAMPLE_ARRAY",
     "2D_RECT_ANGLE": "2D",
     "2D_SHADOW": "2D",
     "3D": "3D",
@@ -134,7 +139,7 @@ const UniformTypeInfo &GetUniformTypeInfo(GLenum uniformType)
 }}  // namespace gl
 """
 
-type_info_data_template = """{{{type}, {component_type}, {texture_type}, {transposed_type}, {bool_type}, {rows}, {columns}, {components}, {component_size}, {internal_size}, {external_size}, {is_sampler}, {is_matrix}, {is_image} }}"""
+type_info_data_template = """{{{type}, {component_type}, {texture_type}, {transposed_type}, {bool_type}, {sampler_format}, {rows}, {columns}, {components}, {component_size}, {internal_size}, {external_size}, {is_sampler}, {is_matrix}, {is_image} }}"""
 type_index_case_template = """case {enum_value}: return {index_value};"""
 
 def cpp_bool(value):
@@ -176,6 +181,18 @@ def get_bool_type(uniform_type):
         return "GL_BOOL_VEC" + uniform_type[-1]
     else:
         return "GL_NONE"
+
+def get_sampler_format(uniform_type):
+    if not "_SAMPLER_" in uniform_type:
+        return "SamplerFormat::InvalidEnum"
+    elif "_SHADOW" in uniform_type:
+        return "SamplerFormat::Shadow"
+    elif "GL_UNSIGNED_INT_SAMPLER_" in uniform_type:
+        return "SamplerFormat::Unsigned"
+    elif "GL_INT_SAMPLER_" in uniform_type:
+        return "SamplerFormat::Signed"
+    else:
+        return "SamplerFormat::Float"
 
 def get_rows(uniform_type):
     if uniform_type == "GL_NONE":
@@ -235,6 +252,7 @@ def gen_type_info(uniform_type):
         texture_type = get_texture_type(uniform_type),
         transposed_type = get_transposed_type(uniform_type),
         bool_type = get_bool_type(uniform_type),
+        sampler_format = get_sampler_format(uniform_type),
         rows = get_rows(uniform_type),
         columns = get_columns(uniform_type),
         components = get_components(uniform_type),
@@ -248,15 +266,37 @@ def gen_type_info(uniform_type):
 def gen_type_index_case(index, uniform_type):
     return "case " + uniform_type + ": return " + str(index) + ";"
 
-uniform_type_info_data = ",\n".join([gen_type_info(uniform_type) for uniform_type in all_uniform_types])
-uniform_type_index_cases = "\n".join([gen_type_index_case(index, uniform_type) for index, uniform_type in enumerate(all_uniform_types)])
 
-with open('uniform_type_info_autogen.cpp', 'wt') as out_file:
-    output_cpp = template_cpp.format(
-        script_name = sys.argv[0],
-        copyright_year = date.today().year,
-        total_count = len(all_uniform_types),
-        uniform_type_info_data = uniform_type_info_data,
-        uniform_type_index_cases = uniform_type_index_cases)
-    out_file.write(output_cpp)
-    out_file.close()
+def main():
+
+    # auto_script parameters.
+    if len(sys.argv) > 1:
+        inputs = []
+        outputs = ['uniform_type_info_autogen.cpp']
+
+        if sys.argv[1] == 'inputs':
+            print ','.join(inputs)
+        elif sys.argv[1] == 'outputs':
+            print ','.join(outputs)
+        else:
+            print('Invalid script parameters')
+            return 1
+        return 0
+
+    uniform_type_info_data = ",\n".join([gen_type_info(uniform_type) for uniform_type in all_uniform_types])
+    uniform_type_index_cases = "\n".join([gen_type_index_case(index, uniform_type) for index, uniform_type in enumerate(all_uniform_types)])
+
+    with open('uniform_type_info_autogen.cpp', 'wt') as out_file:
+        output_cpp = template_cpp.format(
+            script_name = sys.argv[0],
+            copyright_year = date.today().year,
+            total_count = len(all_uniform_types),
+            uniform_type_info_data = uniform_type_info_data,
+            uniform_type_index_cases = uniform_type_index_cases)
+        out_file.write(output_cpp)
+        out_file.close()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

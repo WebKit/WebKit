@@ -21,15 +21,12 @@ namespace rx
 PbufferSurfaceCGL::PbufferSurfaceCGL(const egl::SurfaceState &state,
                                      RendererGL *renderer,
                                      EGLint width,
-                                     EGLint height,
-                                     const FunctionsGL *functions)
-    : SurfaceGL(state, renderer),
+                                     EGLint height)
+    : SurfaceGL(state),
       mWidth(width),
       mHeight(height),
-      mFunctions(functions),
+      mFunctions(renderer->getFunctions()),
       mStateManager(renderer->getStateManager()),
-      mRenderer(renderer),
-      mFramebuffer(0),
       mColorRenderbuffer(0),
       mDSRenderbuffer(0)
 {
@@ -37,12 +34,6 @@ PbufferSurfaceCGL::PbufferSurfaceCGL(const egl::SurfaceState &state,
 
 PbufferSurfaceCGL::~PbufferSurfaceCGL()
 {
-    if (mFramebuffer != 0)
-    {
-        mFunctions->deleteFramebuffers(1, &mFramebuffer);
-        mFramebuffer = 0;
-    }
-
     if (mColorRenderbuffer != 0)
     {
         mFunctions->deleteRenderbuffers(1, &mColorRenderbuffer);
@@ -65,17 +56,10 @@ egl::Error PbufferSurfaceCGL::initialize(const egl::Display *display)
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mDSRenderbuffer);
     mFunctions->renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mWidth, mHeight);
 
-    mFunctions->genFramebuffers(1, &mFramebuffer);
-    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
-    mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                        mColorRenderbuffer);
-    mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                                        GL_RENDERBUFFER, mDSRenderbuffer);
-
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceCGL::makeCurrent()
+egl::Error PbufferSurfaceCGL::makeCurrent(const gl::Context *context)
 {
     return egl::NoError();
 }
@@ -100,13 +84,15 @@ egl::Error PbufferSurfaceCGL::querySurfacePointerANGLE(EGLint attribute, void **
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceCGL::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error PbufferSurfaceCGL::bindTexImage(const gl::Context *context,
+                                           gl::Texture *texture,
+                                           EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceCGL::releaseTexImage(EGLint buffer)
+egl::Error PbufferSurfaceCGL::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::NoError();
@@ -137,12 +123,21 @@ EGLint PbufferSurfaceCGL::getSwapBehavior() const
     return EGL_BUFFER_PRESERVED;
 }
 
-FramebufferImpl *PbufferSurfaceCGL::createDefaultFramebuffer(const gl::FramebufferState &state)
+FramebufferImpl *PbufferSurfaceCGL::createDefaultFramebuffer(const gl::Context *context,
+                                                             const gl::FramebufferState &state)
 {
-    // TODO(cwallez) assert it happens only once?
-    return new FramebufferGL(mFramebuffer, state, mFunctions, mRenderer->getWorkarounds(),
-                             mRenderer->getBlitter(), mRenderer->getMultiviewClearer(),
-                             mStateManager);
+    const FunctionsGL *functions = GetFunctionsGL(context);
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+
+    GLuint framebuffer = 0;
+    functions->genFramebuffers(1, &framebuffer);
+    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                       mColorRenderbuffer);
+    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                       mDSRenderbuffer);
+
+    return new FramebufferGL(state, framebuffer, true);
 }
 
 }  // namespace rx

@@ -15,7 +15,7 @@
 #include "third_party/libXNVCtrl/NVCtrlLib.h"
 
 #if !defined(GPU_INFO_USE_X11)
-#error SystemInfo_x11.cpp compiled without GPU_INFO_USE_X11
+#    error SystemInfo_x11.cpp compiled without GPU_INFO_USE_X11
 #endif
 
 namespace angle
@@ -30,7 +30,7 @@ bool GetNvidiaDriverVersionWithXNVCtrl(std::string *version)
 
     Display *display = XOpenDisplay(nullptr);
 
-    if (XNVCTRLQueryExtension(display, &eventBase, &errorBase))
+    if (display && XNVCTRLQueryExtension(display, &eventBase, &errorBase))
     {
         int screenCount = ScreenCount(display);
         for (int screen = 0; screen < screenCount; ++screen)
@@ -50,4 +50,4 @@ bool GetNvidiaDriverVersionWithXNVCtrl(std::string *version)
 
     return false;
 }
-}
+}  // namespace angle

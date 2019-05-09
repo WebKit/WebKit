@@ -12,12 +12,8 @@
 namespace rx
 {
 
-NativeWindowD3D::NativeWindowD3D(EGLNativeWindowType window) : mWindow(window)
-{
-}
+NativeWindowD3D::NativeWindowD3D(EGLNativeWindowType window) : mWindow(window) {}
 
-NativeWindowD3D::~NativeWindowD3D()
-{
-}
+NativeWindowD3D::~NativeWindowD3D() {}
 
 }  // namespace rx

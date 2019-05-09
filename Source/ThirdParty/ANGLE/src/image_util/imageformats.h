@@ -670,6 +670,21 @@ struct R10G10B10A2
 };
 static_assert(sizeof(R10G10B10A2) == 4, "R10G10B10A2 struct not 32-bits.");
 
+struct R10G10B10A2S
+{
+    int32_t R : 10;
+    int32_t G : 10;
+    int32_t B : 10;
+    int32_t A : 2;
+
+    static void readColor(gl::ColorF *dst, const R10G10B10A2S *src);
+    static void readColor(gl::ColorI *dst, const R10G10B10A2S *src);
+    static void writeColor(R10G10B10A2S *dst, const gl::ColorF *src);
+    static void writeColor(R10G10B10A2S *dst, const gl::ColorI *src);
+    static void average(R10G10B10A2S *dst, const R10G10B10A2S *src1, const R10G10B10A2S *src2);
+};
+static_assert(sizeof(R10G10B10A2S) == 4, "R10G10B10A2S struct not 32-bits.");
+
 struct R9G9B9E5
 {
     uint32_t R : 9;
@@ -695,6 +710,63 @@ struct R11G11B10F
 };
 static_assert(sizeof(R11G11B10F) == 4, "R11G11B10F struct not 32-bits.");
 
+struct D24S8
+{
+    uint32_t D : 24;
+    uint32_t S : 8;
+
+    static void ReadDepthStencil(DepthStencil *dst, const D24S8 *src);
+    static void WriteDepthStencil(D24S8 *dst, const DepthStencil *src);
+};
+
+struct S8
+{
+    uint8_t S;
+
+    static void ReadDepthStencil(DepthStencil *dst, const S8 *src);
+    static void WriteDepthStencil(S8 *dst, const DepthStencil *src);
+};
+
+struct D16
+{
+    uint16_t D;
+
+    static void ReadDepthStencil(DepthStencil *dst, const D16 *src);
+    static void WriteDepthStencil(D16 *dst, const DepthStencil *src);
+};
+
+struct D24
+{
+    uint32_t D;
+
+    static void ReadDepthStencil(DepthStencil *dst, const D24 *src);
+    static void WriteDepthStencil(D24 *dst, const DepthStencil *src);
+};
+
+struct D32F
+{
+    float D;
+
+    static void ReadDepthStencil(DepthStencil *dst, const D32F *src);
+    static void WriteDepthStencil(D32F *dst, const DepthStencil *src);
+};
+
+struct D32
+{
+    uint32_t D;
+
+    static void ReadDepthStencil(DepthStencil *dst, const D32 *src);
+    static void WriteDepthStencil(D32 *dst, const DepthStencil *src);
+};
+
+struct D32FS8
+{
+    float D;
+    uint32_t S;
+
+    static void ReadDepthStencil(DepthStencil *dst, const D32FS8 *src);
+    static void WriteDepthStencil(D32FS8 *dst, const DepthStencil *src);
+};
 }  // namespace angle
 
 #endif  // IMAGEUTIL_IMAGEFORMATS_H_

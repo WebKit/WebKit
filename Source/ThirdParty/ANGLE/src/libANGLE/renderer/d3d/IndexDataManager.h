@@ -44,7 +44,7 @@ struct SourceIndexData
     BufferD3D *srcBuffer;
     const void *srcIndices;
     unsigned int srcCount;
-    GLenum srcIndexType;
+    gl::DrawElementsType srcIndexType;
     bool srcIndicesChanged;
 };
 
@@ -55,7 +55,7 @@ struct TranslatedIndexData
 
     IndexBuffer *indexBuffer;
     BufferD3D *storage;
-    GLenum indexType;
+    gl::DrawElementsType indexType;
     unsigned int serial;
 
     SourceIndexData srcIndexData;
@@ -69,23 +69,25 @@ class IndexDataManager : angle::NonCopyable
 
     void deinitialize();
 
-    gl::Error prepareIndexData(const gl::Context *context,
-                               GLenum srcType,
-                               GLenum dstType,
-                               GLsizei count,
-                               gl::Buffer *glBuffer,
-                               const void *indices,
-                               TranslatedIndexData *translated);
+    angle::Result prepareIndexData(const gl::Context *context,
+                                   gl::DrawElementsType srcType,
+                                   gl::DrawElementsType dstType,
+                                   GLsizei count,
+                                   gl::Buffer *glBuffer,
+                                   const void *indices,
+                                   TranslatedIndexData *translated);
 
   private:
-    gl::Error streamIndexData(const void *data,
-                              unsigned int count,
-                              GLenum srcType,
-                              GLenum dstType,
-                              bool usePrimitiveRestartFixedIndex,
-                              TranslatedIndexData *translated);
-    gl::Error getStreamingIndexBuffer(GLenum destinationIndexType,
-                                      IndexBufferInterface **outBuffer);
+    angle::Result streamIndexData(const gl::Context *context,
+                                  const void *data,
+                                  unsigned int count,
+                                  gl::DrawElementsType srcType,
+                                  gl::DrawElementsType dstType,
+                                  bool usePrimitiveRestartFixedIndex,
+                                  TranslatedIndexData *translated);
+    angle::Result getStreamingIndexBuffer(const gl::Context *context,
+                                          gl::DrawElementsType destinationIndexType,
+                                          IndexBufferInterface **outBuffer);
 
     using StreamingBuffer = std::unique_ptr<StreamingIndexBufferInterface>;
 
@@ -94,12 +96,17 @@ class IndexDataManager : angle::NonCopyable
     std::unique_ptr<StreamingIndexBufferInterface> mStreamingBufferInt;
 };
 
-GLenum GetIndexTranslationDestType(GLenum srcType,
-                                   const gl::HasIndexRange &lazyIndexRange,
-                                   bool usePrimitiveRestartWorkaround);
+angle::Result GetIndexTranslationDestType(const gl::Context *context,
+                                          GLsizei indexCount,
+                                          gl::DrawElementsType indexType,
+                                          const void *indices,
+                                          bool usePrimitiveRestartWorkaround,
+                                          gl::DrawElementsType *destTypeOut);
 
-bool IsOffsetAligned(GLenum elementType, unsigned int offset);
-
+ANGLE_INLINE bool IsOffsetAligned(gl::DrawElementsType elementType, unsigned int offset)
+{
+    return (offset % gl::GetDrawElementsTypeSize(elementType) == 0);
+}
 }  // namespace rx
 
 #endif  // LIBANGLE_INDEXDATAMANAGER_H_

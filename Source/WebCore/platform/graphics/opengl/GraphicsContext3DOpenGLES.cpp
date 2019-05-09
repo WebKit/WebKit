@@ -37,11 +37,7 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 
-#if PLATFORM(WIN)
-#include <GLSLANG/ShaderLang.h>
-#else
 #include <ANGLE/ShaderLang.h>
-#endif
 
 namespace WebCore {
 

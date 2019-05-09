@@ -7,9 +7,15 @@
 #include "compiler/translator/VersionGLSL.h"
 
 #include "angle_gl.h"
+#include "compiler/translator/Symbol.h"
 
 namespace sh
 {
+
+namespace
+{
+constexpr const ImmutableString kGlPointCoordString("gl_PointCoord");
+}  // anonymous namespace
 
 int ShaderOutputTypeToGLSLVersion(ShShaderOutput output)
 {
@@ -76,7 +82,8 @@ TVersionGLSL::TVersionGLSL(sh::GLenum type, const TPragma &pragma, ShShaderOutpu
 
 void TVersionGLSL::visitSymbol(TIntermSymbol *node)
 {
-    if (node->getSymbol() == "gl_PointCoord")
+    if (node->variable().symbolType() == SymbolType::BuiltIn &&
+        node->getName() == kGlPointCoordString)
     {
         ensureVersionIsAtLeast(GLSL_VERSION_120);
     }
@@ -98,15 +105,16 @@ bool TVersionGLSL::visitInvariantDeclaration(Visit, TIntermInvariantDeclaration 
     return true;
 }
 
-bool TVersionGLSL::visitFunctionPrototype(Visit, TIntermFunctionPrototype *node)
+void TVersionGLSL::visitFunctionPrototype(TIntermFunctionPrototype *node)
 {
-    const TIntermSequence &params = *(node->getSequence());
-    for (TIntermSequence::const_iterator iter = params.begin(); iter != params.end(); ++iter)
+    size_t paramCount = node->getFunction()->getParamCount();
+    for (size_t i = 0; i < paramCount; ++i)
     {
-        const TIntermTyped *param = (*iter)->getAsTyped();
-        if (param->isArray())
+        const TVariable *param = node->getFunction()->getParam(i);
+        const TType &type      = param->getType();
+        if (type.isArray())
         {
-            TQualifier qualifier = param->getQualifier();
+            TQualifier qualifier = type.getQualifier();
             if ((qualifier == EvqOut) || (qualifier == EvqInOut))
             {
                 ensureVersionIsAtLeast(GLSL_VERSION_120);
@@ -114,8 +122,6 @@ bool TVersionGLSL::visitFunctionPrototype(Visit, TIntermFunctionPrototype *node)
             }
         }
     }
-    // Fully processed. No need to visit children.
-    return false;
 }
 
 bool TVersionGLSL::visitAggregate(Visit, TIntermAggregate *node)

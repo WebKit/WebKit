@@ -30,6 +30,46 @@ class ARBTextureRectangleTest : public ARBTextureRectangleTestNoExt
     }
 };
 
+// Check that if the extension is not supported, trying to use the features without having an
+// extension directive fails.
+TEST_F(ARBTextureRectangleTestNoExt, NewTypeAndBuiltinsWithoutExtensionDirective)
+{
+    const std::string &shaderString =
+        R"(
+        precision mediump float;
+        uniform sampler2DRect tex;
+        void main()
+        {
+            vec4 color = texture2DRect(tex, vec2(1.0));
+            color = texture2DRectProj(tex, vec3(1.0));
+            color = texture2DRectProj(tex, vec4(1.0));
+        })";
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Check that if the extension is not supported, trying to use the features fails.
+TEST_F(ARBTextureRectangleTestNoExt, NewTypeAndBuiltinsWithExtensionDirective)
+{
+    const std::string &shaderString =
+        R"(
+        #extension GL_ARB_texture_rectangle : enable
+        precision mediump float;
+        uniform sampler2DRect tex;
+        void main()
+        {
+            vec4 color = texture2DRect(tex, vec2(1.0));
+            color = texture2DRectProj(tex, vec3(1.0));
+            color = texture2DRectProj(tex, vec4(1.0));
+        })";
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
 // Check that new types and builtins are usable even with the #extension directive
 // Issue #15 of ARB_texture_rectangle explains that the extension was specified before the
 // #extension mechanism was in place so it doesn't require explicit enabling.

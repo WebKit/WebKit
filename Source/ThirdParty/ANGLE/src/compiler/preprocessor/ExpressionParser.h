@@ -10,6 +10,9 @@
 #include "common/angleutils.h"
 #include "compiler/preprocessor/DiagnosticsBase.h"
 
+namespace angle
+{
+
 namespace pp
 {
 
@@ -39,5 +42,7 @@ class ExpressionParser : angle::NonCopyable
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_EXPRESSIONPARSER_H_

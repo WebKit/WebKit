@@ -23,33 +23,20 @@ namespace rx
 {
 
 DisplayGL::DisplayGL(const egl::DisplayState &state)
-    : DisplayImpl(state), mRenderer(nullptr), mCurrentDrawSurface(nullptr)
-{
-}
+    : DisplayImpl(state), mCurrentDrawSurface(nullptr)
+{}
 
-DisplayGL::~DisplayGL()
-{
-}
+DisplayGL::~DisplayGL() {}
 
 egl::Error DisplayGL::initialize(egl::Display *display)
 {
-    mRenderer = new RendererGL(getFunctionsGL(), display->getAttributeMap());
-
-    const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
-    if (maxVersion < gl::Version(2, 0))
-    {
-        return egl::EglNotInitialized() << "OpenGL ES 2.0 is not supportable.";
-    }
-
     return egl::NoError();
 }
 
-void DisplayGL::terminate()
-{
-    SafeDelete(mRenderer);
-}
+void DisplayGL::terminate() {}
 
 ImageImpl *DisplayGL::createImage(const egl::ImageState &state,
+                                  const gl::Context *context,
                                   EGLenum target,
                                   const egl::AttributeMap &attribs)
 {
@@ -57,13 +44,7 @@ ImageImpl *DisplayGL::createImage(const egl::ImageState &state,
     return nullptr;
 }
 
-ContextImpl *DisplayGL::createContext(const gl::ContextState &state)
-{
-    ASSERT(mRenderer != nullptr);
-    return new ContextGL(state, mRenderer);
-}
-
-StreamProducerImpl *DisplayGL::createStreamProducerD3DTextureNV12(
+StreamProducerImpl *DisplayGL::createStreamProducerD3DTexture(
     egl::Stream::ConsumerType consumerType,
     const egl::AttributeMap &attribs)
 {
@@ -71,7 +52,9 @@ StreamProducerImpl *DisplayGL::createStreamProducerD3DTextureNV12(
     return nullptr;
 }
 
-egl::Error DisplayGL::makeCurrent(egl::Surface *drawSurface, egl::Surface *readSurface, gl::Context *context)
+egl::Error DisplayGL::makeCurrent(egl::Surface *drawSurface,
+                                  egl::Surface *readSurface,
+                                  gl::Context *context)
 {
     // Notify the previous surface (if it still exists) that it is no longer current
     if (mCurrentDrawSurface &&
@@ -93,7 +76,7 @@ egl::Error DisplayGL::makeCurrent(egl::Surface *drawSurface, egl::Surface *readS
     if (drawSurface != nullptr)
     {
         SurfaceGL *glDrawSurface = GetImplAs<SurfaceGL>(drawSurface);
-        ANGLE_TRY(glDrawSurface->makeCurrent());
+        ANGLE_TRY(glDrawSurface->makeCurrent(context));
         mCurrentDrawSurface = drawSurface;
         return egl::NoError();
     }
@@ -101,12 +84,6 @@ egl::Error DisplayGL::makeCurrent(egl::Surface *drawSurface, egl::Surface *readS
     {
         return makeCurrentSurfaceless(context);
     }
-}
-
-gl::Version DisplayGL::getMaxSupportedESVersion() const
-{
-    ASSERT(mRenderer != nullptr);
-    return mRenderer->getMaxSupportedESVersion();
 }
 
 void DisplayGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
@@ -121,4 +98,4 @@ egl::Error DisplayGL::makeCurrentSurfaceless(gl::Context *context)
     UNIMPLEMENTED();
     return egl::NoError();
 }
-}
+}  // namespace rx

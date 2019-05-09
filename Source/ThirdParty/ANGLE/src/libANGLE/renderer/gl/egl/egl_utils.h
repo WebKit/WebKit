@@ -38,7 +38,7 @@ AttributeVector TrimAttributeMap(const egl::AttributeMap &attributes,
 // Append EGL_NONE to the attribute vector so that it can be passed to a native driver.
 void FinalizeAttributeVector(AttributeVector *attributeVector);
 
-}  // namespace egl
+}  // namespace native_egl
 
 }  // namespace rx
 

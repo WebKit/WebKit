@@ -16,8 +16,10 @@ namespace rx
 {
 
 template <typename T>
-static void GetWGLProcAddress(HMODULE glModule, PFNWGLGETPROCADDRESSPROC getProcAddressWGL,
-                              const std::string &procName, T *outProcAddress)
+static void GetWGLProcAddress(HMODULE glModule,
+                              PFNWGLGETPROCADDRESSPROC getProcAddressWGL,
+                              const std::string &procName,
+                              T *outProcAddress)
 {
     T proc = nullptr;
     if (getProcAddressWGL)
@@ -94,12 +96,9 @@ FunctionsWGL::FunctionsWGL()
       dxObjectAccessNV(nullptr),
       dxLockObjectsNV(nullptr),
       dxUnlockObjectsNV(nullptr)
-{
-}
+{}
 
-FunctionsWGL::~FunctionsWGL()
-{
-}
+FunctionsWGL::~FunctionsWGL() {}
 
 void FunctionsWGL::initialize(HMODULE glModule, HDC context)
 {
@@ -117,19 +116,23 @@ void FunctionsWGL::initialize(HMODULE glModule, HDC context)
     GetWGLProcAddress(glModule, getProcAddress, "wglShareLists", &shareLists);
     GetWGLProcAddress(glModule, getProcAddress, "wglUseFontBitmapsA", &useFontBitmapsA);
     GetWGLProcAddress(glModule, getProcAddress, "wglUseFontBitmapsW", &useFontBitmapsW);
-    swapBuffers = SwapBuffers; // SwapBuffers is statically linked from GDI
+    swapBuffers = SwapBuffers;  // SwapBuffers is statically linked from GDI
     GetWGLProcAddress(glModule, getProcAddress, "wglUseFontOutlinesA", &useFontOutlinesA);
     GetWGLProcAddress(glModule, getProcAddress, "wglUseFontOutlinesW", &useFontOutlinesW);
     GetWGLProcAddress(glModule, getProcAddress, "wglDescribeLayerPlane", &describeLayerPlane);
-    GetWGLProcAddress(glModule, getProcAddress, "wglSetLayerPaletteEntries", &setLayerPaletteEntries);
-    GetWGLProcAddress(glModule, getProcAddress, "wglGetLayerPaletteEntries", &getLayerPaletteEntries);
+    GetWGLProcAddress(glModule, getProcAddress, "wglSetLayerPaletteEntries",
+                      &setLayerPaletteEntries);
+    GetWGLProcAddress(glModule, getProcAddress, "wglGetLayerPaletteEntries",
+                      &getLayerPaletteEntries);
     GetWGLProcAddress(glModule, getProcAddress, "wglRealizeLayerPalette", &realizeLayerPalette);
     GetWGLProcAddress(glModule, getProcAddress, "wglSwapLayerBuffers", &swapLayerBuffers);
     GetWGLProcAddress(glModule, getProcAddress, "wglSwapMultipleBuffers", &swapMultipleBuffers);
 
     // Load extension string getter functions
-    GetWGLProcAddress(glModule, getProcAddress, "wglGetExtensionsStringEXT", &getExtensionStringEXT);
-    GetWGLProcAddress(glModule, getProcAddress, "wglGetExtensionsStringARB", &getExtensionStringARB);
+    GetWGLProcAddress(glModule, getProcAddress, "wglGetExtensionsStringEXT",
+                      &getExtensionStringEXT);
+    GetWGLProcAddress(glModule, getProcAddress, "wglGetExtensionsStringARB",
+                      &getExtensionStringARB);
 
     std::string extensionString = "";
     if (getExtensionStringEXT)
@@ -145,41 +148,62 @@ void FunctionsWGL::initialize(HMODULE glModule, HDC context)
     // Load the wgl extension functions by checking if the context supports the extension first
 
     // WGL_ARB_create_context
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_create_context", "wglCreateContextAttribsARB", &createContextAttribsARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_create_context",
+                               "wglCreateContextAttribsARB", &createContextAttribsARB);
 
     // WGL_ARB_pixel_format
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pixel_format", "wglGetPixelFormatAttribivARB", &getPixelFormatAttribivARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pixel_format", "wglGetPixelFormatAttribfvARB", &getPixelFormatAttribfvARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pixel_format", "wglChoosePixelFormatARB", &choosePixelFormatARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pixel_format",
+                               "wglGetPixelFormatAttribivARB", &getPixelFormatAttribivARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pixel_format",
+                               "wglGetPixelFormatAttribfvARB", &getPixelFormatAttribfvARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pixel_format",
+                               "wglChoosePixelFormatARB", &choosePixelFormatARB);
 
     // WGL_EXT_swap_control
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_EXT_swap_control", "wglSwapIntervalEXT", &swapIntervalEXT);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_EXT_swap_control",
+                               "wglSwapIntervalEXT", &swapIntervalEXT);
 
     // WGL_ARB_pbuffer
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer", "wglCreatePbufferARB", &createPbufferARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer", "wglGetPbufferDCARB", &getPbufferDCARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer", "wglReleasePbufferDCARB", &releasePbufferDCARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer", "wglDestroyPbufferARB", &destroyPbufferARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer", "wglQueryPbufferARB", &queryPbufferARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer",
+                               "wglCreatePbufferARB", &createPbufferARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer",
+                               "wglGetPbufferDCARB", &getPbufferDCARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer",
+                               "wglReleasePbufferDCARB", &releasePbufferDCARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer",
+                               "wglDestroyPbufferARB", &destroyPbufferARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_pbuffer",
+                               "wglQueryPbufferARB", &queryPbufferARB);
 
     // WGL_ARB_render_texture
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_render_texture", "wglBindTexImageARB", &bindTexImageARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_render_texture", "wglReleaseTexImageARB", &releaseTexImageARB);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_render_texture", "wglSetPbufferAttribARB", &setPbufferAttribARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_render_texture",
+                               "wglBindTexImageARB", &bindTexImageARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_render_texture",
+                               "wglReleaseTexImageARB", &releaseTexImageARB);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_ARB_render_texture",
+                               "wglSetPbufferAttribARB", &setPbufferAttribARB);
 
     // WGL_NV_DX_interop
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXSetResourceShareHandleNV", &dxSetResourceShareHandleNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXOpenDeviceNV", &dxOpenDeviceNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXCloseDeviceNV", &dxCloseDeviceNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXRegisterObjectNV", &dxRegisterObjectNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXUnregisterObjectNV", &dxUnregisterObjectNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXObjectAccessNV", &dxObjectAccessNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXLockObjectsNV", &dxLockObjectsNV);
-    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop", "wglDXUnlockObjectsNV", &dxUnlockObjectsNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXSetResourceShareHandleNV", &dxSetResourceShareHandleNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXOpenDeviceNV", &dxOpenDeviceNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXCloseDeviceNV", &dxCloseDeviceNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXRegisterObjectNV", &dxRegisterObjectNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXUnregisterObjectNV", &dxUnregisterObjectNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXObjectAccessNV", &dxObjectAccessNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXLockObjectsNV", &dxLockObjectsNV);
+    GetWGLExtensionProcAddress(glModule, getProcAddress, extensions, "WGL_NV_DX_interop",
+                               "wglDXUnlockObjectsNV", &dxUnlockObjectsNV);
 }
 
 bool FunctionsWGL::hasExtension(const std::string &ext) const
 {
     return std::find(extensions.begin(), extensions.end(), ext) != extensions.end();
 }
-}
+}  // namespace rx

@@ -15,20 +15,24 @@
 #include "compiler/translator/ASTMetadataHLSL.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/FlagStd140Structs.h"
-#include "compiler/translator/IntermTraverse.h"
+#include "compiler/translator/ImmutableString.h"
+#include "compiler/translator/ShaderStorageBlockOutputHLSL.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 class BuiltInFunctionEmulator;
 
 namespace sh
 {
+class AtomicCounterFunctionHLSL;
+class ImageFunctionHLSL;
+class ResourcesHLSL;
 class StructureHLSL;
 class TextureFunctionHLSL;
 class TSymbolTable;
-class ImageFunctionHLSL;
+class TVariable;
 class UnfoldShortCircuit;
-class UniformHLSL;
 
-typedef std::map<TString, TIntermSymbol *> ReferencedSymbols;
+using ReferencedVariables = std::map<int, const TVariable *>;
 
 class OutputHLSL : public TIntermTraverser
 {
@@ -41,17 +45,21 @@ class OutputHLSL : public TIntermTraverser
                int numRenderTargets,
                const std::vector<Uniform> &uniforms,
                ShCompileOptions compileOptions,
+               sh::WorkGroupSize workGroupSize,
                TSymbolTable *symbolTable,
-               PerformanceDiagnostics *perfDiagnostics);
+               PerformanceDiagnostics *perfDiagnostics,
+               const std::vector<InterfaceBlock> &shaderStorageBlocks);
 
     ~OutputHLSL();
 
     void output(TIntermNode *treeRoot, TInfoSinkBase &objSink);
 
+    const std::map<std::string, unsigned int> &getShaderStorageBlockRegisterMap() const;
     const std::map<std::string, unsigned int> &getUniformBlockRegisterMap() const;
     const std::map<std::string, unsigned int> &getUniformRegisterMap() const;
-
-    static TString initializer(const TType &type);
+    unsigned int getReadonlyImage2DRegisterIndex() const;
+    unsigned int getImage2DRegisterIndex() const;
+    const std::set<std::string> &getUsedImage2DFunctionNames() const;
 
     TInfoSinkBase &getInfoSink()
     {
@@ -59,9 +67,13 @@ class OutputHLSL : public TIntermTraverser
         return *mInfoSinkStack.top();
     }
 
-    static bool canWriteAsHLSLLiteral(TIntermTyped *expression);
-
   protected:
+    friend class ShaderStorageBlockOutputHLSL;
+
+    TString zeroInitializer(const TType &type) const;
+
+    void writeReferencedAttributes(TInfoSinkBase &out) const;
+    void writeReferencedVaryings(TInfoSinkBase &out) const;
     void header(TInfoSinkBase &out,
                 const std::vector<MappedStruct> &std140Structs,
                 const BuiltInFunctionEmulator *builtInFunctionEmulator) const;
@@ -74,7 +86,6 @@ class OutputHLSL : public TIntermTraverser
 
     // Visit AST nodes and output their code to the body stream
     void visitSymbol(TIntermSymbol *) override;
-    void visitRaw(TIntermRaw *) override;
     void visitConstantUnion(TIntermConstantUnion *) override;
     bool visitSwizzle(Visit visit, TIntermSwizzle *node) override;
     bool visitBinary(Visit visit, TIntermBinary *) override;
@@ -83,7 +94,7 @@ class OutputHLSL : public TIntermTraverser
     bool visitIfElse(Visit visit, TIntermIfElse *) override;
     bool visitSwitch(Visit visit, TIntermSwitch *) override;
     bool visitCase(Visit visit, TIntermCase *) override;
-    bool visitFunctionPrototype(Visit visit, TIntermFunctionPrototype *node) override;
+    void visitFunctionPrototype(TIntermFunctionPrototype *node) override;
     bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *) override;
     bool visitBlock(Visit visit, TIntermBlock *node) override;
@@ -102,7 +113,7 @@ class OutputHLSL : public TIntermTraverser
                        const char *inString,
                        const char *postString);
     void outputLineDirective(TInfoSinkBase &out, int line);
-    TString argumentString(const TIntermSymbol *symbol);
+    void writeParameter(const TVariable *param, TInfoSinkBase &out);
 
     void outputConstructor(TInfoSinkBase &out, Visit visit, TIntermAggregate *node);
     const TConstantUnion *writeConstantUnion(TInfoSinkBase &out,
@@ -135,6 +146,9 @@ class OutputHLSL : public TIntermTraverser
     // Ensures if the type is a struct, the struct is defined
     void ensureStructDefined(const TType &type);
 
+    bool shaderNeedsGenerateOutput() const;
+    const char *generateOutputCall() const;
+
     sh::GLenum mShaderType;
     int mShaderVersion;
     const TExtensionBehavior &mExtensionBehavior;
@@ -143,6 +157,7 @@ class OutputHLSL : public TIntermTraverser
     ShCompileOptions mCompileOptions;
 
     bool mInsideFunction;
+    bool mInsideMain;
 
     // Output streams
     TInfoSinkBase mHeader;
@@ -154,16 +169,20 @@ class OutputHLSL : public TIntermTraverser
     // TODO (jmadill): Just passing an InfoSink in function parameters would be simpler.
     std::stack<TInfoSinkBase *> mInfoSinkStack;
 
-    ReferencedSymbols mReferencedUniforms;
-    ReferencedSymbols mReferencedUniformBlocks;
-    ReferencedSymbols mReferencedAttributes;
-    ReferencedSymbols mReferencedVaryings;
-    ReferencedSymbols mReferencedOutputVariables;
+    ReferencedVariables mReferencedUniforms;
+
+    // Indexed by block id, not instance id.
+    ReferencedInterfaceBlocks mReferencedUniformBlocks;
+
+    ReferencedVariables mReferencedAttributes;
+    ReferencedVariables mReferencedVaryings;
+    ReferencedVariables mReferencedOutputVariables;
 
     StructureHLSL *mStructureHLSL;
-    UniformHLSL *mUniformHLSL;
+    ResourcesHLSL *mResourcesHLSL;
     TextureFunctionHLSL *mTextureFunctionHLSL;
     ImageFunctionHLSL *mImageFunctionHLSL;
+    AtomicCounterFunctionHLSL *mAtomicCounterFunctionHLSL;
 
     // Parameters determining what goes in the header output
     bool mUsesFragColor;
@@ -187,6 +206,7 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesDiscardRewriting;
     bool mUsesNestedBreak;
     bool mRequiresIEEEStrictCompiling;
+    mutable bool mUseZeroArray;
 
     int mNumRenderTargets;
 
@@ -236,13 +256,16 @@ class OutputHLSL : public TIntermTraverser
     // arrays can't be return values in HLSL.
     std::vector<ArrayHelperFunction> mArrayConstructIntoFunctions;
 
+    sh::WorkGroupSize mWorkGroupSize;
+
     PerformanceDiagnostics *mPerfDiagnostics;
 
   private:
     TString generateStructMapping(const std::vector<MappedStruct> &std140Structs) const;
-    TString samplerNamePrefixFromStruct(TIntermTyped *node);
+    ImmutableString samplerNamePrefixFromStruct(TIntermTyped *node);
     bool ancestorEvaluatesToSamplerInStruct();
+    ShaderStorageBlockOutputHLSL *mSSBOOutputHLSL;
 };
-}
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_OUTPUTHLSL_H_

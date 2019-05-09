@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "angle_gl.h"
-#include "common/debug.h"
 #include "common/MemoryBuffer.h"
+#include "common/debug.h"
 #include "compiler/translator/blocklayout.h"
 #include "libANGLE/angletypes.h"
 
@@ -20,24 +20,26 @@ namespace gl
 {
 struct UniformTypeInfo;
 
-struct StaticallyUsed
+struct ActiveVariable
 {
-    StaticallyUsed();
-    StaticallyUsed(const StaticallyUsed &rhs);
-    virtual ~StaticallyUsed();
+    ActiveVariable();
+    ActiveVariable(const ActiveVariable &rhs);
+    virtual ~ActiveVariable();
 
-    StaticallyUsed &operator=(const StaticallyUsed &rhs);
+    ActiveVariable &operator=(const ActiveVariable &rhs);
 
-    void setStaticUse(GLenum shaderType, bool used);
-    void unionReferencesWith(const StaticallyUsed &other);
+    ShaderType getFirstShaderTypeWhereActive() const;
+    void setActive(ShaderType shaderType, bool used);
+    void unionReferencesWith(const ActiveVariable &other);
+    bool isActive(ShaderType shaderType) const;
+    GLuint activeShaderCount() const;
 
-    bool vertexStaticUse;
-    bool fragmentStaticUse;
-    bool computeStaticUse;
+  private:
+    ShaderBitSet mActiveUseBits;
 };
 
 // Helper struct representing a single shader uniform
-struct LinkedUniform : public sh::Uniform, public StaticallyUsed
+struct LinkedUniform : public sh::Uniform, public ActiveVariable
 {
     LinkedUniform();
     LinkedUniform(GLenum type,
@@ -69,7 +71,7 @@ struct LinkedUniform : public sh::Uniform, public StaticallyUsed
     sh::BlockMemberInfo blockInfo;
 };
 
-struct BufferVariable : public sh::ShaderVariable, public StaticallyUsed
+struct BufferVariable : public sh::ShaderVariable, public ActiveVariable
 {
     BufferVariable();
     BufferVariable(GLenum type,
@@ -88,7 +90,7 @@ struct BufferVariable : public sh::ShaderVariable, public StaticallyUsed
 
 // Parent struct for atomic counter, uniform block, and shader storage block buffer, which all
 // contain a group of shader variables, and have a GL buffer backed.
-struct ShaderVariableBuffer : public StaticallyUsed
+struct ShaderVariableBuffer : public ActiveVariable
 {
     ShaderVariableBuffer();
     ShaderVariableBuffer(const ShaderVariableBuffer &other);
@@ -121,6 +123,6 @@ struct InterfaceBlock : public ShaderVariableBuffer
     unsigned int arrayElement;
 };
 
-}
+}  // namespace gl
 
-#endif   // LIBANGLE_UNIFORM_H_
+#endif  // LIBANGLE_UNIFORM_H_

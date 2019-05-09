@@ -7,9 +7,9 @@
 //   Tests for the emulating pack_unpack functions for GLSL.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -125,4 +125,4 @@ TEST_F(PackUnpackTest, UnpackHalf2x16Emulation)
     ASSERT_TRUE(foundInCode("vec2 unpackHalf2x16_emu(uint u)"));
 }
 
-} // namespace
+}  // namespace

@@ -90,6 +90,6 @@ class FunctionsWGL : angle::NonCopyable
     PFNWGLDXUNLOCKOBJECTSNVPROC dxUnlockObjectsNV;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_WGL_FUNCTIONS_WGL
+#endif  // LIBANGLE_RENDERER_GL_WGL_FUNCTIONS_WGL

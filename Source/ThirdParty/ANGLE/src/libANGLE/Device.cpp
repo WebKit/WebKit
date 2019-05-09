@@ -11,15 +11,15 @@
 
 #include <iterator>
 
-#include <platform/Platform.h>
 #include <EGL/eglext.h>
+#include <platform/Platform.h>
 
 #include "common/debug.h"
 #include "common/platform.h"
 #include "libANGLE/renderer/DeviceImpl.h"
 
 #if defined(ANGLE_ENABLE_D3D11)
-#include "libANGLE/renderer/d3d/DeviceD3D.h"
+#    include "libANGLE/renderer/d3d/DeviceD3D.h"
 #endif
 
 namespace egl
@@ -31,7 +31,8 @@ static std::string GenerateExtensionsString(const T &extensions)
     std::vector<std::string> extensionsVector = extensions.getStrings();
 
     std::ostringstream stream;
-    std::copy(extensionsVector.begin(), extensionsVector.end(), std::ostream_iterator<std::string>(stream, " "));
+    std::copy(extensionsVector.begin(), extensionsVector.end(),
+              std::ostream_iterator<std::string>(stream, " "));
     return stream.str();
 }
 
@@ -43,41 +44,43 @@ static DeviceSet *GetDeviceSet()
 }
 
 // Static factory methods
-egl::Error Device::CreateDevice(void *devicePointer, EGLint deviceType, Device **outDevice)
+egl::Error Device::CreateDevice(EGLint deviceType, void *nativeDevice, Device **outDevice)
 {
     *outDevice = nullptr;
+
+    std::unique_ptr<rx::DeviceImpl> newDeviceImpl;
 
 #if defined(ANGLE_ENABLE_D3D11)
     if (deviceType == EGL_D3D11_DEVICE_ANGLE)
     {
-        std::unique_ptr<rx::DeviceD3D> deviceD3D(new rx::DeviceD3D());
-        ANGLE_TRY(deviceD3D->initialize(devicePointer, deviceType, EGL_TRUE));
-        *outDevice = new Device(nullptr, deviceD3D.release());
-        GetDeviceSet()->insert(*outDevice);
-        return NoError();
+        newDeviceImpl.reset(new rx::DeviceD3D(deviceType, nativeDevice));
     }
 #endif
 
     // Note that creating an EGL device from inputted D3D9 parameters isn't currently supported
-    return EglBadAttribute();
-}
 
-egl::Error Device::CreateDevice(Display *owningDisplay, rx::DeviceImpl *impl, Device **outDevice)
-{
-    *outDevice = new Device(owningDisplay, impl);
-    GetDeviceSet()->insert(*outDevice);
+    if (newDeviceImpl == nullptr)
+    {
+        return EglBadAttribute();
+    }
+
+    ANGLE_TRY(newDeviceImpl->initialize());
+    *outDevice = new Device(nullptr, newDeviceImpl.release());
+
     return NoError();
 }
 
-bool Device::IsValidDevice(Device *device)
+bool Device::IsValidDevice(const Device *device)
 {
     const DeviceSet *deviceSet = GetDeviceSet();
-    return deviceSet->find(device) != deviceSet->end();
+    return deviceSet->find(const_cast<Device *>(device)) != deviceSet->end();
 }
 
 Device::Device(Display *owningDisplay, rx::DeviceImpl *impl)
-    : mOwningDisplay(owningDisplay), mImplementation(impl)
+    : mLabel(nullptr), mOwningDisplay(owningDisplay), mImplementation(impl)
 {
+    ASSERT(GetDeviceSet()->find(this) == GetDeviceSet()->end());
+    GetDeviceSet()->insert(this);
     initDeviceExtensions();
 }
 
@@ -85,19 +88,23 @@ Device::~Device()
 {
     ASSERT(GetDeviceSet()->find(this) != GetDeviceSet()->end());
     GetDeviceSet()->erase(this);
+}
 
-    if (mImplementation->deviceExternallySourced())
-    {
-        // If the device isn't externally sourced then it is up to the renderer to delete the impl
-        SafeDelete(mImplementation);
-    }
+void Device::setLabel(EGLLabelKHR label)
+{
+    mLabel = label;
+}
+
+EGLLabelKHR Device::getLabel() const
+{
+    return mLabel;
 }
 
 Error Device::getDevice(EGLAttrib *value)
 {
     void *nativeDevice = nullptr;
-    egl::Error error = getImplementation()->getDevice(&nativeDevice);
-    *value = reinterpret_cast<EGLAttrib>(nativeDevice);
+    egl::Error error   = getImplementation()->getDevice(&nativeDevice);
+    *value             = reinterpret_cast<EGLAttrib>(nativeDevice);
     return error;
 }
 
@@ -121,5 +128,4 @@ const std::string &Device::getExtensionString() const
 {
     return mDeviceExtensionString;
 }
-
-}
+}  // namespace egl

@@ -23,7 +23,7 @@ namespace egl
 {
 class Surface;
 class Image;
-}
+}  // namespace egl
 
 namespace gl
 {
@@ -32,128 +32,157 @@ struct Extents;
 struct Offset;
 struct Rectangle;
 class Framebuffer;
+class MemoryObject;
 struct PixelUnpackState;
-struct TextureState;
-}
+class TextureState;
+}  // namespace gl
 
 namespace rx
 {
 class ContextImpl;
 
-class TextureImpl : public FramebufferAttachmentObjectImpl
+class TextureImpl : public FramebufferAttachmentObjectImpl, public angle::Subject
 {
   public:
     TextureImpl(const gl::TextureState &state);
     ~TextureImpl() override;
 
-    virtual gl::Error onDestroy(const gl::Context *context);
+    virtual void onDestroy(const gl::Context *context);
 
-    virtual gl::Error setImage(const gl::Context *context,
-                               GLenum target,
-                               size_t level,
-                               GLenum internalFormat,
-                               const gl::Extents &size,
-                               GLenum format,
-                               GLenum type,
-                               const gl::PixelUnpackState &unpack,
-                               const uint8_t *pixels) = 0;
-    virtual gl::Error setSubImage(const gl::Context *context,
-                                  GLenum target,
-                                  size_t level,
-                                  const gl::Box &area,
-                                  GLenum format,
-                                  GLenum type,
-                                  const gl::PixelUnpackState &unpack,
-                                  const uint8_t *pixels) = 0;
+    virtual angle::Result setImage(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLenum internalFormat,
+                                   const gl::Extents &size,
+                                   GLenum format,
+                                   GLenum type,
+                                   const gl::PixelUnpackState &unpack,
+                                   const uint8_t *pixels)    = 0;
+    virtual angle::Result setSubImage(const gl::Context *context,
+                                      const gl::ImageIndex &index,
+                                      const gl::Box &area,
+                                      GLenum format,
+                                      GLenum type,
+                                      const gl::PixelUnpackState &unpack,
+                                      gl::Buffer *unpackBuffer,
+                                      const uint8_t *pixels) = 0;
 
-    virtual gl::Error setCompressedImage(const gl::Context *context,
-                                         GLenum target,
-                                         size_t level,
-                                         GLenum internalFormat,
-                                         const gl::Extents &size,
-                                         const gl::PixelUnpackState &unpack,
-                                         size_t imageSize,
-                                         const uint8_t *pixels) = 0;
-    virtual gl::Error setCompressedSubImage(const gl::Context *context,
-                                            GLenum target,
-                                            size_t level,
-                                            const gl::Box &area,
-                                            GLenum format,
-                                            const gl::PixelUnpackState &unpack,
-                                            size_t imageSize,
-                                            const uint8_t *pixels) = 0;
+    virtual angle::Result setCompressedImage(const gl::Context *context,
+                                             const gl::ImageIndex &index,
+                                             GLenum internalFormat,
+                                             const gl::Extents &size,
+                                             const gl::PixelUnpackState &unpack,
+                                             size_t imageSize,
+                                             const uint8_t *pixels)    = 0;
+    virtual angle::Result setCompressedSubImage(const gl::Context *context,
+                                                const gl::ImageIndex &index,
+                                                const gl::Box &area,
+                                                GLenum format,
+                                                const gl::PixelUnpackState &unpack,
+                                                size_t imageSize,
+                                                const uint8_t *pixels) = 0;
 
-    virtual gl::Error copyImage(const gl::Context *context,
-                                GLenum target,
-                                size_t level,
-                                const gl::Rectangle &sourceArea,
-                                GLenum internalFormat,
-                                const gl::Framebuffer *source) = 0;
-    virtual gl::Error copySubImage(const gl::Context *context,
-                                   GLenum target,
-                                   size_t level,
-                                   const gl::Offset &destOffset,
-                                   const gl::Rectangle &sourceArea,
-                                   const gl::Framebuffer *source) = 0;
+    virtual angle::Result copyImage(const gl::Context *context,
+                                    const gl::ImageIndex &index,
+                                    const gl::Rectangle &sourceArea,
+                                    GLenum internalFormat,
+                                    gl::Framebuffer *source)    = 0;
+    virtual angle::Result copySubImage(const gl::Context *context,
+                                       const gl::ImageIndex &index,
+                                       const gl::Offset &destOffset,
+                                       const gl::Rectangle &sourceArea,
+                                       gl::Framebuffer *source) = 0;
 
-    virtual gl::Error copyTexture(const gl::Context *context,
-                                  GLenum target,
-                                  size_t level,
-                                  GLenum internalFormat,
-                                  GLenum type,
-                                  size_t sourceLevel,
-                                  bool unpackFlipY,
-                                  bool unpackPremultiplyAlpha,
-                                  bool unpackUnmultiplyAlpha,
-                                  const gl::Texture *source);
-    virtual gl::Error copySubTexture(const gl::Context *context,
-                                     GLenum target,
-                                     size_t level,
-                                     const gl::Offset &destOffset,
-                                     size_t sourceLevel,
-                                     const gl::Rectangle &sourceArea,
-                                     bool unpackFlipY,
-                                     bool unpackPremultiplyAlpha,
-                                     bool unpackUnmultiplyAlpha,
-                                     const gl::Texture *source);
+    virtual angle::Result copyTexture(const gl::Context *context,
+                                      const gl::ImageIndex &index,
+                                      GLenum internalFormat,
+                                      GLenum type,
+                                      size_t sourceLevel,
+                                      bool unpackFlipY,
+                                      bool unpackPremultiplyAlpha,
+                                      bool unpackUnmultiplyAlpha,
+                                      const gl::Texture *source);
+    virtual angle::Result copySubTexture(const gl::Context *context,
+                                         const gl::ImageIndex &index,
+                                         const gl::Offset &destOffset,
+                                         size_t sourceLevel,
+                                         const gl::Box &sourceBox,
+                                         bool unpackFlipY,
+                                         bool unpackPremultiplyAlpha,
+                                         bool unpackUnmultiplyAlpha,
+                                         const gl::Texture *source);
 
-    virtual gl::Error copyCompressedTexture(const gl::Context *context, const gl::Texture *source);
+    virtual angle::Result copyCompressedTexture(const gl::Context *context,
+                                                const gl::Texture *source);
 
-    virtual gl::Error setStorage(const gl::Context *context,
-                                 GLenum target,
-                                 size_t levels,
-                                 GLenum internalFormat,
-                                 const gl::Extents &size) = 0;
+    virtual angle::Result copy3DTexture(const gl::Context *context,
+                                        gl::TextureTarget target,
+                                        GLenum internalFormat,
+                                        GLenum type,
+                                        size_t sourceLevel,
+                                        size_t destLevel,
+                                        bool unpackFlipY,
+                                        bool unpackPremultiplyAlpha,
+                                        bool unpackUnmultiplyAlpha,
+                                        const gl::Texture *source);
+    virtual angle::Result copy3DSubTexture(const gl::Context *context,
+                                           const gl::TextureTarget target,
+                                           const gl::Offset &destOffset,
+                                           size_t sourceLevel,
+                                           size_t destLevel,
+                                           const gl::Box &srcBox,
+                                           bool unpackFlipY,
+                                           bool unpackPremultiplyAlpha,
+                                           bool unpackUnmultiplyAlpha,
+                                           const gl::Texture *source);
 
-    virtual gl::Error setStorageMultisample(const gl::Context *context,
-                                            GLenum target,
-                                            GLsizei samples,
-                                            GLint internalformat,
-                                            const gl::Extents &size,
-                                            bool fixedSampleLocations) = 0;
+    virtual angle::Result setStorage(const gl::Context *context,
+                                     gl::TextureType type,
+                                     size_t levels,
+                                     GLenum internalFormat,
+                                     const gl::Extents &size) = 0;
 
-    virtual gl::Error setEGLImageTarget(const gl::Context *context,
-                                        GLenum target,
-                                        egl::Image *image) = 0;
+    virtual angle::Result setStorageMultisample(const gl::Context *context,
+                                                gl::TextureType type,
+                                                GLsizei samples,
+                                                GLint internalformat,
+                                                const gl::Extents &size,
+                                                bool fixedSampleLocations) = 0;
 
-    virtual gl::Error setImageExternal(const gl::Context *context,
-                                       GLenum target,
-                                       egl::Stream *stream,
-                                       const egl::Stream::GLTextureDescription &desc) = 0;
+    virtual angle::Result setStorageExternalMemory(const gl::Context *context,
+                                                   gl::TextureType type,
+                                                   size_t levels,
+                                                   GLenum internalFormat,
+                                                   const gl::Extents &size,
+                                                   gl::MemoryObject *memoryObject,
+                                                   GLuint64 offset) = 0;
 
-    virtual gl::Error generateMipmap(const gl::Context *context) = 0;
+    virtual angle::Result setEGLImageTarget(const gl::Context *context,
+                                            gl::TextureType type,
+                                            egl::Image *image) = 0;
 
-    virtual gl::Error setBaseLevel(const gl::Context *context, GLuint baseLevel) = 0;
+    virtual angle::Result setImageExternal(const gl::Context *context,
+                                           gl::TextureType type,
+                                           egl::Stream *stream,
+                                           const egl::Stream::GLTextureDescription &desc) = 0;
 
-    virtual gl::Error bindTexImage(const gl::Context *context, egl::Surface *surface) = 0;
-    virtual gl::Error releaseTexImage(const gl::Context *context) = 0;
+    virtual angle::Result generateMipmap(const gl::Context *context) = 0;
 
-    virtual void syncState(const gl::Texture::DirtyBits &dirtyBits) = 0;
+    virtual angle::Result setBaseLevel(const gl::Context *context, GLuint baseLevel) = 0;
+
+    virtual angle::Result bindTexImage(const gl::Context *context, egl::Surface *surface) = 0;
+    virtual angle::Result releaseTexImage(const gl::Context *context)                     = 0;
+
+    // Override if accurate native memory size information is available
+    virtual GLint getMemorySize() const;
+    virtual GLint getLevelMemorySize(gl::TextureTarget target, GLint level);
+
+    virtual angle::Result syncState(const gl::Context *context,
+                                    const gl::Texture::DirtyBits &dirtyBits) = 0;
 
   protected:
     const gl::TextureState &mState;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_TEXTUREIMPL_H_
+#endif  // LIBANGLE_RENDERER_TEXTUREIMPL_H_

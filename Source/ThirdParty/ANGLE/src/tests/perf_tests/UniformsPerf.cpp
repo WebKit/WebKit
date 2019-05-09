@@ -14,13 +14,14 @@
 #include <random>
 #include <sstream>
 
-#include "Matrix.h"
-#include "shader_utils.h"
+#include "util/Matrix.h"
+#include "util/shader_utils.h"
 
 using namespace angle;
 
 namespace
 {
+constexpr unsigned int kIterationsPerStep = 4;
 
 // Controls when we call glUniform, if the data is the same as last frame.
 enum DataMode
@@ -48,6 +49,8 @@ struct UniformsParams final : public RenderTestParams
 {
     UniformsParams()
     {
+        iterationsPerStep = kIterationsPerStep;
+
         // Common default params
         majorVersion = 2;
         minorVersion = 0;
@@ -59,12 +62,9 @@ struct UniformsParams final : public RenderTestParams
     size_t numVertexUniforms   = 200;
     size_t numFragmentUniforms = 200;
 
-    DataType dataType = DataType::VEC4;
-    DataMode dataMode = DataMode::REPEAT;
+    DataType dataType       = DataType::VEC4;
+    DataMode dataMode       = DataMode::REPEAT;
     ProgramMode programMode = ProgramMode::SINGLE;
-
-    // static parameters
-    size_t iterations = 4;
 };
 
 std::ostream &operator<<(std::ostream &os, const UniformsParams &params)
@@ -90,7 +90,6 @@ std::string UniformsParams::suffix() const
     }
     else
     {
-        ASSERT(dataType == DataType::MAT4);
         strstr << "_matrix";
     }
 
@@ -152,15 +151,11 @@ std::vector<Matrix4> GenMatrixData(size_t count, int parity)
     return data;
 }
 
-UniformsBenchmark::UniformsBenchmark() : ANGLERenderTest("Uniforms", GetParam()), mPrograms({})
-{
-}
+UniformsBenchmark::UniformsBenchmark() : ANGLERenderTest("Uniforms", GetParam()), mPrograms({}) {}
 
 void UniformsBenchmark::initializeBenchmark()
 {
     const auto &params = GetParam();
-
-    ASSERT_GT(params.iterations, 0u);
 
     // Verify the uniform counts are within the limits
     GLint maxVertexUniformVectors, maxFragmentUniformVectors;
@@ -283,9 +278,9 @@ void UniformsBenchmark::initShaders()
     }
     fstrstr << "}";
 
-    mPrograms[0] = CompileProgram(vstrstr.str(), fstrstr.str());
+    mPrograms[0] = CompileProgram(vstrstr.str().c_str(), fstrstr.str().c_str());
     ASSERT_NE(0u, mPrograms[0]);
-    mPrograms[1] = CompileProgram(vstrstr.str(), fstrstr.str());
+    mPrograms[1] = CompileProgram(vstrstr.str().c_str(), fstrstr.str().c_str());
     ASSERT_NE(0u, mPrograms[1]);
 
     for (size_t i = 0; i < params.numVertexUniforms; ++i)
@@ -323,7 +318,7 @@ void UniformsBenchmark::drawLoop(const SetUniformFunc &setUniformsFunc)
 
     size_t frameIndex = 0;
 
-    for (size_t it = 0; it < params.iterations; ++it, frameIndex = (frameIndex == 0 ? 1 : 0))
+    for (size_t it = 0; it < params.iterationsPerStep; ++it, frameIndex = (frameIndex == 0 ? 1 : 0))
     {
         if (MultiProgram)
         {
@@ -396,8 +391,8 @@ UniformsParams MatrixUniforms(const EGLPlatformParameters &egl, DataMode dataMod
     params.dataMode      = dataMode;
 
     // Reduce the number of uniforms to fit within smaller upper limits on some configs.
-    params.numVertexUniforms   = 64;
-    params.numFragmentUniforms = 64;
+    params.numVertexUniforms   = 55;
+    params.numFragmentUniforms = 55;
 
     return params;
 }

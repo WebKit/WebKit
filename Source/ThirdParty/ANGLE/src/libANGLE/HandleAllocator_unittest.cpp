@@ -150,4 +150,47 @@ TEST(HandleAllocatorTest, Reset)
     }
 }
 
+// Covers a particular bug with reserving and allocating sub ranges.
+TEST(HandleAllocatorTest, ReserveAndAllocateIterated)
+{
+    gl::HandleAllocator allocator;
+
+    for (int iteration = 0; iteration < 3; ++iteration)
+    {
+        allocator.reserve(5);
+        allocator.reserve(6);
+        GLuint a = allocator.allocate();
+        GLuint b = allocator.allocate();
+        GLuint c = allocator.allocate();
+        allocator.release(c);
+        allocator.release(a);
+        allocator.release(b);
+        allocator.release(5);
+        allocator.release(6);
+    }
+}
+
+// This test reproduces invalid heap bug when reserve resources after release.
+TEST(HandleAllocatorTest, ReserveAfterReleaseBug)
+{
+    gl::HandleAllocator allocator;
+
+    for (int iteration = 1; iteration <= 16; ++iteration)
+    {
+        allocator.allocate();
+    }
+
+    allocator.release(15);
+    allocator.release(16);
+
+    for (int iteration = 1; iteration <= 14; ++iteration)
+    {
+        allocator.release(iteration);
+    }
+
+    allocator.reserve(1);
+
+    allocator.allocate();
+}
+
 }  // anonymous namespace

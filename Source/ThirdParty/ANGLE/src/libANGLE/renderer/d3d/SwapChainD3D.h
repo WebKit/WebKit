@@ -10,16 +10,16 @@
 #ifndef LIBANGLE_RENDERER_D3D_SWAPCHAIND3D_H_
 #define LIBANGLE_RENDERER_D3D_SWAPCHAIND3D_H_
 
-#include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+#include <GLES2/gl2.h>
 
 #include "common/angleutils.h"
 #include "common/platform.h"
 #include "libANGLE/Error.h"
 
 #if !defined(ANGLE_FORCE_VSYNC_OFF)
-#define ANGLE_FORCE_VSYNC_OFF 0
+#    define ANGLE_FORCE_VSYNC_OFF 0
 #endif
 
 namespace gl
@@ -34,6 +34,7 @@ class Display;
 
 namespace rx
 {
+class DisplayD3D;
 class RenderTargetD3D;
 
 class SwapChainD3D : angle::NonCopyable
@@ -45,21 +46,21 @@ class SwapChainD3D : angle::NonCopyable
                  GLenum depthBufferFormat);
     virtual ~SwapChainD3D();
 
-    virtual EGLint resize(const gl::Context *context,
+    virtual EGLint resize(DisplayD3D *displayD3D,
                           EGLint backbufferWidth,
                           EGLint backbufferSize) = 0;
-    virtual EGLint reset(const gl::Context *context,
+    virtual EGLint reset(DisplayD3D *displayD3D,
                          EGLint backbufferWidth,
                          EGLint backbufferHeight,
-                         EGLint swapInterval) = 0;
-    virtual EGLint swapRect(const gl::Context *context,
+                         EGLint swapInterval)    = 0;
+    virtual EGLint swapRect(DisplayD3D *displayD3D,
                             EGLint x,
                             EGLint y,
                             EGLint width,
-                            EGLint height) = 0;
-    virtual void recreate() = 0;
+                            EGLint height)       = 0;
+    virtual void recreate()                      = 0;
 
-    virtual RenderTargetD3D *getColorRenderTarget() = 0;
+    virtual RenderTargetD3D *getColorRenderTarget()        = 0;
     virtual RenderTargetD3D *getDepthStencilRenderTarget() = 0;
 
     GLenum getRenderTargetInternalFormat() const { return mOffscreenRenderTargetFormat; }
@@ -79,4 +80,4 @@ class SwapChainD3D : angle::NonCopyable
 };
 
 }  // namespace rx
-#endif // LIBANGLE_RENDERER_D3D_SWAPCHAIND3D_H_
+#endif  // LIBANGLE_RENDERER_D3D_SWAPCHAIND3D_H_

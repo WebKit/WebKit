@@ -14,12 +14,9 @@
 namespace rx
 {
 
-SurfaceOzone::SurfaceOzone(const egl::SurfaceState &state,
-                           RendererGL *renderer,
-                           DisplayOzone::Buffer *buffer)
-    : SurfaceGL(state, renderer), mBuffer(buffer)
-{
-}
+SurfaceOzone::SurfaceOzone(const egl::SurfaceState &state, DisplayOzone::Buffer *buffer)
+    : SurfaceGL(state), mBuffer(buffer)
+{}
 
 SurfaceOzone::~SurfaceOzone()
 {
@@ -31,19 +28,20 @@ egl::Error SurfaceOzone::initialize(const egl::Display *display)
     return egl::NoError();
 }
 
-FramebufferImpl *SurfaceOzone::createDefaultFramebuffer(const gl::FramebufferState &state)
+FramebufferImpl *SurfaceOzone::createDefaultFramebuffer(const gl::Context *context,
+                                                        const gl::FramebufferState &state)
 {
-    return mBuffer->framebufferGL(state);
+    return mBuffer->framebufferGL(context, state);
 }
 
-egl::Error SurfaceOzone::makeCurrent()
+egl::Error SurfaceOzone::makeCurrent(const gl::Context *context)
 {
     return egl::NoError();
 }
 
 egl::Error SurfaceOzone::swap(const gl::Context *context)
 {
-    mBuffer->present();
+    mBuffer->present(context);
     return egl::NoError();
 }
 
@@ -63,13 +61,15 @@ egl::Error SurfaceOzone::querySurfacePointerANGLE(EGLint attribute, void **value
     return egl::NoError();
 }
 
-egl::Error SurfaceOzone::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error SurfaceOzone::bindTexImage(const gl::Context *context,
+                                      gl::Texture *texture,
+                                      EGLint buffer)
 {
     mBuffer->bindTexImage();
     return egl::NoError();
 }
 
-egl::Error SurfaceOzone::releaseTexImage(EGLint buffer)
+egl::Error SurfaceOzone::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     return egl::NoError();
 }

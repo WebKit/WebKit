@@ -148,15 +148,13 @@ class StrictNumeric
     // Copy constructor.
     template <typename Src>
     constexpr StrictNumeric(const StrictNumeric<Src> &rhs) : value_(strict_cast<T>(rhs.value_))
-    {
-    }
+    {}
 
     // This is not an explicit constructor because we implicitly upgrade regular
     // numerics to StrictNumerics to make them easier to use.
     template <typename Src>
     constexpr StrictNumeric(Src value) : value_(strict_cast<T>(value))
-    {
-    }
+    {}
 
     // The numeric cast operator basically handles all the magic.
     template <typename Dst>

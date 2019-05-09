@@ -30,9 +30,9 @@ bool ComparePackedVarying(const PackedVarying &x, const PackedVarying &y)
     const sh::ShaderVariable *px, *py;
     if (x.isArrayElement())
     {
-        vx           = *x.varying;
+        vx = *x.varying;
         vx.arraySizes.clear();
-        px           = &vx;
+        px = &vx;
     }
     else
     {
@@ -41,9 +41,9 @@ bool ComparePackedVarying(const PackedVarying &x, const PackedVarying &y)
 
     if (y.isArrayElement())
     {
-        vy           = *y.varying;
+        vy = *y.varying;
         vy.arraySizes.clear();
-        py           = &vy;
+        py = &vy;
     }
     else
     {
@@ -58,8 +58,7 @@ bool ComparePackedVarying(const PackedVarying &x, const PackedVarying &y)
 // Implementation of VaryingPacking
 VaryingPacking::VaryingPacking(GLuint maxVaryingVectors, PackMode packMode)
     : mRegisterMap(maxVaryingVectors), mPackMode(packMode)
-{
-}
+{}
 
 VaryingPacking::~VaryingPacking() = default;
 
@@ -69,7 +68,7 @@ VaryingPacking::~VaryingPacking() = default;
 // Returns false if unsuccessful.
 bool VaryingPacking::packVarying(const PackedVarying &packedVarying)
 {
-    const auto &varying = *packedVarying.varying;
+    const sh::ShaderVariable &varying = *packedVarying.varying;
 
     // "Non - square matrices of type matCxR consume the same space as a square matrix of type matN
     // where N is the greater of C and R."
@@ -80,9 +79,16 @@ bool VaryingPacking::packVarying(const PackedVarying &packedVarying)
     unsigned int varyingRows    = gl::VariableRowCount(transposedType);
     unsigned int varyingColumns = gl::VariableColumnCount(transposedType);
 
+    // Special pack mode for D3D9. Each varying takes a full register, no sharing.
+    // TODO(jmadill): Implement more sophisticated component packing in D3D9.
+    if (mPackMode == PackMode::ANGLE_NON_CONFORMANT_D3D9)
+    {
+        varyingColumns = 4;
+    }
+
     // "Variables of type mat2 occupies 2 complete rows."
     // For non-WebGL contexts, we allow mat2 to occupy only two columns per row.
-    if (mPackMode == PackMode::WEBGL_STRICT && varying.type == GL_FLOAT_MAT2)
+    else if (mPackMode == PackMode::WEBGL_STRICT && varying.type == GL_FLOAT_MAT2)
     {
         varyingColumns = 4;
     }
@@ -182,12 +188,12 @@ bool VaryingPacking::packVarying(const PackedVarying &packedVarying)
                 {
                     // If varyingRows > 1, it must be an array.
                     PackedVaryingRegister registerInfo;
-                    registerInfo.packedVarying     = &packedVarying;
-                    registerInfo.registerRow       = row + arrayIndex;
-                    registerInfo.registerColumn    = bestColumn;
+                    registerInfo.packedVarying  = &packedVarying;
+                    registerInfo.registerRow    = row + arrayIndex;
+                    registerInfo.registerColumn = bestColumn;
                     registerInfo.varyingArrayIndex =
                         (packedVarying.isArrayElement() ? packedVarying.arrayIndex : arrayIndex);
-                    registerInfo.varyingRowIndex   = 0;
+                    registerInfo.varyingRowIndex = 0;
                     // Do not record register info for builtins.
                     // TODO(jmadill): Clean this up.
                     if (!packedVarying.varying->isBuiltIn())
@@ -273,7 +279,7 @@ void VaryingPacking::insert(unsigned int registerRow,
 }
 
 bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
-                                                const Program::MergedVaryings &mergedVaryings,
+                                                const ProgramMergedVaryings &mergedVaryings,
                                                 const std::vector<std::string> &tfVaryings)
 {
     std::set<std::string> uniqueFullNames;
@@ -285,38 +291,53 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
         const sh::Varying *output = ref.second.fragment;
 
         // Only pack statically used varyings that have a matched input or output, plus special
-        // builtins.
-        if (((input && output) || (output && output->isBuiltIn())) && output->staticUse)
+        // builtins. Note that we pack all statically used user-defined varyings even if they are
+        // not active. GLES specs are a bit vague on whether it's allowed to only pack active
+        // varyings, though GLES 3.1 spec section 11.1.2.1 says that "device-dependent
+        // optimizations" may be used to make vertex shader outputs fit.
+        if ((input && output && output->staticUse) ||
+            (input && input->isBuiltIn() && input->active) ||
+            (output && output->isBuiltIn() && output->active))
         {
-            // Will get the vertex shader interpolation by default.
-            auto interpolation = ref.second.get()->interpolation;
+            const sh::Varying *varying = output ? output : input;
 
-            // Note that we lose the vertex shader static use information here. The data for the
-            // variable is taken from the fragment shader.
-            if (output->isStruct())
+            // Don't count gl_Position. Also don't count gl_PointSize for D3D9.
+            if (varying->name != "gl_Position" &&
+                !(varying->name == "gl_PointSize" &&
+                  mPackMode == PackMode::ANGLE_NON_CONFORMANT_D3D9))
             {
-                ASSERT(!output->isArray());
-                for (const auto &field : output->fields)
+                // Will get the vertex shader interpolation by default.
+                auto interpolation = ref.second.get()->interpolation;
+
+                // Note that we lose the vertex shader static use information here. The data for the
+                // variable is taken from the fragment shader.
+                if (varying->isStruct())
                 {
-                    ASSERT(!field.isStruct() && !field.isArray());
-                    mPackedVaryings.push_back(PackedVarying(field, interpolation, output->name));
-                    uniqueFullNames.insert(mPackedVaryings.back().nameWithArrayIndex());
+                    ASSERT(!varying->isArray());
+                    for (const auto &field : varying->fields)
+                    {
+                        ASSERT(!field.isStruct() && !field.isArray());
+                        mPackedVaryings.emplace_back(field, interpolation, varying->name);
+                        uniqueFullNames.insert(mPackedVaryings.back().fullName());
+                    }
                 }
+                else
+                {
+                    mPackedVaryings.emplace_back(*varying, interpolation);
+                    uniqueFullNames.insert(mPackedVaryings.back().fullName());
+                }
+                continue;
             }
-            else
-            {
-                mPackedVaryings.push_back(PackedVarying(*output, interpolation));
-                uniqueFullNames.insert(mPackedVaryings.back().nameWithArrayIndex());
-            }
+        }
+
+        // If the varying is not used in the VS, we know it is inactive.
+        if (!input)
+        {
+            mInactiveVaryingNames.push_back(ref.first);
             continue;
         }
 
         // Keep Transform FB varyings in the merged list always.
-        if (!input)
-        {
-            continue;
-        }
-
         for (const std::string &tfVarying : tfVaryings)
         {
             std::vector<unsigned int> subscripts;
@@ -331,16 +352,26 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
             {
                 continue;
             }
+            if (input->isStruct())
+            {
+                const sh::ShaderVariable *field = FindShaderVarField(*input, tfVarying);
+                if (field != nullptr)
+                {
+                    ASSERT(!field->isStruct() && !field->isArray());
+                    mPackedVaryings.emplace_back(*field, input->interpolation, input->name);
+                    mPackedVaryings.back().vertexOnly = true;
+                    mPackedVaryings.back().arrayIndex = GL_INVALID_INDEX;
+                    uniqueFullNames.insert(tfVarying);
+                }
+            }
             // Array as a whole and array element conflict has already been checked in
             // linkValidateTransformFeedback.
-            if (baseName == input->name)
+            else if (baseName == input->name)
             {
-                // Transform feedback for varying structs is underspecified.
-                // See Khronos bug 9856.
-                // TODO(jmadill): Figure out how to be spec-compliant here.
-                if (!input->isStruct() && tfVarying.compare(0, 3, "gl_") != 0)
+                // only pack varyings that are not builtins.
+                if (tfVarying.compare(0, 3, "gl_") != 0)
                 {
-                    mPackedVaryings.push_back(PackedVarying(*input, input->interpolation));
+                    mPackedVaryings.emplace_back(*input, input->interpolation);
                     mPackedVaryings.back().vertexOnly = true;
                     mPackedVaryings.back().arrayIndex = static_cast<GLuint>(subscript);
                     uniqueFullNames.insert(tfVarying);
@@ -353,17 +384,21 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
                 }
             }
         }
+
+        if (uniqueFullNames.count(ref.first) == 0)
+        {
+            mInactiveVaryingNames.push_back(ref.first);
+        }
     }
 
     std::sort(mPackedVaryings.begin(), mPackedVaryings.end(), ComparePackedVarying);
 
-    return packUserVaryings(infoLog, mPackedVaryings, tfVaryings);
+    return packUserVaryings(infoLog, mPackedVaryings);
 }
 
 // See comment on packVarying.
 bool VaryingPacking::packUserVaryings(gl::InfoLog &infoLog,
-                                      const std::vector<PackedVarying> &packedVaryings,
-                                      const std::vector<std::string> &transformFeedbackVaryings)
+                                      const std::vector<PackedVarying> &packedVaryings)
 {
 
     // "Variables are packed into the registers one at a time so that they each occupy a contiguous
@@ -372,7 +407,15 @@ bool VaryingPacking::packUserVaryings(gl::InfoLog &infoLog,
     {
         if (!packVarying(packedVarying))
         {
-            infoLog << "Could not pack varying " << packedVarying.nameWithArrayIndex();
+            infoLog << "Could not pack varying " << packedVarying.fullName();
+
+            // TODO(jmadill): Implement more sophisticated component packing in D3D9.
+            if (mPackMode == PackMode::ANGLE_NON_CONFORMANT_D3D9)
+            {
+                infoLog << "Note: Additional non-conformant packing restrictions are enforced on "
+                           "D3D9.";
+            }
+
             return false;
         }
     }
@@ -380,29 +423,11 @@ bool VaryingPacking::packUserVaryings(gl::InfoLog &infoLog,
     // Sort the packed register list
     std::sort(mRegisterList.begin(), mRegisterList.end());
 
-    // Assign semantic indices
-    for (unsigned int semanticIndex = 0;
-         semanticIndex < static_cast<unsigned int>(mRegisterList.size()); ++semanticIndex)
-    {
-        mRegisterList[semanticIndex].semanticIndex = semanticIndex;
-    }
-
     return true;
 }
 
-unsigned int VaryingPacking::getRegisterCount() const
+const std::vector<std::string> &VaryingPacking::getInactiveVaryingNames() const
 {
-    unsigned int count = 0;
-
-    for (const Register &reg : mRegisterMap)
-    {
-        if (reg.data[0] || reg.data[1] || reg.data[2] || reg.data[3])
-        {
-            ++count;
-        }
-    }
-
-    return count;
+    return mInactiveVaryingNames;
 }
-
-}  // namespace rx
+}  // namespace gl

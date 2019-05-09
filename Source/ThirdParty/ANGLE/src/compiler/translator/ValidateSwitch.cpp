@@ -7,7 +7,7 @@
 #include "compiler/translator/ValidateSwitch.h"
 
 #include "compiler/translator/Diagnostics.h"
-#include "compiler/translator/IntermTraverse.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 namespace sh
 {
@@ -15,11 +15,12 @@ namespace sh
 namespace
 {
 
+const int kMaxAllowedTraversalDepth = 256;
+
 class ValidateSwitch : public TIntermTraverser
 {
   public:
     static bool validate(TBasicType switchType,
-                         int shaderVersion,
                          TDiagnostics *diagnostics,
                          TIntermBlock *statementList,
                          const TSourceLoc &loc);
@@ -27,7 +28,7 @@ class ValidateSwitch : public TIntermTraverser
     void visitSymbol(TIntermSymbol *) override;
     void visitConstantUnion(TIntermConstantUnion *) override;
     bool visitDeclaration(Visit, TIntermDeclaration *) override;
-    bool visitBlock(Visit, TIntermBlock *) override;
+    bool visitBlock(Visit visit, TIntermBlock *) override;
     bool visitBinary(Visit, TIntermBinary *) override;
     bool visitUnary(Visit, TIntermUnary *) override;
     bool visitTernary(Visit, TIntermTernary *) override;
@@ -40,12 +41,11 @@ class ValidateSwitch : public TIntermTraverser
     bool visitBranch(Visit, TIntermBranch *) override;
 
   private:
-    ValidateSwitch(TBasicType switchType, int shaderVersion, TDiagnostics *context);
+    ValidateSwitch(TBasicType switchType, TDiagnostics *context);
 
     bool validateInternal(const TSourceLoc &loc);
 
     TBasicType mSwitchType;
-    int mShaderVersion;
     TDiagnostics *mDiagnostics;
     bool mCaseTypeMismatch;
     bool mFirstCaseFound;
@@ -60,21 +60,19 @@ class ValidateSwitch : public TIntermTraverser
 };
 
 bool ValidateSwitch::validate(TBasicType switchType,
-                              int shaderVersion,
                               TDiagnostics *diagnostics,
                               TIntermBlock *statementList,
                               const TSourceLoc &loc)
 {
-    ValidateSwitch validate(switchType, shaderVersion, diagnostics);
+    ValidateSwitch validate(switchType, diagnostics);
     ASSERT(statementList);
     statementList->traverse(&validate);
     return validate.validateInternal(loc);
 }
 
-ValidateSwitch::ValidateSwitch(TBasicType switchType, int shaderVersion, TDiagnostics *diagnostics)
-    : TIntermTraverser(true, false, true),
+ValidateSwitch::ValidateSwitch(TBasicType switchType, TDiagnostics *diagnostics)
+    : TIntermTraverser(true, false, true, nullptr),
       mSwitchType(switchType),
-      mShaderVersion(shaderVersion),
       mDiagnostics(diagnostics),
       mCaseTypeMismatch(false),
       mFirstCaseFound(false),
@@ -85,13 +83,14 @@ ValidateSwitch::ValidateSwitch(TBasicType switchType, int shaderVersion, TDiagno
       mDefaultCount(0),
       mDuplicateCases(false)
 {
+    setMaxAllowedDepth(kMaxAllowedTraversalDepth);
 }
 
 void ValidateSwitch::visitSymbol(TIntermSymbol *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
 }
 
 void ValidateSwitch::visitConstantUnion(TIntermConstantUnion *)
@@ -100,24 +99,28 @@ void ValidateSwitch::visitConstantUnion(TIntermConstantUnion *)
     // Could be just a statement like "0;"
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
 }
 
 bool ValidateSwitch::visitDeclaration(Visit, TIntermDeclaration *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
-bool ValidateSwitch::visitBlock(Visit, TIntermBlock *)
+bool ValidateSwitch::visitBlock(Visit visit, TIntermBlock *)
 {
     if (getParentNode() != nullptr)
     {
         if (!mFirstCaseFound)
             mStatementBeforeCase = true;
-        mLastStatementWasCase    = false;
+        mLastStatementWasCase = false;
+        if (visit == PreVisit)
+            ++mControlFlowDepth;
+        if (visit == PostVisit)
+            --mControlFlowDepth;
     }
     return true;
 }
@@ -126,7 +129,7 @@ bool ValidateSwitch::visitBinary(Visit, TIntermBinary *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -134,7 +137,7 @@ bool ValidateSwitch::visitUnary(Visit, TIntermUnary *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -142,7 +145,7 @@ bool ValidateSwitch::visitTernary(Visit, TIntermTernary *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -150,7 +153,7 @@ bool ValidateSwitch::visitSwizzle(Visit, TIntermSwizzle *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -162,7 +165,7 @@ bool ValidateSwitch::visitIfElse(Visit visit, TIntermIfElse *)
         --mControlFlowDepth;
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -170,7 +173,7 @@ bool ValidateSwitch::visitSwitch(Visit, TIntermSwitch *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     // Don't go into nested switch statements
     return false;
 }
@@ -250,7 +253,7 @@ bool ValidateSwitch::visitAggregate(Visit visit, TIntermAggregate *)
         // This is not the statementList node, but some other node.
         if (!mFirstCaseFound)
             mStatementBeforeCase = true;
-        mLastStatementWasCase    = false;
+        mLastStatementWasCase = false;
     }
     return true;
 }
@@ -263,7 +266,7 @@ bool ValidateSwitch::visitLoop(Visit visit, TIntermLoop *)
         --mControlFlowDepth;
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -271,7 +274,7 @@ bool ValidateSwitch::visitBranch(Visit, TIntermBranch *)
 {
     if (!mFirstCaseFound)
         mStatementBeforeCase = true;
-    mLastStatementWasCase    = false;
+    mLastStatementWasCase = false;
     return true;
 }
 
@@ -281,39 +284,32 @@ bool ValidateSwitch::validateInternal(const TSourceLoc &loc)
     {
         mDiagnostics->error(loc, "statement before the first label", "switch");
     }
-    bool lastStatementWasCaseError = false;
     if (mLastStatementWasCase)
     {
-        if (mShaderVersion == 300)
-        {
-            lastStatementWasCaseError = true;
-            // This error has been proposed to be made optional in GLSL ES 3.00, but dEQP tests
-            // still require it.
-            mDiagnostics->error(
-                loc, "no statement between the last label and the end of the switch statement",
-                "switch");
-        }
-        else
-        {
-            // The error has been removed from GLSL ES 3.10.
-            mDiagnostics->warning(
-                loc, "no statement between the last label and the end of the switch statement",
-                "switch");
-        }
+        // There have been some differences between versions of GLSL ES specs on whether this should
+        // be an error or not, but as of early 2018 the latest discussion is that this is an error
+        // also on GLSL ES versions newer than 3.00.
+        mDiagnostics->error(
+            loc, "no statement between the last label and the end of the switch statement",
+            "switch");
     }
-    return !mStatementBeforeCase && !lastStatementWasCaseError && !mCaseInsideControlFlow &&
-           !mCaseTypeMismatch && mDefaultCount <= 1 && !mDuplicateCases;
+    if (getMaxDepth() >= kMaxAllowedTraversalDepth)
+    {
+        mDiagnostics->error(loc, "too complex expressions inside a switch statement", "switch");
+    }
+    return !mStatementBeforeCase && !mLastStatementWasCase && !mCaseInsideControlFlow &&
+           !mCaseTypeMismatch && mDefaultCount <= 1 && !mDuplicateCases &&
+           getMaxDepth() < kMaxAllowedTraversalDepth;
 }
 
 }  // anonymous namespace
 
 bool ValidateSwitchStatementList(TBasicType switchType,
-                                 int shaderVersion,
                                  TDiagnostics *diagnostics,
                                  TIntermBlock *statementList,
                                  const TSourceLoc &loc)
 {
-    return ValidateSwitch::validate(switchType, shaderVersion, diagnostics, statementList, loc);
+    return ValidateSwitch::validate(switchType, diagnostics, statementList, loc);
 }
 
 }  // namespace sh

@@ -7,165 +7,156 @@
 #ifndef UTIL_EGLWINDOW_H_
 #define UTIL_EGLWINDOW_H_
 
+#include <stdint.h>
 #include <list>
 #include <memory>
-#include <stdint.h>
 #include <string>
 
-#include <export.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <GLES3/gl3.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
-#include "common/angleutils.h"
 #include "common/Optional.h"
+#include "common/angleutils.h"
+#include "util/EGLPlatformParameters.h"
+#include "util/util_export.h"
+#include "util/util_gl.h"
 
 class OSWindow;
 
-// A hidden define used in some renderers (currently D3D-only)
-// to init a no-op renderer. Useful for performance testing.
-#ifndef EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE
-#define EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE 0x6AC0
-#endif
-
 namespace angle
 {
+class Library;
 struct PlatformMethods;
-}
+}  // namespace angle
 
-struct ANGLE_EXPORT EGLPlatformParameters
+struct ANGLE_UTIL_EXPORT ConfigParameters
 {
-    EGLint renderer;
-    EGLint majorVersion;
-    EGLint minorVersion;
-    EGLint deviceType;
-    EGLint presentPath;
+    ConfigParameters();
+    ~ConfigParameters();
 
-    EGLPlatformParameters();
-    explicit EGLPlatformParameters(EGLint renderer);
-    EGLPlatformParameters(EGLint renderer, EGLint majorVersion, EGLint minorVersion, EGLint deviceType);
-    EGLPlatformParameters(EGLint renderer,
-                          EGLint majorVersion,
-                          EGLint minorVersion,
-                          EGLint deviceType,
-                          EGLint presentPath);
+    void reset();
+
+    // Surface and Context parameters.
+    int redBits;
+    int greenBits;
+    int blueBits;
+    int alphaBits;
+    int depthBits;
+    int stencilBits;
+
+    Optional<bool> webGLCompatibility;
+    Optional<bool> robustResourceInit;
+
+    // EGLWindow-specific.
+    EGLenum componentType;
+    bool multisample;
+    bool debug;
+    bool noError;
+    Optional<bool> extensionsEnabled;
+    bool bindGeneratesResource;
+    bool clientArraysEnabled;
+    bool robustAccess;
+    EGLint samples;
+    Optional<bool> contextProgramCacheEnabled;
+    EGLenum resetStrategy;
 };
 
-ANGLE_EXPORT bool operator<(const EGLPlatformParameters &a, const EGLPlatformParameters &b);
-ANGLE_EXPORT bool operator==(const EGLPlatformParameters &a, const EGLPlatformParameters &b);
-
-class ANGLE_EXPORT EGLWindow : angle::NonCopyable
+class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 {
   public:
-    EGLWindow(EGLint glesMajorVersion,
-              EGLint glesMinorVersion,
-              const EGLPlatformParameters &platform);
+    static void Delete(GLWindowBase **window);
 
-    ~EGLWindow();
+    // It should also be possible to set multisample and floating point framebuffers.
+    EGLint getClientMajorVersion() const { return mClientMajorVersion; }
+    EGLint getClientMinorVersion() const { return mClientMinorVersion; }
 
-    void setConfigRedBits(int bits) { mRedBits = bits; }
-    void setConfigGreenBits(int bits) { mGreenBits = bits; }
-    void setConfigBlueBits(int bits) { mBlueBits = bits; }
-    void setConfigAlphaBits(int bits) { mAlphaBits = bits; }
-    void setConfigDepthBits(int bits) { mDepthBits = bits; }
-    void setConfigStencilBits(int bits) { mStencilBits = bits; }
-    void setConfigComponentType(EGLenum componentType) { mComponentType = componentType; }
-    void setMultisample(bool multisample) { mMultisample = multisample; }
-    void setSamples(EGLint samples) { mSamples = samples; }
-    void setDebugEnabled(bool debug) { mDebug = debug; }
-    void setNoErrorEnabled(bool noError) { mNoError = noError; }
-    void setWebGLCompatibilityEnabled(bool webglCompatibility)
-    {
-        mWebGLCompatibility = webglCompatibility;
-    }
-    void setBindGeneratesResource(bool bindGeneratesResource)
-    {
-        mBindGeneratesResource = bindGeneratesResource;
-    }
-    void setDebugLayersEnabled(bool enabled) { mDebugLayersEnabled = enabled; }
-    void setClientArraysEnabled(bool enabled) { mClientArraysEnabled = enabled; }
-    void setRobustAccess(bool enabled) { mRobustAccess = enabled; }
-    void setRobustResourceInit(bool enabled) { mRobustResourceInit = enabled; }
-    void setSwapInterval(EGLint swapInterval) { mSwapInterval = swapInterval; }
-    void setPlatformMethods(angle::PlatformMethods *platformMethods)
-    {
-        mPlatformMethods = platformMethods;
-    }
-    void setContextProgramCacheEnabled(bool enabled) { mContextProgramCacheEnabled = enabled; }
+    virtual bool initializeGL(OSWindow *osWindow,
+                              angle::Library *glWindowingLibrary,
+                              const EGLPlatformParameters &platformParams,
+                              const ConfigParameters &configParams) = 0;
+    virtual bool isGLInitialized() const                            = 0;
+    virtual void swap()                                             = 0;
+    virtual void destroyGL()                                        = 0;
+    virtual bool makeCurrent()                                      = 0;
+    virtual bool hasError() const                                   = 0;
+    virtual bool setSwapInterval(EGLint swapInterval)               = 0;
+
+    bool isMultisample() const { return mConfigParams.multisample; }
+    bool isDebugEnabled() const { return mConfigParams.debug; }
+
+    const angle::PlatformMethods *getPlatformMethods() const { return mPlatform.platformMethods; }
+
+    const EGLPlatformParameters &getPlatform() const { return mPlatform; }
+    const ConfigParameters &getConfigParams() const { return mConfigParams; }
+
+  protected:
+    GLWindowBase(EGLint glesMajorVersion, EGLint glesMinorVersion);
+    virtual ~GLWindowBase();
+
+    EGLint mClientMajorVersion;
+    EGLint mClientMinorVersion;
+    EGLPlatformParameters mPlatform;
+    ConfigParameters mConfigParams;
+};
+
+class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
+{
+  public:
+    static EGLWindow *New(EGLint glesMajorVersion, EGLint glesMinorVersion);
+    static void Delete(EGLWindow **window);
 
     static EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
 
-    void swap();
-
-    EGLint getClientMajorVersion() const { return mClientMajorVersion; }
-    EGLint getClientMinorVersion() const { return mClientMinorVersion; }
-    const EGLPlatformParameters &getPlatform() const { return mPlatform; }
     EGLConfig getConfig() const;
     EGLDisplay getDisplay() const;
     EGLSurface getSurface() const;
     EGLContext getContext() const;
-    int getConfigRedBits() const { return mRedBits; }
-    int getConfigGreenBits() const { return mGreenBits; }
-    int getConfigBlueBits() const { return mBlueBits; }
-    int getConfigAlphaBits() const { return mAlphaBits; }
-    int getConfigDepthBits() const { return mDepthBits; }
-    int getConfigStencilBits() const { return mStencilBits; }
-    bool isMultisample() const { return mMultisample; }
-    bool isDebugEnabled() const { return mDebug; }
-    EGLint getSwapInterval() const { return mSwapInterval; }
-    const angle::PlatformMethods *getPlatformMethods() const { return mPlatformMethods; }
 
     // Internally initializes the Display, Surface and Context.
-    bool initializeGL(OSWindow *osWindow);
+    bool initializeGL(OSWindow *osWindow,
+                      angle::Library *glWindowingLibrary,
+                      const EGLPlatformParameters &platformParams,
+                      const ConfigParameters &configParams) override;
 
-    // Only initializes the Display and Surface.
-    bool initializeDisplayAndSurface(OSWindow *osWindow);
+    bool isGLInitialized() const override;
+    void swap() override;
+    void destroyGL() override;
+    bool makeCurrent() override;
+    bool hasError() const override;
+    bool setSwapInterval(EGLint swapInterval) override;
+
+    // Only initializes the Display.
+    bool initializeDisplay(OSWindow *osWindow,
+                           angle::Library *glWindowingLibrary,
+                           const EGLPlatformParameters &params);
+
+    // Only initializes the Surface.
+    bool initializeSurface(OSWindow *osWindow,
+                           angle::Library *glWindowingLibrary,
+                           const ConfigParameters &params);
+
+    // Create an EGL context with this window's configuration
+    EGLContext createContext(EGLContext share) const;
 
     // Only initializes the Context.
     bool initializeContext();
 
-    void destroyGL();
-    bool isGLInitialized() const;
+    void destroySurface();
+    void destroyContext();
 
-    void makeCurrent();
-
-    static bool ClientExtensionEnabled(const std::string &extName);
+    bool isDisplayInitialized() const { return mDisplay != EGL_NO_DISPLAY; }
 
   private:
+    EGLWindow(EGLint glesMajorVersion, EGLint glesMinorVersion);
+
+    ~EGLWindow() override;
+
     EGLConfig mConfig;
     EGLDisplay mDisplay;
     EGLSurface mSurface;
     EGLContext mContext;
 
-    EGLint mClientMajorVersion;
-    EGLint mClientMinorVersion;
     EGLint mEGLMajorVersion;
     EGLint mEGLMinorVersion;
-    EGLPlatformParameters mPlatform;
-    int mRedBits;
-    int mGreenBits;
-    int mBlueBits;
-    int mAlphaBits;
-    int mDepthBits;
-    int mStencilBits;
-    EGLenum mComponentType;
-    bool mMultisample;
-    bool mDebug;
-    bool mNoError;
-    bool mWebGLCompatibility;
-    bool mBindGeneratesResource;
-    bool mClientArraysEnabled;
-    bool mRobustAccess;
-    Optional<bool> mRobustResourceInit;
-    EGLint mSwapInterval;
-    EGLint mSamples;
-    Optional<bool> mDebugLayersEnabled;
-    Optional<bool> mContextProgramCacheEnabled;
-    angle::PlatformMethods *mPlatformMethods;
 };
 
-ANGLE_EXPORT bool CheckExtensionExists(const char *allExtensions, const std::string &extName);
+ANGLE_UTIL_EXPORT bool CheckExtensionExists(const char *allExtensions, const std::string &extName);
 
-#endif // UTIL_EGLWINDOW_H_
+#endif  // UTIL_EGLWINDOW_H_

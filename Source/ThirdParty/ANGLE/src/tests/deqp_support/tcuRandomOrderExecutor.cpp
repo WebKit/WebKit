@@ -23,17 +23,17 @@
 
 #include "tcuRandomOrderExecutor.h"
 
+#include "deClock.h"
+#include "deStringUtil.hpp"
 #include "tcuCommandLine.hpp"
 #include "tcuTestLog.hpp"
-#include "deStringUtil.hpp"
-#include "deClock.h"
 
-#include <cstdio>
 #include <algorithm>
+#include <cstdio>
 #include <fstream>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 namespace tcu
 {
@@ -58,7 +58,7 @@ void RandomOrderExecutor::pruneStack(size_t newStackSize)
     while (m_nodeStack.size() > newStackSize)
     {
         NodeStackEntry &curEntry = m_nodeStack.back();
-        const bool isPkg = curEntry.node->getNodeType() == NODETYPE_PACKAGE;
+        const bool isPkg         = curEntry.node->getNodeType() == NODETYPE_PACKAGE;
 
         DE_ASSERT((m_nodeStack.size() == 2) == isPkg);
 
@@ -172,8 +172,8 @@ static qpTestCaseType nodeTypeToTestCaseType(TestNodeType nodeType)
 
 TestStatus RandomOrderExecutor::execute(const std::string &casePath)
 {
-    TestCase *const testCase = seekToCase(casePath);
-    TestLog &log = m_testCtx.getLog();
+    TestCase *const testCase      = seekToCase(casePath);
+    TestLog &log                  = m_testCtx.getLog();
     const qpTestCaseType caseType = nodeTypeToTestCaseType(testCase->getNodeType());
 
     m_testCtx.setTerminateAfter(false);
@@ -188,7 +188,7 @@ TestStatus RandomOrderExecutor::execute(const std::string &casePath)
 
 tcu::TestStatus RandomOrderExecutor::executeInner(TestCase *testCase, const std::string &casePath)
 {
-    TestLog &log = m_testCtx.getLog();
+    TestLog &log                 = m_testCtx.getLog();
     const deUint64 testStartTime = deGetMicroseconds();
 
     m_testCtx.setTestResult(QP_TEST_RESULT_LAST, "");
@@ -262,8 +262,9 @@ tcu::TestStatus RandomOrderExecutor::executeInner(TestCase *testCase, const std:
     }
     catch (const tcu::Exception &e)
     {
-        log << e << TestLog::Message << "Error in test case deinit, test program "
-                                        "will terminate."
+        log << e << TestLog::Message
+            << "Error in test case deinit, test program "
+               "will terminate."
             << TestLog::EndMessage;
         m_testCtx.setTerminateAfter(true);
     }
@@ -279,4 +280,4 @@ tcu::TestStatus RandomOrderExecutor::executeInner(TestCase *testCase, const std:
     }
 }
 
-}  // tcu
+}  // namespace tcu

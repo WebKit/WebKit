@@ -25,7 +25,7 @@
 
 #include "third_party/compiler/ArrayBoundsClamper.h"
 
-#include "compiler/translator/IntermTraverse.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 // The built-in 'clamp' instruction only accepts floats and returns a float.  I
 // iterated a few times with our driver team who examined the output from our
@@ -36,9 +36,11 @@
 // temporary variables was difficult because ANGLE would then need to make more
 // brutal changes to the expression tree.
 
-const char* kIntClampBegin = "// BEGIN: Generated code for array bounds clamping\n\n";
-const char* kIntClampEnd = "// END: Generated code for array bounds clamping\n\n";
-const char* kIntClampDefinition = "int webgl_int_clamp(int value, int minValue, int maxValue) { return ((value < minValue) ? minValue : ((value > maxValue) ? maxValue : value)); }\n\n";
+const char *kIntClampBegin = "// BEGIN: Generated code for array bounds clamping\n\n";
+const char *kIntClampEnd   = "// END: Generated code for array bounds clamping\n\n";
+const char *kIntClampDefinition =
+    "int webgl_int_clamp(int value, int minValue, int maxValue) { return ((value < minValue) ? "
+    "minValue : ((value > maxValue) ? maxValue : value)); }\n\n";
 
 namespace sh
 {
@@ -46,48 +48,43 @@ namespace sh
 namespace
 {
 
-class ArrayBoundsClamperMarker : public TIntermTraverser {
-public:
-    ArrayBoundsClamperMarker()
-        : TIntermTraverser(true, false, false),
-          mNeedsClamp(false)
-   {
-   }
+class ArrayBoundsClamperMarker : public TIntermTraverser
+{
+  public:
+    ArrayBoundsClamperMarker() : TIntermTraverser(true, false, false), mNeedsClamp(false) {}
 
     bool visitBinary(Visit visit, TIntermBinary *node) override
-   {
-       if (node->getOp() == EOpIndexIndirect)
-       {
-           TIntermTyped* left = node->getLeft();
-           if (left->isArray() || left->isVector() || left->isMatrix())
-           {
-               node->setAddIndexClamp();
-               mNeedsClamp = true;
-           }
-       }
-       return true;
-   }
+    {
+        if (node->getOp() == EOpIndexIndirect)
+        {
+            TIntermTyped *left = node->getLeft();
+            if (left->isArray() || left->isVector() || left->isMatrix())
+            {
+                node->setAddIndexClamp();
+                mNeedsClamp = true;
+            }
+        }
+        return true;
+    }
 
     bool GetNeedsClamp() { return mNeedsClamp; }
 
-private:
+  private:
     bool mNeedsClamp;
 };
 
 }  // anonymous namespace
 
 ArrayBoundsClamper::ArrayBoundsClamper()
-    : mClampingStrategy(SH_CLAMP_WITH_CLAMP_INTRINSIC)
-    , mArrayBoundsClampDefinitionNeeded(false)
-{
-}
+    : mClampingStrategy(SH_CLAMP_WITH_CLAMP_INTRINSIC), mArrayBoundsClampDefinitionNeeded(false)
+{}
 
 void ArrayBoundsClamper::SetClampingStrategy(ShArrayIndexClampingStrategy clampingStrategy)
 {
     mClampingStrategy = clampingStrategy;
 }
 
-void ArrayBoundsClamper::MarkIndirectArrayBoundsForClamping(TIntermNode* root)
+void ArrayBoundsClamper::MarkIndirectArrayBoundsForClamping(TIntermNode *root)
 {
     ASSERT(root);
 
@@ -99,7 +96,7 @@ void ArrayBoundsClamper::MarkIndirectArrayBoundsForClamping(TIntermNode* root)
     }
 }
 
-void ArrayBoundsClamper::OutputClampingFunctionDefinition(TInfoSinkBase& out) const
+void ArrayBoundsClamper::OutputClampingFunctionDefinition(TInfoSinkBase &out) const
 {
     if (!mArrayBoundsClampDefinitionNeeded)
     {

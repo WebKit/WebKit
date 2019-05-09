@@ -27,9 +27,7 @@ HandleRangeAllocator::HandleRangeAllocator()
     mUsed.insert(std::make_pair(0u, 0u));
 }
 
-HandleRangeAllocator::~HandleRangeAllocator()
-{
-}
+HandleRangeAllocator::~HandleRangeAllocator() {}
 
 GLuint HandleRangeAllocator::allocate()
 {
@@ -42,7 +40,7 @@ GLuint HandleRangeAllocator::allocateAtOrAbove(GLuint wanted)
         return allocateRange(1u);
 
     auto current = mUsed.lower_bound(wanted);
-    auto next = current;
+    auto next    = current;
     if (current == mUsed.end() || current->first > wanted)
     {
         current--;
@@ -53,7 +51,7 @@ GLuint HandleRangeAllocator::allocateAtOrAbove(GLuint wanted)
     }
 
     GLuint firstId = current->first;
-    GLuint lastId = current->second;
+    GLuint lastId  = current->second;
     ASSERT(wanted >= firstId);
 
     if (wanted - 1u <= lastId)
@@ -205,7 +203,7 @@ void HandleRangeAllocator::releaseRange(GLuint first, GLuint range)
         {
             ASSERT(current->first < first && current->second > last);
             const GLuint lastExisting = current->second;
-            current->second = first - 1u;
+            current->second           = first - 1u;
             mUsed.insert(std::make_pair(last + 1u, lastExisting));
         }
     }

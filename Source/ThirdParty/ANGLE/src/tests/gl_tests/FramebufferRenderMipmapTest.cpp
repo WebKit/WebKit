@@ -25,27 +25,13 @@ class FramebufferRenderMipmapTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vsSource =
-            R"(attribute highp vec4 position;
-            void main(void)
-            {
-                gl_Position = position;
-            })";
-
-        const std::string fsSource =
-            R"(uniform highp vec4 color;
-            void main(void)
-            {
-                gl_FragColor = color;
-            })";
-
-        mProgram = CompileProgram(vsSource, fsSource);
+        mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         if (mProgram == 0)
         {
             FAIL() << "shader compilation failed.";
         }
 
-        mColorLocation = glGetUniformLocation(mProgram, "color");
+        mColorLocation = glGetUniformLocation(mProgram, essl1_shaders::ColorUniform());
 
         glUseProgram(mProgram);
 
@@ -75,7 +61,7 @@ class FramebufferRenderMipmapTest : public ANGLETest
 TEST_P(FramebufferRenderMipmapTest, Validation)
 {
     bool renderToMipmapSupported =
-        extensionEnabled("GL_OES_fbo_render_mipmap") || getClientMajorVersion() > 2;
+        IsGLExtensionEnabled("GL_OES_fbo_render_mipmap") || getClientMajorVersion() > 2;
 
     GLuint tex = 0;
     glGenTextures(1, &tex);
@@ -114,32 +100,17 @@ TEST_P(FramebufferRenderMipmapTest, Validation)
     glDeleteTextures(1, &tex);
 }
 
-// Render to various levels of a texture and check that they have the correct color data via ReadPixels
+// Render to various levels of a texture and check that they have the correct color data via
+// ReadPixels
 TEST_P(FramebufferRenderMipmapTest, RenderToMipmap)
 {
-    // TODO(geofflang): Figure out why this is broken on Intel OpenGL
-    if (IsIntel() && getPlatformRenderer() == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
-    {
-        std::cout << "Test skipped on Intel OpenGL." << std::endl;
-        return;
-    }
-
     bool renderToMipmapSupported =
-        extensionEnabled("GL_OES_fbo_render_mipmap") || getClientMajorVersion() > 2;
-    if (!renderToMipmapSupported)
-    {
-        std::cout << "Test skipped because GL_OES_fbo_render_mipmap or ES3 is not available." << std::endl;
-        return;
-    }
+        IsGLExtensionEnabled("GL_OES_fbo_render_mipmap") || getClientMajorVersion() > 2;
+    ANGLE_SKIP_TEST_IF(!renderToMipmapSupported);
 
-    const GLfloat levelColors[] =
-    {
-        1.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 1.0f, 1.0f,
+    const GLfloat levelColors[] = {
+        1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
     };
     const GLint testLevels = static_cast<GLint>(ArraySize(levelColors) / 4);
 
@@ -169,7 +140,7 @@ TEST_P(FramebufferRenderMipmapTest, RenderToMipmap)
         glUseProgram(mProgram);
         glUniform4fv(mColorLocation, 1, levelColors + (i * 4));
 
-        drawQuad(mProgram, "position", 0.5f);
+        drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
         EXPECT_GL_NO_ERROR();
     }
 
@@ -189,7 +160,8 @@ TEST_P(FramebufferRenderMipmapTest, RenderToMipmap)
     EXPECT_GL_NO_ERROR();
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(FramebufferRenderMipmapTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
@@ -197,4 +169,5 @@ ANGLE_INSTANTIATE_TEST(FramebufferRenderMipmapTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());

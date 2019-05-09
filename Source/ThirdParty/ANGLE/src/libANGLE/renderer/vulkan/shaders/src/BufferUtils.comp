@@ -1,0 +1,82 @@
+//
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// BufferUtils.comp: various utilities such as clear and copy.
+//
+// The following defines tweak the functionality, and a different shader is built based on these.
+//
+//   - Flags:
+//     * IsAligned: if true, assumes the workgroup size divides the buffer size, so there is no
+//                  need for bound checking
+//   - Format:
+//     * IsFloat
+//     * IsInt
+//     * IsUint
+//   - Function:
+//     * IsClear: the buffer will be cleared
+//     * IsCopy: a buffer will be copied to another
+//
+
+#version 450 core
+
+layout (local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+
+#if IsFloat
+#define ADD_TYPE_PREFIX(type) type
+#define BUFFER_FORMAT rgba32f
+#define GVEC4 vec4
+#elif IsInt
+#define ADD_TYPE_PREFIX(type) i ## type
+#define BUFFER_FORMAT rgba32i
+#define GVEC4 ivec4
+#elif IsUint
+#define ADD_TYPE_PREFIX(type) u ## type
+#define BUFFER_FORMAT rgba32ui
+#define GVEC4 uvec4
+#else
+#error "Not all formats are accounted for"
+#endif
+
+#define BUFFER_WRITE_TYPE ADD_TYPE_PREFIX(imageBuffer)
+#define BUFFER_READ_TYPE ADD_TYPE_PREFIX(samplerBuffer)
+
+layout (set = 0, binding = 0, BUFFER_FORMAT) uniform writeonly BUFFER_WRITE_TYPE dest;
+#if IsCopy
+layout (set = 0, binding = 1) uniform BUFFER_READ_TYPE src;
+#endif // IsCopy
+
+layout (push_constant) uniform PushConstants
+{
+    // destOffset: used in all cases
+    uint destOffset;
+    // size: used if !IsAligned
+    uint size;
+    // srcOffset: used if IsCopy
+    uint srcOffset;
+    uint padding;
+    // clearValue: used if IsClear
+    GVEC4 clearValue;
+} params;
+
+void main()
+{
+#if !IsAligned
+    if (gl_GlobalInvocationID.x >= params.size)
+        return;
+#endif // IsAligned
+
+    int destIndex = int(params.destOffset.x + gl_GlobalInvocationID.x);
+    int srcIndex = int(params.srcOffset.x + gl_GlobalInvocationID.x);
+
+#if IsClear
+    GVEC4 srcValue = params.clearValue;
+#elif IsCopy
+    GVEC4 srcValue = texelFetch(src, srcIndex);
+#else
+#error "Not all functions are accounted for"
+#endif // Function
+
+    imageStore(dest, destIndex, srcValue);
+}

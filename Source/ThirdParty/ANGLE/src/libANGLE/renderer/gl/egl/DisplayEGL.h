@@ -11,9 +11,12 @@
 
 #include "libANGLE/renderer/gl/DisplayGL.h"
 #include "libANGLE/renderer/gl/egl/FunctionsEGL.h"
+#include "libANGLE/renderer/gl/egl/egl_utils.h"
 
 namespace rx
 {
+
+class WorkerContext;
 
 class DisplayEGL : public DisplayGL
 {
@@ -21,21 +24,36 @@ class DisplayEGL : public DisplayGL
     DisplayEGL(const egl::DisplayState &state);
     ~DisplayEGL() override;
 
+    ImageImpl *createImage(const egl::ImageState &state,
+                           const gl::Context *context,
+                           EGLenum target,
+                           const egl::AttributeMap &attribs) override;
+
+    EGLSyncImpl *createSync(const egl::AttributeMap &attribs) override;
+
     std::string getVendorString() const override;
 
+    void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) override;
+
+    virtual void destroyNativeContext(EGLContext context) = 0;
+
+    virtual WorkerContext *createWorkerContext(std::string *infoLog,
+                                               EGLContext sharedContext,
+                                               const native_egl::AttributeVector workerAttribs) = 0;
+
   protected:
-    egl::Error initializeContext(const egl::AttributeMap &eglAttributes);
+    egl::Error initializeContext(EGLContext shareContext,
+                                 const egl::AttributeMap &eglAttributes,
+                                 EGLContext *outContext,
+                                 native_egl::AttributeVector *outAttribs) const;
+
+    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 
     FunctionsEGL *mEGL;
     EGLConfig mConfig;
-    EGLContext mContext;
-    FunctionsGL *mFunctionsGL;
 
   private:
-    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;
-
-    const FunctionsGL *getFunctionsGL() const override;
 };
 
 }  // namespace rx

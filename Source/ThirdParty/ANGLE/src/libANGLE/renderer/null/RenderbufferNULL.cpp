@@ -14,40 +14,37 @@
 namespace rx
 {
 
-RenderbufferNULL::RenderbufferNULL() : RenderbufferImpl()
+RenderbufferNULL::RenderbufferNULL(const gl::RenderbufferState &state) : RenderbufferImpl(state) {}
+
+RenderbufferNULL::~RenderbufferNULL() {}
+
+angle::Result RenderbufferNULL::setStorage(const gl::Context *context,
+                                           GLenum internalformat,
+                                           size_t width,
+                                           size_t height)
 {
+    return angle::Result::Continue;
 }
 
-RenderbufferNULL::~RenderbufferNULL()
+angle::Result RenderbufferNULL::setStorageMultisample(const gl::Context *context,
+                                                      size_t samples,
+                                                      GLenum internalformat,
+                                                      size_t width,
+                                                      size_t height)
 {
+    return angle::Result::Continue;
 }
 
-gl::Error RenderbufferNULL::setStorage(const gl::Context *context,
-                                       GLenum internalformat,
-                                       size_t width,
-                                       size_t height)
+angle::Result RenderbufferNULL::setStorageEGLImageTarget(const gl::Context *context,
+                                                         egl::Image *image)
 {
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error RenderbufferNULL::setStorageMultisample(const gl::Context *context,
-                                                  size_t samples,
-                                                  GLenum internalformat,
-                                                  size_t width,
-                                                  size_t height)
+angle::Result RenderbufferNULL::initializeContents(const gl::Context *context,
+                                                   const gl::ImageIndex &imageIndex)
 {
-    return gl::NoError();
-}
-
-gl::Error RenderbufferNULL::setStorageEGLImageTarget(const gl::Context *context, egl::Image *image)
-{
-    return gl::NoError();
-}
-
-gl::Error RenderbufferNULL::initializeContents(const gl::Context *context,
-                                               const gl::ImageIndex &imageIndex)
-{
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

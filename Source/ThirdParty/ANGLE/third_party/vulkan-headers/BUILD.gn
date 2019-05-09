@@ -1,0 +1,40 @@
+# Copyright 2018 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# BUILD settings for Vulkan Headers
+# Headers repo is at
+# https://github.com/KhronosGroup/Vulkan-Headers
+
+import("../../gni/angle.gni")
+
+config("vulkan_headers_config") {
+  include_dirs = [ "src/include" ]
+
+  if (is_win) {
+    defines = [ "VK_USE_PLATFORM_WIN32_KHR" ]
+  }
+  if (is_linux) {
+    defines = [ "VK_USE_PLATFORM_XCB_KHR" ]
+  }
+  if (is_android) {
+    defines = [ "VK_USE_PLATFORM_ANDROID_KHR" ]
+  }
+  if (is_fuchsia) {
+    defines = [ "VK_USE_PLATFORM_FUCHSIA" ]
+  }
+}
+
+# Vulkan headers only, no compiled sources.
+source_set("vulkan_headers") {
+  sources = [
+    "src/include/vulkan/vk_icd.h",
+    "src/include/vulkan/vk_layer.h",
+    "src/include/vulkan/vk_platform.h",
+    "src/include/vulkan/vk_sdk_platform.h",
+    "src/include/vulkan/vulkan.h",
+    "src/include/vulkan/vulkan.hpp",
+    "src/include/vulkan/vulkan_core.h",
+  ]
+  public_configs = [ ":vulkan_headers_config" ]
+}

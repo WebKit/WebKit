@@ -10,11 +10,11 @@
 #define LIBANGLE_RENDERER_D3D_D3D11_TRIM11_H_
 
 #include "common/angleutils.h"
-#include "libANGLE/angletypes.h"
 #include "libANGLE/Error.h"
+#include "libANGLE/angletypes.h"
 
 #if defined(ANGLE_ENABLE_WINDOWS_STORE)
-#include <EventToken.h>
+#    include <EventToken.h>
 #endif
 
 namespace rx
@@ -29,7 +29,7 @@ class Trim11 : angle::NonCopyable
 
   private:
     Renderer11 *mRenderer;
-#if defined (ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_STORE)
     EventRegistrationToken mApplicationSuspendedEventToken;
 #endif
 
@@ -38,6 +38,6 @@ class Trim11 : angle::NonCopyable
     void unregisterForRendererTrimRequest();
 };
 
-}
+}  // namespace rx
 
-#endif   // LIBANGLE_RENDERER_D3D_D3D11_TRIM11_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_TRIM11_H_

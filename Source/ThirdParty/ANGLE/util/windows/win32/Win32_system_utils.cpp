@@ -6,7 +6,7 @@
 
 // Win32_system_utils.cpp: Implementation of OS-specific functions for Win32 (Windows)
 
-#include "system_utils.h"
+#include "util/system_utils.h"
 
 #include <windows.h>
 #include <array>
@@ -19,45 +19,21 @@ void SetLowPriorityProcess()
     SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
 }
 
-class Win32Library : public Library
+bool StabilizeCPUForBenchmarking()
 {
-  public:
-    Win32Library(const std::string &libraryName);
-    ~Win32Library() override;
-
-    void *getSymbol(const std::string &symbolName) override;
-
-  private:
-    HMODULE mModule;
-};
-
-Win32Library::Win32Library(const std::string &libraryName) : mModule(nullptr)
-{
-    const auto &fullName = libraryName + "." + GetSharedLibraryExtension();
-    mModule              = LoadLibraryA(fullName.c_str());
-}
-
-Win32Library::~Win32Library()
-{
-    if (mModule)
+    if (SetThreadAffinityMask(GetCurrentThread(), 1) == 0)
     {
-        FreeLibrary(mModule);
+        return false;
     }
-}
-
-void *Win32Library::getSymbol(const std::string &symbolName)
-{
-    if (!mModule)
+    if (SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS) == FALSE)
     {
-        return nullptr;
+        return false;
+    }
+    if (SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) == FALSE)
+    {
+        return false;
     }
 
-    return GetProcAddress(mModule, symbolName.c_str());
+    return true;
 }
-
-Library *loadLibrary(const std::string &libraryName)
-{
-    return new Win32Library(libraryName);
-}
-
 }  // namespace angle

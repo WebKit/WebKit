@@ -55,14 +55,21 @@ EXPORTS
     eglStreamConsumerAcquireKHR                 @61
     eglStreamConsumerReleaseKHR                 @62
     eglStreamConsumerGLTextureExternalAttribsNV @63
-    eglCreateStreamProducerD3DTextureNV12ANGLE  @64
-    eglStreamPostD3DTextureNV12ANGLE            @65
+    eglCreateStreamProducerD3DTextureANGLE      @64
+    eglStreamPostD3DTextureANGLE                @65
     eglGetSyncValuesCHROMIUM                    @66
-    eglSwapBuffersWithDamageEXT                 @67
+    eglSwapBuffersWithDamageKHR                 @67
     eglProgramCacheGetAttribANGLE               @68
     eglProgramCachePopulateANGLE                @69
     eglProgramCacheQueryANGLE                   @70
     eglProgramCacheResizeANGLE                  @71
+    eglCreatePlatformWindowSurfaceEXT           @72
+    eglCreatePlatformPixmapSurfaceEXT           @73
+    eglPresentationTimeANDROID                  @74
+    eglDebugMessageControlKHR                   @75
+    eglQueryDebugKHR                            @76
+    eglLabelObjectKHR                           @77
+    eglSetBlobCacheFuncsANDROID                 @78
 
     ; 1.5 entry points
     eglCreateSync                               @38

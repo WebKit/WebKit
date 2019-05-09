@@ -29,26 +29,10 @@ class SRGBFramebufferTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vs =
-            "precision highp float;\n"
-            "attribute vec4 position;\n"
-            "void main()\n"
-            "{\n"
-            "   gl_Position = vec4(position.xy, 0.0, 1.0);\n"
-            "}\n";
-
-        const std::string fs =
-            "precision highp float;\n"
-            "uniform vec4 color;\n"
-            "void main()\n"
-            "{\n"
-            "   gl_FragColor = color;\n"
-            "}\n";
-
-        mProgram = CompileProgram(vs, fs);
+        mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         ASSERT_NE(0u, mProgram);
 
-        mColorLocation = glGetUniformLocation(mProgram, "color");
+        mColorLocation = glGetUniformLocation(mProgram, essl1_shaders::ColorUniform());
         ASSERT_NE(-1, mColorLocation);
     }
 
@@ -67,7 +51,7 @@ class SRGBFramebufferTest : public ANGLETest
 TEST_P(SRGBFramebufferTest, Validation)
 {
     GLenum expectedError =
-        extensionEnabled("GL_EXT_sRGB_write_control") ? GL_NO_ERROR : GL_INVALID_ENUM;
+        IsGLExtensionEnabled("GL_EXT_sRGB_write_control") ? GL_NO_ERROR : GL_INVALID_ENUM;
 
     GLboolean value = GL_FALSE;
     glEnable(GL_FRAMEBUFFER_SRGB_EXT);
@@ -77,7 +61,7 @@ TEST_P(SRGBFramebufferTest, Validation)
     EXPECT_GL_ERROR(expectedError);
     if (expectedError == GL_NO_ERROR)
     {
-        EXPECT_EQ(GL_TRUE, value);
+        EXPECT_GL_TRUE(value);
     }
 
     glDisable(GL_FRAMEBUFFER_SRGB_EXT);
@@ -87,15 +71,15 @@ TEST_P(SRGBFramebufferTest, Validation)
     EXPECT_GL_ERROR(expectedError);
     if (expectedError == GL_NO_ERROR)
     {
-        EXPECT_EQ(GL_FALSE, value);
+        EXPECT_GL_FALSE(value);
     }
 }
 
 // Test basic functionality of GL_EXT_sRGB_write_control
 TEST_P(SRGBFramebufferTest, BasicUsage)
 {
-    if (!extensionEnabled("GL_EXT_sRGB_write_control") ||
-        (!extensionEnabled("GL_EXT_sRGB") && getClientMajorVersion() < 3))
+    if (!IsGLExtensionEnabled("GL_EXT_sRGB_write_control") ||
+        (!IsGLExtensionEnabled("GL_EXT_sRGB") && getClientMajorVersion() < 3))
     {
         std::cout
             << "Test skipped because GL_EXT_sRGB_write_control and GL_EXT_sRGB are not available."
@@ -119,11 +103,11 @@ TEST_P(SRGBFramebufferTest, BasicUsage)
     glUniform4fv(mColorLocation, 1, srgbColor.toNormalizedVector().data());
 
     glEnable(GL_FRAMEBUFFER_SRGB_EXT);
-    drawQuad(mProgram, "position", 0.5f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
 
     glDisable(GL_FRAMEBUFFER_SRGB_EXT);
-    drawQuad(mProgram, "position", 0.5f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
 }
 
@@ -136,6 +120,7 @@ ANGLE_INSTANTIATE_TEST(SRGBFramebufferTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());
 
 }  // namespace angle

@@ -6,13 +6,9 @@
 
 // X11Pixmap.cpp: Implementation of OSPixmap for X11
 
-#include "x11/X11Pixmap.h"
+#include "util/x11/X11Pixmap.h"
 
-X11Pixmap::X11Pixmap()
-  : mPixmap(0),
-    mDisplay(nullptr)
-{
-}
+X11Pixmap::X11Pixmap() : mPixmap(0), mDisplay(nullptr) {}
 
 X11Pixmap::~X11Pixmap()
 {
@@ -26,7 +22,7 @@ bool X11Pixmap::initialize(EGLNativeDisplayType display, size_t width, size_t he
 {
     mDisplay = display;
 
-    int screen = DefaultScreen(mDisplay);
+    int screen  = DefaultScreen(mDisplay);
     Window root = RootWindow(mDisplay, screen);
 
     mPixmap = XCreatePixmap(mDisplay, root, width, height, depth);

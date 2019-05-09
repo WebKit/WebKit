@@ -79,7 +79,7 @@ TEST_F(HandleRangeAllocatorTest, TestAdvanced)
 TEST_F(HandleRangeAllocatorTest, MarkAsUsed)
 {
     auto *allocator = getAllocator();
-    GLuint id = allocator->allocate();
+    GLuint id       = allocator->allocate();
     allocator->release(id);
     EXPECT_FALSE(allocator->isUsed(id));
     EXPECT_TRUE(allocator->markAsUsed(id));
@@ -98,7 +98,7 @@ TEST_F(HandleRangeAllocatorTest, AllocateAtOrAbove)
 {
     const GLuint kOffset = 123456;
     auto *allocator      = getAllocator();
-    GLuint id1 = allocator->allocateAtOrAbove(kOffset);
+    GLuint id1           = allocator->allocateAtOrAbove(kOffset);
     EXPECT_EQ(kOffset, id1);
     GLuint id2 = allocator->allocateAtOrAbove(kOffset);
     EXPECT_GT(id2, kOffset);
@@ -111,7 +111,7 @@ TEST_F(HandleRangeAllocatorTest, AllocateIdAtOrAboveWrapsAround)
 {
     const GLuint kMaxPossibleOffset = ~static_cast<GLuint>(0);
     auto *allocator                 = getAllocator();
-    GLuint id1 = allocator->allocateAtOrAbove(kMaxPossibleOffset);
+    GLuint id1                      = allocator->allocateAtOrAbove(kMaxPossibleOffset);
     EXPECT_EQ(kMaxPossibleOffset, id1);
     GLuint id2 = allocator->allocateAtOrAbove(kMaxPossibleOffset);
     EXPECT_EQ(1u, id2);
@@ -123,7 +123,7 @@ TEST_F(HandleRangeAllocatorTest, AllocateIdAtOrAboveWrapsAround)
 TEST_F(HandleRangeAllocatorTest, RedundantFreeIsIgnored)
 {
     auto *allocator = getAllocator();
-    GLuint id1 = allocator->allocate();
+    GLuint id1      = allocator->allocate();
     allocator->release(0);
     allocator->release(id1);
     allocator->release(id1);
@@ -189,7 +189,7 @@ TEST_F(HandleRangeAllocatorTest, AllocateRangeEndNoEffect)
     const GLuint kMaxPossibleOffset = std::numeric_limits<GLuint>::max();
 
     auto *allocator = getAllocator();
-    GLuint id1 = allocator->allocateAtOrAbove(kMaxPossibleOffset - 2u);
+    GLuint id1      = allocator->allocateAtOrAbove(kMaxPossibleOffset - 2u);
     EXPECT_EQ(kMaxPossibleOffset - 2u, id1);
     GLuint id3 = allocator->allocateRange(3);
     EXPECT_EQ(1u, id3);
@@ -203,7 +203,7 @@ TEST_F(HandleRangeAllocatorTest, AllocateMax)
     const uint32_t kMaxPossibleRange = std::numeric_limits<uint32_t>::max();
 
     auto *allocator = getAllocator();
-    GLuint id = allocator->allocateRange(kMaxPossibleRange);
+    GLuint id       = allocator->allocateRange(kMaxPossibleRange);
     EXPECT_EQ(1u, id);
     allocator->releaseRange(id, kMaxPossibleRange - 1u);
     GLuint id2 = allocator->allocateRange(kMaxPossibleRange);

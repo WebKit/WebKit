@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+#  Copyright 2018 The ANGLE Project Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be
+#  found in the LICENSE file.
+
+# Generate commit.h with git commit hash.
+#
+
 import subprocess as sp
 import sys
 import os
@@ -22,6 +30,9 @@ if operation == 'check':
     else:
         print("0")
     sys.exit(0)
+
+if len(sys.argv) < 4 or operation != 'gen':
+    sys.exit(usage)
 
 output_file = sys.argv[3]
 commit_id_size = 12

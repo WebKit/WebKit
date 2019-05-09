@@ -14,16 +14,20 @@
 #include "common/angleutils.h"
 #include "common/platform.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace gl
 {
 class InfoLog;
-}
+}  // namespace gl
 
 namespace rx
 {
+namespace d3d
+{
+class Context;
+}  // namespace d3d
 
 struct CompileConfig
 {
@@ -42,23 +46,29 @@ class HLSLCompiler : angle::NonCopyable
 
     void release();
 
-    // Attempt to compile a HLSL shader using the supplied configurations, may output a NULL compiled blob
-    // even if no GL errors are returned.
-    gl::Error compileToBinary(gl::InfoLog &infoLog, const std::string &hlsl, const std::string &profile,
-                              const std::vector<CompileConfig> &configs, const D3D_SHADER_MACRO *overrideMacros,
-                              ID3DBlob **outCompiledBlob, std::string *outDebugInfo);
+    // Attempt to compile a HLSL shader using the supplied configurations, may output a NULL
+    // compiled blob even if no GL errors are returned.
+    angle::Result compileToBinary(d3d::Context *context,
+                                  gl::InfoLog &infoLog,
+                                  const std::string &hlsl,
+                                  const std::string &profile,
+                                  const std::vector<CompileConfig> &configs,
+                                  const D3D_SHADER_MACRO *overrideMacros,
+                                  ID3DBlob **outCompiledBlob,
+                                  std::string *outDebugInfo);
 
-    gl::Error disassembleBinary(ID3DBlob *shaderBinary, std::string *disassemblyOut);
-    gl::Error ensureInitialized();
+    angle::Result disassembleBinary(d3d::Context *context,
+                                    ID3DBlob *shaderBinary,
+                                    std::string *disassemblyOut);
+    angle::Result ensureInitialized(d3d::Context *context);
 
   private:
-
     bool mInitialized;
     HMODULE mD3DCompilerModule;
     pD3DCompile mD3DCompileFunc;
     pD3DDisassemble mD3DDisassembleFunc;
 };
 
-}
+}  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_D3D_HLSLCOMPILER_H_

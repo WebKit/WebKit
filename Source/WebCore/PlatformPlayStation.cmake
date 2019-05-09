@@ -5,8 +5,6 @@ include(platform/ImageDecoders.cmake)
 include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    ${THIRDPARTY_DIR}/ANGLE/
-    ${THIRDPARTY_DIR}/ANGLE/include/KHR
     ${WEBCORE_DIR}/platform
     ${WEBCORE_DIR}/platform/generic
     ${WEBCORE_DIR}/platform/graphics/egl

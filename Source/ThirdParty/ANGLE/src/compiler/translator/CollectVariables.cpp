@@ -10,8 +10,8 @@
 #include "angle_gl.h"
 #include "common/utilities.h"
 #include "compiler/translator/HashNames.h"
-#include "compiler/translator/IntermTraverse.h"
 #include "compiler/translator/SymbolTable.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -38,7 +38,7 @@ BlockLayoutType GetBlockLayoutType(TLayoutBlockStorage blockStorage)
     }
 }
 
-// TODO(jiawei.shao@intel.com): implement GL_OES_shader_io_blocks.
+// TODO(jiawei.shao@intel.com): implement GL_EXT_shader_io_blocks.
 BlockType GetBlockType(TQualifier qualifier)
 {
     switch (qualifier)
@@ -56,37 +56,38 @@ BlockType GetBlockType(TQualifier qualifier)
 }
 
 template <class VarT>
-VarT *FindVariable(const TString &name, std::vector<VarT> *infoList)
+VarT *FindVariable(const ImmutableString &name, std::vector<VarT> *infoList)
 {
     // TODO(zmo): optimize this function.
     for (size_t ii = 0; ii < infoList->size(); ++ii)
     {
-        if ((*infoList)[ii].name.c_str() == name)
+        if (name == (*infoList)[ii].name)
             return &((*infoList)[ii]);
     }
 
     return nullptr;
 }
 
-// Note that this shouldn't be called for interface blocks - static use information is collected for
+// Note that this shouldn't be called for interface blocks - active information is collected for
 // individual fields in case of interface blocks.
-void MarkStaticallyUsed(ShaderVariable *variable)
+void MarkActive(ShaderVariable *variable)
 {
-    if (!variable->staticUse)
+    if (!variable->active)
     {
         if (variable->isStruct())
         {
             // Conservatively assume all fields are statically used as well.
             for (auto &field : variable->fields)
             {
-                MarkStaticallyUsed(&field);
+                MarkActive(&field);
             }
         }
-        variable->staticUse = true;
+        ASSERT(variable->staticUse);
+        variable->active = true;
     }
 }
 
-ShaderVariable *FindVariableInInterfaceBlock(const TString &name,
+ShaderVariable *FindVariableInInterfaceBlock(const ImmutableString &name,
                                              const TInterfaceBlock *interfaceBlock,
                                              std::vector<InterfaceBlock> *infoList)
 {
@@ -96,6 +97,7 @@ ShaderVariable *FindVariableInInterfaceBlock(const TString &name,
 
     // Set static use on the parent interface block here
     namedBlock->staticUse = true;
+    namedBlock->active    = true;
     return FindVariable(name, &namedBlock->fields);
 }
 
@@ -114,37 +116,45 @@ class CollectVariablesTraverser : public TIntermTraverser
                               std::vector<InterfaceBlock> *inBlocks,
                               ShHashFunction64 hashFunction,
                               TSymbolTable *symbolTable,
-                              int shaderVersion,
                               GLenum shaderType,
                               const TExtensionBehavior &extensionBehavior);
 
+    bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node) override;
     void visitSymbol(TIntermSymbol *symbol) override;
     bool visitDeclaration(Visit, TIntermDeclaration *node) override;
     bool visitBinary(Visit visit, TIntermBinary *binaryNode) override;
 
   private:
-    std::string getMappedName(const TName &name) const;
+    std::string getMappedName(const TSymbol *symbol) const;
 
+    void setFieldOrVariableProperties(const TType &type,
+                                      bool staticUse,
+                                      ShaderVariable *variableOut) const;
+    void setFieldProperties(const TType &type,
+                            const ImmutableString &name,
+                            bool staticUse,
+                            ShaderVariable *variableOut) const;
     void setCommonVariableProperties(const TType &type,
-                                     const TName &name,
+                                     const TVariable &variable,
                                      ShaderVariable *variableOut) const;
 
     Attribute recordAttribute(const TIntermSymbol &variable) const;
     OutputVariable recordOutputVariable(const TIntermSymbol &variable) const;
     Varying recordVarying(const TIntermSymbol &variable) const;
-    void recordInterfaceBlock(const TType &interfaceBlockType,
+    void recordInterfaceBlock(const char *instanceName,
+                              const TType &interfaceBlockType,
                               InterfaceBlock *interfaceBlock) const;
     Uniform recordUniform(const TIntermSymbol &variable) const;
 
-    void setBuiltInInfoFromSymbolTable(const char *name, ShaderVariable *info);
+    void setBuiltInInfoFromSymbol(const TVariable &variable, ShaderVariable *info);
 
-    void recordBuiltInVaryingUsed(const char *name,
+    void recordBuiltInVaryingUsed(const TVariable &variable,
                                   bool *addedFlag,
                                   std::vector<Varying> *varyings);
-    void recordBuiltInFragmentOutputUsed(const char *name, bool *addedFlag);
-    void recordBuiltInAttributeUsed(const char *name, bool *addedFlag);
+    void recordBuiltInFragmentOutputUsed(const TVariable &variable, bool *addedFlag);
+    void recordBuiltInAttributeUsed(const TVariable &variable, bool *addedFlag);
     InterfaceBlock *recordGLInUsed(const TType &glInType);
-    InterfaceBlock *findNamedInterfaceBlock(const TString &name) const;
+    InterfaceBlock *findNamedInterfaceBlock(const ImmutableString &name) const;
 
     std::vector<Attribute> *mAttribs;
     std::vector<OutputVariable> *mOutputVariables;
@@ -164,6 +174,7 @@ class CollectVariablesTraverser : public TIntermTraverser
     bool mInstanceIDAdded;
     bool mVertexIDAdded;
     bool mPointSizeAdded;
+    bool mDrawIDAdded;
 
     // Vertex Shader and Geometry Shader builtins
     bool mPositionAdded;
@@ -191,7 +202,6 @@ class CollectVariablesTraverser : public TIntermTraverser
 
     ShHashFunction64 mHashFunction;
 
-    int mShaderVersion;
     GLenum mShaderType;
     const TExtensionBehavior &mExtensionBehavior;
 };
@@ -207,7 +217,6 @@ CollectVariablesTraverser::CollectVariablesTraverser(
     std::vector<sh::InterfaceBlock> *inBlocks,
     ShHashFunction64 hashFunction,
     TSymbolTable *symbolTable,
-    int shaderVersion,
     GLenum shaderType,
     const TExtensionBehavior &extensionBehavior)
     : TIntermTraverser(true, false, false, symbolTable),
@@ -223,6 +232,7 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mInstanceIDAdded(false),
       mVertexIDAdded(false),
       mPointSizeAdded(false),
+      mDrawIDAdded(false),
       mPositionAdded(false),
       mPointCoordAdded(false),
       mFrontFacingAdded(false),
@@ -240,36 +250,31 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mPrimitiveIDAdded(false),
       mLayerAdded(false),
       mHashFunction(hashFunction),
-      mShaderVersion(shaderVersion),
       mShaderType(shaderType),
       mExtensionBehavior(extensionBehavior)
+{}
+
+std::string CollectVariablesTraverser::getMappedName(const TSymbol *symbol) const
 {
+    return HashName(symbol, mHashFunction, nullptr).data();
 }
 
-std::string CollectVariablesTraverser::getMappedName(const TName &name) const
+void CollectVariablesTraverser::setBuiltInInfoFromSymbol(const TVariable &variable,
+                                                         ShaderVariable *info)
 {
-    return HashName(name, mHashFunction, nullptr).c_str();
-}
+    const TType &type = variable.getType();
 
-void CollectVariablesTraverser::setBuiltInInfoFromSymbolTable(const char *name,
-                                                              ShaderVariable *info)
-{
-    TVariable *symbolTableVar =
-        reinterpret_cast<TVariable *>(mSymbolTable->findBuiltIn(name, mShaderVersion));
-    ASSERT(symbolTableVar);
-    const TType &type = symbolTableVar->getType();
-
-    info->name       = name;
-    info->mappedName = name;
+    info->name       = variable.name().data();
+    info->mappedName = variable.name().data();
     info->type       = GLVariableType(type);
-    info->precision = GLVariablePrecision(type);
+    info->precision  = GLVariablePrecision(type);
     if (auto *arraySizes = type.getArraySizes())
     {
         info->arraySizes.assign(arraySizes->begin(), arraySizes->end());
     }
 }
 
-void CollectVariablesTraverser::recordBuiltInVaryingUsed(const char *name,
+void CollectVariablesTraverser::recordBuiltInVaryingUsed(const TVariable &variable,
                                                          bool *addedFlag,
                                                          std::vector<Varying> *varyings)
 {
@@ -277,33 +282,38 @@ void CollectVariablesTraverser::recordBuiltInVaryingUsed(const char *name,
     if (!(*addedFlag))
     {
         Varying info;
-        setBuiltInInfoFromSymbolTable(name, &info);
+        setBuiltInInfoFromSymbol(variable, &info);
         info.staticUse   = true;
-        info.isInvariant = mSymbolTable->isVaryingInvariant(name);
+        info.active      = true;
+        info.isInvariant = mSymbolTable->isVaryingInvariant(variable);
         varyings->push_back(info);
         (*addedFlag) = true;
     }
 }
 
-void CollectVariablesTraverser::recordBuiltInFragmentOutputUsed(const char *name, bool *addedFlag)
+void CollectVariablesTraverser::recordBuiltInFragmentOutputUsed(const TVariable &variable,
+                                                                bool *addedFlag)
 {
     if (!(*addedFlag))
     {
         OutputVariable info;
-        setBuiltInInfoFromSymbolTable(name, &info);
+        setBuiltInInfoFromSymbol(variable, &info);
         info.staticUse = true;
+        info.active    = true;
         mOutputVariables->push_back(info);
         (*addedFlag) = true;
     }
 }
 
-void CollectVariablesTraverser::recordBuiltInAttributeUsed(const char *name, bool *addedFlag)
+void CollectVariablesTraverser::recordBuiltInAttributeUsed(const TVariable &variable,
+                                                           bool *addedFlag)
 {
     if (!(*addedFlag))
     {
         Attribute info;
-        setBuiltInInfoFromSymbolTable(name, &info);
+        setBuiltInInfoFromSymbol(variable, &info);
         info.staticUse = true;
+        info.active    = true;
         info.location  = -1;
         mAttribs->push_back(info);
         (*addedFlag) = true;
@@ -316,8 +326,7 @@ InterfaceBlock *CollectVariablesTraverser::recordGLInUsed(const TType &glInType)
     {
         ASSERT(glInType.getQualifier() == EvqPerVertexIn);
         InterfaceBlock info;
-        recordInterfaceBlock(glInType, &info);
-        info.staticUse = true;
+        recordInterfaceBlock("gl_in", glInType, &info);
 
         mPerVertexInAdded = true;
         mInBlocks->push_back(info);
@@ -325,33 +334,45 @@ InterfaceBlock *CollectVariablesTraverser::recordGLInUsed(const TType &glInType)
     }
     else
     {
-        return FindVariable("gl_PerVertex", mInBlocks);
+        return FindVariable(ImmutableString("gl_PerVertex"), mInBlocks);
     }
 }
 
-// We want to check whether a uniform/varying is statically used
-// because we only count the used ones in packing computing.
-// Also, gl_FragCoord, gl_PointCoord, and gl_FrontFacing count
-// toward varying counting if they are statically used in a fragment
-// shader.
+bool CollectVariablesTraverser::visitInvariantDeclaration(Visit visit,
+                                                          TIntermInvariantDeclaration *node)
+{
+    // We should not mark variables as active just based on an invariant declaration, so we don't
+    // traverse the symbols declared invariant.
+    return false;
+}
+
+// We want to check whether a uniform/varying is active because we need to skip updating inactive
+// ones. We also only count the active ones in packing computing. Also, gl_FragCoord, gl_PointCoord,
+// and gl_FrontFacing count toward varying counting if they are active in a fragment shader.
 void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
 {
     ASSERT(symbol != nullptr);
 
-    if (symbol->getName().isInternal())
+    if (symbol->variable().symbolType() == SymbolType::AngleInternal ||
+        symbol->variable().symbolType() == SymbolType::Empty)
     {
-        // Internal variables are not collected.
+        // Internal variables or nameless variables are not collected.
         return;
     }
 
-    ShaderVariable *var       = nullptr;
-    const TString &symbolName = symbol->getName().getString();
+    ShaderVariable *var = nullptr;
 
-    if (IsVaryingIn(symbol->getQualifier()))
+    const ImmutableString &symbolName = symbol->getName();
+
+    // Check the qualifier from the variable, not from the symbol node. The node may have a
+    // different qualifier if it's the result of a folded ternary node.
+    TQualifier qualifier = symbol->variable().getType().getQualifier();
+
+    if (IsVaryingIn(qualifier))
     {
         var = FindVariable(symbolName, mInputVaryings);
     }
-    else if (IsVaryingOut(symbol->getQualifier()))
+    else if (IsVaryingOut(qualifier))
     {
         var = FindVariable(symbolName, mOutputVaryings);
     }
@@ -361,7 +382,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
     }
     else if (symbolName == "gl_DepthRange")
     {
-        ASSERT(symbol->getQualifier() == EvqUniform);
+        ASSERT(qualifier == EvqUniform);
 
         if (!mDepthRangeAdded)
         {
@@ -372,6 +393,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             info.type          = GL_NONE;
             info.precision     = GL_NONE;
             info.staticUse     = true;
+            info.active        = true;
 
             ShaderVariable nearInfo(GL_FLOAT);
             const char kNearName[] = "near";
@@ -379,6 +401,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             nearInfo.mappedName    = kNearName;
             nearInfo.precision     = GL_HIGH_FLOAT;
             nearInfo.staticUse     = true;
+            nearInfo.active        = true;
 
             ShaderVariable farInfo(GL_FLOAT);
             const char kFarName[] = "far";
@@ -386,6 +409,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             farInfo.mappedName    = kFarName;
             farInfo.precision     = GL_HIGH_FLOAT;
             farInfo.staticUse     = true;
+            farInfo.active        = true;
 
             ShaderVariable diffInfo(GL_FLOAT);
             const char kDiffName[] = "diff";
@@ -393,6 +417,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             diffInfo.mappedName    = kDiffName;
             diffInfo.precision     = GL_HIGH_FLOAT;
             diffInfo.staticUse     = true;
+            diffInfo.active        = true;
 
             info.fields.push_back(nearInfo);
             info.fields.push_back(farInfo);
@@ -404,7 +429,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
     }
     else
     {
-        switch (symbol->getQualifier())
+        switch (qualifier)
         {
             case EvqAttribute:
             case EvqVertexIn:
@@ -426,7 +451,7 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
                 }
 
                 // It's an internal error to reference an undefined user uniform
-                ASSERT(symbolName.compare(0, 3, "gl_") != 0 || var);
+                ASSERT(!symbolName.beginsWith("gl_") || var);
             }
             break;
             case EvqBuffer:
@@ -437,108 +462,99 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             }
             break;
             case EvqFragCoord:
-                recordBuiltInVaryingUsed("gl_FragCoord", &mFragCoordAdded, mInputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mFragCoordAdded, mInputVaryings);
                 return;
             case EvqFrontFacing:
-                recordBuiltInVaryingUsed("gl_FrontFacing", &mFrontFacingAdded, mInputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mFrontFacingAdded, mInputVaryings);
                 return;
             case EvqPointCoord:
-                recordBuiltInVaryingUsed("gl_PointCoord", &mPointCoordAdded, mInputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mPointCoordAdded, mInputVaryings);
                 return;
             case EvqInstanceID:
                 // Whenever the SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW option is set,
                 // gl_InstanceID is added inside expressions to initialize ViewID_OVR and
-                // InstanceID. gl_InstanceID is not added to the symbol table for ESSL1 shaders
-                // which makes it necessary to populate the type information explicitly instead of
-                // extracting it from the symbol table.
-                if (!mInstanceIDAdded)
-                {
-                    Attribute info;
-                    const char kName[] = "gl_InstanceID";
-                    info.name          = kName;
-                    info.mappedName    = kName;
-                    info.type          = GL_INT;
-                    info.precision     = GL_HIGH_INT;  // Defined by spec.
-                    info.staticUse     = true;
-                    info.location      = -1;
-                    mAttribs->push_back(info);
-                    mInstanceIDAdded = true;
-                }
+                // InstanceID. Note that gl_InstanceID is not added to the symbol table for ESSL1
+                // shaders.
+                recordBuiltInAttributeUsed(symbol->variable(), &mInstanceIDAdded);
                 return;
             case EvqVertexID:
-                recordBuiltInAttributeUsed("gl_VertexID", &mVertexIDAdded);
+                recordBuiltInAttributeUsed(symbol->variable(), &mVertexIDAdded);
                 return;
             case EvqPosition:
-                recordBuiltInVaryingUsed("gl_Position", &mPositionAdded, mOutputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mPositionAdded, mOutputVaryings);
                 return;
             case EvqPointSize:
-                recordBuiltInVaryingUsed("gl_PointSize", &mPointSizeAdded, mOutputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mPointSizeAdded, mOutputVaryings);
+                return;
+            case EvqDrawID:
+                recordBuiltInAttributeUsed(symbol->variable(), &mDrawIDAdded);
                 return;
             case EvqLastFragData:
-                recordBuiltInVaryingUsed("gl_LastFragData", &mLastFragDataAdded, mInputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mLastFragDataAdded, mInputVaryings);
                 return;
             case EvqFragColor:
-                recordBuiltInFragmentOutputUsed("gl_FragColor", &mFragColorAdded);
+                recordBuiltInFragmentOutputUsed(symbol->variable(), &mFragColorAdded);
                 return;
             case EvqFragData:
                 if (!mFragDataAdded)
                 {
                     OutputVariable info;
-                    setBuiltInInfoFromSymbolTable("gl_FragData", &info);
+                    setBuiltInInfoFromSymbol(symbol->variable(), &info);
                     if (!IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers))
                     {
                         ASSERT(info.arraySizes.size() == 1u);
                         info.arraySizes.back() = 1u;
                     }
                     info.staticUse = true;
+                    info.active    = true;
                     mOutputVariables->push_back(info);
                     mFragDataAdded = true;
                 }
                 return;
             case EvqFragDepthEXT:
-                recordBuiltInFragmentOutputUsed("gl_FragDepthEXT", &mFragDepthEXTAdded);
+                recordBuiltInFragmentOutputUsed(symbol->variable(), &mFragDepthEXTAdded);
                 return;
             case EvqFragDepth:
-                recordBuiltInFragmentOutputUsed("gl_FragDepth", &mFragDepthAdded);
+                recordBuiltInFragmentOutputUsed(symbol->variable(), &mFragDepthAdded);
                 return;
             case EvqSecondaryFragColorEXT:
-                recordBuiltInFragmentOutputUsed("gl_SecondaryFragColorEXT",
-                                                &mSecondaryFragColorEXTAdded);
+                recordBuiltInFragmentOutputUsed(symbol->variable(), &mSecondaryFragColorEXTAdded);
                 return;
             case EvqSecondaryFragDataEXT:
-                recordBuiltInFragmentOutputUsed("gl_SecondaryFragDataEXT",
-                                                &mSecondaryFragDataEXTAdded);
+                recordBuiltInFragmentOutputUsed(symbol->variable(), &mSecondaryFragDataEXTAdded);
                 return;
             case EvqInvocationID:
-                recordBuiltInVaryingUsed("gl_InvocationID", &mInvocationIDAdded, mInputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mInvocationIDAdded, mInputVaryings);
                 break;
             case EvqPrimitiveIDIn:
-                recordBuiltInVaryingUsed("gl_PrimitiveIDIn", &mPrimitiveIDInAdded, mInputVaryings);
+                recordBuiltInVaryingUsed(symbol->variable(), &mPrimitiveIDInAdded, mInputVaryings);
                 break;
             case EvqPrimitiveID:
-                if (mShaderType == GL_GEOMETRY_SHADER_OES)
+                if (mShaderType == GL_GEOMETRY_SHADER_EXT)
                 {
-                    recordBuiltInVaryingUsed("gl_PrimitiveID", &mPrimitiveIDAdded, mOutputVaryings);
+                    recordBuiltInVaryingUsed(symbol->variable(), &mPrimitiveIDAdded,
+                                             mOutputVaryings);
                 }
                 else
                 {
                     ASSERT(mShaderType == GL_FRAGMENT_SHADER);
-                    recordBuiltInVaryingUsed("gl_PrimitiveID", &mPrimitiveIDAdded, mInputVaryings);
+                    recordBuiltInVaryingUsed(symbol->variable(), &mPrimitiveIDAdded,
+                                             mInputVaryings);
                 }
                 break;
             case EvqLayer:
-                if (mShaderType == GL_GEOMETRY_SHADER_OES)
+                if (mShaderType == GL_GEOMETRY_SHADER_EXT)
                 {
-                    recordBuiltInVaryingUsed("gl_Layer", &mLayerAdded, mOutputVaryings);
+                    recordBuiltInVaryingUsed(symbol->variable(), &mLayerAdded, mOutputVaryings);
                 }
                 else if (mShaderType == GL_FRAGMENT_SHADER)
                 {
-                    recordBuiltInVaryingUsed("gl_Layer", &mLayerAdded, mInputVaryings);
+                    recordBuiltInVaryingUsed(symbol->variable(), &mLayerAdded, mInputVaryings);
                 }
                 else
                 {
                     ASSERT(mShaderType == GL_VERTEX_SHADER &&
-                           IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview));
+                           IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview2));
                 }
                 break;
             default:
@@ -547,18 +563,19 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
     }
     if (var)
     {
-        MarkStaticallyUsed(var);
+        MarkActive(var);
     }
 }
 
-void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
-                                                            const TName &name,
-                                                            ShaderVariable *variableOut) const
+void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
+                                                             bool staticUse,
+                                                             ShaderVariable *variableOut) const
 {
     ASSERT(variableOut);
 
-    const TStructure *structure = type.getStruct();
+    variableOut->staticUse = staticUse;
 
+    const TStructure *structure = type.getStruct();
     if (!structure)
     {
         variableOut->type      = GLVariableType(type);
@@ -567,27 +584,51 @@ void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
     else
     {
         // Structures use a NONE type that isn't exposed outside ANGLE.
-        variableOut->type       = GL_NONE;
-        variableOut->structName = structure->name().c_str();
+        variableOut->type = GL_NONE;
+        if (structure->symbolType() != SymbolType::Empty)
+        {
+            variableOut->structName = structure->name().data();
+        }
 
         const TFieldList &fields = structure->fields();
 
-        for (TField *field : fields)
+        for (const TField *field : fields)
         {
             // Regardless of the variable type (uniform, in/out etc.) its fields are always plain
             // ShaderVariable objects.
             ShaderVariable fieldVariable;
-            setCommonVariableProperties(*field->type(), TName(field->name()), &fieldVariable);
+            setFieldProperties(*field->type(), field->name(), staticUse, &fieldVariable);
             variableOut->fields.push_back(fieldVariable);
         }
     }
-    variableOut->name       = name.getString().c_str();
-    variableOut->mappedName = getMappedName(name);
-
     if (auto *arraySizes = type.getArraySizes())
     {
         variableOut->arraySizes.assign(arraySizes->begin(), arraySizes->end());
     }
+}
+
+void CollectVariablesTraverser::setFieldProperties(const TType &type,
+                                                   const ImmutableString &name,
+                                                   bool staticUse,
+                                                   ShaderVariable *variableOut) const
+{
+    ASSERT(variableOut);
+    setFieldOrVariableProperties(type, staticUse, variableOut);
+    variableOut->name.assign(name.data(), name.length());
+    variableOut->mappedName = HashName(name, mHashFunction, nullptr).data();
+}
+
+void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
+                                                            const TVariable &variable,
+                                                            ShaderVariable *variableOut) const
+{
+    ASSERT(variableOut);
+
+    variableOut->staticUse = mSymbolTable->isStaticallyUsed(variable);
+    setFieldOrVariableProperties(type, variableOut->staticUse, variableOut);
+    ASSERT(variable.symbolType() != SymbolType::Empty);
+    variableOut->name.assign(variable.name().data(), variable.name().length());
+    variableOut->mappedName = getMappedName(&variable);
 }
 
 Attribute CollectVariablesTraverser::recordAttribute(const TIntermSymbol &variable) const
@@ -596,7 +637,7 @@ Attribute CollectVariablesTraverser::recordAttribute(const TIntermSymbol &variab
     ASSERT(!type.getStruct());
 
     Attribute attribute;
-    setCommonVariableProperties(type, variable.getName(), &attribute);
+    setCommonVariableProperties(type, variable.variable(), &attribute);
 
     attribute.location = type.getLayoutQualifier().location;
     return attribute;
@@ -608,9 +649,10 @@ OutputVariable CollectVariablesTraverser::recordOutputVariable(const TIntermSymb
     ASSERT(!type.getStruct());
 
     OutputVariable outputVariable;
-    setCommonVariableProperties(type, variable.getName(), &outputVariable);
+    setCommonVariableProperties(type, variable.variable(), &outputVariable);
 
     outputVariable.location = type.getLayoutQualifier().location;
+    outputVariable.index    = type.getLayoutQualifier().index;
     return outputVariable;
 }
 
@@ -619,7 +661,7 @@ Varying CollectVariablesTraverser::recordVarying(const TIntermSymbol &variable) 
     const TType &type = variable.getType();
 
     Varying varying;
-    setCommonVariableProperties(type, variable.getName(), &varying);
+    setCommonVariableProperties(type, variable.variable(), &varying);
     varying.location = type.getLayoutQualifier().location;
 
     switch (type.getQualifier())
@@ -631,8 +673,7 @@ Varying CollectVariablesTraverser::recordVarying(const TIntermSymbol &variable) 
         case EvqFlatOut:
         case EvqCentroidOut:
         case EvqGeometryOut:
-            if (mSymbolTable->isVaryingInvariant(std::string(variable.getSymbol().c_str())) ||
-                type.isInvariant())
+            if (mSymbolTable->isVaryingInvariant(variable.variable()) || type.isInvariant())
             {
                 varying.isInvariant = true;
             }
@@ -645,8 +686,9 @@ Varying CollectVariablesTraverser::recordVarying(const TIntermSymbol &variable) 
     return varying;
 }
 
-// TODO(jiawei.shao@intel.com): implement GL_OES_shader_io_blocks.
-void CollectVariablesTraverser::recordInterfaceBlock(const TType &interfaceBlockType,
+// TODO(jiawei.shao@intel.com): implement GL_EXT_shader_io_blocks.
+void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
+                                                     const TType &interfaceBlockType,
                                                      InterfaceBlock *interfaceBlock) const
 {
     ASSERT(interfaceBlockType.getBasicType() == EbtInterfaceBlock);
@@ -655,42 +697,82 @@ void CollectVariablesTraverser::recordInterfaceBlock(const TType &interfaceBlock
     const TInterfaceBlock *blockType = interfaceBlockType.getInterfaceBlock();
     ASSERT(blockType);
 
-    interfaceBlock->name       = blockType->name().c_str();
-    interfaceBlock->mappedName = getMappedName(TName(blockType->name()));
-    interfaceBlock->instanceName =
-        (blockType->hasInstanceName() ? blockType->instanceName().c_str() : "");
+    interfaceBlock->name       = blockType->name().data();
+    interfaceBlock->mappedName = getMappedName(blockType);
+    if (instanceName != nullptr)
+    {
+        interfaceBlock->instanceName = instanceName;
+        const TSymbol *blockSymbol   = nullptr;
+        if (strncmp(instanceName, "gl_in", 5u) == 0)
+        {
+            blockSymbol = mSymbolTable->getGlInVariableWithArraySize();
+        }
+        else
+        {
+            blockSymbol = mSymbolTable->findGlobal(ImmutableString(instanceName));
+        }
+        ASSERT(blockSymbol && blockSymbol->isVariable());
+        interfaceBlock->staticUse =
+            mSymbolTable->isStaticallyUsed(*static_cast<const TVariable *>(blockSymbol));
+    }
     ASSERT(!interfaceBlockType.isArrayOfArrays());  // Disallowed by GLSL ES 3.10 section 4.3.9
-    interfaceBlock->arraySize = interfaceBlockType.isArray() ? interfaceBlockType.getOutermostArraySize() : 0;
+    interfaceBlock->arraySize =
+        interfaceBlockType.isArray() ? interfaceBlockType.getOutermostArraySize() : 0;
 
     interfaceBlock->blockType = GetBlockType(interfaceBlockType.getQualifier());
     if (interfaceBlock->blockType == BlockType::BLOCK_UNIFORM ||
         interfaceBlock->blockType == BlockType::BLOCK_BUFFER)
     {
-        interfaceBlock->isRowMajorLayout = (blockType->matrixPacking() == EmpRowMajor);
+        // TODO(oetuaho): Remove setting isRowMajorLayout.
+        interfaceBlock->isRowMajorLayout = false;
         interfaceBlock->binding          = blockType->blockBinding();
         interfaceBlock->layout           = GetBlockLayoutType(blockType->blockStorage());
     }
 
     // Gather field information
+    bool anyFieldStaticallyUsed = false;
     for (const TField *field : blockType->fields())
     {
         const TType &fieldType = *field->type();
 
+        bool staticUse = false;
+        if (instanceName == nullptr)
+        {
+            // Static use of individual fields has been recorded, since they are present in the
+            // symbol table as variables.
+            const TSymbol *fieldSymbol = mSymbolTable->findGlobal(field->name());
+            ASSERT(fieldSymbol && fieldSymbol->isVariable());
+            staticUse =
+                mSymbolTable->isStaticallyUsed(*static_cast<const TVariable *>(fieldSymbol));
+            if (staticUse)
+            {
+                anyFieldStaticallyUsed = true;
+            }
+        }
+
         InterfaceBlockField fieldVariable;
-        setCommonVariableProperties(fieldType, TName(field->name()), &fieldVariable);
+        setFieldProperties(fieldType, field->name(), staticUse, &fieldVariable);
         fieldVariable.isRowMajorLayout =
             (fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor);
         interfaceBlock->fields.push_back(fieldVariable);
+    }
+    if (anyFieldStaticallyUsed)
+    {
+        interfaceBlock->staticUse = true;
     }
 }
 
 Uniform CollectVariablesTraverser::recordUniform(const TIntermSymbol &variable) const
 {
     Uniform uniform;
-    setCommonVariableProperties(variable.getType(), variable.getName(), &uniform);
-    uniform.binding  = variable.getType().getLayoutQualifier().binding;
-    uniform.location = variable.getType().getLayoutQualifier().location;
-    uniform.offset   = variable.getType().getLayoutQualifier().offset;
+    setCommonVariableProperties(variable.getType(), variable.variable(), &uniform);
+    uniform.binding = variable.getType().getLayoutQualifier().binding;
+    uniform.imageUnitFormat =
+        GetImageInternalFormatType(variable.getType().getLayoutQualifier().imageInternalFormat);
+    uniform.location  = variable.getType().getLayoutQualifier().location;
+    uniform.offset    = variable.getType().getLayoutQualifier().offset;
+    uniform.readonly  = variable.getType().getMemoryQualifier().readonly;
+    uniform.writeonly = variable.getType().getMemoryQualifier().writeonly;
     return uniform;
 }
 
@@ -718,17 +800,20 @@ bool CollectVariablesTraverser::visitDeclaration(Visit, TIntermDeclaration *node
         // uniforms, varyings, outputs and interface blocks cannot be initialized in a shader, we
         // must have only TIntermSymbol nodes in the sequence in the cases we are interested in.
         const TIntermSymbol &variable = *variableNode->getAsSymbolNode();
-        if (variable.getName().isInternal())
+        if (variable.variable().symbolType() == SymbolType::AngleInternal)
         {
             // Internal variables are not collected.
             continue;
         }
 
-        // TODO(jiawei.shao@intel.com): implement GL_OES_shader_io_blocks.
+        // TODO(jiawei.shao@intel.com): implement GL_EXT_shader_io_blocks.
         if (typedNode.getBasicType() == EbtInterfaceBlock)
         {
             InterfaceBlock interfaceBlock;
-            recordInterfaceBlock(variable.getType(), &interfaceBlock);
+            recordInterfaceBlock(variable.variable().symbolType() != SymbolType::Empty
+                                     ? variable.getName().data()
+                                     : nullptr,
+                                 variable.getType(), &interfaceBlock);
 
             switch (qualifier)
             {
@@ -744,6 +829,7 @@ bool CollectVariablesTraverser::visitDeclaration(Visit, TIntermDeclaration *node
         }
         else
         {
+            ASSERT(variable.variable().symbolType() != SymbolType::Empty);
             switch (qualifier)
             {
                 case EvqAttribute:
@@ -777,8 +863,9 @@ bool CollectVariablesTraverser::visitDeclaration(Visit, TIntermDeclaration *node
 }
 
 // TODO(jiawei.shao@intel.com): add search on mInBlocks and mOutBlocks when implementing
-// GL_OES_shader_io_blocks.
-InterfaceBlock *CollectVariablesTraverser::findNamedInterfaceBlock(const TString &blockName) const
+// GL_EXT_shader_io_blocks.
+InterfaceBlock *CollectVariablesTraverser::findNamedInterfaceBlock(
+    const ImmutableString &blockName) const
 {
     InterfaceBlock *namedBlock = FindVariable(blockName, mUniformBlocks);
     if (!namedBlock)
@@ -792,7 +879,7 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
 {
     if (binaryNode->getOp() == EOpIndexDirectInterfaceBlock)
     {
-        // NOTE: we do not determine static use for individual blocks of an array
+        // NOTE: we do not determine static use / activeness for individual blocks of an array.
         TIntermTyped *blockNode = binaryNode->getLeft()->getAsTyped();
         ASSERT(blockNode);
 
@@ -826,10 +913,15 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
             namedBlock = findNamedInterfaceBlock(interfaceBlock->name());
         }
         ASSERT(namedBlock);
-        namedBlock->staticUse   = true;
+        ASSERT(namedBlock->staticUse);
+        namedBlock->active      = true;
         unsigned int fieldIndex = static_cast<unsigned int>(constantUnion->getIConst(0));
         ASSERT(fieldIndex < namedBlock->fields.size());
+        // TODO(oetuaho): Would be nicer to record static use of fields of named interface blocks
+        // more accurately at parse time - now we only mark the fields statically used if they are
+        // active. http://anglebug.com/2440
         namedBlock->fields[fieldIndex].staticUse = true;
+        namedBlock->fields[fieldIndex].active    = true;
 
         if (traverseIndexExpression)
         {
@@ -855,14 +947,12 @@ void CollectVariables(TIntermBlock *root,
                       std::vector<InterfaceBlock> *inBlocks,
                       ShHashFunction64 hashFunction,
                       TSymbolTable *symbolTable,
-                      int shaderVersion,
                       GLenum shaderType,
                       const TExtensionBehavior &extensionBehavior)
 {
     CollectVariablesTraverser collect(attributes, outputVariables, uniforms, inputVaryings,
                                       outputVaryings, uniformBlocks, shaderStorageBlocks, inBlocks,
-                                      hashFunction, symbolTable, shaderVersion, shaderType,
-                                      extensionBehavior);
+                                      hashFunction, symbolTable, shaderType, extensionBehavior);
     root->traverse(&collect);
 }
 

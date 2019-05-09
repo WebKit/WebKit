@@ -1,0 +1,9 @@
+Name: vulkan_command_buffer_utils.h, vulkan_command_buffer_utils.cpp
+URL: https://github.com/LunarG/VulkanSamples/tree/master/API-Samples/utils
+License: Apache License, Version 2.0
+License File: http://www.apache.org/licenses/LICENSE-2.0
+
+Description:
+Utility functions used to implement Vulkan samples and performance tests.
+Modified and reorganized to add support for running applications using
+various command buffer implementations.

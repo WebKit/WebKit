@@ -6,19 +6,18 @@
 
 #include "compiler/translator/TranslatorESSL.h"
 
-#include "compiler/translator/BuiltInFunctionEmulatorGLSL.h"
-#include "compiler/translator/EmulatePrecision.h"
-#include "compiler/translator/RecordConstantPrecision.h"
-#include "compiler/translator/OutputESSL.h"
 #include "angle_gl.h"
+#include "compiler/translator/BuiltInFunctionEmulatorGLSL.h"
+#include "compiler/translator/OutputESSL.h"
+#include "compiler/translator/tree_ops/EmulatePrecision.h"
+#include "compiler/translator/tree_ops/RecordConstantPrecision.h"
 
 namespace sh
 {
 
 TranslatorESSL::TranslatorESSL(sh::GLenum type, ShShaderSpec spec)
     : TCompiler(type, spec, SH_ESSL_OUTPUT)
-{
-}
+{}
 
 void TranslatorESSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
                                                  ShCompileOptions compileOptions)
@@ -53,7 +52,7 @@ void TranslatorESSL::translate(TIntermBlock *root,
 
     if (precisionEmulation)
     {
-        EmulatePrecision emulatePrecision(&getSymbolTable(), shaderVer);
+        EmulatePrecision emulatePrecision(&getSymbolTable());
         root->traverse(&emulatePrecision);
         emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(sink, shaderVer, SH_ESSL_OUTPUT);
@@ -92,7 +91,7 @@ void TranslatorESSL::translate(TIntermBlock *root,
              << ", local_size_z=" << localSize[2] << ") in;\n";
     }
 
-    if (getShaderType() == GL_GEOMETRY_SHADER_OES)
+    if (getShaderType() == GL_GEOMETRY_SHADER_EXT)
     {
         WriteGeometryShaderLayoutQualifiers(
             sink, getGeometryShaderInputPrimitiveType(), getGeometryShaderInvocations(),
@@ -104,20 +103,21 @@ void TranslatorESSL::translate(TIntermBlock *root,
                            &getSymbolTable(), getShaderType(), shaderVer, precisionEmulation,
                            compileOptions);
 
-    if (compileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM)
-    {
-        TName uniformName(TString("ViewID_OVR"));
-        uniformName.setInternal(true);
-        sink << "highp uniform int " << outputESSL.hashName(uniformName) << ";\n";
-    }
-
     root->traverse(&outputESSL);
 }
 
 bool TranslatorESSL::shouldFlattenPragmaStdglInvariantAll()
 {
-    // Not necessary when translating to ESSL.
-    return false;
+    // If following the spec to the letter, we should not flatten this pragma.
+    // However, the spec's wording means that the pragma applies only to outputs.
+    // This contradicts the spirit of using the pragma,
+    // because if the pragma is used in a vertex shader,
+    // the only way to be able to link it to a fragment shader
+    // is to manually qualify each of fragment shader's inputs as invariant.
+    // Which defeats the purpose of this pragma - temporarily make all varyings
+    // invariant for debugging.
+    // Thus, we should be non-conformant to spec's letter here and flatten.
+    return true;
 }
 
 void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
@@ -125,15 +125,14 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
     TInfoSinkBase &sink                   = getInfoSink().obj;
     const TExtensionBehavior &extBehavior = getExtensionBehavior();
     const bool isMultiviewExtEmulated =
-        (compileOptions &
-         (SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM | SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW |
-          SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER)) != 0u;
+        (compileOptions & (SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW |
+                           SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER)) != 0u;
     for (TExtensionBehavior::const_iterator iter = extBehavior.begin(); iter != extBehavior.end();
          ++iter)
     {
         if (iter->second != EBhUndefined)
         {
-            const bool isMultiview = (iter->first == TExtension::OVR_multiview);
+            const bool isMultiview = (iter->first == TExtension::OVR_multiview2);
             if (getResources().NV_shader_framebuffer_fetch &&
                 iter->first == TExtension::EXT_shader_framebuffer_fetch)
             {
@@ -152,17 +151,17 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
                 {
                     // Emit the NV_viewport_array2 extension in a vertex shader if the
                     // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the
-                    // OVR_multiview(2) extension is requested.
+                    // OVR_multiview2 extension is requested.
                     sink << "#extension GL_NV_viewport_array2 : require\n";
                 }
             }
-            else if (iter->first == TExtension::OES_geometry_shader)
+            else if (iter->first == TExtension::EXT_geometry_shader)
             {
-                sink << "#ifdef GL_OES_geometry_shader\n"
-                     << "#extension GL_OES_geometry_shader : " << GetBehaviorString(iter->second)
-                     << "\n"
-                     << "#elif defined GL_EXT_geometry_shader\n"
+                sink << "#ifdef GL_EXT_geometry_shader\n"
                      << "#extension GL_EXT_geometry_shader : " << GetBehaviorString(iter->second)
+                     << "\n"
+                     << "#elif defined GL_OES_geometry_shader\n"
+                     << "#extension GL_OES_geometry_shader : " << GetBehaviorString(iter->second)
                      << "\n";
                 if (iter->second == EBhRequire)
                 {
@@ -171,6 +170,12 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
                             "this if the extension is \"required\"\n";
                 }
                 sink << "#endif\n";
+            }
+            else if (iter->first == TExtension::ANGLE_multi_draw)
+            {
+                // Don't emit anything. This extension is emulated
+                ASSERT((compileOptions & SH_EMULATE_GL_DRAW_ID) != 0);
+                continue;
             }
             else
             {

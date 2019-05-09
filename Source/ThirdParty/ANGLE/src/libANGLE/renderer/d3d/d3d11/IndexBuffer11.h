@@ -22,16 +22,24 @@ class IndexBuffer11 : public IndexBuffer
     explicit IndexBuffer11(Renderer11 *const renderer);
     ~IndexBuffer11() override;
 
-    gl::Error initialize(unsigned int bufferSize, GLenum indexType, bool dynamic) override;
+    angle::Result initialize(const gl::Context *context,
+                             unsigned int bufferSize,
+                             gl::DrawElementsType indexType,
+                             bool dynamic) override;
 
-    gl::Error mapBuffer(unsigned int offset, unsigned int size, void **outMappedMemory) override;
-    gl::Error unmapBuffer() override;
+    angle::Result mapBuffer(const gl::Context *context,
+                            unsigned int offset,
+                            unsigned int size,
+                            void **outMappedMemory) override;
+    angle::Result unmapBuffer(const gl::Context *context) override;
 
-    GLenum getIndexType() const override;
+    gl::DrawElementsType getIndexType() const override;
     unsigned int getBufferSize() const override;
-    gl::Error setSize(unsigned int bufferSize, GLenum indexType) override;
+    angle::Result setSize(const gl::Context *context,
+                          unsigned int bufferSize,
+                          gl::DrawElementsType indexType) override;
 
-    gl::Error discard() override;
+    angle::Result discard(const gl::Context *context) override;
 
     DXGI_FORMAT getIndexFormat() const;
     const d3d11::Buffer &getBuffer() const;
@@ -41,10 +49,10 @@ class IndexBuffer11 : public IndexBuffer
 
     d3d11::Buffer mBuffer;
     unsigned int mBufferSize;
-    GLenum mIndexType;
+    gl::DrawElementsType mIndexType;
     bool mDynamicUsage;
 };
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_D3D11_INDEXBUFFER11_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_INDEXBUFFER11_H_

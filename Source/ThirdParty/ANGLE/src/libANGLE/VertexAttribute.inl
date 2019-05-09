@@ -10,7 +10,7 @@ namespace gl
 {
 
 inline VertexAttribCurrentValueData::VertexAttribCurrentValueData()
-    : Type(GL_FLOAT)
+    : Type(gl::VertexAttribType::Float)
 {
     FloatValues[0] = 0.0f;
     FloatValues[1] = 0.0f;
@@ -24,7 +24,7 @@ inline void VertexAttribCurrentValueData::setFloatValues(const GLfloat floatValu
     {
         FloatValues[valueIndex] = floatValues[valueIndex];
     }
-    Type = GL_FLOAT;
+    Type = gl::VertexAttribType::Float;
 }
 
 inline void VertexAttribCurrentValueData::setIntValues(const GLint intValues[4])
@@ -33,7 +33,7 @@ inline void VertexAttribCurrentValueData::setIntValues(const GLint intValues[4])
     {
         IntValues[valueIndex] = intValues[valueIndex];
     }
-    Type = GL_INT;
+    Type = gl::VertexAttribType::Int;
 }
 
 inline void VertexAttribCurrentValueData::setUnsignedIntValues(const GLuint unsignedIntValues[4])
@@ -42,7 +42,7 @@ inline void VertexAttribCurrentValueData::setUnsignedIntValues(const GLuint unsi
     {
         UnsignedIntValues[valueIndex] = unsignedIntValues[valueIndex];
     }
-    Type = GL_UNSIGNED_INT;
+    Type = gl::VertexAttribType::UnsignedInt;
 }
 
 inline bool operator==(const VertexAttribCurrentValueData &a, const VertexAttribCurrentValueData &b)

@@ -30,13 +30,12 @@ class SwapChain9 : public SwapChainD3D
                EGLint orientation);
     ~SwapChain9() override;
 
-    EGLint resize(const gl::Context *context, EGLint backbufferWidth, EGLint backbufferHeight)
-        override;
-    EGLint reset(const gl::Context *context,
+    EGLint resize(DisplayD3D *displayD3D, EGLint backbufferWidth, EGLint backbufferHeight) override;
+    EGLint reset(DisplayD3D *displayD3D,
                  EGLint backbufferWidth,
                  EGLint backbufferHeight,
                  EGLint swapInterval) override;
-    EGLint swapRect(const gl::Context *context,
+    EGLint swapRect(DisplayD3D *displayD3D,
                     EGLint x,
                     EGLint y,
                     EGLint width,
@@ -71,11 +70,11 @@ class SwapChain9 : public SwapChainD3D
     IDirect3DSurface9 *mBackBuffer;
     IDirect3DSurface9 *mRenderTarget;
     IDirect3DSurface9 *mDepthStencil;
-    IDirect3DTexture9* mOffscreenTexture;
+    IDirect3DTexture9 *mOffscreenTexture;
 
     SurfaceRenderTarget9 mColorRenderTarget;
     SurfaceRenderTarget9 mDepthStencilRenderTarget;
 };
 
-}
-#endif // LIBANGLE_RENDERER_D3D_D3D9_SWAPCHAIN9_H_
+}  // namespace rx
+#endif  // LIBANGLE_RENDERER_D3D_D3D9_SWAPCHAIN9_H_

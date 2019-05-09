@@ -30,6 +30,6 @@ class ShaderExecutable9 : public ShaderExecutableD3D
     IDirect3DVertexShader9 *mVertexExecutable;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_D3D9_SHADEREXECUTABLE9_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D9_SHADEREXECUTABLE9_H_

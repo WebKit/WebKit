@@ -8,9 +8,9 @@
 
 #include "windows/winrt/WinRTWindow.h"
 
-#include <wrl.h>
 #include <windows.applicationmodel.core.h>
 #include <windows.ui.xaml.h>
+#include <wrl.h>
 
 #include "angle_windowsstore.h"
 #include "common/debug.h"
@@ -22,9 +22,7 @@ using namespace ABI::Windows::UI::Core;
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 
-WinRTWindow::WinRTWindow() : mNativeWindow(nullptr)
-{
-}
+WinRTWindow::WinRTWindow() : mNativeWindow(nullptr) {}
 
 WinRTWindow::~WinRTWindow()
 {
@@ -50,8 +48,8 @@ bool WinRTWindow::initialize(const std::string &name, size_t width, size_t heigh
     destroy();
 
     // Get all the relevant activation factories
-    result = GetActivationFactory(
-        HStringReference(RuntimeClass_Windows_UI_Core_CoreWindow).Get(), &coreWindowStatic);
+    result = GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Core_CoreWindow).Get(),
+                                  &coreWindowStatic);
     if (FAILED(result))
     {
         return false;
@@ -90,7 +88,7 @@ bool WinRTWindow::initialize(const std::string &name, size_t width, size_t heigh
 
     // Get the PropertySet as a map, so we can Insert things into it later
     ComPtr<IInspectable> tempNativeWindow = mNativeWindow;
-    result = tempNativeWindow.As(&nativeWindowAsMap);
+    result                                = tempNativeWindow.As(&nativeWindowAsMap);
     if (FAILED(result))
     {
         return false;
@@ -195,7 +193,7 @@ bool WinRTWindow::initialize(const std::string &name, size_t width, size_t heigh
     Size renderSize;
     renderSize.Width  = static_cast<float>(width);
     renderSize.Height = static_cast<float>(height);
-    result = propertyValueStatics->CreateSize(renderSize, sizeValue.GetAddressOf());
+    result            = propertyValueStatics->CreateSize(renderSize, sizeValue.GetAddressOf());
     if (FAILED(result))
     {
         return false;
@@ -218,6 +216,8 @@ void WinRTWindow::destroy()
 
     mCoreDispatcher.Reset();
 }
+
+void WinRTWindow::resetNativeWindow() {}
 
 EGLNativeWindowType WinRTWindow::getNativeWindow() const
 {
@@ -278,7 +278,7 @@ void WinRTWindow::signalTestEvent()
     UNIMPLEMENTED();
 }
 
-OSWindow *CreateOSWindow()
+OSWindow *OSWindow::New()
 {
     return new WinRTWindow();
 }

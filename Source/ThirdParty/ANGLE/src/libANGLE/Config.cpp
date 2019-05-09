@@ -14,8 +14,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "angle_gl.h"
 #include <EGL/eglext.h>
+#include "angle_gl.h"
 
 #include "common/debug.h"
 
@@ -34,7 +34,7 @@ Config::Config()
       alphaMaskSize(0),
       bindToTextureRGB(EGL_FALSE),
       bindToTextureRGBA(EGL_FALSE),
-      colorBufferType(EGL_NONE),
+      colorBufferType(EGL_RGB_BUFFER),
       configCaveat(EGL_NONE),
       configID(0),
       conformant(0),
@@ -59,13 +59,11 @@ Config::Config()
       transparentGreenValue(0),
       transparentBlueValue(0),
       optimalOrientation(0),
-      colorComponentType(EGL_COLOR_COMPONENT_TYPE_FIXED_EXT)
-{
-}
+      colorComponentType(EGL_COLOR_COMPONENT_TYPE_FIXED_EXT),
+      recordable(EGL_FALSE)
+{}
 
-Config::~Config()
-{
-}
+Config::~Config() {}
 
 Config::Config(const Config &other) = default;
 
@@ -121,7 +119,8 @@ bool ConfigSet::contains(const Config *config) const
     return false;
 }
 
-// Function object used by STL sorting routines for ordering Configs according to [EGL 1.5] section 3.4.1.2 page 28.
+// Function object used by STL sorting routines for ordering Configs according to [EGL 1.5]
+// section 3.4.1.2 page 28.
 class ConfigSorter
 {
   public:
@@ -135,20 +134,19 @@ class ConfigSorter
         scanForWantedComponents(attributeMap);
     }
 
-    bool operator()(const Config *x, const Config *y) const
-    {
-        return (*this)(*x, *y);
-    }
+    bool operator()(const Config *x, const Config *y) const { return (*this)(*x, *y); }
 
     bool operator()(const Config &x, const Config &y) const
     {
-        #define SORT(attribute)                        \
-            if (x.attribute != y.attribute)            \
-            {                                          \
-                return x.attribute < y.attribute;      \
-            }
+#define SORT(attribute)                       \
+    do                                        \
+    {                                         \
+        if (x.attribute != y.attribute)       \
+            return x.attribute < y.attribute; \
+    } while (0)
 
-        static_assert(EGL_NONE < EGL_SLOW_CONFIG && EGL_SLOW_CONFIG < EGL_NON_CONFORMANT_CONFIG, "Unexpected EGL enum value.");
+        static_assert(EGL_NONE < EGL_SLOW_CONFIG && EGL_SLOW_CONFIG < EGL_NON_CONFORMANT_CONFIG,
+                      "Unexpected EGL enum value.");
         SORT(configCaveat);
 
         static_assert(EGL_COLOR_COMPONENT_TYPE_FIXED_EXT < EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT,
@@ -158,7 +156,8 @@ class ConfigSorter
         static_assert(EGL_RGB_BUFFER < EGL_LUMINANCE_BUFFER, "Unexpected EGL enum value.");
         SORT(colorBufferType);
 
-        // By larger total number of color bits, only considering those that are requested to be > 0.
+        // By larger total number of color bits, only considering those that are requested to be >
+        // 0.
         EGLint xComponentsSize = wantedComponentsSize(x);
         EGLint yComponentsSize = wantedComponentsSize(y);
         if (xComponentsSize != yComponentsSize)
@@ -175,7 +174,7 @@ class ConfigSorter
         SORT(nativeVisualType);
         SORT(configID);
 
-        #undef SORT
+#undef SORT
 
         return false;
     }
@@ -203,11 +202,16 @@ class ConfigSorter
     {
         EGLint total = 0;
 
-        if (mWantRed)       total += config.redSize;
-        if (mWantGreen)     total += config.greenSize;
-        if (mWantBlue)      total += config.blueSize;
-        if (mWantAlpha)     total += config.alphaSize;
-        if (mWantLuminance) total += config.luminanceSize;
+        if (mWantRed)
+            total += config.redSize;
+        if (mWantGreen)
+            total += config.greenSize;
+        if (mWantBlue)
+            total += config.blueSize;
+        if (mWantAlpha)
+            total += config.alphaSize;
+        if (mWantLuminance)
+            total += config.luminanceSize;
 
         return total;
     }
@@ -219,15 +223,15 @@ class ConfigSorter
     bool mWantLuminance;
 };
 
-std::vector<const Config*> ConfigSet::filter(const AttributeMap &attributeMap) const
+std::vector<const Config *> ConfigSet::filter(const AttributeMap &attributeMap) const
 {
-    std::vector<const Config*> result;
+    std::vector<const Config *> result;
     result.reserve(mConfigs.size());
 
     for (auto configIter = mConfigs.begin(); configIter != mConfigs.end(); configIter++)
     {
         const Config &config = configIter->second;
-        bool match = true;
+        bool match           = true;
 
         for (auto attribIter = attributeMap.begin(); attribIter != attributeMap.end(); attribIter++)
         {
@@ -241,45 +245,123 @@ std::vector<const Config*> ConfigSet::filter(const AttributeMap &attributeMap) c
 
             switch (attributeKey)
             {
-              case EGL_BUFFER_SIZE:               match = config.bufferSize >= attributeValue;                        break;
-              case EGL_ALPHA_SIZE:                match = config.alphaSize >= attributeValue;                         break;
-              case EGL_BLUE_SIZE:                 match = config.blueSize >= attributeValue;                          break;
-              case EGL_GREEN_SIZE:                match = config.greenSize >= attributeValue;                         break;
-              case EGL_RED_SIZE:                  match = config.redSize >= attributeValue;                           break;
-              case EGL_DEPTH_SIZE:                match = config.depthSize >= attributeValue;                         break;
-              case EGL_STENCIL_SIZE:              match = config.stencilSize >= attributeValue;                       break;
-              case EGL_CONFIG_CAVEAT:             match = config.configCaveat == (EGLenum)attributeValue;             break;
-              case EGL_CONFIG_ID:                 match = config.configID == attributeValue;                          break;
-              case EGL_LEVEL:                     match = config.level >= attributeValue;                             break;
-              case EGL_NATIVE_RENDERABLE:         match = config.nativeRenderable == (EGLBoolean)attributeValue;      break;
-              case EGL_NATIVE_VISUAL_TYPE:        match = config.nativeVisualType == attributeValue;                  break;
-              case EGL_SAMPLES:                   match = config.samples >= attributeValue;                           break;
-              case EGL_SAMPLE_BUFFERS:            match = config.sampleBuffers >= attributeValue;                     break;
-              case EGL_SURFACE_TYPE:              match = (config.surfaceType & attributeValue) == attributeValue;    break;
-              case EGL_TRANSPARENT_TYPE:          match = config.transparentType == (EGLenum)attributeValue;          break;
-              case EGL_TRANSPARENT_BLUE_VALUE:    match = config.transparentBlueValue == attributeValue;              break;
-              case EGL_TRANSPARENT_GREEN_VALUE:   match = config.transparentGreenValue == attributeValue;             break;
-              case EGL_TRANSPARENT_RED_VALUE:     match = config.transparentRedValue == attributeValue;               break;
-              case EGL_BIND_TO_TEXTURE_RGB:       match = config.bindToTextureRGB == (EGLBoolean)attributeValue;      break;
-              case EGL_BIND_TO_TEXTURE_RGBA:      match = config.bindToTextureRGBA == (EGLBoolean)attributeValue;     break;
-              case EGL_MIN_SWAP_INTERVAL:         match = config.minSwapInterval == attributeValue;                   break;
-              case EGL_MAX_SWAP_INTERVAL:         match = config.maxSwapInterval == attributeValue;                   break;
-              case EGL_LUMINANCE_SIZE:            match = config.luminanceSize >= attributeValue;                     break;
-              case EGL_ALPHA_MASK_SIZE:           match = config.alphaMaskSize >= attributeValue;                     break;
-              case EGL_COLOR_BUFFER_TYPE:         match = config.colorBufferType == (EGLenum)attributeValue;          break;
-              case EGL_RENDERABLE_TYPE:           match = (config.renderableType & attributeValue) == attributeValue; break;
-              case EGL_MATCH_NATIVE_PIXMAP:       match = false; UNIMPLEMENTED();                                     break;
-              case EGL_CONFORMANT:                match = (config.conformant & attributeValue) == attributeValue;     break;
-              case EGL_MAX_PBUFFER_WIDTH:         match = config.maxPBufferWidth >= attributeValue;                   break;
-              case EGL_MAX_PBUFFER_HEIGHT:        match = config.maxPBufferHeight >= attributeValue;                  break;
-              case EGL_MAX_PBUFFER_PIXELS:        match = config.maxPBufferPixels >= attributeValue;                  break;
-              case EGL_OPTIMAL_SURFACE_ORIENTATION_ANGLE:
-                  match = config.optimalOrientation == attributeValue;
-                  break;
-              case EGL_COLOR_COMPONENT_TYPE_EXT:
-                  match = config.colorComponentType == static_cast<EGLenum>(attributeValue);
-                  break;
-              default: UNREACHABLE();
+                case EGL_BUFFER_SIZE:
+                    match = config.bufferSize >= attributeValue;
+                    break;
+                case EGL_ALPHA_SIZE:
+                    match = config.alphaSize >= attributeValue;
+                    break;
+                case EGL_BLUE_SIZE:
+                    match = config.blueSize >= attributeValue;
+                    break;
+                case EGL_GREEN_SIZE:
+                    match = config.greenSize >= attributeValue;
+                    break;
+                case EGL_RED_SIZE:
+                    match = config.redSize >= attributeValue;
+                    break;
+                case EGL_DEPTH_SIZE:
+                    match = config.depthSize >= attributeValue;
+                    break;
+                case EGL_STENCIL_SIZE:
+                    match = config.stencilSize >= attributeValue;
+                    break;
+                case EGL_CONFIG_CAVEAT:
+                    match = config.configCaveat == static_cast<EGLenum>(attributeValue);
+                    break;
+                case EGL_CONFIG_ID:
+                    match = config.configID == attributeValue;
+                    break;
+                case EGL_LEVEL:
+                    match = config.level == attributeValue;
+                    break;
+                case EGL_NATIVE_RENDERABLE:
+                    match = config.nativeRenderable == static_cast<EGLBoolean>(attributeValue);
+                    break;
+                case EGL_NATIVE_VISUAL_TYPE:
+                    match = config.nativeVisualType == attributeValue;
+                    break;
+                case EGL_SAMPLES:
+                    match = config.samples >= attributeValue;
+                    break;
+                case EGL_SAMPLE_BUFFERS:
+                    match = config.sampleBuffers >= attributeValue;
+                    break;
+                case EGL_SURFACE_TYPE:
+                    match = (config.surfaceType & attributeValue) == attributeValue;
+                    break;
+                case EGL_TRANSPARENT_TYPE:
+                    match = config.transparentType == static_cast<EGLenum>(attributeValue);
+                    break;
+                case EGL_TRANSPARENT_BLUE_VALUE:
+                    if (attributeMap.get(EGL_TRANSPARENT_TYPE, EGL_NONE) != EGL_NONE)
+                    {
+                        match = config.transparentBlueValue == attributeValue;
+                    }
+                    break;
+                case EGL_TRANSPARENT_GREEN_VALUE:
+                    if (attributeMap.get(EGL_TRANSPARENT_TYPE, EGL_NONE) != EGL_NONE)
+                    {
+                        match = config.transparentGreenValue == attributeValue;
+                    }
+                    break;
+                case EGL_TRANSPARENT_RED_VALUE:
+                    if (attributeMap.get(EGL_TRANSPARENT_TYPE, EGL_NONE) != EGL_NONE)
+                    {
+                        match = config.transparentRedValue == attributeValue;
+                    }
+                    break;
+                case EGL_BIND_TO_TEXTURE_RGB:
+                    match = config.bindToTextureRGB == static_cast<EGLBoolean>(attributeValue);
+                    break;
+                case EGL_BIND_TO_TEXTURE_RGBA:
+                    match = config.bindToTextureRGBA == static_cast<EGLBoolean>(attributeValue);
+                    break;
+                case EGL_MIN_SWAP_INTERVAL:
+                    match = config.minSwapInterval == attributeValue;
+                    break;
+                case EGL_MAX_SWAP_INTERVAL:
+                    match = config.maxSwapInterval == attributeValue;
+                    break;
+                case EGL_LUMINANCE_SIZE:
+                    match = config.luminanceSize >= attributeValue;
+                    break;
+                case EGL_ALPHA_MASK_SIZE:
+                    match = config.alphaMaskSize >= attributeValue;
+                    break;
+                case EGL_COLOR_BUFFER_TYPE:
+                    match = config.colorBufferType == static_cast<EGLenum>(attributeValue);
+                    break;
+                case EGL_RENDERABLE_TYPE:
+                    match = (config.renderableType & attributeValue) == attributeValue;
+                    break;
+                case EGL_MATCH_NATIVE_PIXMAP:
+                    match = false;
+                    UNIMPLEMENTED();
+                    break;
+                case EGL_CONFORMANT:
+                    match = (config.conformant & attributeValue) == attributeValue;
+                    break;
+                case EGL_MAX_PBUFFER_WIDTH:
+                    match = config.maxPBufferWidth >= attributeValue;
+                    break;
+                case EGL_MAX_PBUFFER_HEIGHT:
+                    match = config.maxPBufferHeight >= attributeValue;
+                    break;
+                case EGL_MAX_PBUFFER_PIXELS:
+                    match = config.maxPBufferPixels >= attributeValue;
+                    break;
+                case EGL_OPTIMAL_SURFACE_ORIENTATION_ANGLE:
+                    match = config.optimalOrientation == attributeValue;
+                    break;
+                case EGL_COLOR_COMPONENT_TYPE_EXT:
+                    match = config.colorComponentType == static_cast<EGLenum>(attributeValue);
+                    break;
+                case EGL_RECORDABLE_ANDROID:
+                    match = config.recordable == static_cast<EGLBoolean>(attributeValue);
+                    break;
+                default:
+                    UNREACHABLE();
             }
 
             if (!match)
@@ -300,4 +382,13 @@ std::vector<const Config*> ConfigSet::filter(const AttributeMap &attributeMap) c
     return result;
 }
 
+ConfigSet::ConfigMap::iterator ConfigSet::begin()
+{
+    return mConfigs.begin();
 }
+
+ConfigSet::ConfigMap::iterator ConfigSet::end()
+{
+    return mConfigs.end();
+}
+}  // namespace egl

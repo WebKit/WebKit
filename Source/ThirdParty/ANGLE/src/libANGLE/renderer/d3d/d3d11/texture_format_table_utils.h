@@ -18,6 +18,11 @@ namespace d3d11
 
 using FormatSupportFunction = bool (*)(const Renderer11DeviceCaps &);
 
+inline bool OnlyFL11_1Plus(const Renderer11DeviceCaps &deviceCaps)
+{
+    return (deviceCaps.featureLevel >= D3D_FEATURE_LEVEL_11_1);
+}
+
 inline bool OnlyFL10Plus(const Renderer11DeviceCaps &deviceCaps)
 {
     return (deviceCaps.featureLevel >= D3D_FEATURE_LEVEL_10_0);

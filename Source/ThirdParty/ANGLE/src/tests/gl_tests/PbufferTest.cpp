@@ -6,6 +6,7 @@
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
+#include "util/EGLWindow.h"
 
 using namespace angle;
 
@@ -26,7 +27,7 @@ class PbufferTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vsSource =
+        constexpr char kVS[] =
             R"(precision highp float;
             attribute vec4 position;
             varying vec2 texcoord;
@@ -38,7 +39,7 @@ class PbufferTest : public ANGLETest
                 texcoord.y = 1.0 - texcoord.y;
             })";
 
-        const std::string textureFSSource =
+        constexpr char kFS[] =
             R"(precision highp float;
             uniform sampler2D tex;
             varying vec2 texcoord;
@@ -48,7 +49,7 @@ class PbufferTest : public ANGLETest
                 gl_FragColor = texture2D(tex, texcoord);
             })";
 
-        mTextureProgram = CompileProgram(vsSource, textureFSSource);
+        mTextureProgram = CompileProgram(kVS, kFS);
         if (mTextureProgram == 0)
         {
             FAIL() << "shader compilation failed.";
@@ -59,23 +60,25 @@ class PbufferTest : public ANGLETest
         EGLWindow *window = getEGLWindow();
 
         EGLint surfaceType = 0;
-        eglGetConfigAttrib(window->getDisplay(), window->getConfig(), EGL_SURFACE_TYPE, &surfaceType);
+        eglGetConfigAttrib(window->getDisplay(), window->getConfig(), EGL_SURFACE_TYPE,
+                           &surfaceType);
         mSupportsPbuffers = (surfaceType & EGL_PBUFFER_BIT) != 0;
 
         EGLint bindToTextureRGBA = 0;
-        eglGetConfigAttrib(window->getDisplay(), window->getConfig(), EGL_BIND_TO_TEXTURE_RGBA, &bindToTextureRGBA);
+        eglGetConfigAttrib(window->getDisplay(), window->getConfig(), EGL_BIND_TO_TEXTURE_RGBA,
+                           &bindToTextureRGBA);
         mSupportsBindTexImage = (bindToTextureRGBA == EGL_TRUE);
 
-        const EGLint pBufferAttributes[] =
-        {
-            EGL_WIDTH, static_cast<EGLint>(mPbufferSize),
-            EGL_HEIGHT, static_cast<EGLint>(mPbufferSize),
+        const EGLint pBufferAttributes[] = {
+            EGL_WIDTH,          static_cast<EGLint>(mPbufferSize),
+            EGL_HEIGHT,         static_cast<EGLint>(mPbufferSize),
             EGL_TEXTURE_FORMAT, mSupportsBindTexImage ? EGL_TEXTURE_RGBA : EGL_NO_TEXTURE,
             EGL_TEXTURE_TARGET, mSupportsBindTexImage ? EGL_TEXTURE_2D : EGL_NO_TEXTURE,
-            EGL_NONE, EGL_NONE,
+            EGL_NONE,           EGL_NONE,
         };
 
-        mPbuffer = eglCreatePbufferSurface(window->getDisplay(), window->getConfig(), pBufferAttributes);
+        mPbuffer =
+            eglCreatePbufferSurface(window->getDisplay(), window->getConfig(), pBufferAttributes);
         if (mSupportsPbuffers)
         {
             ASSERT_NE(mPbuffer, EGL_NO_SURFACE);
@@ -112,11 +115,7 @@ class PbufferTest : public ANGLETest
 // Test clearing a Pbuffer and checking the color is correct
 TEST_P(PbufferTest, Clearing)
 {
-    if (!mSupportsPbuffers)
-    {
-        std::cout << "Test skipped because Pbuffers are not supported." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers);
 
     EGLWindow *window = getEGLWindow();
 
@@ -149,17 +148,9 @@ TEST_P(PbufferTest, Clearing)
 // Bind the Pbuffer to a texture and verify it renders correctly
 TEST_P(PbufferTest, BindTexImage)
 {
-    if (!mSupportsPbuffers)
-    {
-        std::cout << "Test skipped because Pbuffers are not supported." << std::endl;
-        return;
-    }
-
-    if (!mSupportsBindTexImage)
-    {
-        std::cout << "Test skipped because Pbuffer does not support binding to RGBA textures." << std::endl;
-        return;
-    }
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
 
     EGLWindow *window = getEGLWindow();
 
@@ -260,17 +251,9 @@ TEST_P(PbufferTest, TextureSizeReset)
 // Bind a Pbuffer, redefine the texture, and verify it renders correctly
 TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
 {
-    if (!mSupportsPbuffers)
-    {
-        std::cout << "Test skipped because Pbuffers are not supported." << std::endl;
-        return;
-    }
-
-    if (!mSupportsBindTexImage)
-    {
-        std::cout << "Test skipped because Pbuffer does not support binding to RGBA textures." << std::endl;
-        return;
-    }
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
 
     EGLWindow *window = getEGLWindow();
 
@@ -306,7 +289,8 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
     // Redefine the texture
     unsigned int pixelValue = 0xFFFF00FF;
     std::vector<unsigned int> pixelData(getWindowWidth() * getWindowHeight(), pixelValue);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixelData[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, &pixelData[0]);
 
     // Draw a quad and verify that it is magenta
     glUseProgram(mTextureProgram);
@@ -321,11 +305,12 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
     glDeleteTextures(1, &texture);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(PbufferTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_OPENGL(),
                        ES2_D3D11_WARP(),
-                       ES2_D3D11_REFERENCE(),
-                       ES2_OPENGLES());
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());

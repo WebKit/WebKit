@@ -13,21 +13,23 @@
 #include <random>
 #include <sstream>
 
-#include "shader_utils.h"
+#include "util/shader_utils.h"
 
 namespace angle
 {
+constexpr unsigned int kIterationsPerStep = 256;
 
 struct TexturesParams final : public RenderTestParams
 {
     TexturesParams()
     {
+        iterationsPerStep = kIterationsPerStep;
+
         // Common default params
         majorVersion = 2;
         minorVersion = 0;
         windowWidth  = 720;
         windowHeight = 720;
-        iterations   = 256;
 
         numTextures                 = 8;
         textureRebindFrequency      = 5;
@@ -44,9 +46,6 @@ struct TexturesParams final : public RenderTestParams
     size_t textureMipCount;
 
     bool webgl;
-
-    // static parameters
-    size_t iterations;
 };
 
 std::ostream &operator<<(std::ostream &os, const TexturesParams &params)
@@ -103,8 +102,6 @@ void TexturesBenchmark::initializeBenchmark()
 {
     const auto &params = GetParam();
 
-    ASSERT_GT(params.iterations, 0u);
-
     // Verify the uniform counts are within the limits
     GLint maxTextureUnits;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
@@ -154,7 +151,7 @@ void TexturesBenchmark::initShaders()
     fstrstr << ";\n"
                "}\n";
 
-    mProgram = CompileProgram(vs, fstrstr.str());
+    mProgram = CompileProgram(vs.c_str(), fstrstr.str().c_str());
     ASSERT_NE(0u, mProgram);
 
     for (size_t i = 0; i < params.numTextures; ++i)
@@ -210,7 +207,7 @@ void TexturesBenchmark::drawBenchmark()
 {
     const auto &params = GetParam();
 
-    for (size_t it = 0; it < params.iterations; ++it)
+    for (size_t it = 0; it < params.iterationsPerStep; ++it)
     {
         if (it % params.textureRebindFrequency == 0)
         {
@@ -252,13 +249,16 @@ void TexturesBenchmark::drawBenchmark()
                                 minFilters[stateUpdateCount % ArraySize(minFilters)]);
 
                 const GLenum magFilters[] = {
-                    GL_NEAREST, GL_LINEAR,
+                    GL_NEAREST,
+                    GL_LINEAR,
                 };
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
                                 magFilters[stateUpdateCount % ArraySize(magFilters)]);
 
                 const GLenum wrapParameters[] = {
-                    GL_CLAMP_TO_EDGE, GL_REPEAT, GL_MIRRORED_REPEAT,
+                    GL_CLAMP_TO_EDGE,
+                    GL_REPEAT,
+                    GL_MIRRORED_REPEAT,
                 };
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
                                 wrapParameters[stateUpdateCount % ArraySize(wrapParameters)]);
@@ -308,5 +308,4 @@ ANGLE_INSTANTIATE_TEST(TexturesBenchmark,
                        D3D9Params(true),
                        OpenGLOrGLESParams(false),
                        OpenGLOrGLESParams(true));
-
 }  // namespace angle

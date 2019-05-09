@@ -11,26 +11,23 @@
 
 #include "ANGLEPerfTest.h"
 #include "common/vector_utils.h"
-#include "random_utils.h"
-#include "shader_utils.h"
+#include "util/random_utils.h"
+#include "util/shader_utils.h"
 
 using namespace angle;
 
 namespace
 {
+constexpr unsigned int kIterationsPerStep = 4;
 
 struct DynamicPromotionParams final : public RenderTestParams
 {
-    DynamicPromotionParams();
+    DynamicPromotionParams() { iterationsPerStep = kIterationsPerStep; }
+
     std::string suffix() const override;
 
-    size_t vertexCount;
-    unsigned int iterations;
+    size_t vertexCount = 1024;
 };
-
-DynamicPromotionParams::DynamicPromotionParams() : vertexCount(1024), iterations(4)
-{
-}
 
 std::string DynamicPromotionParams::suffix() const
 {
@@ -64,12 +61,11 @@ DynamicPromotionPerfTest::DynamicPromotionPerfTest()
       mProgram(0),
       mElementArrayBuffer(0),
       mArrayBuffer(0)
-{
-}
+{}
 
 void DynamicPromotionPerfTest::initializeBenchmark()
 {
-    const std::string &vertexShaderSource =
+    constexpr char kVertexShaderSource[] =
         "attribute vec2 position;\n"
         "attribute vec3 color;\n"
         "varying vec3 vColor;\n"
@@ -79,14 +75,14 @@ void DynamicPromotionPerfTest::initializeBenchmark()
         "    gl_Position = vec4(position, 0, 1);\n"
         "}";
 
-    const std::string &fragmentShaderSource =
+    constexpr char kFragmentShaderSource[] =
         "varying mediump vec3 vColor;\n"
         "void main()\n"
         "{\n"
         "    gl_FragColor = vec4(vColor, 1);\n"
         "}";
 
-    mProgram = CompileProgram(vertexShaderSource, fragmentShaderSource);
+    mProgram = CompileProgram(kVertexShaderSource, kFragmentShaderSource);
     ASSERT_NE(0u, mProgram);
 
     const size_t vertexCount = GetParam().vertexCount;
@@ -151,7 +147,7 @@ void DynamicPromotionPerfTest::destroyBenchmark()
 
 void DynamicPromotionPerfTest::drawBenchmark()
 {
-    unsigned int iterations = GetParam().iterations;
+    unsigned int iterations = GetParam().iterationsPerStep;
     size_t vertexCount      = GetParam().vertexCount;
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -185,5 +181,4 @@ TEST_P(DynamicPromotionPerfTest, Run)
 ANGLE_INSTANTIATE_TEST(DynamicPromotionPerfTest,
                        DynamicPromotionD3D11Params(),
                        DynamicPromotionD3D9Params());
-
 }  // anonymous namespace

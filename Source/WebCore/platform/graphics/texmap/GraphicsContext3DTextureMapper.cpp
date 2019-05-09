@@ -35,11 +35,7 @@
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(WIN)
-#include <GLSLANG/ShaderLang.h>
-#else
 #include <ANGLE/ShaderLang.h>
-#endif
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>

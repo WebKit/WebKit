@@ -78,4 +78,4 @@ ANGLE_INSTANTIATE_TEST(ProgramParameterTest,
                        ES31_OPENGLES(),
                        ES31_D3D11());
 ANGLE_INSTANTIATE_TEST(ProgramParameterTestES31, ES31_OPENGL(), ES31_OPENGLES(), ES31_D3D11());
-}
+}  // namespace

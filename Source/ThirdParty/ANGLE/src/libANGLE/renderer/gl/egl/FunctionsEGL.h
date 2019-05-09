@@ -62,6 +62,7 @@ class FunctionsEGL
 
     EGLBoolean bindTexImage(EGLSurface surface, EGLint buffer) const;
     EGLBoolean releaseTexImage(EGLSurface surface, EGLint buffer) const;
+    EGLBoolean surfaceAttrib(EGLSurface surface, EGLint attribute, EGLint value) const;
     EGLBoolean swapInterval(EGLint interval) const;
 
     EGLImageKHR createImageKHR(EGLContext context,
@@ -70,10 +71,31 @@ class FunctionsEGL
                                const EGLint *attrib_list) const;
     EGLBoolean destroyImageKHR(EGLImageKHR image) const;
 
-    EGLSyncKHR createSyncKHR(EGLenum type, const EGLint *attrib_list);
-    EGLBoolean destroySyncKHR(EGLSyncKHR sync);
-    EGLint clientWaitSyncKHR(EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout);
-    EGLBoolean getSyncAttribKHR(EGLSyncKHR sync, EGLint attribute, EGLint *value);
+    EGLSyncKHR createSyncKHR(EGLenum type, const EGLint *attrib_list) const;
+    EGLBoolean destroySyncKHR(EGLSyncKHR sync) const;
+    EGLint clientWaitSyncKHR(EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout) const;
+    EGLBoolean getSyncAttribKHR(EGLSyncKHR sync, EGLint attribute, EGLint *value) const;
+
+    EGLint waitSyncKHR(EGLSyncKHR sync, EGLint flags) const;
+
+    EGLBoolean swapBuffersWithDamageKHR(EGLSurface surface, EGLint *rects, EGLint n_rects) const;
+
+    EGLBoolean presentationTimeANDROID(EGLSurface surface, EGLnsecsANDROID time) const;
+
+    void setBlobCacheFuncsANDROID(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) const;
+
+    EGLBoolean getCompositorTimingSupportedANDROID(EGLSurface surface, EGLint name) const;
+    EGLBoolean getCompositorTimingANDROID(EGLSurface surface,
+                                          EGLint numTimestamps,
+                                          const EGLint *names,
+                                          EGLnsecsANDROID *values) const;
+    EGLBoolean getNextFrameIdANDROID(EGLSurface surface, EGLuint64KHR *frameId) const;
+    EGLBoolean getFrameTimestampSupportedANDROID(EGLSurface surface, EGLint timestamp) const;
+    EGLBoolean getFrameTimestampsANDROID(EGLSurface surface,
+                                         EGLuint64KHR frameId,
+                                         EGLint numTimestamps,
+                                         const EGLint *timestamps,
+                                         EGLnsecsANDROID *values) const;
 
   private:
     // So as to isolate from angle we do not include angleutils.h and cannot

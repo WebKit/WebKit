@@ -17,7 +17,6 @@ namespace rx
 {
 
 PbufferSurfaceWGL::PbufferSurfaceWGL(const egl::SurfaceState &state,
-                                     RendererGL *renderer,
                                      EGLint width,
                                      EGLint height,
                                      EGLenum textureFormat,
@@ -26,7 +25,7 @@ PbufferSurfaceWGL::PbufferSurfaceWGL(const egl::SurfaceState &state,
                                      int pixelFormat,
                                      HDC deviceContext,
                                      const FunctionsWGL *functions)
-    : SurfaceWGL(state, renderer),
+    : SurfaceWGL(state),
       mWidth(width),
       mHeight(height),
       mLargest(largest),
@@ -37,8 +36,7 @@ PbufferSurfaceWGL::PbufferSurfaceWGL(const egl::SurfaceState &state,
       mPbuffer(nullptr),
       mPbufferDeviceContext(nullptr),
       mFunctionsWGL(functions)
-{
-}
+{}
 
 PbufferSurfaceWGL::~PbufferSurfaceWGL()
 {
@@ -53,10 +51,15 @@ static int GetWGLTextureType(EGLenum eglTextureType)
 {
     switch (eglTextureType)
     {
-      case EGL_NO_TEXTURE:    return WGL_NO_TEXTURE_ARB;
-      case EGL_TEXTURE_RGB:   return WGL_TEXTURE_RGB_ARB;
-      case EGL_TEXTURE_RGBA:  return WGL_TEXTURE_RGBA_ARB;
-      default: UNREACHABLE(); return 0;
+        case EGL_NO_TEXTURE:
+            return WGL_NO_TEXTURE_ARB;
+        case EGL_TEXTURE_RGB:
+            return WGL_TEXTURE_RGB_ARB;
+        case EGL_TEXTURE_RGBA:
+            return WGL_TEXTURE_RGBA_ARB;
+        default:
+            UNREACHABLE();
+            return 0;
     }
 }
 
@@ -64,20 +67,27 @@ static int GetWGLTextureTarget(EGLenum eglTextureTarget)
 {
     switch (eglTextureTarget)
     {
-      case EGL_NO_TEXTURE:    return WGL_NO_TEXTURE_ARB;
-      case EGL_TEXTURE_2D:    return WGL_TEXTURE_2D_ARB;
-      default: UNREACHABLE(); return 0;
+        case EGL_NO_TEXTURE:
+            return WGL_NO_TEXTURE_ARB;
+        case EGL_TEXTURE_2D:
+            return WGL_TEXTURE_2D_ARB;
+        default:
+            UNREACHABLE();
+            return 0;
     }
 }
 
 egl::Error PbufferSurfaceWGL::initialize(const egl::Display *display)
 {
-    const int pbufferCreationAttributes[] =
-    {
-        WGL_PBUFFER_LARGEST_ARB, mLargest ? 1 : 0,
-        WGL_TEXTURE_FORMAT_ARB, GetWGLTextureType(mTextureFormat),
-        WGL_TEXTURE_TARGET_ARB, GetWGLTextureTarget(mTextureTarget),
-        0, 0,
+    const int pbufferCreationAttributes[] = {
+        WGL_PBUFFER_LARGEST_ARB,
+        mLargest ? 1 : 0,
+        WGL_TEXTURE_FORMAT_ARB,
+        GetWGLTextureType(mTextureFormat),
+        WGL_TEXTURE_TARGET_ARB,
+        GetWGLTextureTarget(mTextureTarget),
+        0,
+        0,
     };
 
     mPbuffer = mFunctionsWGL->createPbufferARB(mParentDeviceContext, mPixelFormat, mWidth, mHeight,
@@ -112,7 +122,7 @@ egl::Error PbufferSurfaceWGL::initialize(const egl::Display *display)
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceWGL::makeCurrent()
+egl::Error PbufferSurfaceWGL::makeCurrent(const gl::Context *context)
 {
     return egl::NoError();
 }
@@ -141,12 +151,17 @@ static int GetWGLBufferBindTarget(EGLint buffer)
 {
     switch (buffer)
     {
-      case EGL_BACK_BUFFER:   return WGL_BACK_LEFT_ARB;
-      default: UNREACHABLE(); return 0;
+        case EGL_BACK_BUFFER:
+            return WGL_BACK_LEFT_ARB;
+        default:
+            UNREACHABLE();
+            return 0;
     }
 }
 
-egl::Error PbufferSurfaceWGL::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error PbufferSurfaceWGL::bindTexImage(const gl::Context *context,
+                                           gl::Texture *texture,
+                                           EGLint buffer)
 {
     if (!mFunctionsWGL->bindTexImageARB(mPbuffer, GetWGLBufferBindTarget(buffer)))
     {
@@ -158,7 +173,7 @@ egl::Error PbufferSurfaceWGL::bindTexImage(gl::Texture *texture, EGLint buffer)
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceWGL::releaseTexImage(EGLint buffer)
+egl::Error PbufferSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     if (!mFunctionsWGL->releaseTexImageARB(mPbuffer, GetWGLBufferBindTarget(buffer)))
     {
@@ -170,9 +185,7 @@ egl::Error PbufferSurfaceWGL::releaseTexImage(EGLint buffer)
     return egl::NoError();
 }
 
-void PbufferSurfaceWGL::setSwapInterval(EGLint interval)
-{
-}
+void PbufferSurfaceWGL::setSwapInterval(EGLint interval) {}
 
 EGLint PbufferSurfaceWGL::getWidth() const
 {
@@ -198,4 +211,4 @@ HDC PbufferSurfaceWGL::getDC() const
 {
     return mPbufferDeviceContext;
 }
-}
+}  // namespace rx

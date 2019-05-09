@@ -6,14 +6,15 @@
 
 #include "test_utils/ANGLETest.h"
 
-#include <cstdint>
-#include "com_utils.h"
-#include "OSWindow.h"
 #include <d3d11.h>
+#include <cstdint>
+
+#include "util/OSWindow.h"
+#include "util/com_utils.h"
 
 using namespace angle;
 
-class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
+class EGLPresentPathD3D11 : public EGLTest, public testing::WithParamInterface<PlatformParameters>
 {
   protected:
     EGLPresentPathD3D11()
@@ -24,12 +25,13 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
           mConfig(0),
           mOSWindow(nullptr),
           mWindowWidth(0)
-    {
-    }
+    {}
 
     void SetUp() override
     {
-        mOSWindow    = CreateOSWindow();
+        EGLTest::SetUp();
+
+        mOSWindow    = OSWindow::New();
         mWindowWidth = 64;
         mOSWindow->initialize("EGLPresentPathD3D11", mWindowWidth, mWindowWidth);
     }
@@ -38,24 +40,17 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
     {
         int clientVersion = GetParam().majorVersion;
 
-        const char *extensionString =
-            static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
-        ASSERT_NE(nullptr, strstr(extensionString, "EGL_ANGLE_experimental_present_path"));
-
-        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
-            reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(
-                eglGetProcAddress("eglGetPlatformDisplayEXT"));
-        ASSERT_NE(nullptr, eglGetPlatformDisplayEXT);
-
         // Set up EGL Display
-        EGLint displayAttribs[] = {
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
-            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE, GetParam().eglParameters.majorVersion,
-            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE, GetParam().eglParameters.majorVersion,
-            EGL_EXPERIMENTAL_PRESENT_PATH_ANGLE,
-            usePresentPathFast ? EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE
-                               : EGL_EXPERIMENTAL_PRESENT_PATH_COPY_ANGLE,
-            EGL_NONE};
+        EGLint displayAttribs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+                                   GetParam().getRenderer(),
+                                   EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
+                                   GetParam().eglParameters.majorVersion,
+                                   EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
+                                   GetParam().eglParameters.majorVersion,
+                                   EGL_EXPERIMENTAL_PRESENT_PATH_ANGLE,
+                                   usePresentPathFast ? EGL_EXPERIMENTAL_PRESENT_PATH_FAST_ANGLE
+                                                      : EGL_EXPERIMENTAL_PRESENT_PATH_COPY_ANGLE,
+                                   EGL_NONE};
         mDisplay =
             eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttribs);
         ASSERT_TRUE(EGL_NO_DISPLAY != mDisplay);
@@ -174,7 +169,7 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
         }
 
         mOSWindow->destroy();
-        SafeDelete(mOSWindow);
+        OSWindow::Delete(&mOSWindow);
     }
 
     void drawQuadUsingGL()
@@ -182,7 +177,7 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
         GLuint m2DProgram;
         GLint mTexture2DUniformLocation;
 
-        const std::string vertexShaderSource =
+        constexpr char kVS[] =
             R"(precision highp float;
             attribute vec4 position;
             varying vec2 texcoord;
@@ -193,7 +188,7 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
                 texcoord = (position.xy * 0.5) + 0.5;
             })";
 
-        const std::string fragmentShaderSource2D =
+        constexpr char kFS[] =
             R"(precision highp float;
             uniform sampler2D tex;
             varying vec2 texcoord;
@@ -203,7 +198,7 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
                 gl_FragColor = texture2D(tex, texcoord);
             })";
 
-        m2DProgram                = CompileProgram(vertexShaderSource, fragmentShaderSource2D);
+        m2DProgram                = CompileProgram(kVS, kFS);
         mTexture2DUniformLocation = glGetUniformLocation(m2DProgram, "tex");
 
         uint8_t textureInitData[16] = {
@@ -230,14 +225,9 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
 
         GLint positionLocation = glGetAttribLocation(m2DProgram, "position");
         glUseProgram(m2DProgram);
-        const GLfloat vertices[] =
-        {
-            -1.0f,  1.0f, 0.5f,
-            -1.0f, -1.0f, 0.5f,
-             1.0f, -1.0f, 0.5f,
-            -1.0f,  1.0f, 0.5f,
-             1.0f, -1.0f, 0.5f,
-             1.0f,  1.0f, 0.5f,
+        const GLfloat vertices[] = {
+            -1.0f, 1.0f, 0.5f, -1.0f, -1.0f, 0.5f, 1.0f, -1.0f, 0.5f,
+            -1.0f, 1.0f, 0.5f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f,  0.5f,
         };
 
         glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
@@ -288,9 +278,9 @@ class EGLPresentPathD3D11 : public testing::TestWithParam<PlatformParameters>
         angle::GLColor *byteData = reinterpret_cast<angle::GLColor *>(mappedSubresource.pData);
 
         // Note that the texture is in BGRA format, although the GLColor struct is RGBA
-        GLColor expectedTopLeftPixel     = GLColor(0,   0, 255, 255);  // Red
-        GLColor expectedTopRightPixel    = GLColor(0, 255,   0, 255);  // Green
-        GLColor expectedBottomLeftPixel  = GLColor(255, 0,   0, 255);  // Blue
+        GLColor expectedTopLeftPixel     = GLColor(0, 0, 255, 255);    // Red
+        GLColor expectedTopRightPixel    = GLColor(0, 255, 0, 255);    // Green
+        GLColor expectedBottomLeftPixel  = GLColor(255, 0, 0, 255);    // Blue
         GLColor expectedBottomRightPixel = GLColor(0, 255, 255, 255);  // Red + Green
 
         if (usingPresentPathFast)

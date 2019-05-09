@@ -23,8 +23,10 @@ class VertexArray9 : public VertexArrayImpl
   public:
     VertexArray9(const gl::VertexArrayState &data) : VertexArrayImpl(data) {}
 
-    void syncState(const gl::Context *context,
-                   const gl::VertexArray::DirtyBits &dirtyBits) override;
+    angle::Result syncState(const gl::Context *context,
+                            const gl::VertexArray::DirtyBits &dirtyBits,
+                            gl::VertexArray::DirtyAttribBitsArray *attribBits,
+                            gl::VertexArray::DirtyBindingBitsArray *bindingBits) override;
 
     ~VertexArray9() override {}
 
@@ -34,13 +36,22 @@ class VertexArray9 : public VertexArrayImpl
     Serial mCurrentStateSerial;
 };
 
-inline void VertexArray9::syncState(const gl::Context *context,
-                                    const gl::VertexArray::DirtyBits &dirtyBits)
+inline angle::Result VertexArray9::syncState(const gl::Context *context,
+                                             const gl::VertexArray::DirtyBits &dirtyBits,
+                                             gl::VertexArray::DirtyAttribBitsArray *attribBits,
+                                             gl::VertexArray::DirtyBindingBitsArray *bindingBits)
 {
+
     ASSERT(dirtyBits.any());
     Renderer9 *renderer = GetImplAs<Context9>(context)->getRenderer();
     mCurrentStateSerial = renderer->generateSerial();
-}
-}
 
-#endif // LIBANGLE_RENDERER_D3D_D3D9_VERTEXARRAY9_H_
+    // Clear the dirty bits in the back-end here.
+    memset(attribBits, 0, sizeof(gl::VertexArray::DirtyAttribBitsArray));
+    memset(bindingBits, 0, sizeof(gl::VertexArray::DirtyBindingBitsArray));
+
+    return angle::Result::Continue;
+}
+}  // namespace rx
+
+#endif  // LIBANGLE_RENDERER_D3D_D3D9_VERTEXARRAY9_H_

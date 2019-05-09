@@ -11,8 +11,8 @@
 #include "common/utilities.h"
 #include "compiler/translator/OutputHLSL.h"
 #include "compiler/translator/Types.h"
-#include "compiler/translator/util.h"
 #include "compiler/translator/UtilsHLSL.h"
+#include "compiler/translator/util.h"
 
 namespace sh
 {
@@ -26,7 +26,7 @@ TString Define(const TStructure &structure,
                Std140PaddingHelper *padHelper)
 {
     const TFieldList &fields = structure.fields();
-    const bool isNameless    = (structure.name() == "");
+    const bool isNameless    = (structure.symbolType() == SymbolType::Empty);
     const TString &structName =
         QualifiedStructNameString(structure, useHLSLRowMajorPacking, useStd140Packing);
     const TString declareString = (isNameless ? "struct" : "struct " + structName);
@@ -53,7 +53,7 @@ TString Define(const TStructure &structure,
             }
 
             string += "    " + fieldTypeString + " " + DecorateField(field->name(), structure) +
-                      ArrayString(fieldType) + ";\n";
+                      ArrayString(fieldType).data() + ";\n";
 
             if (padHelper)
             {
@@ -76,7 +76,8 @@ TString WriteParameterList(const std::vector<TType> &parameters)
     {
         const TType &paramType = parameters[parameter];
 
-        parameterList += TypeString(paramType) + " x" + str(parameter) + ArrayString(paramType);
+        parameterList +=
+            TypeString(paramType) + " x" + str(parameter) + ArrayString(paramType).data();
 
         if (parameter < parameters.size() - 1u)
         {
@@ -91,15 +92,13 @@ TString WriteParameterList(const std::vector<TType> &parameters)
 Std140PaddingHelper::Std140PaddingHelper(const std::map<TString, int> &structElementIndexes,
                                          unsigned *uniqueCounter)
     : mPaddingCounter(uniqueCounter), mElementIndex(0), mStructElementIndexes(&structElementIndexes)
-{
-}
+{}
 
 Std140PaddingHelper::Std140PaddingHelper(const Std140PaddingHelper &other)
     : mPaddingCounter(other.mPaddingCounter),
       mElementIndex(other.mElementIndex),
       mStructElementIndexes(other.mStructElementIndexes)
-{
-}
+{}
 
 Std140PaddingHelper &Std140PaddingHelper::operator=(const Std140PaddingHelper &other)
 {
@@ -173,7 +172,7 @@ TString Std140PaddingHelper::postPaddingString(const TType &type, bool useHLSLRo
         return "";
     }
 
-    int numComponents     = 0;
+    int numComponents           = 0;
     const TStructure *structure = type.getStruct();
 
     if (type.isMatrix())
@@ -214,9 +213,7 @@ TString Std140PaddingHelper::postPaddingString(const TType &type, bool useHLSLRo
     return padding;
 }
 
-StructureHLSL::StructureHLSL() : mUniquePaddingCounter(0)
-{
-}
+StructureHLSL::StructureHLSL() : mUniquePaddingCounter(0) {}
 
 Std140PaddingHelper StructureHLSL::getPaddingHelper()
 {
@@ -441,7 +438,7 @@ TString StructureHLSL::addBuiltInConstructor(const TType &type, const TIntermSeq
     else
     {
         size_t remainingComponents = ctorType.getObjectSize();
-        size_t parameterIndex = 0;
+        size_t parameterIndex      = 0;
 
         while (remainingComponents > 0)
         {

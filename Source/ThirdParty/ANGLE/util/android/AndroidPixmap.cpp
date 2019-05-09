@@ -6,7 +6,7 @@
 
 // AndroidPixmap.cpp: Implementation of OSPixmap for Android
 
-#include "OSPixmap.h"
+#include "util/OSPixmap.h"
 
 OSPixmap *CreateOSPixmap()
 {

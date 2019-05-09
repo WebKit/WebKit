@@ -21,8 +21,6 @@ class CompilerNULL : public CompilerImpl
     CompilerNULL();
     ~CompilerNULL() override;
 
-    gl::Error release() override;
-
     // TODO(jmadill): Expose translator built-in resources init method.
     ShShaderOutput getTranslatorOutputType() const override;
 };

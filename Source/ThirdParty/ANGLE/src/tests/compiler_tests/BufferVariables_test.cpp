@@ -205,6 +205,66 @@ TEST_F(BufferVariablesTest, AssignToBufferVariableWithinReadonlyBlock)
     }
 }
 
+// Test that can't assign to a readonly buffer variable through an instance name.
+TEST_F(BufferVariablesTest, AssignToReadonlyBufferVariableByInstanceName)
+{
+    const std::string &source =
+        R"(#version 310 es
+        layout(binding = 3) buffer buf {
+            readonly float f;
+        } instanceBuffer;
+        void main()
+        {
+            instanceBuffer.f += 0.2;
+        })";
+    if (compile(source))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Test that can't assign to a readonly struct buffer variable.
+TEST_F(BufferVariablesTest, AssignToReadonlyStructBufferVariable)
+{
+    const std::string &source =
+        R"(#version 310 es
+        struct S {
+            float f;
+        };
+        layout(binding = 3) buffer buf {
+            readonly S s;
+        };
+        void main()
+        {
+            s.f += 0.2;
+        })";
+    if (compile(source))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Test that can't assign to a readonly struct buffer variable through an instance name.
+TEST_F(BufferVariablesTest, AssignToReadonlyStructBufferVariableByInstanceName)
+{
+    const std::string &source =
+        R"(#version 310 es
+        struct S {
+            float f;
+        };
+        layout(binding = 3) buffer buf {
+            readonly S s;
+        } instanceBuffer;
+        void main()
+        {
+            instanceBuffer.s.f += 0.2;
+        })";
+    if (compile(source))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
 // Test that a readonly and writeonly buffer variable should neither read or write.
 TEST_F(BufferVariablesTest, AccessReadonlyWriteonlyBufferVariable)
 {

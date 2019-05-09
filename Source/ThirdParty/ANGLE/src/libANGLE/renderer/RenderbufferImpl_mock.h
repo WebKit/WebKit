@@ -12,6 +12,7 @@
 #include "gmock/gmock.h"
 
 #include "libANGLE/Image.h"
+#include "libANGLE/Renderbuffer.h"
 #include "libANGLE/renderer/RenderbufferImpl.h"
 
 namespace rx
@@ -20,21 +21,25 @@ namespace rx
 class MockRenderbufferImpl : public RenderbufferImpl
 {
   public:
+    MockRenderbufferImpl() : RenderbufferImpl(mMockState) {}
     virtual ~MockRenderbufferImpl() { destructor(); }
-    MOCK_METHOD4(setStorage, gl::Error(const gl::Context *, GLenum, size_t, size_t));
+    MOCK_METHOD4(setStorage, angle::Result(const gl::Context *, GLenum, size_t, size_t));
     MOCK_METHOD5(setStorageMultisample,
-                 gl::Error(const gl::Context *, size_t, GLenum, size_t, size_t));
-    MOCK_METHOD2(setStorageEGLImageTarget, gl::Error(const gl::Context *, egl::Image *));
+                 angle::Result(const gl::Context *, size_t, GLenum, size_t, size_t));
+    MOCK_METHOD2(setStorageEGLImageTarget, angle::Result(const gl::Context *, egl::Image *));
 
     MOCK_METHOD4(getAttachmentRenderTarget,
-                 gl::Error(const gl::Context *,
-                           GLenum,
-                           const gl::ImageIndex &,
-                           FramebufferAttachmentRenderTarget **));
+                 angle::Result(const gl::Context *,
+                               GLenum,
+                               const gl::ImageIndex &,
+                               FramebufferAttachmentRenderTarget **));
 
     MOCK_METHOD0(destructor, void());
+
+  protected:
+    gl::RenderbufferState mMockState;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_RENDERBUFFERIMPLMOCK_H_
+#endif  // LIBANGLE_RENDERER_RENDERBUFFERIMPLMOCK_H_

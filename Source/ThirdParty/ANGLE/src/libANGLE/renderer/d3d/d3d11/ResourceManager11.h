@@ -10,6 +10,7 @@
 #define LIBANGLE_RENDERER_D3D_D3D11_RESOURCEFACTORY11_H_
 
 #include <array>
+#include <atomic>
 #include <memory>
 
 #include "common/MemoryBuffer.h"
@@ -32,6 +33,11 @@ HRESULT SetDebugName(angle::ComPtr<T> &resource, const char *name)
 }
 }  // namespace d3d11
 
+namespace d3d
+{
+class Context;
+}  // namespace d3d
+
 class Renderer11;
 class ResourceManager11;
 template <typename T>
@@ -42,26 +48,28 @@ using InputElementArray = WrappedArray<D3D11_INPUT_ELEMENT_DESC>;
 using ShaderData        = WrappedArray<uint8_t>;
 
 // Format: ResourceType, D3D11 type, DESC type, init data type.
-#define ANGLE_RESOURCE_TYPE_OP(NAME, OP)                                                     \
-    OP(NAME, BlendState, ID3D11BlendState, D3D11_BLEND_DESC, void)                           \
-    OP(NAME, Buffer, ID3D11Buffer, D3D11_BUFFER_DESC, const D3D11_SUBRESOURCE_DATA)          \
-    OP(NAME, ComputeShader, ID3D11ComputeShader, ShaderData, void)                           \
-    OP(NAME, DepthStencilState, ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC, void)     \
-    OP(NAME, DepthStencilView, ID3D11DepthStencilView, D3D11_DEPTH_STENCIL_VIEW_DESC,        \
-       ID3D11Resource)                                                                       \
-    OP(NAME, GeometryShader, ID3D11GeometryShader, ShaderData,                               \
-       const std::vector<D3D11_SO_DECLARATION_ENTRY>)                                        \
-    OP(NAME, InputLayout, ID3D11InputLayout, InputElementArray, const ShaderData)            \
-    OP(NAME, PixelShader, ID3D11PixelShader, ShaderData, void)                               \
-    OP(NAME, Query, ID3D11Query, D3D11_QUERY_DESC, void)                                     \
-    OP(NAME, RasterizerState, ID3D11RasterizerState, D3D11_RASTERIZER_DESC, void)            \
-    OP(NAME, RenderTargetView, ID3D11RenderTargetView, D3D11_RENDER_TARGET_VIEW_DESC,        \
-       ID3D11Resource)                                                                       \
-    OP(NAME, SamplerState, ID3D11SamplerState, D3D11_SAMPLER_DESC, void)                     \
-    OP(NAME, ShaderResourceView, ID3D11ShaderResourceView, D3D11_SHADER_RESOURCE_VIEW_DESC,  \
-       ID3D11Resource)                                                                       \
-    OP(NAME, Texture2D, ID3D11Texture2D, D3D11_TEXTURE2D_DESC, const D3D11_SUBRESOURCE_DATA) \
-    OP(NAME, Texture3D, ID3D11Texture3D, D3D11_TEXTURE3D_DESC, const D3D11_SUBRESOURCE_DATA) \
+#define ANGLE_RESOURCE_TYPE_OP(NAME, OP)                                                       \
+    OP(NAME, BlendState, ID3D11BlendState, D3D11_BLEND_DESC, void)                             \
+    OP(NAME, Buffer, ID3D11Buffer, D3D11_BUFFER_DESC, const D3D11_SUBRESOURCE_DATA)            \
+    OP(NAME, ComputeShader, ID3D11ComputeShader, ShaderData, void)                             \
+    OP(NAME, DepthStencilState, ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC, void)       \
+    OP(NAME, DepthStencilView, ID3D11DepthStencilView, D3D11_DEPTH_STENCIL_VIEW_DESC,          \
+       ID3D11Resource)                                                                         \
+    OP(NAME, GeometryShader, ID3D11GeometryShader, ShaderData,                                 \
+       const std::vector<D3D11_SO_DECLARATION_ENTRY>)                                          \
+    OP(NAME, InputLayout, ID3D11InputLayout, InputElementArray, const ShaderData)              \
+    OP(NAME, PixelShader, ID3D11PixelShader, ShaderData, void)                                 \
+    OP(NAME, Query, ID3D11Query, D3D11_QUERY_DESC, void)                                       \
+    OP(NAME, RasterizerState, ID3D11RasterizerState, D3D11_RASTERIZER_DESC, void)              \
+    OP(NAME, RenderTargetView, ID3D11RenderTargetView, D3D11_RENDER_TARGET_VIEW_DESC,          \
+       ID3D11Resource)                                                                         \
+    OP(NAME, SamplerState, ID3D11SamplerState, D3D11_SAMPLER_DESC, void)                       \
+    OP(NAME, ShaderResourceView, ID3D11ShaderResourceView, D3D11_SHADER_RESOURCE_VIEW_DESC,    \
+       ID3D11Resource)                                                                         \
+    OP(NAME, UnorderedAccessView, ID3D11UnorderedAccessView, D3D11_UNORDERED_ACCESS_VIEW_DESC, \
+       ID3D11Resource)                                                                         \
+    OP(NAME, Texture2D, ID3D11Texture2D, D3D11_TEXTURE2D_DESC, const D3D11_SUBRESOURCE_DATA)   \
+    OP(NAME, Texture3D, ID3D11Texture3D, D3D11_TEXTURE3D_DESC, const D3D11_SUBRESOURCE_DATA)   \
     OP(NAME, VertexShader, ID3D11VertexShader, ShaderData, void)
 
 #define ANGLE_RESOURCE_TYPE_LIST(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) RESTYPE,
@@ -81,22 +89,25 @@ constexpr size_t ResourceTypeIndex(ResourceType resourceType)
 constexpr size_t NumResourceTypes = ResourceTypeIndex(ResourceType::Last);
 
 #define ANGLE_RESOURCE_TYPE_TO_D3D11(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) \
-    \
-template<> struct NAME<ResourceType::RESTYPE>                                          \
+                                                                                       \
+    template <>                                                                        \
+    struct NAME<ResourceType::RESTYPE>                                                 \
     {                                                                                  \
         using Value = D3D11TYPE;                                                       \
     };
 
 #define ANGLE_RESOURCE_TYPE_TO_DESC(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) \
-    \
-template<> struct NAME<ResourceType::RESTYPE>                                         \
+                                                                                      \
+    template <>                                                                       \
+    struct NAME<ResourceType::RESTYPE>                                                \
     {                                                                                 \
         using Value = DESCTYPE;                                                       \
     };
 
 #define ANGLE_RESOURCE_TYPE_TO_INIT_DATA(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) \
-    \
-template<> struct NAME<ResourceType::RESTYPE>                                              \
+                                                                                           \
+    template <>                                                                            \
+    struct NAME<ResourceType::RESTYPE>                                                     \
     {                                                                                      \
         using Value = INITDATATYPE;                                                        \
     };
@@ -105,12 +116,13 @@ template<> struct NAME<ResourceType::RESTYPE>                                   
     template <ResourceType Param>             \
     struct NAME;                              \
     ANGLE_RESOURCE_TYPE_OP(NAME, OP)          \
-    \
-template<ResourceType Param> struct NAME      \
-    {                                         \
-    };                                        \
-    \
-template<ResourceType Param> using Get##NAME = typename NAME<Param>::Value;
+                                              \
+    template <ResourceType Param>             \
+    struct NAME                               \
+    {};                                       \
+                                              \
+    template <ResourceType Param>             \
+    using Get##NAME = typename NAME<Param>::Value;
 
 ANGLE_RESOURCE_TYPE_TO_TYPE(D3D11Type, ANGLE_RESOURCE_TYPE_TO_D3D11)
 ANGLE_RESOURCE_TYPE_TO_TYPE(DescType, ANGLE_RESOURCE_TYPE_TO_DESC)
@@ -121,23 +133,25 @@ ANGLE_RESOURCE_TYPE_TO_TYPE(InitDataType, ANGLE_RESOURCE_TYPE_TO_INIT_DATA)
 #undef ANGLE_RESOURCE_TYPE_TO_INIT_DATA
 #undef ANGLE_RESOURCE_TYPE_TO_TYPE
 
-#define ANGLE_TYPE_TO_RESOURCE_TYPE(NAME, OP)               \
-    template <typename Param>                               \
-    struct NAME;                                            \
-    ANGLE_RESOURCE_TYPE_OP(NAME, OP)                        \
-    \
-template<typename Param> struct NAME                        \
-    {                                                       \
-    };                                                      \
-    \
-template<typename Param> constexpr ResourceType Get##NAME() \
-    {                                                       \
-        return NAME<Param>::Value;                          \
+#define ANGLE_TYPE_TO_RESOURCE_TYPE(NAME, OP) \
+    template <typename Param>                 \
+    struct NAME;                              \
+    ANGLE_RESOURCE_TYPE_OP(NAME, OP)          \
+                                              \
+    template <typename Param>                 \
+    struct NAME                               \
+    {};                                       \
+                                              \
+    template <typename Param>                 \
+    constexpr ResourceType Get##NAME()        \
+    {                                         \
+        return NAME<Param>::Value;            \
     }
 
 #define ANGLE_D3D11_TO_RESOURCE_TYPE(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) \
-    \
-template<> struct NAME<D3D11TYPE>                                                      \
+                                                                                       \
+    template <>                                                                        \
+    struct NAME<D3D11TYPE>                                                             \
     {                                                                                  \
         static constexpr ResourceType Value = ResourceType::RESTYPE;                   \
     };
@@ -229,8 +243,7 @@ class Resource11 : public Resource11Base<ResourceT, UniquePtr, TypedData<Resourc
     Resource11() {}
     Resource11(Resource11 &&other)
         : Resource11Base<ResourceT, UniquePtr, TypedData<ResourceT>>(std::move(other))
-    {
-    }
+    {}
     Resource11 &operator=(Resource11 &&other)
     {
         std::swap(this->mData, other.mData);
@@ -256,8 +269,7 @@ class SharedResource11 : public Resource11Base<T, std::shared_ptr, TypedData<T>>
     SharedResource11() {}
     SharedResource11(SharedResource11 &&movedObj)
         : Resource11Base<T, std::shared_ptr, TypedData<T>>(std::move(movedObj))
-    {
-    }
+    {}
 
     SharedResource11 &operator=(SharedResource11 &&other)
     {
@@ -292,21 +304,23 @@ class ResourceManager11 final : angle::NonCopyable
     ~ResourceManager11();
 
     template <typename T>
-    gl::Error allocate(Renderer11 *renderer,
-                       const GetDescFromD3D11<T> *desc,
-                       GetInitDataFromD3D11<T> *initData,
-                       Resource11<T> *resourceOut);
+    angle::Result allocate(d3d::Context *context,
+                           Renderer11 *renderer,
+                           const GetDescFromD3D11<T> *desc,
+                           GetInitDataFromD3D11<T> *initData,
+                           Resource11<T> *resourceOut);
 
     template <typename T>
-    gl::Error allocate(Renderer11 *renderer,
-                       const GetDescFromD3D11<T> *desc,
-                       GetInitDataFromD3D11<T> *initData,
-                       SharedResource11<T> *sharedRes)
+    angle::Result allocate(d3d::Context *context,
+                           Renderer11 *renderer,
+                           const GetDescFromD3D11<T> *desc,
+                           GetInitDataFromD3D11<T> *initData,
+                           SharedResource11<T> *sharedRes)
     {
         Resource11<T> res;
-        ANGLE_TRY(allocate(renderer, desc, initData, &res));
+        ANGLE_TRY(allocate(context, renderer, desc, initData, &res));
         *sharedRes = std::move(res);
-        return gl::NoError();
+        return angle::Result::Continue;
     }
 
     template <typename T>
@@ -328,8 +342,8 @@ class ResourceManager11 final : angle::NonCopyable
 
     bool mInitializeAllocations;
 
-    std::array<size_t, NumResourceTypes> mAllocatedResourceCounts;
-    std::array<uint64_t, NumResourceTypes> mAllocatedResourceDeviceMemory;
+    std::array<std::atomic_size_t, NumResourceTypes> mAllocatedResourceCounts;
+    std::array<std::atomic_uint64_t, NumResourceTypes> mAllocatedResourceDeviceMemory;
     angle::MemoryBuffer mZeroMemory;
 
     std::vector<D3D11_SUBRESOURCE_DATA> mShadowInitData;
@@ -357,6 +371,7 @@ namespace d3d11
 ANGLE_RESOURCE_TYPE_OP(ClassList, ANGLE_RESOURCE_TYPE_CLASS)
 
 using SharedSRV = SharedResource11<ID3D11ShaderResourceView>;
+using SharedUAV = SharedResource11<ID3D11UnorderedAccessView>;
 }  // namespace d3d11
 
 #undef ANGLE_RESOURCE_TYPE_CLASS

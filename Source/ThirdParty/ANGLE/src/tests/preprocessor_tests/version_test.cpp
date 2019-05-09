@@ -7,18 +7,19 @@
 #include "PreprocessorTest.h"
 #include "compiler/preprocessor/Token.h"
 
-class VersionTest : public SimplePreprocessorTest
+namespace angle
 {
-};
+
+class VersionTest : public SimplePreprocessorTest
+{};
 
 TEST_F(VersionTest, Valid)
 {
-    const char* str = "#version 200\n";
-    const char* expected = "\n";
+    const char *str      = "#version 200\n";
+    const char *expected = "\n";
 
     using testing::_;
-    EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 1), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -27,20 +28,20 @@ TEST_F(VersionTest, Valid)
 
 TEST_F(VersionTest, CommentsIgnored)
 {
-    const char* str = "/*foo*/"
-                      "#"
-                      "/*foo*/"
-                      "version"
-                      "/*foo*/"
-                      "200"
-                      "/*foo*/"
-                      "//foo"
-                      "\n";
-    const char* expected = "\n";
+    const char *str =
+        "/*foo*/"
+        "#"
+        "/*foo*/"
+        "version"
+        "/*foo*/"
+        "200"
+        "/*foo*/"
+        "//foo"
+        "\n";
+    const char *expected = "\n";
 
     using testing::_;
-    EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 1), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -49,13 +50,12 @@ TEST_F(VersionTest, CommentsIgnored)
 
 TEST_F(VersionTest, MissingNewline)
 {
-    const char* str = "#version 200";
-    const char* expected = "";
+    const char *str      = "#version 200";
+    const char *expected = "";
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 1), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200));
     // Error reported about EOF.
     EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_EOF_IN_DIRECTIVE, _, _));
 
@@ -64,126 +64,122 @@ TEST_F(VersionTest, MissingNewline)
 
 TEST_F(VersionTest, AfterComments)
 {
-    const char* str = "/* block comment acceptable */\n"
-                      "// line comment acceptable\n"
-                      "#version 200\n";
-    const char* expected = "\n\n\n";
+    const char *str =
+        "/* block comment acceptable */\n"
+        "// line comment acceptable\n"
+        "#version 200\n";
+    const char *expected = "\n\n\n";
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 3), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
-    
+
     preprocess(str, expected);
 }
 
 TEST_F(VersionTest, AfterWhitespace)
 {
-    const char* str = "\n"
-                      "\n"
-                      "#version 200\n";
-    const char* expected = "\n\n\n";
+    const char *str =
+        "\n"
+        "\n"
+        "#version 200\n";
+    const char *expected = "\n\n\n";
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 3), 200));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
-    
+
     preprocess(str, expected);
 }
 
 TEST_F(VersionTest, AfterValidToken)
 {
-    const char* str = "foo\n"
-                      "#version 200\n";
+    const char *str =
+        "foo\n"
+        "#version 200\n";
 
     using testing::_;
-    EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
-                      pp::SourceLocation(0, 2), _));
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
+                                    pp::SourceLocation(0, 2), _));
 
     preprocess(str);
 }
 
 TEST_F(VersionTest, AfterInvalidToken)
 {
-    const char* str = "$\n"
-                      "#version 200\n";
+    const char *str =
+        "$\n"
+        "#version 200\n";
 
     using testing::_;
     EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_INVALID_CHARACTER,
-                      pp::SourceLocation(0, 1), "$"));
-    EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
-                      pp::SourceLocation(0, 2), _));
+                print(pp::Diagnostics::PP_INVALID_CHARACTER, pp::SourceLocation(0, 1), "$"));
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
+                                    pp::SourceLocation(0, 2), _));
 
     preprocess(str);
 }
 
 TEST_F(VersionTest, AfterValidDirective)
 {
-    const char* str = "#\n"
-                      "#version 200\n";
+    const char *str =
+        "#\n"
+        "#version 200\n";
 
     using testing::_;
-    EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
-                      pp::SourceLocation(0, 2), _));
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
+                                    pp::SourceLocation(0, 2), _));
 
     preprocess(str);
 }
 
 TEST_F(VersionTest, AfterInvalidDirective)
 {
-    const char* str = "#foo\n"
-                      "#version 200\n";
+    const char *str =
+        "#foo\n"
+        "#version 200\n";
 
     using testing::_;
     EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_DIRECTIVE_INVALID_NAME,
-                      pp::SourceLocation(0, 1), "foo"));
-    EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
-                      pp::SourceLocation(0, 2), _));
+                print(pp::Diagnostics::PP_DIRECTIVE_INVALID_NAME, pp::SourceLocation(0, 1), "foo"));
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
+                                    pp::SourceLocation(0, 2), _));
 
     preprocess(str);
 }
 
 TEST_F(VersionTest, AfterExcludedBlock)
 {
-    const char* str = "#if 0\n"
-                      "foo\n"
-                      "#endif\n"
-                      "#version 200\n";
+    const char *str =
+        "#if 0\n"
+        "foo\n"
+        "#endif\n"
+        "#version 200\n";
 
     using testing::_;
-    EXPECT_CALL(mDiagnostics,
-                print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
-                      pp::SourceLocation(0, 4), _));
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_VERSION_NOT_FIRST_STATEMENT,
+                                    pp::SourceLocation(0, 4), _));
 
     preprocess(str);
 }
 
 struct VersionTestParam
 {
-    const char* str;
+    const char *str;
     pp::Diagnostics::ID id;
 };
 
-class InvalidVersionTest : public VersionTest,
-                           public testing::WithParamInterface<VersionTestParam>
-{
-};
+class InvalidVersionTest : public VersionTest, public testing::WithParamInterface<VersionTestParam>
+{};
 
 TEST_P(InvalidVersionTest, Identified)
 {
     VersionTestParam param = GetParam();
-    const char* expected = "\n";
+    const char *expected   = "\n";
 
     using testing::_;
     // No handleVersion call.
@@ -198,7 +194,8 @@ static const VersionTestParam kParams[] = {
     {"#version\n", pp::Diagnostics::PP_INVALID_VERSION_DIRECTIVE},
     {"#version foo\n", pp::Diagnostics::PP_INVALID_VERSION_NUMBER},
     {"#version 100 foo\n", pp::Diagnostics::PP_UNEXPECTED_TOKEN},
-    {"#version 0xffffffff\n", pp::Diagnostics::PP_INTEGER_OVERFLOW}
-};
+    {"#version 0xffffffff\n", pp::Diagnostics::PP_INTEGER_OVERFLOW}};
 
-INSTANTIATE_TEST_CASE_P(All, InvalidVersionTest, testing::ValuesIn(kParams));
+INSTANTIATE_TEST_SUITE_P(All, InvalidVersionTest, testing::ValuesIn(kParams));
+
+}  // namespace angle

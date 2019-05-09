@@ -1,0 +1,85 @@
+Name
+
+    ANGLE_power_preference
+
+Name Strings
+
+    EGL_ANGLE_power_preference
+
+Contributors
+
+    Kenneth Russell
+
+Contacts
+
+    Kenneth Russell, Google Inc. (kbr 'at' google.com)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, April 16, 2019
+
+Number
+
+    EGL Extension #??
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.4
+    Specification.
+
+Overview
+
+    This extension allows selection of the high- or low-power GPU on
+    dual-GPU systems, specifically on macOS.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    None
+
+New Tokens
+
+    Accepted as an attribute name in the <*attrib_list> argument to
+    eglCreateContext:
+
+        EGL_POWER_PREFERENCE_ANGLE  0x3482
+
+    Accepted as an attribute value in the <*attrib_list> argument to
+    eglCreateContext:
+
+        EGL_LOW_POWER_ANGLE         0x0001
+        EGL_HIGH_POWER_ANGLE        0x0002
+
+Additions to the EGL 1.4 Specification
+
+    Add the following to section 3.7.1 "Creating Rendering Contexts":
+
+    EGL_POWER_PREFERENCE_ANGLE indicates whether the context should be
+    created on the integrated (low-power) or discrete (high-power) GPU
+    on dual-GPU systems. EGL_POWER_PREFERENCE_ANGLE is only a legal
+    context creation attribute when the EGL_ANGLE_power_preference
+    extension is advertised. The valid values for this attribute are
+    EGL_LOW_POWER_ANGLE and EGL_HIGH_POWER_ANGLE. If this extension is
+    advertised and this context creation attribute is not specified,
+    the default value is EGL_LOW_POWER_ANGLE.
+
+    The containing application must set the
+    NSSupportsAutomaticGraphicsSwitching attribute to true in its
+    Info.plist in order for this extension to operate as advertised.
+
+Issues
+
+    None yet.
+
+Revision History
+
+    Rev.    Date         Author     Changes
+    ----  -------------  ---------  ----------------------------------------
+      1   Apr 16, 2019   kbr        Initial version

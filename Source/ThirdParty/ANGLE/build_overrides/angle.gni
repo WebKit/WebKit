@@ -1,0 +1,11 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Overrides for ANGLE's dependencies
+angle_glslang_dir = "//third_party/glslang/src"
+angle_googletest_dir = "//third_party/googletest/src"
+angle_libjpeg_turbo_dir = "//third_party/libjpeg_turbo"
+angle_jsoncpp_dir = "//third_party/jsoncpp"
+angle_libpng_dir = "//third_party/libpng"
+angle_spirv_tools_dir = "//third_party/spirv-tools/src"

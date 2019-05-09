@@ -6,7 +6,7 @@
 
 // Win32Window.cpp: Implementation of OSWindow for Win32 (Windows)
 
-#include "windows/win32/Win32Window.h"
+#include "util/windows/win32/Win32Window.h"
 
 #include <sstream>
 
@@ -325,7 +325,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type        = down ? Event::EVENT_KEY_PRESSED : Event::EVENT_KEY_RELEASED;
                 event.Key.Alt     = HIWORD(GetAsyncKeyState(VK_MENU)) != 0;
                 event.Key.Control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
-                event.Key.Shift = HIWORD(GetAsyncKeyState(VK_SHIFT)) != 0;
+                event.Key.Shift   = HIWORD(GetAsyncKeyState(VK_SHIFT)) != 0;
                 event.Key.System =
                     HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
                 event.Key.Code = VirtualKeyCodeToKey(wParam, lParam);
@@ -350,7 +350,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type               = Event::EVENT_MOUSE_BUTTON_PRESSED;
                 event.MouseButton.Button = MOUSEBUTTON_LEFT;
                 event.MouseButton.X      = static_cast<short>(LOWORD(lParam));
-                event.MouseButton.Y = static_cast<short>(HIWORD(lParam));
+                event.MouseButton.Y      = static_cast<short>(HIWORD(lParam));
                 window->pushEvent(event);
                 break;
             }
@@ -361,7 +361,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type               = Event::EVENT_MOUSE_BUTTON_RELEASED;
                 event.MouseButton.Button = MOUSEBUTTON_LEFT;
                 event.MouseButton.X      = static_cast<short>(LOWORD(lParam));
-                event.MouseButton.Y = static_cast<short>(HIWORD(lParam));
+                event.MouseButton.Y      = static_cast<short>(HIWORD(lParam));
                 window->pushEvent(event);
                 break;
             }
@@ -373,7 +373,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type               = Event::EVENT_MOUSE_BUTTON_PRESSED;
                 event.MouseButton.Button = MOUSEBUTTON_RIGHT;
                 event.MouseButton.X      = static_cast<short>(LOWORD(lParam));
-                event.MouseButton.Y = static_cast<short>(HIWORD(lParam));
+                event.MouseButton.Y      = static_cast<short>(HIWORD(lParam));
                 window->pushEvent(event);
                 break;
             }
@@ -385,7 +385,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type               = Event::EVENT_MOUSE_BUTTON_RELEASED;
                 event.MouseButton.Button = MOUSEBUTTON_RIGHT;
                 event.MouseButton.X      = static_cast<short>(LOWORD(lParam));
-                event.MouseButton.Y = static_cast<short>(HIWORD(lParam));
+                event.MouseButton.Y      = static_cast<short>(HIWORD(lParam));
                 window->pushEvent(event);
                 break;
             }
@@ -398,7 +398,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type               = Event::EVENT_MOUSE_BUTTON_PRESSED;
                 event.MouseButton.Button = MOUSEBUTTON_MIDDLE;
                 event.MouseButton.X      = static_cast<short>(LOWORD(lParam));
-                event.MouseButton.Y = static_cast<short>(HIWORD(lParam));
+                event.MouseButton.Y      = static_cast<short>(HIWORD(lParam));
                 window->pushEvent(event);
                 break;
             }
@@ -410,7 +410,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
                 event.Type               = Event::EVENT_MOUSE_BUTTON_RELEASED;
                 event.MouseButton.Button = MOUSEBUTTON_MIDDLE;
                 event.MouseButton.X      = static_cast<short>(LOWORD(lParam));
-                event.MouseButton.Y = static_cast<short>(HIWORD(lParam));
+                event.MouseButton.Y      = static_cast<short>(HIWORD(lParam));
                 window->pushEvent(event);
                 break;
             }
@@ -491,8 +491,7 @@ Win32Window::Win32Window()
       mNativeWindow(0),
       mParentWindow(0),
       mNativeDisplay(0)
-{
-}
+{}
 
 Win32Window::~Win32Window()
 {
@@ -550,8 +549,8 @@ bool Win32Window::initialize(const std::string &name, size_t width, size_t heigh
         return false;
     }
 
-    DWORD parentStyle         = WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
-    DWORD parentExtendedStyle = WS_EX_APPWINDOW;
+    DWORD parentStyle = WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
+    DWORD parentExtendedStyle = WS_EX_APPWINDOW | WS_EX_TOOLWINDOW;
 
     RECT sizeRect = {0, 0, static_cast<LONG>(width), static_cast<LONG>(height)};
     AdjustWindowRectEx(&sizeRect, parentStyle, FALSE, parentExtendedStyle);
@@ -679,9 +678,9 @@ bool Win32Window::takeScreenshot(uint8_t *pixelData)
         bitmapInfo.biYPelsPerMeter = 0;
         bitmapInfo.biClrUsed       = 0;
         bitmapInfo.biClrImportant  = 0;
-        int getBitsResult = GetDIBits(screenDC, tmpBitmap, 0, mHeight, pixelData,
+        int getBitsResult          = GetDIBits(screenDC, tmpBitmap, 0, mHeight, pixelData,
                                       reinterpret_cast<BITMAPINFO *>(&bitmapInfo), DIB_RGB_COLORS);
-        error = (getBitsResult == 0);
+        error                      = (getBitsResult == 0);
     }
 
     if (tmpBitmap != nullptr)
@@ -703,6 +702,8 @@ bool Win32Window::takeScreenshot(uint8_t *pixelData)
 
     return !error;
 }
+
+void Win32Window::resetNativeWindow() {}
 
 EGLNativeWindowType Win32Window::getNativeWindow() const
 {
@@ -735,11 +736,6 @@ void Win32Window::setMousePosition(int x, int y)
     ClientToScreen(mNativeWindow, &topLeft);
 
     SetCursorPos(topLeft.x + x, topLeft.y + y);
-}
-
-OSWindow *CreateOSWindow()
-{
-    return new Win32Window();
 }
 
 bool Win32Window::setPosition(int x, int y)
@@ -830,4 +826,10 @@ void Win32Window::pushEvent(Event event)
 void Win32Window::signalTestEvent()
 {
     PostMessage(mNativeWindow, WM_USER, 0, 0);
+}
+
+// static
+OSWindow *OSWindow::New()
+{
+    return new Win32Window();
 }

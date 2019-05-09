@@ -8,8 +8,8 @@
 
 #include "angle_gl.h"
 #include "compiler/translator/Diagnostics.h"
-#include "compiler/translator/IntermTraverse.h"
 #include "compiler/translator/ParseContext.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 namespace sh
 {
@@ -25,7 +25,7 @@ int GetLoopSymbolId(TIntermLoop *loop)
     TIntermBinary *declInit  = (*declSeq)[0]->getAsBinaryNode();
     TIntermSymbol *symbol    = declInit->getLeft()->getAsSymbolNode();
 
-    return symbol->getId();
+    return symbol->uniqueId().get();
 }
 
 // Traverses a node to check if it represents a constant index expression.
@@ -42,8 +42,7 @@ class ValidateConstIndexExpr : public TIntermTraverser
   public:
     ValidateConstIndexExpr(const std::vector<int> &loopSymbols)
         : TIntermTraverser(true, false, false), mValid(true), mLoopSymbolIds(loopSymbols)
-    {
-    }
+    {}
 
     // Returns true if the parsed node represents a constant index expression.
     bool isValid() const { return mValid; }
@@ -55,8 +54,8 @@ class ValidateConstIndexExpr : public TIntermTraverser
         if (mValid)
         {
             bool isLoopSymbol = std::find(mLoopSymbolIds.begin(), mLoopSymbolIds.end(),
-                                          symbol->getId()) != mLoopSymbolIds.end();
-            mValid = (symbol->getQualifier() == EvqConst) || isLoopSymbol;
+                                          symbol->uniqueId().get()) != mLoopSymbolIds.end();
+            mValid            = (symbol->getQualifier() == EvqConst) || isLoopSymbol;
         }
     }
 
@@ -72,7 +71,6 @@ class ValidateLimitationsTraverser : public TLValueTrackingTraverser
   public:
     ValidateLimitationsTraverser(sh::GLenum shaderType,
                                  TSymbolTable *symbolTable,
-                                 int shaderVersion,
                                  TDiagnostics *diagnostics);
 
     void visitSymbol(TIntermSymbol *node) override;
@@ -81,8 +79,8 @@ class ValidateLimitationsTraverser : public TLValueTrackingTraverser
 
   private:
     void error(TSourceLoc loc, const char *reason, const char *token);
+    void error(TSourceLoc loc, const char *reason, const ImmutableString &token);
 
-    bool withinLoopBody() const;
     bool isLoopIndex(TIntermSymbol *symbol);
     bool validateLoopType(TIntermLoop *node);
 
@@ -105,9 +103,8 @@ class ValidateLimitationsTraverser : public TLValueTrackingTraverser
 
 ValidateLimitationsTraverser::ValidateLimitationsTraverser(sh::GLenum shaderType,
                                                            TSymbolTable *symbolTable,
-                                                           int shaderVersion,
                                                            TDiagnostics *diagnostics)
-    : TLValueTrackingTraverser(true, false, false, symbolTable, shaderVersion),
+    : TLValueTrackingTraverser(true, false, false, symbolTable),
       mShaderType(shaderType),
       mDiagnostics(diagnostics)
 {
@@ -120,7 +117,7 @@ void ValidateLimitationsTraverser::visitSymbol(TIntermSymbol *node)
     {
         error(node->getLine(),
               "Loop index cannot be statically assigned to within the body of the loop",
-              node->getSymbol().c_str());
+              node->getName());
     }
 }
 
@@ -164,14 +161,16 @@ void ValidateLimitationsTraverser::error(TSourceLoc loc, const char *reason, con
     mDiagnostics->error(loc, reason, token);
 }
 
-bool ValidateLimitationsTraverser::withinLoopBody() const
+void ValidateLimitationsTraverser::error(TSourceLoc loc,
+                                         const char *reason,
+                                         const ImmutableString &token)
 {
-    return !mLoopSymbolIds.empty();
+    error(loc, reason, token.data());
 }
 
 bool ValidateLimitationsTraverser::isLoopIndex(TIntermSymbol *symbol)
 {
-    return std::find(mLoopSymbolIds.begin(), mLoopSymbolIds.end(), symbol->getId()) !=
+    return std::find(mLoopSymbolIds.begin(), mLoopSymbolIds.end(), symbol->uniqueId().get()) !=
            mLoopSymbolIds.end();
 }
 
@@ -254,11 +253,11 @@ int ValidateLimitationsTraverser::validateForLoopInit(TIntermLoop *node)
     if (!isConstExpr(declInit->getRight()))
     {
         error(declInit->getLine(), "Loop index cannot be initialized with non-constant expression",
-              symbol->getSymbol().c_str());
+              symbol->getName());
         return -1;
     }
 
-    return symbol->getId();
+    return symbol->uniqueId().get();
 }
 
 bool ValidateLimitationsTraverser::validateForLoopCond(TIntermLoop *node, int indexSymbolId)
@@ -286,9 +285,9 @@ bool ValidateLimitationsTraverser::validateForLoopCond(TIntermLoop *node, int in
         error(binOp->getLine(), "Invalid condition", "for");
         return false;
     }
-    if (symbol->getId() != indexSymbolId)
+    if (symbol->uniqueId().get() != indexSymbolId)
     {
-        error(symbol->getLine(), "Expected loop index", symbol->getSymbol().c_str());
+        error(symbol->getLine(), "Expected loop index", symbol->getName());
         return false;
     }
     // Relational operator is one of: > >= < <= == or !=.
@@ -310,7 +309,7 @@ bool ValidateLimitationsTraverser::validateForLoopCond(TIntermLoop *node, int in
     if (!isConstExpr(binOp->getRight()))
     {
         error(binOp->getLine(), "Loop index cannot be compared with non-constant expression",
-              symbol->getSymbol().c_str());
+              symbol->getName());
         return false;
     }
 
@@ -357,9 +356,9 @@ bool ValidateLimitationsTraverser::validateForLoopExpr(TIntermLoop *node, int in
         error(expr->getLine(), "Invalid expression", "for");
         return false;
     }
-    if (symbol->getId() != indexSymbolId)
+    if (symbol->uniqueId().get() != indexSymbolId)
     {
-        error(symbol->getLine(), "Expected loop index", symbol->getSymbol().c_str());
+        error(symbol->getLine(), "Expected loop index", symbol->getName());
         return false;
     }
 
@@ -387,7 +386,7 @@ bool ValidateLimitationsTraverser::validateForLoopExpr(TIntermLoop *node, int in
         if (!isConstExpr(binOp->getRight()))
         {
             error(binOp->getLine(), "Loop index cannot be modified by non-constant expression",
-                  symbol->getSymbol().c_str());
+                  symbol->getName());
             return false;
         }
     }
@@ -428,15 +427,14 @@ bool ValidateLimitationsTraverser::validateIndexing(TIntermBinary *node)
     return valid;
 }
 
-}  // namespace anonymous
+}  // namespace
 
 bool ValidateLimitations(TIntermNode *root,
                          GLenum shaderType,
                          TSymbolTable *symbolTable,
-                         int shaderVersion,
                          TDiagnostics *diagnostics)
 {
-    ValidateLimitationsTraverser validate(shaderType, symbolTable, shaderVersion, diagnostics);
+    ValidateLimitationsTraverser validate(shaderType, symbolTable, diagnostics);
     root->traverse(&validate);
     return diagnostics->numErrors() == 0;
 }

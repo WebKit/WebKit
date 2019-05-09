@@ -18,16 +18,17 @@ namespace wgl
 
 PIXELFORMATDESCRIPTOR GetDefaultPixelFormatDescriptor()
 {
-    PIXELFORMATDESCRIPTOR pixelFormatDescriptor = { 0 };
-    pixelFormatDescriptor.nSize = sizeof(pixelFormatDescriptor);
-    pixelFormatDescriptor.nVersion = 1;
-    pixelFormatDescriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_GENERIC_ACCELERATED | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
-    pixelFormatDescriptor.cColorBits = 24;
-    pixelFormatDescriptor.cAlphaBits = 8;
-    pixelFormatDescriptor.cDepthBits = 24;
+    PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {0};
+    pixelFormatDescriptor.nSize                 = sizeof(pixelFormatDescriptor);
+    pixelFormatDescriptor.nVersion              = 1;
+    pixelFormatDescriptor.dwFlags =
+        PFD_DRAW_TO_WINDOW | PFD_GENERIC_ACCELERATED | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pixelFormatDescriptor.iPixelType   = PFD_TYPE_RGBA;
+    pixelFormatDescriptor.cColorBits   = 24;
+    pixelFormatDescriptor.cAlphaBits   = 8;
+    pixelFormatDescriptor.cDepthBits   = 24;
     pixelFormatDescriptor.cStencilBits = 8;
-    pixelFormatDescriptor.iLayerType = PFD_MAIN_PLANE;
+    pixelFormatDescriptor.iLayerType   = PFD_MAIN_PLANE;
 
     return pixelFormatDescriptor;
 }
@@ -80,6 +81,6 @@ int QueryWGLFormatAttrib(HDC dc, int format, int attribName, const FunctionsWGL 
     }
     return result;
 }
-}
+}  // namespace wgl
 
-}
+}  // namespace rx

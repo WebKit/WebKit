@@ -32,28 +32,26 @@ class D3DImageFormatConversionTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vertexShaderSource =
-            R"(precision highp float;
-            attribute vec4 position;
-            varying vec2 texcoord;
+        constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_Position = vec4(position.xy, 0.0, 1.0);
-                texcoord = (position.xy * 0.5) + 0.5;
-            })";
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
 
-        const std::string fragmentShaderSource2D =
-            R"(precision highp float;
-            uniform sampler2D tex;
-            varying vec2 texcoord;
+        constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D tex;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_FragColor = texture2D(tex, texcoord);
-            })";
+void main()
+{
+    gl_FragColor = texture2D(tex, texcoord);
+})";
 
-        m2DProgram = CompileProgram(vertexShaderSource, fragmentShaderSource2D);
+        m2DProgram                = CompileProgram(kVS, kFS);
         mTexture2DUniformLocation = glGetUniformLocation(m2DProgram, "tex");
     }
 
@@ -64,8 +62,9 @@ class D3DImageFormatConversionTest : public ANGLETest
         ANGLETest::TearDown();
     }
 
-    // Uses ColorStructType::writeColor to populate initial data for a texture, pass it to glTexImage2D, then render with it.
-    // The resulting colors should match the colors passed into ::writeColor.
+    // Uses ColorStructType::writeColor to populate initial data for a texture, pass it to
+    // glTexImage2D, then render with it. The resulting colors should match the colors passed into
+    // ::writeColor.
     template <typename ColorStructType>
     void runTest(GLenum tex2DFormat, GLenum tex2DType)
     {
@@ -78,10 +77,22 @@ class D3DImageFormatConversionTest : public ANGLETest
         glGenFramebuffers(1, &fbo);
         EXPECT_GL_NO_ERROR();
 
-        srcColorF[0].red = 1.0f; srcColorF[0].green = 0.0f; srcColorF[0].blue = 0.0f; srcColorF[0].alpha = 1.0f; // Red
-        srcColorF[1].red = 0.0f; srcColorF[1].green = 1.0f; srcColorF[1].blue = 0.0f; srcColorF[1].alpha = 1.0f; // Green
-        srcColorF[2].red = 0.0f; srcColorF[2].green = 0.0f; srcColorF[2].blue = 1.0f; srcColorF[2].alpha = 1.0f; // Blue
-        srcColorF[3].red = 1.0f; srcColorF[3].green = 1.0f; srcColorF[3].blue = 0.0f; srcColorF[3].alpha = 1.0f; // Red + Green (Yellow)
+        srcColorF[0].red   = 1.0f;
+        srcColorF[0].green = 0.0f;
+        srcColorF[0].blue  = 0.0f;
+        srcColorF[0].alpha = 1.0f;  // Red
+        srcColorF[1].red   = 0.0f;
+        srcColorF[1].green = 1.0f;
+        srcColorF[1].blue  = 0.0f;
+        srcColorF[1].alpha = 1.0f;  // Green
+        srcColorF[2].red   = 0.0f;
+        srcColorF[2].green = 0.0f;
+        srcColorF[2].blue  = 1.0f;
+        srcColorF[2].alpha = 1.0f;  // Blue
+        srcColorF[3].red   = 1.0f;
+        srcColorF[3].green = 1.0f;
+        srcColorF[3].blue  = 0.0f;
+        srcColorF[3].alpha = 1.0f;  // Red + Green (Yellow)
 
         // Convert the ColorF into the pixels that will be fed to glTexImage2D
         for (unsigned int i = 0; i < 4; i++)
@@ -105,10 +116,10 @@ class D3DImageFormatConversionTest : public ANGLETest
         EXPECT_GL_NO_ERROR();
 
         // Check that the pixel colors match srcColorF
-        EXPECT_PIXEL_EQ(                    0,                    0, 255,   0,   0, 255);
-        EXPECT_PIXEL_EQ(getWindowHeight() - 1,                    0,   0, 255,   0, 255);
-        EXPECT_PIXEL_EQ(                    0, getWindowWidth() - 1,   0,   0, 255, 255);
-        EXPECT_PIXEL_EQ(getWindowHeight() - 1, getWindowWidth() - 1, 255, 255,   0, 255);
+        EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+        EXPECT_PIXEL_EQ(getWindowHeight() - 1, 0, 0, 255, 0, 255);
+        EXPECT_PIXEL_EQ(0, getWindowWidth() - 1, 0, 0, 255, 255);
+        EXPECT_PIXEL_EQ(getWindowHeight() - 1, getWindowWidth() - 1, 255, 255, 0, 255);
         swapBuffers();
 
         glDeleteFramebuffers(1, &fbo);
@@ -150,9 +161,16 @@ TEST_P(D3DImageFormatConversionTest, WriteColorFunctionR8G8B8)
     runTest<R8G8B8>(GL_RGB, GL_UNSIGNED_BYTE);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
-// Even though this test is only run on Windows (since it includes imageformats.h from the D3D renderer), we can still run the test
-// against OpenGL. This is valuable, since it provides extra validation using a renderer that doesn't use imageformats.h itself.
-ANGLE_INSTANTIATE_TEST(D3DImageFormatConversionTest, ES2_D3D9(), ES2_D3D11(), ES2_D3D11_FL9_3(), ES2_OPENGL());
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against. Even though this test is only run on Windows (since it includes
+// imageformats.h from the D3D renderer), we can still run the test against OpenGL. This is
+// valuable, since it provides extra validation using a renderer that doesn't use imageformats.h
+// itself.
+ANGLE_INSTANTIATE_TEST(D3DImageFormatConversionTest,
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES2_D3D11_FL9_3(),
+                       ES2_OPENGL(),
+                       ES2_VULKAN());
 
-} // namespace
+}  // namespace

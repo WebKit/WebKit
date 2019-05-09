@@ -8,20 +8,19 @@
 
 #include "angle_gl.h"
 #include "compiler/translator/BuiltInFunctionEmulatorGLSL.h"
-#include "compiler/translator/EmulatePrecision.h"
 #include "compiler/translator/ExtensionGLSL.h"
 #include "compiler/translator/OutputGLSL.h"
-#include "compiler/translator/RewriteTexelFetchOffset.h"
-#include "compiler/translator/RewriteUnaryMinusOperatorFloat.h"
 #include "compiler/translator/VersionGLSL.h"
+#include "compiler/translator/tree_ops/EmulatePrecision.h"
+#include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
+#include "compiler/translator/tree_ops/RewriteUnaryMinusOperatorFloat.h"
 
 namespace sh
 {
 
 TranslatorGLSL::TranslatorGLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
     : TCompiler(type, spec, output)
-{
-}
+{}
 
 void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
                                                  ShCompileOptions compileOptions)
@@ -109,7 +108,7 @@ void TranslatorGLSL::translate(TIntermBlock *root,
 
     if (precisionEmulation)
     {
-        EmulatePrecision emulatePrecision(&getSymbolTable(), getShaderVersion());
+        EmulatePrecision emulatePrecision(&getSymbolTable());
         root->traverse(&emulatePrecision);
         emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(sink, getShaderVersion(), getOutputType());
@@ -141,7 +140,7 @@ void TranslatorGLSL::translate(TIntermBlock *root,
         bool hasGLSecondaryFragColor = false;
         bool hasGLSecondaryFragData  = false;
 
-        for (const auto &outputVar : outputVariables)
+        for (const auto &outputVar : mOutputVariables)
         {
             if (declareGLFragmentOutputs)
             {
@@ -202,7 +201,7 @@ void TranslatorGLSL::translate(TIntermBlock *root,
              << ", local_size_z=" << localSize[2] << ") in;\n";
     }
 
-    if (getShaderType() == GL_GEOMETRY_SHADER_OES)
+    if (getShaderType() == GL_GEOMETRY_SHADER_EXT)
     {
         WriteGeometryShaderLayoutQualifiers(
             sink, getGeometryShaderInputPrimitiveType(), getGeometryShaderInvocations(),
@@ -213,13 +212,6 @@ void TranslatorGLSL::translate(TIntermBlock *root,
     TOutputGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(), getNameMap(),
                            &getSymbolTable(), getShaderType(), getShaderVersion(), getOutputType(),
                            compileOptions);
-
-    if (compileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM)
-    {
-        TName uniformName(TString("ViewID_OVR"));
-        uniformName.setInternal(true);
-        sink << "uniform int " << outputGLSL.hashName(uniformName) << ";\n";
-    }
 
     root->traverse(&outputGLSL);
 }
@@ -278,21 +270,29 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions 
                      << "\n";
             }
 
-            if (iter.first == TExtension::OES_geometry_shader)
+            if (iter.first == TExtension::EXT_geometry_shader)
             {
                 sink << "#extension GL_ARB_geometry_shader4 : " << GetBehaviorString(iter.second)
                      << "\n";
             }
         }
 
-        const bool isMultiview = (iter.first == TExtension::OVR_multiview);
+        const bool isMultiview = (iter.first == TExtension::OVR_multiview2);
         if (isMultiview && getShaderType() == GL_VERTEX_SHADER &&
             (compileOptions & SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER) != 0u)
         {
             // Emit the NV_viewport_array2 extension in a vertex shader if the
-            // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the OVR_multiview(2)
+            // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the OVR_multiview2(2)
             // extension is requested.
             sink << "#extension GL_NV_viewport_array2 : require\n";
+        }
+
+        // Support ANGLE_texture_multisample extension on GLSL300
+        if (getShaderVersion() >= 300 && iter.first == TExtension::ANGLE_texture_multisample &&
+            getOutputType() < SH_GLSL_330_CORE_OUTPUT)
+        {
+            sink << "#extension GL_ARB_texture_multisample : " << GetBehaviorString(iter.second)
+                 << "\n";
         }
     }
 

@@ -11,9 +11,9 @@
 
 #include <windows.h>
 
-#include "Timer.h"
+#include "util/Timer.h"
 
-class WindowsTimer : public Timer
+class ANGLE_UTIL_EXPORT WindowsTimer : public Timer
 {
   public:
     WindowsTimer();
@@ -22,11 +22,14 @@ class WindowsTimer : public Timer
     void stop() override;
     double getElapsedTime() const override;
 
+    double getAbsoluteTime() override;
+
   private:
+    LONGLONG getFrequency();
+
     bool mRunning;
     LONGLONG mStartTime;
     LONGLONG mStopTime;
-
     LONGLONG mFrequency;
 };
 

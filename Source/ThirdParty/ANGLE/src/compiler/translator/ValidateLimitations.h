@@ -19,7 +19,6 @@ class TDiagnostics;
 bool ValidateLimitations(TIntermNode *root,
                          GLenum shaderType,
                          TSymbolTable *symbolTable,
-                         int shaderVersion,
                          TDiagnostics *diagnostics);
 
 }  // namespace sh

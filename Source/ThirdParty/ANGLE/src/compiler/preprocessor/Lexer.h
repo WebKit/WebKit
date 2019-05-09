@@ -9,6 +9,9 @@
 
 #include "common/angleutils.h"
 
+namespace angle
+{
+
 namespace pp
 {
 
@@ -23,5 +26,7 @@ class Lexer : angle::NonCopyable
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_LEXER_H_

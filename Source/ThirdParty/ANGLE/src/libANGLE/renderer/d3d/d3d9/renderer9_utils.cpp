@@ -9,14 +9,12 @@
 
 #include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 
-#include "common/mathutil.h"
 #include "common/debug.h"
+#include "common/mathutil.h"
 
 #include "libANGLE/formatutils.h"
-#include "libANGLE/Framebuffer.h"
-#include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
-#include "libANGLE/renderer/d3d/FramebufferD3D.h"
+#include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "platform/Platform.h"
 #include "platform/WorkaroundsD3D.h"
@@ -34,15 +32,32 @@ D3DCMPFUNC ConvertComparison(GLenum comparison)
     D3DCMPFUNC d3dComp = D3DCMP_ALWAYS;
     switch (comparison)
     {
-      case GL_NEVER:    d3dComp = D3DCMP_NEVER;        break;
-      case GL_ALWAYS:   d3dComp = D3DCMP_ALWAYS;       break;
-      case GL_LESS:     d3dComp = D3DCMP_LESS;         break;
-      case GL_LEQUAL:   d3dComp = D3DCMP_LESSEQUAL;    break;
-      case GL_EQUAL:    d3dComp = D3DCMP_EQUAL;        break;
-      case GL_GREATER:  d3dComp = D3DCMP_GREATER;      break;
-      case GL_GEQUAL:   d3dComp = D3DCMP_GREATEREQUAL; break;
-      case GL_NOTEQUAL: d3dComp = D3DCMP_NOTEQUAL;     break;
-      default: UNREACHABLE();
+        case GL_NEVER:
+            d3dComp = D3DCMP_NEVER;
+            break;
+        case GL_ALWAYS:
+            d3dComp = D3DCMP_ALWAYS;
+            break;
+        case GL_LESS:
+            d3dComp = D3DCMP_LESS;
+            break;
+        case GL_LEQUAL:
+            d3dComp = D3DCMP_LESSEQUAL;
+            break;
+        case GL_EQUAL:
+            d3dComp = D3DCMP_EQUAL;
+            break;
+        case GL_GREATER:
+            d3dComp = D3DCMP_GREATER;
+            break;
+        case GL_GEQUAL:
+            d3dComp = D3DCMP_GREATEREQUAL;
+            break;
+        case GL_NOTEQUAL:
+            d3dComp = D3DCMP_NOTEQUAL;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return d3dComp;
@@ -50,10 +65,8 @@ D3DCMPFUNC ConvertComparison(GLenum comparison)
 
 D3DCOLOR ConvertColor(gl::ColorF color)
 {
-    return D3DCOLOR_RGBA(gl::unorm<8>(color.red),
-                         gl::unorm<8>(color.green),
-                         gl::unorm<8>(color.blue),
-                         gl::unorm<8>(color.alpha));
+    return D3DCOLOR_RGBA(gl::unorm<8>(color.red), gl::unorm<8>(color.green),
+                         gl::unorm<8>(color.blue), gl::unorm<8>(color.alpha));
 }
 
 D3DBLEND ConvertBlendFunc(GLenum blend)
@@ -62,22 +75,53 @@ D3DBLEND ConvertBlendFunc(GLenum blend)
 
     switch (blend)
     {
-      case GL_ZERO:                     d3dBlend = D3DBLEND_ZERO;           break;
-      case GL_ONE:                      d3dBlend = D3DBLEND_ONE;            break;
-      case GL_SRC_COLOR:                d3dBlend = D3DBLEND_SRCCOLOR;       break;
-      case GL_ONE_MINUS_SRC_COLOR:      d3dBlend = D3DBLEND_INVSRCCOLOR;    break;
-      case GL_DST_COLOR:                d3dBlend = D3DBLEND_DESTCOLOR;      break;
-      case GL_ONE_MINUS_DST_COLOR:      d3dBlend = D3DBLEND_INVDESTCOLOR;   break;
-      case GL_SRC_ALPHA:                d3dBlend = D3DBLEND_SRCALPHA;       break;
-      case GL_ONE_MINUS_SRC_ALPHA:      d3dBlend = D3DBLEND_INVSRCALPHA;    break;
-      case GL_DST_ALPHA:                d3dBlend = D3DBLEND_DESTALPHA;      break;
-      case GL_ONE_MINUS_DST_ALPHA:      d3dBlend = D3DBLEND_INVDESTALPHA;   break;
-      case GL_CONSTANT_COLOR:           d3dBlend = D3DBLEND_BLENDFACTOR;    break;
-      case GL_ONE_MINUS_CONSTANT_COLOR: d3dBlend = D3DBLEND_INVBLENDFACTOR; break;
-      case GL_CONSTANT_ALPHA:           d3dBlend = D3DBLEND_BLENDFACTOR;    break;
-      case GL_ONE_MINUS_CONSTANT_ALPHA: d3dBlend = D3DBLEND_INVBLENDFACTOR; break;
-      case GL_SRC_ALPHA_SATURATE:       d3dBlend = D3DBLEND_SRCALPHASAT;    break;
-      default: UNREACHABLE();
+        case GL_ZERO:
+            d3dBlend = D3DBLEND_ZERO;
+            break;
+        case GL_ONE:
+            d3dBlend = D3DBLEND_ONE;
+            break;
+        case GL_SRC_COLOR:
+            d3dBlend = D3DBLEND_SRCCOLOR;
+            break;
+        case GL_ONE_MINUS_SRC_COLOR:
+            d3dBlend = D3DBLEND_INVSRCCOLOR;
+            break;
+        case GL_DST_COLOR:
+            d3dBlend = D3DBLEND_DESTCOLOR;
+            break;
+        case GL_ONE_MINUS_DST_COLOR:
+            d3dBlend = D3DBLEND_INVDESTCOLOR;
+            break;
+        case GL_SRC_ALPHA:
+            d3dBlend = D3DBLEND_SRCALPHA;
+            break;
+        case GL_ONE_MINUS_SRC_ALPHA:
+            d3dBlend = D3DBLEND_INVSRCALPHA;
+            break;
+        case GL_DST_ALPHA:
+            d3dBlend = D3DBLEND_DESTALPHA;
+            break;
+        case GL_ONE_MINUS_DST_ALPHA:
+            d3dBlend = D3DBLEND_INVDESTALPHA;
+            break;
+        case GL_CONSTANT_COLOR:
+            d3dBlend = D3DBLEND_BLENDFACTOR;
+            break;
+        case GL_ONE_MINUS_CONSTANT_COLOR:
+            d3dBlend = D3DBLEND_INVBLENDFACTOR;
+            break;
+        case GL_CONSTANT_ALPHA:
+            d3dBlend = D3DBLEND_BLENDFACTOR;
+            break;
+        case GL_ONE_MINUS_CONSTANT_ALPHA:
+            d3dBlend = D3DBLEND_INVBLENDFACTOR;
+            break;
+        case GL_SRC_ALPHA_SATURATE:
+            d3dBlend = D3DBLEND_SRCALPHASAT;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return d3dBlend;
@@ -89,12 +133,23 @@ D3DBLENDOP ConvertBlendOp(GLenum blendOp)
 
     switch (blendOp)
     {
-      case GL_FUNC_ADD:              d3dBlendOp = D3DBLENDOP_ADD;         break;
-      case GL_FUNC_SUBTRACT:         d3dBlendOp = D3DBLENDOP_SUBTRACT;    break;
-      case GL_FUNC_REVERSE_SUBTRACT: d3dBlendOp = D3DBLENDOP_REVSUBTRACT; break;
-      case GL_MIN_EXT:               d3dBlendOp = D3DBLENDOP_MIN;         break;
-      case GL_MAX_EXT:               d3dBlendOp = D3DBLENDOP_MAX;         break;
-      default: UNREACHABLE();
+        case GL_FUNC_ADD:
+            d3dBlendOp = D3DBLENDOP_ADD;
+            break;
+        case GL_FUNC_SUBTRACT:
+            d3dBlendOp = D3DBLENDOP_SUBTRACT;
+            break;
+        case GL_FUNC_REVERSE_SUBTRACT:
+            d3dBlendOp = D3DBLENDOP_REVSUBTRACT;
+            break;
+        case GL_MIN_EXT:
+            d3dBlendOp = D3DBLENDOP_MIN;
+            break;
+        case GL_MAX_EXT:
+            d3dBlendOp = D3DBLENDOP_MAX;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return d3dBlendOp;
@@ -106,15 +161,32 @@ D3DSTENCILOP ConvertStencilOp(GLenum stencilOp)
 
     switch (stencilOp)
     {
-      case GL_ZERO:      d3dStencilOp = D3DSTENCILOP_ZERO;    break;
-      case GL_KEEP:      d3dStencilOp = D3DSTENCILOP_KEEP;    break;
-      case GL_REPLACE:   d3dStencilOp = D3DSTENCILOP_REPLACE; break;
-      case GL_INCR:      d3dStencilOp = D3DSTENCILOP_INCRSAT; break;
-      case GL_DECR:      d3dStencilOp = D3DSTENCILOP_DECRSAT; break;
-      case GL_INVERT:    d3dStencilOp = D3DSTENCILOP_INVERT;  break;
-      case GL_INCR_WRAP: d3dStencilOp = D3DSTENCILOP_INCR;    break;
-      case GL_DECR_WRAP: d3dStencilOp = D3DSTENCILOP_DECR;    break;
-      default: UNREACHABLE();
+        case GL_ZERO:
+            d3dStencilOp = D3DSTENCILOP_ZERO;
+            break;
+        case GL_KEEP:
+            d3dStencilOp = D3DSTENCILOP_KEEP;
+            break;
+        case GL_REPLACE:
+            d3dStencilOp = D3DSTENCILOP_REPLACE;
+            break;
+        case GL_INCR:
+            d3dStencilOp = D3DSTENCILOP_INCRSAT;
+            break;
+        case GL_DECR:
+            d3dStencilOp = D3DSTENCILOP_DECRSAT;
+            break;
+        case GL_INVERT:
+            d3dStencilOp = D3DSTENCILOP_INVERT;
+            break;
+        case GL_INCR_WRAP:
+            d3dStencilOp = D3DSTENCILOP_INCR;
+            break;
+        case GL_DECR_WRAP:
+            d3dStencilOp = D3DSTENCILOP_DECR;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return d3dStencilOp;
@@ -126,10 +198,20 @@ D3DTEXTUREADDRESS ConvertTextureWrap(GLenum wrap)
 
     switch (wrap)
     {
-      case GL_REPEAT:            d3dWrap = D3DTADDRESS_WRAP;   break;
-      case GL_CLAMP_TO_EDGE:     d3dWrap = D3DTADDRESS_CLAMP;  break;
-      case GL_MIRRORED_REPEAT:   d3dWrap = D3DTADDRESS_MIRROR; break;
-      default: UNREACHABLE();
+        case GL_REPEAT:
+            d3dWrap = D3DTADDRESS_WRAP;
+            break;
+        case GL_CLAMP_TO_EDGE:
+            d3dWrap = D3DTADDRESS_CLAMP;
+            break;
+        case GL_CLAMP_TO_BORDER:
+            d3dWrap = D3DTADDRESS_BORDER;
+            break;
+        case GL_MIRRORED_REPEAT:
+            d3dWrap = D3DTADDRESS_MIRROR;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return d3dWrap;
@@ -156,31 +238,32 @@ D3DCULL ConvertCullMode(gl::CullFaceMode cullFace, GLenum frontFace)
     return cull;
 }
 
-D3DCUBEMAP_FACES ConvertCubeFace(GLenum cubeFace)
+D3DCUBEMAP_FACES ConvertCubeFace(gl::TextureTarget cubeFace)
 {
     D3DCUBEMAP_FACES face = D3DCUBEMAP_FACE_POSITIVE_X;
 
     switch (cubeFace)
     {
-      case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
-        face = D3DCUBEMAP_FACE_POSITIVE_X;
-        break;
-      case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
-        face = D3DCUBEMAP_FACE_NEGATIVE_X;
-        break;
-      case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
-        face = D3DCUBEMAP_FACE_POSITIVE_Y;
-        break;
-      case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
-        face = D3DCUBEMAP_FACE_NEGATIVE_Y;
-        break;
-      case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
-        face = D3DCUBEMAP_FACE_POSITIVE_Z;
-        break;
-      case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        face = D3DCUBEMAP_FACE_NEGATIVE_Z;
-        break;
-      default: UNREACHABLE();
+        case gl::TextureTarget::CubeMapPositiveX:
+            face = D3DCUBEMAP_FACE_POSITIVE_X;
+            break;
+        case gl::TextureTarget::CubeMapNegativeX:
+            face = D3DCUBEMAP_FACE_NEGATIVE_X;
+            break;
+        case gl::TextureTarget::CubeMapPositiveY:
+            face = D3DCUBEMAP_FACE_POSITIVE_Y;
+            break;
+        case gl::TextureTarget::CubeMapNegativeY:
+            face = D3DCUBEMAP_FACE_NEGATIVE_Y;
+            break;
+        case gl::TextureTarget::CubeMapPositiveZ:
+            face = D3DCUBEMAP_FACE_POSITIVE_Z;
+            break;
+        case gl::TextureTarget::CubeMapNegativeZ:
+            face = D3DCUBEMAP_FACE_NEGATIVE_Z;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return face;
@@ -188,10 +271,8 @@ D3DCUBEMAP_FACES ConvertCubeFace(GLenum cubeFace)
 
 DWORD ConvertColorMask(bool red, bool green, bool blue, bool alpha)
 {
-    return (red   ? D3DCOLORWRITEENABLE_RED   : 0) |
-           (green ? D3DCOLORWRITEENABLE_GREEN : 0) |
-           (blue  ? D3DCOLORWRITEENABLE_BLUE  : 0) |
-           (alpha ? D3DCOLORWRITEENABLE_ALPHA : 0);
+    return (red ? D3DCOLORWRITEENABLE_RED : 0) | (green ? D3DCOLORWRITEENABLE_GREEN : 0) |
+           (blue ? D3DCOLORWRITEENABLE_BLUE : 0) | (alpha ? D3DCOLORWRITEENABLE_ALPHA : 0);
 }
 
 D3DTEXTUREFILTERTYPE ConvertMagFilter(GLenum magFilter, float maxAnisotropy)
@@ -204,47 +285,56 @@ D3DTEXTUREFILTERTYPE ConvertMagFilter(GLenum magFilter, float maxAnisotropy)
     D3DTEXTUREFILTERTYPE d3dMagFilter = D3DTEXF_POINT;
     switch (magFilter)
     {
-      case GL_NEAREST: d3dMagFilter = D3DTEXF_POINT;  break;
-      case GL_LINEAR:  d3dMagFilter = D3DTEXF_LINEAR; break;
-      default: UNREACHABLE();
+        case GL_NEAREST:
+            d3dMagFilter = D3DTEXF_POINT;
+            break;
+        case GL_LINEAR:
+            d3dMagFilter = D3DTEXF_LINEAR;
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return d3dMagFilter;
 }
 
-void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DTEXTUREFILTERTYPE *d3dMipFilter,
-                      float *d3dLodBias, float maxAnisotropy, size_t baseLevel)
+void ConvertMinFilter(GLenum minFilter,
+                      D3DTEXTUREFILTERTYPE *d3dMinFilter,
+                      D3DTEXTUREFILTERTYPE *d3dMipFilter,
+                      float *d3dLodBias,
+                      float maxAnisotropy,
+                      size_t baseLevel)
 {
     switch (minFilter)
     {
-      case GL_NEAREST:
-        *d3dMinFilter = D3DTEXF_POINT;
-        *d3dMipFilter = D3DTEXF_NONE;
-        break;
-      case GL_LINEAR:
-        *d3dMinFilter = D3DTEXF_LINEAR;
-        *d3dMipFilter = D3DTEXF_NONE;
-        break;
-      case GL_NEAREST_MIPMAP_NEAREST:
-        *d3dMinFilter = D3DTEXF_POINT;
-        *d3dMipFilter = D3DTEXF_POINT;
-        break;
-      case GL_LINEAR_MIPMAP_NEAREST:
-        *d3dMinFilter = D3DTEXF_LINEAR;
-        *d3dMipFilter = D3DTEXF_POINT;
-        break;
-      case GL_NEAREST_MIPMAP_LINEAR:
-        *d3dMinFilter = D3DTEXF_POINT;
-        *d3dMipFilter = D3DTEXF_LINEAR;
-        break;
-      case GL_LINEAR_MIPMAP_LINEAR:
-        *d3dMinFilter = D3DTEXF_LINEAR;
-        *d3dMipFilter = D3DTEXF_LINEAR;
-        break;
-      default:
-        *d3dMinFilter = D3DTEXF_POINT;
-        *d3dMipFilter = D3DTEXF_NONE;
-        UNREACHABLE();
+        case GL_NEAREST:
+            *d3dMinFilter = D3DTEXF_POINT;
+            *d3dMipFilter = D3DTEXF_NONE;
+            break;
+        case GL_LINEAR:
+            *d3dMinFilter = D3DTEXF_LINEAR;
+            *d3dMipFilter = D3DTEXF_NONE;
+            break;
+        case GL_NEAREST_MIPMAP_NEAREST:
+            *d3dMinFilter = D3DTEXF_POINT;
+            *d3dMipFilter = D3DTEXF_POINT;
+            break;
+        case GL_LINEAR_MIPMAP_NEAREST:
+            *d3dMinFilter = D3DTEXF_LINEAR;
+            *d3dMipFilter = D3DTEXF_POINT;
+            break;
+        case GL_NEAREST_MIPMAP_LINEAR:
+            *d3dMinFilter = D3DTEXF_POINT;
+            *d3dMipFilter = D3DTEXF_LINEAR;
+            break;
+        case GL_LINEAR_MIPMAP_LINEAR:
+            *d3dMinFilter = D3DTEXF_LINEAR;
+            *d3dMipFilter = D3DTEXF_LINEAR;
+            break;
+        default:
+            *d3dMinFilter = D3DTEXF_POINT;
+            *d3dMipFilter = D3DTEXF_NONE;
+            UNREACHABLE();
     }
 
     // Disabling mipmapping will always sample from level 0 of the texture. It is possible to work
@@ -254,7 +344,7 @@ void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DT
     if (baseLevel > 0 && *d3dMipFilter == D3DTEXF_NONE)
     {
         *d3dMipFilter = D3DTEXF_POINT;
-        *d3dLodBias = -static_cast<float>(gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
+        *d3dLodBias   = -static_cast<float>(gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
     }
     else
     {
@@ -267,14 +357,14 @@ void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DT
     }
 }
 
-D3DQUERYTYPE ConvertQueryType(GLenum queryType)
+D3DQUERYTYPE ConvertQueryType(gl::QueryType type)
 {
-    switch (queryType)
+    switch (type)
     {
-        case GL_ANY_SAMPLES_PASSED_EXT:
-        case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
+        case gl::QueryType::AnySamples:
+        case gl::QueryType::AnySamplesConservative:
             return D3DQUERYTYPE_OCCLUSION;
-        case GL_COMMANDS_COMPLETED_CHROMIUM:
+        case gl::QueryType::CommandsCompleted:
             return D3DQUERYTYPE_EVENT;
         default:
             UNREACHABLE();
@@ -287,10 +377,19 @@ D3DMULTISAMPLE_TYPE GetMultisampleType(GLuint samples)
     return (samples > 1) ? static_cast<D3DMULTISAMPLE_TYPE>(samples) : D3DMULTISAMPLE_NONE;
 }
 
-}
+}  // namespace gl_d3d9
 
 namespace d3d9_gl
 {
+
+unsigned int GetReservedVaryingVectors()
+{
+    // We reserve two registers for "dx_Position" and "gl_Position". The spec says they
+    // don't count towards the varying limit, so we must make space for them. We also
+    // reserve the last register since it can only pass a PSIZE, and not any arbitrary
+    // varying.
+    return 3;
+}
 
 unsigned int GetReservedVertexUniformVectors()
 {
@@ -314,8 +413,11 @@ bool IsFormatChannelEquivalent(D3DFORMAT d3dformat, GLenum format)
     return convertedFormat == format;
 }
 
-static gl::TextureCaps GenerateTextureFormatCaps(GLenum internalFormat, IDirect3D9 *d3d9, D3DDEVTYPE deviceType,
-                                                 UINT adapter, D3DFORMAT adapterFormat)
+static gl::TextureCaps GenerateTextureFormatCaps(GLenum internalFormat,
+                                                 IDirect3D9 *d3d9,
+                                                 D3DDEVTYPE deviceType,
+                                                 UINT adapter,
+                                                 D3DFORMAT adapterFormat)
 {
     gl::TextureCaps textureCaps;
 
@@ -326,25 +428,37 @@ static gl::TextureCaps GenerateTextureFormatCaps(GLenum internalFormat, IDirect3
     {
         if (formatInfo.depthBits > 0 || formatInfo.stencilBits > 0)
         {
-            textureCaps.texturable = SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, 0, D3DRTYPE_TEXTURE, d3dFormatInfo.texFormat));
+            textureCaps.texturable = SUCCEEDED(d3d9->CheckDeviceFormat(
+                adapter, deviceType, adapterFormat, 0, D3DRTYPE_TEXTURE, d3dFormatInfo.texFormat));
         }
         else
         {
-            textureCaps.texturable = SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, 0, D3DRTYPE_TEXTURE, d3dFormatInfo.texFormat)) &&
-                                     SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, 0, D3DRTYPE_CUBETEXTURE, d3dFormatInfo.texFormat));
+            textureCaps.texturable =
+                SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, 0,
+                                                  D3DRTYPE_TEXTURE, d3dFormatInfo.texFormat)) &&
+                SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, 0,
+                                                  D3DRTYPE_CUBETEXTURE, d3dFormatInfo.texFormat));
         }
 
-        textureCaps.filterable = SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, D3DUSAGE_QUERY_FILTER, D3DRTYPE_TEXTURE, d3dFormatInfo.texFormat));
+        textureCaps.filterable = SUCCEEDED(
+            d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, D3DUSAGE_QUERY_FILTER,
+                                    D3DRTYPE_TEXTURE, d3dFormatInfo.texFormat));
     }
 
     if (d3dFormatInfo.renderFormat != D3DFMT_UNKNOWN)
     {
-        textureCaps.renderable = SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, D3DUSAGE_RENDERTARGET, D3DRTYPE_TEXTURE, d3dFormatInfo.renderFormat));
+        textureCaps.textureAttachment = SUCCEEDED(
+            d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, D3DUSAGE_RENDERTARGET,
+                                    D3DRTYPE_TEXTURE, d3dFormatInfo.renderFormat));
 
-        if ((formatInfo.depthBits > 0 || formatInfo.stencilBits > 0) && !textureCaps.renderable)
+        if ((formatInfo.depthBits > 0 || formatInfo.stencilBits > 0) &&
+            !textureCaps.textureAttachment)
         {
-            textureCaps.renderable = SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_TEXTURE, d3dFormatInfo.renderFormat));
+            textureCaps.textureAttachment = SUCCEEDED(
+                d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, D3DUSAGE_DEPTHSTENCIL,
+                                        D3DRTYPE_TEXTURE, d3dFormatInfo.renderFormat));
         }
+        textureCaps.renderbuffer = textureCaps.textureAttachment;
 
         textureCaps.sampleCounts.insert(1);
         for (unsigned int i = D3DMULTISAMPLE_2_SAMPLES; i <= D3DMULTISAMPLE_16_SAMPLES; i++)
@@ -419,23 +533,25 @@ void GenerateCaps(IDirect3D9 *d3d9,
     caps->maxRenderbufferSize = caps->max2DTextureSize;
 
     // Draw buffers are not supported in D3D9
-    caps->maxDrawBuffers = 1;
+    caps->maxDrawBuffers      = 1;
     caps->maxColorAttachments = 1;
 
     // No specific limits on viewport size, maximum 2D texture size is equivalent
-    caps->maxViewportWidth = caps->max2DTextureSize;
+    caps->maxViewportWidth  = caps->max2DTextureSize;
     caps->maxViewportHeight = caps->maxViewportWidth;
 
     // Point size is clamped to 1.0f when the shader model is less than 3
     caps->minAliasedPointSize = 1.0f;
-    caps->maxAliasedPointSize = ((D3DSHADER_VERSION_MAJOR(deviceCaps.PixelShaderVersion) >= 3) ? deviceCaps.MaxPointSize : 1.0f);
+    caps->maxAliasedPointSize =
+        ((D3DSHADER_VERSION_MAJOR(deviceCaps.PixelShaderVersion) >= 3) ? deviceCaps.MaxPointSize
+                                                                       : 1.0f);
 
     // Wide lines not supported
     caps->minAliasedLineWidth = 1.0f;
     caps->maxAliasedLineWidth = 1.0f;
 
     // Primitive count limits (unused in ES2)
-    caps->maxElementsIndices = 0;
+    caps->maxElementsIndices  = 0;
     caps->maxElementsVertices = 0;
 
     // Program and shader binary formats (no supported shader binary formats)
@@ -468,28 +584,31 @@ void GenerateCaps(IDirect3D9 *d3d9,
     const size_t MAX_VERTEX_CONSTANT_VECTORS_D3D9 = 256;
     caps->maxVertexUniformVectors =
         MAX_VERTEX_CONSTANT_VECTORS_D3D9 - GetReservedVertexUniformVectors();
-    caps->maxVertexUniformComponents = caps->maxVertexUniformVectors * 4;
+    caps->maxShaderUniformComponents[gl::ShaderType::Vertex] = caps->maxVertexUniformVectors * 4;
 
-    caps->maxVertexUniformBlocks = 0;
+    caps->maxShaderUniformBlocks[gl::ShaderType::Vertex] = 0;
 
-    // SM3 only supports 11 output variables, with a special 12th register for PSIZE.
-    const size_t MAX_VERTEX_OUTPUT_VECTORS_SM3 = 9;
-    const size_t MAX_VERTEX_OUTPUT_VECTORS_SM2 = 7;
-    caps->maxVertexOutputComponents = ((deviceCaps.VertexShaderVersion >= D3DVS_VERSION(3, 0)) ? MAX_VERTEX_OUTPUT_VECTORS_SM3
-                                                                                               : MAX_VERTEX_OUTPUT_VECTORS_SM2) * 4;
+    // SM3 only supports 12 output variables, but the special 12th register is only for PSIZE.
+    const unsigned int MAX_VERTEX_OUTPUT_VECTORS_SM3 = 12 - GetReservedVaryingVectors();
+    const unsigned int MAX_VERTEX_OUTPUT_VECTORS_SM2 = 10 - GetReservedVaryingVectors();
+    caps->maxVertexOutputComponents =
+        ((deviceCaps.VertexShaderVersion >= D3DVS_VERSION(3, 0)) ? MAX_VERTEX_OUTPUT_VECTORS_SM3
+                                                                 : MAX_VERTEX_OUTPUT_VECTORS_SM2) *
+        4;
 
     // Only Direct3D 10 ready devices support all the necessary vertex texture formats.
     // We test this using D3D9 by checking support for the R16F format.
     if (deviceCaps.VertexShaderVersion >= D3DVS_VERSION(3, 0) &&
         SUCCEEDED(d3d9->CheckDeviceFormat(adapter, deviceType, currentDisplayMode.Format,
-                                          D3DUSAGE_QUERY_VERTEXTEXTURE, D3DRTYPE_TEXTURE, D3DFMT_R16F)))
+                                          D3DUSAGE_QUERY_VERTEXTEXTURE, D3DRTYPE_TEXTURE,
+                                          D3DFMT_R16F)))
     {
-        const size_t MAX_TEXTURE_IMAGE_UNITS_VTF_SM3 = 4;
-        caps->maxVertexTextureImageUnits = MAX_TEXTURE_IMAGE_UNITS_VTF_SM3;
+        const size_t MAX_TEXTURE_IMAGE_UNITS_VTF_SM3             = 4;
+        caps->maxShaderTextureImageUnits[gl::ShaderType::Vertex] = MAX_TEXTURE_IMAGE_UNITS_VTF_SM3;
     }
     else
     {
-        caps->maxVertexTextureImageUnits = 0;
+        caps->maxShaderTextureImageUnits[gl::ShaderType::Vertex] = 0;
     }
 
     // Fragment shader limits
@@ -499,43 +618,45 @@ void GenerateCaps(IDirect3D9 *d3d9,
         ((deviceCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0)) ? MAX_PIXEL_CONSTANT_VECTORS_SM3
                                                                 : MAX_PIXEL_CONSTANT_VECTORS_SM2) -
         GetReservedFragmentUniformVectors();
-    caps->maxFragmentUniformComponents = caps->maxFragmentUniformVectors * 4;
-    caps->maxFragmentUniformBlocks = 0;
-    caps->maxFragmentInputComponents = caps->maxVertexOutputComponents;
-    caps->maxTextureImageUnits = 16;
-    caps->minProgramTexelOffset = 0;
-    caps->maxProgramTexelOffset = 0;
+    caps->maxShaderUniformComponents[gl::ShaderType::Fragment] =
+        caps->maxFragmentUniformVectors * 4;
+    caps->maxShaderUniformBlocks[gl::ShaderType::Fragment]     = 0;
+    caps->maxFragmentInputComponents                           = caps->maxVertexOutputComponents;
+    caps->maxShaderTextureImageUnits[gl::ShaderType::Fragment] = 16;
+    caps->minProgramTexelOffset                                = 0;
+    caps->maxProgramTexelOffset                                = 0;
 
     // Aggregate shader limits (unused in ES2)
-    caps->maxUniformBufferBindings = 0;
-    caps->maxUniformBlockSize = 0;
-    caps->uniformBufferOffsetAlignment = 0;
-    caps->maxCombinedUniformBlocks = 0;
-    caps->maxCombinedVertexUniformComponents = 0;
-    caps->maxCombinedFragmentUniformComponents = 0;
-    caps->maxVaryingComponents = 0;
+    caps->maxUniformBufferBindings                                     = 0;
+    caps->maxUniformBlockSize                                          = 0;
+    caps->uniformBufferOffsetAlignment                                 = 0;
+    caps->maxCombinedUniformBlocks                                     = 0;
+    caps->maxCombinedShaderUniformComponents[gl::ShaderType::Vertex]   = 0;
+    caps->maxCombinedShaderUniformComponents[gl::ShaderType::Fragment] = 0;
+    caps->maxVaryingComponents                                         = 0;
 
     // Aggregate shader limits
-    caps->maxVaryingVectors = caps->maxVertexOutputComponents / 4;
-    caps->maxCombinedTextureImageUnits = caps->maxVertexTextureImageUnits + caps->maxTextureImageUnits;
+    caps->maxVaryingVectors            = caps->maxVertexOutputComponents / 4;
+    caps->maxCombinedTextureImageUnits = caps->maxShaderTextureImageUnits[gl::ShaderType::Vertex] +
+                                         caps->maxShaderTextureImageUnits[gl::ShaderType::Fragment];
 
     // Transform feedback limits
     caps->maxTransformFeedbackInterleavedComponents = 0;
-    caps->maxTransformFeedbackSeparateAttributes = 0;
-    caps->maxTransformFeedbackSeparateComponents = 0;
+    caps->maxTransformFeedbackSeparateAttributes    = 0;
+    caps->maxTransformFeedbackSeparateComponents    = 0;
 
     // Multisample limits
     caps->maxSamples = maxSamples;
 
     // GL extension support
     extensions->setTextureExtensionSupport(*textureCapsMap);
-    extensions->elementIndexUint = deviceCaps.MaxVertexIndex >= (1 << 16);
-    extensions->getProgramBinary = true;
-    extensions->rgb8rgba8 = true;
-    extensions->readFormatBGRA = true;
+    extensions->elementIndexUint  = deviceCaps.MaxVertexIndex >= (1 << 16);
+    extensions->getProgramBinary  = true;
+    extensions->rgb8rgba8         = true;
+    extensions->readFormatBGRA    = true;
     extensions->pixelBufferObject = false;
-    extensions->mapBuffer = false;
-    extensions->mapBufferRange = false;
+    extensions->mapBuffer         = false;
+    extensions->mapBufferRange    = false;
 
     // textureRG is emulated and not performant.
     extensions->textureRG = false;
@@ -560,49 +681,61 @@ void GenerateCaps(IDirect3D9 *d3d9,
         extensions->textureNPOT = false;
     }
 
-    extensions->drawBuffers = false;
+    extensions->drawBuffers    = false;
     extensions->textureStorage = true;
 
-    // Must support a minimum of 2:1 anisotropy for max anisotropy to be considered supported, per the spec
-    extensions->textureFilterAnisotropic = (deviceCaps.RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0 && deviceCaps.MaxAnisotropy >= 2;
+    // Must support a minimum of 2:1 anisotropy for max anisotropy to be considered supported, per
+    // the spec
+    extensions->textureFilterAnisotropic =
+        (deviceCaps.RasterCaps & D3DPRASTERCAPS_ANISOTROPY) != 0 && deviceCaps.MaxAnisotropy >= 2;
     extensions->maxTextureAnisotropy = static_cast<GLfloat>(deviceCaps.MaxAnisotropy);
 
     // Check occlusion query support by trying to create one
     IDirect3DQuery9 *occlusionQuery = nullptr;
-    extensions->occlusionQueryBoolean = SUCCEEDED(device->CreateQuery(D3DQUERYTYPE_OCCLUSION, &occlusionQuery)) && occlusionQuery;
+    extensions->occlusionQueryBoolean =
+        SUCCEEDED(device->CreateQuery(D3DQUERYTYPE_OCCLUSION, &occlusionQuery)) && occlusionQuery;
     SafeRelease(occlusionQuery);
 
     // Check event query support by trying to create one
     IDirect3DQuery9 *eventQuery = nullptr;
-    extensions->fence = SUCCEEDED(device->CreateQuery(D3DQUERYTYPE_EVENT, &eventQuery)) && eventQuery;
+    extensions->fence =
+        SUCCEEDED(device->CreateQuery(D3DQUERYTYPE_EVENT, &eventQuery)) && eventQuery;
     SafeRelease(eventQuery);
 
-    extensions->disjointTimerQuery     = false;
-    extensions->robustness = true;
+    extensions->disjointTimerQuery = false;
+    extensions->robustness         = true;
     // It seems that only DirectX 10 and higher enforce the well-defined behavior of always
     // returning zero values when out-of-bounds reads. See
     // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness.txt
     extensions->robustBufferAccessBehavior = false;
-    extensions->blendMinMax = true;
-    extensions->framebufferBlit = true;
-    extensions->framebufferMultisample = true;
-    extensions->instancedArrays = deviceCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0);
-    extensions->packReverseRowOrder = true;
-    extensions->standardDerivatives = (deviceCaps.PS20Caps.Caps & D3DPS20CAPS_GRADIENTINSTRUCTIONS) != 0;
-    extensions->shaderTextureLOD = true;
-    extensions->fragDepth = true;
-    extensions->textureUsage = true;
+    extensions->blendMinMax                = true;
+    // https://docs.microsoft.com/en-us/windows/desktop/direct3ddxgi/format-support-for-direct3d-feature-level-9-1-hardware
+    extensions->floatBlend                 = false;
+    extensions->framebufferBlit            = true;
+    extensions->framebufferMultisample     = true;
+    extensions->instancedArraysANGLE       = deviceCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0);
+    // D3D9 requires at least one attribute that has a divisor of 0, which isn't required by the EXT
+    // extension
+    extensions->instancedArraysEXT         = false;
+    extensions->packReverseRowOrder        = true;
+    extensions->standardDerivatives =
+        (deviceCaps.PS20Caps.Caps & D3DPS20CAPS_GRADIENTINSTRUCTIONS) != 0;
+    extensions->shaderTextureLOD       = true;
+    extensions->fragDepth              = true;
+    extensions->textureUsage           = true;
     extensions->translatedShaderSource = true;
-    extensions->fboRenderMipmap = false;
-    extensions->discardFramebuffer = false; // It would be valid to set this to true, since glDiscardFramebufferEXT is just a hint
-    extensions->colorBufferFloat = false;
-    extensions->debugMarker = true;
-    extensions->eglImage               = true;
-    extensions->eglImageExternal       = true;
-    extensions->unpackSubimage         = true;
-    extensions->packSubimage           = true;
-    extensions->syncQuery              = extensions->fence;
-    extensions->copyTexture            = true;
+    extensions->fboRenderMipmap        = false;
+    extensions->discardFramebuffer     = false;  // It would be valid to set this to true, since
+                                                 // glDiscardFramebufferEXT is just a hint
+    extensions->colorBufferFloat   = false;
+    extensions->debugMarker        = true;
+    extensions->eglImage           = true;
+    extensions->eglImageExternal   = true;
+    extensions->unpackSubimage     = true;
+    extensions->packSubimage       = true;
+    extensions->syncQuery          = extensions->fence;
+    extensions->copyTexture        = true;
+    extensions->textureBorderClamp = true;
 
     // D3D9 has no concept of separate masks and refs for front and back faces in the depth stencil
     // state.
@@ -615,9 +748,13 @@ void GenerateCaps(IDirect3D9 *d3d9,
 
     // D3D9 cannot support constant color and alpha blend funcs together
     limitations->noSimultaneousConstantColorAndAlphaBlendFunc = true;
+
+    // D3D9 cannot support packing more than one variable to a single varying.
+    // TODO(jmadill): Implement more sophisticated component packing in D3D9.
+    limitations->noFlexibleVaryingPacking = true;
 }
 
-}
+}  // namespace d3d9_gl
 
 namespace d3d9
 {
@@ -625,12 +762,16 @@ namespace d3d9
 GLuint ComputeBlockSize(D3DFORMAT format, GLuint width, GLuint height)
 {
     const D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(format);
-    GLuint numBlocksWide = (width + d3dFormatInfo.blockWidth - 1) / d3dFormatInfo.blockWidth;
+    GLuint numBlocksWide  = (width + d3dFormatInfo.blockWidth - 1) / d3dFormatInfo.blockWidth;
     GLuint numBlocksHight = (height + d3dFormatInfo.blockHeight - 1) / d3dFormatInfo.blockHeight;
     return (d3dFormatInfo.pixelBytes * numBlocksWide * numBlocksHight);
 }
 
-void MakeValidSize(bool isImage, D3DFORMAT format, GLsizei *requestWidth, GLsizei *requestHeight, int *levelOffset)
+void MakeValidSize(bool isImage,
+                   D3DFORMAT format,
+                   GLsizei *requestWidth,
+                   GLsizei *requestHeight,
+                   int *levelOffset)
 {
     const D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(format);
 
@@ -639,7 +780,8 @@ void MakeValidSize(bool isImage, D3DFORMAT format, GLsizei *requestWidth, GLsize
     if (isImage || *requestWidth < static_cast<GLsizei>(d3dFormatInfo.blockWidth) ||
         *requestHeight < static_cast<GLsizei>(d3dFormatInfo.blockHeight))
     {
-        while (*requestWidth % d3dFormatInfo.blockWidth != 0 || *requestHeight % d3dFormatInfo.blockHeight != 0)
+        while (*requestWidth % d3dFormatInfo.blockWidth != 0 ||
+               *requestHeight % d3dFormatInfo.blockHeight != 0)
         {
             *requestWidth <<= 1;
             *requestHeight <<= 1;
@@ -652,8 +794,8 @@ void MakeValidSize(bool isImage, D3DFORMAT format, GLsizei *requestWidth, GLsize
 angle::WorkaroundsD3D GenerateWorkarounds()
 {
     angle::WorkaroundsD3D workarounds;
-    workarounds.mrtPerfWorkaround = true;
-    workarounds.setDataFasterThanImageUpload = false;
+    workarounds.mrtPerfWorkaround                = true;
+    workarounds.setDataFasterThanImageUpload     = false;
     workarounds.useInstancedPointSpriteEmulation = false;
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.

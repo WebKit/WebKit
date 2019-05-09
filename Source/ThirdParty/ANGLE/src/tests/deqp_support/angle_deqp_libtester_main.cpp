@@ -12,6 +12,7 @@
 #include "common/angleutils.h"
 #include "deMath.h"
 #include "deUniquePtr.hpp"
+#include "platform/Platform.h"
 #include "tcuApp.hpp"
 #include "tcuCommandLine.hpp"
 #include "tcuDefs.hpp"
@@ -19,40 +20,39 @@
 #include "tcuRandomOrderExecutor.h"
 #include "tcuResource.hpp"
 #include "tcuTestLog.hpp"
-#include "system_utils.h"
+#include "util/system_utils.h"
 
 #if (DE_OS == DE_OS_WIN32)
-#include <Windows.h>
+#    include <Windows.h>
 #elif (DE_OS == DE_OS_UNIX) || (DE_OS == DE_OS_OSX)
-#include <sys/unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#    include <sys/stat.h>
+#    include <sys/types.h>
+#    include <sys/unistd.h>
 #elif (DE_OS == DE_OS_ANDROID)
-#include <sys/stat.h>
+#    include <sys/stat.h>
 #endif
 
-tcu::Platform *createPlatform();
+tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc);
 
 namespace
 {
 
-tcu::Platform *g_platform = nullptr;
-tcu::CommandLine *g_cmdLine = nullptr;
-tcu::DirArchive *g_archive = nullptr;
-tcu::TestLog *g_log = nullptr;
-tcu::TestContext *g_testCtx = nullptr;
-tcu::TestPackageRoot *g_root = nullptr;
+tcu::Platform *g_platform            = nullptr;
+tcu::CommandLine *g_cmdLine          = nullptr;
+tcu::DirArchive *g_archive           = nullptr;
+tcu::TestLog *g_log                  = nullptr;
+tcu::TestContext *g_testCtx          = nullptr;
+tcu::TestPackageRoot *g_root         = nullptr;
 tcu::RandomOrderExecutor *g_executor = nullptr;
 
 const char *g_dEQPDataSearchDirs[] = {
-    "data",
-    "third_party/deqp/data",
-    "../third_party/deqp/src/data",
-    "deqp_support/data",
-    "third_party/deqp/src/data",
-    "../../third_party/deqp/src/data",
     "../../../third_party/deqp/src/data",
-    "../../sdcard/chromium_tests_root/third_party/deqp/src/data",
+    "../../sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src/data",
+    "../../third_party/angle/third_party/deqp/src/data",
+    "../../third_party/deqp/src/data",
+    "../third_party/deqp/src/data",
+    "data",
+    "third_party/deqp/src/data",
 };
 
 // TODO(jmadill): upstream to dEQP?
@@ -78,7 +78,7 @@ deBool deIsDir(const char *filename)
     return result == 0 && ((st.st_mode & S_IFDIR) == S_IFDIR);
 }
 #else
-#error TODO(jmadill): support other platforms
+#    error TODO(jmadill): support other platforms
 #endif
 
 bool FindDataDir(std::string *dataDirOut)
@@ -119,7 +119,9 @@ std::string GetLogFileName(std::string deqpDataDir)
 
 }  // anonymous namespace
 
-ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc, const char *argv[])
+ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc,
+                                                         const char *argv[],
+                                                         void *logErrorFunc)
 {
     try
     {
@@ -127,9 +129,9 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc, const char *a
         // Set stdout to line-buffered mode (will be fully buffered by default if stdout is pipe).
         setvbuf(stdout, DE_NULL, _IOLBF, 4 * 1024);
 #endif
-        g_platform = createPlatform();
+        g_platform = CreateANGLEPlatform(reinterpret_cast<angle::LogErrorFunc>(logErrorFunc));
 
-        if (!deSetRoundingMode(DE_ROUNDINGMODE_TO_NEAREST))
+        if (!deSetRoundingMode(DE_ROUNDINGMODE_TO_NEAREST_EVEN))
         {
             std::cout << "Failed to set floating point rounding mode." << std::endl;
             return false;
@@ -146,10 +148,10 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc, const char *a
         g_archive = new tcu::DirArchive(deqpDataDir.c_str());
         g_log     = new tcu::TestLog(GetLogFileName(deqpDataDir).c_str(), g_cmdLine->getLogFlags());
         g_testCtx = new tcu::TestContext(*g_platform, *g_archive, *g_log, *g_cmdLine, DE_NULL);
-        g_root = new tcu::TestPackageRoot(*g_testCtx, tcu::TestPackageRegistry::getSingleton());
+        g_root    = new tcu::TestPackageRoot(*g_testCtx, tcu::TestPackageRegistry::getSingleton());
         g_executor = new tcu::RandomOrderExecutor(*g_root, *g_testCtx);
     }
-    catch (const std::exception& e)
+    catch (const std::exception &e)
     {
         tcu::die("%s", e.what());
         return false;
@@ -161,7 +163,7 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc, const char *a
 // Exported to the tester app.
 ANGLE_LIBTESTER_EXPORT int deqp_libtester_main(int argc, const char *argv[])
 {
-    if (!deqp_libtester_init_platform(argc, argv))
+    if (!deqp_libtester_init_platform(argc, argv, nullptr))
     {
         tcu::die("Could not initialize the dEQP platform");
     }
@@ -205,10 +207,10 @@ ANGLE_LIBTESTER_EXPORT void deqp_libtester_shutdown_platform()
     g_platform = nullptr;
 }
 
-ANGLE_LIBTESTER_EXPORT bool deqp_libtester_run(const char *caseName)
+ANGLE_LIBTESTER_EXPORT TestResult deqp_libtester_run(const char *caseName)
 {
     const char *emptyString = "";
-    if (g_platform == nullptr && !deqp_libtester_init_platform(1, &emptyString))
+    if (g_platform == nullptr && !deqp_libtester_init_platform(1, &emptyString, nullptr))
     {
         tcu::die("Failed to initialize platform.");
     }
@@ -224,16 +226,18 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_run(const char *caseName)
             switch (result.getCode())
             {
                 case QP_TEST_RESULT_PASS:
+                    return TestResult::Pass;
                 case QP_TEST_RESULT_NOT_SUPPORTED:
-                    return true;
+                    std::cout << "Not supported! " << result.getDescription() << std::endl;
+                    return TestResult::NotSupported;
                 case QP_TEST_RESULT_QUALITY_WARNING:
                     std::cout << "Quality warning! " << result.getDescription() << std::endl;
-                    return true;
+                    return TestResult::Pass;
                 case QP_TEST_RESULT_COMPATIBILITY_WARNING:
                     std::cout << "Compatiblity warning! " << result.getDescription() << std::endl;
-                    return true;
+                    return TestResult::Pass;
                 default:
-                    return false;
+                    return TestResult::Fail;
             }
         }
         else
@@ -244,7 +248,8 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_run(const char *caseName)
     catch (const std::exception &e)
     {
         std::cout << "Exception running test: " << e.what() << std::endl;
+        return TestResult::Exception;
     }
 
-    return false;
+    return TestResult::Fail;
 }

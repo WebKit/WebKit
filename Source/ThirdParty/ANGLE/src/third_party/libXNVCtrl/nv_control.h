@@ -107,7 +107,7 @@
 /* Define 32 bit floats */
 typedef float FLOAT32;
 #ifndef F32
-#define F32
+#    define F32
 #endif
 
 typedef struct

@@ -18,15 +18,10 @@ namespace rx
 class MockImageImpl : public ImageImpl
 {
   public:
-    MockImageImpl(const egl::ImageState &state,
-                  EGLenum /*target*/,
-                  const egl::AttributeMap & /*attribs*/)
-        : ImageImpl(state)
-    {
-    }
+    MockImageImpl(const egl::ImageState &state) : ImageImpl(state) {}
     virtual ~MockImageImpl() { destructor(); }
-    MOCK_METHOD0(initialize, egl::Error(void));
-    MOCK_METHOD2(orphan, gl::Error(const gl::Context *, egl::ImageSibling *));
+    MOCK_METHOD1(initialize, egl::Error(const egl::Display *));
+    MOCK_METHOD2(orphan, angle::Result(const gl::Context *, egl::ImageSibling *));
     MOCK_METHOD0(destructor, void());
 };
 }  // namespace rx

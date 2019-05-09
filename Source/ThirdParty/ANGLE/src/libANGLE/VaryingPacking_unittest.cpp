@@ -13,6 +13,7 @@
 // But 'None' is also define as a numberic constant 0L in <X11/X.h>.
 // So we need to include gtest first to avoid such conflict.
 
+#include "libANGLE/Program.h"
 #include "libANGLE/VaryingPacking.h"
 
 using namespace gl;
@@ -37,7 +38,7 @@ class VaryingPackingTest : public ::testing::TestWithParam<GLuint>
         InfoLog infoLog;
         std::vector<std::string> transformFeedbackVaryings;
 
-        return varyingPacking->packUserVaryings(infoLog, packedVaryings, transformFeedbackVaryings);
+        return varyingPacking->packUserVaryings(infoLog, packedVaryings);
     }
 
     // Uses the "relaxed" ANGLE packing mode.
@@ -67,10 +68,10 @@ std::vector<sh::Varying> MakeVaryings(GLenum type, size_t count, size_t arraySiz
         strstr << type << index;
 
         sh::Varying varying;
-        varying.type          = type;
-        varying.precision     = GL_MEDIUM_FLOAT;
-        varying.name          = strstr.str();
-        varying.mappedName    = strstr.str();
+        varying.type       = type;
+        varying.precision  = GL_MEDIUM_FLOAT;
+        varying.name       = strstr.str();
+        varying.mappedName = strstr.str();
         if (arraySize > 0)
         {
             varying.arraySizes.push_back(static_cast<unsigned int>(arraySize));
@@ -160,6 +161,6 @@ TEST_P(VaryingPackingTest, MaxPlusOneMat2VaryingsFailsWebGL)
 }
 
 // Makes separate tests for different values of kMaxVaryings.
-INSTANTIATE_TEST_CASE_P(, VaryingPackingTest, ::testing::Values(1, 4, 8));
+INSTANTIATE_TEST_SUITE_P(, VaryingPackingTest, ::testing::Values(1, 4, 8));
 
 }  // anonymous namespace

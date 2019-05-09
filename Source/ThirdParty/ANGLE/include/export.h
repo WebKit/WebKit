@@ -10,23 +10,23 @@
 #define LIBGLESV2_EXPORT_H_
 
 #if !defined(ANGLE_EXPORT)
-#if defined(_WIN32)
-#if defined(LIBGLESV2_IMPLEMENTATION) || defined(LIBANGLE_IMPLEMENTATION) || \
-    defined(LIBANGLE_UTIL_IMPLEMENTATION)
-#       define ANGLE_EXPORT __declspec(dllexport)
-#   else
-#       define ANGLE_EXPORT __declspec(dllimport)
-#   endif
-#elif defined(__GNUC__)
-#if defined(LIBGLESV2_IMPLEMENTATION) || defined(LIBANGLE_IMPLEMENTATION) || \
-    defined(LIBANGLE_UTIL_IMPLEMENTATION)
-#       define ANGLE_EXPORT __attribute__((visibility ("default")))
-#   else
-#       define ANGLE_EXPORT
-#   endif
-#else
-#   define ANGLE_EXPORT
-#endif
+#    if defined(_WIN32)
+#        if defined(LIBGLESV2_IMPLEMENTATION) || defined(LIBANGLE_IMPLEMENTATION) || \
+            defined(LIBFEATURE_SUPPORT_IMPLEMENTATION)
+#            define ANGLE_EXPORT __declspec(dllexport)
+#        else
+#            define ANGLE_EXPORT __declspec(dllimport)
+#        endif
+#    elif defined(__GNUC__)
+#        if defined(LIBGLESV2_IMPLEMENTATION) || defined(LIBANGLE_IMPLEMENTATION) || \
+            defined(LIBFEATURE_SUPPORT_IMPLEMENTATION)
+#            define ANGLE_EXPORT __attribute__((visibility("default")))
+#        else
+#            define ANGLE_EXPORT
+#        endif
+#    else
+#        define ANGLE_EXPORT
+#    endif
 #endif  // !defined(ANGLE_EXPORT)
 
-#endif // LIBGLESV2_EXPORT_H_
+#endif  // LIBGLESV2_EXPORT_H_

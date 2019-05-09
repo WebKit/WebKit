@@ -9,6 +9,8 @@
 #include "libANGLE/renderer/gl/SyncGL.h"
 
 #include "common/debug.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 
 namespace rx
@@ -21,43 +23,46 @@ SyncGL::SyncGL(const FunctionsGL *functions) : SyncImpl(), mFunctions(functions)
 
 SyncGL::~SyncGL()
 {
-    if (mSyncObject != 0)
-    {
-        mFunctions->deleteSync(mSyncObject);
-    }
+    ASSERT(mSyncObject == 0);
 }
 
-gl::Error SyncGL::set(GLenum condition, GLbitfield flags)
+void SyncGL::onDestroy(const gl::Context *context)
+{
+    ASSERT(mSyncObject != 0);
+    mFunctions->deleteSync(mSyncObject);
+    mSyncObject = 0;
+}
+
+angle::Result SyncGL::set(const gl::Context *context, GLenum condition, GLbitfield flags)
 {
     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE && flags == 0);
     mSyncObject = mFunctions->fenceSync(condition, flags);
-    if (mSyncObject == 0)
-    {
-        // if glFenceSync fails, it returns 0.
-        return gl::OutOfMemory() << "glFenceSync failed to create a GLsync object.";
-    }
-
-    return gl::NoError();
+    ANGLE_CHECK(GetImplAs<ContextGL>(context), mSyncObject != 0,
+                "glFenceSync failed to create a GLsync object.", GL_OUT_OF_MEMORY);
+    return angle::Result::Continue;
 }
 
-gl::Error SyncGL::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
+angle::Result SyncGL::clientWait(const gl::Context *context,
+                                 GLbitfield flags,
+                                 GLuint64 timeout,
+                                 GLenum *outResult)
 {
     ASSERT(mSyncObject != 0);
     *outResult = mFunctions->clientWaitSync(mSyncObject, flags, timeout);
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error SyncGL::serverWait(GLbitfield flags, GLuint64 timeout)
+angle::Result SyncGL::serverWait(const gl::Context *context, GLbitfield flags, GLuint64 timeout)
 {
     ASSERT(mSyncObject != 0);
     mFunctions->waitSync(mSyncObject, flags, timeout);
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error SyncGL::getStatus(GLint *outResult)
+angle::Result SyncGL::getStatus(const gl::Context *context, GLint *outResult)
 {
     ASSERT(mSyncObject != 0);
     mFunctions->getSynciv(mSyncObject, GL_SYNC_STATUS, 1, nullptr, outResult);
-    return gl::NoError();
+    return angle::Result::Continue;
 }
-}
+}  // namespace rx

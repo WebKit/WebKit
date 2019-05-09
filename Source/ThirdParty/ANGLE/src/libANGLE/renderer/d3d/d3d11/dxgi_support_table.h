@@ -21,19 +21,13 @@ namespace d3d11
 
 struct DXGISupport
 {
-    DXGISupport()
-        : alwaysSupportedFlags(0),
-          neverSupportedFlags(0),
-          optionallySupportedFlags(0)
-    {
-    }
+    DXGISupport() : alwaysSupportedFlags(0), neverSupportedFlags(0), optionallySupportedFlags(0) {}
 
     DXGISupport(UINT alwaysSupportedIn, UINT neverSupportedIn, UINT optionallySupportedIn)
         : alwaysSupportedFlags(alwaysSupportedIn),
           neverSupportedFlags(neverSupportedIn),
           optionallySupportedFlags(optionallySupportedIn)
-    {
-    }
+    {}
 
     UINT alwaysSupportedFlags;
     UINT neverSupportedFlags;
@@ -42,8 +36,8 @@ struct DXGISupport
 
 const DXGISupport &GetDXGISupport(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL featureLevel);
 
-} // namespace d3d11
+}  // namespace d3d11
 
-} // namespace rx
+}  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_D3D_D3D11_DXGI_SUPPORT_TABLE_H_

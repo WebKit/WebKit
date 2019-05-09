@@ -8,112 +8,75 @@
 
 #include "libANGLE/renderer/d3d/d3d11/DebugAnnotator11.h"
 
-#include "common/debug.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
+
+#include <VersionHelpers.h>
 
 namespace rx
 {
 
-DebugAnnotator11::DebugAnnotator11()
-    : mInitialized(false),
-      mD3d11Module(nullptr),
-      mUserDefinedAnnotation(nullptr)
+DebugAnnotator11::DebugAnnotator11() {}
+
+DebugAnnotator11::~DebugAnnotator11() {}
+
+void DebugAnnotator11::beginEvent(const char *eventName, const char *eventMessage)
 {
-    // D3D11 devices can't be created during DllMain.
-    // We defer device creation until the object is actually used.
-}
-
-DebugAnnotator11::~DebugAnnotator11()
-{
-    if (mInitialized)
-    {
-        SafeRelease(mUserDefinedAnnotation);
-
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
-        FreeLibrary(mD3d11Module);
-#endif // !ANGLE_ENABLE_WINDOWS_STORE
-    }
-}
-
-void DebugAnnotator11::beginEvent(const wchar_t *eventName)
-{
-    initializeDevice();
-
+    angle::LoggingAnnotator::beginEvent(eventName, eventMessage);
     if (mUserDefinedAnnotation != nullptr)
     {
-        mUserDefinedAnnotation->BeginEvent(eventName);
+        std::mbstate_t state = std::mbstate_t();
+        std::mbsrtowcs(mWCharMessage, &eventMessage, kMaxMessageLength, &state);
+        mUserDefinedAnnotation->BeginEvent(mWCharMessage);
     }
 }
 
-void DebugAnnotator11::endEvent()
+void DebugAnnotator11::endEvent(const char *eventName)
 {
-    initializeDevice();
-
+    angle::LoggingAnnotator::endEvent(eventName);
     if (mUserDefinedAnnotation != nullptr)
     {
         mUserDefinedAnnotation->EndEvent();
     }
 }
 
-void DebugAnnotator11::setMarker(const wchar_t *markerName)
+void DebugAnnotator11::setMarker(const char *markerName)
 {
-    initializeDevice();
-
+    angle::LoggingAnnotator::setMarker(markerName);
     if (mUserDefinedAnnotation != nullptr)
     {
-        mUserDefinedAnnotation->SetMarker(markerName);
+        std::mbstate_t state = std::mbstate_t();
+        std::mbsrtowcs(mWCharMessage, &markerName, kMaxMessageLength, &state);
+        mUserDefinedAnnotation->SetMarker(mWCharMessage);
     }
 }
 
 bool DebugAnnotator11::getStatus()
 {
-#if defined(ANGLE_ENABLE_WINDOWS_STORE)
-    static_assert(NTDDI_VERSION >= NTDDI_WIN10, "GetStatus only works on Win10 and above");
-    initializeDevice();
-
     if (mUserDefinedAnnotation != nullptr)
     {
         return !!(mUserDefinedAnnotation->GetStatus());
     }
 
-    return true;  // Default if initializeDevice() failed
-#else
-    // We can't detect GetStatus() on desktop ANGLE builds so always return true.
-    return true;
-#endif  // ANGLE_ENABLE_WINDOWS_STORE
+    return false;
 }
 
-void DebugAnnotator11::initializeDevice()
+void DebugAnnotator11::initialize(ID3D11DeviceContext *context)
 {
-    if (!mInitialized)
+    // ID3DUserDefinedAnnotation.GetStatus only works on Windows10 or greater.
+    // Returning true unconditionally from DebugAnnotator11::getStatus() means
+    // writing out all compiled shaders to temporary files even if debugging
+    // tools are not attached. See rx::ShaderD3D::prepareSourceAndReturnOptions.
+    // If you want debug annotations, you must use Windows 10.
+    if (IsWindows10OrGreater())
     {
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
-        mD3d11Module = LoadLibrary(TEXT("d3d11.dll"));
-        ASSERT(mD3d11Module);
-
-        PFN_D3D11_CREATE_DEVICE D3D11CreateDevice = (PFN_D3D11_CREATE_DEVICE)GetProcAddress(mD3d11Module, "D3D11CreateDevice");
-        ASSERT(D3D11CreateDevice != nullptr);
-#endif // !ANGLE_ENABLE_WINDOWS_STORE
-
-        ID3D11Device *device = nullptr;
-        ID3D11DeviceContext *context = nullptr;
-
-        HRESULT hr = E_FAIL;
-
-        // Create a D3D_DRIVER_TYPE_NULL device, which is much cheaper than other types of device.
-        hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_NULL, nullptr, 0, nullptr, 0,
-                               D3D11_SDK_VERSION, &device, nullptr, &context);
-        ASSERT(SUCCEEDED(hr));
-        if (SUCCEEDED(hr))
-        {
-            mUserDefinedAnnotation = d3d11::DynamicCastComObject<ID3DUserDefinedAnnotation>(context);
-            ASSERT(mUserDefinedAnnotation != nullptr);
-            mInitialized = true;
-        }
-
-        SafeRelease(device);
-        SafeRelease(context);
+        mUserDefinedAnnotation.Attach(
+            d3d11::DynamicCastComObject<ID3DUserDefinedAnnotation>(context));
     }
 }
 
+void DebugAnnotator11::release()
+{
+    mUserDefinedAnnotation.Reset();
 }
+
+}  // namespace rx

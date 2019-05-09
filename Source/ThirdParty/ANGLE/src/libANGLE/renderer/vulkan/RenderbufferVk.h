@@ -11,6 +11,8 @@
 #define LIBANGLE_RENDERER_VULKAN_RENDERBUFFERVK_H_
 
 #include "libANGLE/renderer/RenderbufferImpl.h"
+#include "libANGLE/renderer/vulkan/RenderTargetVk.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 namespace rx
 {
@@ -18,27 +20,41 @@ namespace rx
 class RenderbufferVk : public RenderbufferImpl
 {
   public:
-    RenderbufferVk();
+    RenderbufferVk(const gl::RenderbufferState &state);
     ~RenderbufferVk() override;
 
-    gl::Error setStorage(const gl::Context *context,
-                         GLenum internalformat,
-                         size_t width,
-                         size_t height) override;
-    gl::Error setStorageMultisample(const gl::Context *context,
-                                    size_t samples,
-                                    GLenum internalformat,
-                                    size_t width,
-                                    size_t height) override;
-    gl::Error setStorageEGLImageTarget(const gl::Context *context, egl::Image *image) override;
+    void onDestroy(const gl::Context *context) override;
 
-    gl::Error getAttachmentRenderTarget(const gl::Context *context,
-                                        GLenum binding,
-                                        const gl::ImageIndex &imageIndex,
-                                        FramebufferAttachmentRenderTarget **rtOut) override;
+    angle::Result setStorage(const gl::Context *context,
+                             GLenum internalformat,
+                             size_t width,
+                             size_t height) override;
+    angle::Result setStorageMultisample(const gl::Context *context,
+                                        size_t samples,
+                                        GLenum internalformat,
+                                        size_t width,
+                                        size_t height) override;
+    angle::Result setStorageEGLImageTarget(const gl::Context *context, egl::Image *image) override;
 
-    gl::Error initializeContents(const gl::Context *context,
-                                 const gl::ImageIndex &imageIndex) override;
+    angle::Result getAttachmentRenderTarget(const gl::Context *context,
+                                            GLenum binding,
+                                            const gl::ImageIndex &imageIndex,
+                                            FramebufferAttachmentRenderTarget **rtOut) override;
+
+    angle::Result initializeContents(const gl::Context *context,
+                                     const gl::ImageIndex &imageIndex) override;
+
+    vk::ImageHelper *getImage() const { return mImage; }
+    void releaseOwnershipOfImage(const gl::Context *context);
+
+  private:
+    void releaseAndDeleteImage(const gl::Context *context, RendererVk *renderer);
+    void releaseImage(const gl::Context *context, RendererVk *renderer);
+
+    bool mOwnsImage;
+    vk::ImageHelper *mImage;
+    vk::ImageView mImageView;
+    RenderTargetVk mRenderTarget;
 };
 
 }  // namespace rx

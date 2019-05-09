@@ -37,8 +37,7 @@ std::vector<std::string> SplitString(const std::string &input,
                                      WhitespaceHandling whitespace,
                                      SplitResult resultType);
 
-void SplitStringAlongWhitespace(const std::string &input,
-                                std::vector<std::string> *tokensOut);
+void SplitStringAlongWhitespace(const std::string &input, std::vector<std::string> *tokensOut);
 
 std::string TrimString(const std::string &input, const std::string &trimChars);
 
@@ -70,7 +69,7 @@ bool BeginsWith(const std::string &str, const std::string &prefix, const size_t 
 // Check if the string str ends with the given suffix.
 // Suffix may not be NUL and needs to be NULL terminated.
 // The comparison is case sensitive.
-bool EndsWith(const std::string& str, const char* suffix);
+bool EndsWith(const std::string &str, const char *suffix);
 
 // Convert to lower-case.
 void ToLower(std::string *str);
@@ -82,4 +81,4 @@ bool ReplaceSubstring(std::string *str,
 
 }  // namespace angle
 
-#endif // LIBANGLE_STRING_UTILS_H_
+#endif  // LIBANGLE_STRING_UTILS_H_

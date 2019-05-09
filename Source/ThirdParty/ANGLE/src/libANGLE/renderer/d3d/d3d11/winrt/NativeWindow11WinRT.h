@@ -11,10 +11,10 @@
 
 #include "libANGLE/renderer/d3d/d3d11/NativeWindow11.h"
 
-#include <memory>
 #include <windows.applicationmodel.core.h>
 #include <wrl.h>
 #include <wrl/wrappers/corewrappers.h>
+#include <memory>
 
 namespace rx
 {

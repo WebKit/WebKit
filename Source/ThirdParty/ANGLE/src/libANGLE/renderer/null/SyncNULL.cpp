@@ -14,34 +14,33 @@
 namespace rx
 {
 
-SyncNULL::SyncNULL() : SyncImpl()
+SyncNULL::SyncNULL() : SyncImpl() {}
+
+SyncNULL::~SyncNULL() {}
+
+angle::Result SyncNULL::set(const gl::Context *context, GLenum condition, GLbitfield flags)
 {
+    return angle::Result::Continue;
 }
 
-SyncNULL::~SyncNULL()
-{
-}
-
-gl::Error SyncNULL::set(GLenum condition, GLbitfield flags)
-{
-    return gl::NoError();
-}
-
-gl::Error SyncNULL::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
+angle::Result SyncNULL::clientWait(const gl::Context *context,
+                                   GLbitfield flags,
+                                   GLuint64 timeout,
+                                   GLenum *outResult)
 {
     *outResult = GL_ALREADY_SIGNALED;
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error SyncNULL::serverWait(GLbitfield flags, GLuint64 timeout)
+angle::Result SyncNULL::serverWait(const gl::Context *context, GLbitfield flags, GLuint64 timeout)
 {
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error SyncNULL::getStatus(GLint *outResult)
+angle::Result SyncNULL::getStatus(const gl::Context *context, GLint *outResult)
 {
     *outResult = GL_SIGNALED;
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

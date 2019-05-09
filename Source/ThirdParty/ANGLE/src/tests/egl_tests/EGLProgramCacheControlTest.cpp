@@ -9,11 +9,12 @@
 #include "common/angleutils.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
+#include "util/EGLWindow.h"
 
 using namespace angle;
 
 constexpr EGLint kEnabledCacheSize = 0x10000;
-constexpr char kEGLExtName[]       = "EGL_ANGLE_program_cache_control ";
+constexpr char kEGLExtName[]       = "EGL_ANGLE_program_cache_control";
 
 void TestCacheProgram(PlatformMethods *platform,
                       const ProgramKeyType &key,
@@ -30,35 +31,44 @@ class EGLProgramCacheControlTest : public ANGLETest
     }
 
   protected:
-    EGLProgramCacheControlTest() { setDeferContextInit(true); }
+    EGLProgramCacheControlTest()
+    {
+        // Test flakiness was noticed when reusing displays.
+        forceNewDisplay();
+        setDeferContextInit(true);
+    }
 
     void SetUp() override
     {
-        mPlatformMethods.cacheProgram = &TestCacheProgram;
+        setContextProgramCacheEnabled(true, &TestCacheProgram);
 
-        ANGLETestBase::ANGLETestSetUp();
+        ANGLETest::SetUp();
 
         if (extensionAvailable())
         {
             EGLDisplay display = getEGLWindow()->getDisplay();
-            setContextProgramCacheEnabled(true);
             eglProgramCacheResizeANGLE(display, kEnabledCacheSize, EGL_PROGRAM_CACHE_RESIZE_ANGLE);
+            ASSERT_EGL_SUCCESS();
         }
 
-        getEGLWindow()->initializeContext();
+        ASSERT_TRUE(getEGLWindow()->initializeContext());
     }
 
-    void TearDown() override { ANGLETestBase::ANGLETestTearDown(); }
+    void TearDown() override
+    {
+        setContextProgramCacheEnabled(false, angle::DefaultCacheProgram);
+        ANGLETest::TearDown();
+    }
 
     bool extensionAvailable()
     {
         EGLDisplay display = getEGLWindow()->getDisplay();
-        return eglDisplayExtensionEnabled(display, kEGLExtName);
+        return IsEGLDisplayExtensionEnabled(display, kEGLExtName);
     }
 
     bool programBinaryAvailable()
     {
-        return (getClientMajorVersion() >= 3 || extensionEnabled("GL_OES_get_program_binary"));
+        return (getClientMajorVersion() >= 3 || IsGLExtensionEnabled("GL_OES_get_program_binary"));
     }
 
     ProgramKeyType mCachedKey;
@@ -176,9 +186,8 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
 {
     ANGLE_SKIP_TEST_IF(!extensionAvailable() || !programBinaryAvailable());
 
-    const std::string vertexShader =
-        "attribute vec4 position; void main() { gl_Position = position; }";
-    const std::string fragmentShader = "void main() { gl_FragColor = vec4(1, 0, 0, 1); }";
+    constexpr char kVS[] = "attribute vec4 position; void main() { gl_Position = position; }";
+    constexpr char kFS[] = "void main() { gl_FragColor = vec4(1, 0, 0, 1); }";
 
     // Link a program, which will miss the cache.
     {
@@ -186,7 +195,7 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
         glClear(GL_COLOR_BUFFER_BIT);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
-        ANGLE_GL_PROGRAM(program, vertexShader, fragmentShader);
+        ANGLE_GL_PROGRAM(program, kVS, kFS);
         drawQuad(program, "position", 0.5f);
         EXPECT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -229,7 +238,7 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
         glClear(GL_COLOR_BUFFER_BIT);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
-        ANGLE_GL_PROGRAM(program, vertexShader, fragmentShader);
+        ANGLE_GL_PROGRAM(program, kVS, kFS);
         drawQuad(program, "position", 0.5f);
         EXPECT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -239,4 +248,28 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
     EXPECT_TRUE(mCachedBinary.empty());
 }
 
-ANGLE_INSTANTIATE_TEST(EGLProgramCacheControlTest, ES2_D3D9(), ES2_D3D11(), ES2_OPENGL());
+// Tests that trying to link a program without correct shaders doesn't buggily call the cache.
+TEST_P(EGLProgramCacheControlTest, LinkProgramWithBadShaders)
+{
+    ANGLE_SKIP_TEST_IF(!extensionAvailable());
+
+    GLuint shader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, shader);
+    glLinkProgram(program);
+
+    GLint linkStatus = 0;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_FALSE(linkStatus);
+    EXPECT_GL_NO_ERROR();
+
+    glDeleteShader(shader);
+    glDeleteProgram(program);
+}
+
+ANGLE_INSTANTIATE_TEST(EGLProgramCacheControlTest,
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES2_OPENGL(),
+                       ES2_VULKAN());

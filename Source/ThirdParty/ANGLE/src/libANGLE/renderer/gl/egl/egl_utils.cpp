@@ -40,6 +40,6 @@ void FinalizeAttributeVector(AttributeVector *attributeVector)
     attributeVector->push_back(EGL_NONE);
 }
 
-}  // namespace egl
+}  // namespace native_egl
 
 }  // namespace rx

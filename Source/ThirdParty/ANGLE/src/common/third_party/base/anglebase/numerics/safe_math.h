@@ -64,13 +64,11 @@ class CheckedNumeric
     // Copy constructor.
     template <typename Src>
     CheckedNumeric(const CheckedNumeric<Src> &rhs) : state_(rhs.ValueUnsafe(), rhs.validity())
-    {
-    }
+    {}
 
     template <typename Src>
     CheckedNumeric(Src value, RangeConstraint validity) : state_(value, validity)
-    {
-    }
+    {}
 
     // This is not an explicit constructor because we implicitly upgrade regular
     // numerics to CheckedNumerics to make them easier to use.
@@ -86,8 +84,7 @@ class CheckedNumeric
     template <typename Src>
     CheckedNumeric(StrictNumeric<Src> value)  // NOLINT(runtime/explicit)
         : state_(static_cast<Src>(value))
-    {
-    }
+    {}
 
     // IsValid() is the public API to test if a CheckedNumeric is currently valid.
     bool IsValid() const { return validity() == RANGE_VALID; }
@@ -247,7 +244,7 @@ class CheckedNumeric
 //  * We skip range checks for floating points.
 //  * We skip range checks for destination integers with sufficient range.
 // TODO(jschuh): extract these out into templates.
-#define ANGLEBASE_NUMERIC_ARITHMETIC_OPERATORS(NAME, OP, COMPOUND_OP)                                   \
+#define ANGLEBASE_NUMERIC_ARITHMETIC_OPERATORS(NAME, OP, COMPOUND_OP)                              \
     /* Binary arithmetic operator for CheckedNumerics of the same type. */                         \
     template <typename T>                                                                          \
     CheckedNumeric<typename ArithmeticPromotion<T>::type> operator OP(                             \

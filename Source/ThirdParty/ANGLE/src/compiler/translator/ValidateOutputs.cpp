@@ -12,17 +12,18 @@
 #include <set>
 
 #include "compiler/translator/InfoSink.h"
-#include "compiler/translator/IntermTraverse.h"
 #include "compiler/translator/ParseContext.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 namespace sh
 {
 
 namespace
 {
+
 void error(const TIntermSymbol &symbol, const char *reason, TDiagnostics *diagnostics)
 {
-    diagnostics->error(symbol.getLine(), reason, symbol.getSymbol().c_str());
+    diagnostics->error(symbol.getLine(), reason, symbol.getName().data());
 }
 
 class ValidateOutputsTraverser : public TIntermTraverser
@@ -43,7 +44,7 @@ class ValidateOutputsTraverser : public TIntermTraverser
     OutputVector mOutputs;
     OutputVector mUnspecifiedLocationOutputs;
     OutputVector mYuvOutputs;
-    std::set<std::string> mVisitedSymbols;
+    std::set<int> mVisitedSymbols;  // Visited symbol ids.
 };
 
 ValidateOutputsTraverser::ValidateOutputsTraverser(const TExtensionBehavior &extBehavior,
@@ -53,19 +54,19 @@ ValidateOutputsTraverser::ValidateOutputsTraverser(const TExtensionBehavior &ext
       mAllowUnspecifiedOutputLocationResolution(
           IsExtensionEnabled(extBehavior, TExtension::EXT_blend_func_extended)),
       mUsesFragDepth(false)
-{
-}
+{}
 
 void ValidateOutputsTraverser::visitSymbol(TIntermSymbol *symbol)
 {
-    TString name         = symbol->getSymbol();
-    TQualifier qualifier = symbol->getQualifier();
-
-    if (mVisitedSymbols.count(name.c_str()) == 1)
+    if (symbol->variable().symbolType() == SymbolType::Empty)
         return;
 
-    mVisitedSymbols.insert(name.c_str());
+    if (mVisitedSymbols.count(symbol->uniqueId().get()) == 1)
+        return;
 
+    mVisitedSymbols.insert(symbol->uniqueId().get());
+
+    TQualifier qualifier = symbol->getQualifier();
     if (qualifier == EvqFragmentOut)
     {
         if (symbol->getType().getLayoutQualifier().location != -1)
@@ -90,33 +91,42 @@ void ValidateOutputsTraverser::visitSymbol(TIntermSymbol *symbol)
 void ValidateOutputsTraverser::validate(TDiagnostics *diagnostics) const
 {
     ASSERT(diagnostics);
-    OutputVector validOutputs(mMaxDrawBuffers);
+    OutputVector validOutputs(mMaxDrawBuffers, nullptr);
+    OutputVector validSecondaryOutputs(mMaxDrawBuffers, nullptr);
 
     for (const auto &symbol : mOutputs)
     {
-        const TType &type         = symbol->getType();
+        const TType &type = symbol->getType();
         ASSERT(!type.isArrayOfArrays());  // Disallowed in GLSL ES 3.10 section 4.3.6.
         const size_t elementCount =
             static_cast<size_t>(type.isArray() ? type.getOutermostArraySize() : 1u);
-        const size_t location     = static_cast<size_t>(type.getLayoutQualifier().location);
+        const size_t location = static_cast<size_t>(type.getLayoutQualifier().location);
 
         ASSERT(type.getLayoutQualifier().location != -1);
 
-        if (location + elementCount <= validOutputs.size())
+        OutputVector *validOutputsToUse = &validOutputs;
+        // The default index is 0, so we only assign the output to secondary outputs in case the
+        // index is explicitly set to 1.
+        if (type.getLayoutQualifier().index == 1)
+        {
+            validOutputsToUse = &validSecondaryOutputs;
+        }
+
+        if (location + elementCount <= validOutputsToUse->size())
         {
             for (size_t elementIndex = 0; elementIndex < elementCount; elementIndex++)
             {
                 const size_t offsetLocation = location + elementIndex;
-                if (validOutputs[offsetLocation])
+                if ((*validOutputsToUse)[offsetLocation])
                 {
-                    std::stringstream strstr;
+                    std::stringstream strstr = sh::InitializeStream<std::stringstream>();
                     strstr << "conflicting output locations with previously defined output '"
-                           << validOutputs[offsetLocation]->getSymbol() << "'";
+                           << (*validOutputsToUse)[offsetLocation]->getName() << "'";
                     error(*symbol, strstr.str().c_str(), diagnostics);
                 }
                 else
                 {
-                    validOutputs[offsetLocation] = symbol;
+                    (*validOutputsToUse)[offsetLocation] = symbol;
                 }
             }
         }

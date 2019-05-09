@@ -20,9 +20,7 @@ ShaderExecutableD3D::ShaderExecutableD3D(const void *function, size_t length)
     memcpy(mFunctionBuffer.data(), function, length);
 }
 
-ShaderExecutableD3D::~ShaderExecutableD3D()
-{
-}
+ShaderExecutableD3D::~ShaderExecutableD3D() {}
 
 const uint8_t *ShaderExecutableD3D::getFunction() const
 {
@@ -53,9 +51,7 @@ UniformStorageD3D::UniformStorageD3D(size_t initialSize) : mUniformData()
     mUniformData.fill(0);
 }
 
-UniformStorageD3D::~UniformStorageD3D()
-{
-}
+UniformStorageD3D::~UniformStorageD3D() {}
 
 size_t UniformStorageD3D::size() const
 {

@@ -23,11 +23,11 @@ class PathGL : public PathImpl
     PathGL(const FunctionsGL *functions, GLuint path);
     ~PathGL() override;
 
-    gl::Error setCommands(GLsizei numCommands,
-                          const GLubyte *commands,
-                          GLsizei numCoords,
-                          GLenum coordType,
-                          const void *coords) override;
+    angle::Result setCommands(GLsizei numCommands,
+                              const GLubyte *commands,
+                              GLsizei numCoords,
+                              GLenum coordType,
+                              const void *coords) override;
 
     void setPathParameter(GLenum pname, GLfloat value) override;
 

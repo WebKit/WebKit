@@ -7,9 +7,9 @@
 //   Test for the pruning of unused function with the SH_PRUNE_UNUSED_FUNCTIONS compile flag
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -90,4 +90,4 @@ TEST_F(PruneUnusedFunctionsTest, UsedFunction)
     EXPECT_TRUE(foundInCode("main(", 1));
 }
 
-}
+}  // namespace

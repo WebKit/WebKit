@@ -28,8 +28,7 @@ TOutputESSL::TOutputESSL(TInfoSinkBase &objSink,
                       SH_ESSL_OUTPUT,
                       compileOptions),
       mForceHighp(forceHighp)
-{
-}
+{}
 
 bool TOutputESSL::writeVariablePrecision(TPrecision precision)
 {

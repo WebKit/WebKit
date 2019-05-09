@@ -14,28 +14,24 @@
 namespace rx
 {
 
-FenceNVNULL::FenceNVNULL() : FenceNVImpl()
+FenceNVNULL::FenceNVNULL() : FenceNVImpl() {}
+
+FenceNVNULL::~FenceNVNULL() {}
+
+angle::Result FenceNVNULL::set(const gl::Context *context, GLenum condition)
 {
+    return angle::Result::Continue;
 }
 
-FenceNVNULL::~FenceNVNULL()
-{
-}
-
-gl::Error FenceNVNULL::set(GLenum condition)
-{
-    return gl::NoError();
-}
-
-gl::Error FenceNVNULL::test(GLboolean *outFinished)
+angle::Result FenceNVNULL::test(const gl::Context *context, GLboolean *outFinished)
 {
     *outFinished = GL_TRUE;
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error FenceNVNULL::finish()
+angle::Result FenceNVNULL::finish(const gl::Context *context)
 {
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

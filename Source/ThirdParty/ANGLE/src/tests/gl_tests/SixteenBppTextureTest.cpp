@@ -50,28 +50,26 @@ class SixteenBppTextureTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vertexShaderSource =
-            R"(precision highp float;
-            attribute vec4 position;
-            varying vec2 texcoord;
+        constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_Position = vec4(position.xy, 0.0, 1.0);
-                texcoord = (position.xy * 0.5) + 0.5;
-            })";
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
 
-        const std::string fragmentShaderSource2D =
-            R"(precision highp float;
-            uniform sampler2D tex;
-            varying vec2 texcoord;
+        constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D tex;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_FragColor = texture2D(tex, texcoord);
-            })";
+void main()
+{
+    gl_FragColor = texture2D(tex, texcoord);
+})";
 
-        m2DProgram = CompileProgram(vertexShaderSource, fragmentShaderSource2D);
+        m2DProgram                = CompileProgram(kVS, kFS);
         mTexture2DUniformLocation = glGetUniformLocation(m2DProgram, "tex");
     }
 
@@ -142,8 +140,7 @@ class SixteenBppTextureTest : public ANGLETest
 };
 
 class SixteenBppTextureTestES3 : public SixteenBppTextureTest
-{
-};
+{};
 
 // Simple validation test for GL_RGB565 textures.
 // Samples from the texture, renders to it, generates mipmaps etc.
@@ -176,12 +173,11 @@ TEST_P(SixteenBppTextureTest, RGB565Validation)
 // Samples from the texture, renders to it, generates mipmaps etc.
 TEST_P(SixteenBppTextureTest, RGBA5551Validation)
 {
-    GLushort pixels[4] =
-    {
-        0xF801, // Red
-        0x07C1, // Green
-        0x003F, // Blue
-        0xFFC1  // Red + Green
+    GLushort pixels[4] = {
+        0xF801,  // Red
+        0x07C1,  // Green
+        0x003F,  // Blue
+        0xFFC1   // Red + Green
     };
 
     // Create a simple 5551 texture
@@ -237,12 +233,11 @@ TEST_P(SixteenBppTextureTest, RGBA5551ClearAlpha)
 // Samples from the texture, renders to it, generates mipmaps etc.
 TEST_P(SixteenBppTextureTest, RGBA4444Validation)
 {
-    GLushort pixels[4] =
-    {
-        0xF00F, // Red
-        0x0F0F, // Green
-        0x00FF, // Blue
-        0xFF0F  // Red + Green
+    GLushort pixels[4] = {
+        0xF00F,  // Red
+        0x0F0F,  // Green
+        0x00FF,  // Blue
+        0xFF0F   // Red + Green
     };
 
     glClearColor(0, 0, 0, 0);
@@ -358,11 +353,7 @@ TEST_P(SixteenBppTextureTestES3, RGB5A1UploadRGB10A2)
 TEST_P(SixteenBppTextureTestES3, RGBA4FramebufferReadback)
 {
     // TODO(jmadill): Fix bug with GLES
-    if (IsOpenGLES())
-    {
-        std::cout << "Test skipped on GLES." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsOpenGLES());
 
     Vector4 rawColor(0.5f, 0.7f, 1.0f, 0.0f);
     GLColor expectedColor(rawColor);
@@ -416,11 +407,7 @@ TEST_P(SixteenBppTextureTestES3, RGBA4FramebufferReadback)
 TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
 {
     // TODO(jmadill): Fix bug with GLES
-    if (IsOpenGLES())
-    {
-        std::cout << "Test skipped on GLES." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsOpenGLES());
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
@@ -431,7 +418,7 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
     fourColors.push_back(GLColor::blue);
     fourColors.push_back(GLColor::white);
 
-    const std::string &vertexShader =
+    constexpr char kVS[] =
         "#version 300 es\n"
         "in vec4 color;\n"
         "in vec2 position;\n"
@@ -440,7 +427,7 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
         "    fcolor = color;\n"
         "    gl_Position = vec4(position, 0.5, 1.0);\n"
         "}";
-    const std::string &fragmentShader =
+    constexpr char kFS[] =
         "#version 300 es\n"
         "in mediump vec4 fcolor;\n"
         "out mediump vec4 color;\n"
@@ -448,7 +435,7 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
         "    color = fcolor;\n"
         "}";
 
-    GLuint program = CompileProgram(vertexShader, fragmentShader);
+    GLuint program = CompileProgram(kVS, kFS);
     glUseProgram(program);
 
     GLint colorLocation = glGetAttribLocation(program, "color");
@@ -496,14 +483,16 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
     glDeleteProgram(program);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(SixteenBppTextureTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
-                       ES2_OPENGLES());
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());
 
 ANGLE_INSTANTIATE_TEST(SixteenBppTextureTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 
-} // namespace
+}  // namespace

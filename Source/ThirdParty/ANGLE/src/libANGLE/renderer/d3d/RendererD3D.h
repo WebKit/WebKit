@@ -14,10 +14,9 @@
 #include "common/Color.h"
 #include "common/MemoryBuffer.h"
 #include "common/debug.h"
-#include "libANGLE/ContextState.h"
 #include "libANGLE/Device.h"
+#include "libANGLE/State.h"
 #include "libANGLE/Version.h"
-#include "libANGLE/WorkerThread.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
@@ -32,11 +31,12 @@ class ConfigSet;
 
 namespace gl
 {
+class ErrorSet;
 class FramebufferState;
 class InfoLog;
 class Texture;
 struct LinkedVarying;
-}
+}  // namespace gl
 
 namespace rx
 {
@@ -73,6 +73,52 @@ enum RendererClass
     RENDERER_D3D9
 };
 
+// A d3d::Context wraps error handling.
+namespace d3d
+{
+class Context : angle::NonCopyable
+{
+  public:
+    Context() {}
+    virtual ~Context() {}
+
+    virtual void handleResult(HRESULT hr,
+                              const char *message,
+                              const char *file,
+                              const char *function,
+                              unsigned int line) = 0;
+};
+}  // namespace d3d
+
+// ANGLE_TRY for HRESULT errors.
+#define ANGLE_TRY_HR(CONTEXT, EXPR, MESSAGE)                                                     \
+    do                                                                                           \
+    {                                                                                            \
+        auto ANGLE_LOCAL_VAR = (EXPR);                                                           \
+        if (ANGLE_UNLIKELY(FAILED(ANGLE_LOCAL_VAR)))                                             \
+        {                                                                                        \
+            CONTEXT->handleResult(ANGLE_LOCAL_VAR, MESSAGE, __FILE__, ANGLE_FUNCTION, __LINE__); \
+            return angle::Result::Stop;                                                          \
+        }                                                                                        \
+    } while (0)
+
+#define ANGLE_CHECK_HR(CONTEXT, EXPR, MESSAGE, ERROR)                                  \
+    do                                                                                 \
+    {                                                                                  \
+        if (ANGLE_UNLIKELY(!(EXPR)))                                                   \
+        {                                                                              \
+            CONTEXT->handleResult(ERROR, MESSAGE, __FILE__, ANGLE_FUNCTION, __LINE__); \
+            return angle::Result::Stop;                                                \
+        }                                                                              \
+    } while (0)
+
+#define ANGLE_HR_UNREACHABLE(context) \
+    UNREACHABLE();                    \
+    ANGLE_CHECK_HR(context, false, "Unreachble code reached.", E_FAIL)
+
+// Check if the device is lost every 10 failures to get the query data
+constexpr unsigned int kPollingD3DDeviceLostCheckFrequency = 10;
+
 // Useful for unit testing
 class BufferFactoryD3D : angle::NonCopyable
 {
@@ -81,24 +127,25 @@ class BufferFactoryD3D : angle::NonCopyable
     virtual ~BufferFactoryD3D() {}
 
     virtual VertexBuffer *createVertexBuffer() = 0;
-    virtual IndexBuffer *createIndexBuffer() = 0;
+    virtual IndexBuffer *createIndexBuffer()   = 0;
 
     // TODO(jmadill): add VertexFormatCaps
-    virtual VertexConversionType getVertexConversionType(gl::VertexFormatType vertexFormatType) const = 0;
-    virtual GLenum getVertexComponentType(gl::VertexFormatType vertexFormatType) const = 0;
+    virtual VertexConversionType getVertexConversionType(angle::FormatID vertexFormatID) const = 0;
+    virtual GLenum getVertexComponentType(angle::FormatID vertexFormatID) const                = 0;
 
     // Warning: you should ensure binding really matches attrib.bindingIndex before using this
     // function.
-    virtual gl::ErrorOrResult<unsigned int> getVertexSpaceRequired(
-        const gl::VertexAttribute &attrib,
-        const gl::VertexBinding &binding,
-        GLsizei count,
-        GLsizei instances) const = 0;
+    virtual angle::Result getVertexSpaceRequired(const gl::Context *context,
+                                                 const gl::VertexAttribute &attrib,
+                                                 const gl::VertexBinding &binding,
+                                                 size_t count,
+                                                 GLsizei instances,
+                                                 unsigned int *bytesRequiredOut) const = 0;
 };
 
-using AttribIndexArray = std::array<int, gl::MAX_VERTEX_ATTRIBS>;
+using AttribIndexArray = gl::AttribArray<int>;
 
-class RendererD3D : public BufferFactoryD3D, public MultisampleTextureInitializer
+class RendererD3D : public BufferFactoryD3D
 {
   public:
     explicit RendererD3D(egl::Display *display);
@@ -106,20 +153,20 @@ class RendererD3D : public BufferFactoryD3D, public MultisampleTextureInitialize
 
     virtual egl::Error initialize() = 0;
 
-    virtual egl::ConfigSet generateConfigs() = 0;
+    virtual egl::ConfigSet generateConfigs()                                            = 0;
     virtual void generateDisplayExtensions(egl::DisplayExtensions *outExtensions) const = 0;
 
-    virtual ContextImpl *createContext(const gl::ContextState &state) = 0;
+    virtual ContextImpl *createContext(const gl::State &state, gl::ErrorSet *errorSet) = 0;
 
     std::string getVendorString() const;
 
-    virtual int getMinorShaderModel() const = 0;
+    virtual int getMinorShaderModel() const          = 0;
     virtual std::string getShaderModelSuffix() const = 0;
 
     // Direct3D Specific methods
     virtual DeviceIdentifier getAdapterIdentifier() const = 0;
 
-    virtual bool isValidNativeWindow(EGLNativeWindowType window) const = 0;
+    virtual bool isValidNativeWindow(EGLNativeWindowType window) const                  = 0;
     virtual NativeWindowD3D *createNativeWindow(EGLNativeWindowType window,
                                                 const egl::Config *config,
                                                 const egl::AttributeMap &attribs) const = 0;
@@ -130,12 +177,12 @@ class RendererD3D : public BufferFactoryD3D, public MultisampleTextureInitialize
                                           GLenum backBufferFormat,
                                           GLenum depthBufferFormat,
                                           EGLint orientation,
-                                          EGLint samples) = 0;
+                                          EGLint samples)                          = 0;
     virtual egl::Error getD3DTextureInfo(const egl::Config *configuration,
                                          IUnknown *d3dTexture,
                                          EGLint *width,
                                          EGLint *height,
-                                         GLenum *fboFormat) const = 0;
+                                         const angle::Format **angleFormat) const  = 0;
     virtual egl::Error validateShareHandle(const egl::Config *config,
                                            HANDLE shareHandle,
                                            const egl::AttributeMap &attribs) const = 0;
@@ -145,145 +192,183 @@ class RendererD3D : public BufferFactoryD3D, public MultisampleTextureInitialize
     const angle::WorkaroundsD3D &getWorkarounds() const;
 
     // Pixel operations
-    virtual gl::Error copyImage2D(const gl::Context *context,
-                                  const gl::Framebuffer *framebuffer,
-                                  const gl::Rectangle &sourceRect,
-                                  GLenum destFormat,
-                                  const gl::Offset &destOffset,
-                                  TextureStorage *storage,
-                                  GLint level) = 0;
-    virtual gl::Error copyImageCube(const gl::Context *context,
-                                    const gl::Framebuffer *framebuffer,
-                                    const gl::Rectangle &sourceRect,
-                                    GLenum destFormat,
-                                    const gl::Offset &destOffset,
-                                    TextureStorage *storage,
-                                    GLenum target,
-                                    GLint level) = 0;
-    virtual gl::Error copyImage3D(const gl::Context *context,
-                                  const gl::Framebuffer *framebuffer,
-                                  const gl::Rectangle &sourceRect,
-                                  GLenum destFormat,
-                                  const gl::Offset &destOffset,
-                                  TextureStorage *storage,
-                                  GLint level) = 0;
-    virtual gl::Error copyImage2DArray(const gl::Context *context,
-                                       const gl::Framebuffer *framebuffer,
-                                       const gl::Rectangle &sourceRect,
-                                       GLenum destFormat,
-                                       const gl::Offset &destOffset,
-                                       TextureStorage *storage,
-                                       GLint level) = 0;
+    virtual angle::Result copyImage2D(const gl::Context *context,
+                                      const gl::Framebuffer *framebuffer,
+                                      const gl::Rectangle &sourceRect,
+                                      GLenum destFormat,
+                                      const gl::Offset &destOffset,
+                                      TextureStorage *storage,
+                                      GLint level)      = 0;
+    virtual angle::Result copyImageCube(const gl::Context *context,
+                                        const gl::Framebuffer *framebuffer,
+                                        const gl::Rectangle &sourceRect,
+                                        GLenum destFormat,
+                                        const gl::Offset &destOffset,
+                                        TextureStorage *storage,
+                                        gl::TextureTarget target,
+                                        GLint level)    = 0;
+    virtual angle::Result copyImage3D(const gl::Context *context,
+                                      const gl::Framebuffer *framebuffer,
+                                      const gl::Rectangle &sourceRect,
+                                      GLenum destFormat,
+                                      const gl::Offset &destOffset,
+                                      TextureStorage *storage,
+                                      GLint level)      = 0;
+    virtual angle::Result copyImage2DArray(const gl::Context *context,
+                                           const gl::Framebuffer *framebuffer,
+                                           const gl::Rectangle &sourceRect,
+                                           GLenum destFormat,
+                                           const gl::Offset &destOffset,
+                                           TextureStorage *storage,
+                                           GLint level) = 0;
 
-    virtual gl::Error copyTexture(const gl::Context *context,
-                                  const gl::Texture *source,
-                                  GLint sourceLevel,
-                                  const gl::Rectangle &sourceRect,
-                                  GLenum destFormat,
-                                  const gl::Offset &destOffset,
-                                  TextureStorage *storage,
-                                  GLenum destTarget,
-                                  GLint destLevel,
-                                  bool unpackFlipY,
-                                  bool unpackPremultiplyAlpha,
-                                  bool unpackUnmultiplyAlpha) = 0;
-    virtual gl::Error copyCompressedTexture(const gl::Context *context,
-                                            const gl::Texture *source,
-                                            GLint sourceLevel,
-                                            TextureStorage *storage,
-                                            GLint destLevel) = 0;
+    virtual angle::Result copyTexture(const gl::Context *context,
+                                      const gl::Texture *source,
+                                      GLint sourceLevel,
+                                      gl::TextureTarget srcTarget,
+                                      const gl::Box &sourceBox,
+                                      GLenum destFormat,
+                                      GLenum destType,
+                                      const gl::Offset &destOffset,
+                                      TextureStorage *storage,
+                                      gl::TextureTarget destTarget,
+                                      GLint destLevel,
+                                      bool unpackFlipY,
+                                      bool unpackPremultiplyAlpha,
+                                      bool unpackUnmultiplyAlpha) = 0;
+    virtual angle::Result copyCompressedTexture(const gl::Context *context,
+                                                const gl::Texture *source,
+                                                GLint sourceLevel,
+                                                TextureStorage *storage,
+                                                GLint destLevel)  = 0;
 
     // RenderTarget creation
-    virtual gl::Error createRenderTarget(int width, int height, GLenum format, GLsizei samples, RenderTargetD3D **outRT) = 0;
-    virtual gl::Error createRenderTargetCopy(RenderTargetD3D *source, RenderTargetD3D **outRT) = 0;
+    virtual angle::Result createRenderTarget(const gl::Context *context,
+                                             int width,
+                                             int height,
+                                             GLenum format,
+                                             GLsizei samples,
+                                             RenderTargetD3D **outRT)     = 0;
+    virtual angle::Result createRenderTargetCopy(const gl::Context *context,
+                                                 RenderTargetD3D *source,
+                                                 RenderTargetD3D **outRT) = 0;
 
     // Shader operations
-    virtual gl::Error loadExecutable(const uint8_t *function,
-                                     size_t length,
-                                     gl::ShaderType type,
-                                     const std::vector<D3DVarying> &streamOutVaryings,
-                                     bool separatedOutputBuffers,
-                                     ShaderExecutableD3D **outExecutable)      = 0;
-    virtual gl::Error compileToExecutable(gl::InfoLog &infoLog,
-                                          const std::string &shaderHLSL,
-                                          gl::ShaderType type,
-                                          const std::vector<D3DVarying> &streamOutVaryings,
-                                          bool separatedOutputBuffers,
-                                          const angle::CompilerWorkaroundsD3D &workarounds,
-                                          ShaderExecutableD3D **outExectuable) = 0;
-    virtual gl::Error ensureHLSLCompilerInitialized()                          = 0;
+    virtual angle::Result loadExecutable(d3d::Context *context,
+                                         const uint8_t *function,
+                                         size_t length,
+                                         gl::ShaderType type,
+                                         const std::vector<D3DVarying> &streamOutVaryings,
+                                         bool separatedOutputBuffers,
+                                         ShaderExecutableD3D **outExecutable)      = 0;
+    virtual angle::Result compileToExecutable(d3d::Context *context,
+                                              gl::InfoLog &infoLog,
+                                              const std::string &shaderHLSL,
+                                              gl::ShaderType type,
+                                              const std::vector<D3DVarying> &streamOutVaryings,
+                                              bool separatedOutputBuffers,
+                                              const angle::CompilerWorkaroundsD3D &workarounds,
+                                              ShaderExecutableD3D **outExectuable) = 0;
+    virtual angle::Result ensureHLSLCompilerInitialized(d3d::Context *context)     = 0;
 
     virtual UniformStorageD3D *createUniformStorage(size_t storageSize) = 0;
 
     // Image operations
-    virtual ImageD3D *createImage() = 0;
-    virtual gl::Error generateMipmap(const gl::Context *context,
-                                     ImageD3D *dest,
-                                     ImageD3D *source) = 0;
-    virtual gl::Error generateMipmapUsingD3D(const gl::Context *context,
-                                             TextureStorage *storage,
-                                             const gl::TextureState &textureState) = 0;
-    virtual gl::Error copyImage(const gl::Context *context,
-                                ImageD3D *dest,
-                                ImageD3D *source,
-                                const gl::Rectangle &sourceRect,
-                                const gl::Offset &destOffset,
-                                bool unpackFlipY,
-                                bool unpackPremultiplyAlpha,
-                                bool unpackUnmultiplyAlpha)                 = 0;
-    virtual TextureStorage *createTextureStorage2D(SwapChainD3D *swapChain) = 0;
+    virtual ImageD3D *createImage()                                                        = 0;
+    virtual angle::Result generateMipmap(const gl::Context *context,
+                                         ImageD3D *dest,
+                                         ImageD3D *source)                                 = 0;
+    virtual angle::Result generateMipmapUsingD3D(const gl::Context *context,
+                                                 TextureStorage *storage,
+                                                 const gl::TextureState &textureState)     = 0;
+    virtual angle::Result copyImage(const gl::Context *context,
+                                    ImageD3D *dest,
+                                    ImageD3D *source,
+                                    const gl::Box &sourceBox,
+                                    const gl::Offset &destOffset,
+                                    bool unpackFlipY,
+                                    bool unpackPremultiplyAlpha,
+                                    bool unpackUnmultiplyAlpha)                            = 0;
+    virtual TextureStorage *createTextureStorage2D(SwapChainD3D *swapChain)                = 0;
     virtual TextureStorage *createTextureStorageEGLImage(EGLImageD3D *eglImage,
                                                          RenderTargetD3D *renderTargetD3D) = 0;
     virtual TextureStorage *createTextureStorageExternal(
         egl::Stream *stream,
-        const egl::Stream::GLTextureDescription &desc) = 0;
-    virtual TextureStorage *createTextureStorage2D(GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, int levels, bool hintLevelZeroOnly) = 0;
-    virtual TextureStorage *createTextureStorageCube(GLenum internalformat, bool renderTarget, int size, int levels, bool hintLevelZeroOnly) = 0;
-    virtual TextureStorage *createTextureStorage3D(GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, GLsizei depth, int levels) = 0;
-    virtual TextureStorage *createTextureStorage2DArray(GLenum internalformat, bool renderTarget, GLsizei width, GLsizei height, GLsizei depth, int levels) = 0;
+        const egl::Stream::GLTextureDescription &desc)                                        = 0;
+    virtual TextureStorage *createTextureStorage2D(GLenum internalformat,
+                                                   bool renderTarget,
+                                                   GLsizei width,
+                                                   GLsizei height,
+                                                   int levels,
+                                                   bool hintLevelZeroOnly)                    = 0;
+    virtual TextureStorage *createTextureStorageCube(GLenum internalformat,
+                                                     bool renderTarget,
+                                                     int size,
+                                                     int levels,
+                                                     bool hintLevelZeroOnly)                  = 0;
+    virtual TextureStorage *createTextureStorage3D(GLenum internalformat,
+                                                   bool renderTarget,
+                                                   GLsizei width,
+                                                   GLsizei height,
+                                                   GLsizei depth,
+                                                   int levels)                                = 0;
+    virtual TextureStorage *createTextureStorage2DArray(GLenum internalformat,
+                                                        bool renderTarget,
+                                                        GLsizei width,
+                                                        GLsizei height,
+                                                        GLsizei depth,
+                                                        int levels)                           = 0;
     virtual TextureStorage *createTextureStorage2DMultisample(GLenum internalformat,
                                                               GLsizei width,
                                                               GLsizei height,
                                                               int levels,
                                                               int samples,
-                                                              bool fixedSampleLocations) = 0;
+                                                              bool fixedSampleLocations)      = 0;
+    virtual TextureStorage *createTextureStorage2DMultisampleArray(GLenum internalformat,
+                                                                   GLsizei width,
+                                                                   GLsizei height,
+                                                                   GLsizei depth,
+                                                                   int levels,
+                                                                   int samples,
+                                                                   bool fixedSampleLocations) = 0;
 
     // Buffer-to-texture and Texture-to-buffer copies
     virtual bool supportsFastCopyBufferToTexture(GLenum internalFormat) const = 0;
-    virtual gl::Error fastCopyBufferToTexture(const gl::Context *context,
-                                              const gl::PixelUnpackState &unpack,
-                                              unsigned int offset,
-                                              RenderTargetD3D *destRenderTarget,
-                                              GLenum destinationFormat,
-                                              GLenum sourcePixelsType,
-                                              const gl::Box &destArea) = 0;
+    virtual angle::Result fastCopyBufferToTexture(const gl::Context *context,
+                                                  const gl::PixelUnpackState &unpack,
+                                                  unsigned int offset,
+                                                  RenderTargetD3D *destRenderTarget,
+                                                  GLenum destinationFormat,
+                                                  GLenum sourcePixelsType,
+                                                  const gl::Box &destArea)    = 0;
 
     // Device lost
-    GLenum getResetStatus();
+    gl::GraphicsResetStatus getResetStatus();
     void notifyDeviceLost();
-    virtual bool resetDevice() = 0;
+    virtual bool resetDevice()          = 0;
     virtual bool testDeviceLost()       = 0;
     virtual bool testDeviceResettable() = 0;
 
     virtual RendererClass getRendererClass() const = 0;
-    virtual void *getD3DDevice() = 0;
+    virtual void *getD3DDevice()                   = 0;
 
     void setGPUDisjoint();
 
     GLint getGPUDisjoint();
     GLint64 getTimestamp();
 
-    virtual gl::Error clearRenderTarget(RenderTargetD3D *renderTarget,
-                                        const gl::ColorF &clearColorValue,
-                                        const float clearDepthValue,
-                                        const unsigned int clearStencilValue) = 0;
+    virtual angle::Result clearRenderTarget(const gl::Context *context,
+                                            RenderTargetD3D *renderTarget,
+                                            const gl::ColorF &clearColorValue,
+                                            const float clearDepthValue,
+                                            const unsigned int clearStencilValue) = 0;
 
-    virtual egl::Error getEGLDevice(DeviceImpl **device) = 0;
+    virtual DeviceImpl *createEGLDevice() = 0;
 
     bool presentPathFastEnabled() const { return mPresentPathFastEnabled; }
 
     // Stream creation
-    virtual StreamProducerImpl *createStreamProducerD3DTextureNV12(
+    virtual StreamProducerImpl *createStreamProducerD3DTexture(
         egl::Stream::ConsumerType consumerType,
         const egl::AttributeMap &attribs) = 0;
 
@@ -297,31 +382,24 @@ class RendererD3D : public BufferFactoryD3D, public MultisampleTextureInitialize
 
     virtual gl::Version getMaxSupportedESVersion() const = 0;
 
-    gl::Error initRenderTarget(RenderTargetD3D *renderTarget);
+    angle::Result initRenderTarget(const gl::Context *context, RenderTargetD3D *renderTarget);
 
-    angle::WorkerThreadPool *getWorkerThreadPool();
-
-    gl::Error getIncompleteTexture(const gl::Context *context,
-                                   GLenum type,
-                                   gl::Texture **textureOut);
+    virtual angle::Result getIncompleteTexture(const gl::Context *context,
+                                               gl::TextureType type,
+                                               gl::Texture **textureOut) = 0;
 
     Serial generateSerial();
 
     virtual bool canSelectViewInVertexShader() const = 0;
 
-    gl::Error initializeMultisampleTextureToBlack(const gl::Context *context,
-                                                  gl::Texture *glTexture) override;
-
   protected:
-    virtual bool getLUID(LUID *adapterLuid) const = 0;
+    virtual bool getLUID(LUID *adapterLuid) const                    = 0;
     virtual void generateCaps(gl::Caps *outCaps,
                               gl::TextureCapsMap *outTextureCaps,
                               gl::Extensions *outExtensions,
                               gl::Limitations *outLimitations) const = 0;
 
-    void cleanup();
-
-    bool skipDraw(const gl::State &glState, GLenum drawMode);
+    bool skipDraw(const gl::State &glState, gl::PrimitiveMode drawMode);
 
     egl::Display *mDisplay;
 
@@ -338,22 +416,18 @@ class RendererD3D : public BufferFactoryD3D, public MultisampleTextureInitialize
     mutable gl::Extensions mNativeExtensions;
     mutable gl::Limitations mNativeLimitations;
 
-    IncompleteTextureSet mIncompleteTextures;
-
     mutable bool mWorkaroundsInitialized;
     mutable angle::WorkaroundsD3D mWorkarounds;
 
     bool mDisjoint;
     bool mDeviceLost;
 
-    angle::WorkerThreadPool mWorkerThreadPool;
-
     SerialFactory mSerialFactory;
 };
 
 unsigned int GetBlendSampleMask(const gl::State &glState, int samples);
-bool InstancedPointSpritesActive(ProgramD3D *programD3D, GLenum mode);
-
+bool InstancedPointSpritesActive(ProgramD3D *programD3D, gl::PrimitiveMode mode);
+GLenum DefaultGLErrorCode(HRESULT hr);
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_RENDERERD3D_H_
+#endif  // LIBANGLE_RENDERER_D3D_RENDERERD3D_H_

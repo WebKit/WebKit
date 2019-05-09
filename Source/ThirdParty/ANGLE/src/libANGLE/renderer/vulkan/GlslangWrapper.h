@@ -9,33 +9,40 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_GLSLANG_WRAPPER_H_
 #define LIBANGLE_RENDERER_VULKAN_GLSLANG_WRAPPER_H_
 
-#include "libANGLE/RefCountObject.h"
 #include "libANGLE/renderer/ProgramImpl.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
 {
-
-class GlslangWrapper : public gl::RefCountObjectNoID
+// This class currently holds no state. If we want to hold state we would need to solve the
+// potential race conditions with multiple threads.
+class GlslangWrapper
 {
   public:
-    // Increases the reference count.
-    // TODO(jmadill): Determine how to handle this atomically.
-    static GlslangWrapper *GetReference();
-    static void ReleaseReference();
+    static void Initialize();
+    static void Release();
 
-    gl::LinkResult linkProgram(const gl::Context *glContext,
-                               const gl::ProgramState &programState,
-                               const gl::ProgramLinkedResources &resources,
-                               std::vector<uint32_t> *vertexCodeOut,
-                               std::vector<uint32_t> *fragmentCodeOut);
+    static void GetShaderSource(const gl::ProgramState &programState,
+                                const gl::ProgramLinkedResources &resources,
+                                std::string *vertexSourceOut,
+                                std::string *fragmentSourceOut);
+
+    static angle::Result GetShaderCode(vk::Context *context,
+                                       const gl::Caps &glCaps,
+                                       bool enableLineRasterEmulation,
+                                       const std::string &vertexSource,
+                                       const std::string &fragmentSource,
+                                       std::vector<uint32_t> *vertexCodeOut,
+                                       std::vector<uint32_t> *fragmentCodeOut);
 
   private:
-    GlslangWrapper();
-    ~GlslangWrapper() override;
-
-    static GlslangWrapper *mInstance;
+    static angle::Result GetShaderCodeImpl(vk::Context *context,
+                                           const gl::Caps &glCaps,
+                                           const std::string &vertexSource,
+                                           const std::string &fragmentSource,
+                                           std::vector<uint32_t> *vertexCodeOut,
+                                           std::vector<uint32_t> *fragmentCodeOut);
 };
-
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_VULKAN_GLSLANG_WRAPPER_H_

@@ -7,10 +7,10 @@
 //   Some tests for shader inspection
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "compiler/translator/Compiler.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 
 namespace sh
 {
@@ -26,22 +26,22 @@ TEST(ShaderVariableTest, FindInfoByMappedName)
     // };
     // B uni[2];
     ShaderVariable uni(0, 2);
-    uni.name = "uni";
+    uni.name       = "uni";
     uni.mappedName = "m_uni";
     uni.structName = "B";
     {
         ShaderVariable a(0, 3);
-        a.name = "a";
+        a.name       = "a";
         a.mappedName = "m_a";
         a.structName = "A";
         {
             ShaderVariable x(GL_FLOAT, 2);
-            x.name = "x";
+            x.name       = "x";
             x.mappedName = "m_x";
             a.fields.push_back(x);
 
             ShaderVariable y(GL_FLOAT_VEC3);
-            y.name = "y";
+            y.name       = "y";
             y.mappedName = "m_y";
             a.fields.push_back(y);
         }
@@ -52,34 +52,28 @@ TEST(ShaderVariableTest, FindInfoByMappedName)
     std::string originalFullName;
 
     std::string mappedFullName = "wrongName";
-    EXPECT_FALSE(uni.findInfoByMappedName(
-        mappedFullName, &leafVar, &originalFullName));
+    EXPECT_FALSE(uni.findInfoByMappedName(mappedFullName, &leafVar, &originalFullName));
 
     mappedFullName = "m_uni";
-    EXPECT_TRUE(uni.findInfoByMappedName(
-        mappedFullName, &leafVar, &originalFullName));
+    EXPECT_TRUE(uni.findInfoByMappedName(mappedFullName, &leafVar, &originalFullName));
     EXPECT_EQ(&uni, leafVar);
     EXPECT_STREQ("uni", originalFullName.c_str());
 
     mappedFullName = "m_uni[0].m_a[1].wrongName";
-    EXPECT_FALSE(uni.findInfoByMappedName(
-        mappedFullName, &leafVar, &originalFullName));
+    EXPECT_FALSE(uni.findInfoByMappedName(mappedFullName, &leafVar, &originalFullName));
 
     mappedFullName = "m_uni[0].m_a[1].m_x";
-    EXPECT_TRUE(uni.findInfoByMappedName(
-        mappedFullName, &leafVar, &originalFullName));
+    EXPECT_TRUE(uni.findInfoByMappedName(mappedFullName, &leafVar, &originalFullName));
     EXPECT_EQ(&(uni.fields[0].fields[0]), leafVar);
     EXPECT_STREQ("uni[0].a[1].x", originalFullName.c_str());
 
     mappedFullName = "m_uni[0].m_a[1].m_x[0]";
-    EXPECT_TRUE(uni.findInfoByMappedName(
-        mappedFullName, &leafVar, &originalFullName));
+    EXPECT_TRUE(uni.findInfoByMappedName(mappedFullName, &leafVar, &originalFullName));
     EXPECT_EQ(&(uni.fields[0].fields[0]), leafVar);
     EXPECT_STREQ("uni[0].a[1].x[0]", originalFullName.c_str());
 
     mappedFullName = "m_uni[0].m_a[1].m_y";
-    EXPECT_TRUE(uni.findInfoByMappedName(
-        mappedFullName, &leafVar, &originalFullName));
+    EXPECT_TRUE(uni.findInfoByMappedName(mappedFullName, &leafVar, &originalFullName));
     EXPECT_EQ(&(uni.fields[0].fields[1]), leafVar);
     EXPECT_STREQ("uni[0].a[1].y", originalFullName.c_str());
 }
@@ -92,17 +86,17 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
     // };
     // uniform A uni;
     Uniform vx_a;
-    vx_a.name = "uni";
+    vx_a.name       = "uni";
     vx_a.mappedName = "m_uni";
     vx_a.structName = "A";
     {
         ShaderVariable x(GL_FLOAT);
-        x.name = "x";
+        x.name       = "x";
         x.mappedName = "m_x";
         vx_a.fields.push_back(x);
 
         ShaderVariable y(GL_FLOAT);
-        y.name = "y";
+        y.name       = "y";
         y.mappedName = "m_y";
         vx_a.fields.push_back(y);
     }
@@ -113,17 +107,17 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
     // };
     // uniform A uni;
     Uniform fx_a;
-    fx_a.name = "uni";
+    fx_a.name       = "uni";
     fx_a.mappedName = "m_uni";
     fx_a.structName = "A";
     {
         ShaderVariable y(GL_FLOAT);
-        y.name = "y";
+        y.name       = "y";
         y.mappedName = "m_y";
         fx_a.fields.push_back(y);
 
         ShaderVariable x(GL_FLOAT);
-        x.name = "x";
+        x.name       = "x";
         x.mappedName = "m_x";
         fx_a.fields.push_back(x);
     }
@@ -139,17 +133,17 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
     // };
     // uniform A uni;
     Uniform vx_a;
-    vx_a.name = "uni";
+    vx_a.name       = "uni";
     vx_a.mappedName = "m_uni";
     vx_a.structName = "A";
     {
         ShaderVariable x(GL_FLOAT);
-        x.name = "x";
+        x.name       = "x";
         x.mappedName = "m_x";
         vx_a.fields.push_back(x);
 
         ShaderVariable y(GL_FLOAT);
-        y.name = "y";
+        y.name       = "y";
         y.mappedName = "m_y";
         vx_a.fields.push_back(y);
     }
@@ -160,16 +154,16 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
     // };
     // uniform B uni;
     Uniform fx_a;
-    fx_a.name = "uni";
+    fx_a.name       = "uni";
     fx_a.mappedName = "m_uni";
     {
         ShaderVariable x(GL_FLOAT);
-        x.name = "x";
+        x.name       = "x";
         x.mappedName = "m_x";
         fx_a.fields.push_back(x);
 
         ShaderVariable y(GL_FLOAT);
-        y.name = "y";
+        y.name       = "y";
         y.mappedName = "m_y";
         fx_a.fields.push_back(y);
     }
@@ -188,20 +182,20 @@ TEST(ShaderVariableTest, IsSameVaryingWithDifferentInvariance)
 {
     // invariant varying float vary;
     Varying vx;
-    vx.type = GL_FLOAT;
-    vx.precision = GL_MEDIUM_FLOAT;
-    vx.name = "vary";
-    vx.mappedName = "m_vary";
-    vx.staticUse = true;
+    vx.type        = GL_FLOAT;
+    vx.precision   = GL_MEDIUM_FLOAT;
+    vx.name        = "vary";
+    vx.mappedName  = "m_vary";
+    vx.staticUse   = true;
     vx.isInvariant = true;
 
     // varying float vary;
     Varying fx;
-    fx.type = GL_FLOAT;
-    fx.precision = GL_MEDIUM_FLOAT;
-    fx.name = "vary";
-    fx.mappedName = "m_vary";
-    fx.staticUse = true;
+    fx.type        = GL_FLOAT;
+    fx.precision   = GL_MEDIUM_FLOAT;
+    fx.name        = "vary";
+    fx.mappedName  = "m_vary";
+    fx.staticUse   = true;
     fx.isInvariant = false;
 
     // Default to ESSL1 behavior: invariance must match
@@ -227,16 +221,14 @@ TEST(ShaderVariableTest, InvariantDoubleDeleteBug)
                                               SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
-    const char *program[] =
-    {
+    const char *program[] = {
         "attribute vec4 position;\n"
         "varying float v;\n"
         "invariant v;\n"
         "void main() {\n"
         "  v = 1.0;\n"
         "  gl_Position = position;\n"
-        "}"
-    };
+        "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program, 1, SH_OBJECT_CODE));
     EXPECT_TRUE(sh::Compile(compiler, program, 1, SH_OBJECT_CODE));
@@ -263,8 +255,7 @@ TEST(ShaderVariableTest, IllegalInvariantVarying)
            foo();
            gl_Position = v_varying;
         })"};
-    const char *program2[] =
-    {
+    const char *program2[] = {
         "varying vec4 v_varying;\n"
         "void foo() {\n"
         "  invariant v_varying;\n"
@@ -272,8 +263,7 @@ TEST(ShaderVariableTest, IllegalInvariantVarying)
         "void main() {\n"
         "  foo();\n"
         "  gl_Position = v_varying;\n"
-        "}"
-    };
+        "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
     EXPECT_FALSE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
@@ -289,35 +279,35 @@ TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
                                               SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
-    const char *program1[] =
-    {
+    const char *program1[] = {
         "varying vec4 v_varying;\n"
         "invariant v_varying;\n"
         "void main() {\n"
         "  gl_Position = v_varying;\n"
-        "}"
-    };
-    const char *program2[] =
-    {
+        "}"};
+    const char *program2[] = {
         "varying vec4 v_varying;\n"
         "void main() {\n"
         "  gl_Position = v_varying;\n"
-        "}"
-    };
+        "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
     const std::vector<sh::Varying> *varyings = sh::GetOutputVaryings(compiler);
     for (const sh::Varying &varying : *varyings)
     {
         if (varying.name == "v_varying")
+        {
             EXPECT_TRUE(varying.isInvariant);
+        }
     }
     EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
     varyings = sh::GetOutputVaryings(compiler);
     for (const sh::Varying &varying : *varyings)
     {
         if (varying.name == "v_varying")
+        {
             EXPECT_FALSE(varying.isInvariant);
+        }
     }
     sh::Destruct(compiler);
 }
@@ -331,35 +321,35 @@ TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
                                               SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
-    const char *program1[] =
-    {
+    const char *program1[] = {
         "#pragma STDGL invariant(all)\n"
         "varying vec4 v_varying;\n"
         "void main() {\n"
         "  gl_Position = v_varying;\n"
-        "}"
-    };
-    const char *program2[] =
-    {
+        "}"};
+    const char *program2[] = {
         "varying vec4 v_varying;\n"
         "void main() {\n"
         "  gl_Position = v_varying;\n"
-        "}"
-    };
+        "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
     const std::vector<sh::Varying> *varyings = sh::GetOutputVaryings(compiler);
     for (const sh::Varying &varying : *varyings)
     {
         if (varying.name == "v_varying")
+        {
             EXPECT_TRUE(varying.isInvariant);
+        }
     }
     EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
     varyings = sh::GetOutputVaryings(compiler);
     for (const sh::Varying &varying : *varyings)
     {
         if (varying.name == "v_varying")
+        {
             EXPECT_FALSE(varying.isInvariant);
+        }
     }
     sh::Destruct(compiler);
 }
@@ -374,40 +364,38 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
                                               SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
-    const char *program1[] =
-    {
+    const char *program1[] = {
         "invariant gl_Position;\n"
         "void main() {\n"
         "  gl_Position = vec4(0, 0, 0, 0);\n"
-        "}"
-    };
-    const char *program2[] =
-    {
+        "}"};
+    const char *program2[] = {
         "void main() {\n"
         "  gl_Position = vec4(0, 0, 0, 0);\n"
-        "}"
-    };
-    const char *program3[] =
-    {
+        "}"};
+    const char *program3[] = {
         "void main() {\n"
         "  invariant gl_Position;\n"
         "  gl_Position = vec4(0, 0, 0, 0);\n"
-        "}"
-    };
+        "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
     const std::vector<sh::Varying> *varyings = sh::GetOutputVaryings(compiler);
     for (const sh::Varying &varying : *varyings)
     {
         if (varying.name == "gl_Position")
+        {
             EXPECT_TRUE(varying.isInvariant);
+        }
     }
     EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
     varyings = sh::GetOutputVaryings(compiler);
     for (const sh::Varying &varying : *varyings)
     {
         if (varying.name == "gl_Position")
+        {
             EXPECT_FALSE(varying.isInvariant);
+        }
     }
     EXPECT_FALSE(sh::Compile(compiler, program3, 1, SH_VARIABLES));
     sh::Destruct(compiler);

@@ -7,9 +7,9 @@
 //   Tests for writing the code for shader precision emulation.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -47,8 +47,7 @@ class NoDebugShaderPrecisionTest : public MatchOutputCodeTest
   public:
     NoDebugShaderPrecisionTest()
         : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_GLSL_COMPATIBILITY_OUTPUT)
-    {
-    }
+    {}
 };
 
 TEST_F(DebugShaderPrecisionTest, RoundingFunctionsDefined)
@@ -288,19 +287,17 @@ TEST_F(DebugShaderPrecisionTest, CompoundAddFunction)
         "   gl_FragColor = v;\n"
         "}\n";
     compile(shaderString);
-    ASSERT_TRUE(foundInESSLCode(
-        "highp vec4 angle_compound_add_frm(inout highp vec4 x, in highp vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) + y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "vec4 angle_compound_add_frm(inout vec4 x, in vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) + y);"
-    ));
+    ASSERT_TRUE(
+        foundInESSLCode("highp vec4 angle_compound_add_frm(inout highp vec4 x, in highp vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) + y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_add_frm(inout vec4 x, in vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) + y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_add_frm(inout float4 x, in float4 y) {\n"
                         "    x = angle_frm(angle_frm(x) + y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_add_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_add_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_add_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("+="));
 }
 
@@ -316,19 +313,17 @@ TEST_F(DebugShaderPrecisionTest, CompoundSubFunction)
         "   gl_FragColor = v;\n"
         "}\n";
     compile(shaderString);
-    ASSERT_TRUE(foundInESSLCode(
-        "highp vec4 angle_compound_sub_frm(inout highp vec4 x, in highp vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) - y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "vec4 angle_compound_sub_frm(inout vec4 x, in vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) - y);"
-    ));
+    ASSERT_TRUE(
+        foundInESSLCode("highp vec4 angle_compound_sub_frm(inout highp vec4 x, in highp vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) - y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_sub_frm(inout vec4 x, in vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) - y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_sub_frm(inout float4 x, in float4 y) {\n"
                         "    x = angle_frm(angle_frm(x) - y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_sub_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_sub_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_sub_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("-="));
 }
 
@@ -344,19 +339,17 @@ TEST_F(DebugShaderPrecisionTest, CompoundDivFunction)
         "   gl_FragColor = v;\n"
         "}\n";
     compile(shaderString);
-    ASSERT_TRUE(foundInESSLCode(
-        "highp vec4 angle_compound_div_frm(inout highp vec4 x, in highp vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) / y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "vec4 angle_compound_div_frm(inout vec4 x, in vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) / y);"
-    ));
+    ASSERT_TRUE(
+        foundInESSLCode("highp vec4 angle_compound_div_frm(inout highp vec4 x, in highp vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) / y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_div_frm(inout vec4 x, in vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) / y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_div_frm(inout float4 x, in float4 y) {\n"
                         "    x = angle_frm(angle_frm(x) / y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_div_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_div_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_div_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("/="));
 }
 
@@ -372,19 +365,17 @@ TEST_F(DebugShaderPrecisionTest, CompoundMulFunction)
         "   gl_FragColor = v;\n"
         "}\n";
     compile(shaderString);
-    ASSERT_TRUE(foundInESSLCode(
-        "highp vec4 angle_compound_mul_frm(inout highp vec4 x, in highp vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "vec4 angle_compound_mul_frm(inout vec4 x, in vec4 y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
+    ASSERT_TRUE(
+        foundInESSLCode("highp vec4 angle_compound_mul_frm(inout highp vec4 x, in highp vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_mul_frm(inout vec4 x, in vec4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_mul_frm(inout float4 x, in float4 y) {\n"
                         "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_mul_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("*="));
 }
 
@@ -402,17 +393,15 @@ TEST_F(DebugShaderPrecisionTest, CompoundAddVectorPlusScalarFunction)
     compile(shaderString);
     ASSERT_TRUE(foundInESSLCode(
         "highp vec4 angle_compound_add_frm(inout highp vec4 x, in highp float y) {\n"
-        "    x = angle_frm(angle_frm(x) + y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "vec4 angle_compound_add_frm(inout vec4 x, in float y) {\n"
-        "    x = angle_frm(angle_frm(x) + y);"
-    ));
+        "    x = angle_frm(angle_frm(x) + y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_add_frm(inout vec4 x, in float y) {\n"
+                        "    x = angle_frm(angle_frm(x) + y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_add_frm(inout float4 x, in float y) {\n"
                         "    x = angle_frm(angle_frm(x) + y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_add_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_add_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_add_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("+="));
 }
 
@@ -428,19 +417,17 @@ TEST_F(DebugShaderPrecisionTest, CompoundMatrixTimesMatrixFunction)
         "   gl_FragColor = m[0];\n"
         "}\n";
     compile(shaderString);
-    ASSERT_TRUE(foundInESSLCode(
-        "highp mat4 angle_compound_mul_frm(inout highp mat4 x, in highp mat4 y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "mat4 angle_compound_mul_frm(inout mat4 x, in mat4 y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
+    ASSERT_TRUE(
+        foundInESSLCode("highp mat4 angle_compound_mul_frm(inout highp mat4 x, in highp mat4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("mat4 angle_compound_mul_frm(inout mat4 x, in mat4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4x4 angle_compound_mul_frm(inout float4x4 x, in float4x4 y) {\n"
                         "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_mul_frm(_um, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_m, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_m1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("*="));
 }
 
@@ -470,7 +457,7 @@ TEST_F(DebugShaderPrecisionTest, CompoundNonSquareMatrixTimesMatrixFunction)
         foundInHLSLCode("float2x4 angle_compound_mul_frm(inout float2x4 x, in float2x2 y) {\n"
                         "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_mul_frm(_um, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_m, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_m1031, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("*="));
 }
 
@@ -488,17 +475,15 @@ TEST_F(DebugShaderPrecisionTest, CompoundMatrixTimesScalarFunction)
     compile(shaderString);
     ASSERT_TRUE(foundInESSLCode(
         "highp mat4 angle_compound_mul_frm(inout highp mat4 x, in highp float y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "mat4 angle_compound_mul_frm(inout mat4 x, in float y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
+        "    x = angle_frm(angle_frm(x) * y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("mat4 angle_compound_mul_frm(inout mat4 x, in float y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4x4 angle_compound_mul_frm(inout float4x4 x, in float y) {\n"
                         "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_mul_frm(_um, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_m, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_m1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("*="));
 }
 
@@ -514,18 +499,17 @@ TEST_F(DebugShaderPrecisionTest, CompoundVectorTimesMatrixFunction)
         "   gl_FragColor = v;\n"
         "}\n";
     compile(shaderString);
-    ASSERT_TRUE(foundInESSLCode(
-        "highp vec4 angle_compound_mul_frm(inout highp vec4 x, in highp mat4 y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode("vec4 angle_compound_mul_frm(inout vec4 x, in mat4 y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
+    ASSERT_TRUE(
+        foundInESSLCode("highp vec4 angle_compound_mul_frm(inout highp vec4 x, in highp mat4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_mul_frm(inout vec4 x, in mat4 y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_mul_frm(inout float4 x, in float4x4 y) {\n"
                         "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_mul_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("*="));
 }
 
@@ -543,17 +527,15 @@ TEST_F(DebugShaderPrecisionTest, CompoundVectorTimesScalarFunction)
     compile(shaderString);
     ASSERT_TRUE(foundInESSLCode(
         "highp vec4 angle_compound_mul_frm(inout highp vec4 x, in highp float y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
-    ASSERT_TRUE(foundInGLSLCode(
-        "vec4 angle_compound_mul_frm(inout vec4 x, in float y) {\n"
-        "    x = angle_frm(angle_frm(x) * y);"
-    ));
+        "    x = angle_frm(angle_frm(x) * y);"));
+    ASSERT_TRUE(
+        foundInGLSLCode("vec4 angle_compound_mul_frm(inout vec4 x, in float y) {\n"
+                        "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(
         foundInHLSLCode("float4 angle_compound_mul_frm(inout float4 x, in float y) {\n"
                         "    x = angle_frm(angle_frm(x) * y);"));
     ASSERT_TRUE(foundInAllGLSLCode("angle_compound_mul_frm(_uv, angle_frm(_uu2));"));
-    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_v, angle_frm(_u2));"));
+    ASSERT_TRUE(foundInHLSLCode("angle_compound_mul_frm(_v1030, angle_frm(_u2));"));
     ASSERT_TRUE(notFoundInCode("*="));
 }
 
@@ -582,11 +564,11 @@ TEST_F(DebugShaderPrecisionTest, BinaryMathRounding)
     ASSERT_TRUE(foundInAllGLSLCode("v4 = angle_frm((angle_frm(_uu4) / angle_frm(_uu5)))"));
     ASSERT_TRUE(foundInAllGLSLCode("v6 = angle_frm((_uv5 = angle_frm(_uu5)))"));
 
-    ASSERT_TRUE(foundInHLSLCode("v1 = angle_frm((angle_frm(_u1) + angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("v2 = angle_frm((angle_frm(_u2) - angle_frm(_u3)))"));
-    ASSERT_TRUE(foundInHLSLCode("v3 = angle_frm((angle_frm(_u3) * angle_frm(_u4)))"));
-    ASSERT_TRUE(foundInHLSLCode("v4 = angle_frm((angle_frm(_u4) / angle_frm(_u5)))"));
-    ASSERT_TRUE(foundInHLSLCode("v6 = angle_frm((_v5 = angle_frm(_u5)))"));
+    ASSERT_TRUE(foundInHLSLCode("v11033 = angle_frm((angle_frm(_u1) + angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("v21034 = angle_frm((angle_frm(_u2) - angle_frm(_u3)))"));
+    ASSERT_TRUE(foundInHLSLCode("v31035 = angle_frm((angle_frm(_u3) * angle_frm(_u4)))"));
+    ASSERT_TRUE(foundInHLSLCode("v41036 = angle_frm((angle_frm(_u4) / angle_frm(_u5)))"));
+    ASSERT_TRUE(foundInHLSLCode("v61038 = angle_frm((_v51037 = angle_frm(_u5)))"));
 }
 
 TEST_F(DebugShaderPrecisionTest, BuiltInMathFunctionRounding)
@@ -650,10 +632,10 @@ TEST_F(DebugShaderPrecisionTest, BuiltInMathFunctionRounding)
         "   mat4 m1 = matrixCompMult(um1, um2);\n"
 
         "   gl_FragColor = v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 + v10 +"
-            "v11 + v12 + v13 + v14 + v15 + v16 + v17 + v18 + v19 + v20 +"
-            "v21 + v22 + v23 + v24 + v25 + v26 + v27 + v28 + v29 + v30 +"
-            "v31 + v32 + v33 + v34 + v35 + v36 + v37 + v38 + v39 +"
-            "vec4(f1, f2, f3, 0.0) + vec4(vf31, 0.0) + m1[0];\n"
+        "v11 + v12 + v13 + v14 + v15 + v16 + v17 + v18 + v19 + v20 +"
+        "v21 + v22 + v23 + v24 + v25 + v26 + v27 + v28 + v29 + v30 +"
+        "v31 + v32 + v33 + v34 + v35 + v36 + v37 + v38 + v39 +"
+        "vec4(f1, f2, f3, 0.0) + vec4(vf31, 0.0) + m1[0];\n"
         "}\n";
     compile(shaderString);
     ASSERT_TRUE(foundInAllGLSLCode("v1 = angle_frm(radians(angle_frm(_uu1)))"));
@@ -712,59 +694,59 @@ TEST_F(DebugShaderPrecisionTest, BuiltInMathFunctionRounding)
     ASSERT_TRUE(
         foundInAllGLSLCode("m1 = angle_frm(matrixCompMult(angle_frm(_uum1), angle_frm(_uum2)))"));
 
-    ASSERT_TRUE(foundInHLSLCode("v1 = angle_frm(radians(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v2 = angle_frm(degrees(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v3 = angle_frm(sin(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v4 = angle_frm(cos(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v5 = angle_frm(tan(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v6 = angle_frm(asin(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v7 = angle_frm(acos(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v8 = angle_frm(atan(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v9 = angle_frm(atan_emu(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("v10 = angle_frm(pow(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("v11 = angle_frm(exp(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v12 = angle_frm(log(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v13 = angle_frm(exp2(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v14 = angle_frm(log2(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v15 = angle_frm(sqrt(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v16 = angle_frm(rsqrt(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v17 = angle_frm(abs(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v18 = angle_frm(sign(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v19 = angle_frm(floor(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v20 = angle_frm(ceil(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v21 = angle_frm(frac(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v22 = angle_frm(mod_emu(angle_frm(_u1), angle_frm(_uf)))"));
-    ASSERT_TRUE(foundInHLSLCode("v23 = angle_frm(mod_emu(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("v24 = angle_frm(min(angle_frm(_u1), angle_frm(_uf)))"));
-    ASSERT_TRUE(foundInHLSLCode("v25 = angle_frm(min(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("v26 = angle_frm(max(angle_frm(_u1), angle_frm(_uf)))"));
-    ASSERT_TRUE(foundInHLSLCode("v27 = angle_frm(max(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(
-        foundInHLSLCode("v28 = angle_frm(clamp(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
-    ASSERT_TRUE(
-        foundInHLSLCode("v29 = angle_frm(clamp(angle_frm(_u1), angle_frm(_uf), angle_frm(_uf2)))"));
-    ASSERT_TRUE(
-        foundInHLSLCode("v30 = angle_frm(lerp(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
-    ASSERT_TRUE(
-        foundInHLSLCode("v31 = angle_frm(lerp(angle_frm(_u1), angle_frm(_u2), angle_frm(_uf)))"));
-    ASSERT_TRUE(foundInHLSLCode("v32 = angle_frm(step(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("v33 = angle_frm(step(angle_frm(_uf), angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v11037 = angle_frm(radians(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v21038 = angle_frm(degrees(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v31039 = angle_frm(sin(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v41040 = angle_frm(cos(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v51041 = angle_frm(tan(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v61042 = angle_frm(asin(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v71043 = angle_frm(acos(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v81044 = angle_frm(atan(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v91045 = angle_frm(atan_emu(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("v101046 = angle_frm(pow(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("v111047 = angle_frm(exp(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v121048 = angle_frm(log(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v131049 = angle_frm(exp2(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v141050 = angle_frm(log2(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v151051 = angle_frm(sqrt(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v161052 = angle_frm(rsqrt(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v171053 = angle_frm(abs(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v181054 = angle_frm(sign(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v191055 = angle_frm(floor(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v201056 = angle_frm(ceil(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v211057 = angle_frm(frac(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v221058 = angle_frm(mod_emu(angle_frm(_u1), angle_frm(_uf)))"));
+    ASSERT_TRUE(foundInHLSLCode("v231059 = angle_frm(mod_emu(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("v241060 = angle_frm(min(angle_frm(_u1), angle_frm(_uf)))"));
+    ASSERT_TRUE(foundInHLSLCode("v251061 = angle_frm(min(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("v261062 = angle_frm(max(angle_frm(_u1), angle_frm(_uf)))"));
+    ASSERT_TRUE(foundInHLSLCode("v271063 = angle_frm(max(angle_frm(_u1), angle_frm(_u2)))"));
     ASSERT_TRUE(foundInHLSLCode(
-        "v34 = angle_frm(smoothstep(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
+        "v281064 = angle_frm(clamp(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
     ASSERT_TRUE(foundInHLSLCode(
-        "v35 = angle_frm(smoothstep(angle_frm(_uf), angle_frm(_uf2), angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("v36 = angle_frm(normalize(angle_frm(_u1)))"));
+        "v291065 = angle_frm(clamp(angle_frm(_u1), angle_frm(_uf), angle_frm(_uf2)))"));
     ASSERT_TRUE(foundInHLSLCode(
-        "v37 = angle_frm(faceforward_emu(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
-    ASSERT_TRUE(foundInHLSLCode("v38 = angle_frm(reflect(angle_frm(_u1), angle_frm(_u2)))"));
+        "v301066 = angle_frm(lerp(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
     ASSERT_TRUE(foundInHLSLCode(
-        "v39 = angle_frm(refract(angle_frm(_u1), angle_frm(_u2), angle_frm(_uf)))"));
+        "v311067 = angle_frm(lerp(angle_frm(_u1), angle_frm(_u2), angle_frm(_uf)))"));
+    ASSERT_TRUE(foundInHLSLCode("v321068 = angle_frm(step(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("v331069 = angle_frm(step(angle_frm(_uf), angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode(
+        "v341070 = angle_frm(smoothstep(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
+    ASSERT_TRUE(foundInHLSLCode(
+        "v351071 = angle_frm(smoothstep(angle_frm(_uf), angle_frm(_uf2), angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("v361072 = angle_frm(normalize(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode(
+        "v371073 = angle_frm(faceforward_emu(angle_frm(_u1), angle_frm(_u2), angle_frm(_u3)))"));
+    ASSERT_TRUE(foundInHLSLCode("v381074 = angle_frm(reflect(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode(
+        "v391075 = angle_frm(refract(angle_frm(_u1), angle_frm(_u2), angle_frm(_uf)))"));
 
-    ASSERT_TRUE(foundInHLSLCode("f1 = angle_frm(length(angle_frm(_u1)))"));
-    ASSERT_TRUE(foundInHLSLCode("f2 = angle_frm(distance(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("f3 = angle_frm(dot(angle_frm(_u1), angle_frm(_u2)))"));
-    ASSERT_TRUE(foundInHLSLCode("vf31 = angle_frm(cross(angle_frm(_uf31), angle_frm(_uf32)))"));
-    ASSERT_TRUE(foundInHLSLCode("m1 = angle_frm((angle_frm(_um1) * angle_frm(_um2)))"));
+    ASSERT_TRUE(foundInHLSLCode("f11076 = angle_frm(length(angle_frm(_u1)))"));
+    ASSERT_TRUE(foundInHLSLCode("f21077 = angle_frm(distance(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("f31078 = angle_frm(dot(angle_frm(_u1), angle_frm(_u2)))"));
+    ASSERT_TRUE(foundInHLSLCode("vf311079 = angle_frm(cross(angle_frm(_uf31), angle_frm(_uf32)))"));
+    ASSERT_TRUE(foundInHLSLCode("m11080 = angle_frm((angle_frm(_um1) * angle_frm(_um2)))"));
 }
 
 TEST_F(DebugShaderPrecisionTest, BuiltInRelationalFunctionRounding)
@@ -790,12 +772,12 @@ TEST_F(DebugShaderPrecisionTest, BuiltInRelationalFunctionRounding)
     ASSERT_TRUE(foundInAllGLSLCode("bv5 = equal(angle_frm(_uu1), angle_frm(_uu2))"));
     ASSERT_TRUE(foundInAllGLSLCode("bv6 = notEqual(angle_frm(_uu1), angle_frm(_uu2))"));
 
-    ASSERT_TRUE(foundInHLSLCode("bv1 = (angle_frm(_u1) < angle_frm(_u2))"));
-    ASSERT_TRUE(foundInHLSLCode("bv2 = (angle_frm(_u1) <= angle_frm(_u2))"));
-    ASSERT_TRUE(foundInHLSLCode("bv3 = (angle_frm(_u1) > angle_frm(_u2))"));
-    ASSERT_TRUE(foundInHLSLCode("bv4 = (angle_frm(_u1) >= angle_frm(_u2))"));
-    ASSERT_TRUE(foundInHLSLCode("bv5 = (angle_frm(_u1) == angle_frm(_u2))"));
-    ASSERT_TRUE(foundInHLSLCode("bv6 = (angle_frm(_u1) != angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("bv11030 = (angle_frm(_u1) < angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("bv21031 = (angle_frm(_u1) <= angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("bv31032 = (angle_frm(_u1) > angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("bv41033 = (angle_frm(_u1) >= angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("bv51034 = (angle_frm(_u1) == angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("bv61035 = (angle_frm(_u1) != angle_frm(_u2))"));
 }
 
 TEST_F(DebugShaderPrecisionTest, ConstructorRounding)
@@ -817,8 +799,8 @@ TEST_F(DebugShaderPrecisionTest, ConstructorRounding)
     ASSERT_TRUE(foundInAllGLSLCode("v1 = angle_frm(vec4(_uu1, _uu2, angle_frl(_uu3), _uu4))"));
     ASSERT_TRUE(foundInAllGLSLCode("v2 = angle_frm(vec4(_uuiv))"));
 
-    ASSERT_TRUE(foundInHLSLCode("v1 = angle_frm(vec4_ctor(_u1, _u2, angle_frl(_u3), _u4))"));
-    ASSERT_TRUE(foundInHLSLCode("v2 = angle_frm(vec4_ctor(_uiv))"));
+    ASSERT_TRUE(foundInHLSLCode("v11033 = angle_frm(vec4_ctor(_u1, _u2, angle_frl(_u3), _u4))"));
+    ASSERT_TRUE(foundInHLSLCode("v21034 = angle_frm(vec4_ctor(_uiv))"));
 }
 
 TEST_F(DebugShaderPrecisionTest, StructConstructorNoRounding)
@@ -833,7 +815,7 @@ TEST_F(DebugShaderPrecisionTest, StructConstructorNoRounding)
         "}\n";
     compile(shaderString);
     ASSERT_TRUE(foundInAllGLSLCode("s = _uS(angle_frm(_uu))"));
-    ASSERT_TRUE(foundInHLSLCode("s = _S_ctor(angle_frm(_u))"));
+    ASSERT_TRUE(foundInHLSLCode("s1031 = _S_ctor(angle_frm(_u))"));
     ASSERT_TRUE(notFoundInCode("angle_frm(_uS"));  // GLSL
     ASSERT_TRUE(notFoundInCode("angle_frm(_S"));   // HLSL
 }
@@ -849,7 +831,7 @@ TEST_F(DebugShaderPrecisionTest, SwizzleRounding)
         "}\n";
     compile(shaderString);
     ASSERT_TRUE(foundInAllGLSLCode("v = angle_frm(_uu).xyxy"));
-    ASSERT_TRUE(foundInHLSLCode("v = angle_frm(_u).xyxy"));
+    ASSERT_TRUE(foundInHLSLCode("v1029 = angle_frm(_u).xyxy"));
 }
 
 TEST_F(DebugShaderPrecisionTest, BuiltInTexFunctionRounding)
@@ -865,7 +847,7 @@ TEST_F(DebugShaderPrecisionTest, BuiltInTexFunctionRounding)
         "}\n";
     compile(shaderString);
     ASSERT_TRUE(foundInAllGLSLCode("v = angle_frl(texture2D(_us, angle_frm(_uu)))"));
-    ASSERT_TRUE(foundInHLSLCode("v = angle_frl(gl_texture2D(_s, angle_frm(_u)))"));
+    ASSERT_TRUE(foundInHLSLCode("v1030 = angle_frl(gl_texture2D(_s, angle_frm(_u)))"));
 }
 
 TEST_F(DebugShaderPrecisionTest, FunctionCallParameterQualifiersFromDefinition)
@@ -900,14 +882,14 @@ TEST_F(DebugShaderPrecisionTest, FunctionCallParameterQualifiersFromDefinition)
     // otherwise.
     // Test in parameters
     ASSERT_TRUE(foundInAllGLSLCode("v = _uadd(angle_frm(_uu1), angle_frm(_uu2))"));
-    ASSERT_TRUE(foundInHLSLCode("v = f_add_float4_float4(angle_frm(_u1), angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("v1043 = f_add_float4_float4(angle_frm(_u1), angle_frm(_u2))"));
     // Test inout parameter
     ASSERT_TRUE(foundInAllGLSLCode("_ucompound_add(_uv, angle_frm(_uu3))"));
-    ASSERT_TRUE(foundInHLSLCode("compound_add_float4_float4(_v, angle_frm(_u3))"));
+    ASSERT_TRUE(foundInHLSLCode("compound_add_float4_float4(_v1043, angle_frm(_u3))"));
     // Test out parameter
     ASSERT_TRUE(foundInAllGLSLCode("_uadd_to_last(angle_frm(_uu4), angle_frm(_uu5), _uv2)"));
-    ASSERT_TRUE(
-        foundInHLSLCode("add_to_last_float4_float4_float4(angle_frm(_u4), angle_frm(_u5), _v2)"));
+    ASSERT_TRUE(foundInHLSLCode(
+        "add_to_last_float4_float4_float4(angle_frm(_u4), angle_frm(_u5), _v21044)"));
 }
 
 TEST_F(DebugShaderPrecisionTest, FunctionCallParameterQualifiersFromPrototype)
@@ -941,14 +923,14 @@ TEST_F(DebugShaderPrecisionTest, FunctionCallParameterQualifiersFromPrototype)
     compile(shaderString);
     // Test in parameters
     ASSERT_TRUE(foundInAllGLSLCode("v = _uadd(angle_frm(_uu1), angle_frm(_uu2))"));
-    ASSERT_TRUE(foundInHLSLCode("v = f_add_float4_float4(angle_frm(_u1), angle_frm(_u2))"));
+    ASSERT_TRUE(foundInHLSLCode("v1043 = f_add_float4_float4(angle_frm(_u1), angle_frm(_u2))"));
     // Test inout parameter
     ASSERT_TRUE(foundInAllGLSLCode("_ucompound_add(_uv, angle_frm(_uu3))"));
-    ASSERT_TRUE(foundInHLSLCode("compound_add_float4_float4(_v, angle_frm(_u3))"));
+    ASSERT_TRUE(foundInHLSLCode("compound_add_float4_float4(_v1043, angle_frm(_u3))"));
     // Test out parameter
     ASSERT_TRUE(foundInAllGLSLCode("add_to_last(angle_frm(_uu4), angle_frm(_uu5), _uv2)"));
-    ASSERT_TRUE(
-        foundInHLSLCode("add_to_last_float4_float4_float4(angle_frm(_u4), angle_frm(_u5), _v2)"));
+    ASSERT_TRUE(foundInHLSLCode(
+        "add_to_last_float4_float4_float4(angle_frm(_u4), angle_frm(_u5), _v21044)"));
 }
 
 TEST_F(DebugShaderPrecisionTest, NestedFunctionCalls)
@@ -975,7 +957,7 @@ TEST_F(DebugShaderPrecisionTest, NestedFunctionCalls)
     ASSERT_TRUE(foundInAllGLSLCode(
         "v2 = _uadd(_ucompound_add(_uv, angle_frm(_uu2)), angle_frm(fract(angle_frm(_uu3))))"));
     ASSERT_TRUE(foundInHLSLCode(
-        "v2 = f_add_float4_float4(f_compound_add_float4_float4(_v, angle_frm(_u2)), "
+        "v21038 = f_add_float4_float4(f_compound_add_float4_float4(_v1037, angle_frm(_u2)), "
         "angle_frm(frac(angle_frm(_u3))))"));
 }
 
@@ -1028,7 +1010,7 @@ TEST_F(DebugShaderPrecisionTest, ModfOutParameter)
         "}\n";
     compile(shaderString);
     ASSERT_TRUE(foundInAllGLSLCode("modf(angle_frm(_uu), _uo)"));
-    ASSERT_TRUE(foundInHLSLCode("modf(angle_frm(_u), _o)"));
+    ASSERT_TRUE(foundInHLSLCode("modf(angle_frm(_u), _o1030)"));
 }
 
 #if defined(ANGLE_ENABLE_HLSL)

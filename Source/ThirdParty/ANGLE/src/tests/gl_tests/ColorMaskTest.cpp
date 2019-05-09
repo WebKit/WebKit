@@ -29,28 +29,10 @@ class ColorMaskTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vsSource =
-            "precision highp float;\n"
-            "attribute vec4 position;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = position;\n"
-            "}\n";
-
-        const std::string fsSource =
-            "precision highp float;\n"
-            "uniform vec4 color;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    gl_FragColor = color;\n"
-            "}\n";
-
-        mProgram = CompileProgram(vsSource, fsSource);
+        mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         ASSERT_NE(0u, mProgram) << "shader compilation failed.";
 
-        mColorUniform = glGetUniformLocation(mProgram, "color");
+        mColorUniform = glGetUniformLocation(mProgram, essl1_shaders::ColorUniform());
     }
 
     void TearDown() override
@@ -82,7 +64,7 @@ TEST_P(ColorMaskTest, AMDZeroColorMaskBug)
     glUseProgram(mProgram);
     glUniform4f(mColorUniform, 1.0f, 0.0f, 0.0f, 0.0f);
     EXPECT_GL_NO_ERROR();
-    drawQuad(mProgram, "position", 0.5f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_EQ(x, y, 0, 0, 255, 255);
 
     // Re-enable the color mask, should be red (with blend disabled, the red should overwrite
@@ -91,7 +73,7 @@ TEST_P(ColorMaskTest, AMDZeroColorMaskBug)
     glUseProgram(mProgram);
     glUniform4f(mColorUniform, 1.0f, 0.0f, 0.0f, 0.0f);
     EXPECT_GL_NO_ERROR();
-    drawQuad(mProgram, "position", 0.5f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_EQ(x, y, 255, 0, 0, 0);
 }
 
@@ -105,6 +87,7 @@ ANGLE_INSTANTIATE_TEST(ColorMaskTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());
 
 }  // namespace angle

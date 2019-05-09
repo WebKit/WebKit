@@ -53,7 +53,7 @@ class PixelRect
         }
         else
         {
-            ASSERT(target == GL_TEXTURE_2D);
+            ASSERT_GLENUM_EQ(GL_TEXTURE_2D, target);
             glTexImage2D(target, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                          mData.data());
         }
@@ -208,11 +208,11 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest
     }
 
   protected:
-    static constexpr int kFbWidth    = 128;
-    static constexpr int kFbHeight   = 128;
+    static constexpr int kFbWidth      = 128;
+    static constexpr int kFbHeight     = 128;
     static constexpr int kTextureDepth = 16;
-    static constexpr int kReadWidth  = 4;
-    static constexpr int kReadHeight = 4;
+    static constexpr int kReadWidth    = 4;
+    static constexpr int kReadHeight   = 4;
     static constexpr int kReadLayer    = 2;
 
     // Tag the framebuffer pixels differently than the initial read buffer pixels, so we know for
@@ -235,24 +235,22 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        // TODO(fjhenigman): Factor out this shader and others like it in other tests, into
-        // ANGLETest.
-        const std::string vertexShader =
-            "attribute vec3 a_position;\n"
-            "varying vec2 v_texCoord;\n"
-            "void main() {\n"
-            "    v_texCoord = a_position.xy * 0.5 + 0.5;\n"
-            "    gl_Position = vec4(a_position, 1);\n"
-            "}\n";
-        const std::string fragmentShader =
-            "precision mediump float;\n"
-            "varying vec2 v_texCoord;\n"
-            "uniform sampler2D u_texture;\n"
-            "void main() {\n"
-            "    gl_FragColor = texture2D(u_texture, v_texCoord);\n"
-            "}\n";
+        constexpr char kVS[] = R"(
+attribute vec3 a_position;
+varying vec2 v_texCoord;
+void main() {
+    v_texCoord = a_position.xy * 0.5 + 0.5;
+    gl_Position = vec4(a_position, 1);
+})";
+        constexpr char kFS[] = R"(
+precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D u_texture;
+void main() {
+    gl_FragColor = texture2D(u_texture, v_texCoord);
+})";
 
-        mProgram = CompileProgram(vertexShader, fragmentShader);
+        mProgram = CompileProgram(kVS, kFS);
         glUseProgram(mProgram);
         GLint uniformLoc = glGetUniformLocation(mProgram, "u_texture");
         ASSERT_NE(-1, uniformLoc);
@@ -345,8 +343,7 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest
 };
 
 class WebGL2ReadOutsideFramebufferTest : public WebGLReadOutsideFramebufferTest
-{
-};
+{};
 
 // Check that readPixels does not set a destination pixel when
 // the corresponding source pixel is outside the framebuffer.
@@ -361,14 +358,9 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexSubImage2D)
 {
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImage2D, false);
 
-#ifdef _WIN64
     // TODO(fjhenigman): Figure out this failure.
-    if (GetParam() == ES2_D3D11_FL9_3())
-    {
-        std::cout << "Cube map skipped on 64-bit " << GetParam() << "." << std::endl;
-        return;
-    }
-#endif
+    // Cube map skipped on 64-bit Windows with D3D FL 9.3
+    ANGLE_SKIP_TEST_IF(GetParam() == ES2_D3D11_FL9_3());
 
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImageCube, false);
 }
@@ -378,14 +370,9 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexImage2D)
 {
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexImage2D, true);
 
-#ifdef _WIN64
     // TODO(fjhenigman): Figure out this failure.
-    if (GetParam() == ES2_D3D11_FL9_3())
-    {
-        std::cout << "Cube map skipped on 64-bit " << GetParam() << "." << std::endl;
-        return;
-    }
-#endif
+    // Cube map skipped on 64-bit Windows with D3D FL 9.3
+    ANGLE_SKIP_TEST_IF(GetParam() == ES2_D3D11_FL9_3());
 
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexImageCube, true);
 }
@@ -394,12 +381,8 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexImage2D)
 // the corresponding source pixel is outside the framebuffer.
 TEST_P(WebGL2ReadOutsideFramebufferTest, CopyTexSubImage3D)
 {
-    if (IsDesktopOpenGL() || IsOpenGLES())
-    {
-        std::cout << "Robust CopyTexSubImage3D behaviour is not implemented on OpenGL."
-                  << std::endl;
-        return;
-    }
+    // Robust CopyTexSubImage3D behaviour is not implemented on OpenGL.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL() || IsOpenGLES());
 
     Main3D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImage3D, false);
 }
@@ -420,4 +403,4 @@ ANGLE_INSTANTIATE_TEST(WebGL2ReadOutsideFramebufferTest,
                        ES2_OPENGLES(),
                        ES3_OPENGLES());
 
-}  // namespace
+}  // namespace angle

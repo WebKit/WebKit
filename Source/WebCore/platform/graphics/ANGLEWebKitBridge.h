@@ -32,7 +32,11 @@
 #include <epoxy/gl.h>
 #endif
 
+#if PLATFORM(COCOA)
 #include <ANGLE/ShaderLang.h>
+#else
+#include <ANGLE/GLSLANG/ShaderLang.h>
+#endif
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

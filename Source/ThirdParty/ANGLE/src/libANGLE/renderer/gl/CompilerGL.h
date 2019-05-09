@@ -21,13 +21,12 @@ class CompilerGL : public CompilerImpl
     CompilerGL(const FunctionsGL *functions);
     ~CompilerGL() override {}
 
-    gl::Error release() override;
     ShShaderOutput getTranslatorOutputType() const override;
 
   private:
     ShShaderOutput mTranslatorOutputType;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_COMPILERGL_H_
+#endif  // LIBANGLE_RENDERER_GL_COMPILERGL_H_

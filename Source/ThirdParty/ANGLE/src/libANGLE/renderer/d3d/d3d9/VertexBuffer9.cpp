@@ -7,12 +7,14 @@
 // VertexBuffer9.cpp: Defines the D3D9 VertexBuffer implementation.
 
 #include "libANGLE/renderer/d3d/d3d9/VertexBuffer9.h"
+
+#include "libANGLE/Buffer.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/VertexAttribute.h"
+#include "libANGLE/renderer/d3d/BufferD3D.h"
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/d3d/d3d9/vertexconversion.h"
-#include "libANGLE/renderer/d3d/BufferD3D.h"
-#include "libANGLE/VertexAttribute.h"
-#include "libANGLE/Buffer.h"
 
 namespace rx
 {
@@ -20,7 +22,7 @@ namespace rx
 VertexBuffer9::VertexBuffer9(Renderer9 *renderer) : mRenderer(renderer)
 {
     mVertexBuffer = nullptr;
-    mBufferSize = 0;
+    mBufferSize   = 0;
     mDynamicUsage = false;
 }
 
@@ -29,7 +31,9 @@ VertexBuffer9::~VertexBuffer9()
     SafeRelease(mVertexBuffer);
 }
 
-gl::Error VertexBuffer9::initialize(unsigned int size, bool dynamicUsage)
+angle::Result VertexBuffer9::initialize(const gl::Context *context,
+                                        unsigned int size,
+                                        bool dynamicUsage)
 {
     SafeRelease(mVertexBuffer);
 
@@ -44,53 +48,41 @@ gl::Error VertexBuffer9::initialize(unsigned int size, bool dynamicUsage)
         }
 
         HRESULT result = mRenderer->createVertexBuffer(size, flags, &mVertexBuffer);
-
-        if (FAILED(result))
-        {
-            return gl::OutOfMemory()
-                   << "Failed to allocate internal vertex buffer of size " << size;
-        }
+        ANGLE_TRY_HR(GetImplAs<Context9>(context), result,
+                     "Failed to allocate internal vertex buffer");
     }
 
-    mBufferSize = size;
+    mBufferSize   = size;
     mDynamicUsage = dynamicUsage;
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error VertexBuffer9::storeVertexAttributes(const gl::VertexAttribute &attrib,
-                                               const gl::VertexBinding &binding,
-                                               GLenum currentValueType,
-                                               GLint start,
-                                               GLsizei count,
-                                               GLsizei instances,
-                                               unsigned int offset,
-                                               const uint8_t *sourceData)
+angle::Result VertexBuffer9::storeVertexAttributes(const gl::Context *context,
+                                                   const gl::VertexAttribute &attrib,
+                                                   const gl::VertexBinding &binding,
+                                                   gl::VertexAttribType currentValueType,
+                                                   GLint start,
+                                                   size_t count,
+                                                   GLsizei instances,
+                                                   unsigned int offset,
+                                                   const uint8_t *sourceData)
 {
-    if (!mVertexBuffer)
-    {
-        return gl::OutOfMemory() << "Internal vertex buffer is not initialized.";
-    }
+    ASSERT(mVertexBuffer);
 
-    int inputStride = static_cast<int>(gl::ComputeVertexAttributeStride(attrib, binding));
-    int elementSize = static_cast<int>(gl::ComputeVertexAttributeTypeSize(attrib));
+    size_t inputStride = gl::ComputeVertexAttributeStride(attrib, binding);
+    size_t elementSize = gl::ComputeVertexAttributeTypeSize(attrib);
 
     DWORD lockFlags = mDynamicUsage ? D3DLOCK_NOOVERWRITE : 0;
 
     uint8_t *mapPtr = nullptr;
 
-    auto errorOrMapSize = mRenderer->getVertexSpaceRequired(attrib, binding, count, instances);
-    if (errorOrMapSize.isError())
-    {
-        return errorOrMapSize.getError();
-    }
+    unsigned int mapSize = 0;
+    ANGLE_TRY(
+        mRenderer->getVertexSpaceRequired(context, attrib, binding, count, instances, &mapSize));
 
-    unsigned int mapSize = errorOrMapSize.getResult();
-
-    HRESULT result = mVertexBuffer->Lock(offset, mapSize, reinterpret_cast<void**>(&mapPtr), lockFlags);
-    if (FAILED(result))
-    {
-        return gl::OutOfMemory() << "Failed to lock internal vertex buffer, " << gl::FmtHR(result);
-    }
+    HRESULT result =
+        mVertexBuffer->Lock(offset, mapSize, reinterpret_cast<void **>(&mapPtr), lockFlags);
+    ANGLE_TRY_HR(GetImplAs<Context9>(context), result, "Failed to lock internal vertex buffer");
 
     const uint8_t *input = sourceData;
 
@@ -99,13 +91,14 @@ gl::Error VertexBuffer9::storeVertexAttributes(const gl::VertexAttribute &attrib
         input += inputStride * start;
     }
 
-    gl::VertexFormatType vertexFormatType = gl::GetVertexFormatType(attrib, currentValueType);
-    const d3d9::VertexFormat &d3dVertexInfo = d3d9::GetVertexFormatInfo(mRenderer->getCapsDeclTypes(), vertexFormatType);
+    angle::FormatID vertexFormatID = gl::GetVertexFormatID(attrib, currentValueType);
+    const d3d9::VertexFormat &d3dVertexInfo =
+        d3d9::GetVertexFormatInfo(mRenderer->getCapsDeclTypes(), vertexFormatID);
     bool needsConversion = (d3dVertexInfo.conversionType & VERTEX_CONVERT_CPU) > 0;
 
     if (!needsConversion && inputStride == elementSize)
     {
-        size_t copySize = static_cast<size_t>(count) * static_cast<size_t>(inputStride);
+        size_t copySize = count * inputStride;
         memcpy(mapPtr, input, copySize);
     }
     else
@@ -115,7 +108,7 @@ gl::Error VertexBuffer9::storeVertexAttributes(const gl::VertexAttribute &attrib
 
     mVertexBuffer->Unlock();
 
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 unsigned int VertexBuffer9::getBufferSize() const
@@ -123,46 +116,37 @@ unsigned int VertexBuffer9::getBufferSize() const
     return mBufferSize;
 }
 
-gl::Error VertexBuffer9::setBufferSize(unsigned int size)
+angle::Result VertexBuffer9::setBufferSize(const gl::Context *context, unsigned int size)
 {
     if (size > mBufferSize)
     {
-        return initialize(size, mDynamicUsage);
+        return initialize(context, size, mDynamicUsage);
     }
     else
     {
-        return gl::NoError();
+        return angle::Result::Continue;
     }
 }
 
-gl::Error VertexBuffer9::discard()
+angle::Result VertexBuffer9::discard(const gl::Context *context)
 {
-    if (!mVertexBuffer)
-    {
-        return gl::OutOfMemory() << "Internal vertex buffer is not initialized.";
-    }
+    ASSERT(mVertexBuffer);
 
     void *dummy;
     HRESULT result;
 
+    Context9 *context9 = GetImplAs<Context9>(context);
+
     result = mVertexBuffer->Lock(0, 1, &dummy, D3DLOCK_DISCARD);
-    if (FAILED(result))
-    {
-        return gl::OutOfMemory() << "Failed to lock internal buffer for discarding, "
-                                 << gl::FmtHR(result);
-    }
+    ANGLE_TRY_HR(context9, result, "Failed to lock internal vertex buffer for discarding");
 
     result = mVertexBuffer->Unlock();
-    if (FAILED(result))
-    {
-        return gl::OutOfMemory() << "Failed to unlock internal buffer for discarding, "
-                                 << gl::FmtHR(result);
-    }
+    ANGLE_TRY_HR(context9, result, "Failed to unlock internal vertex buffer for discarding");
 
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-IDirect3DVertexBuffer9 * VertexBuffer9::getBuffer() const
+IDirect3DVertexBuffer9 *VertexBuffer9::getBuffer() const
 {
     return mVertexBuffer;
 }

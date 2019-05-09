@@ -9,6 +9,9 @@
 
 #include <string>
 
+namespace angle
+{
+
 namespace pp
 {
 
@@ -61,6 +64,7 @@ class Diagnostics
         PP_INVALID_LINE_NUMBER,
         PP_INVALID_FILE_NUMBER,
         PP_INVALID_LINE_DIRECTIVE,
+        PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
         PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3,
         PP_UNDEFINED_SHIFT,
         PP_TOKENIZER_ERROR,
@@ -69,7 +73,6 @@ class Diagnostics
         PP_WARNING_BEGIN,
         PP_EOF_IN_DIRECTIVE,
         PP_UNRECOGNIZED_PRAGMA,
-        PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
         PP_WARNING_MACRO_NAME_RESERVED,
         PP_WARNING_END
     };
@@ -86,5 +89,7 @@ class Diagnostics
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_DIAGNOSTICSBASE_H_

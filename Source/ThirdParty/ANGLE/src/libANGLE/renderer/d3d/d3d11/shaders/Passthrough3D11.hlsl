@@ -1,3 +1,9 @@
+//
+// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
 Texture3D<float4> TextureF  : register(t0);
 Texture3D<uint4>  TextureUI : register(t0);
 Texture3D<int4>   TextureI  : register(t0);
@@ -144,3 +150,25 @@ float4 PS_PassthroughLumAlpha3D(GS_OUTPUT input) : SV_TARGET0
 {
     return TextureF.Sample(Sampler, input.TexCoord).rrra;
 }
+
+float4 PS_PassthroughRGBA3D_4444(GS_OUTPUT input) : SV_TARGET0
+{
+    return round(TextureF.Sample(Sampler, input.TexCoord) * float4(15, 15, 15, 15)) / float4(15, 15, 15, 15);
+}
+
+float4 PS_PassthroughRGB3D_565(GS_OUTPUT input) : SV_TARGET0
+{
+    return float4(round(TextureF.Sample(Sampler, input.TexCoord).rgb * float3(31, 63, 31)) / float3(31, 63, 31), 1.0f);
+}
+
+float4 PS_PassthroughRGBA3D_5551(GS_OUTPUT input) : SV_TARGET0
+{
+    return round(TextureF.Sample(Sampler, input.TexCoord) * float4(31, 31, 31, 1)) / float4(31, 31, 31, 1);
+}
+
+float4 PS_PassthroughRGBA3D_2101010(GS_OUTPUT input) : SV_TARGET0
+{
+    return round(TextureF.Sample(Sampler, input.TexCoord) * float4(31, 31, 31, 1)) / float4(31, 31, 31, 1);
+}
+
+

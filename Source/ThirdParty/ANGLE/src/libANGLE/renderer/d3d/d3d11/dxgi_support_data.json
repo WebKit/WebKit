@@ -1005,11 +1005,11 @@
       "texture2D": "check",
       "texture3D": "check",
       "textureCube": "check",
-      "shaderSample": "10_0check11_0always",
-      "renderTarget": "11_0",
+      "shaderSample": "9_3check11_0always",
+      "renderTarget": "dxgi1_2",
       "multisampleRT": "check",
       "depthStencil": "never",
-      "mipAutoGen": "never"
+      "mipAutoGen": "dxgi1_2"
     },
     "DXGI_FORMAT_B8G8R8X8_TYPELESS":
     {

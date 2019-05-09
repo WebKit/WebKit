@@ -68,28 +68,26 @@ class DepthStencilFormatsTestBase : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vertexShaderSource =
-            R"(precision highp float;
-            attribute vec4 position;
-            varying vec2 texcoord;
+        constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_Position = position;
-                texcoord = (position.xy * 0.5) + 0.5;
-            })";
+void main()
+{
+    gl_Position = position;
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
 
-        const std::string fragmentShaderSource =
-            R"(precision highp float;
-            uniform sampler2D tex;
-            varying vec2 texcoord;
+        constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D tex;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_FragColor = texture2D(tex, texcoord);
-            })";
+void main()
+{
+    gl_FragColor = texture2D(tex, texcoord);
+})";
 
-        mProgram = CompileProgram(vertexShaderSource, fragmentShaderSource);
+        mProgram = CompileProgram(kVS, kFS);
         if (mProgram == 0)
         {
             FAIL() << "shader compilation failed.";
@@ -123,11 +121,13 @@ class DepthStencilFormatsTestES3 : public DepthStencilFormatsTestBase
 
 TEST_P(DepthStencilFormatsTest, DepthTexture)
 {
-    bool shouldHaveTextureSupport = extensionEnabled("GL_ANGLE_depth_texture");
-    EXPECT_EQ(shouldHaveTextureSupport, checkTexImageFormatSupport(GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT));
-    EXPECT_EQ(shouldHaveTextureSupport, checkTexImageFormatSupport(GL_DEPTH_COMPONENT, GL_UNSIGNED_INT));
+    bool shouldHaveTextureSupport = IsGLExtensionEnabled("GL_ANGLE_depth_texture");
+    EXPECT_EQ(shouldHaveTextureSupport,
+              checkTexImageFormatSupport(GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT));
+    EXPECT_EQ(shouldHaveTextureSupport,
+              checkTexImageFormatSupport(GL_DEPTH_COMPONENT, GL_UNSIGNED_INT));
 
-    if (extensionEnabled("GL_EXT_texture_storage"))
+    if (IsGLExtensionEnabled("GL_EXT_texture_storage"))
     {
         EXPECT_EQ(shouldHaveTextureSupport, checkTexStorageFormatSupport(GL_DEPTH_COMPONENT16));
         EXPECT_EQ(shouldHaveTextureSupport, checkTexStorageFormatSupport(GL_DEPTH_COMPONENT32_OES));
@@ -137,16 +137,19 @@ TEST_P(DepthStencilFormatsTest, DepthTexture)
 TEST_P(DepthStencilFormatsTest, PackedDepthStencil)
 {
     // Expected to fail in D3D9 if GL_OES_packed_depth_stencil is not present.
-    // Expected to fail in D3D11 if GL_OES_packed_depth_stencil or GL_ANGLE_depth_texture is not present.
+    // Expected to fail in D3D11 if GL_OES_packed_depth_stencil or GL_ANGLE_depth_texture is not
+    // present.
 
-    bool shouldHaveRenderbufferSupport = extensionEnabled("GL_OES_packed_depth_stencil");
-    EXPECT_EQ(shouldHaveRenderbufferSupport, checkRenderbufferFormatSupport(GL_DEPTH24_STENCIL8_OES));
+    bool shouldHaveRenderbufferSupport = IsGLExtensionEnabled("GL_OES_packed_depth_stencil");
+    EXPECT_EQ(shouldHaveRenderbufferSupport,
+              checkRenderbufferFormatSupport(GL_DEPTH24_STENCIL8_OES));
 
-    bool shouldHaveTextureSupport = extensionEnabled("GL_OES_packed_depth_stencil") &&
-                                    extensionEnabled("GL_ANGLE_depth_texture");
-    EXPECT_EQ(shouldHaveTextureSupport, checkTexImageFormatSupport(GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES));
+    bool shouldHaveTextureSupport = IsGLExtensionEnabled("GL_OES_packed_depth_stencil") &&
+                                    IsGLExtensionEnabled("GL_ANGLE_depth_texture");
+    EXPECT_EQ(shouldHaveTextureSupport,
+              checkTexImageFormatSupport(GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES));
 
-    if (extensionEnabled("GL_EXT_texture_storage"))
+    if (IsGLExtensionEnabled("GL_EXT_texture_storage"))
     {
         EXPECT_EQ(shouldHaveTextureSupport, checkTexStorageFormatSupport(GL_DEPTH24_STENCIL8_OES));
     }
@@ -183,12 +186,71 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithDepthStencil)
     ASSERT_EQ(255, pixel[3]);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// This test reproduces a driver bug on Intel windows platforms on driver version
+// from 4815 to 4901.
+// When rendering with Stencil buffer enabled and depth buffer disabled, large
+// viewport will lead to memory leak and driver crash. And the pixel result
+// is a random value.
+TEST_P(DepthStencilFormatsTestES3, DrawWithLargeViewport)
+{
+    ANGLE_SKIP_TEST_IF(IsIntel() && (IsOSX() || IsWindows()));
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    glEnable(GL_STENCIL_TEST);
+    glDisable(GL_DEPTH_TEST);
+
+    // The iteration is to reproduce memory leak when rendering several times.
+    for (int i = 0; i < 10; ++i)
+    {
+        // Create offscreen fbo and its color attachment and depth stencil attachment.
+        GLTexture framebufferColorTexture;
+        glBindTexture(GL_TEXTURE_2D, framebufferColorTexture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture framebufferStencilTexture;
+        glBindTexture(GL_TEXTURE_2D, framebufferStencilTexture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, getWindowWidth(), getWindowHeight());
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               framebufferColorTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                               framebufferStencilTexture, 0);
+
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_NO_ERROR();
+
+        GLint kStencilRef = 4;
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilFunc(GL_ALWAYS, kStencilRef, 0xFF);
+
+        float viewport[2];
+        glGetFloatv(GL_MAX_VIEWPORT_DIMS, viewport);
+
+        glViewport(0, 0, static_cast<GLsizei>(viewport[0]), static_cast<GLsizei>(viewport[1]));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb);
+
+        drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(DepthStencilFormatsTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_OPENGL(),
-                       ES2_OPENGLES());
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());
 ANGLE_INSTANTIATE_TEST(DepthStencilFormatsTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 
 class TinyDepthStencilWorkaroundTest : public ANGLETest
@@ -215,22 +277,16 @@ class TinyDepthStencilWorkaroundTest : public ANGLETest
 // http://anglebug.com/1664
 TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
 {
-    const std::string &drawVS =
+    constexpr char kDrawVS[] =
         "#version 100\n"
         "attribute vec3 vertex;\n"
         "void main () {\n"
         "  gl_Position = vec4(vertex.x, vertex.y, vertex.z * 2.0 - 1.0, 1);\n"
         "}\n";
 
-    const std::string &drawFS =
-        "#version 100\n"
-        "void main () {\n"
-        "  gl_FragColor = vec4 (1.);\n"
-        "}\n";
+    ANGLE_GL_PROGRAM(drawProgram, kDrawVS, essl1_shaders::fs::Red());
 
-    ANGLE_GL_PROGRAM(drawProgram, drawVS, drawFS);
-
-    const std::string &blitVS =
+    constexpr char kBlitVS[] =
         "#version 100\n"
         "attribute vec2 vertex;\n"
         "varying vec2 position;\n"
@@ -239,7 +295,7 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
         "  gl_Position = vec4(vertex, 0, 1);\n"
         "}\n";
 
-    const std::string &blitFS =
+    constexpr char kBlitFS[] =
         "#version 100\n"
         "precision mediump float;\n"
         "uniform sampler2D texture;\n"
@@ -248,7 +304,7 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
         "  gl_FragColor = vec4 (texture2D (texture, position).rrr, 1.);\n"
         "}\n";
 
-    ANGLE_GL_PROGRAM(blitProgram, blitVS, blitFS);
+    ANGLE_GL_PROGRAM(blitProgram, kBlitVS, kBlitFS);
 
     GLint blitTextureLocation = glGetUniformLocation(blitProgram.get(), "texture");
     ASSERT_NE(-1, blitTextureLocation);

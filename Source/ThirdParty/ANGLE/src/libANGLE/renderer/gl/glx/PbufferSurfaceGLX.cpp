@@ -16,21 +16,19 @@ namespace rx
 {
 
 PbufferSurfaceGLX::PbufferSurfaceGLX(const egl::SurfaceState &state,
-                                     RendererGL *renderer,
                                      EGLint width,
                                      EGLint height,
                                      bool largest,
                                      const FunctionsGLX &glx,
                                      glx::FBConfig fbConfig)
-    : SurfaceGLX(state, renderer),
+    : SurfaceGLX(state),
       mWidth(width),
       mHeight(height),
       mLargest(largest),
       mGLX(glx),
       mFBConfig(fbConfig),
       mPbuffer(0)
-{
-}
+{}
 
 PbufferSurfaceGLX::~PbufferSurfaceGLX()
 {
@@ -45,16 +43,11 @@ egl::Error PbufferSurfaceGLX::initialize(const egl::Display *display)
     // Avoid creating 0-sized PBuffers as it fails on the Intel Mesa driver
     // as commented on https://bugs.freedesktop.org/show_bug.cgi?id=38869 so we
     // use (w, 1) or (1, h) instead.
-    int width = std::max(1, static_cast<int>(mWidth));
+    int width  = std::max(1, static_cast<int>(mWidth));
     int height = std::max(1, static_cast<int>(mHeight));
 
-    const int attribs[] =
-    {
-        GLX_PBUFFER_WIDTH, width,
-        GLX_PBUFFER_HEIGHT, height,
-        GLX_LARGEST_PBUFFER, mLargest,
-        None
-    };
+    const int attribs[] = {
+        GLX_PBUFFER_WIDTH, width, GLX_PBUFFER_HEIGHT, height, GLX_LARGEST_PBUFFER, mLargest, None};
 
     mPbuffer = mGLX.createPbuffer(mFBConfig, attribs);
     if (!mPbuffer)
@@ -71,7 +64,7 @@ egl::Error PbufferSurfaceGLX::initialize(const egl::Display *display)
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceGLX::makeCurrent()
+egl::Error PbufferSurfaceGLX::makeCurrent(const gl::Context *context)
 {
     return egl::NoError();
 }
@@ -96,21 +89,21 @@ egl::Error PbufferSurfaceGLX::querySurfacePointerANGLE(EGLint attribute, void **
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceGLX::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error PbufferSurfaceGLX::bindTexImage(const gl::Context *context,
+                                           gl::Texture *texture,
+                                           EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::NoError();
 }
 
-egl::Error PbufferSurfaceGLX::releaseTexImage(EGLint buffer)
+egl::Error PbufferSurfaceGLX::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::NoError();
 }
 
-void PbufferSurfaceGLX::setSwapInterval(EGLint interval)
-{
-}
+void PbufferSurfaceGLX::setSwapInterval(EGLint interval) {}
 
 EGLint PbufferSurfaceGLX::getWidth() const
 {

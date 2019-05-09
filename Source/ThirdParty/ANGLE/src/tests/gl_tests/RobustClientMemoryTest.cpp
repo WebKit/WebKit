@@ -28,151 +28,9 @@ class RobustClientMemoryTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
-    {
-        ANGLETest::SetUp();
-
-        glGetBooleanvRobustANGLE = reinterpret_cast<PFNGLGETBOOLEANVROBUSTANGLE>(
-            eglGetProcAddress("glGetBooleanvRobustANGLE"));
-        glGetBufferParameterivRobustANGLE = reinterpret_cast<PFNGLGETBUFFERPARAMETERIVROBUSTANGLE>(
-            eglGetProcAddress("glGetBufferParameterivRobustANGLE"));
-        glGetFloatvRobustANGLE = reinterpret_cast<PFNGLGETFLOATVROBUSTANGLE>(
-            eglGetProcAddress("glGetFloatvRobustANGLE"));
-        glGetFramebufferAttachmentParameterivRobustANGLE =
-            reinterpret_cast<PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVROBUSTANGLE>(
-                eglGetProcAddress("glGetFramebufferAttachmentParameterivRobustANGLE"));
-        glGetIntegervRobustANGLE = reinterpret_cast<PFNGLGETINTEGERVROBUSTANGLE>(
-            eglGetProcAddress("glGetIntegervRobustANGLE"));
-        glGetProgramivRobustANGLE = reinterpret_cast<PFNGLGETPROGRAMIVROBUSTANGLE>(
-            eglGetProcAddress("glGetProgramivRobustANGLE"));
-        glGetRenderbufferParameterivRobustANGLE =
-            reinterpret_cast<PFNGLGETRENDERBUFFERPARAMETERIVROBUSTANGLE>(
-                eglGetProcAddress("glGetRenderbufferParameterivRobustANGLE"));
-        glGetShaderivRobustANGLE = reinterpret_cast<PFNGLGETSHADERIVROBUSTANGLE>(
-            eglGetProcAddress("glGetShaderivRobustANGLE"));
-        glGetTexParameterfvRobustANGLE = reinterpret_cast<PFNGLGETTEXPARAMETERFVROBUSTANGLE>(
-            eglGetProcAddress("glGetTexParameterfvRobustANGLE"));
-        glGetTexParameterivRobustANGLE = reinterpret_cast<PFNGLGETTEXPARAMETERIVROBUSTANGLE>(
-            eglGetProcAddress("glGetTexParameterivRobustANGLE"));
-        glGetUniformfvRobustANGLE = reinterpret_cast<PFNGLGETUNIFORMFVROBUSTANGLE>(
-            eglGetProcAddress("glGetUniformfvRobustANGLE"));
-        glGetUniformivRobustANGLE = reinterpret_cast<PFNGLGETUNIFORMIVROBUSTANGLE>(
-            eglGetProcAddress("glGetUniformivRobustANGLE"));
-        glGetVertexAttribfvRobustANGLE = reinterpret_cast<PFNGLGETVERTEXATTRIBFVROBUSTANGLE>(
-            eglGetProcAddress("glGetVertexAttribfvRobustANGLE"));
-        glGetVertexAttribivRobustANGLE = reinterpret_cast<PFNGLGETVERTEXATTRIBIVROBUSTANGLE>(
-            eglGetProcAddress("glGetVertexAttribivRobustANGLE"));
-        glGetVertexAttribPointervRobustANGLE =
-            reinterpret_cast<PFNGLGETVERTEXATTRIBPOINTERVROBUSTANGLE>(
-                eglGetProcAddress("glGetVertexAttribPointervRobustANGLE"));
-        glReadPixelsRobustANGLE = reinterpret_cast<PFNGLREADPIXELSROBUSTANGLE>(
-            eglGetProcAddress("glReadPixelsRobustANGLE"));
-        glTexImage2DRobustANGLE = reinterpret_cast<PFNGLTEXIMAGE2DROBUSTANGLE>(
-            eglGetProcAddress("glTexImage2DRobustANGLE"));
-        glTexParameterfvRobustANGLE = reinterpret_cast<PFNGLTEXPARAMETERFVROBUSTANGLE>(
-            eglGetProcAddress("glTexParameterfvRobustANGLE"));
-        glTexParameterivRobustANGLE = reinterpret_cast<PFNGLTEXPARAMETERIVROBUSTANGLE>(
-            eglGetProcAddress("glTexParameterivRobustANGLE"));
-        glTexSubImage2DRobustANGLE = reinterpret_cast<PFNGLTEXSUBIMAGE2DROBUSTANGLE>(
-            eglGetProcAddress("glTexSubImage2DRobustANGLE"));
-        glTexImage3DRobustANGLE = reinterpret_cast<PFNGLTEXIMAGE3DROBUSTANGLE>(
-            eglGetProcAddress("glTexImage3DRobustANGLE"));
-        glTexSubImage3DRobustANGLE = reinterpret_cast<PFNGLTEXSUBIMAGE3DROBUSTANGLE>(
-            eglGetProcAddress("glTexSubImage3DRobustANGLE"));
-        glGetQueryivRobustANGLE = reinterpret_cast<PFNGLGETQUERYIVROBUSTANGLE>(
-            eglGetProcAddress("glGetQueryivRobustANGLE"));
-        glGetQueryObjectuivRobustANGLE = reinterpret_cast<PFNGLGETQUERYOBJECTUIVROBUSTANGLE>(
-            eglGetProcAddress("glGetQueryObjectuivRobustANGLE"));
-        glGetBufferPointervRobustANGLE = reinterpret_cast<PFNGLGETBUFFERPOINTERVROBUSTANGLE>(
-            eglGetProcAddress("glGetBufferPointervRobustANGLE"));
-        glGetIntegeri_vRobustANGLE = reinterpret_cast<PFNGLGETINTEGERI_VROBUSTANGLE>(
-            eglGetProcAddress("glGetIntegeri_vRobustANGLE"));
-        glGetInternalformativRobustANGLE = reinterpret_cast<PFNGETINTERNALFORMATIVROBUSTANGLE>(
-            eglGetProcAddress("glGetInternalformativRobustANGLE"));
-        glGetVertexAttribIivRobustANGLE = reinterpret_cast<PFNGLGETVERTEXATTRIBIIVROBUSTANGLE>(
-            eglGetProcAddress("glGetVertexAttribIivRobustANGLE"));
-        glGetVertexAttribIuivRobustANGLE = reinterpret_cast<PFNGLGETVERTEXATTRIBIUIVROBUSTANGLE>(
-            eglGetProcAddress("glGetVertexAttribIuivRobustANGLE"));
-        glGetUniformuivRobustANGLE = reinterpret_cast<PFNGLGETUNIFORMUIVROBUSTANGLE>(
-            eglGetProcAddress("glGetUniformuivRobustANGLE"));
-        glGetActiveUniformBlockivRobustANGLE =
-            reinterpret_cast<PFNGLGETACTIVEUNIFORMBLOCKIVROBUSTANGLE>(
-                eglGetProcAddress("glGetActiveUniformBlockivRobustANGLE"));
-        glGetInteger64vRobustANGLE = reinterpret_cast<PFNGLGETINTEGER64VROBUSTANGLE>(
-            eglGetProcAddress("glGetInteger64vRobustANGLE"));
-        glGetInteger64i_vRobustANGLE = reinterpret_cast<PFNGLGETINTEGER64I_VROBUSTANGLE>(
-            eglGetProcAddress("glGetInteger64i_vRobustANGLE"));
-        glGetBufferParameteri64vRobustANGLE =
-            reinterpret_cast<PFNGLGETBUFFERPARAMETERI64VROBUSTANGLE>(
-                eglGetProcAddress("glGetBufferParameteri64vRobustANGLE"));
-        glSamplerParameterivRobustANGLE = reinterpret_cast<PFNGLSAMPLERPARAMETERIVROBUSTANGLE>(
-            eglGetProcAddress("glSamplerParameterivRobustANGLE"));
-        glSamplerParameterfvRobustANGLE = reinterpret_cast<PFNGLSAMPLERPARAMETERFVROBUSTANGLE>(
-            eglGetProcAddress("glSamplerParameterfvRobustANGLE"));
-        glGetSamplerParameterivRobustANGLE =
-            reinterpret_cast<PFNGLGETSAMPLERPARAMETERIVROBUSTANGLE>(
-                eglGetProcAddress("glGetSamplerParameterivRobustANGLE"));
-        glGetSamplerParameterfvRobustANGLE =
-            reinterpret_cast<PFNGLGETSAMPLERPARAMETERFVROBUSTANGLE>(
-                eglGetProcAddress("glGetSamplerParameterfvRobustANGLE"));
-        glGetFramebufferParameterivRobustANGLE =
-            reinterpret_cast<PFNGLGETFRAMEBUFFERPARAMETERIVROBUSTANGLE>(
-                eglGetProcAddress("glGetFramebufferParameterivRobustANGLE"));
-        glGetProgramInterfaceivRobustANGLE =
-            reinterpret_cast<PFNGLGETPROGRAMINTERFACEIVROBUSTANGLE>(
-                eglGetProcAddress("glGetProgramInterfaceivRobustANGLE"));
-        glGetBooleani_vRobustANGLE = reinterpret_cast<PFNGLGETBOOLEANI_VROBUSTANGLE>(
-            eglGetProcAddress("glGetBooleani_vRobustANGLE"));
-        glGetMultisamplefvRobustANGLE = reinterpret_cast<PFNGLGETMULTISAMPLEFVROBUSTANGLE>(
-            eglGetProcAddress("glGetMultisamplefvRobustANGLE"));
-        glGetTexLevelParameterivRobustANGLE =
-            reinterpret_cast<PFNGLGETTEXLEVELPARAMETERIVROBUSTANGLE>(
-                eglGetProcAddress("glGetTexLevelParameterivRobustANGLE"));
-        glGetTexLevelParameterfvRobustANGLE =
-            reinterpret_cast<PFNGLGETTEXLEVELPARAMETERFVROBUSTANGLE>(
-                eglGetProcAddress("glGetTexLevelParameterfvRobustANGLE"));
-        glGetPointervRobustANGLERobustANGLE =
-            reinterpret_cast<PFNGLGETPOINTERVROBUSTANGLEROBUSTANGLE>(
-                eglGetProcAddress("glGetPointervRobustANGLERobustANGLE"));
-        glReadnPixelsRobustANGLE = reinterpret_cast<PFNGLREADNPIXELSROBUSTANGLE>(
-            eglGetProcAddress("glReadnPixelsRobustANGLE"));
-        glGetnUniformfvRobustANGLE = reinterpret_cast<PFNGLGETNUNIFORMFVROBUSTANGLE>(
-            eglGetProcAddress("glGetnUniformfvRobustANGLE"));
-        glGetnUniformivRobustANGLE = reinterpret_cast<PFNGLGETNUNIFORMIVROBUSTANGLE>(
-            eglGetProcAddress("glGetnUniformivRobustANGLE"));
-        glGetnUniformuivRobustANGLE = reinterpret_cast<PFNGLGETNUNIFORMUIVROBUSTANGLE>(
-            eglGetProcAddress("glGetnUniformuivRobustANGLE"));
-        glTexParameterIivRobustANGLE = reinterpret_cast<PFNGLTEXPARAMETERIIVROBUSTANGLE>(
-            eglGetProcAddress("glTexParameterIivRobustANGLE"));
-        glTexParameterIuivRobustANGLE = reinterpret_cast<PFNGLTEXPARAMETERIUIVROBUSTANGLE>(
-            eglGetProcAddress("glTexParameterIuivRobustANGLE"));
-        glGetTexParameterIivRobustANGLE = reinterpret_cast<PFNGLGETTEXPARAMETERIIVROBUSTANGLE>(
-            eglGetProcAddress("glGetTexParameterIivRobustANGLE"));
-        glGetTexParameterIuivRobustANGLE = reinterpret_cast<PFNGLGETTEXPARAMETERIUIVROBUSTANGLE>(
-            eglGetProcAddress("glGetTexParameterIuivRobustANGLE"));
-        glSamplerParameterIivRobustANGLE = reinterpret_cast<PFNGLSAMPLERPARAMETERIIVROBUSTANGLE>(
-            eglGetProcAddress("glSamplerParameterIivRobustANGLE"));
-        glSamplerParameterIuivRobustANGLE = reinterpret_cast<PFNGLSAMPLERPARAMETERIUIVROBUSTANGLE>(
-            eglGetProcAddress("glSamplerParameterIuivRobustANGLE"));
-        glGetSamplerParameterIivRobustANGLE =
-            reinterpret_cast<PFNGLGETSAMPLERPARAMETERIIVROBUSTANGLE>(
-                eglGetProcAddress("glGetSamplerParameterIivRobustANGLE"));
-        glGetSamplerParameterIuivRobustANGLE =
-            reinterpret_cast<PFNGLGETSAMPLERPARAMETERIUIVROBUSTANGLE>(
-                eglGetProcAddress("glGetSamplerParameterIuivRobustANGLE"));
-        glGetQueryObjectivRobustANGLE = reinterpret_cast<PFNGLGETQUERYOBJECTIVROBUSTANGLE>(
-            eglGetProcAddress("glGetQueryObjectivRobustANGLE"));
-        glGetQueryObjecti64vRobustANGLE = reinterpret_cast<PFNGLGETQUERYOBJECTI64VROBUSTANGLE>(
-            eglGetProcAddress("glGetQueryObjecti64vRobustANGLE"));
-        glGetQueryObjectui64vRobustANGLE = reinterpret_cast<PFNGLGETQUERYOBJECTUI64VROBUSTANGLE>(
-            eglGetProcAddress("glGetQueryObjectui64vRobustANGLE"));
-    }
-
-    void TearDown() override { ANGLETest::TearDown(); }
-
     bool extensionsPresent() const
     {
-        if (!extensionEnabled("GL_ANGLE_robust_client_memory"))
+        if (!IsGLExtensionEnabled("GL_ANGLE_robust_client_memory"))
         {
             std::cout << "Test skipped because GL_ANGLE_robust_client_memory is not available.";
             return false;
@@ -180,68 +38,6 @@ class RobustClientMemoryTest : public ANGLETest
 
         return true;
     }
-
-    PFNGLGETBOOLEANVROBUSTANGLE glGetBooleanvRobustANGLE                   = nullptr;
-    PFNGLGETBUFFERPARAMETERIVROBUSTANGLE glGetBufferParameterivRobustANGLE = nullptr;
-    PFNGLGETFLOATVROBUSTANGLE glGetFloatvRobustANGLE                       = nullptr;
-    PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVROBUSTANGLE
-    glGetFramebufferAttachmentParameterivRobustANGLE                                   = nullptr;
-    PFNGLGETINTEGERVROBUSTANGLE glGetIntegervRobustANGLE                               = nullptr;
-    PFNGLGETPROGRAMIVROBUSTANGLE glGetProgramivRobustANGLE                             = nullptr;
-    PFNGLGETRENDERBUFFERPARAMETERIVROBUSTANGLE glGetRenderbufferParameterivRobustANGLE = nullptr;
-    PFNGLGETSHADERIVROBUSTANGLE glGetShaderivRobustANGLE                               = nullptr;
-    PFNGLGETTEXPARAMETERFVROBUSTANGLE glGetTexParameterfvRobustANGLE                   = nullptr;
-    PFNGLGETTEXPARAMETERIVROBUSTANGLE glGetTexParameterivRobustANGLE                   = nullptr;
-    PFNGLGETUNIFORMFVROBUSTANGLE glGetUniformfvRobustANGLE                             = nullptr;
-    PFNGLGETUNIFORMIVROBUSTANGLE glGetUniformivRobustANGLE                             = nullptr;
-    PFNGLGETVERTEXATTRIBFVROBUSTANGLE glGetVertexAttribfvRobustANGLE                   = nullptr;
-    PFNGLGETVERTEXATTRIBIVROBUSTANGLE glGetVertexAttribivRobustANGLE                   = nullptr;
-    PFNGLGETVERTEXATTRIBPOINTERVROBUSTANGLE glGetVertexAttribPointervRobustANGLE       = nullptr;
-    PFNGLREADPIXELSROBUSTANGLE glReadPixelsRobustANGLE                                 = nullptr;
-    PFNGLTEXIMAGE2DROBUSTANGLE glTexImage2DRobustANGLE                                 = nullptr;
-    PFNGLTEXPARAMETERFVROBUSTANGLE glTexParameterfvRobustANGLE                         = nullptr;
-    PFNGLTEXPARAMETERIVROBUSTANGLE glTexParameterivRobustANGLE                         = nullptr;
-    PFNGLTEXSUBIMAGE2DROBUSTANGLE glTexSubImage2DRobustANGLE                           = nullptr;
-    PFNGLTEXIMAGE3DROBUSTANGLE glTexImage3DRobustANGLE                                 = nullptr;
-    PFNGLTEXSUBIMAGE3DROBUSTANGLE glTexSubImage3DRobustANGLE                           = nullptr;
-    PFNGLGETQUERYIVROBUSTANGLE glGetQueryivRobustANGLE                                 = nullptr;
-    PFNGLGETQUERYOBJECTUIVROBUSTANGLE glGetQueryObjectuivRobustANGLE                   = nullptr;
-    PFNGLGETBUFFERPOINTERVROBUSTANGLE glGetBufferPointervRobustANGLE                   = nullptr;
-    PFNGLGETINTEGERI_VROBUSTANGLE glGetIntegeri_vRobustANGLE                           = nullptr;
-    PFNGETINTERNALFORMATIVROBUSTANGLE glGetInternalformativRobustANGLE                 = nullptr;
-    PFNGLGETVERTEXATTRIBIIVROBUSTANGLE glGetVertexAttribIivRobustANGLE                 = nullptr;
-    PFNGLGETVERTEXATTRIBIUIVROBUSTANGLE glGetVertexAttribIuivRobustANGLE               = nullptr;
-    PFNGLGETUNIFORMUIVROBUSTANGLE glGetUniformuivRobustANGLE                           = nullptr;
-    PFNGLGETACTIVEUNIFORMBLOCKIVROBUSTANGLE glGetActiveUniformBlockivRobustANGLE       = nullptr;
-    PFNGLGETINTEGER64VROBUSTANGLE glGetInteger64vRobustANGLE                           = nullptr;
-    PFNGLGETINTEGER64I_VROBUSTANGLE glGetInteger64i_vRobustANGLE                       = nullptr;
-    PFNGLGETBUFFERPARAMETERI64VROBUSTANGLE glGetBufferParameteri64vRobustANGLE         = nullptr;
-    PFNGLSAMPLERPARAMETERIVROBUSTANGLE glSamplerParameterivRobustANGLE                 = nullptr;
-    PFNGLSAMPLERPARAMETERFVROBUSTANGLE glSamplerParameterfvRobustANGLE                 = nullptr;
-    PFNGLGETSAMPLERPARAMETERIVROBUSTANGLE glGetSamplerParameterivRobustANGLE           = nullptr;
-    PFNGLGETSAMPLERPARAMETERFVROBUSTANGLE glGetSamplerParameterfvRobustANGLE           = nullptr;
-    PFNGLGETFRAMEBUFFERPARAMETERIVROBUSTANGLE glGetFramebufferParameterivRobustANGLE   = nullptr;
-    PFNGLGETPROGRAMINTERFACEIVROBUSTANGLE glGetProgramInterfaceivRobustANGLE           = nullptr;
-    PFNGLGETBOOLEANI_VROBUSTANGLE glGetBooleani_vRobustANGLE                           = nullptr;
-    PFNGLGETMULTISAMPLEFVROBUSTANGLE glGetMultisamplefvRobustANGLE                     = nullptr;
-    PFNGLGETTEXLEVELPARAMETERIVROBUSTANGLE glGetTexLevelParameterivRobustANGLE         = nullptr;
-    PFNGLGETTEXLEVELPARAMETERFVROBUSTANGLE glGetTexLevelParameterfvRobustANGLE         = nullptr;
-    PFNGLGETPOINTERVROBUSTANGLEROBUSTANGLE glGetPointervRobustANGLERobustANGLE         = nullptr;
-    PFNGLREADNPIXELSROBUSTANGLE glReadnPixelsRobustANGLE                               = nullptr;
-    PFNGLGETNUNIFORMFVROBUSTANGLE glGetnUniformfvRobustANGLE                           = nullptr;
-    PFNGLGETNUNIFORMIVROBUSTANGLE glGetnUniformivRobustANGLE                           = nullptr;
-    PFNGLGETNUNIFORMUIVROBUSTANGLE glGetnUniformuivRobustANGLE                         = nullptr;
-    PFNGLTEXPARAMETERIIVROBUSTANGLE glTexParameterIivRobustANGLE                       = nullptr;
-    PFNGLTEXPARAMETERIUIVROBUSTANGLE glTexParameterIuivRobustANGLE                     = nullptr;
-    PFNGLGETTEXPARAMETERIIVROBUSTANGLE glGetTexParameterIivRobustANGLE                 = nullptr;
-    PFNGLGETTEXPARAMETERIUIVROBUSTANGLE glGetTexParameterIuivRobustANGLE               = nullptr;
-    PFNGLSAMPLERPARAMETERIIVROBUSTANGLE glSamplerParameterIivRobustANGLE               = nullptr;
-    PFNGLSAMPLERPARAMETERIUIVROBUSTANGLE glSamplerParameterIuivRobustANGLE             = nullptr;
-    PFNGLGETSAMPLERPARAMETERIIVROBUSTANGLE glGetSamplerParameterIivRobustANGLE         = nullptr;
-    PFNGLGETSAMPLERPARAMETERIUIVROBUSTANGLE glGetSamplerParameterIuivRobustANGLE       = nullptr;
-    PFNGLGETQUERYOBJECTIVROBUSTANGLE glGetQueryObjectivRobustANGLE                     = nullptr;
-    PFNGLGETQUERYOBJECTI64VROBUSTANGLE glGetQueryObjecti64vRobustANGLE                 = nullptr;
-    PFNGLGETQUERYOBJECTUI64VROBUSTANGLE glGetQueryObjectui64vRobustANGLE               = nullptr;
 };
 
 // Test basic usage and validation of glGetIntegervRobustANGLE
@@ -359,11 +155,7 @@ TEST_P(RobustClientMemoryTest, ReadPixels)
     }
 
     // TODO(ynovikov): Looks like a driver bug on Intel HD 530 http://anglebug.com/1877
-    if (IsLinux() && IsIntel() && IsDesktopOpenGL())
-    {
-        std::cout << "Test skipped on Intel OpenGL on Linux." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsDesktopOpenGL());
 
     GLsizei dataDimension = 16;
     std::vector<GLubyte> rgbaData(dataDimension * dataDimension * 4);
@@ -416,6 +208,7 @@ ANGLE_INSTANTIATE_TEST(RobustClientMemoryTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());
 
-}  // namespace
+}  // namespace angle

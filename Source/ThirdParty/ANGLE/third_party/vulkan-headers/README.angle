@@ -1,0 +1,15 @@
+Name: Vulkan Header Components
+Short Name: Vulkan Headers
+Version: N/A
+URL: https://github.com/KhronosGroup/Vulkan-Headers
+SOURCE CODE: git clone https://github.com/KhronosGroup/Vulkan-Headers.git
+Date: 06/12/2018
+Revision: 634e3658d6fa8f95f9062a3a7831d5567baf0eb3
+Security Critical: no
+License: Apache 2.0
+License File: LICENSE.txt
+
+Description:
+The Vulkan Headers Components are used to by Vulkan projects. This includes the Vulkan loader,
+mock ICD in the Vulkan-Tools repo, and the Vulkan Validation layers.
+

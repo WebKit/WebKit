@@ -29,8 +29,6 @@ class StrtofClampParser
     }
 };
 
-// NumericLexFloat32OutOfRangeToInfinity usually only comes to play in corner cases of parsing, but
-// it's useful to test that it works as expected across the whole range of floats.
 class NumericLexFloatParser
 {
   public:
@@ -65,7 +63,7 @@ class FloatLexTest : public ::testing::Test
 };
 
 typedef ::testing::Types<StrtofClampParser, NumericLexFloatParser> FloatParserTypes;
-TYPED_TEST_CASE(FloatLexTest, FloatParserTypes);
+TYPED_TEST_SUITE(FloatLexTest, FloatParserTypes);
 
 TYPED_TEST(FloatLexTest, One)
 {
@@ -153,6 +151,29 @@ TYPED_TEST(FloatLexTest, SlightlyAboveMaxFloat)
 TYPED_TEST(FloatLexTest, SlightlyBelowMaxFloat)
 {
     ASSERT_FALSE(TestFixture::IsInfinity("3.4028e38"));
+    ASSERT_TRUE(TestFixture::ParsedMatches("3.4028e38", 3.4028e38f));
+}
+
+TYPED_TEST(FloatLexTest, SlightlyAboveMaxFloatLargerMantissa)
+{
+    ASSERT_TRUE(TestFixture::IsInfinity("34.029e37"));
+}
+
+TYPED_TEST(FloatLexTest, SlightlyBelowMaxFloatLargerMantissa)
+{
+    ASSERT_FALSE(TestFixture::IsInfinity("34.028e37"));
+    ASSERT_TRUE(TestFixture::ParsedMatches("34.028e37", 3.4028e38f));
+}
+
+TYPED_TEST(FloatLexTest, SlightlyAboveMaxFloatSmallerMantissa)
+{
+    ASSERT_TRUE(TestFixture::IsInfinity("0.34029e39"));
+}
+
+TYPED_TEST(FloatLexTest, SlightlyBelowMaxFloatSmallerMantissa)
+{
+    ASSERT_FALSE(TestFixture::IsInfinity("0.34028e39"));
+    ASSERT_TRUE(TestFixture::ParsedMatches("0.34028e39", 3.4028e38f));
 }
 
 TYPED_TEST(FloatLexTest, SlightlyBelowMinSubnormalFloat)

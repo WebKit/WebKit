@@ -19,8 +19,7 @@ namespace rx
 
 ClearMultiviewGL::ClearMultiviewGL(const FunctionsGL *functions, StateManagerGL *stateManager)
     : mFunctions(functions), mStateManager(stateManager), mFramebuffer(0u)
-{
-}
+{}
 
 ClearMultiviewGL::~ClearMultiviewGL()
 {
@@ -41,18 +40,9 @@ void ClearMultiviewGL::clearMultiviewFBO(const gl::FramebufferState &state,
                                          GLint stencil)
 {
     const gl::FramebufferAttachment *firstAttachment = state.getFirstNonNullAttachment();
-    switch (firstAttachment->getMultiviewLayout())
+    if (firstAttachment->isMultiview())
     {
-        case GL_FRAMEBUFFER_MULTIVIEW_LAYERED_ANGLE:
-            clearLayeredFBO(state, clearCommandType, mask, buffer, drawbuffer, values, depth,
-                            stencil);
-            break;
-        case GL_FRAMEBUFFER_MULTIVIEW_SIDE_BY_SIDE_ANGLE:
-            clearSideBySideFBO(state, scissorBase, clearCommandType, mask, buffer, drawbuffer,
-                               values, depth, stencil);
-            break;
-        default:
-            UNREACHABLE();
+        clearLayeredFBO(state, clearCommandType, mask, buffer, drawbuffer, values, depth, stencil);
     }
 }
 
@@ -70,7 +60,7 @@ void ClearMultiviewGL::clearLayeredFBO(const gl::FramebufferState &state,
     mStateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebuffer);
 
     const gl::FramebufferAttachment *firstAttachment = state.getFirstNonNullAttachment();
-    ASSERT(firstAttachment->getMultiviewLayout() == GL_FRAMEBUFFER_MULTIVIEW_LAYERED_ANGLE);
+    ASSERT(firstAttachment->isMultiview());
 
     const auto &drawBuffers = state.getDrawBufferStates();
     mFunctions->drawBuffers(static_cast<GLsizei>(drawBuffers.size()), drawBuffers.data());
@@ -85,30 +75,6 @@ void ClearMultiviewGL::clearLayeredFBO(const gl::FramebufferState &state,
     }
 
     detachTextures(state);
-}
-
-void ClearMultiviewGL::clearSideBySideFBO(const gl::FramebufferState &state,
-                                          const gl::Rectangle &scissorBase,
-                                          ClearCommandType clearCommandType,
-                                          GLbitfield mask,
-                                          GLenum buffer,
-                                          GLint drawbuffer,
-                                          const uint8_t *values,
-                                          GLfloat depth,
-                                          GLint stencil)
-{
-    const gl::FramebufferAttachment *firstAttachment = state.getFirstNonNullAttachment();
-    ASSERT(firstAttachment->getMultiviewLayout() == GL_FRAMEBUFFER_MULTIVIEW_SIDE_BY_SIDE_ANGLE);
-
-    const auto &viewportOffsets = firstAttachment->getMultiviewViewportOffsets();
-    for (size_t i = 0u; i < viewportOffsets.size(); ++i)
-    {
-        gl::Rectangle scissor(scissorBase.x + viewportOffsets[i].x,
-                              scissorBase.y + viewportOffsets[i].y, scissorBase.width,
-                              scissorBase.height);
-        mStateManager->setScissorIndexed(0u, scissor);
-        genericClear(clearCommandType, mask, buffer, drawbuffer, values, depth, stencil);
-    }
 }
 
 void ClearMultiviewGL::genericClear(ClearCommandType clearCommandType,
@@ -154,13 +120,14 @@ void ClearMultiviewGL::attachTextures(const gl::FramebufferState &state, int lay
         }
 
         const auto &imageIndex = attachment->getTextureImageIndex();
-        ASSERT(imageIndex.type == GL_TEXTURE_2D_ARRAY);
+        ASSERT(imageIndex.getType() == gl::TextureType::_2DArray);
 
         GLenum colorAttachment =
             static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + static_cast<int>(drawBufferId));
         const TextureGL *textureGL = GetImplAs<TextureGL>(attachment->getTexture());
         mFunctions->framebufferTextureLayer(GL_DRAW_FRAMEBUFFER, colorAttachment,
-                                            textureGL->getTextureID(), imageIndex.mipIndex, layer);
+                                            textureGL->getTextureID(), imageIndex.getLevelIndex(),
+                                            layer);
     }
 
     const gl::FramebufferAttachment *depthStencilAttachment = state.getDepthStencilAttachment();
@@ -169,29 +136,32 @@ void ClearMultiviewGL::attachTextures(const gl::FramebufferState &state, int lay
     if (depthStencilAttachment != nullptr)
     {
         const auto &imageIndex = depthStencilAttachment->getTextureImageIndex();
-        ASSERT(imageIndex.type == GL_TEXTURE_2D_ARRAY);
+        ASSERT(imageIndex.getType() == gl::TextureType::_2DArray);
 
         const TextureGL *textureGL = GetImplAs<TextureGL>(depthStencilAttachment->getTexture());
         mFunctions->framebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                                            textureGL->getTextureID(), imageIndex.mipIndex, layer);
+                                            textureGL->getTextureID(), imageIndex.getLevelIndex(),
+                                            layer);
     }
     else if (depthAttachment != nullptr)
     {
         const auto &imageIndex = depthAttachment->getTextureImageIndex();
-        ASSERT(imageIndex.type == GL_TEXTURE_2D_ARRAY);
+        ASSERT(imageIndex.getType() == gl::TextureType::_2DArray);
 
         const TextureGL *textureGL = GetImplAs<TextureGL>(depthAttachment->getTexture());
         mFunctions->framebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                            textureGL->getTextureID(), imageIndex.mipIndex, layer);
+                                            textureGL->getTextureID(), imageIndex.getLevelIndex(),
+                                            layer);
     }
     else if (stencilAttachment != nullptr)
     {
         const auto &imageIndex = stencilAttachment->getTextureImageIndex();
-        ASSERT(imageIndex.type == GL_TEXTURE_2D_ARRAY);
+        ASSERT(imageIndex.getType() == gl::TextureType::_2DArray);
 
         const TextureGL *textureGL = GetImplAs<TextureGL>(stencilAttachment->getTexture());
         mFunctions->framebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                            textureGL->getTextureID(), imageIndex.mipIndex, layer);
+                                            textureGL->getTextureID(), imageIndex.getLevelIndex(),
+                                            layer);
     }
 }
 

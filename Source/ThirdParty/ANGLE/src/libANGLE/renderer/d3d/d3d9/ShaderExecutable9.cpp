@@ -14,14 +14,18 @@
 namespace rx
 {
 
-ShaderExecutable9::ShaderExecutable9(const void *function, size_t length, IDirect3DPixelShader9 *executable)
+ShaderExecutable9::ShaderExecutable9(const void *function,
+                                     size_t length,
+                                     IDirect3DPixelShader9 *executable)
     : ShaderExecutableD3D(function, length)
 {
-    mPixelExecutable = executable;
+    mPixelExecutable  = executable;
     mVertexExecutable = nullptr;
 }
 
-ShaderExecutable9::ShaderExecutable9(const void *function, size_t length, IDirect3DVertexShader9 *executable)
+ShaderExecutable9::ShaderExecutable9(const void *function,
+                                     size_t length,
+                                     IDirect3DVertexShader9 *executable)
     : ShaderExecutableD3D(function, length)
 {
     mVertexExecutable = executable;
@@ -44,4 +48,4 @@ IDirect3DPixelShader9 *ShaderExecutable9::getPixelShader() const
     return mPixelExecutable;
 }
 
-}
+}  // namespace rx

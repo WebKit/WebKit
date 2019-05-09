@@ -23,9 +23,9 @@
 namespace rx
 {
 
-void* FunctionsGLX::sLibHandle = nullptr;
+void *FunctionsGLX::sLibHandle = nullptr;
 
-template<typename T>
+template <typename T>
 static bool GetProc(PFNGETPROCPROC getProc, T *member, const char *name)
 {
     *member = reinterpret_cast<T>(getProc(name));
@@ -60,8 +60,7 @@ struct FunctionsGLX::GLXFunctionTable
           swapIntervalEXTPtr(nullptr),
           swapIntervalMESAPtr(nullptr),
           swapIntervalSGIPtr(nullptr)
-    {
-    }
+    {}
 
     // GLX 1.0
     PFNGLXCREATECONTEXTPROC createContextPtr;
@@ -79,7 +78,7 @@ struct FunctionsGLX::GLXFunctionTable
     PFNGLXGETCLIENTSTRINGPROC getClientStringPtr;
     PFNGLXQUERYEXTENSIONSSTRINGPROC queryExtensionsStringPtr;
 
-    //GLX 1.3
+    // GLX 1.3
     PFNGLXGETFBCONFIGSPROC getFBConfigsPtr;
     PFNGLXCHOOSEFBCONFIGPROC chooseFBConfigPtr;
     PFNGLXGETFBCONFIGATTRIBPROC getFBConfigAttribPtr;
@@ -104,13 +103,12 @@ struct FunctionsGLX::GLXFunctionTable
 };
 
 FunctionsGLX::FunctionsGLX()
-  : majorVersion(0),
-    minorVersion(0),
-    mXDisplay(nullptr),
-    mXScreen(-1),
-    mFnPtrs(new GLXFunctionTable())
-{
-}
+    : majorVersion(0),
+      minorVersion(0),
+      mXDisplay(nullptr),
+      mXScreen(-1),
+      mFnPtrs(new GLXFunctionTable())
+{}
 
 FunctionsGLX::~FunctionsGLX()
 {
@@ -122,7 +120,7 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
 {
     terminate();
     mXDisplay = xDisplay;
-    mXScreen = screen;
+    mXScreen  = screen;
 
 #if !defined(ANGLE_LINK_GLX)
     // Some OpenGL implementations can't handle having this library
@@ -152,16 +150,19 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
     getProc = reinterpret_cast<PFNGETPROCPROC>(glXGetProcAddress);
 #endif
 
-#define GET_PROC_OR_ERROR(MEMBER, NAME) \
-    if (!GetProc(getProc, MEMBER, #NAME)) \
-    { \
-        *errorString = "Could not load GLX entry point " #NAME; \
-        return false; \
-    }
+#define GET_PROC_OR_ERROR(MEMBER, NAME)                             \
+    do                                                              \
+    {                                                               \
+        if (!GetProc(getProc, MEMBER, #NAME))                       \
+        {                                                           \
+            *errorString = "Could not load GLX entry point " #NAME; \
+            return false;                                           \
+        }                                                           \
+    } while (0)
 #if !defined(ANGLE_LINK_GLX)
-#define GET_FNPTR_OR_ERROR(MEMBER, NAME) GET_PROC_OR_ERROR(MEMBER, NAME)
+#    define GET_FNPTR_OR_ERROR(MEMBER, NAME) GET_PROC_OR_ERROR(MEMBER, NAME)
 #else
-#define GET_FNPTR_OR_ERROR(MEMBER, NAME) *MEMBER = NAME;
+#    define GET_FNPTR_OR_ERROR(MEMBER, NAME) *MEMBER = NAME
 #endif
 
     // GLX 1.0
@@ -247,9 +248,7 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
     return true;
 }
 
-void FunctionsGLX::terminate()
-{
-}
+void FunctionsGLX::terminate() {}
 
 bool FunctionsGLX::hasExtension(const char *extension) const
 {
@@ -272,7 +271,7 @@ int FunctionsGLX::getScreen() const
 glx::Context FunctionsGLX::createContext(XVisualInfo *visual, glx::Context share, bool direct) const
 {
     GLXContext shareCtx = reinterpret_cast<GLXContext>(share);
-    GLXContext context = mFnPtrs->createContextPtr(mXDisplay, visual, shareCtx, direct);
+    GLXContext context  = mFnPtrs->createContextPtr(mXDisplay, visual, shareCtx, direct);
     return reinterpret_cast<glx::Context>(context);
 }
 void FunctionsGLX::destroyContext(glx::Context context) const
@@ -331,12 +330,12 @@ const char *FunctionsGLX::queryExtensionsString() const
 glx::FBConfig *FunctionsGLX::getFBConfigs(int *nElements) const
 {
     GLXFBConfig *configs = mFnPtrs->getFBConfigsPtr(mXDisplay, mXScreen, nElements);
-    return reinterpret_cast<glx::FBConfig*>(configs);
+    return reinterpret_cast<glx::FBConfig *>(configs);
 }
 glx::FBConfig *FunctionsGLX::chooseFBConfig(const int *attribList, int *nElements) const
 {
     GLXFBConfig *configs = mFnPtrs->chooseFBConfigPtr(mXDisplay, mXScreen, attribList, nElements);
-    return reinterpret_cast<glx::FBConfig*>(configs);
+    return reinterpret_cast<glx::FBConfig *>(configs);
 }
 int FunctionsGLX::getFBConfigAttrib(glx::FBConfig config, int attribute, int *value) const
 {
@@ -348,7 +347,9 @@ XVisualInfo *FunctionsGLX::getVisualFromFBConfig(glx::FBConfig config) const
     GLXFBConfig cfg = reinterpret_cast<GLXFBConfig>(config);
     return mFnPtrs->getVisualFromFBConfigPtr(mXDisplay, cfg);
 }
-GLXWindow FunctionsGLX::createWindow(glx::FBConfig config, Window window, const int *attribList) const
+GLXWindow FunctionsGLX::createWindow(glx::FBConfig config,
+                                     Window window,
+                                     const int *attribList) const
 {
     GLXFBConfig cfg = reinterpret_cast<GLXFBConfig>(config);
     return mFnPtrs->createWindowPtr(mXDisplay, cfg, window, attribList);
@@ -372,11 +373,15 @@ void FunctionsGLX::queryDrawable(glx::Drawable drawable, int attribute, unsigned
 }
 
 // GLX_ARB_create_context
-glx::Context FunctionsGLX::createContextAttribsARB(glx::FBConfig config, glx::Context shareContext, Bool direct, const int *attribList) const
+glx::Context FunctionsGLX::createContextAttribsARB(glx::FBConfig config,
+                                                   glx::Context shareContext,
+                                                   Bool direct,
+                                                   const int *attribList) const
 {
     GLXContext shareCtx = reinterpret_cast<GLXContext>(shareContext);
-    GLXFBConfig cfg = reinterpret_cast<GLXFBConfig>(config);
-    GLXContext ctx = mFnPtrs->createContextAttribsARBPtr(mXDisplay, cfg, shareCtx, direct, attribList);
+    GLXFBConfig cfg     = reinterpret_cast<GLXFBConfig>(config);
+    GLXContext ctx =
+        mFnPtrs->createContextAttribsARBPtr(mXDisplay, cfg, shareCtx, direct, attribList);
     return reinterpret_cast<glx::Context>(ctx);
 }
 
@@ -395,4 +400,4 @@ int FunctionsGLX::swapIntervalSGI(int intervals) const
     return mFnPtrs->swapIntervalSGIPtr(intervals);
 }
 
-}
+}  // namespace rx

@@ -13,7 +13,7 @@
 
 namespace rx
 {
-class FunctionsGL;
+class RendererGL;
 struct WorkaroundsGL;
 enum class MultiviewImplementationTypeGL;
 
@@ -21,29 +21,35 @@ class ShaderGL : public ShaderImpl
 {
   public:
     ShaderGL(const gl::ShaderState &data,
-             const FunctionsGL *functions,
-             const WorkaroundsGL &workarounds,
-             bool isWebGL,
-             MultiviewImplementationTypeGL multiviewImplementationType);
+             GLuint shaderID,
+             MultiviewImplementationTypeGL multiviewImplementationType,
+             const std::shared_ptr<RendererGL> &renderer);
     ~ShaderGL() override;
 
-    // ShaderImpl implementation
-    ShCompileOptions prepareSourceAndReturnOptions(std::stringstream *sourceStream,
-                                                   std::string *sourcePath) override;
-    bool postTranslateCompile(gl::Compiler *compiler, std::string *infoLog) override;
+    void destroy() override;
+
+    std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,
+                                                  gl::ShCompilerInstance *compilerInstance,
+                                                  ShCompileOptions options) override;
+
     std::string getDebugInfo() const override;
 
     GLuint getShaderID() const;
 
   private:
-    const FunctionsGL *mFunctions;
-    const WorkaroundsGL &mWorkarounds;
+    void compileAndCheckShader(const char *source);
+    void compileShader(const char *source);
+    void checkShader();
+    bool peekCompletion();
+    bool compileAndCheckShaderInWorker(const char *source);
 
     GLuint mShaderID;
-    bool mIsWebGL;
     MultiviewImplementationTypeGL mMultiviewImplementationType;
+    std::shared_ptr<RendererGL> mRenderer;
+    GLint mCompileStatus;
+    std::string mInfoLog;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_SHADERGL_H_
+#endif  // LIBANGLE_RENDERER_GL_SHADERGL_H_

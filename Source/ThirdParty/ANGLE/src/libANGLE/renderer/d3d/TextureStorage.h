@@ -18,10 +18,15 @@
 namespace gl
 {
 class Context;
-struct ImageIndex;
+class ImageIndex;
 struct Box;
 struct PixelUnpackState;
 }  // namespace gl
+
+namespace angle
+{
+class Subject;
+}  // namespace angle
 
 namespace rx
 {
@@ -35,48 +40,55 @@ class TextureStorage : angle::NonCopyable
     TextureStorage() {}
     virtual ~TextureStorage() {}
 
-    virtual gl::Error onDestroy(const gl::Context *context);
+    virtual angle::Result onDestroy(const gl::Context *context);
 
-    virtual int getTopLevel() const = 0;
-    virtual bool isRenderTarget() const = 0;
-    virtual bool isManaged() const = 0;
+    virtual int getTopLevel() const                   = 0;
+    virtual bool isRenderTarget() const               = 0;
+    virtual bool isManaged() const                    = 0;
     virtual bool supportsNativeMipmapFunction() const = 0;
-    virtual int getLevelCount() const = 0;
+    virtual int getLevelCount() const                 = 0;
 
-    virtual gl::Error getRenderTarget(const gl::Context *context,
-                                      const gl::ImageIndex &index,
-                                      RenderTargetD3D **outRT) = 0;
-    virtual gl::Error generateMipmap(const gl::Context *context,
-                                     const gl::ImageIndex &sourceIndex,
-                                     const gl::ImageIndex &destIndex) = 0;
+    virtual angle::Result getRenderTarget(const gl::Context *context,
+                                          const gl::ImageIndex &index,
+                                          RenderTargetD3D **outRT)        = 0;
+    virtual angle::Result generateMipmap(const gl::Context *context,
+                                         const gl::ImageIndex &sourceIndex,
+                                         const gl::ImageIndex &destIndex) = 0;
 
-    virtual gl::Error copyToStorage(const gl::Context *context, TextureStorage *destStorage) = 0;
-    virtual gl::Error setData(const gl::Context *context,
-                              const gl::ImageIndex &index,
-                              ImageD3D *image,
-                              const gl::Box *destBox,
-                              GLenum type,
-                              const gl::PixelUnpackState &unpack,
-                              const uint8_t *pixelData) = 0;
+    virtual angle::Result copyToStorage(const gl::Context *context,
+                                        TextureStorage *destStorage) = 0;
+    virtual angle::Result setData(const gl::Context *context,
+                                  const gl::ImageIndex &index,
+                                  ImageD3D *image,
+                                  const gl::Box *destBox,
+                                  GLenum type,
+                                  const gl::PixelUnpackState &unpack,
+                                  const uint8_t *pixelData)          = 0;
 
-    // This is a no-op for most implementations of TextureStorage. Some (e.g. TextureStorage11_2D) might override it.
-    virtual gl::Error useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                    bool useLevelZeroTexture);
+    // This is a no-op for most implementations of TextureStorage. Some (e.g. TextureStorage11_2D)
+    // might override it.
+    virtual angle::Result useLevelZeroWorkaroundTexture(const gl::Context *context,
+                                                        bool useLevelZeroTexture);
+
+    virtual void invalidateTextures() {}
+
+  protected:
+    const angle::Subject *mSubject;
 };
 
-inline gl::Error TextureStorage::onDestroy(const gl::Context *context)
+inline angle::Result TextureStorage::onDestroy(const gl::Context *context)
 {
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-inline gl::Error TextureStorage::useLevelZeroWorkaroundTexture(const gl::Context *context,
-                                                               bool useLevelZeroTexture)
+inline angle::Result TextureStorage::useLevelZeroWorkaroundTexture(const gl::Context *context,
+                                                                   bool useLevelZeroTexture)
 {
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 using TexStoragePointer = angle::UniqueObjectPointer<TextureStorage, gl::Context>;
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_TEXTURESTORAGE_H_
+#endif  // LIBANGLE_RENDERER_D3D_TEXTURESTORAGE_H_

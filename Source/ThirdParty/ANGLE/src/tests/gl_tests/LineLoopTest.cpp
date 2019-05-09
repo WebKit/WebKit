@@ -6,6 +6,8 @@
 
 #include "test_utils/ANGLETest.h"
 
+#include "test_utils/gl_raii.h"
+
 using namespace angle;
 
 class LineLoopTest : public ANGLETest
@@ -25,28 +27,14 @@ class LineLoopTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vsSource =
-            R"(attribute highp vec4 position;
-            void main(void)
-            {
-                gl_Position = position;
-            })";
-
-        const std::string fsSource =
-            R"(uniform highp vec4 color;
-            void main(void)
-            {
-                gl_FragColor = color;
-            })";
-
-        mProgram = CompileProgram(vsSource, fsSource);
+        mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         if (mProgram == 0)
         {
             FAIL() << "shader compilation failed.";
         }
 
-        mPositionLocation = glGetAttribLocation(mProgram, "position");
-        mColorLocation    = glGetUniformLocation(mProgram, "color");
+        mPositionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
+        mColorLocation    = glGetUniformLocation(mProgram, essl1_shaders::ColorUniform());
 
         glBlendFunc(GL_ONE, GL_ONE);
         glEnable(GL_BLEND);
@@ -72,7 +60,7 @@ class LineLoopTest : public ANGLETest
 
         static const GLfloat stripPositions[] = {-0.5f, -0.5f, -0.5f, 0.5f,
                                                  0.5f,  0.5f,  0.5f,  -0.5f};
-        static const GLubyte stripIndices[] = {1, 0, 3, 2, 1};
+        static const GLubyte stripIndices[]   = {1, 0, 3, 2, 1};
 
         glUseProgram(mProgram);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -132,7 +120,7 @@ TEST_P(LineLoopTest, LineLoopUShortIndices)
 
 TEST_P(LineLoopTest, LineLoopUIntIndices)
 {
-    if (!extensionEnabled("GL_OES_element_index_uint"))
+    if (!IsGLExtensionEnabled("GL_OES_element_index_uint"))
     {
         return;
     }
@@ -180,7 +168,7 @@ TEST_P(LineLoopTest, LineLoopUShortIndexBuffer)
 
 TEST_P(LineLoopTest, LineLoopUIntIndexBuffer)
 {
-    if (!extensionEnabled("GL_OES_element_index_uint"))
+    if (!IsGLExtensionEnabled("GL_OES_element_index_uint"))
     {
         return;
     }
@@ -200,6 +188,27 @@ TEST_P(LineLoopTest, LineLoopUIntIndexBuffer)
     glDeleteBuffers(1, &buf);
 }
 
+// Tests an edge case with a very large line loop element count.
+// Disabled because it is slow and triggers an internal error.
+TEST_P(LineLoopTest, DISABLED_DrawArraysWithLargeCount)
+{
+    constexpr char kVS[] = "void main() { gl_Position = vec4(0); }";
+    constexpr char kFS[] = "void main() { gl_FragColor = vec4(0, 1, 0, 1); }";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glDrawArrays(GL_LINE_LOOP, 0, 0x3FFFFFFE);
+    EXPECT_GL_ERROR(GL_OUT_OF_MEMORY);
+
+    glDrawArrays(GL_LINE_LOOP, 0, 0x1FFFFFFE);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(LineLoopTest, ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES());
+ANGLE_INSTANTIATE_TEST(LineLoopTest,
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES2_OPENGL(),
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());

@@ -33,25 +33,22 @@
    version 2.2 of Bison.  */
 
 #ifndef YY_YY_GLSLANG_TAB_H_INCLUDED
-# define YY_YY_GLSLANG_TAB_H_INCLUDED
+#define YY_YY_GLSLANG_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+#    define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
 
-
 #define YYLTYPE TSourceLoc
 #define YYLTYPE_IS_DECLARED 1
 
-
-
 /* Token type.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
+#    define YYTOKENTYPE
 enum yytokentype
 {
     INVARIANT                 = 258,
@@ -131,106 +128,111 @@ enum yytokentype
     SAMPLER2DMS               = 332,
     ISAMPLER2DMS              = 333,
     USAMPLER2DMS              = 334,
-    SAMPLER3D                 = 335,
-    SAMPLER3DRECT             = 336,
-    SAMPLER2DSHADOW           = 337,
-    SAMPLERCUBESHADOW         = 338,
-    SAMPLER2DARRAYSHADOW      = 339,
-    SAMPLEREXTERNAL2DY2YEXT   = 340,
-    IMAGE2D                   = 341,
-    IIMAGE2D                  = 342,
-    UIMAGE2D                  = 343,
-    IMAGE3D                   = 344,
-    IIMAGE3D                  = 345,
-    UIMAGE3D                  = 346,
-    IMAGE2DARRAY              = 347,
-    IIMAGE2DARRAY             = 348,
-    UIMAGE2DARRAY             = 349,
-    IMAGECUBE                 = 350,
-    IIMAGECUBE                = 351,
-    UIMAGECUBE                = 352,
-    ATOMICUINT                = 353,
-    LAYOUT                    = 354,
-    YUVCSCSTANDARDEXT         = 355,
-    YUVCSCSTANDARDEXTCONSTANT = 356,
-    IDENTIFIER                = 357,
-    TYPE_NAME                 = 358,
-    FLOATCONSTANT             = 359,
-    INTCONSTANT               = 360,
-    UINTCONSTANT              = 361,
-    BOOLCONSTANT              = 362,
-    FIELD_SELECTION           = 363,
-    LEFT_OP                   = 364,
-    RIGHT_OP                  = 365,
-    INC_OP                    = 366,
-    DEC_OP                    = 367,
-    LE_OP                     = 368,
-    GE_OP                     = 369,
-    EQ_OP                     = 370,
-    NE_OP                     = 371,
-    AND_OP                    = 372,
-    OR_OP                     = 373,
-    XOR_OP                    = 374,
-    MUL_ASSIGN                = 375,
-    DIV_ASSIGN                = 376,
-    ADD_ASSIGN                = 377,
-    MOD_ASSIGN                = 378,
-    LEFT_ASSIGN               = 379,
-    RIGHT_ASSIGN              = 380,
-    AND_ASSIGN                = 381,
-    XOR_ASSIGN                = 382,
-    OR_ASSIGN                 = 383,
-    SUB_ASSIGN                = 384,
-    LEFT_PAREN                = 385,
-    RIGHT_PAREN               = 386,
-    LEFT_BRACKET              = 387,
-    RIGHT_BRACKET             = 388,
-    LEFT_BRACE                = 389,
-    RIGHT_BRACE               = 390,
-    DOT                       = 391,
-    COMMA                     = 392,
-    COLON                     = 393,
-    EQUAL                     = 394,
-    SEMICOLON                 = 395,
-    BANG                      = 396,
-    DASH                      = 397,
-    TILDE                     = 398,
-    PLUS                      = 399,
-    STAR                      = 400,
-    SLASH                     = 401,
-    PERCENT                   = 402,
-    LEFT_ANGLE                = 403,
-    RIGHT_ANGLE               = 404,
-    VERTICAL_BAR              = 405,
-    CARET                     = 406,
-    AMPERSAND                 = 407,
-    QUESTION                  = 408
+    SAMPLER2DMSARRAY          = 335,
+    ISAMPLER2DMSARRAY         = 336,
+    USAMPLER2DMSARRAY         = 337,
+    SAMPLER3D                 = 338,
+    SAMPLER3DRECT             = 339,
+    SAMPLER2DSHADOW           = 340,
+    SAMPLERCUBESHADOW         = 341,
+    SAMPLER2DARRAYSHADOW      = 342,
+    SAMPLEREXTERNAL2DY2YEXT   = 343,
+    IMAGE2D                   = 344,
+    IIMAGE2D                  = 345,
+    UIMAGE2D                  = 346,
+    IMAGE3D                   = 347,
+    IIMAGE3D                  = 348,
+    UIMAGE3D                  = 349,
+    IMAGE2DARRAY              = 350,
+    IIMAGE2DARRAY             = 351,
+    UIMAGE2DARRAY             = 352,
+    IMAGECUBE                 = 353,
+    IIMAGECUBE                = 354,
+    UIMAGECUBE                = 355,
+    ATOMICUINT                = 356,
+    LAYOUT                    = 357,
+    YUVCSCSTANDARDEXT         = 358,
+    YUVCSCSTANDARDEXTCONSTANT = 359,
+    IDENTIFIER                = 360,
+    TYPE_NAME                 = 361,
+    FLOATCONSTANT             = 362,
+    INTCONSTANT               = 363,
+    UINTCONSTANT              = 364,
+    BOOLCONSTANT              = 365,
+    FIELD_SELECTION           = 366,
+    LEFT_OP                   = 367,
+    RIGHT_OP                  = 368,
+    INC_OP                    = 369,
+    DEC_OP                    = 370,
+    LE_OP                     = 371,
+    GE_OP                     = 372,
+    EQ_OP                     = 373,
+    NE_OP                     = 374,
+    AND_OP                    = 375,
+    OR_OP                     = 376,
+    XOR_OP                    = 377,
+    MUL_ASSIGN                = 378,
+    DIV_ASSIGN                = 379,
+    ADD_ASSIGN                = 380,
+    MOD_ASSIGN                = 381,
+    LEFT_ASSIGN               = 382,
+    RIGHT_ASSIGN              = 383,
+    AND_ASSIGN                = 384,
+    XOR_ASSIGN                = 385,
+    OR_ASSIGN                 = 386,
+    SUB_ASSIGN                = 387,
+    LEFT_PAREN                = 388,
+    RIGHT_PAREN               = 389,
+    LEFT_BRACKET              = 390,
+    RIGHT_BRACKET             = 391,
+    LEFT_BRACE                = 392,
+    RIGHT_BRACE               = 393,
+    DOT                       = 394,
+    COMMA                     = 395,
+    COLON                     = 396,
+    EQUAL                     = 397,
+    SEMICOLON                 = 398,
+    BANG                      = 399,
+    DASH                      = 400,
+    TILDE                     = 401,
+    PLUS                      = 402,
+    STAR                      = 403,
+    SLASH                     = 404,
+    PERCENT                   = 405,
+    LEFT_ANGLE                = 406,
+    RIGHT_ANGLE               = 407,
+    VERTICAL_BAR              = 408,
+    CARET                     = 409,
+    AMPERSAND                 = 410,
+    QUESTION                  = 411
 };
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
 
-
-    struct {
-        union {
-            TString *string;
+    struct
+    {
+        union
+        {
+            const char *string;  // pool allocated.
             float f;
             int i;
             unsigned int u;
             bool b;
         };
-        TSymbol* symbol;
+        const TSymbol *symbol;
     } lex;
-    struct {
+    struct
+    {
         TOperator op;
-        union {
+        union
+        {
             TIntermNode *intermNode;
             TIntermNodePair nodePair;
-            TIntermFunctionCallOrMethod callOrMethodPair;
             TIntermTyped *intermTypedNode;
             TIntermAggregate *intermAggregate;
             TIntermBlock *intermBlock;
@@ -239,7 +241,8 @@ union YYSTYPE
             TIntermSwitch *intermSwitch;
             TIntermCase *intermCase;
         };
-        union {
+        union
+        {
             TVector<unsigned int> *arraySizes;
             TTypeSpecifierNonArray typeSpecifierNonArray;
             TPublicType type;
@@ -247,38 +250,36 @@ union YYSTYPE
             TLayoutQualifier layoutQualifier;
             TQualifier qualifier;
             TFunction *function;
+            TFunctionLookup *functionLookup;
             TParameter param;
-            TField *field;
+            TDeclarator *declarator;
+            TDeclaratorList *declaratorList;
             TFieldList *fieldList;
             TQualifierWrapperBase *qualifierWrapper;
             TTypeQualifierBuilder *typeQualifierBuilder;
         };
     } interm;
-
-
 };
 
 typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+#    define YYSTYPE_IS_TRIVIAL 1
+#    define YYSTYPE_IS_DECLARED 1
 #endif
 
 /* Location type.  */
-#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+#if !defined YYLTYPE && !defined YYLTYPE_IS_DECLARED
 typedef struct YYLTYPE YYLTYPE;
 struct YYLTYPE
 {
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
+    int first_line;
+    int first_column;
+    int last_line;
+    int last_column;
 };
-# define YYLTYPE_IS_DECLARED 1
-# define YYLTYPE_IS_TRIVIAL 1
+#    define YYLTYPE_IS_DECLARED 1
+#    define YYLTYPE_IS_TRIVIAL 1
 #endif
 
-
-
-int yyparse (TParseContext* context, void *scanner);
+int yyparse(TParseContext *context, void *scanner);
 
 #endif /* !YY_YY_GLSLANG_TAB_H_INCLUDED  */

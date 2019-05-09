@@ -16,7 +16,7 @@
 #include "common/debug.h"
 
 #if !defined(GPU_INFO_USE_LIBPCI)
-#error SystemInfo_libpci.cpp compiled without GPU_INFO_USE_LIBPCI
+#    error SystemInfo_libpci.cpp compiled without GPU_INFO_USE_LIBPCI
 #endif
 
 namespace angle
@@ -129,4 +129,4 @@ bool GetPCIDevicesWithLibPCI(std::vector<GPUDeviceInfo> *devices)
 
     return true;
 }
-}
+}  // namespace angle

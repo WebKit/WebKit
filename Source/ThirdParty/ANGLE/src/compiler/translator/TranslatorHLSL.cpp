@@ -6,33 +6,35 @@
 
 #include "compiler/translator/TranslatorHLSL.h"
 
-#include "compiler/translator/AddDefaultReturnStatements.h"
-#include "compiler/translator/ArrayReturnValueToOutParameter.h"
-#include "compiler/translator/BreakVariableAliasingInInnerLoops.h"
-#include "compiler/translator/EmulatePrecision.h"
-#include "compiler/translator/ExpandIntegerPowExpressions.h"
-#include "compiler/translator/IntermNodePatternMatcher.h"
 #include "compiler/translator/OutputHLSL.h"
-#include "compiler/translator/RemoveDynamicIndexing.h"
-#include "compiler/translator/RemoveNoOpCasesFromEndOfSwitchStatements.h"
-#include "compiler/translator/RewriteElseBlocks.h"
-#include "compiler/translator/RewriteTexelFetchOffset.h"
-#include "compiler/translator/RewriteUnaryMinusOperatorInt.h"
-#include "compiler/translator/SeparateArrayInitialization.h"
-#include "compiler/translator/SeparateDeclarations.h"
-#include "compiler/translator/SeparateExpressionsReturningArrays.h"
-#include "compiler/translator/SimplifyLoopConditions.h"
-#include "compiler/translator/SplitSequenceOperator.h"
-#include "compiler/translator/UnfoldShortCircuitToIf.h"
-#include "compiler/translator/WrapSwitchStatementsInBlocks.h"
+#include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
+#include "compiler/translator/tree_ops/ArrayReturnValueToOutParameter.h"
+#include "compiler/translator/tree_ops/BreakVariableAliasingInInnerLoops.h"
+#include "compiler/translator/tree_ops/EmulatePrecision.h"
+#include "compiler/translator/tree_ops/ExpandIntegerPowExpressions.h"
+#include "compiler/translator/tree_ops/PruneEmptyCases.h"
+#include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
+#include "compiler/translator/tree_ops/RewriteAtomicFunctionExpressions.h"
+#include "compiler/translator/tree_ops/RewriteElseBlocks.h"
+#include "compiler/translator/tree_ops/RewriteExpressionsWithShaderStorageBlock.h"
+#include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
+#include "compiler/translator/tree_ops/RewriteUnaryMinusOperatorInt.h"
+#include "compiler/translator/tree_ops/SeparateArrayConstructorStatements.h"
+#include "compiler/translator/tree_ops/SeparateArrayInitialization.h"
+#include "compiler/translator/tree_ops/SeparateDeclarations.h"
+#include "compiler/translator/tree_ops/SeparateExpressionsReturningArrays.h"
+#include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
+#include "compiler/translator/tree_ops/SplitSequenceOperator.h"
+#include "compiler/translator/tree_ops/UnfoldShortCircuitToIf.h"
+#include "compiler/translator/tree_ops/WrapSwitchStatementsInBlocks.h"
+#include "compiler/translator/tree_util/IntermNodePatternMatcher.h"
 
 namespace sh
 {
 
 TranslatorHLSL::TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
     : TCompiler(type, spec, output)
-{
-}
+{}
 
 void TranslatorHLSL::translate(TIntermBlock *root,
                                ShCompileOptions compileOptions,
@@ -50,16 +52,18 @@ void TranslatorHLSL::translate(TIntermBlock *root,
                            IntermNodePatternMatcher::kExpressionReturningArray |
                                IntermNodePatternMatcher::kUnfoldedShortCircuitExpression |
                                IntermNodePatternMatcher::kDynamicIndexingOfVectorOrMatrixInLValue,
-                           &getSymbolTable(), getShaderVersion());
+                           &getSymbolTable());
 
     SplitSequenceOperator(root,
                           IntermNodePatternMatcher::kExpressionReturningArray |
                               IntermNodePatternMatcher::kUnfoldedShortCircuitExpression |
                               IntermNodePatternMatcher::kDynamicIndexingOfVectorOrMatrixInLValue,
-                          &getSymbolTable(), getShaderVersion());
+                          &getSymbolTable());
 
     // Note that SeparateDeclarations needs to be run before UnfoldShortCircuitToIf.
     UnfoldShortCircuitToIf(root, &getSymbolTable());
+
+    SeparateArrayConstructorStatements(root);
 
     SeparateExpressionsReturningArrays(root, &getSymbolTable());
 
@@ -73,7 +77,7 @@ void TranslatorHLSL::translate(TIntermBlock *root,
     if (!shouldRunLoopAndIndexingValidation(compileOptions))
     {
         // HLSL doesn't support dynamic indexing of vectors and matrices.
-        RemoveDynamicIndexing(root, &getSymbolTable(), getShaderVersion(), perfDiagnostics);
+        RemoveDynamicIndexing(root, &getSymbolTable(), perfDiagnostics);
     }
 
     // Work around D3D9 bug that would manifest in vertex shaders with selection blocks which
@@ -90,20 +94,17 @@ void TranslatorHLSL::translate(TIntermBlock *root,
     sh::BreakVariableAliasingInInnerLoops(root);
 
     // WrapSwitchStatementsInBlocks should be called after any AST transformations that might
-    // introduce variable declarations inside the main scope of any switch statement.
-    if (WrapSwitchStatementsInBlocks(root))
-    {
-        // The WrapSwitchStatementsInBlocks step might introduce new no-op cases to the end of
-        // switch statements, so make sure to clean up the AST.
-        RemoveNoOpCasesFromEndOfSwitchStatements(root, &getSymbolTable());
-    }
+    // introduce variable declarations inside the main scope of any switch statement. It cannot
+    // result in no-op cases at the end of switch statements, because unreferenced variables
+    // have already been pruned.
+    WrapSwitchStatementsInBlocks(root);
 
     bool precisionEmulation =
         getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
 
     if (precisionEmulation)
     {
-        EmulatePrecision emulatePrecision(&getSymbolTable(), getShaderVersion());
+        EmulatePrecision emulatePrecision(&getSymbolTable());
         root->traverse(&emulatePrecision);
         emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(getInfoSink().obj, getShaderVersion(),
@@ -126,20 +127,45 @@ void TranslatorHLSL::translate(TIntermBlock *root,
         sh::RewriteUnaryMinusOperatorInt(root);
     }
 
+    if (getShaderVersion() >= 310)
+    {
+        // Due to ssbo also can be used as the argument of atomic memory functions, we should put
+        // RewriteExpressionsWithShaderStorageBlock before RewriteAtomicFunctionExpressions.
+        sh::RewriteExpressionsWithShaderStorageBlock(root, &getSymbolTable());
+        sh::RewriteAtomicFunctionExpressions(root, &getSymbolTable(), getShaderVersion());
+    }
+
     sh::OutputHLSL outputHLSL(getShaderType(), getShaderVersion(), getExtensionBehavior(),
                               getSourcePath(), getOutputType(), numRenderTargets, getUniforms(),
-                              compileOptions, &getSymbolTable(), perfDiagnostics);
+                              compileOptions, getComputeShaderLocalSize(), &getSymbolTable(),
+                              perfDiagnostics, mShaderStorageBlocks);
 
     outputHLSL.output(root, getInfoSink().obj);
 
-    mUniformBlockRegisterMap   = outputHLSL.getUniformBlockRegisterMap();
-    mUniformRegisterMap        = outputHLSL.getUniformRegisterMap();
+    mShaderStorageBlockRegisterMap = outputHLSL.getShaderStorageBlockRegisterMap();
+    mUniformBlockRegisterMap       = outputHLSL.getUniformBlockRegisterMap();
+    mUniformRegisterMap            = outputHLSL.getUniformRegisterMap();
+    mReadonlyImage2DRegisterIndex  = outputHLSL.getReadonlyImage2DRegisterIndex();
+    mImage2DRegisterIndex          = outputHLSL.getImage2DRegisterIndex();
+    mUsedImage2DFunctionNames      = outputHLSL.getUsedImage2DFunctionNames();
 }
 
 bool TranslatorHLSL::shouldFlattenPragmaStdglInvariantAll()
 {
     // Not necessary when translating to HLSL.
     return false;
+}
+
+bool TranslatorHLSL::hasShaderStorageBlock(const std::string &uniformBlockName) const
+{
+    return (mShaderStorageBlockRegisterMap.count(uniformBlockName) > 0);
+}
+
+unsigned int TranslatorHLSL::getShaderStorageBlockRegister(
+    const std::string &shaderStorageBlockName) const
+{
+    ASSERT(hasShaderStorageBlock(shaderStorageBlockName));
+    return mShaderStorageBlockRegisterMap.find(shaderStorageBlockName)->second;
 }
 
 bool TranslatorHLSL::hasUniformBlock(const std::string &uniformBlockName) const
@@ -156,6 +182,21 @@ unsigned int TranslatorHLSL::getUniformBlockRegister(const std::string &uniformB
 const std::map<std::string, unsigned int> *TranslatorHLSL::getUniformRegisterMap() const
 {
     return &mUniformRegisterMap;
+}
+
+unsigned int TranslatorHLSL::getReadonlyImage2DRegisterIndex() const
+{
+    return mReadonlyImage2DRegisterIndex;
+}
+
+unsigned int TranslatorHLSL::getImage2DRegisterIndex() const
+{
+    return mImage2DRegisterIndex;
+}
+
+const std::set<std::string> *TranslatorHLSL::getUsedImage2DFunctionNames() const
+{
+    return &mUsedImage2DFunctionNames;
 }
 
 }  // namespace sh

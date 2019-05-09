@@ -8,9 +8,11 @@
 
 #include "libANGLE/renderer/d3d/d3d9/VertexDeclarationCache.h"
 
+#include "libANGLE/Context.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/ProgramD3D.h"
+#include "libANGLE/renderer/d3d/d3d9/Context9.h"
 #include "libANGLE/renderer/d3d/d3d9/VertexBuffer9.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 
@@ -22,7 +24,7 @@ VertexDeclarationCache::VertexDeclarationCache() : mMaxLru(0)
     for (int i = 0; i < NUM_VERTEX_DECL_CACHE_ENTRIES; i++)
     {
         mVertexDeclCache[i].vertexDeclaration = nullptr;
-        mVertexDeclCache[i].lruCount = 0;
+        mVertexDeclCache[i].lruCount          = 0;
     }
 
     for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
@@ -42,7 +44,8 @@ VertexDeclarationCache::~VertexDeclarationCache()
     }
 }
 
-gl::Error VertexDeclarationCache::applyDeclaration(
+angle::Result VertexDeclarationCache::applyDeclaration(
+    const gl::Context *context,
     IDirect3DDevice9 *device,
     const std::vector<TranslatedAttribute> &attributes,
     gl::Program *program,
@@ -55,8 +58,8 @@ gl::Error VertexDeclarationCache::applyDeclaration(
     *repeatDraw = 1;
 
     const size_t invalidAttribIndex = attributes.size();
-    size_t indexedAttribute = invalidAttribIndex;
-    size_t instancedAttribute = invalidAttribIndex;
+    size_t indexedAttribute         = invalidAttribIndex;
+    size_t instancedAttribute       = invalidAttribIndex;
 
     if (instances == 0)
     {
@@ -64,8 +67,8 @@ gl::Error VertexDeclarationCache::applyDeclaration(
         {
             if (attributes[i].divisor != 0)
             {
-                // If a divisor is set, it still applies even if an instanced draw was not used, so treat
-                // as a single-instance draw.
+                // If a divisor is set, it still applies even if an instanced draw was not used, so
+                // treat as a single-instance draw.
                 instances = 1;
                 break;
             }
@@ -87,13 +90,14 @@ gl::Error VertexDeclarationCache::applyDeclaration(
                 {
                     instancedAttribute = i;
                 }
-                if (indexedAttribute != invalidAttribIndex && instancedAttribute != invalidAttribIndex)
-                    break;   // Found both an indexed and instanced attribute
+                if (indexedAttribute != invalidAttribIndex &&
+                    instancedAttribute != invalidAttribIndex)
+                    break;  // Found both an indexed and instanced attribute
             }
         }
 
-        // The validation layer checks that there is at least one active attribute with a zero divisor as per
-        // the GL_ANGLE_instanced_arrays spec.
+        // The validation layer checks that there is at least one active attribute with a zero
+        // divisor as per the GL_ANGLE_instanced_arrays spec.
         ASSERT(indexedAttribute != invalidAttribIndex);
     }
 
@@ -117,7 +121,8 @@ gl::Error VertexDeclarationCache::applyDeclaration(
 
             if (instances > 0)
             {
-                // Due to a bug on ATI cards we can't enable instancing when none of the attributes are instanced.
+                // Due to a bug on ATI cards we can't enable instancing when none of the attributes
+                // are instanced.
                 if (instancedAttribute == invalidAttribIndex)
                 {
                     *repeatDraw = instances;
@@ -134,7 +139,7 @@ gl::Error VertexDeclarationCache::applyDeclaration(
                     }
 
                     UINT frequency = 1;
-                    
+
                     if (attributes[i].divisor == 0)
                     {
                         frequency = D3DSTREAMSOURCE_INDEXEDDATA | instances;
@@ -143,7 +148,7 @@ gl::Error VertexDeclarationCache::applyDeclaration(
                     {
                         frequency = D3DSTREAMSOURCE_INSTANCEDATA | attributes[i].divisor;
                     }
-                    
+
                     device->SetStreamSourceFreq(stream, frequency);
                     mInstancingEnabled = true;
                 }
@@ -152,7 +157,7 @@ gl::Error VertexDeclarationCache::applyDeclaration(
             VertexBuffer9 *vertexBuffer = GetAs<VertexBuffer9>(attributes[i].vertexBuffer.get());
 
             unsigned int offset = 0;
-            ANGLE_TRY_RESULT(attributes[i].computeOffset(start), offset);
+            ANGLE_TRY(attributes[i].computeOffset(context, start, &offset));
 
             if (mAppliedVBs[stream].serial != attributes[i].serial ||
                 mAppliedVBs[stream].stride != attributes[i].stride ||
@@ -165,15 +170,16 @@ gl::Error VertexDeclarationCache::applyDeclaration(
                 mAppliedVBs[stream].offset = offset;
             }
 
-            gl::VertexFormatType vertexformatType =
-                gl::GetVertexFormatType(*attributes[i].attribute, GL_FLOAT);
-            const d3d9::VertexFormat &d3d9VertexInfo = d3d9::GetVertexFormatInfo(caps.DeclTypes, vertexformatType);
+            angle::FormatID vertexformatID =
+                gl::GetVertexFormatID(*attributes[i].attribute, gl::VertexAttribType::Float);
+            const d3d9::VertexFormat &d3d9VertexInfo =
+                d3d9::GetVertexFormatInfo(caps.DeclTypes, vertexformatID);
 
-            element->Stream = static_cast<WORD>(stream);
-            element->Offset = 0;
-            element->Type = static_cast<BYTE>(d3d9VertexInfo.nativeFormat);
-            element->Method = D3DDECLMETHOD_DEFAULT;
-            element->Usage = D3DDECLUSAGE_TEXCOORD;
+            element->Stream     = static_cast<WORD>(stream);
+            element->Offset     = 0;
+            element->Type       = static_cast<BYTE>(d3d9VertexInfo.nativeFormat);
+            element->Method     = D3DDECLMETHOD_DEFAULT;
+            element->Usage      = D3DDECLUSAGE_TEXCOORD;
             element->UsageIndex = static_cast<BYTE>(semanticIndexes[i]);
             element++;
         }
@@ -193,21 +199,23 @@ gl::Error VertexDeclarationCache::applyDeclaration(
     }
 
     static const D3DVERTEXELEMENT9 end = D3DDECL_END();
-    *(element++) = end;
+    *(element++)                       = end;
 
     for (int i = 0; i < NUM_VERTEX_DECL_CACHE_ENTRIES; i++)
     {
         VertexDeclCacheEntry *entry = &mVertexDeclCache[i];
-        if (memcmp(entry->cachedElements, elements, (element - elements) * sizeof(D3DVERTEXELEMENT9)) == 0 && entry->vertexDeclaration)
+        if (memcmp(entry->cachedElements, elements,
+                   (element - elements) * sizeof(D3DVERTEXELEMENT9)) == 0 &&
+            entry->vertexDeclaration)
         {
             entry->lruCount = ++mMaxLru;
-            if(entry->vertexDeclaration != mLastSetVDecl)
+            if (entry->vertexDeclaration != mLastSetVDecl)
             {
                 device->SetVertexDeclaration(entry->vertexDeclaration);
                 mLastSetVDecl = entry->vertexDeclaration;
             }
 
-            return gl::NoError();
+            return angle::Result::Continue;
         }
     }
 
@@ -230,17 +238,14 @@ gl::Error VertexDeclarationCache::applyDeclaration(
 
     memcpy(lastCache->cachedElements, elements, (element - elements) * sizeof(D3DVERTEXELEMENT9));
     HRESULT result = device->CreateVertexDeclaration(elements, &lastCache->vertexDeclaration);
-    if (FAILED(result))
-    {
-        return gl::OutOfMemory() << "Failed to create internal vertex declaration, "
-                                 << gl::FmtHR(result);
-    }
+    ANGLE_TRY_HR(GetImplAs<Context9>(context), result,
+                 "Failed to create internal vertex declaration");
 
     device->SetVertexDeclaration(lastCache->vertexDeclaration);
-    mLastSetVDecl = lastCache->vertexDeclaration;
+    mLastSetVDecl       = lastCache->vertexDeclaration;
     lastCache->lruCount = ++mMaxLru;
 
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 void VertexDeclarationCache::markStateDirty()
@@ -251,7 +256,7 @@ void VertexDeclarationCache::markStateDirty()
     }
 
     mLastSetVDecl      = nullptr;
-    mInstancingEnabled = true;   // Forces it to be disabled when not used
+    mInstancingEnabled = true;  // Forces it to be disabled when not used
 }
 
-}
+}  // namespace rx

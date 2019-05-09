@@ -150,12 +150,11 @@ struct NarrowingRange
     // The following logic avoids warnings where the max function is
     // instantiated with invalid values for a bit shift (even though
     // such a function can never be called).
-    static const int shift = (MaxExponent<Src>::value > MaxExponent<Dst>::value &&
-                              SrcLimits::digits < DstLimits::digits &&
-                              SrcLimits::is_iec559 &&
-                              DstLimits::is_integer)
-                                 ? (DstLimits::digits - SrcLimits::digits)
-                                 : 0;
+    static const int shift =
+        (MaxExponent<Src>::value > MaxExponent<Dst>::value &&
+         SrcLimits::digits < DstLimits::digits && SrcLimits::is_iec559 && DstLimits::is_integer)
+            ? (DstLimits::digits - SrcLimits::digits)
+            : 0;
 
     static constexpr Dst max()
     {

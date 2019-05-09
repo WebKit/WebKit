@@ -9,10 +9,17 @@
 
 #include <gtest/gtest.h>
 
+#include "gpu_info_util/SystemInfo.h"
 #include "test_utils/ANGLETest.h"
+#include "test_utils/angle_test_instantiate.h"
+
+using namespace angle;
+
+class EGLSanityCheckTest : public EGLTest
+{};
 
 // Checks the tests are running against ANGLE
-TEST(EGLSanityCheckTest, IsRunningOnANGLE)
+TEST_F(EGLSanityCheckTest, IsRunningOnANGLE)
 {
     const char *extensionString =
         static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
@@ -20,18 +27,63 @@ TEST(EGLSanityCheckTest, IsRunningOnANGLE)
 }
 
 // Checks that getting function pointer works
-TEST(EGLSanityCheckTest, HasGetPlatformDisplayEXT)
+TEST_F(EGLSanityCheckTest, HasGetPlatformDisplayEXT)
 {
-    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
-        reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(
-            eglGetProcAddress("eglGetPlatformDisplayEXT"));
-
     ASSERT_NE(eglGetPlatformDisplayEXT, nullptr);
 }
 
 // Checks that calling GetProcAddress for a non-existant function fails.
-TEST(EGLSanityCheckTest, GetProcAddressNegativeTest)
+TEST_F(EGLSanityCheckTest, GetProcAddressNegativeTest)
 {
     auto check = eglGetProcAddress("WigglyWombats");
     EXPECT_EQ(nullptr, check);
+}
+
+// Tests that our whitelist function generally maps to our support function.
+// We can add specific exceptions here if needed.
+// Disabled because it was creating a large number of configs. This could even result
+// in a BDOD on Windows.
+TEST_F(EGLSanityCheckTest, DISABLED_WhitelistMatchesSupport)
+{
+    // Has issues with Vulkan support detection on Android.
+    ANGLE_SKIP_TEST_IF(IsAndroid());
+
+    // Cannot make any useful checks if SystemInfo is not supported.
+    SystemInfo systemInfo;
+    ANGLE_SKIP_TEST_IF(!GetSystemInfo(&systemInfo));
+
+    auto check = [&systemInfo](const PlatformParameters &params) {
+        EXPECT_EQ(IsConfigWhitelisted(systemInfo, params), IsConfigSupported(params)) << params;
+    };
+
+    check(ES1_OPENGL());
+    check(ES2_OPENGL());
+    check(ES3_OPENGL());
+    check(ES31_OPENGL());
+
+    check(ES1_OPENGLES());
+    check(ES2_OPENGLES());
+    check(ES3_OPENGLES());
+    check(ES31_OPENGLES());
+
+    check(ES1_D3D9());
+    check(ES2_D3D9());
+
+    check(ES1_D3D11());
+    check(ES2_D3D11());
+    check(ES3_D3D11());
+    check(ES31_D3D11());
+
+    check(ES1_VULKAN());
+    check(ES2_VULKAN());
+    check(ES3_VULKAN());
+
+    check(ES1_VULKAN_NULL());
+    check(ES2_VULKAN_NULL());
+    check(ES3_VULKAN_NULL());
+
+    check(ES1_NULL());
+    check(ES2_NULL());
+    check(ES3_NULL());
+    check(ES31_NULL());
 }

@@ -11,6 +11,8 @@
 
 #include <EGL/egl.h>
 
+#include "libANGLE/Debug.h"
+
 namespace gl
 {
 class Context;
@@ -19,15 +21,23 @@ class Context;
 namespace egl
 {
 class Error;
+class Debug;
 class Display;
 class Surface;
 
-class Thread
+class Thread : public LabeledObject
 {
   public:
     Thread();
 
-    void setError(const Error &error);
+    void setLabel(EGLLabelKHR label) override;
+    EGLLabelKHR getLabel() const override;
+
+    void setSuccess();
+    void setError(const Error &error,
+                  const Debug *debug,
+                  const char *command,
+                  const LabeledObject *object);
     EGLint getError() const;
 
     void setAPI(EGLenum api);
@@ -38,9 +48,10 @@ class Thread
     Surface *getCurrentReadSurface() const;
     gl::Context *getContext() const;
     gl::Context *getValidContext() const;
-    Display *getCurrentDisplay() const;
+    Display *getDisplay() const;
 
   private:
+    EGLLabelKHR mLabel;
     EGLint mError;
     EGLenum mAPI;
     gl::Context *mContext;

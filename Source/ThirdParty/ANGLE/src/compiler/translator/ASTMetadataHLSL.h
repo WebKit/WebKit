@@ -27,8 +27,7 @@ struct ASTMetadataHLSL
           mCalledInDiscontinuousLoop(false),
           mHasGradientLoopInCallGraph(false),
           mNeedsLod0(false)
-    {
-    }
+    {}
 
     // Here "something uses a gradient" means here that it either contains a
     // gradient operation, or a call to a function that uses a gradient.

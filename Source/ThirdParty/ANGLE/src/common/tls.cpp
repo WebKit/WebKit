@@ -11,24 +11,24 @@
 #include <assert.h>
 
 #ifdef ANGLE_ENABLE_WINDOWS_STORE
-#include <vector>
-#include <set>
-#include <map>
-#include <mutex>
+#    include <map>
+#    include <mutex>
+#    include <set>
+#    include <vector>
 
-#include <wrl/client.h>
-#include <wrl/async.h>
-#include <Windows.System.Threading.h>
+#    include <Windows.System.Threading.h>
+#    include <wrl/async.h>
+#    include <wrl/client.h>
 
 using namespace std;
 using namespace Windows::Foundation;
 using namespace ABI::Windows::System::Threading;
 
 // Thread local storage for Windows Store support
-typedef vector<void*> ThreadLocalData;
+typedef vector<void *> ThreadLocalData;
 
-static __declspec(thread) ThreadLocalData* currentThreadData = nullptr;
-static set<ThreadLocalData*> allThreadData;
+static __declspec(thread) ThreadLocalData *currentThreadData = nullptr;
+static set<ThreadLocalData *> allThreadData;
 static DWORD nextTlsIndex = 0;
 static vector<DWORD> freeTlsIndices;
 
@@ -39,7 +39,7 @@ TLSIndex CreateTLSIndex()
     TLSIndex index;
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_STORE
     if (!freeTlsIndices.empty())
     {
         DWORD result = freeTlsIndices.back();
@@ -50,9 +50,9 @@ TLSIndex CreateTLSIndex()
     {
         index = nextTlsIndex++;
     }
-#else
+#    else
     index = TlsAlloc();
-#endif
+#    endif
 
 #elif defined(ANGLE_PLATFORM_POSIX)
     // Create global pool key
@@ -62,7 +62,8 @@ TLSIndex CreateTLSIndex()
     }
 #endif
 
-    assert(index != TLS_INVALID_INDEX && "CreateTLSIndex(): Unable to allocate Thread Local Storage");
+    assert(index != TLS_INVALID_INDEX &&
+           "CreateTLSIndex(): Unable to allocate Thread Local Storage");
     return index;
 }
 
@@ -75,7 +76,7 @@ bool DestroyTLSIndex(TLSIndex index)
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_STORE
     assert(index < nextTlsIndex);
     assert(find(freeTlsIndices.begin(), freeTlsIndices.end(), index) == freeTlsIndices.end());
 
@@ -88,9 +89,9 @@ bool DestroyTLSIndex(TLSIndex index)
         }
     }
     return true;
-#else
+#    else
     return (TlsFree(index) == TRUE);
-#endif
+#    endif
 #elif defined(ANGLE_PLATFORM_POSIX)
     return (pthread_key_delete(index) == 0);
 #endif
@@ -105,8 +106,8 @@ bool SetTLSValue(TLSIndex index, void *value)
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#ifdef ANGLE_ENABLE_WINDOWS_STORE
-    ThreadLocalData* threadData = currentThreadData;
+#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+    ThreadLocalData *threadData = currentThreadData;
     if (!threadData)
     {
         threadData = new ThreadLocalData(index + 1, nullptr);
@@ -120,9 +121,9 @@ bool SetTLSValue(TLSIndex index, void *value)
 
     threadData->at(index) = value;
     return true;
-#else
+#    else
     return (TlsSetValue(index, value) == TRUE);
-#endif
+#    endif
 #elif defined(ANGLE_PLATFORM_POSIX)
     return (pthread_setspecific(index, value) == 0);
 #endif
@@ -137,8 +138,8 @@ void *GetTLSValue(TLSIndex index)
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#ifdef ANGLE_ENABLE_WINDOWS_STORE
-    ThreadLocalData* threadData = currentThreadData;
+#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+    ThreadLocalData *threadData = currentThreadData;
     if (threadData && threadData->size() > index)
     {
         return threadData->at(index);
@@ -147,9 +148,9 @@ void *GetTLSValue(TLSIndex index)
     {
         return nullptr;
     }
-#else
+#    else
     return TlsGetValue(index);
-#endif
+#    endif
 #elif defined(ANGLE_PLATFORM_POSIX)
     return pthread_getspecific(index);
 #endif

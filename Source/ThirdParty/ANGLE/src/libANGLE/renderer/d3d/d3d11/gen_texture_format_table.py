@@ -5,6 +5,7 @@
 #
 # gen_texture_format_table.py:
 #  Code generation for texture format map
+#  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 #
 
 from datetime import date
@@ -87,7 +88,7 @@ def get_swizzle_format_id(internal_format, angle_format):
 
     # The format itself can be used for swizzles if it can be accessed as a render target and
     # sampled and the bit count for all 4 channels is the same.
-    if "rtvFormat" in angle_format and "srvFormat" in angle_format and not channels_different and len(angle_format['channels']) == 4:
+    if "rtvFormat" in angle_format and "srvFormat" in angle_format and "uavFormat" in angle_format and not channels_different and len(angle_format['channels']) == 4:
         return angle_format["glInternalFormat"] if "glInternalFormat" in angle_format else internal_format
 
     b = int(math.ceil(float(max_component_bits) / 8) * 8)
@@ -141,9 +142,10 @@ def get_blit_srv_format(angle_format):
 
 format_entry_template = """{space}{{
 {space}    static constexpr Format info({internalFormat},
-{space}                                 angle::Format::ID::{formatName},
+{space}                                 angle::FormatID::{formatName},
 {space}                                 {texFormat},
 {space}                                 {srvFormat},
+{space}                                 {uavFormat},
 {space}                                 {rtvFormat},
 {space}                                 {dsvFormat},
 {space}                                 {blitSRVFormat},
@@ -156,9 +158,10 @@ format_entry_template = """{space}{{
 split_format_entry_template = """{space}    {condition}
 {space}    {{
 {space}        static constexpr Format info({internalFormat},
-{space}                                     angle::Format::ID::{formatName},
+{space}                                     angle::FormatID::{formatName},
 {space}                                     {texFormat},
 {space}                                     {srvFormat},
+{space}                                     {uavFormat},
 {space}                                     {rtvFormat},
 {space}                                     {dsvFormat},
 {space}                                     {blitSRVFormat},
@@ -178,6 +181,7 @@ def json_to_table_data(internal_format, format_name, prefix, json):
         "formatName": format_name,
         "texFormat": "DXGI_FORMAT_UNKNOWN",
         "srvFormat": "DXGI_FORMAT_UNKNOWN",
+        "uavFormat": "DXGI_FORMAT_UNKNOWN",
         "rtvFormat": "DXGI_FORMAT_UNKNOWN",
         "dsvFormat": "DXGI_FORMAT_UNKNOWN",
         "condition": prefix,
@@ -240,6 +244,12 @@ def parse_json_into_switch_angle_format_string(json_map, json_data):
         if format_name not in json_data:
             continue
 
+        # Typeless internal formats are dummy formats just used to fit support
+        # for typeless D3D textures into the format system. Their properties
+        # should not be queried.
+        if 'TYPELESS' in internal_format:
+            continue
+
         angle_format = json_data[format_name]
 
         supported_case, unsupported_case, support_test = parse_json_angle_format_case(
@@ -257,16 +267,38 @@ def parse_json_into_switch_angle_format_string(json_map, json_data):
 
     return table_data
 
-json_map = angle_format.load_with_override(os.path.abspath('texture_format_map.json'))
-data_source_name = 'texture_format_data.json'
-json_data = angle_format.load_json(data_source_name)
 
-angle_format_cases = parse_json_into_switch_angle_format_string(json_map, json_data)
-output_cpp = template_texture_format_table_autogen_cpp.format(
-    script_name = sys.argv[0],
-    copyright_year = date.today().year,
-    angle_format_info_cases = angle_format_cases,
-    data_source_name = data_source_name)
-with open('texture_format_table_autogen.cpp', 'wt') as out_file:
-    out_file.write(output_cpp)
-    out_file.close()
+def main():
+
+    # auto_script parameters.
+    if len(sys.argv) > 1:
+        inputs = ['../../angle_format.py', 'texture_format_data.json', 'texture_format_map.json']
+        outputs = ['texture_format_table_autogen.cpp']
+
+        if sys.argv[1] == 'inputs':
+            print ','.join(inputs)
+        elif sys.argv[1] == 'outputs':
+            print ','.join(outputs)
+        else:
+            print('Invalid script parameters')
+            return 1
+        return 0
+
+    json_map = angle_format.load_with_override(os.path.abspath('texture_format_map.json'))
+    data_source_name = 'texture_format_data.json'
+    json_data = angle_format.load_json(data_source_name)
+
+    angle_format_cases = parse_json_into_switch_angle_format_string(json_map, json_data)
+    output_cpp = template_texture_format_table_autogen_cpp.format(
+        script_name = sys.argv[0],
+        copyright_year = date.today().year,
+        angle_format_info_cases = angle_format_cases,
+        data_source_name = data_source_name)
+    with open('texture_format_table_autogen.cpp', 'wt') as out_file:
+        out_file.write(output_cpp)
+        out_file.close()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -15,23 +15,17 @@
 namespace
 {
 // TODO(jmadill): Make methods owned by egl::Display.
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wglobal-constructors"
-#endif
-    angle::PlatformMethods g_platformMethods;
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-}  // anonymous namespace
-
-angle::PlatformMethods::PlatformMethods()
+angle::PlatformMethods& g_platformMethods()
 {
+    static angle::PlatformMethods platformMethods;
+    return platformMethods;
 }
+
+}  // anonymous namespace
 
 angle::PlatformMethods *ANGLEPlatformCurrent()
 {
-    return &g_platformMethods;
+    return &g_platformMethods();
 }
 
 bool ANGLE_APIENTRY ANGLEGetDisplayPlatform(angle::EGLDisplayType display,
@@ -64,13 +58,13 @@ bool ANGLE_APIENTRY ANGLEGetDisplayPlatform(angle::EGLDisplayType display,
     }
 
     // TODO(jmadill): Store platform methods in display.
-    g_platformMethods.context = context;
-    *platformMethodsOut       = &g_platformMethods;
+    g_platformMethods().context = context;
+    *platformMethodsOut       = &g_platformMethods();
     return true;
 }
 
 void ANGLE_APIENTRY ANGLEResetDisplayPlatform(angle::EGLDisplayType display)
 {
     // TODO(jmadill): Store platform methods in display.
-    g_platformMethods = angle::PlatformMethods();
+    g_platformMethods() = angle::PlatformMethods();
 }

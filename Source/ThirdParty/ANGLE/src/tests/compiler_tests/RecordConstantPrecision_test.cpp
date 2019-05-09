@@ -7,9 +7,9 @@
 //   Test for recording constant variable precision when it affects consuming expression.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -73,7 +73,6 @@ TEST_F(RecordConstantPrecisionTest, FoldedBinaryConstantPrecisionIsHigher)
     ASSERT_FALSE(foundInCode("fract(4096.5"));
     ASSERT_FALSE(foundInCode("fract((4096.5"));
 }
-
 
 // The constant cannot be folded if its precision is higher than the other operands, since it
 // increases the precision of the consuming expression. This applies also when the constant is

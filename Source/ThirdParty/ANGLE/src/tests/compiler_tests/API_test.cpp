@@ -7,9 +7,9 @@
 //   Some tests for the compiler API.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 
 TEST(APITest, CompareShBuiltInResources)
 {
@@ -23,4 +23,3 @@ TEST(APITest, CompareShBuiltInResources)
 
     EXPECT_TRUE(memcmp(&a_resources, &b_resources, sizeof(a_resources)) == 0);
 }
-

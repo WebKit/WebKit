@@ -23,6 +23,11 @@ struct Workarounds
     // Program binaries don't contain transform feedback varyings on Qualcomm GPUs.
     // Work around this by disabling the program cache for programs with transform feedback.
     bool disableProgramCachingForTransformFeedback = false;
+
+    // On Windows Intel OpenGL drivers TexImage sometimes seems to interact with the Framebuffer.
+    // Flaky crashes can occur unless we sync the Framebuffer bindings. The workaround is to add
+    // Framebuffer binding dirty bits to TexImage updates. See http://anglebug.com/2906
+    bool syncFramebufferBindingsOnTexImage = false;
 };
 }  // namespace gl
 

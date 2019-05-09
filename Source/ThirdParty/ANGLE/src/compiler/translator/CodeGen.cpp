@@ -5,19 +5,19 @@
 //
 
 #ifdef ANGLE_ENABLE_ESSL
-#include "compiler/translator/TranslatorESSL.h"
+#    include "compiler/translator/TranslatorESSL.h"
 #endif  // ANGLE_ENABLE_ESSL
 
 #ifdef ANGLE_ENABLE_GLSL
-#include "compiler/translator/TranslatorGLSL.h"
+#    include "compiler/translator/TranslatorGLSL.h"
 #endif  // ANGLE_ENABLE_GLSL
 
 #ifdef ANGLE_ENABLE_HLSL
-#include "compiler/translator/TranslatorHLSL.h"
+#    include "compiler/translator/TranslatorHLSL.h"
 #endif  // ANGLE_ENABLE_HLSL
 
 #ifdef ANGLE_ENABLE_VULKAN
-#include "compiler/translator/TranslatorVulkan.h"
+#    include "compiler/translator/TranslatorVulkan.h"
 #endif  // ANGLE_ENABLE_VULKAN
 
 #include "compiler/translator/util.h"

@@ -17,18 +17,17 @@
 namespace rx
 {
 
-DeviceD3D::DeviceD3D()
-    : mDevice(0), mDeviceType(0), mDeviceExternallySourced(false), mIsInitialized(false)
-{
-}
+DeviceD3D::DeviceD3D(GLint deviceType, void *nativeDevice)
+    : mDevice(nativeDevice), mDeviceType(deviceType), mIsInitialized(false)
+{}
 
 DeviceD3D::~DeviceD3D()
 {
 #if defined(ANGLE_ENABLE_D3D11)
-    if (mDeviceType == EGL_D3D11_DEVICE_ANGLE)
+    if (mIsInitialized && mDeviceType == EGL_D3D11_DEVICE_ANGLE)
     {
         // DeviceD3D holds a ref to an externally-sourced D3D11 device. We must release it.
-        ID3D11Device *device = reinterpret_cast<ID3D11Device *>(mDevice);
+        ID3D11Device *device = static_cast<ID3D11Device *>(mDevice);
         device->Release();
     }
 #endif
@@ -36,31 +35,20 @@ DeviceD3D::~DeviceD3D()
 
 egl::Error DeviceD3D::getDevice(void **outValue)
 {
-    if (!mIsInitialized)
-    {
-        *outValue = nullptr;
-        return egl::EglBadDevice();
-    }
-
+    ASSERT(mIsInitialized);
     *outValue = mDevice;
     return egl::NoError();
 }
 
-egl::Error DeviceD3D::initialize(void *device,
-                                 EGLint deviceType,
-                                 EGLBoolean deviceExternallySourced)
+egl::Error DeviceD3D::initialize()
 {
     ASSERT(!mIsInitialized);
-    if (mIsInitialized)
-    {
-        return egl::EglBadDevice();
-    }
 
 #if defined(ANGLE_ENABLE_D3D11)
-    if (deviceType == EGL_D3D11_DEVICE_ANGLE)
+    if (mDeviceType == EGL_D3D11_DEVICE_ANGLE)
     {
         // Validate the device
-        IUnknown *iunknown = reinterpret_cast<IUnknown *>(device);
+        IUnknown *iunknown = static_cast<IUnknown *>(mDevice);
 
         ID3D11Device *d3dDevice = nullptr;
         HRESULT hr =
@@ -74,16 +62,9 @@ egl::Error DeviceD3D::initialize(void *device,
         // Deliberately don't release the ref here, so that the DeviceD3D holds a ref to the
         // D3D11 device.
     }
-    else
 #endif
-    {
-        ASSERT(deviceExternallySourced == EGL_FALSE);
-    }
 
-    mDevice                  = device;
-    mDeviceType              = deviceType;
-    mDeviceExternallySourced = !!deviceExternallySourced;
-    mIsInitialized           = true;
+    mIsInitialized = true;
 
     return egl::NoError();
 }
@@ -98,8 +79,4 @@ void DeviceD3D::generateExtensions(egl::DeviceExtensions *outExtensions) const
     outExtensions->deviceD3D = true;
 }
 
-bool DeviceD3D::deviceExternallySourced()
-{
-    return mDeviceExternallySourced;
-}
-}
+}  // namespace rx

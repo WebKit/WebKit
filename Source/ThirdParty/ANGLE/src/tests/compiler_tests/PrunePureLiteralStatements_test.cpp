@@ -148,7 +148,8 @@ TEST_F(PrunePureLiteralStatementsTest, SwitchLiteralExpressionOnlyLastCase)
     ASSERT_TRUE(notFoundInCode("42"));
 }
 
-// Test that the pruning correctly handles the pruning inside switch statements - pruning isn't stopped by literal statements
+// Test that the pruning correctly handles the pruning inside switch statements - pruning isn't
+// stopped by literal statements
 TEST_F(PrunePureLiteralStatementsTest, SwitchLiteralExpressionLiteralDoesntStop)
 {
     const std::string shaderString =

@@ -11,12 +11,8 @@
 namespace rx
 {
 
-DeviceImpl::DeviceImpl()
-{
-}
+DeviceImpl::DeviceImpl() {}
 
-DeviceImpl::~DeviceImpl()
-{
-}
+DeviceImpl::~DeviceImpl() {}
 
-}
+}  // namespace rx

@@ -20,6 +20,11 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/RenderbufferImpl.h"
 
+namespace rx
+{
+class GLImplFactory;
+}  // namespace rx
+
 namespace gl
 {
 // A GL renderbuffer object is usually used as a depth or stencil buffer attachment
@@ -27,25 +32,56 @@ namespace gl
 // FramebufferAttachment and Framebuffer for how they are applied to an FBO via an
 // attachment point.
 
-class Renderbuffer final : public egl::ImageSibling,
-                           public LabeledObject
+class RenderbufferState final : angle::NonCopyable
 {
   public:
-    Renderbuffer(rx::RenderbufferImpl *impl, GLuint id);
+    RenderbufferState();
+    ~RenderbufferState();
+
+    GLsizei getWidth() const;
+    GLsizei getHeight() const;
+    const Format &getFormat() const;
+    GLsizei getSamples() const;
+
+  private:
+    friend class Renderbuffer;
+
+    void update(GLsizei width,
+                GLsizei height,
+                const Format &format,
+                GLsizei samples,
+                InitState initState);
+
+    GLsizei mWidth;
+    GLsizei mHeight;
+    Format mFormat;
+    GLsizei mSamples;
+
+    // For robust resource init.
+    InitState mInitState;
+};
+
+class Renderbuffer final : public RefCountObject, public egl::ImageSibling, public LabeledObject
+{
+  public:
+    Renderbuffer(rx::GLImplFactory *implFactory, GLuint id);
     ~Renderbuffer() override;
 
-    Error onDestroy(const Context *context) override;
+    void onDestroy(const Context *context) override;
 
-    void setLabel(const std::string &label) override;
+    void setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
-    Error setStorage(const Context *context, GLenum internalformat, size_t width, size_t height);
-    Error setStorageMultisample(const Context *context,
-                                size_t samples,
-                                GLenum internalformat,
-                                size_t width,
-                                size_t height);
-    Error setStorageEGLImageTarget(const Context *context, egl::Image *imageTarget);
+    angle::Result setStorage(const Context *context,
+                             GLenum internalformat,
+                             size_t width,
+                             size_t height);
+    angle::Result setStorageMultisample(const Context *context,
+                                        size_t samples,
+                                        GLenum internalformat,
+                                        size_t width,
+                                        size_t height);
+    angle::Result setStorageEGLImageTarget(const Context *context, egl::Image *imageTarget);
 
     rx::RenderbufferImpl *getImplementation() const;
 
@@ -60,10 +96,15 @@ class Renderbuffer final : public egl::ImageSibling,
     GLuint getDepthSize() const;
     GLuint getStencilSize() const;
 
+    GLint getMemorySize() const;
+
     // FramebufferAttachmentObject Impl
     Extents getAttachmentSize(const ImageIndex &imageIndex) const override;
-    const Format &getAttachmentFormat(GLenum binding, const ImageIndex &imageIndex) const override;
+    Format getAttachmentFormat(GLenum binding, const ImageIndex &imageIndex) const override;
     GLsizei getAttachmentSamples(const ImageIndex &imageIndex) const override;
+    bool isRenderable(const Context *context,
+                      GLenum binding,
+                      const ImageIndex &imageIndex) const override;
 
     void onAttach(const Context *context) override;
     void onDetach(const Context *context) override;
@@ -75,19 +116,12 @@ class Renderbuffer final : public egl::ImageSibling,
   private:
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
 
-    rx::RenderbufferImpl *mRenderbuffer;
+    RenderbufferState mState;
+    std::unique_ptr<rx::RenderbufferImpl> mImplementation;
 
     std::string mLabel;
-
-    GLsizei mWidth;
-    GLsizei mHeight;
-    Format mFormat;
-    GLsizei mSamples;
-
-    // For robust resource init.
-    InitState mInitState;
 };
 
 }  // namespace gl
 
-#endif   // LIBANGLE_RENDERBUFFER_H_
+#endif  // LIBANGLE_RENDERBUFFER_H_

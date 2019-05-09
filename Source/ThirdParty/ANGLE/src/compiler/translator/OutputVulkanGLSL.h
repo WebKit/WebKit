@@ -27,8 +27,12 @@ class TOutputVulkanGLSL : public TOutputGLSL
                       ShShaderOutput output,
                       ShCompileOptions compileOptions);
 
+    void writeStructType(const TStructure *structure);
+
   protected:
     void writeLayoutQualifier(TIntermTyped *variable) override;
+    void writeQualifier(TQualifier qualifier, const TSymbol *symbol) override;
+    void writeVariableType(const TType &type, const TSymbol *symbol) override;
 };
 
 }  // namespace sh

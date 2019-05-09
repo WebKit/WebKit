@@ -20,7 +20,7 @@ class FunctionsEGLDL : public FunctionsEGL
     FunctionsEGLDL();
     ~FunctionsEGLDL() override;
 
-    egl::Error initialize(EGLNativeDisplayType nativeDisplay, const char *libName);
+    egl::Error initialize(EGLNativeDisplayType nativeDisplay, const char *libName, void *eglHandle);
     void *getProcAddress(const char *name) const override;
 
   private:

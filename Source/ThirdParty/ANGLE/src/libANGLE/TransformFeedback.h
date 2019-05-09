@@ -9,6 +9,7 @@
 
 #include "libANGLE/RefCountObject.h"
 
+#include "common/PackedEnums.h"
 #include "common/angleutils.h"
 #include "libANGLE/Debug.h"
 
@@ -18,7 +19,8 @@ namespace rx
 {
 class GLImplFactory;
 class TransformFeedbackImpl;
-}
+class TransformFeedbackGL;
+}  // namespace rx
 
 namespace gl
 {
@@ -33,9 +35,9 @@ class TransformFeedbackState final : angle::NonCopyable
     TransformFeedbackState(size_t maxIndexedBuffers);
     ~TransformFeedbackState();
 
-    const BindingPointer<Buffer> &getGenericBuffer() const;
     const OffsetBindingPointer<Buffer> &getIndexedBuffer(size_t idx) const;
     const std::vector<OffsetBindingPointer<Buffer>> &getIndexedBuffers() const;
+    const Program *getBoundProgram() const { return mProgram; }
 
   private:
     friend class TransformFeedback;
@@ -43,12 +45,13 @@ class TransformFeedbackState final : angle::NonCopyable
     std::string mLabel;
 
     bool mActive;
-    GLenum mPrimitiveMode;
+    PrimitiveMode mPrimitiveMode;
     bool mPaused;
+    GLsizeiptr mVerticesDrawn;
+    GLsizeiptr mVertexCapacity;
 
     Program *mProgram;
 
-    BindingPointer<Buffer> mGenericBuffer;
     std::vector<OffsetBindingPointer<Buffer>> mIndexedBuffers;
 };
 
@@ -57,45 +60,56 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
   public:
     TransformFeedback(rx::GLImplFactory *implFactory, GLuint id, const Caps &caps);
     ~TransformFeedback() override;
-    Error onDestroy(const Context *context) override;
+    void onDestroy(const Context *context) override;
 
-    void setLabel(const std::string &label) override;
+    void setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
-    void begin(const Context *context, GLenum primitiveMode, Program *program);
-    void end(const Context *context);
-    void pause();
-    void resume();
+    angle::Result begin(const Context *context, PrimitiveMode primitiveMode, Program *program);
+    angle::Result end(const Context *context);
+    angle::Result pause(const Context *context);
+    angle::Result resume(const Context *context);
 
-    bool isActive() const;
+    bool isActive() const { return mState.mActive; }
+
     bool isPaused() const;
-    GLenum getPrimitiveMode() const;
+    PrimitiveMode getPrimitiveMode() const;
+    // Validates that the vertices produced by a draw call will fit in the bound transform feedback
+    // buffers.
+    bool checkBufferSpaceForDraw(GLsizei count, GLsizei primcount) const;
+    // This must be called after each draw call when transform feedback is enabled to keep track of
+    // how many vertices have been written to the buffers. This information is needed by
+    // checkBufferSpaceForDraw because each draw call appends vertices to the buffers starting just
+    // after the last vertex of the previous draw call.
+    void onVerticesDrawn(const Context *context, GLsizei count, GLsizei primcount);
 
     bool hasBoundProgram(GLuint program) const;
 
-    void bindGenericBuffer(const Context *context, Buffer *buffer);
-    const BindingPointer<Buffer> &getGenericBuffer() const;
-
-    void bindIndexedBuffer(const Context *context,
-                           size_t index,
-                           Buffer *buffer,
-                           size_t offset,
-                           size_t size);
+    angle::Result bindIndexedBuffer(const Context *context,
+                                    size_t index,
+                                    Buffer *buffer,
+                                    size_t offset,
+                                    size_t size);
     const OffsetBindingPointer<Buffer> &getIndexedBuffer(size_t index) const;
     size_t getIndexedBufferCount() const;
 
-    void detachBuffer(const Context *context, GLuint bufferName);
+    // Returns true if any buffer bound to this object is also bound to another target.
+    bool buffersBoundForOtherUse() const;
+
+    angle::Result detachBuffer(const Context *context, GLuint bufferName);
 
     rx::TransformFeedbackImpl *getImplementation();
     const rx::TransformFeedbackImpl *getImplementation() const;
+
+    void onBindingChanged(const Context *context, bool bound);
 
   private:
     void bindProgram(const Context *context, Program *program);
 
     TransformFeedbackState mState;
-    rx::TransformFeedbackImpl* mImplementation;
+    rx::TransformFeedbackImpl *mImplementation;
 };
 
-}
+}  // namespace gl
 
-#endif // LIBANGLE_TRANSFORM_FEEDBACK_H_
+#endif  // LIBANGLE_TRANSFORM_FEEDBACK_H_

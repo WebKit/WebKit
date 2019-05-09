@@ -16,28 +16,20 @@
 namespace gl
 {
 
-Debug::Control::Control()
-{
-}
+Debug::Control::Control() {}
 
-Debug::Control::~Control()
-{
-}
+Debug::Control::~Control() {}
 
 Debug::Control::Control(const Control &other) = default;
 
-Debug::Group::Group()
-{
-}
+Debug::Group::Group() {}
 
-Debug::Group::~Group()
-{
-}
+Debug::Group::~Group() {}
 
 Debug::Group::Group(const Group &other) = default;
 
-Debug::Debug()
-    : mOutputEnabled(false),
+Debug::Debug(bool initialDebugState)
+    : mOutputEnabled(initialDebugState),
       mCallbackFunction(nullptr),
       mCallbackUserParam(nullptr),
       mMessages(),
@@ -48,9 +40,7 @@ Debug::Debug()
     pushDefaultGroup();
 }
 
-Debug::~Debug()
-{
-}
+Debug::~Debug() {}
 
 void Debug::setMaxLoggedMessages(GLuint maxLoggedMessages)
 {
@@ -97,7 +87,7 @@ void Debug::insertMessage(GLenum source,
                           GLenum type,
                           GLuint id,
                           GLenum severity,
-                          const std::string &message)
+                          const std::string &message) const
 {
     std::string messageCopy(message);
     insertMessage(source, type, id, severity, std::move(messageCopy));
@@ -107,7 +97,7 @@ void Debug::insertMessage(GLenum source,
                           GLenum type,
                           GLuint id,
                           GLenum severity,
-                          std::string &&message)
+                          std::string &&message) const
 {
     if (!isMessageEnabled(source, type, id, severity))
     {
@@ -312,16 +302,75 @@ void Debug::pushDefaultGroup()
     c0.source   = GL_DONT_CARE;
     c0.type     = GL_DONT_CARE;
     c0.severity = GL_DONT_CARE;
-    c0.enabled = true;
+    c0.enabled  = true;
     g.controls.push_back(std::move(c0));
 
     Control c1;
     c1.source   = GL_DONT_CARE;
     c1.type     = GL_DONT_CARE;
     c1.severity = GL_DEBUG_SEVERITY_LOW;
-    c1.enabled = false;
+    c1.enabled  = false;
     g.controls.push_back(std::move(c1));
 
     mGroups.push_back(std::move(g));
 }
 }  // namespace gl
+
+namespace egl
+{
+
+namespace
+{
+angle::PackedEnumBitSet<MessageType> GetDefaultMessageTypeBits()
+{
+    angle::PackedEnumBitSet<MessageType> result;
+    result.set(MessageType::Critical);
+    result.set(MessageType::Error);
+    return result;
+}
+}  // anonymous namespace
+
+Debug::Debug() : mCallback(nullptr), mEnabledMessageTypes(GetDefaultMessageTypeBits()) {}
+
+void Debug::setCallback(EGLDEBUGPROCKHR callback, const AttributeMap &attribs)
+{
+    mCallback = callback;
+
+    const angle::PackedEnumBitSet<MessageType> defaultMessageTypes = GetDefaultMessageTypeBits();
+    if (mCallback != nullptr)
+    {
+        for (MessageType messageType : angle::AllEnums<MessageType>())
+        {
+            mEnabledMessageTypes[messageType] =
+                (attribs.getAsInt(egl::ToEGLenum(messageType), defaultMessageTypes[messageType]) ==
+                 EGL_TRUE);
+        }
+    }
+}
+
+EGLDEBUGPROCKHR Debug::getCallback() const
+{
+    return mCallback;
+}
+
+bool Debug::isMessageTypeEnabled(MessageType type) const
+{
+    return mEnabledMessageTypes[type];
+}
+
+void Debug::insertMessage(EGLenum error,
+                          const char *command,
+                          MessageType messageType,
+                          EGLLabelKHR threadLabel,
+                          EGLLabelKHR objectLabel,
+                          const std::string &message) const
+{
+    // TODO(geofflang): Lock before checking the callback. http://anglebug.com/2464
+    if (mCallback && isMessageTypeEnabled(messageType))
+    {
+        mCallback(error, command, egl::ToEGLenum(messageType), threadLabel, objectLabel,
+                  message.c_str());
+    }
+}
+
+}  // namespace egl

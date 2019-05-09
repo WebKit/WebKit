@@ -10,10 +10,10 @@
 #ifndef TESTS_TEST_UTILS_SHADER_COMPILE_TREE_TEST_H_
 #define TESTS_TEST_UTILS_SHADER_COMPILE_TREE_TEST_H_
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "compiler/translator/PoolAlloc.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 
 namespace sh
 {
@@ -53,7 +53,7 @@ class ShaderCompileTreeTest : public testing::Test
   private:
     TranslatorESSL *mTranslator;
 
-    TPoolAllocator mAllocator;
+    angle::PoolAllocator mAllocator;
 };
 
 // Returns true if the node is some kind of a zero node - either constructor or a constant union

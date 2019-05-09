@@ -44,4 +44,4 @@ TEST(OptionalTest, Copies)
     ASSERT_EQ(testValid, testCopy);
 }
 
-} // namespace
+}  // namespace

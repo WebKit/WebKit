@@ -8,21 +8,21 @@
 // rx::FenceNVImpl and rx::SyncImpl.
 
 #include "libANGLE/renderer/d3d/d3d11/Fence11.h"
-#include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 
 #include "common/utilities.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/renderer/d3d/d3d11/Context11.h"
+#include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 
 namespace rx
 {
-
-static const int kDeviceLostCheckPeriod = 64;
 
 //
 // Template helpers for set and test operations.
 //
 
 template <class FenceClass>
-gl::Error FenceSetHelper(FenceClass *fence)
+angle::Result FenceSetHelper(const gl::Context *context, FenceClass *fence)
 {
     if (!fence->mQuery)
     {
@@ -30,60 +30,57 @@ gl::Error FenceSetHelper(FenceClass *fence)
         queryDesc.Query     = D3D11_QUERY_EVENT;
         queryDesc.MiscFlags = 0;
 
+        Context11 *context11 = GetImplAs<Context11>(context);
         HRESULT result = fence->mRenderer->getDevice()->CreateQuery(&queryDesc, &fence->mQuery);
-        if (FAILED(result))
-        {
-            return gl::OutOfMemory() << "Failed to create event query, " << gl::FmtHR(result);
-        }
+        ANGLE_TRY_HR(context11, result, "Failed to create event query");
     }
 
     fence->mRenderer->getDeviceContext()->End(fence->mQuery);
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 template <class FenceClass>
-gl::Error FenceTestHelper(FenceClass *fence, bool flushCommandBuffer, GLboolean *outFinished)
+angle::Result FenceTestHelper(const gl::Context *context,
+                              FenceClass *fence,
+                              bool flushCommandBuffer,
+                              GLboolean *outFinished)
 {
     ASSERT(fence->mQuery);
 
     UINT getDataFlags = (flushCommandBuffer ? 0 : D3D11_ASYNC_GETDATA_DONOTFLUSH);
+
+    Context11 *context11 = GetImplAs<Context11>(context);
     HRESULT result =
         fence->mRenderer->getDeviceContext()->GetData(fence->mQuery, nullptr, 0, getDataFlags);
-
-    if (FAILED(result))
-    {
-        return gl::OutOfMemory() << "Failed to get query data, " << gl::FmtHR(result);
-    }
+    ANGLE_TRY_HR(context11, result, "Failed to get query data");
 
     ASSERT(result == S_OK || result == S_FALSE);
     *outFinished = ((result == S_OK) ? GL_TRUE : GL_FALSE);
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 //
 // FenceNV11
 //
 
-FenceNV11::FenceNV11(Renderer11 *renderer) : FenceNVImpl(), mRenderer(renderer), mQuery(nullptr)
-{
-}
+FenceNV11::FenceNV11(Renderer11 *renderer) : FenceNVImpl(), mRenderer(renderer), mQuery(nullptr) {}
 
 FenceNV11::~FenceNV11()
 {
     SafeRelease(mQuery);
 }
 
-gl::Error FenceNV11::set(GLenum condition)
+angle::Result FenceNV11::set(const gl::Context *context, GLenum condition)
 {
-    return FenceSetHelper(this);
+    return FenceSetHelper(context, this);
 }
 
-gl::Error FenceNV11::test(GLboolean *outFinished)
+angle::Result FenceNV11::test(const gl::Context *context, GLboolean *outFinished)
 {
-    return FenceTestHelper(this, true, outFinished);
+    return FenceTestHelper(context, this, true, outFinished);
 }
 
-gl::Error FenceNV11::finish()
+angle::Result FenceNV11::finish(const gl::Context *context)
 {
     GLboolean finished = GL_FALSE;
 
@@ -91,17 +88,19 @@ gl::Error FenceNV11::finish()
     while (finished != GL_TRUE)
     {
         loopCount++;
-        ANGLE_TRY(FenceTestHelper(this, true, &finished));
+        ANGLE_TRY(FenceTestHelper(context, this, true, &finished));
 
-        if (loopCount % kDeviceLostCheckPeriod == 0 && mRenderer->testDeviceLost())
+        bool checkDeviceLost = (loopCount % kPollingD3DDeviceLostCheckFrequency) == 0;
+        if (checkDeviceLost && mRenderer->testDeviceLost())
         {
-            return gl::OutOfMemory() << "Device was lost while querying result of an event query.";
+            ANGLE_TRY_HR(GetImplAs<Context11>(context), DXGI_ERROR_DRIVER_INTERNAL_ERROR,
+                         "Device was lost while querying result of an event query.");
         }
 
         ScheduleYield();
     }
 
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 //
@@ -133,36 +132,36 @@ Sync11::~Sync11()
     SafeRelease(mQuery);
 }
 
-gl::Error Sync11::set(GLenum condition, GLbitfield flags)
+angle::Result Sync11::set(const gl::Context *context, GLenum condition, GLbitfield flags)
 {
     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE && flags == 0);
-    return FenceSetHelper(this);
+    return FenceSetHelper(context, this);
 }
 
-gl::Error Sync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
+angle::Result Sync11::clientWait(const gl::Context *context,
+                                 GLbitfield flags,
+                                 GLuint64 timeout,
+                                 GLenum *outResult)
 {
     ASSERT(outResult);
 
     bool flushCommandBuffer = ((flags & GL_SYNC_FLUSH_COMMANDS_BIT) != 0);
 
+    *outResult = GL_WAIT_FAILED;
+
     GLboolean result = GL_FALSE;
-    gl::Error error  = FenceTestHelper(this, flushCommandBuffer, &result);
-    if (error.isError())
-    {
-        *outResult = GL_WAIT_FAILED;
-        return error;
-    }
+    ANGLE_TRY(FenceTestHelper(context, this, flushCommandBuffer, &result));
 
     if (result == GL_TRUE)
     {
         *outResult = GL_ALREADY_SIGNALED;
-        return gl::NoError();
+        return angle::Result::Continue;
     }
 
     if (timeout == 0)
     {
         *outResult = GL_TIMEOUT_EXPIRED;
-        return gl::NoError();
+        return angle::Result::Continue;
     }
 
     LARGE_INTEGER currentCounter = {};
@@ -186,17 +185,16 @@ gl::Error Sync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResu
         success = QueryPerformanceCounter(&currentCounter);
         ASSERT(success);
 
-        error = FenceTestHelper(this, flushCommandBuffer, &result);
-        if (error.isError())
-        {
-            *outResult = GL_WAIT_FAILED;
-            return error;
-        }
+        *outResult = GL_WAIT_FAILED;
 
-        if ((loopCount % kDeviceLostCheckPeriod) == 0 && mRenderer->testDeviceLost())
+        ANGLE_TRY(FenceTestHelper(context, this, flushCommandBuffer, &result));
+
+        bool checkDeviceLost = (loopCount % kPollingD3DDeviceLostCheckFrequency) == 0;
+        if (checkDeviceLost && mRenderer->testDeviceLost())
         {
             *outResult = GL_WAIT_FAILED;
-            return gl::OutOfMemory() << "Device was lost while querying result of an event query.";
+            ANGLE_TRY_HR(GetImplAs<Context11>(context), DXGI_ERROR_DRIVER_INTERNAL_ERROR,
+                         "Device was lost while querying result of an event query.");
         }
     }
 
@@ -209,32 +207,28 @@ gl::Error Sync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResu
         *outResult = GL_CONDITION_SATISFIED;
     }
 
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error Sync11::serverWait(GLbitfield flags, GLuint64 timeout)
+angle::Result Sync11::serverWait(const gl::Context *context, GLbitfield flags, GLuint64 timeout)
 {
     // Because our API is currently designed to be called from a single thread, we don't need to do
     // extra work for a server-side fence. GPU commands issued after the fence is created will
     // always be processed after the fence is signaled.
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
-gl::Error Sync11::getStatus(GLint *outResult)
+angle::Result Sync11::getStatus(const gl::Context *context, GLint *outResult)
 {
     GLboolean result = GL_FALSE;
-    gl::Error error  = FenceTestHelper(this, false, &result);
-    if (error.isError())
-    {
-        // The spec does not specify any way to report errors during the status test (e.g. device
-        // lost) so we report the fence is unblocked in case of error or signaled.
-        *outResult = GL_SIGNALED;
 
-        return error;
-    }
+    // The spec does not specify any way to report errors during the status test (e.g. device
+    // lost) so we report the fence is unblocked in case of error or signaled.
+    *outResult = GL_SIGNALED;
+    ANGLE_TRY(FenceTestHelper(context, this, false, &result));
 
     *outResult = (result ? GL_SIGNALED : GL_UNSIGNALED);
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

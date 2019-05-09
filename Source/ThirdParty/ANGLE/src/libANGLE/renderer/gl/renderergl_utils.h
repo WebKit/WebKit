@@ -10,9 +10,9 @@
 #ifndef LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 #define LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 
-#include "libANGLE/angletypes.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Version.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
 
@@ -26,11 +26,15 @@ class TextureCapsMap;
 struct Extensions;
 struct Version;
 struct Workarounds;
-}
+}  // namespace gl
 
 namespace rx
 {
+class BlitGL;
+class ClearMultiviewGL;
+class ContextGL;
 class FunctionsGL;
+class StateManagerGL;
 struct WorkaroundsGL;
 enum class MultiviewImplementationTypeGL
 {
@@ -39,7 +43,13 @@ enum class MultiviewImplementationTypeGL
 };
 
 VendorID GetVendorID(const FunctionsGL *functions);
-std::string GetDriverVersion(const FunctionsGL *functions);
+
+// Helpers for extracting the GL helper objects out of a context
+const FunctionsGL *GetFunctionsGL(const gl::Context *context);
+StateManagerGL *GetStateManagerGL(const gl::Context *context);
+BlitGL *GetBlitGL(const gl::Context *context);
+ClearMultiviewGL *GetMultiviewClearer(const gl::Context *context);
+const WorkaroundsGL &GetWorkaroundsGL(const gl::Context *context);
 
 namespace nativegl_gl
 {
@@ -54,14 +64,18 @@ void GenerateCaps(const FunctionsGL *functions,
 
 void GenerateWorkarounds(const FunctionsGL *functions, WorkaroundsGL *workarounds);
 void ApplyWorkarounds(const FunctionsGL *functions, gl::Workarounds *workarounds);
-}
+}  // namespace nativegl_gl
 
 namespace nativegl
 {
 bool SupportsFenceSync(const FunctionsGL *functions);
 bool SupportsOcclusionQueries(const FunctionsGL *functions);
-bool SupportsNativeRendering(const FunctionsGL *functions, GLenum target, GLenum internalFormat);
-}
+bool SupportsNativeRendering(const FunctionsGL *functions,
+                             gl::TextureType type,
+                             GLenum internalFormat);
+bool UseTexImage2D(gl::TextureType textureType);
+bool UseTexImage3D(gl::TextureType textureType);
+}  // namespace nativegl
 
 bool CanMapBufferForRead(const FunctionsGL *functions);
 uint8_t *MapBufferRangeWithFallback(const FunctionsGL *functions,
@@ -70,13 +84,15 @@ uint8_t *MapBufferRangeWithFallback(const FunctionsGL *functions,
                                     size_t length,
                                     GLbitfield access);
 
-gl::ErrorOrResult<bool> ShouldApplyLastRowPaddingWorkaround(const gl::Extents &size,
-                                                            const gl::PixelStoreStateBase &state,
-                                                            const gl::Buffer *pixelBuffer,
-                                                            GLenum format,
-                                                            GLenum type,
-                                                            bool is3D,
-                                                            const void *pixels);
+angle::Result ShouldApplyLastRowPaddingWorkaround(ContextGL *contextGL,
+                                                  const gl::Extents &size,
+                                                  const gl::PixelStoreStateBase &state,
+                                                  const gl::Buffer *pixelBuffer,
+                                                  GLenum format,
+                                                  GLenum type,
+                                                  bool is3D,
+                                                  const void *pixels,
+                                                  bool *shouldApplyOut);
 
 struct ContextCreationTry
 {
@@ -89,8 +105,7 @@ struct ContextCreationTry
 
     ContextCreationTry(EGLint displayType, Type type, gl::Version version)
         : displayType(displayType), type(type), version(version)
-    {
-    }
+    {}
 
     EGLint displayType;
     Type type;
@@ -98,6 +113,6 @@ struct ContextCreationTry
 };
 
 std::vector<ContextCreationTry> GenerateContextCreationToTry(EGLint requestedType, bool isMesaGLX);
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
+#endif  // LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_

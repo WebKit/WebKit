@@ -385,6 +385,16 @@ void LoadG8R24ToR24G8(size_t width,
                       size_t outputRowPitch,
                       size_t outputDepthPitch);
 
+void LoadD24S8ToD32FS8X24(size_t width,
+                          size_t height,
+                          size_t depth,
+                          const uint8_t *input,
+                          size_t inputRowPitch,
+                          size_t inputDepthPitch,
+                          uint8_t *output,
+                          size_t outputRowPitch,
+                          size_t outputDepthPitch);
+
 void LoadD32FToD32F(size_t width,
                     size_t height,
                     size_t depth,
@@ -394,6 +404,16 @@ void LoadD32FToD32F(size_t width,
                     uint8_t *output,
                     size_t outputRowPitch,
                     size_t outputDepthPitch);
+
+void LoadD32FS8X24ToD24S8(size_t width,
+                          size_t height,
+                          size_t depth,
+                          const uint8_t *input,
+                          size_t inputRowPitch,
+                          size_t inputDepthPitch,
+                          uint8_t *output,
+                          size_t outputRowPitch,
+                          size_t outputDepthPitch);
 
 void LoadD32FS8X24ToD32FS8X24(size_t width,
                               size_t height,
@@ -447,6 +467,16 @@ void LoadRGB32FToRGBA16F(size_t width,
                          uint8_t *output,
                          size_t outputRowPitch,
                          size_t outputDepthPitch);
+
+void LoadRGB32FToRGB16F(size_t width,
+                        size_t height,
+                        size_t depth,
+                        const uint8_t *input,
+                        size_t inputRowPitch,
+                        size_t inputDepthPitch,
+                        uint8_t *output,
+                        size_t outputRowPitch,
+                        size_t outputDepthPitch);
 
 template <size_t blockWidth, size_t blockHeight, size_t blockSize>
 inline void LoadCompressedToNative(size_t width,
@@ -550,6 +580,46 @@ void LoadEACRG11SToRG8(size_t width,
                        uint8_t *output,
                        size_t outputRowPitch,
                        size_t outputDepthPitch);
+
+void LoadEACR11ToR16(size_t width,
+                     size_t height,
+                     size_t depth,
+                     const uint8_t *input,
+                     size_t inputRowPitch,
+                     size_t inputDepthPitch,
+                     uint8_t *output,
+                     size_t outputRowPitch,
+                     size_t outputDepthPitch);
+
+void LoadEACR11SToR16(size_t width,
+                      size_t height,
+                      size_t depth,
+                      const uint8_t *input,
+                      size_t inputRowPitch,
+                      size_t inputDepthPitch,
+                      uint8_t *output,
+                      size_t outputRowPitch,
+                      size_t outputDepthPitch);
+
+void LoadEACRG11ToRG16(size_t width,
+                       size_t height,
+                       size_t depth,
+                       const uint8_t *input,
+                       size_t inputRowPitch,
+                       size_t inputDepthPitch,
+                       uint8_t *output,
+                       size_t outputRowPitch,
+                       size_t outputDepthPitch);
+
+void LoadEACRG11SToRG16(size_t width,
+                        size_t height,
+                        size_t depth,
+                        const uint8_t *input,
+                        size_t inputRowPitch,
+                        size_t inputDepthPitch,
+                        uint8_t *output,
+                        size_t outputRowPitch,
+                        size_t outputDepthPitch);
 
 void LoadETC2RGB8ToRGBA8(size_t width,
                          size_t height,

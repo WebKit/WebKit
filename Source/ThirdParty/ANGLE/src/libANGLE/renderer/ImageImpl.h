@@ -11,6 +11,8 @@
 
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
+#include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/FramebufferAttachmentObjectImpl.h"
 
 namespace gl
 {
@@ -19,20 +21,38 @@ class Context;
 
 namespace egl
 {
+class Display;
 class ImageSibling;
 struct ImageState;
 }  // namespace egl
 
 namespace rx
 {
+class ExternalImageSiblingImpl : public FramebufferAttachmentObjectImpl
+{
+  public:
+    ~ExternalImageSiblingImpl() override {}
+
+    virtual egl::Error initialize(const egl::Display *display) = 0;
+    virtual void onDestroy(const egl::Display *display) {}
+
+    virtual gl::Format getFormat() const                        = 0;
+    virtual bool isRenderable(const gl::Context *context) const = 0;
+    virtual bool isTexturable(const gl::Context *context) const = 0;
+    virtual gl::Extents getSize() const                         = 0;
+    virtual size_t getSamples() const                           = 0;
+};
+
 class ImageImpl : angle::NonCopyable
 {
   public:
     ImageImpl(const egl::ImageState &state) : mState(state) {}
     virtual ~ImageImpl() {}
-    virtual egl::Error initialize() = 0;
+    virtual void onDestroy(const egl::Display *display) {}
 
-    virtual gl::Error orphan(const gl::Context *context, egl::ImageSibling *sibling) = 0;
+    virtual egl::Error initialize(const egl::Display *display) = 0;
+
+    virtual angle::Result orphan(const gl::Context *context, egl::ImageSibling *sibling) = 0;
 
   protected:
     const egl::ImageState &mState;

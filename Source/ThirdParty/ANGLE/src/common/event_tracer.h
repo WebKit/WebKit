@@ -11,7 +11,7 @@
 namespace angle
 {
 
-const unsigned char *GetTraceCategoryEnabledFlag(const char* name);
+const unsigned char *GetTraceCategoryEnabledFlag(const char *name);
 angle::TraceEventHandle AddTraceEvent(char phase,
                                       const unsigned char *categoryGroupEnabled,
                                       const char *name,
@@ -21,6 +21,6 @@ angle::TraceEventHandle AddTraceEvent(char phase,
                                       const unsigned char *argTypes,
                                       const unsigned long long *argValues,
                                       unsigned char flags);
-}
+}  // namespace angle
 
 #endif  // COMMON_EVENT_TRACER_H_

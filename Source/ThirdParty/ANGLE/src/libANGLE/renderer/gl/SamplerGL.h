@@ -37,6 +37,6 @@ class SamplerGL : public SamplerImpl
     mutable gl::SamplerState mAppliedSamplerState;
     GLuint mSamplerID;
 };
-}
+}  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_GL_SAMPLERGL_H_

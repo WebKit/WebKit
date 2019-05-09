@@ -12,6 +12,10 @@
 
 #include "compiler/preprocessor/Lexer.h"
 #include "compiler/preprocessor/Macro.h"
+#include "compiler/preprocessor/Preprocessor.h"
+
+namespace angle
+{
 
 namespace pp
 {
@@ -25,7 +29,8 @@ class MacroExpander : public Lexer
     MacroExpander(Lexer *lexer,
                   MacroSet *macroSet,
                   Diagnostics *diagnostics,
-                  int allowedMacroExpansionDepth);
+                  const PreprocessorSettings &settings,
+                  bool parseDefined);
     ~MacroExpander() override;
 
     void lex(Token *token) override;
@@ -65,12 +70,13 @@ class MacroExpander : public Lexer
     Lexer *mLexer;
     MacroSet *mMacroSet;
     Diagnostics *mDiagnostics;
+    bool mParseDefined;
 
     std::unique_ptr<Token> mReserveToken;
     std::vector<MacroContext *> mContextStack;
     size_t mTotalTokensInContexts;
 
-    int mAllowedMacroExpansionDepth;
+    PreprocessorSettings mSettings;
 
     bool mDeferReenablingMacros;
     std::vector<std::shared_ptr<Macro>> mMacrosToReenable;
@@ -79,5 +85,7 @@ class MacroExpander : public Lexer
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_MACROEXPANDER_H_

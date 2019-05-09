@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     int rt = RUN_ALL_TESTS();

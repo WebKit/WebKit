@@ -12,23 +12,25 @@
 
 #include <string.h>
 
-#define LIST_EXTENSIONS(OP)             \
-    OP(ARB_texture_rectangle)           \
-    OP(ARM_shader_framebuffer_fetch)    \
-    OP(EXT_blend_func_extended)         \
-    OP(EXT_draw_buffers)                \
-    OP(EXT_frag_depth)                  \
-    OP(EXT_geometry_shader)             \
-    OP(EXT_shader_framebuffer_fetch)    \
-    OP(EXT_shader_texture_lod)          \
-    OP(EXT_YUV_target)                  \
-    OP(NV_EGL_stream_consumer_external) \
-    OP(NV_shader_framebuffer_fetch)     \
-    OP(OES_EGL_image_external)          \
-    OP(OES_EGL_image_external_essl3)    \
-    OP(OES_geometry_shader)             \
-    OP(OES_standard_derivatives)        \
-    OP(OVR_multiview)
+#define LIST_EXTENSIONS(OP)                      \
+    OP(ARB_texture_rectangle)                    \
+    OP(ANGLE_texture_multisample)                \
+    OP(ARM_shader_framebuffer_fetch)             \
+    OP(EXT_blend_func_extended)                  \
+    OP(EXT_draw_buffers)                         \
+    OP(EXT_frag_depth)                           \
+    OP(EXT_geometry_shader)                      \
+    OP(EXT_shader_framebuffer_fetch)             \
+    OP(EXT_shader_texture_lod)                   \
+    OP(EXT_YUV_target)                           \
+    OP(NV_EGL_stream_consumer_external)          \
+    OP(NV_shader_framebuffer_fetch)              \
+    OP(OES_EGL_image_external)                   \
+    OP(OES_EGL_image_external_essl3)             \
+    OP(OES_standard_derivatives)                 \
+    OP(OES_texture_storage_multisample_2d_array) \
+    OP(OVR_multiview2)                           \
+    OP(ANGLE_multi_draw)
 
 namespace sh
 {

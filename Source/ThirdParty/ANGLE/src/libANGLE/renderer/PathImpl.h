@@ -22,11 +22,11 @@ class PathImpl : angle::NonCopyable
   public:
     virtual ~PathImpl() {}
 
-    virtual gl::Error setCommands(GLsizei numCommands,
-                                  const GLubyte *commands,
-                                  GLsizei numCoords,
-                                  GLenum coordType,
-                                  const void *coords) = 0;
+    virtual angle::Result setCommands(GLsizei numCommands,
+                                      const GLubyte *commands,
+                                      GLsizei numCoords,
+                                      GLenum coordType,
+                                      const void *coords) = 0;
 
     virtual void setPathParameter(GLenum pname, GLfloat value) = 0;
 };

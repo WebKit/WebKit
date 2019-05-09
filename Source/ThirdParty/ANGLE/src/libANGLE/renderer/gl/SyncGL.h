@@ -21,15 +21,22 @@ class SyncGL : public SyncImpl
     explicit SyncGL(const FunctionsGL *functions);
     ~SyncGL() override;
 
-    gl::Error set(GLenum condition, GLbitfield flags) override;
-    gl::Error clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult) override;
-    gl::Error serverWait(GLbitfield flags, GLuint64 timeout) override;
-    gl::Error getStatus(GLint *outResult) override;
+    void onDestroy(const gl::Context *context) override;
+
+    angle::Result set(const gl::Context *context, GLenum condition, GLbitfield flags) override;
+    angle::Result clientWait(const gl::Context *context,
+                             GLbitfield flags,
+                             GLuint64 timeout,
+                             GLenum *outResult) override;
+    angle::Result serverWait(const gl::Context *context,
+                             GLbitfield flags,
+                             GLuint64 timeout) override;
+    angle::Result getStatus(const gl::Context *context, GLint *outResult) override;
 
   private:
     const FunctionsGL *mFunctions;
     GLsync mSyncObject;
 };
-}
+}  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_GL_FENCESYNCGL_H_

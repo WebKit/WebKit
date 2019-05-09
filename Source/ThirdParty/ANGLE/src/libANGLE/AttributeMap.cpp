@@ -11,9 +11,7 @@
 namespace egl
 {
 
-AttributeMap::AttributeMap()
-{
-}
+AttributeMap::AttributeMap() {}
 
 AttributeMap::AttributeMap(const AttributeMap &other) = default;
 
@@ -39,7 +37,7 @@ EGLAttrib AttributeMap::get(EGLAttrib key) const
 EGLAttrib AttributeMap::get(EGLAttrib key, EGLAttrib defaultValue) const
 {
     auto iter = mAttributes.find(key);
-    return (mAttributes.find(key) != mAttributes.end()) ? iter->second : defaultValue;
+    return (iter != mAttributes.end()) ? iter->second : defaultValue;
 }
 
 EGLint AttributeMap::getAsInt(EGLAttrib key) const
@@ -107,4 +105,4 @@ AttributeMap AttributeMap::CreateFromAttribArray(const EGLAttrib *attributes)
     }
     return map;
 }
-}
+}  // namespace egl

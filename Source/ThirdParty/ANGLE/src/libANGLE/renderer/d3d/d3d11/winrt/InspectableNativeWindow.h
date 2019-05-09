@@ -33,18 +33,18 @@ namespace rx
 class InspectableNativeWindow
 {
   public:
-    InspectableNativeWindow() :
-        mSupportsSwapChainResize(true),
-        mSwapChainSizeSpecified(false),
-        mSwapChainScaleSpecified(false),
-        mSwapChainScale(1.0f),
-        mClientRectChanged(false),
-        mClientRect({0,0,0,0}),
-        mNewClientRect({0,0,0,0})
+    InspectableNativeWindow()
+        : mSupportsSwapChainResize(true),
+          mSwapChainSizeSpecified(false),
+          mSwapChainScaleSpecified(false),
+          mSwapChainScale(1.0f),
+          mClientRectChanged(false),
+          mClientRect({0, 0, 0, 0}),
+          mNewClientRect({0, 0, 0, 0})
     {
         mSizeChangedEventToken.value = 0;
     }
-    virtual ~InspectableNativeWindow(){}
+    virtual ~InspectableNativeWindow() {}
 
     virtual bool initialize(EGLNativeWindowType window, IPropertySet *propertySet) = 0;
     virtual HRESULT createSwapChain(ID3D11Device *device,
@@ -53,7 +53,7 @@ class InspectableNativeWindow
                                     unsigned int width,
                                     unsigned int height,
                                     bool containsAlpha,
-                                    IDXGISwapChain1 **swapChain) = 0;
+                                    IDXGISwapChain1 **swapChain)                   = 0;
 
     bool getClientRect(RECT *rect)
     {
@@ -67,10 +67,12 @@ class InspectableNativeWindow
         return true;
     }
 
-    // setNewClientSize is used by the WinRT size change handler. It isn't used by the rest of ANGLE.
+    // setNewClientSize is used by the WinRT size change handler. It isn't used by the rest of
+    // ANGLE.
     void setNewClientSize(const Size &newWindowSize)
     {
-        // If the client doesn't support swapchain resizing then we should have already unregistered from size change handler
+        // If the client doesn't support swapchain resizing then we should have already unregistered
+        // from size change handler
         ASSERT(mSupportsSwapChainResize);
 
         if (mSupportsSwapChainResize)
@@ -81,7 +83,8 @@ class InspectableNativeWindow
                 mNewClientRect     = clientRect(newWindowSize);
                 mClientRectChanged = true;
 
-                // If a scale was specified, then now is the time to apply the scale matrix for the new swapchain size and window size
+                // If a scale was specified, then now is the time to apply the scale matrix for the
+                // new swapchain size and window size
                 if (mSwapChainScaleSpecified)
                 {
                     scaleSwapChain(newWindowSize, mNewClientRect);
@@ -89,7 +92,8 @@ class InspectableNativeWindow
             }
 
             // Even if the swapchain size was fixed, the window might have changed size.
-            // In this case, we should recalculate the scale matrix to account for the new window size
+            // In this case, we should recalculate the scale matrix to account for the new window
+            // size
             if (mSwapChainSizeSpecified)
             {
                 scaleSwapChain(newWindowSize, mClientRect);
@@ -101,10 +105,11 @@ class InspectableNativeWindow
     virtual HRESULT scaleSwapChain(const Size &windowSize, const RECT &clientRect) = 0;
     RECT clientRect(const Size &size);
 
-    bool mSupportsSwapChainResize; // Support for IDXGISwapChain::ResizeBuffers method
-    bool mSwapChainSizeSpecified;  // If an EGLRenderSurfaceSizeProperty was specified
-    bool mSwapChainScaleSpecified; // If an EGLRenderResolutionScaleProperty was specified
-    float mSwapChainScale;         // The scale value specified by the EGLRenderResolutionScaleProperty property
+    bool mSupportsSwapChainResize;  // Support for IDXGISwapChain::ResizeBuffers method
+    bool mSwapChainSizeSpecified;   // If an EGLRenderSurfaceSizeProperty was specified
+    bool mSwapChainScaleSpecified;  // If an EGLRenderResolutionScaleProperty was specified
+    float mSwapChainScale;  // The scale value specified by the EGLRenderResolutionScaleProperty
+                            // property
     RECT mClientRect;
     RECT mNewClientRect;
     bool mClientRectChanged;
@@ -112,20 +117,33 @@ class InspectableNativeWindow
     EventRegistrationToken mSizeChangedEventToken;
 };
 
-bool IsCoreWindow(EGLNativeWindowType window, ComPtr<ABI::Windows::UI::Core::ICoreWindow> *coreWindow = nullptr);
-bool IsSwapChainPanel(EGLNativeWindowType window, ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> *swapChainPanel = nullptr);
-bool IsEGLConfiguredPropertySet(EGLNativeWindowType window, ABI::Windows::Foundation::Collections::IPropertySet **propertySet = nullptr, IInspectable **inspectable = nullptr);
+bool IsCoreWindow(EGLNativeWindowType window,
+                  ComPtr<ABI::Windows::UI::Core::ICoreWindow> *coreWindow = nullptr);
+bool IsSwapChainPanel(
+    EGLNativeWindowType window,
+    ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> *swapChainPanel = nullptr);
+bool IsEGLConfiguredPropertySet(
+    EGLNativeWindowType window,
+    ABI::Windows::Foundation::Collections::IPropertySet **propertySet = nullptr,
+    IInspectable **inspectable                                        = nullptr);
 
-HRESULT GetOptionalPropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
-                                 const wchar_t *propertyName,
-                                 boolean *hasKey,
-                                 ComPtr<ABI::Windows::Foundation::IPropertyValue> &propertyValue);
+HRESULT GetOptionalPropertyValue(
+    const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable *>> &propertyMap,
+    const wchar_t *propertyName,
+    boolean *hasKey,
+    ComPtr<ABI::Windows::Foundation::IPropertyValue> &propertyValue);
 
-HRESULT GetOptionalSizePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
-                                     const wchar_t *propertyName, SIZE *value, bool *valueExists);
+HRESULT GetOptionalSizePropertyValue(
+    const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable *>> &propertyMap,
+    const wchar_t *propertyName,
+    SIZE *value,
+    bool *valueExists);
 
-HRESULT GetOptionalSinglePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
-                                       const wchar_t *propertyName, float *value, bool *valueExists);
-}
+HRESULT GetOptionalSinglePropertyValue(
+    const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable *>> &propertyMap,
+    const wchar_t *propertyName,
+    float *value,
+    bool *valueExists);
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_D3D11_WINRT_INSPECTABLENATIVEWINDOW_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_WINRT_INSPECTABLENATIVEWINDOW_H_

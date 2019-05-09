@@ -25,8 +25,8 @@ PIXELFORMATDESCRIPTOR GetDefaultPixelFormatDescriptor();
 std::vector<int> GetDefaultPixelFormatAttributes(bool preservedSwap);
 
 int QueryWGLFormatAttrib(HDC dc, int format, int attribName, const FunctionsWGL *functions);
-}
+}  // namespace wgl
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_WGL_WGLUTILS_H_
+#endif  // LIBANGLE_RENDERER_GL_WGL_WGLUTILS_H_

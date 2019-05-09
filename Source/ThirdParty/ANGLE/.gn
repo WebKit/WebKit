@@ -1,0 +1,45 @@
+# Copyright 2017 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file is used when gn runs in this directory (or a lower directory
+# and searching upward ends here).  See "gn help dotfile."
+# As a result this file will only affect stand-alone ANGLE builds,
+# not chromium builds.
+
+import("//build/dotfile_settings.gni")
+import("//dotfile_settings.gni")
+
+# Location of the build configuration file.
+buildconfig = "//build/config/BUILDCONFIG.gn"
+
+# The secondary source root is a parallel directory tree where
+# GN build files are placed when they can not be placed directly
+# in the source tree, e.g. for third party source trees.
+secondary_source = "//build/secondary/"
+
+# These are the targets to check headers for by default. The files in targets
+# matching these patterns (see "gn help label_pattern" for format) will have
+# their includes checked for proper dependencies when you run either
+# "gn check" or "gn gen --check".
+check_targets = [ "*" ]
+
+# These are the list of GN files that run exec_script. This whitelist exists
+# to force additional review for new uses of exec_script, which is strongly
+# discouraged except for gypi_to_gn calls.
+exec_script_whitelist = angle_dotfile_settings.exec_script_whitelist +
+                        build_dotfile_settings.exec_script_whitelist +
+                        [
+                          "//build/config/sysroot.gni",
+                          "//build/config/win/BUILD.gn",
+                          "//build/config/win/visual_studio_version.gni",
+                          "//build/gn_helpers.py",
+                          "//build_overrides/build.gni",
+                        ]
+
+default_args = {
+  use_custom_libcxx = false
+  clang_use_chrome_plugins = true
+  build_angle_deqp_tests = true
+  use_sysroot = true
+}

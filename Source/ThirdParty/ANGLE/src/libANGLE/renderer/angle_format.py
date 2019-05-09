@@ -10,6 +10,11 @@ import json
 import os
 import re
 
+kChannels = "ABDGLRSX"
+
+def get_angle_format_map_abs_path():
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), 'angle_format_map.json')
+
 def reject_duplicate_keys(pairs):
     found_keys = {}
     for key, value in pairs:
@@ -34,7 +39,7 @@ def load_inverse_table(path):
     return { angle: gl for gl, angle in pairs }
 
 def load_without_override():
-    map_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'angle_format_map.json')
+    map_path = get_angle_format_map_abs_path()
     return load_forward_table(map_path)
 
 def load_with_override(override_path):
@@ -46,6 +51,10 @@ def load_with_override(override_path):
 
     return results
 
+def get_all_angle_formats():
+    map_path = get_angle_format_map_abs_path()
+    return load_inverse_table(map_path).keys()
+
 def get_component_type(format_id):
     if "SNORM" in format_id:
         return "snorm"
@@ -53,13 +62,21 @@ def get_component_type(format_id):
         return "unorm"
     elif "FLOAT" in format_id:
         return "float"
+    elif "FIXED" in format_id:
+        return "float"
     elif "UINT" in format_id:
         return "uint"
     elif "SINT" in format_id:
         return "int"
+    elif "USCALED" in format_id:
+        return "uint"
+    elif "SSCALED" in format_id:
+        return "int"
     elif format_id == "NONE":
         return "none"
     elif "SRGB" in format_id:
+        return "unorm"
+    elif "TYPELESS" in format_id:
         return "unorm"
     elif format_id == "R9G9B9E5_SHAREDEXP":
         return "float"
@@ -67,7 +84,7 @@ def get_component_type(format_id):
         raise ValueError("Unknown component type for " + format_id)
 
 def get_channel_tokens(format_id):
-    r = re.compile(r'([ABDGLRS][\d]+)')
+    r = re.compile(r'([' + kChannels + '][\d]+)')
     return filter(r.match, r.split(format_id))
 
 def get_channels(format_id):
@@ -166,3 +183,46 @@ def get_internal_format_initializer(internal_format, format_id):
         return 'Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>'
     else:
         raise ValueError('warning: internal format initializer could not be generated and may be needed for ' + internal_format)
+
+def get_vertex_copy_function(src_format, dst_format):
+    if dst_format == "NONE":
+        return "nullptr";
+
+    num_channel = len(get_channel_tokens(src_format))
+    if num_channel < 1 or num_channel > 4:
+        return "nullptr";
+
+    if 'FIXED' in src_format:
+        assert 'FLOAT' in dst_format, ('get_vertex_copy_function: can only convert fixed to float,'
+                                       + ' not to ' + dst_format)
+        return 'Copy32FixedTo32FVertexData<%d, %d>' % (num_channel, num_channel)
+
+    sign = ''
+    base_type = None
+    if 'FLOAT' in src_format:
+        base_type = 'float'
+    else:
+        bits = get_bits(src_format)
+        redbits = bits and bits.get('R')
+        if redbits == 8:
+            base_type = 'byte'
+        elif redbits == 16:
+            base_type = 'short'
+        elif redbits == 32:
+            base_type = 'int'
+
+        if 'UINT' in src_format or 'UNORM' in src_format or 'USCALED' in src_format:
+            sign = 'u'
+
+    if base_type is None:
+        return "nullptr";
+
+    gl_type = 'GL' + sign + base_type
+
+    if src_format == dst_format:
+        return 'CopyNativeVertexData<%s, %d, %d, 0>' % (gl_type, num_channel, num_channel)
+
+    assert 'FLOAT' in dst_format, ('get_vertex_copy_function: can only convert to float,'
+                                   + ' not to ' + dst_format)
+    normalized = 'true' if 'NORM' in src_format else 'false'
+    return "CopyTo32FVertexData<%s, %d, %d, %s>" % (gl_type, num_channel, num_channel, normalized)

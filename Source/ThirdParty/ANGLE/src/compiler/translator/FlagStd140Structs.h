@@ -25,6 +25,6 @@ struct MappedStruct
 };
 
 std::vector<MappedStruct> FlagStd140Structs(TIntermNode *node);
-}
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_FLAGSTD140STRUCTS_H_

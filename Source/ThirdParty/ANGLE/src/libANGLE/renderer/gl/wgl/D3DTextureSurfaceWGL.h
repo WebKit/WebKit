@@ -26,7 +26,7 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
 {
   public:
     D3DTextureSurfaceWGL(const egl::SurfaceState &state,
-                         RendererGL *renderer,
+                         StateManagerGL *stateManager,
                          EGLenum buftype,
                          EGLClientBuffer clientBuffer,
                          DisplayWGL *display,
@@ -41,7 +41,7 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
                                                      ID3D11Device *d3d11Device);
 
     egl::Error initialize(const egl::Display *display) override;
-    egl::Error makeCurrent() override;
+    egl::Error makeCurrent(const gl::Context *context) override;
     egl::Error unMakeCurrent() override;
 
     egl::Error swap(const gl::Context *context) override;
@@ -51,8 +51,10 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
                              EGLint width,
                              EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
-    egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
-    egl::Error releaseTexImage(EGLint buffer) override;
+    egl::Error bindTexImage(const gl::Context *context,
+                            gl::Texture *texture,
+                            EGLint buffer) override;
+    egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(EGLint interval) override;
 
     EGLint getWidth() const override;
@@ -61,21 +63,21 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
-    FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &data) override;
+    FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
+                                              const gl::FramebufferState &data) override;
 
     HDC getDC() const override;
+
+    const angle::Format *getD3DTextureColorFormat() const override;
 
   private:
     EGLenum mBuftype;
     EGLClientBuffer mClientBuffer;
 
-    RendererGL *mRenderer;
-
     ID3D11Device *mDisplayD3D11Device;
 
     DisplayWGL *mDisplay;
     StateManagerGL *mStateManager;
-    const WorkaroundsGL &mWorkarounds;
     const FunctionsGL *mFunctionsGL;
     const FunctionsWGL *mFunctionsWGL;
 
@@ -83,6 +85,8 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
 
     size_t mWidth;
     size_t mHeight;
+
+    const angle::Format *mColorFormat;
 
     HANDLE mDeviceHandle;
     IUnknown *mObject;
@@ -92,7 +96,6 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
 
     GLuint mColorRenderbufferID;
     GLuint mDepthStencilRenderbufferID;
-    GLuint mFramebufferID;
 };
 }  // namespace rx
 

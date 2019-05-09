@@ -20,22 +20,25 @@ class VertexBuffer9 : public VertexBuffer
   public:
     explicit VertexBuffer9(Renderer9 *renderer);
 
-    gl::Error initialize(unsigned int size, bool dynamicUsage) override;
+    angle::Result initialize(const gl::Context *context,
+                             unsigned int size,
+                             bool dynamicUsage) override;
 
     // Warning: you should ensure binding really matches attrib.bindingIndex before using this
     // function.
-    gl::Error storeVertexAttributes(const gl::VertexAttribute &attrib,
-                                    const gl::VertexBinding &binding,
-                                    GLenum currentValueType,
-                                    GLint start,
-                                    GLsizei count,
-                                    GLsizei instances,
-                                    unsigned int offset,
-                                    const uint8_t *sourceData) override;
+    angle::Result storeVertexAttributes(const gl::Context *context,
+                                        const gl::VertexAttribute &attrib,
+                                        const gl::VertexBinding &binding,
+                                        gl::VertexAttribType currentValueType,
+                                        GLint start,
+                                        size_t count,
+                                        GLsizei instances,
+                                        unsigned int offset,
+                                        const uint8_t *sourceData) override;
 
     unsigned int getBufferSize() const override;
-    gl::Error setBufferSize(unsigned int size) override;
-    gl::Error discard() override;
+    angle::Result setBufferSize(const gl::Context *context, unsigned int size) override;
+    angle::Result discard(const gl::Context *context) override;
 
     IDirect3DVertexBuffer9 *getBuffer() const;
 
@@ -48,6 +51,6 @@ class VertexBuffer9 : public VertexBuffer
     bool mDynamicUsage;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_D3D9_VERTEXBUFFER9_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D9_VERTEXBUFFER9_H_

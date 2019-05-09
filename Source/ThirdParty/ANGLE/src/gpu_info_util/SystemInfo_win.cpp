@@ -16,15 +16,15 @@
 
 #if defined(GPU_INFO_USE_SETUPAPI)
 // Remove parts of commctrl.h that have compile errors
-#define NOTOOLBAR
-#define NOTOOLTIPS
-#include <cfgmgr32.h>
-#include <setupapi.h>
+#    define NOTOOLBAR
+#    define NOTOOLTIPS
+#    include <cfgmgr32.h>
+#    include <setupapi.h>
 #elif defined(GPU_INFO_USE_DXGI)
-#include <dxgi.h>
-#include <d3d10.h>
+#    include <d3d10.h>
+#    include <dxgi.h>
 #else
-#error "SystemInfo_win needs at least GPU_INFO_USE_SETUPAPI or GPU_INFO_USE_DXGI defined"
+#    error "SystemInfo_win needs at least GPU_INFO_USE_SETUPAPI or GPU_INFO_USE_DXGI defined"
 #endif
 
 #include <array>
@@ -189,7 +189,7 @@ bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
 }
 
 #else
-#error
+#    error
 #endif
 
 }  // anonymous namespace
@@ -210,7 +210,7 @@ bool GetSystemInfo(SystemInfo *info)
         return false;
     }
 #else
-#error
+#    error
 #endif
 
     if (info->gpus.size() == 0)

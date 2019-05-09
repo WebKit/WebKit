@@ -30,8 +30,7 @@ class RewriteDoWhileCrashTest : public ShaderCompileTreeTest
     }
 };
 
-// Make sure that the RewriteDoWhile step doesn't crash due to creating temp symbols before calling
-// nextTemporaryId(). Regression test.
+// Make sure that the RewriteDoWhile step doesn't crash. Regression test.
 TEST_F(RewriteDoWhileCrashTest, RunsSuccessfully)
 {
     const std::string &shaderString =

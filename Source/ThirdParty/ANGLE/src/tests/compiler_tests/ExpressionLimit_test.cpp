@@ -6,21 +6,22 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 
-#define SHADER(Src) #Src
-
-class ExpressionLimitTest : public testing::Test {
-protected:
+class ExpressionLimitTest : public testing::Test
+{
+  protected:
     static const int kMaxExpressionComplexity = 16;
     static const int kMaxCallStackDepth       = 16;
     static const int kMaxFunctionParameters   = 16;
-    static const char* kExpressionTooComplex;
-    static const char* kCallStackTooDeep;
-    static const char* kHasRecursion;
+    static const char *kExpressionTooComplex;
+    static const char *kCallStackTooDeep;
+    static const char *kHasRecursion;
     static const char *kTooManyParameters;
+    static const char *kTooComplexSwitch;
+    static const char *kGlobalVariableInit;
 
     virtual void SetUp()
     {
@@ -51,22 +52,23 @@ protected:
         res->MaxFunctionParameters   = kMaxFunctionParameters;
     }
 
-    void GenerateLongExpression(int length, std::stringstream* ss)
+    static void GenerateLongExpression(int length, std::stringstream *ss)
     {
-        for (int ii = 0; ii < length; ++ii) {
-          *ss << "+ vec4(" << ii << ")";
+        for (int ii = 0; ii < length; ++ii)
+        {
+            *ss << "+ vec4(" << ii << ")";
         }
     }
 
-    std::string GenerateShaderWithLongExpression(int length)
+    static std::string GenerateShaderWithLongExpression(int length)
     {
-        static const char* shaderStart = SHADER(
-            precision mediump float;
+        static const char *shaderStart =
+            R"(precision mediump float;
             uniform vec4 u_color;
             void main()
             {
                gl_FragColor = u_color
-        );
+        )";
 
         std::stringstream ss;
         ss << shaderStart;
@@ -76,10 +78,10 @@ protected:
         return ss.str();
     }
 
-    std::string GenerateShaderWithUnusedLongExpression(int length)
+    static std::string GenerateShaderWithUnusedLongExpression(int length)
     {
-        static const char* shaderStart = SHADER(
-            precision mediump float;
+        static const char *shaderStart =
+            R"(precision mediump float;
             uniform vec4 u_color;
             void main()
             {
@@ -87,7 +89,7 @@ protected:
             }
             vec4 someFunction() {
               return u_color
-        );
+        )";
 
         std::stringstream ss;
 
@@ -98,25 +100,26 @@ protected:
         return ss.str();
     }
 
-    void GenerateDeepFunctionStack(int length, std::stringstream* ss)
+    static void GenerateDeepFunctionStack(int length, std::stringstream *ss)
     {
-        static const char* shaderStart = SHADER(
-            precision mediump float;
+        static const char *shaderStart =
+            R"(precision mediump float;
             uniform vec4 u_color;
             vec4 function0()  {
               return u_color;
             }
-        );
+        )";
 
         *ss << shaderStart;
-        for (int ii = 0; ii < length; ++ii) {
-          *ss << "vec4 function" << (ii + 1) << "() {\n"
-              << "  return function" << ii << "();\n"
-              << "}\n";
+        for (int ii = 0; ii < length; ++ii)
+        {
+            *ss << "vec4 function" << (ii + 1) << "() {\n"
+                << "  return function" << ii << "();\n"
+                << "}\n";
         }
     }
 
-    std::string GenerateShaderWithDeepFunctionStack(int length)
+    static std::string GenerateShaderWithDeepFunctionStack(int length)
     {
         std::stringstream ss;
 
@@ -129,7 +132,7 @@ protected:
         return ss.str();
     }
 
-    std::string GenerateShaderWithUnusedDeepFunctionStack(int length)
+    static std::string GenerateShaderWithUnusedDeepFunctionStack(int length)
     {
         std::stringstream ss;
 
@@ -139,11 +142,10 @@ protected:
            << "  gl_FragColor = vec4(0,0,0,0);\n"
            << "}";
 
-
         return ss.str();
     }
 
-    std::string GenerateShaderWithFunctionParameters(int parameters)
+    static std::string GenerateShaderWithFunctionParameters(int parameters)
     {
         std::stringstream ss;
 
@@ -171,6 +173,50 @@ protected:
         return ss.str();
     }
 
+    static std::string GenerateShaderWithNestingInsideSwitch(int nesting)
+    {
+        std::stringstream shaderString;
+        shaderString <<
+            R"(#version 300 es
+            uniform int u;
+
+            void main()
+            {
+                int x;
+                switch (u)
+                {
+                    case 0:
+                        x = x)";
+        for (int i = 0; i < nesting; ++i)
+        {
+            shaderString << " + x";
+        }
+        shaderString <<
+            R"(;
+                }  // switch (u)
+            })";
+        return shaderString.str();
+    }
+
+    static std::string GenerateShaderWithNestingInsideGlobalInitializer(int nesting)
+    {
+        std::stringstream shaderString;
+        shaderString <<
+            R"(uniform int u;
+            int x = u)";
+
+        for (int i = 0; i < nesting; ++i)
+        {
+            shaderString << " + u";
+        }
+        shaderString << R"(;
+            void main()
+            {
+                gl_FragColor = vec4(0.0);
+            })";
+        return shaderString.str();
+    }
+
     // Compiles a shader and if there's an error checks for a specific
     // substring in the error log. This way we know the error is specific
     // to the issue we are testing.
@@ -179,10 +225,10 @@ protected:
                                 ShCompileOptions compileOptions,
                                 const char *expected_error)
     {
-                bool success = sh::Compile(compiler, &source, 1, compileOptions) != 0;
-                if (success)
-                {
-                    success = !expected_error;
+        bool success = sh::Compile(compiler, &source, 1, compileOptions) != 0;
+        if (success)
+        {
+            success = !expected_error;
         }
         else
         {
@@ -198,19 +244,20 @@ protected:
     ShBuiltInResources resources;
 };
 
-const char* ExpressionLimitTest::kExpressionTooComplex =
-    "Expression too complex";
-const char* ExpressionLimitTest::kCallStackTooDeep =
-    "Call stack too deep";
-const char* ExpressionLimitTest::kHasRecursion =
+const char *ExpressionLimitTest::kExpressionTooComplex = "Expression too complex";
+const char *ExpressionLimitTest::kCallStackTooDeep     = "Call stack too deep";
+const char *ExpressionLimitTest::kHasRecursion =
     "Recursive function call in the following call chain";
-const char* ExpressionLimitTest::kTooManyParameters =
-    "Function has too many parameters";
+const char *ExpressionLimitTest::kTooManyParameters = "Function has too many parameters";
+const char *ExpressionLimitTest::kTooComplexSwitch =
+    "too complex expressions inside a switch statement";
+const char *ExpressionLimitTest::kGlobalVariableInit =
+    "global variable initializers must be constant expressions";
 
 TEST_F(ExpressionLimitTest, ExpressionComplexity)
 {
-    ShShaderSpec spec = SH_WEBGL_SPEC;
-    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShShaderSpec spec       = SH_WEBGL_SPEC;
+    ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
     ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
 
@@ -220,9 +267,7 @@ TEST_F(ExpressionLimitTest, ExpressionComplexity)
         compileOptions, nullptr));
     // Test expression over the limit fails.
     EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler,
-        GenerateShaderWithLongExpression(
-            kMaxExpressionComplexity + 10).c_str(),
+        vertexCompiler, GenerateShaderWithLongExpression(kMaxExpressionComplexity + 10).c_str(),
         compileOptions, kExpressionTooComplex));
     // Test expression over the limit without a limit does not fail.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -233,8 +278,8 @@ TEST_F(ExpressionLimitTest, ExpressionComplexity)
 
 TEST_F(ExpressionLimitTest, UnusedExpressionComplexity)
 {
-    ShShaderSpec spec = SH_WEBGL_SPEC;
-    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShShaderSpec spec       = SH_WEBGL_SPEC;
+    ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
     ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
 
@@ -246,8 +291,7 @@ TEST_F(ExpressionLimitTest, UnusedExpressionComplexity)
     // Test expression over the limit fails.
     EXPECT_TRUE(CheckShaderCompilation(
         vertexCompiler,
-        GenerateShaderWithUnusedLongExpression(
-            kMaxExpressionComplexity + 10).c_str(),
+        GenerateShaderWithUnusedLongExpression(kMaxExpressionComplexity + 10).c_str(),
         compileOptions, kExpressionTooComplex));
     // Test expression over the limit without a limit does not fail.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -259,8 +303,8 @@ TEST_F(ExpressionLimitTest, UnusedExpressionComplexity)
 
 TEST_F(ExpressionLimitTest, CallStackDepth)
 {
-    ShShaderSpec spec = SH_WEBGL_SPEC;
-    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShShaderSpec spec       = SH_WEBGL_SPEC;
+    ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
     ShCompileOptions compileOptions = SH_LIMIT_CALL_STACK_DEPTH;
 
@@ -270,9 +314,7 @@ TEST_F(ExpressionLimitTest, CallStackDepth)
         compileOptions, nullptr));
     // Test call stack over the limit fails.
     EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler,
-        GenerateShaderWithDeepFunctionStack(
-            kMaxCallStackDepth + 10).c_str(),
+        vertexCompiler, GenerateShaderWithDeepFunctionStack(kMaxCallStackDepth + 10).c_str(),
         compileOptions, kCallStackTooDeep));
     // Test call stack over the limit without limit does not fail.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -283,8 +325,8 @@ TEST_F(ExpressionLimitTest, CallStackDepth)
 
 TEST_F(ExpressionLimitTest, UnusedCallStackDepth)
 {
-    ShShaderSpec spec = SH_WEBGL_SPEC;
-    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShShaderSpec spec       = SH_WEBGL_SPEC;
+    ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
     ShCompileOptions compileOptions = SH_LIMIT_CALL_STACK_DEPTH;
 
@@ -294,9 +336,7 @@ TEST_F(ExpressionLimitTest, UnusedCallStackDepth)
         compileOptions, nullptr));
     // Test call stack over the limit fails.
     EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler,
-        GenerateShaderWithUnusedDeepFunctionStack(
-            kMaxCallStackDepth + 10).c_str(),
+        vertexCompiler, GenerateShaderWithUnusedDeepFunctionStack(kMaxCallStackDepth + 10).c_str(),
         compileOptions, kCallStackTooDeep));
     // Test call stack over the limit without limit does not fail.
     EXPECT_TRUE(CheckShaderCompilation(
@@ -307,13 +347,13 @@ TEST_F(ExpressionLimitTest, UnusedCallStackDepth)
 
 TEST_F(ExpressionLimitTest, Recursion)
 {
-    ShShaderSpec spec = SH_WEBGL_SPEC;
-    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShShaderSpec spec       = SH_WEBGL_SPEC;
+    ShShaderOutput output   = SH_ESSL_OUTPUT;
     ShHandle vertexCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
     ShCompileOptions compileOptions = 0;
 
-    static const char* shaderWithRecursion0 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion0 =
+        R"(precision mediump float;
         uniform vec4 u_color;
         vec4 someFunc()  {
             return someFunc();
@@ -322,10 +362,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = u_color * someFunc();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion1 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion1 =
+        R"(precision mediump float;
         uniform vec4 u_color;
 
         vec4 someFunc();
@@ -341,10 +381,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = u_color * someFunc();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion2 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion2 =
+        R"(precision mediump float;
         uniform vec4 u_color;
         vec4 someFunc()  {
             if (u_color.x > 0.5) {
@@ -357,10 +397,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = someFunc();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion3 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion3 =
+        R"(precision mediump float;
         uniform vec4 u_color;
         vec4 someFunc()  {
             if (u_color.x > 0.5) {
@@ -373,10 +413,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = someFunc();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion4 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion4 =
+        R"(precision mediump float;
         uniform vec4 u_color;
         vec4 someFunc()  {
             return (u_color.x > 0.5) ? vec4(1) : someFunc();
@@ -385,10 +425,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = someFunc();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion5 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion5 =
+        R"(precision mediump float;
         uniform vec4 u_color;
         vec4 someFunc()  {
             return (u_color.x > 0.5) ? someFunc() : vec4(1);
@@ -397,10 +437,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = someFunc();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion6 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion6 =
+        R"(precision mediump float;
         uniform vec4 u_color;
         vec4 someFunc()  {
             return someFunc();
@@ -409,10 +449,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = u_color;
         }
-    );
+    )";
 
-    static const char* shaderWithNoRecursion = SHADER(
-        precision mediump float;
+    static const char *shaderWithNoRecursion =
+        R"(precision mediump float;
         uniform vec4 u_color;
 
         vec3 rgb(int r, int g, int b) {
@@ -424,10 +464,10 @@ TEST_F(ExpressionLimitTest, Recursion)
             vec3 faceColor2 = rgb(183, 148, 133);
             gl_FragColor = u_color + vec4(hairColor0 + faceColor2, 0);
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion7 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion7 =
+        R"(precision mediump float;
         uniform vec4 u_color;
 
         vec4 function2() {
@@ -443,10 +483,10 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = function1();
         }
-    );
+    )";
 
-    static const char* shaderWithRecursion8 = SHADER(
-        precision mediump float;
+    static const char *shaderWithRecursion8 =
+        R"(precision mediump float;
         uniform vec4 u_color;
 
         vec4 function1();
@@ -466,48 +506,38 @@ TEST_F(ExpressionLimitTest, Recursion)
         void main() {
             gl_FragColor = function1();
         }
-    );
+    )";
 
     // Check simple recursions fails.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion0,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion0, compileOptions,
+                                       kHasRecursion));
     // Check simple recursions fails.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion1,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion1, compileOptions,
+                                       kHasRecursion));
     // Check if recursions fails.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion2,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion2, compileOptions,
+                                       kHasRecursion));
     // Check if recursions fails.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion3,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion3, compileOptions,
+                                       kHasRecursion));
     // Check ternary recursions fails.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion4,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion4, compileOptions,
+                                       kHasRecursion));
     // Check ternary recursions fails.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion5,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion5, compileOptions,
+                                       kHasRecursion));
 
     // Check some more forms of recursion
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion6,
-        compileOptions, kHasRecursion));
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion7,
-        compileOptions, kHasRecursion));
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion8,
-        compileOptions, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion6, compileOptions,
+                                       kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion7, compileOptions,
+                                       kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion8, compileOptions,
+                                       kHasRecursion));
     // Check unused recursions fails if limiting call stack
     // since we check all paths.
-    EXPECT_TRUE(CheckShaderCompilation(
-        vertexCompiler, shaderWithRecursion6,
-        compileOptions | SH_LIMIT_CALL_STACK_DEPTH, kHasRecursion));
+    EXPECT_TRUE(CheckShaderCompilation(vertexCompiler, shaderWithRecursion6,
+                                       compileOptions | SH_LIMIT_CALL_STACK_DEPTH, kHasRecursion));
 
     // Check unused recursions passes.
     EXPECT_TRUE(
@@ -537,5 +567,53 @@ TEST_F(ExpressionLimitTest, FunctionParameterCount)
     EXPECT_TRUE(CheckShaderCompilation(
         compiler, GenerateShaderWithFunctionParameters(kMaxFunctionParameters + 1).c_str(),
         compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
+    sh::Destruct(compiler);
+}
+
+TEST_F(ExpressionLimitTest, NestingInsideSwitch)
+{
+    ShShaderSpec spec     = SH_WEBGL2_SPEC;
+    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShHandle compiler     = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
+    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+
+    // Test nesting over the limit fails.
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler, GenerateShaderWithNestingInsideSwitch(kMaxExpressionComplexity + 1).c_str(),
+        compileOptions, kExpressionTooComplex));
+    // Test nesting over the limit without limit does not fail.
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler, GenerateShaderWithNestingInsideSwitch(kMaxExpressionComplexity + 1).c_str(),
+        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
+    // Test that nesting way over the limit doesn't cause stack overflow but is handled
+    // gracefully.
+    EXPECT_TRUE(CheckShaderCompilation(compiler,
+                                       GenerateShaderWithNestingInsideSwitch(5000).c_str(),
+                                       compileOptions, kTooComplexSwitch));
+    sh::Destruct(compiler);
+}
+
+TEST_F(ExpressionLimitTest, NestingInsideGlobalInitializer)
+{
+    ShShaderSpec spec     = SH_WEBGL_SPEC;
+    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShHandle compiler     = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
+    ShCompileOptions compileOptions = SH_LIMIT_EXPRESSION_COMPLEXITY;
+
+    // Test nesting over the limit fails.
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler,
+        GenerateShaderWithNestingInsideGlobalInitializer(kMaxExpressionComplexity + 1).c_str(),
+        compileOptions, kExpressionTooComplex));
+    // Test nesting over the limit without limit does not fail.
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler,
+        GenerateShaderWithNestingInsideGlobalInitializer(kMaxExpressionComplexity + 1).c_str(),
+        compileOptions & ~SH_LIMIT_EXPRESSION_COMPLEXITY, nullptr));
+    // Test that nesting way over the limit doesn't cause stack overflow but is handled
+    // gracefully.
+    EXPECT_TRUE(CheckShaderCompilation(
+        compiler, GenerateShaderWithNestingInsideGlobalInitializer(5000).c_str(), compileOptions,
+        kGlobalVariableInit));
     sh::Destruct(compiler);
 }

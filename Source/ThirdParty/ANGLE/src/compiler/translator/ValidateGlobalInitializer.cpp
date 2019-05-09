@@ -6,8 +6,7 @@
 
 #include "compiler/translator/ValidateGlobalInitializer.h"
 
-#include "compiler/translator/IntermTraverse.h"
-#include "compiler/translator/ParseContext.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 namespace sh
 {
@@ -15,56 +14,76 @@ namespace sh
 namespace
 {
 
+const int kMaxAllowedTraversalDepth = 256;
+
 class ValidateGlobalInitializerTraverser : public TIntermTraverser
 {
   public:
-    ValidateGlobalInitializerTraverser(const TParseContext *context);
+    ValidateGlobalInitializerTraverser(int shaderVersion);
 
     void visitSymbol(TIntermSymbol *node) override;
+    void visitConstantUnion(TIntermConstantUnion *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
     bool visitBinary(Visit visit, TIntermBinary *node) override;
     bool visitUnary(Visit visit, TIntermUnary *node) override;
 
-    bool isValid() const { return mIsValid; }
+    bool isValid() const { return mIsValid && mMaxDepth < mMaxAllowedDepth; }
     bool issueWarning() const { return mIssueWarning; }
 
   private:
-    const TParseContext *mContext;
+    int mShaderVersion;
     bool mIsValid;
     bool mIssueWarning;
 };
 
 void ValidateGlobalInitializerTraverser::visitSymbol(TIntermSymbol *node)
 {
-    const TSymbol *sym =
-        mContext->symbolTable.find(node->getSymbol(), mContext->getShaderVersion());
-    if (sym->isVariable())
+    // ESSL 1.00 section 4.3 (or ESSL 3.00 section 4.3):
+    // Global initializers must be constant expressions.
+    switch (node->getType().getQualifier())
     {
-        // ESSL 1.00 section 4.3 (or ESSL 3.00 section 4.3):
-        // Global initializers must be constant expressions.
-        const TVariable *var = static_cast<const TVariable *>(sym);
-        switch (var->getType().getQualifier())
-        {
-            case EvqConst:
-                break;
-            case EvqGlobal:
-            case EvqTemporary:
-            case EvqUniform:
-                // We allow these cases to be compatible with legacy ESSL 1.00 content.
-                // Implement stricter rules for ESSL 3.00 since there's no legacy content to deal
-                // with.
-                if (mContext->getShaderVersion() >= 300)
-                {
-                    mIsValid = false;
-                }
-                else
-                {
-                    mIssueWarning = true;
-                }
-                break;
-            default:
+        case EvqConst:
+            break;
+        case EvqGlobal:
+        case EvqTemporary:
+        case EvqUniform:
+            // We allow these cases to be compatible with legacy ESSL 1.00 content.
+            // Implement stricter rules for ESSL 3.00 since there's no legacy content to deal
+            // with.
+            if (mShaderVersion >= 300)
+            {
                 mIsValid = false;
-        }
+            }
+            else
+            {
+                mIssueWarning = true;
+            }
+            break;
+        default:
+            mIsValid = false;
+    }
+}
+
+void ValidateGlobalInitializerTraverser::visitConstantUnion(TIntermConstantUnion *node)
+{
+    // Constant unions that are not constant expressions may result from folding a ternary
+    // expression.
+    switch (node->getType().getQualifier())
+    {
+        case EvqConst:
+            break;
+        case EvqTemporary:
+            if (mShaderVersion >= 300)
+            {
+                mIsValid = false;
+            }
+            else
+            {
+                mIssueWarning = true;
+            }
+            break;
+        default:
+            UNREACHABLE();
     }
 }
 
@@ -99,18 +118,20 @@ bool ValidateGlobalInitializerTraverser::visitUnary(Visit visit, TIntermUnary *n
     return true;
 }
 
-ValidateGlobalInitializerTraverser::ValidateGlobalInitializerTraverser(const TParseContext *context)
-    : TIntermTraverser(true, false, false), mContext(context), mIsValid(true), mIssueWarning(false)
+ValidateGlobalInitializerTraverser::ValidateGlobalInitializerTraverser(int shaderVersion)
+    : TIntermTraverser(true, false, false, nullptr),
+      mShaderVersion(shaderVersion),
+      mIsValid(true),
+      mIssueWarning(false)
 {
+    setMaxAllowedDepth(kMaxAllowedTraversalDepth);
 }
 
 }  // namespace
 
-bool ValidateGlobalInitializer(TIntermTyped *initializer,
-                               const TParseContext *context,
-                               bool *warning)
+bool ValidateGlobalInitializer(TIntermTyped *initializer, int shaderVersion, bool *warning)
 {
-    ValidateGlobalInitializerTraverser validate(context);
+    ValidateGlobalInitializerTraverser validate(shaderVersion);
     initializer->traverse(&validate);
     ASSERT(warning != nullptr);
     *warning = validate.issueWarning();

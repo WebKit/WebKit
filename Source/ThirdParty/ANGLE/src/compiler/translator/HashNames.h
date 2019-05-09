@@ -17,11 +17,16 @@ namespace sh
 
 typedef std::map<TPersistString, TPersistString> NameMap;
 
-class TName;
+class ImmutableString;
+class TSymbol;
+
+ImmutableString HashName(const ImmutableString &name,
+                         ShHashFunction64 hashFunction,
+                         NameMap *nameMap);
 
 // Hash user-defined name for GLSL output, with special handling for internal names.
 // The nameMap parameter is optional and is used to cache hashed names if set.
-TString HashName(const TName &name, ShHashFunction64 hashFunction, NameMap *nameMap);
+ImmutableString HashName(const TSymbol *symbol, ShHashFunction64 hashFunction, NameMap *nameMap);
 
 }  // namespace sh
 

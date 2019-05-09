@@ -14,27 +14,23 @@
 namespace rx
 {
 
-class RendererGL;
-
 class SurfaceGL : public SurfaceImpl
 {
   public:
-    SurfaceGL(const egl::SurfaceState &state, RendererGL *renderer);
+    SurfaceGL(const egl::SurfaceState &state);
     ~SurfaceGL() override;
 
-    FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &data) override;
+    FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
+                                              const gl::FramebufferState &data) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
 
-    gl::Error initializeContents(const gl::Context *context,
-                                 const gl::ImageIndex &imageIndex) override;
+    angle::Result initializeContents(const gl::Context *context,
+                                     const gl::ImageIndex &imageIndex) override;
 
-    virtual egl::Error makeCurrent() = 0;
+    virtual egl::Error makeCurrent(const gl::Context *context) = 0;
     virtual egl::Error unMakeCurrent();
-
-  private:
-    RendererGL *mRenderer;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_SURFACEGL_H_
+#endif  // LIBANGLE_RENDERER_GL_SURFACEGL_H_

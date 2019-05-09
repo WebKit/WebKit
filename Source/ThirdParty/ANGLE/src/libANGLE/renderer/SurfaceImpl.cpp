@@ -11,18 +11,76 @@
 namespace rx
 {
 
-SurfaceImpl::SurfaceImpl(const egl::SurfaceState &state) : mState(state)
-{
-}
+SurfaceImpl::SurfaceImpl(const egl::SurfaceState &state) : mState(state) {}
 
-SurfaceImpl::~SurfaceImpl()
-{
-}
+SurfaceImpl::~SurfaceImpl() {}
 
 egl::Error SurfaceImpl::swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects)
 {
     UNREACHABLE();
     return egl::EglBadSurface() << "swapWithDamage implementation missing.";
+}
+
+egl::Error SurfaceImpl::setPresentationTime(EGLnsecsANDROID time)
+{
+    UNREACHABLE();
+    return egl::EglBadSurface() << "setPresentationTime implementation missing.";
+}
+
+void SurfaceImpl::setFixedWidth(EGLint width)
+{
+    UNREACHABLE();
+}
+
+void SurfaceImpl::setFixedHeight(EGLint height)
+{
+    UNREACHABLE();
+}
+
+void SurfaceImpl::setTimestampsEnabled(bool enabled)
+{
+    UNREACHABLE();
+}
+
+const angle::Format *SurfaceImpl::getD3DTextureColorFormat() const
+{
+    UNREACHABLE();
+    return nullptr;
+}
+
+egl::SupportedCompositorTimings SurfaceImpl::getSupportedCompositorTimings() const
+{
+    UNREACHABLE();
+    return egl::SupportedCompositorTimings();
+}
+
+egl::Error SurfaceImpl::getCompositorTiming(EGLint numTimestamps,
+                                            const EGLint *names,
+                                            EGLnsecsANDROID *values) const
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay();
+}
+
+egl::Error SurfaceImpl::getNextFrameId(EGLuint64KHR *frameId) const
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay();
+}
+
+egl::SupportedTimestamps SurfaceImpl::getSupportedTimestamps() const
+{
+    UNREACHABLE();
+    return egl::SupportedTimestamps();
+}
+
+egl::Error SurfaceImpl::getFrameTimestamps(EGLuint64KHR frameId,
+                                           EGLint numTimestamps,
+                                           const EGLint *timestamps,
+                                           EGLnsecsANDROID *values) const
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay();
 }
 
 }  // namespace rx

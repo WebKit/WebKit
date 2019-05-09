@@ -20,12 +20,12 @@ class SwapChain9;
 class RenderTarget9 : public RenderTargetD3D
 {
   public:
-    RenderTarget9() { }
+    RenderTarget9() {}
     ~RenderTarget9() override {}
     // Retrieve the texture that backs this render target, may be null for swap chain render
     // targets.
     virtual IDirect3DBaseTexture9 *getTexture() const = 0;
-    virtual size_t getTextureLevel() const = 0;
+    virtual size_t getTextureLevel() const            = 0;
 
     virtual IDirect3DSurface9 *getSurface() const = 0;
 
@@ -93,6 +93,6 @@ class SurfaceRenderTarget9 : public RenderTarget9
     bool mDepth;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_D3D9_RENDERTARGET9_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D9_RENDERTARGET9_H_

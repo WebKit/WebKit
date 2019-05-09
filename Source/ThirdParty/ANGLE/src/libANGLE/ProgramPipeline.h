@@ -21,7 +21,7 @@ namespace rx
 {
 class GLImplFactory;
 class ProgramPipelineImpl;
-};
+}  // namespace rx
 
 namespace gl
 {
@@ -48,9 +48,9 @@ class ProgramPipeline final : public RefCountObject, public LabeledObject
     ProgramPipeline(rx::GLImplFactory *factory, GLuint handle);
     ~ProgramPipeline() override;
 
-    Error onDestroy(const Context *context) override;
+    void onDestroy(const Context *context) override;
 
-    void setLabel(const std::string &label) override;
+    void setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
     rx::ProgramPipelineImpl *getImplementation() const;
@@ -60,6 +60,6 @@ class ProgramPipeline final : public RefCountObject, public LabeledObject
 
     ProgramPipelineState mState;
 };
-}
+}  // namespace gl
 
 #endif  // LIBANGLE_PROGRAMPIPELINE_H_

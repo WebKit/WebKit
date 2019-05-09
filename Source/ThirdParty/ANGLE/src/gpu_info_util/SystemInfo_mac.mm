@@ -164,6 +164,19 @@ bool GetSystemInfo(SystemInfo *info)
 
     FindPrimaryGPU(info);
 
+    // Figure out whether this is a dual-GPU system.
+    //
+    // TODO(kbr): this code was ported over from Chromium, and its correctness
+    // could be improved - need to use Mac-specific APIs to determine whether
+    // offline renderers are allowed, and whether these two GPUs are really the
+    // integrated/discrete GPUs in a laptop.
+    if (info->gpus.size() == 2 &&
+        ((IsIntel(info->gpus[0].vendorId) && !IsIntel(info->gpus[1].vendorId)) ||
+         (!IsIntel(info->gpus[0].vendorId) && IsIntel(info->gpus[1].vendorId))))
+    {
+        info->isMacSwitchable = true;
+    }
+
     return true;
 }
 

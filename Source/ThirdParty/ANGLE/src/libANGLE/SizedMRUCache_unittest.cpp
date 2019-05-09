@@ -5,8 +5,9 @@
 //
 // SizedMRUCache_unittest.h: Unit tests for the sized MRU cached.
 
-#include "libANGLE/SizedMRUCache.h"
 #include <gtest/gtest.h>
+
+#include "libANGLE/SizedMRUCache.h"
 
 namespace angle
 {

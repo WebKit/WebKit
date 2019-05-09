@@ -9,7 +9,7 @@
 #include "libANGLE/Compiler.h"
 
 #include "common/debug.h"
-#include "libANGLE/ContextState.h"
+#include "libANGLE/State.h"
 #include "libANGLE/renderer/CompilerImpl.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 
@@ -19,9 +19,8 @@ namespace gl
 namespace
 {
 
-// Global count of active shader compiler handles. Needed to know when to call sh::Initialize and
-// sh::Finalize.
-size_t activeCompilerHandles = 0;
+// To know when to call sh::Initialize and sh::Finalize.
+size_t gActiveCompilers = 0;
 
 ShShaderSpec SelectShaderSpec(GLint majorVersion, GLint minorVersion, bool isWebGL)
 {
@@ -36,51 +35,66 @@ ShShaderSpec SelectShaderSpec(GLint majorVersion, GLint minorVersion, bool isWeb
             return isWebGL ? SH_WEBGL2_SPEC : SH_GLES3_SPEC;
         }
     }
+
+    // GLES1 emulation: Use GLES3 shader spec.
+    if (!isWebGL && majorVersion == 1)
+    {
+        return SH_GLES3_SPEC;
+    }
+
     return isWebGL ? SH_WEBGL_SPEC : SH_GLES2_SPEC;
 }
 
 }  // anonymous namespace
 
-Compiler::Compiler(rx::GLImplFactory *implFactory, const ContextState &state)
+Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     : mImplementation(implFactory->createCompiler()),
       mSpec(SelectShaderSpec(state.getClientMajorVersion(),
                              state.getClientMinorVersion(),
                              state.getExtensions().webglCompatibility)),
       mOutputType(mImplementation->getTranslatorOutputType()),
-      mResources(),
-      mFragmentCompiler(nullptr),
-      mVertexCompiler(nullptr),
-      mComputeCompiler(nullptr),
-      mGeometryCompiler(nullptr)
+      mResources()
 {
-    ASSERT(state.getClientMajorVersion() == 2 || state.getClientMajorVersion() == 3);
+    ASSERT(state.getClientMajorVersion() == 1 || state.getClientMajorVersion() == 2 ||
+           state.getClientMajorVersion() == 3);
 
     const gl::Caps &caps             = state.getCaps();
     const gl::Extensions &extensions = state.getExtensions();
+
+    if (gActiveCompilers == 0)
+    {
+        sh::Initialize();
+    }
+    ++gActiveCompilers;
 
     sh::InitBuiltInResources(&mResources);
     mResources.MaxVertexAttribs             = caps.maxVertexAttributes;
     mResources.MaxVertexUniformVectors      = caps.maxVertexUniformVectors;
     mResources.MaxVaryingVectors            = caps.maxVaryingVectors;
-    mResources.MaxVertexTextureImageUnits   = caps.maxVertexTextureImageUnits;
+    mResources.MaxVertexTextureImageUnits   = caps.maxShaderTextureImageUnits[ShaderType::Vertex];
     mResources.MaxCombinedTextureImageUnits = caps.maxCombinedTextureImageUnits;
-    mResources.MaxTextureImageUnits         = caps.maxTextureImageUnits;
+    mResources.MaxTextureImageUnits         = caps.maxShaderTextureImageUnits[ShaderType::Fragment];
     mResources.MaxFragmentUniformVectors    = caps.maxFragmentUniformVectors;
     mResources.MaxDrawBuffers               = caps.maxDrawBuffers;
     mResources.OES_standard_derivatives     = extensions.standardDerivatives;
     mResources.EXT_draw_buffers             = extensions.drawBuffers;
     mResources.EXT_shader_texture_lod       = extensions.shaderTextureLOD;
-    mResources.OES_EGL_image_external          = extensions.eglImageExternal;
-    mResources.OES_EGL_image_external_essl3    = extensions.eglImageExternalEssl3;
+    mResources.OES_EGL_image_external       = extensions.eglImageExternal;
+    mResources.OES_EGL_image_external_essl3 = extensions.eglImageExternalEssl3;
     mResources.NV_EGL_stream_consumer_external = extensions.eglStreamConsumerExternal;
     mResources.ARB_texture_rectangle           = extensions.textureRectangle;
+    mResources.OES_texture_storage_multisample_2d_array =
+        extensions.textureStorageMultisample2DArray;
+    mResources.ANGLE_texture_multisample = extensions.textureMultisample;
+    mResources.ANGLE_multi_draw          = extensions.multiDraw;
+
     // TODO: use shader precision caps to determine if high precision is supported?
     mResources.FragmentPrecisionHigh = 1;
     mResources.EXT_frag_depth        = extensions.fragDepth;
 
-    // OVR_multiview state
-    mResources.OVR_multiview = extensions.multiview;
-    mResources.MaxViewsOVR   = extensions.maxViews;
+    // OVR_multiview2 state
+    mResources.OVR_multiview2 = extensions.multiview2;
+    mResources.MaxViewsOVR    = extensions.maxViews;
 
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;
@@ -88,13 +102,17 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const ContextState &state)
     mResources.MinProgramTexelOffset   = caps.minProgramTexelOffset;
     mResources.MaxProgramTexelOffset   = caps.maxProgramTexelOffset;
 
+    // EXT_blend_func_extended
+    mResources.EXT_blend_func_extended  = extensions.blendFuncExtended;
+    mResources.MaxDualSourceDrawBuffers = extensions.maxDualSourceDrawBuffers;
+
     // GLSL ES 3.1 constants
     mResources.MaxProgramTextureGatherOffset    = caps.maxProgramTextureGatherOffset;
     mResources.MinProgramTextureGatherOffset    = caps.minProgramTextureGatherOffset;
     mResources.MaxImageUnits                    = caps.maxImageUnits;
-    mResources.MaxVertexImageUniforms           = caps.maxVertexImageUniforms;
-    mResources.MaxFragmentImageUniforms         = caps.maxFragmentImageUniforms;
-    mResources.MaxComputeImageUniforms          = caps.maxComputeImageUniforms;
+    mResources.MaxVertexImageUniforms           = caps.maxShaderImageUniforms[ShaderType::Vertex];
+    mResources.MaxFragmentImageUniforms         = caps.maxShaderImageUniforms[ShaderType::Fragment];
+    mResources.MaxComputeImageUniforms          = caps.maxShaderImageUniforms[ShaderType::Compute];
     mResources.MaxCombinedImageUniforms         = caps.maxCombinedImageUniforms;
     mResources.MaxCombinedShaderOutputResources = caps.maxCombinedShaderOutputResources;
     mResources.MaxUniformLocations              = caps.maxUniformLocations;
@@ -105,22 +123,25 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const ContextState &state)
         mResources.MaxComputeWorkGroupSize[index]  = caps.maxComputeWorkGroupSize[index];
     }
 
-    mResources.MaxComputeUniformComponents = caps.maxComputeUniformComponents;
-    mResources.MaxComputeTextureImageUnits = caps.maxComputeTextureImageUnits;
+    mResources.MaxComputeUniformComponents = caps.maxShaderUniformComponents[ShaderType::Compute];
+    mResources.MaxComputeTextureImageUnits = caps.maxShaderTextureImageUnits[ShaderType::Compute];
 
-    mResources.MaxComputeAtomicCounters       = caps.maxComputeAtomicCounters;
-    mResources.MaxComputeAtomicCounterBuffers = caps.maxComputeAtomicCounterBuffers;
+    mResources.MaxComputeAtomicCounters = caps.maxShaderAtomicCounters[ShaderType::Compute];
+    mResources.MaxComputeAtomicCounterBuffers =
+        caps.maxShaderAtomicCounterBuffers[ShaderType::Compute];
 
-    mResources.MaxVertexAtomicCounters         = caps.maxVertexAtomicCounters;
-    mResources.MaxFragmentAtomicCounters       = caps.maxFragmentAtomicCounters;
-    mResources.MaxCombinedAtomicCounters       = caps.maxCombinedAtomicCounters;
-    mResources.MaxAtomicCounterBindings        = caps.maxAtomicCounterBufferBindings;
-    mResources.MaxVertexAtomicCounterBuffers   = caps.maxVertexAtomicCounterBuffers;
-    mResources.MaxFragmentAtomicCounterBuffers = caps.maxFragmentAtomicCounterBuffers;
+    mResources.MaxVertexAtomicCounters   = caps.maxShaderAtomicCounters[ShaderType::Vertex];
+    mResources.MaxFragmentAtomicCounters = caps.maxShaderAtomicCounters[ShaderType::Fragment];
+    mResources.MaxCombinedAtomicCounters = caps.maxCombinedAtomicCounters;
+    mResources.MaxAtomicCounterBindings  = caps.maxAtomicCounterBufferBindings;
+    mResources.MaxVertexAtomicCounterBuffers =
+        caps.maxShaderAtomicCounterBuffers[ShaderType::Vertex];
+    mResources.MaxFragmentAtomicCounterBuffers =
+        caps.maxShaderAtomicCounterBuffers[ShaderType::Fragment];
     mResources.MaxCombinedAtomicCounterBuffers = caps.maxCombinedAtomicCounterBuffers;
     mResources.MaxAtomicCounterBufferSize      = caps.maxAtomicCounterBufferSize;
 
-    mResources.MaxUniformBufferBindings = caps.maxUniformBufferBindings;
+    mResources.MaxUniformBufferBindings       = caps.maxUniformBufferBindings;
     mResources.MaxShaderStorageBufferBindings = caps.maxShaderStorageBufferBindings;
 
     // Needed by point size clamping workaround
@@ -132,90 +153,126 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const ContextState &state)
     }
 
     // Geometry Shader constants
-    mResources.OES_geometry_shader = extensions.geometryShader;
-    // TODO(jiawei.shao@intel.com): initialize all implementation dependent geometry shader limits.
-    mResources.MaxGeometryOutputVertices    = extensions.maxGeometryOutputVertices;
-    mResources.MaxGeometryShaderInvocations = extensions.maxGeometryShaderInvocations;
+    mResources.EXT_geometry_shader          = extensions.geometryShader;
+    mResources.MaxGeometryUniformComponents = caps.maxShaderUniformComponents[ShaderType::Geometry];
+    mResources.MaxGeometryUniformBlocks     = caps.maxShaderUniformBlocks[ShaderType::Geometry];
+    mResources.MaxGeometryInputComponents   = caps.maxGeometryInputComponents;
+    mResources.MaxGeometryOutputComponents  = caps.maxGeometryOutputComponents;
+    mResources.MaxGeometryOutputVertices    = caps.maxGeometryOutputVertices;
+    mResources.MaxGeometryTotalOutputComponents = caps.maxGeometryTotalOutputComponents;
+    mResources.MaxGeometryTextureImageUnits = caps.maxShaderTextureImageUnits[ShaderType::Geometry];
+
+    mResources.MaxGeometryAtomicCounterBuffers =
+        caps.maxShaderAtomicCounterBuffers[ShaderType::Geometry];
+    mResources.MaxGeometryAtomicCounters      = caps.maxShaderAtomicCounters[ShaderType::Geometry];
+    mResources.MaxGeometryShaderStorageBlocks = caps.maxShaderStorageBlocks[ShaderType::Geometry];
+    mResources.MaxGeometryShaderInvocations   = caps.maxGeometryShaderInvocations;
+    mResources.MaxGeometryImageUniforms       = caps.maxShaderImageUniforms[ShaderType::Geometry];
 }
 
 Compiler::~Compiler()
 {
-    if (mFragmentCompiler)
+    for (auto &pool : mPools)
     {
-        sh::Destruct(mFragmentCompiler);
-        mFragmentCompiler = nullptr;
-
-        ASSERT(activeCompilerHandles > 0);
-        activeCompilerHandles--;
+        for (ShCompilerInstance &instance : pool)
+        {
+            instance.destroy();
+        }
     }
-
-    if (mVertexCompiler)
-    {
-        sh::Destruct(mVertexCompiler);
-        mVertexCompiler = nullptr;
-
-        ASSERT(activeCompilerHandles > 0);
-        activeCompilerHandles--;
-    }
-
-    if (mComputeCompiler)
-    {
-        sh::Destruct(mComputeCompiler);
-        mComputeCompiler = nullptr;
-
-        ASSERT(activeCompilerHandles > 0);
-        activeCompilerHandles--;
-    }
-
-    if (activeCompilerHandles == 0)
+    --gActiveCompilers;
+    if (gActiveCompilers == 0)
     {
         sh::Finalize();
     }
-
-    ANGLE_SWALLOW_ERR(mImplementation->release());
 }
 
-ShHandle Compiler::getCompilerHandle(GLenum type)
+ShCompilerInstance Compiler::getInstance(ShaderType type)
 {
-    ShHandle *compiler = nullptr;
-    switch (type)
+    ASSERT(type != ShaderType::InvalidEnum);
+    auto &pool = mPools[type];
+    if (pool.empty())
     {
-        case GL_VERTEX_SHADER:
-            compiler = &mVertexCompiler;
-            break;
-
-        case GL_FRAGMENT_SHADER:
-            compiler = &mFragmentCompiler;
-            break;
-        case GL_COMPUTE_SHADER:
-            compiler = &mComputeCompiler;
-            break;
-        case GL_GEOMETRY_SHADER_EXT:
-            compiler = &mGeometryCompiler;
-            break;
-        default:
-            UNREACHABLE();
-            return nullptr;
+        ShHandle handle = sh::ConstructCompiler(ToGLenum(type), mSpec, mOutputType, &mResources);
+        ASSERT(handle);
+        return ShCompilerInstance(handle, mOutputType, type);
     }
-
-    if (!(*compiler))
+    else
     {
-        if (activeCompilerHandles == 0)
-        {
-            sh::Initialize();
-        }
-
-        *compiler = sh::ConstructCompiler(type, mSpec, mOutputType, &mResources);
-        ASSERT(*compiler);
-        activeCompilerHandles++;
+        ShCompilerInstance instance = std::move(pool.back());
+        pool.pop_back();
+        return instance;
     }
-
-    return *compiler;
 }
 
-const std::string &Compiler::getBuiltinResourcesString(GLenum type)
+void Compiler::putInstance(ShCompilerInstance &&instance)
 {
-    return sh::GetBuiltInResourcesString(getCompilerHandle(type));
+    static constexpr size_t kMaxPoolSize = 32;
+    auto &pool                           = mPools[instance.getShaderType()];
+    if (pool.size() < kMaxPoolSize)
+    {
+        pool.push_back(std::move(instance));
+    }
+    else
+    {
+        instance.destroy();
+    }
+}
+
+ShCompilerInstance::ShCompilerInstance() : mHandle(nullptr) {}
+
+ShCompilerInstance::ShCompilerInstance(ShHandle handle,
+                                       ShShaderOutput outputType,
+                                       ShaderType shaderType)
+    : mHandle(handle), mOutputType(outputType), mShaderType(shaderType)
+{}
+
+ShCompilerInstance::~ShCompilerInstance()
+{
+    ASSERT(mHandle == nullptr);
+}
+
+void ShCompilerInstance::destroy()
+{
+    if (mHandle != nullptr)
+    {
+        sh::Destruct(mHandle);
+        mHandle = nullptr;
+    }
+}
+
+ShCompilerInstance::ShCompilerInstance(ShCompilerInstance &&other)
+    : mHandle(other.mHandle), mOutputType(other.mOutputType), mShaderType(other.mShaderType)
+{
+    other.mHandle = nullptr;
+}
+
+ShCompilerInstance &ShCompilerInstance::operator=(ShCompilerInstance &&other)
+{
+    mHandle       = other.mHandle;
+    mOutputType   = other.mOutputType;
+    mShaderType   = other.mShaderType;
+    other.mHandle = nullptr;
+    return *this;
+}
+
+ShHandle ShCompilerInstance::getHandle()
+{
+    return mHandle;
+}
+
+ShaderType ShCompilerInstance::getShaderType() const
+{
+    return mShaderType;
+}
+
+const std::string &ShCompilerInstance::getBuiltinResourcesString()
+{
+    return sh::GetBuiltInResourcesString(mHandle);
+}
+
+ShShaderOutput ShCompilerInstance::getShaderOutputType() const
+{
+    return mOutputType;
 }
 
 }  // namespace gl

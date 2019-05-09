@@ -15,8 +15,7 @@ namespace sh
 
 TExtensionGLSL::TExtensionGLSL(ShShaderOutput output)
     : TIntermTraverser(true, false, false), mTargetVersion(ShaderOutputTypeToGLSLVersion(output))
-{
-}
+{}
 
 const std::set<std::string> &TExtensionGLSL::getEnabledExtensions() const
 {

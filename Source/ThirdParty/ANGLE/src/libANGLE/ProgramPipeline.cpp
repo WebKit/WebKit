@@ -17,13 +17,9 @@
 namespace gl
 {
 
-ProgramPipelineState::ProgramPipelineState() : mLabel()
-{
-}
+ProgramPipelineState::ProgramPipelineState() : mLabel() {}
 
-ProgramPipelineState::~ProgramPipelineState()
-{
-}
+ProgramPipelineState::~ProgramPipelineState() {}
 
 const std::string &ProgramPipelineState::getLabel() const
 {
@@ -31,8 +27,7 @@ const std::string &ProgramPipelineState::getLabel() const
 }
 
 ProgramPipeline::ProgramPipeline(rx::GLImplFactory *factory, GLuint handle)
-    : RefCountObject(handle),
-      mProgramPipeline(factory->createProgramPipeline(mState))
+    : RefCountObject(handle), mProgramPipeline(factory->createProgramPipeline(mState))
 {
     ASSERT(mProgramPipeline);
 }
@@ -42,12 +37,9 @@ ProgramPipeline::~ProgramPipeline()
     mProgramPipeline.release();
 }
 
-Error ProgramPipeline::onDestroy(const Context *context)
-{
-    return NoError();
-}
+void ProgramPipeline::onDestroy(const Context *context) {}
 
-void ProgramPipeline::setLabel(const std::string &label)
+void ProgramPipeline::setLabel(const Context *context, const std::string &label)
 {
     mState.mLabel = label;
 }

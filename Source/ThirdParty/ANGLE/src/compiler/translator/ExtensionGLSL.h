@@ -12,7 +12,7 @@
 #include <set>
 #include <string>
 
-#include "compiler/translator/IntermTraverse.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 
 namespace sh
 {

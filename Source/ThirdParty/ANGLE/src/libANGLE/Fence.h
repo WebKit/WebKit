@@ -20,7 +20,7 @@ namespace rx
 {
 class FenceNVImpl;
 class SyncImpl;
-}
+}  // namespace rx
 
 namespace gl
 {
@@ -31,9 +31,9 @@ class FenceNV final : angle::NonCopyable
     explicit FenceNV(rx::FenceNVImpl *impl);
     virtual ~FenceNV();
 
-    Error set(GLenum condition);
-    Error test(GLboolean *outResult);
-    Error finish();
+    angle::Result set(const Context *context, GLenum condition);
+    angle::Result test(const Context *context, GLboolean *outResult);
+    angle::Result finish(const Context *context);
 
     bool isSet() const { return mIsSet; }
     GLboolean getStatus() const { return mStatus; }
@@ -54,15 +54,18 @@ class Sync final : public RefCountObject, public LabeledObject
     Sync(rx::SyncImpl *impl, GLuint id);
     ~Sync() override;
 
-    Error onDestroy(const Context *context) override;
+    void onDestroy(const Context *context) override;
 
-    void setLabel(const std::string &label) override;
+    void setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
-    Error set(GLenum condition, GLbitfield flags);
-    Error clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult);
-    Error serverWait(GLbitfield flags, GLuint64 timeout);
-    Error getStatus(GLint *outResult) const;
+    angle::Result set(const Context *context, GLenum condition, GLbitfield flags);
+    angle::Result clientWait(const Context *context,
+                             GLbitfield flags,
+                             GLuint64 timeout,
+                             GLenum *outResult);
+    angle::Result serverWait(const Context *context, GLbitfield flags, GLuint64 timeout);
+    angle::Result getStatus(const Context *context, GLint *outResult) const;
 
     GLenum getCondition() const { return mCondition; }
     GLbitfield getFlags() const { return mFlags; }
@@ -78,4 +81,4 @@ class Sync final : public RefCountObject, public LabeledObject
 
 }  // namespace gl
 
-#endif   // LIBANGLE_FENCE_H_
+#endif  // LIBANGLE_FENCE_H_

@@ -8,27 +8,31 @@
 
 namespace angle
 {
-
 template <typename sourceType, typename colorDataType>
-inline void ReadColor(const uint8_t *source, uint8_t *dest)
+void ReadColor(const uint8_t *source, uint8_t *dest)
 {
     sourceType::readColor(reinterpret_cast<Color<colorDataType>*>(dest),
                           reinterpret_cast<const sourceType*>(source));
 }
 
 template <typename destType, typename colorDataType>
-inline void WriteColor(const uint8_t *source, uint8_t *dest)
+void WriteColor(const uint8_t *source, uint8_t *dest)
 {
     destType::writeColor(reinterpret_cast<destType*>(dest),
                          reinterpret_cast<const Color<colorDataType>*>(source));
 }
 
-template <typename sourceType, typename destType, typename colorDataType>
-inline void CopyPixel(const uint8_t *source, uint8_t *dest)
+template <typename SourceType>
+void ReadDepthStencil(const uint8_t *source, uint8_t *dest)
 {
-    colorDataType temp;
-    ReadColor<sourceType, colorDataType>(source, &temp);
-    WriteColor<destType, colorDataType>(&temp, dest);
+    SourceType::ReadDepthStencil(reinterpret_cast<DepthStencil *>(dest),
+                                 reinterpret_cast<const SourceType *>(source));
 }
 
+template <typename DestType>
+void WriteDepthStencil(const uint8_t *source, uint8_t *dest)
+{
+    DestType::WriteDepthStencil(reinterpret_cast<DestType *>(dest),
+                                reinterpret_cast<const DepthStencil *>(source));
+}
 }  // namespace angle

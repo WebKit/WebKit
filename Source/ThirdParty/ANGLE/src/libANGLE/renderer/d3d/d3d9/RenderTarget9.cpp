@@ -9,14 +9,15 @@
 
 #include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
-#include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 #include "libANGLE/renderer/d3d/d3d9/SwapChain9.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
+#include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 
 namespace rx
 {
 
-// TODO: AddRef the incoming surface to take ownership instead of expecting that its ref is being given.
+// TODO: AddRef the incoming surface to take ownership instead of expecting that its ref is being
+// given.
 TextureRenderTarget9::TextureRenderTarget9(IDirect3DBaseTexture9 *texture,
                                            size_t textureLevel,
                                            IDirect3DSurface9 *surface,
@@ -104,14 +105,10 @@ D3DFORMAT TextureRenderTarget9::getD3DFormat() const
 }
 
 SurfaceRenderTarget9::SurfaceRenderTarget9(SwapChain9 *swapChain, bool depth)
-    : mSwapChain(swapChain),
-      mDepth(depth)
-{
-}
+    : mSwapChain(swapChain), mDepth(depth)
+{}
 
-SurfaceRenderTarget9::~SurfaceRenderTarget9()
-{
-}
+SurfaceRenderTarget9::~SurfaceRenderTarget9() {}
 
 GLsizei SurfaceRenderTarget9::getWidth() const
 {
@@ -160,4 +157,4 @@ D3DFORMAT SurfaceRenderTarget9::getD3DFormat() const
     return d3d9::GetTextureFormatInfo(getInternalFormat()).texFormat;
 }
 
-}
+}  // namespace rx

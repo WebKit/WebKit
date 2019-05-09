@@ -25,10 +25,10 @@ class GeometryShaderTest : public ShaderCompileTreeTest
   protected:
     void initResources(ShBuiltInResources *resources) override
     {
-        resources->OES_geometry_shader = 1;
+        resources->EXT_geometry_shader = 1;
     }
 
-    ::GLenum getShaderType() const override { return GL_GEOMETRY_SHADER_OES; }
+    ::GLenum getShaderType() const override { return GL_GEOMETRY_SHADER_EXT; }
 
     ShShaderSpec getShaderSpec() const override { return SH_GLES3_1_SPEC; }
 
@@ -91,12 +91,10 @@ class GeometryShaderTest : public ShaderCompileTreeTest
         return sstream.str();
     }
 
-    const std::string kVersion                         = "#version 310 es\n";
-    const std::array<std::string, 2> kExtensionStrings = {
-        {"#extension GL_OES_geometry_shader", "#extension GL_EXT_geometry_shader"}};
+    const std::string kVersion = "#version 310 es\n";
     const std::string kHeader =
         "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n";
+        "#extension GL_EXT_geometry_shader : require\n";
     const std::string kInputLayout  = "layout (points) in;\n";
     const std::string kOutputLayout = "layout (points, max_vertices = 1) out;\n";
 
@@ -112,32 +110,15 @@ class GeometryShaderTest : public ShaderCompileTreeTest
         "void main()\n"
         "{\n"
         "}\n";
-    const std::string kShaderBody =
-        R"(layout(triangles, invocations = 2) in;
-        layout(triangle_strip, max_vertices = 3) out;
-        in vec4 i_color[];
-        out vec4 o_color;
-        void main()
-        {
-            for (int i = 0; i < i_color.length(); i++)
-            {
-                gl_Position = gl_in[i].gl_Position;
-                o_color = i_color[i];
-                gl_PrimitiveID = gl_PrimitiveIDIn;
-                gl_Layer = gl_InvocationID;
-                EmitVertex();
-            }
-            EndPrimitive();
-        })";
 };
 
 class GeometryShaderOutputCodeTest : public MatchOutputCodeTest
 {
   public:
     GeometryShaderOutputCodeTest()
-        : MatchOutputCodeTest(GL_GEOMETRY_SHADER_OES, SH_OBJECT_CODE, SH_ESSL_OUTPUT)
+        : MatchOutputCodeTest(GL_GEOMETRY_SHADER_EXT, SH_OBJECT_CODE, SH_ESSL_OUTPUT)
     {
-        getResources()->OES_geometry_shader = 1;
+        getResources()->EXT_geometry_shader = 1;
     }
 };
 
@@ -145,12 +126,10 @@ class GeometryShaderOutputCodeTest : public MatchOutputCodeTest
 TEST_F(GeometryShaderTest, Version300)
 {
     const std::string &shaderString =
-        "#version 300 es\n"
-        "layout(points) in;\n"
-        "layout(points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 300 es
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -159,16 +138,14 @@ TEST_F(GeometryShaderTest, Version300)
 }
 
 // Geometry Shaders are not supported in GLSL ES shaders version 310 without extension
-// OES_geometry_shader enabled.
+// EXT_geometry_shader enabled.
 TEST_F(GeometryShaderTest, Version310WithoutExtension)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "layout(points) in;\n"
-        "layout(points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -176,17 +153,34 @@ TEST_F(GeometryShaderTest, Version310WithoutExtension)
     }
 }
 
-// Geometry Shaders are supported in GLSL ES shaders version 310 with OES_geometry_shader enabled.
-TEST_F(GeometryShaderTest, Version310WithOESExtension)
+// Geometry Shaders are not supported in GLSL ES shaders version 310 with extension
+// EXT_geometry_shader disabled.
+TEST_F(GeometryShaderTest, Version310ExtensionDisabled)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout(points) in;\n"
-        "layout(points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : disable
+        void main()
+        {
+        })";
+
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Geometry Shaders are supported in GLSL ES shaders version 310 with EXT_geometry_shader enabled.
+TEST_F(GeometryShaderTest, Version310WithEXTExtension)
+{
+    const std::string &shaderString =
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout(points) in;
+        layout(points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -199,12 +193,12 @@ TEST_F(GeometryShaderTest, Version310WithOESExtension)
 TEST_F(GeometryShaderTest, NoInputPrimitives)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout(points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout(points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -266,13 +260,13 @@ TEST_F(GeometryShaderTest, RedeclareInputPrimitives)
 TEST_F(GeometryShaderTest, DeclareDifferentInputPrimitivesInOneLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, triangles) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, triangles) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -284,13 +278,13 @@ TEST_F(GeometryShaderTest, DeclareDifferentInputPrimitivesInOneLayout)
 TEST_F(GeometryShaderTest, InvocationsLessThanOne)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 0) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 0) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -303,13 +297,13 @@ TEST_F(GeometryShaderTest, InvocationsLessThanOne)
 TEST_F(GeometryShaderTest, InvocationsEqualsOne)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 1) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 1) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -321,14 +315,14 @@ TEST_F(GeometryShaderTest, InvocationsEqualsOne)
 TEST_F(GeometryShaderTest, InvocationsEqualsOneInSeparatedLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (invocations = 1) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (invocations = 1) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -341,13 +335,13 @@ TEST_F(GeometryShaderTest, InvocationsEqualsOneInSeparatedLayout)
 TEST_F(GeometryShaderTest, TooLargeInvocations)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 9989899) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 9989899) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -359,13 +353,13 @@ TEST_F(GeometryShaderTest, TooLargeInvocations)
 TEST_F(GeometryShaderTest, InvocationsDeclaredWithInputPrimitives)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 3) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 3) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -377,13 +371,13 @@ TEST_F(GeometryShaderTest, InvocationsDeclaredWithInputPrimitives)
 TEST_F(GeometryShaderTest, InvocationsBeforeInputPrimitives)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (invocations = 3, points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (invocations = 3, points) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -395,14 +389,14 @@ TEST_F(GeometryShaderTest, InvocationsBeforeInputPrimitives)
 TEST_F(GeometryShaderTest, InvocationsInIndividualLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (invocations = 3) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (invocations = 3) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -414,14 +408,14 @@ TEST_F(GeometryShaderTest, InvocationsInIndividualLayout)
 TEST_F(GeometryShaderTest, DuplicatedInvocations)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 3) in;\n"
-        "layout (invocations = 3) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 3) in;
+        layout (invocations = 3) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -434,14 +428,14 @@ TEST_F(GeometryShaderTest, DuplicatedInvocations)
 TEST_F(GeometryShaderTest, RedeclareDifferentInvocations)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 3) in;\n"
-        "layout (invocations = 5) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 3) in;
+        layout (invocations = 5) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -454,14 +448,14 @@ TEST_F(GeometryShaderTest, RedeclareDifferentInvocations)
 TEST_F(GeometryShaderTest, RedeclareDifferentInvocationsAfterInvocationEqualsOne)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 1) in;\n"
-        "layout (invocations = 5) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 1) in;
+        layout (invocations = 5) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -473,13 +467,13 @@ TEST_F(GeometryShaderTest, RedeclareDifferentInvocationsAfterInvocationEqualsOne
 TEST_F(GeometryShaderTest, RedeclareDifferentInvocationsInOneLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 3, invocations = 5) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 3, invocations = 5) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -491,13 +485,13 @@ TEST_F(GeometryShaderTest, RedeclareDifferentInvocationsInOneLayout)
 TEST_F(GeometryShaderTest, DeclareInvocationsInOutLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, invocations = 3, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, invocations = 3, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -509,14 +503,14 @@ TEST_F(GeometryShaderTest, DeclareInvocationsInOutLayout)
 TEST_F(GeometryShaderTest, DeclareInvocationsInLayoutNoQualifier)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (invocations = 3);\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (invocations = 3);
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -528,13 +522,13 @@ TEST_F(GeometryShaderTest, DeclareInvocationsInLayoutNoQualifier)
 TEST_F(GeometryShaderTest, DeclareOutputPrimitiveBeforeInputPrimitiveDeclare)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "layout (points) in;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, max_vertices = 1) out;
+        layout (points) in;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -546,13 +540,13 @@ TEST_F(GeometryShaderTest, DeclareOutputPrimitiveBeforeInputPrimitiveDeclare)
 TEST_F(GeometryShaderTest, DeclareMaxVerticesBeforeOutputPrimitive)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (max_vertices = 1, points) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (max_vertices = 1, points) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -565,13 +559,13 @@ TEST_F(GeometryShaderTest, DeclareMaxVerticesBeforeOutputPrimitive)
 TEST_F(GeometryShaderTest, NoOutputPrimitives)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -634,13 +628,13 @@ TEST_F(GeometryShaderTest, RedeclareOutputPrimitives)
 TEST_F(GeometryShaderTest, RedeclareDifferentOutputPrimitivesInOneLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 3, line_strip) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 3, line_strip) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -653,12 +647,12 @@ TEST_F(GeometryShaderTest, RedeclareDifferentOutputPrimitivesInOneLayout)
 TEST_F(GeometryShaderTest, NoOutLayouts)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -671,13 +665,13 @@ TEST_F(GeometryShaderTest, NoOutLayouts)
 TEST_F(GeometryShaderTest, NoMaxVertices)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -689,13 +683,13 @@ TEST_F(GeometryShaderTest, NoMaxVertices)
 TEST_F(GeometryShaderTest, NegativeMaxVertices)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = -1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = -1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -707,13 +701,13 @@ TEST_F(GeometryShaderTest, NegativeMaxVertices)
 TEST_F(GeometryShaderTest, ZeroMaxVertices)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 0) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 0) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -726,13 +720,13 @@ TEST_F(GeometryShaderTest, ZeroMaxVertices)
 TEST_F(GeometryShaderTest, TooLargeMaxVertices)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 257) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 257) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -744,14 +738,14 @@ TEST_F(GeometryShaderTest, TooLargeMaxVertices)
 TEST_F(GeometryShaderTest, MaxVerticesInIndividualLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points) out;\n"
-        "layout (max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points) out;
+        layout (max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -763,14 +757,14 @@ TEST_F(GeometryShaderTest, MaxVerticesInIndividualLayout)
 TEST_F(GeometryShaderTest, DuplicatedMaxVertices)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "layout (max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        layout (max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -782,14 +776,14 @@ TEST_F(GeometryShaderTest, DuplicatedMaxVertices)
 TEST_F(GeometryShaderTest, RedeclareDifferentMaxVertices)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "layout (max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        layout (max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -801,13 +795,13 @@ TEST_F(GeometryShaderTest, RedeclareDifferentMaxVertices)
 TEST_F(GeometryShaderTest, RedeclareDifferentMaxVerticesInOneLayout)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 2, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2, max_vertices = 1) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -819,42 +813,42 @@ TEST_F(GeometryShaderTest, RedeclareDifferentMaxVerticesInOneLayout)
 TEST_F(GeometryShaderTest, InvalidLocation)
 {
     const std::string &shaderString1 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, location = 1) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, location = 1) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     const std::string &shaderString2 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (invocations = 2, location = 1) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (invocations = 2, location = 1) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     const std::string &shaderString3 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, location = 3, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, location = 3, max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     const std::string &shaderString4 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points) out;\n"
-        "layout (max_vertices = 2, location = 3) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points) out;
+        layout (max_vertices = 2, location = 3) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString1) || compile(shaderString2) || compile(shaderString3) ||
         compile(shaderString4))
@@ -867,41 +861,41 @@ TEST_F(GeometryShaderTest, InvalidLocation)
 TEST_F(GeometryShaderTest, InvalidLayoutQualifiers)
 {
     const std::string &shaderString1 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, abc) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, abc) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     const std::string &shaderString2 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, abc, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, abc, max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     const std::string &shaderString3 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, xyz = 2) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, xyz = 2) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+        })";
 
     const std::string &shaderString4 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points) out;\n"
-        "layout (max_vertices = 2, xyz = 3) out;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points) out;
+        layout (max_vertices = 2, xyz = 3) out;
+        void main()
+        {
+        })";
 
     if (compile(shaderString1) || compile(shaderString2) || compile(shaderString3) ||
         compile(shaderString4))
@@ -914,15 +908,15 @@ TEST_F(GeometryShaderTest, InvalidLayoutQualifiers)
 TEST_F(GeometryShaderTest, IndexGLInByConstantInteger)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    vec4 position;\n"
-        "    position = gl_in[0].gl_Position;\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            vec4 position;
+            position = gl_in[0].gl_Position;
+        })";
 
     if (!compile(shaderString))
     {
@@ -934,18 +928,18 @@ TEST_F(GeometryShaderTest, IndexGLInByConstantInteger)
 TEST_F(GeometryShaderTest, IndexGLInByVariable)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (lines) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    vec4 position;\n"
-        "    for (int i = 0; i < 2; i++)\n"
-        "    {\n"
-        "        position = gl_in[i].gl_Position;\n"
-        "    }\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (lines) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            vec4 position;
+            for (int i = 0; i < 2; i++)
+            {
+                position = gl_in[i].gl_Position;
+            }
+        })";
 
     if (!compile(shaderString))
     {
@@ -958,13 +952,13 @@ TEST_F(GeometryShaderTest, IndexGLInByVariable)
 TEST_F(GeometryShaderTest, IndexGLInWithoutInputPrimitive)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    vec4 position = gl_in[0].gl_Position;\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            vec4 position = gl_in[0].gl_Position;
+        })";
 
     if (compile(shaderString))
     {
@@ -976,13 +970,13 @@ TEST_F(GeometryShaderTest, IndexGLInWithoutInputPrimitive)
 TEST_F(GeometryShaderTest, UseGLInLengthWithoutInputPrimitive)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    int length = gl_in.length();\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            int length = gl_in.length();
+        })";
 
     if (compile(shaderString))
     {
@@ -995,7 +989,7 @@ TEST_F(GeometryShaderTest, UseGLInLengthWithInputPrimitive)
 {
     const std::string &shaderString =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (points) in;
         layout (points, max_vertices = 2) out;
         void main()
@@ -1014,14 +1008,14 @@ TEST_F(GeometryShaderTest, UseGLInLengthWithInputPrimitive)
 TEST_F(GeometryShaderTest, AssignValueToGLIn)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_in[0].gl_Position = vec4(0, 0, 0, 1);\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            gl_in[0].gl_Position = vec4(0, 0, 0, 1);
+        })";
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
@@ -1032,18 +1026,18 @@ TEST_F(GeometryShaderTest, AssignValueToGLIn)
 TEST_F(GeometryShaderTest, BuiltInVariables)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 2) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = gl_in[gl_InvocationID].gl_Position;\n"
-        "    int invocation = gl_InvocationID;\n"
-        "    gl_Layer = invocation;\n"
-        "    int primitiveIn = gl_PrimitiveIDIn;\n"
-        "    gl_PrimitiveID = primitiveIn;\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 2) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            gl_Position = gl_in[gl_InvocationID].gl_Position;
+            int invocation = gl_InvocationID;
+            gl_Layer = invocation;
+            int primitiveIn = gl_PrimitiveIDIn;
+            gl_PrimitiveID = primitiveIn;
+        })";
     if (!compile(shaderString))
     {
         FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
@@ -1054,14 +1048,14 @@ TEST_F(GeometryShaderTest, BuiltInVariables)
 TEST_F(GeometryShaderTest, AssignValueToGLPrimitiveIn)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 2) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_PrimitiveIDIn = 1;\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 2) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            gl_PrimitiveIDIn = 1;
+        })";
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
@@ -1072,14 +1066,14 @@ TEST_F(GeometryShaderTest, AssignValueToGLPrimitiveIn)
 TEST_F(GeometryShaderTest, AssignValueToGLInvocations)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, invocations = 2) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_InvocationID = 1;\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, invocations = 2) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            gl_InvocationID = 1;
+        })";
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
@@ -1090,16 +1084,16 @@ TEST_F(GeometryShaderTest, AssignValueToGLInvocations)
 TEST_F(GeometryShaderTest, GeometryShaderBuiltInFunctions)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = gl_in[0].gl_Position;\n"
-        "    EmitVertex();\n"
-        "    EndPrimitive();\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2) out;
+        void main()
+        {
+            gl_Position = gl_in[0].gl_Position;
+            EmitVertex();
+            EndPrimitive();
+        })";
 
     if (!compile(shaderString))
     {
@@ -1107,23 +1101,23 @@ TEST_F(GeometryShaderTest, GeometryShaderBuiltInFunctions)
     }
 }
 
-// Verify that using EmitVertex() or EndPrimitive() without GL_OES_geometry_shader declared causes a
+// Verify that using EmitVertex() or EndPrimitive() without GL_EXT_geometry_shader declared causes a
 // compile error.
 TEST_F(GeometryShaderTest, GeometryShaderBuiltInFunctionsWithoutExtension)
 {
     const std::string &shaderString1 =
-        "#version 310 es\n"
-        "void main()\n"
-        "{\n"
-        "    EmitVertex();\n"
-        "}\n";
+        R"(#version 310 es
+        void main()
+        {
+            EmitVertex();
+        })";
 
     const std::string &shaderString2 =
-        "#version 310 es\n"
-        "void main()\n"
-        "{\n"
-        "    EndPrimitive();\n"
-        "}\n";
+        R"(#version 310 es
+        void main()
+        {
+            EndPrimitive();
+        })";
 
     if (compile(shaderString1) || compile(shaderString2))
     {
@@ -1136,7 +1130,7 @@ TEST_F(GeometryShaderTest, GeometryShaderBuiltInConstants)
 {
     const std::string &kShaderHeader =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (points) in;
         layout (points, max_vertices = 2) out;
         void main()
@@ -1144,10 +1138,14 @@ TEST_F(GeometryShaderTest, GeometryShaderBuiltInConstants)
             gl_Position.x = float()";
 
     const std::array<std::string, 9> kGeometryShaderBuiltinConstants = {{
-        "gl_MaxGeometryInputComponents", "gl_MaxGeometryOutputComponents",
-        "gl_MaxGeometryImageUniforms", "gl_MaxGeometryTextureImageUnits",
-        "gl_MaxGeometryOutputVertices", "gl_MaxGeometryTotalOutputComponents",
-        "gl_MaxGeometryUniformComponents", "gl_MaxGeometryAtomicCounters",
+        "gl_MaxGeometryInputComponents",
+        "gl_MaxGeometryOutputComponents",
+        "gl_MaxGeometryImageUniforms",
+        "gl_MaxGeometryTextureImageUnits",
+        "gl_MaxGeometryOutputVertices",
+        "gl_MaxGeometryTotalOutputComponents",
+        "gl_MaxGeometryUniformComponents",
+        "gl_MaxGeometryAtomicCounters",
         "gl_MaxGeometryAtomicCounterBuffers",
     }};
 
@@ -1167,7 +1165,7 @@ TEST_F(GeometryShaderTest, GeometryShaderBuiltInConstants)
     }
 }
 
-// Verify that using any Geometry Shader built-in constant values without GL_OES_geometry_shader
+// Verify that using any Geometry Shader built-in constant values without GL_EXT_geometry_shader
 // declared causes a compile error.
 TEST_F(GeometryShaderTest, GeometryShaderBuiltInConstantsWithoutExtension)
 {
@@ -1178,10 +1176,14 @@ TEST_F(GeometryShaderTest, GeometryShaderBuiltInConstantsWithoutExtension)
         "    int val = ";
 
     const std::array<std::string, 9> kGeometryShaderBuiltinConstants = {{
-        "gl_MaxGeometryInputComponents", "gl_MaxGeometryOutputComponents",
-        "gl_MaxGeometryImageUniforms", "gl_MaxGeometryTextureImageUnits",
-        "gl_MaxGeometryOutputVertices", "gl_MaxGeometryTotalOutputComponents",
-        "gl_MaxGeometryUniformComponents", "gl_MaxGeometryAtomicCounters",
+        "gl_MaxGeometryInputComponents",
+        "gl_MaxGeometryOutputComponents",
+        "gl_MaxGeometryImageUniforms",
+        "gl_MaxGeometryTextureImageUnits",
+        "gl_MaxGeometryOutputVertices",
+        "gl_MaxGeometryTotalOutputComponents",
+        "gl_MaxGeometryUniformComponents",
+        "gl_MaxGeometryAtomicCounters",
         "gl_MaxGeometryAtomicCounterBuffers",
     }};
 
@@ -1204,14 +1206,14 @@ TEST_F(GeometryShaderTest, GeometryShaderBuiltInConstantsWithoutExtension)
 TEST_F(GeometryShaderTest, NonArrayInput)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "in vec4 texcoord;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        in vec4 texcoord;
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -1224,29 +1226,29 @@ TEST_F(GeometryShaderTest, NonArrayInput)
 TEST_F(GeometryShaderTest, DeclareUnsizedInputBeforeInputPrimitive)
 {
     const std::string &shaderString1 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "in vec4 texcoord[];\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "    vec4 coord = texcoord[0];\n"
-        "    int length = texcoord.length();\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        in vec4 texcoord[];
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+            vec4 coord = texcoord[0];
+            int length = texcoord.length();
+        })";
 
     const std::string &shaderString2 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "in vec4 texcoord1[1];\n"
-        "in vec4 texcoord2[];\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "void main()\n"
-        "{\n"
-        "    vec4 coord = texcoord2[0];\n"
-        "    int length = texcoord2.length();\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        in vec4 texcoord1[1];
+        in vec4 texcoord2[];
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        void main()
+        {
+            vec4 coord = texcoord2[0];
+            int length = texcoord2.length();
+        })";
 
     if (compile(shaderString1) || compile(shaderString2))
     {
@@ -1259,23 +1261,23 @@ TEST_F(GeometryShaderTest, DeclareUnsizedInputBeforeInputPrimitive)
 TEST_F(GeometryShaderTest, DeclareUnsizedInputWithoutInputPrimitive)
 {
     const std::string &shaderString1 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "in vec4 texcoord[];\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, max_vertices = 1) out;
+        in vec4 texcoord[];
+        void main()
+        {
+        })";
 
     const std::string &shaderString2 =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "in vec4 texcoord1[1];\n"
-        "in vec4 texcoord2[];\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points, max_vertices = 1) out;
+        in vec4 texcoord1[1];
+        in vec4 texcoord2[];
+        void main()
+        {
+        })";
 
     if (compile(shaderString1) || compile(shaderString2))
     {
@@ -1289,7 +1291,7 @@ TEST_F(GeometryShaderTest, IndexingUnsizedInputDeclaredAfterInputPrimitive)
 {
     const std::string &shaderString =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (points) in;
         layout (points, max_vertices = 1) out;
         in vec4 texcoord[], texcoord2[];
@@ -1312,7 +1314,7 @@ TEST_F(GeometryShaderTest, CallingLengthOnUnsizedInputDeclaredAfterInputPrimitiv
 {
     const std::string &shaderString =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (points) in;
         layout (points, max_vertices = 1) out;
         in vec4 texcoord[];
@@ -1332,15 +1334,15 @@ TEST_F(GeometryShaderTest, CallingLengthOnUnsizedInputDeclaredAfterInputPrimitiv
 TEST_F(GeometryShaderTest, AssignValueToInput)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "in vec4 texcoord[];\n"
-        "void main()\n"
-        "{\n"
-        "    texcoord[0] = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        in vec4 texcoord[];
+        void main()
+        {
+            texcoord[0] = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
 
     if (compile(shaderString))
     {
@@ -1353,7 +1355,7 @@ TEST_F(GeometryShaderTest, InputWithLocations)
 {
     const std::string &shaderString =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (triangles) in;
         layout (points, max_vertices = 1) out;
         layout (location = 0) in vec4 texcoord1[];
@@ -1427,14 +1429,14 @@ TEST_F(GeometryShaderTest, InputWithSizeAfterInputPrimitive)
 TEST_F(GeometryShaderTest, NonArrayOutputs)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "out vec4 color;\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 1) out;
+        out vec4 color;
+        void main()
+        {
+        })";
 
     if (!compile(shaderString))
     {
@@ -1446,17 +1448,17 @@ TEST_F(GeometryShaderTest, NonArrayOutputs)
 TEST_F(GeometryShaderTest, OutputsWithLocation)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (triangles) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "layout (location = 0) out vec4 color1;\n"
-        "layout (location = 1) out vec4 color2;\n"
-        "void main()\n"
-        "{\n"
-        "    color1 = vec4(0.0, 1.0, 0.0, 1.0);\n"
-        "    color2 = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (triangles) in;
+        layout (points, max_vertices = 1) out;
+        layout (location = 0) out vec4 color1;
+        layout (location = 1) out vec4 color2;
+        void main()
+        {
+            color1 = vec4(0.0, 1.0, 0.0, 1.0);
+            color2 = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
 
     if (!compile(shaderString))
     {
@@ -1468,16 +1470,16 @@ TEST_F(GeometryShaderTest, OutputsWithLocation)
 TEST_F(GeometryShaderTest, SizedArrayOutputs)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (triangles) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "out vec4 color[2];\n"
-        "void main()\n"
-        "{\n"
-        "    color[0] = vec4(0.0, 1.0, 0.0, 1.0);\n"
-        "    color[1] = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (triangles) in;
+        layout (points, max_vertices = 1) out;
+        out vec4 color[2];
+        void main()
+        {
+            color[0] = vec4(0.0, 1.0, 0.0, 1.0);
+            color[1] = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
 
     if (!compile(shaderString))
     {
@@ -1489,14 +1491,14 @@ TEST_F(GeometryShaderTest, SizedArrayOutputs)
 TEST_F(GeometryShaderTest, UnsizedArrayOutputs)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (triangles) in;\n"
-        "layout (points, max_vertices = 1) out;\n"
-        "out vec4 color[];\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (triangles) in;
+        layout (points, max_vertices = 1) out;
+        out vec4 color[];
+        void main()
+        {
+        })";
 
     if (compile(shaderString))
     {
@@ -1540,15 +1542,15 @@ TEST_F(GeometryShaderTest, OutputWithInterpolationQualifiers)
 TEST_F(GeometryShaderTest, InvariantOutput)
 {
     const std::string &shaderString =
-        "#version 310 es\n"
-        "#extension GL_OES_geometry_shader : require\n"
-        "layout (points) in;\n"
-        "layout (points, max_vertices = 2) out;\n"
-        "invariant out vec4 gs_output;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = gl_in[0].gl_Position;\n"
-        "}\n";
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2) out;
+        invariant out vec4 gs_output;
+        void main()
+        {
+            gl_Position = gl_in[0].gl_Position;
+        })";
 
     if (!compile(shaderString))
     {
@@ -1561,7 +1563,7 @@ TEST_F(GeometryShaderOutputCodeTest, ValidateGLInMembersInOutputShaderString)
 {
     const std::string &shaderString1 =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (lines) in;
         layout (points, max_vertices = 2) out;
         void main()
@@ -1578,7 +1580,7 @@ TEST_F(GeometryShaderOutputCodeTest, ValidateGLInMembersInOutputShaderString)
 
     const std::string &shaderString2 =
         R"(#version 310 es
-        #extension GL_OES_geometry_shader : require
+        #extension GL_EXT_geometry_shader : require
         layout (points) in;
         layout (points, max_vertices = 2) out;
         void main()
@@ -1591,56 +1593,54 @@ TEST_F(GeometryShaderOutputCodeTest, ValidateGLInMembersInOutputShaderString)
     EXPECT_TRUE(foundInESSLCode("].gl_Position"));
 }
 
-// Verify that Geometry Shaders are supported in GLSL ES version 310 with EXT_geometry_shader
-// enabled.
-TEST_F(GeometryShaderTest, Version310WithEXTExtension)
+// Verify that geometry shader inputs can be declared as struct arrays.
+TEST_F(GeometryShaderTest, StructArrayInput)
 {
-    std::ostringstream stream;
+    const std::string &shaderString =
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2) out;
+        struct S
+        {
+            float value1;
+            vec4 value2;
+        };
+        in S gs_input[];
+        out S gs_output;
+        void main()
+        {
+            gs_output = gs_input[0];
+        })";
 
-    const std::string &kEXTExtensionString = kExtensionStrings[1];
-    ASSERT_TRUE(kEXTExtensionString == "#extension GL_EXT_geometry_shader");
-
-    stream << kVersion << kEXTExtensionString << " : require\n" << kShaderBody;
-
-    if (!compile(stream.str()))
+    if (!compile(shaderString))
     {
         FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
     }
 }
 
-// Verify that Geometry Shaders are supported in GLSL ES version 310 with mixed using
-// "EXT_geometry_shader" and "OES_geometry_shader" extension strings.
-TEST_F(GeometryShaderTest, MixedUseOESAndEXTExtension)
+// Verify that geometry shader outputs cannot be declared as struct arrays.
+TEST_F(GeometryShaderTest, StructArrayOutput)
 {
-    const std::array<std::string, 3> kExtensionBehaviors = {{"require", "disable", "warn"}};
-
-    ASSERT_TRUE(kExtensionStrings.size() == 2u);
-
-    for (const std::string &extensionBehavior1 : kExtensionBehaviors)
-    {
-        for (const std::string &extensionBehavior2 : kExtensionBehaviors)
+    const std::string &shaderString =
+        R"(#version 310 es
+        #extension GL_EXT_geometry_shader : require
+        layout (points) in;
+        layout (points, max_vertices = 2) out;
+        struct S
         {
-            for (size_t i = 0; i < 2u; ++i)
-            {
-                std::ostringstream stream;
-                stream << kVersion << kExtensionStrings[i] << " : " << extensionBehavior1 << "\n"
-                       << kExtensionStrings[1 - i] << " : " << extensionBehavior2 << "\n"
-                       << kShaderBody;
+            float value1;
+            vec4 value2;
+        };
+        out S gs_output[1];
+        void main()
+        {
+            gs_output[0].value1 = 1.0;
+            gs_output[0].value2 = vec4(1.0, 0.0, 0.0, 1.0);
+        })";
 
-                bool shouldCompile =
-                    extensionBehavior1 != "disable" || extensionBehavior2 != "disable";
-                if (shouldCompile != compile(stream.str()))
-                {
-                    if (shouldCompile)
-                    {
-                        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
-                    }
-                    else
-                    {
-                        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
-                    }
-                }
-            }
-        }
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
     }
 }

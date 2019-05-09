@@ -10,9 +10,9 @@
 
 #include <algorithm>
 
+#include "common/string_utils.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/egl/functionsegl_typedefs.h"
-#include "common/string_utils.h"
 
 namespace
 {
@@ -54,17 +54,31 @@ struct FunctionsEGL::EGLDispatchTable
 
           bindTexImagePtr(nullptr),
           releaseTexImagePtr(nullptr),
+          surfaceAttribPtr(nullptr),
           swapIntervalPtr(nullptr),
 
           createImageKHRPtr(nullptr),
           destroyImageKHRPtr(nullptr),
 
-          clientWaitSyncKHRPtr(nullptr),
           createSyncKHRPtr(nullptr),
           destroySyncKHRPtr(nullptr),
-          getSyncAttribKHRPtr(nullptr)
-    {
-    }
+          clientWaitSyncKHRPtr(nullptr),
+          getSyncAttribKHRPtr(nullptr),
+
+          waitSyncKHRPtr(nullptr),
+
+          swapBuffersWithDamageKHRPtr(nullptr),
+
+          presentationTimeANDROIDPtr(nullptr),
+
+          setBlobCacheFuncsANDROIDPtr(nullptr),
+
+          getCompositorTimingSupportedANDROIDPtr(nullptr),
+          getCompositorTimingANDROIDPtr(nullptr),
+          getNextFrameIdANDROIDPtr(nullptr),
+          getFrameTimestampSupportedANDROIDPtr(nullptr),
+          getFrameTimestampsANDROIDPtr(nullptr)
+    {}
 
     // 1.0
     PFNEGLBINDAPIPROC bindAPIPtr;
@@ -87,6 +101,7 @@ struct FunctionsEGL::EGLDispatchTable
     // 1.1
     PFNEGLBINDTEXIMAGEPROC bindTexImagePtr;
     PFNEGLRELEASETEXIMAGEPROC releaseTexImagePtr;
+    PFNEGLSURFACEATTRIBPROC surfaceAttribPtr;
     PFNEGLSWAPINTERVALPROC swapIntervalPtr;
 
     // EGL_KHR_image
@@ -94,16 +109,34 @@ struct FunctionsEGL::EGLDispatchTable
     PFNEGLDESTROYIMAGEKHRPROC destroyImageKHRPtr;
 
     // EGL_KHR_fence_sync
-    PFNEGLCLIENTWAITSYNCKHRPROC clientWaitSyncKHRPtr;
     PFNEGLCREATESYNCKHRPROC createSyncKHRPtr;
     PFNEGLDESTROYSYNCKHRPROC destroySyncKHRPtr;
+    PFNEGLCLIENTWAITSYNCKHRPROC clientWaitSyncKHRPtr;
     PFNEGLGETSYNCATTRIBKHRPROC getSyncAttribKHRPtr;
+
+    // EGL_KHR_wait_sync
+    PFNEGLWAITSYNCKHRPROC waitSyncKHRPtr;
+
+    // EGL_KHR_swap_buffers_with_damage
+    PFNEGLSWAPBUFFERSWITHDAMAGEKHRPROC swapBuffersWithDamageKHRPtr;
+
+    // EGL_ANDROID_presentation_time
+    PFNEGLPRESENTATIONTIMEANDROIDPROC presentationTimeANDROIDPtr;
+
+    // EGL_ANDROID_blob_cache
+    PFNEGLSETBLOBCACHEFUNCSANDROIDPROC setBlobCacheFuncsANDROIDPtr;
+
+    // EGL_ANDROID_get_frame_timestamps
+    PFNEGLGETCOMPOSITORTIMINGSUPPORTEDANDROIDPROC getCompositorTimingSupportedANDROIDPtr;
+    PFNEGLGETCOMPOSITORTIMINGANDROIDPROC getCompositorTimingANDROIDPtr;
+    PFNEGLGETNEXTFRAMEIDANDROIDPROC getNextFrameIdANDROIDPtr;
+    PFNEGLGETFRAMETIMESTAMPSUPPORTEDANDROIDPROC getFrameTimestampSupportedANDROIDPtr;
+    PFNEGLGETFRAMETIMESTAMPSANDROIDPROC getFrameTimestampsANDROIDPtr;
 };
 
 FunctionsEGL::FunctionsEGL()
     : majorVersion(0), minorVersion(0), mFnPtrs(new EGLDispatchTable()), mEGLDisplay(EGL_NO_DISPLAY)
-{
-}
+{}
 
 FunctionsEGL::~FunctionsEGL()
 {
@@ -112,11 +145,14 @@ FunctionsEGL::~FunctionsEGL()
 
 egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
 {
-#define ANGLE_GET_PROC_OR_ERROR(MEMBER, NAME)                                       \
-    if (!SetPtr(MEMBER, getProcAddress(#NAME)))                                     \
-    {                                                                               \
-        return egl::EglNotInitialized() << "Could not load EGL entry point " #NAME; \
-    }
+#define ANGLE_GET_PROC_OR_ERROR(MEMBER, NAME)                                           \
+    do                                                                                  \
+    {                                                                                   \
+        if (!SetPtr(MEMBER, getProcAddress(#NAME)))                                     \
+        {                                                                               \
+            return egl::EglNotInitialized() << "Could not load EGL entry point " #NAME; \
+        }                                                                               \
+    } while (0)
 
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->bindAPIPtr, eglBindAPI);
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->chooseConfigPtr, eglChooseConfig);
@@ -137,6 +173,7 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
 
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->bindTexImagePtr, eglBindTexImage);
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->releaseTexImagePtr, eglReleaseTexImage);
+    ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->surfaceAttribPtr, eglSurfaceAttrib);
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapIntervalPtr, eglSwapInterval);
 
     mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
@@ -171,10 +208,42 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
     }
     if (hasExtension("EGL_KHR_fence_sync"))
     {
-        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->clientWaitSyncKHRPtr, eglClientWaitSyncKHR);
         ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->createSyncKHRPtr, eglCreateSyncKHR);
         ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->destroySyncKHRPtr, eglDestroySyncKHR);
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->clientWaitSyncKHRPtr, eglClientWaitSyncKHR);
         ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getSyncAttribKHRPtr, eglGetSyncAttribKHR);
+    }
+    if (hasExtension("EGL_KHR_wait_sync"))
+    {
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->waitSyncKHRPtr, eglWaitSyncKHR);
+    }
+
+    if (hasExtension("EGL_KHR_swap_buffers_with_damage"))
+    {
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapBuffersWithDamageKHRPtr, eglSwapBuffersWithDamageKHR);
+    }
+
+    if (hasExtension("EGL_ANDROID_presentation_time"))
+    {
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->presentationTimeANDROIDPtr, eglPresentationTimeANDROID);
+    }
+
+    if (hasExtension("EGL_ANDROID_blob_cache"))
+    {
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->setBlobCacheFuncsANDROIDPtr, eglSetBlobCacheFuncsANDROID);
+    }
+
+    if (hasExtension("EGL_ANDROID_get_frame_timestamps"))
+    {
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getCompositorTimingSupportedANDROIDPtr,
+                                eglGetCompositorTimingSupportedANDROID);
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getCompositorTimingANDROIDPtr,
+                                eglGetCompositorTimingANDROID);
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getNextFrameIdANDROIDPtr, eglGetNextFrameIdANDROID);
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getFrameTimestampSupportedANDROIDPtr,
+                                eglGetFrameTimestampSupportedANDROID);
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getFrameTimestampsANDROIDPtr,
+                                eglGetFrameTimestampsANDROID);
     }
 
 #undef ANGLE_GET_PROC_OR_ERROR
@@ -300,6 +369,11 @@ EGLBoolean FunctionsEGL::releaseTexImage(EGLSurface surface, EGLint buffer) cons
     return mFnPtrs->releaseTexImagePtr(mEGLDisplay, surface, buffer);
 }
 
+EGLBoolean FunctionsEGL::surfaceAttrib(EGLSurface surface, EGLint attribute, EGLint value) const
+{
+    return mFnPtrs->surfaceAttribPtr(mEGLDisplay, surface, attribute, value);
+}
+
 EGLBoolean FunctionsEGL::swapInterval(EGLint interval) const
 {
     return mFnPtrs->swapIntervalPtr(mEGLDisplay, interval);
@@ -318,23 +392,82 @@ EGLBoolean FunctionsEGL::destroyImageKHR(EGLImageKHR image) const
     return mFnPtrs->destroyImageKHRPtr(mEGLDisplay, image);
 }
 
-EGLSyncKHR FunctionsEGL::createSyncKHR(EGLenum type, const EGLint *attrib_list)
+EGLSyncKHR FunctionsEGL::createSyncKHR(EGLenum type, const EGLint *attrib_list) const
 {
     return mFnPtrs->createSyncKHRPtr(mEGLDisplay, type, attrib_list);
 }
 
-EGLBoolean FunctionsEGL::destroySyncKHR(EGLSyncKHR sync)
+EGLBoolean FunctionsEGL::destroySyncKHR(EGLSyncKHR sync) const
 {
     return mFnPtrs->destroySyncKHRPtr(mEGLDisplay, sync);
 }
 
-EGLint FunctionsEGL::clientWaitSyncKHR(EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout)
+EGLint FunctionsEGL::clientWaitSyncKHR(EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout) const
 {
     return mFnPtrs->clientWaitSyncKHRPtr(mEGLDisplay, sync, flags, timeout);
 }
 
-EGLBoolean FunctionsEGL::getSyncAttribKHR(EGLSyncKHR sync, EGLint attribute, EGLint *value)
+EGLBoolean FunctionsEGL::getSyncAttribKHR(EGLSyncKHR sync, EGLint attribute, EGLint *value) const
 {
     return mFnPtrs->getSyncAttribKHRPtr(mEGLDisplay, sync, attribute, value);
 }
+
+EGLint FunctionsEGL::waitSyncKHR(EGLSyncKHR sync, EGLint flags) const
+{
+    return mFnPtrs->waitSyncKHRPtr(mEGLDisplay, sync, flags);
+}
+
+EGLBoolean FunctionsEGL::swapBuffersWithDamageKHR(EGLSurface surface,
+                                                  EGLint *rects,
+                                                  EGLint n_rects) const
+{
+    return mFnPtrs->swapBuffersWithDamageKHRPtr(mEGLDisplay, surface, rects, n_rects);
+}
+
+EGLBoolean FunctionsEGL::presentationTimeANDROID(EGLSurface surface, EGLnsecsANDROID time) const
+{
+    return mFnPtrs->presentationTimeANDROIDPtr(mEGLDisplay, surface, time);
+}
+
+void FunctionsEGL::setBlobCacheFuncsANDROID(EGLSetBlobFuncANDROID set,
+                                            EGLGetBlobFuncANDROID get) const
+{
+    return mFnPtrs->setBlobCacheFuncsANDROIDPtr(mEGLDisplay, set, get);
+}
+
+EGLBoolean FunctionsEGL::getCompositorTimingSupportedANDROID(EGLSurface surface, EGLint name) const
+{
+    return mFnPtrs->getCompositorTimingSupportedANDROIDPtr(mEGLDisplay, surface, name);
+}
+
+EGLBoolean FunctionsEGL::getCompositorTimingANDROID(EGLSurface surface,
+                                                    EGLint numTimestamps,
+                                                    const EGLint *names,
+                                                    EGLnsecsANDROID *values) const
+{
+    return mFnPtrs->getCompositorTimingANDROIDPtr(mEGLDisplay, surface, numTimestamps, names,
+                                                  values);
+}
+
+EGLBoolean FunctionsEGL::getNextFrameIdANDROID(EGLSurface surface, EGLuint64KHR *frameId) const
+{
+    return mFnPtrs->getNextFrameIdANDROIDPtr(mEGLDisplay, surface, frameId);
+}
+
+EGLBoolean FunctionsEGL::getFrameTimestampSupportedANDROID(EGLSurface surface,
+                                                           EGLint timestamp) const
+{
+    return mFnPtrs->getFrameTimestampSupportedANDROIDPtr(mEGLDisplay, surface, timestamp);
+}
+
+EGLBoolean FunctionsEGL::getFrameTimestampsANDROID(EGLSurface surface,
+                                                   EGLuint64KHR frameId,
+                                                   EGLint numTimestamps,
+                                                   const EGLint *timestamps,
+                                                   EGLnsecsANDROID *values) const
+{
+    return mFnPtrs->getFrameTimestampsANDROIDPtr(mEGLDisplay, surface, frameId, numTimestamps,
+                                                 timestamps, values);
+}
+
 }  // namespace rx

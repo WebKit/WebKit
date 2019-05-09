@@ -10,10 +10,10 @@
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
-#if defined (ANGLE_ENABLE_WINDOWS_STORE)
-#include <wrl.h>
-#include <wrl/wrappers/corewrappers.h>
-#include <windows.applicationmodel.core.h>
+#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#    include <windows.applicationmodel.core.h>
+#    include <wrl.h>
+#    include <wrl/wrappers/corewrappers.h>
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Windows::ApplicationModel;
@@ -25,11 +25,10 @@ using namespace ABI::Windows::Foundation::Collections;
 namespace rx
 {
 
-Trim11::Trim11(rx::Renderer11 *renderer)
-    : mRenderer(renderer)
+Trim11::Trim11(rx::Renderer11 *renderer) : mRenderer(renderer)
 {
     bool result = true;
-    result = registerForRendererTrimRequest();
+    result      = registerForRendererTrimRequest();
     ASSERT(result);
 }
 
@@ -45,8 +44,8 @@ void Trim11::trim()
         return;
     }
 
-#if defined (ANGLE_ENABLE_WINDOWS_STORE)
-    ID3D11Device* device = mRenderer->getDevice();
+#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+    ID3D11Device *device      = mRenderer->getDevice();
     IDXGIDevice3 *dxgiDevice3 = d3d11::DynamicCastComObject<IDXGIDevice3>(device);
     if (dxgiDevice3)
     {
@@ -58,18 +57,20 @@ void Trim11::trim()
 
 bool Trim11::registerForRendererTrimRequest()
 {
-#if defined (ANGLE_ENABLE_WINDOWS_STORE)
-    ICoreApplication* coreApplication = nullptr;
-    HRESULT result = GetActivationFactory(HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(), &coreApplication);
+#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+    ICoreApplication *coreApplication = nullptr;
+    HRESULT result                    = GetActivationFactory(
+        HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
+        &coreApplication);
     if (SUCCEEDED(result))
     {
-        auto suspendHandler = Callback<IEventHandler<SuspendingEventArgs*>>(
-            [this](IInspectable*, ISuspendingEventArgs*) -> HRESULT
-        {
-            trim();
-            return S_OK;
-        });
-        result = coreApplication->add_Suspending(suspendHandler.Get(), &mApplicationSuspendedEventToken);
+        auto suspendHandler = Callback<IEventHandler<SuspendingEventArgs *>>(
+            [this](IInspectable *, ISuspendingEventArgs *) -> HRESULT {
+                trim();
+                return S_OK;
+            });
+        result =
+            coreApplication->add_Suspending(suspendHandler.Get(), &mApplicationSuspendedEventToken);
     }
     SafeRelease(coreApplication);
 
@@ -83,11 +84,13 @@ bool Trim11::registerForRendererTrimRequest()
 
 void Trim11::unregisterForRendererTrimRequest()
 {
-#if defined (ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_STORE)
     if (mApplicationSuspendedEventToken.value != 0)
     {
-        ICoreApplication* coreApplication = nullptr;
-        if (SUCCEEDED(GetActivationFactory(HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(), &coreApplication)))
+        ICoreApplication *coreApplication = nullptr;
+        if (SUCCEEDED(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
+                &coreApplication)))
         {
             coreApplication->remove_Suspending(mApplicationSuspendedEventToken);
         }
@@ -97,4 +100,4 @@ void Trim11::unregisterForRendererTrimRequest()
 #endif
 }
 
-}
+}  // namespace rx

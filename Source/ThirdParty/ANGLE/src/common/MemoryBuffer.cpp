@@ -15,10 +15,6 @@ namespace angle
 {
 
 // MemoryBuffer implementation.
-MemoryBuffer::MemoryBuffer() : mSize(0), mData(nullptr)
-{
-}
-
 MemoryBuffer::~MemoryBuffer()
 {
     free(mData);
@@ -41,7 +37,7 @@ bool MemoryBuffer::resize(size_t size)
     }
 
     // Only reallocate if the size has changed.
-    uint8_t *newMemory = reinterpret_cast<uint8_t *>(malloc(sizeof(uint8_t) * size));
+    uint8_t *newMemory = static_cast<uint8_t *>(malloc(sizeof(uint8_t) * size));
     if (newMemory == nullptr)
     {
         return false;
@@ -82,13 +78,9 @@ MemoryBuffer &MemoryBuffer::operator=(MemoryBuffer &&other)
 
 // ScratchBuffer implementation.
 
-ScratchBuffer::ScratchBuffer(uint32_t lifetime) : mLifetime(lifetime), mResetCounter(lifetime)
-{
-}
+ScratchBuffer::ScratchBuffer(uint32_t lifetime) : mLifetime(lifetime), mResetCounter(lifetime) {}
 
-ScratchBuffer::~ScratchBuffer()
-{
-}
+ScratchBuffer::~ScratchBuffer() {}
 
 bool ScratchBuffer::get(size_t requestedSize, MemoryBuffer **memoryBufferOut)
 {

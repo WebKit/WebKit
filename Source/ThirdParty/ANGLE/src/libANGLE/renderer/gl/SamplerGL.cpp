@@ -15,20 +15,52 @@ namespace
 {
 
 template <typename T>
+inline void SetSamplerParameter(const rx::FunctionsGL *functions,
+                                GLuint sampler,
+                                GLenum name,
+                                const T &value)
+{
+    functions->samplerParameterf(sampler, name, static_cast<GLfloat>(value));
+}
+
+inline void SetSamplerParameter(const rx::FunctionsGL *functions,
+                                GLuint sampler,
+                                GLenum name,
+                                const angle::ColorGeneric &value)
+{
+    switch (value.type)
+    {
+        case angle::ColorGeneric::Type::Float:
+            functions->samplerParameterfv(sampler, name, &value.colorF.red);
+            break;
+        case angle::ColorGeneric::Type::Int:
+            functions->samplerParameterIiv(sampler, name, &value.colorI.red);
+            break;
+        case angle::ColorGeneric::Type::UInt:
+            functions->samplerParameterIuiv(sampler, name, &value.colorUI.red);
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+}
+
+template <typename Getter, typename Setter>
 static inline void SyncSamplerStateMember(const rx::FunctionsGL *functions,
                                           GLuint sampler,
                                           const gl::SamplerState &newState,
                                           gl::SamplerState &curState,
                                           GLenum name,
-                                          T(gl::SamplerState::*samplerMember))
+                                          Getter getter,
+                                          Setter setter)
 {
-    if (curState.*samplerMember != newState.*samplerMember)
+    if ((curState.*getter)() != (newState.*getter)())
     {
-        curState.*samplerMember = newState.*samplerMember;
-        functions->samplerParameterf(sampler, name, static_cast<GLfloat>(curState.*samplerMember));
+        (curState.*setter)((newState.*getter)());
+        SetSamplerParameter(functions, sampler, name, (newState.*getter)());
     }
 }
-}
+}  // namespace
 
 namespace rx
 {
@@ -54,17 +86,18 @@ SamplerGL::~SamplerGL()
 void SamplerGL::syncState(const gl::Context *context)
 {
     // clang-format off
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_FILTER, &gl::SamplerState::minFilter);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAG_FILTER, &gl::SamplerState::magFilter);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_S, &gl::SamplerState::wrapS);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_T, &gl::SamplerState::wrapT);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_R, &gl::SamplerState::wrapR);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_ANISOTROPY_EXT, &gl::SamplerState::maxAnisotropy);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_LOD, &gl::SamplerState::minLod);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::maxLod);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::compareMode);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::compareFunc);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::sRGBDecode);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_FILTER, &gl::SamplerState::getMinFilter, &gl::SamplerState::setMinFilter);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAG_FILTER, &gl::SamplerState::getMagFilter, &gl::SamplerState::setMagFilter);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_S, &gl::SamplerState::getWrapS, &gl::SamplerState::setWrapS);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_T, &gl::SamplerState::getWrapT, &gl::SamplerState::setWrapT);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_R, &gl::SamplerState::getWrapR, &gl::SamplerState::setWrapR);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_ANISOTROPY_EXT, &gl::SamplerState::getMaxAnisotropy, &gl::SamplerState::setMaxAnisotropy);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_LOD, &gl::SamplerState::getMinLod, &gl::SamplerState::setMinLod);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::getMaxLod, &gl::SamplerState::setMaxLod);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::getCompareMode, &gl::SamplerState::setCompareMode);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::getCompareFunc, &gl::SamplerState::setCompareFunc);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::getSRGBDecode, &gl::SamplerState::setSRGBDecode);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_BORDER_COLOR, &gl::SamplerState::getBorderColor, &gl::SamplerState::setBorderColor);
     // clang-format on
 }
 
@@ -72,4 +105,4 @@ GLuint SamplerGL::getSamplerID() const
 {
     return mSamplerID;
 }
-}
+}  // namespace rx

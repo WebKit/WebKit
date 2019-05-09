@@ -9,18 +9,11 @@
 
 #include <gtest/gtest.h>
 
-extern bool g_OnlyOneRunFrame;
+void ANGLEProcessPerfTestArgs(int *argc, char **argv);
 
 int main(int argc, char **argv)
 {
-    for (int i = 0; i < argc; ++i)
-    {
-        if (strcmp("--one-frame-only", argv[i]) == 0)
-        {
-            g_OnlyOneRunFrame = true;
-        }
-    }
-
+    ANGLEProcessPerfTestArgs(&argc, argv);
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new testing::Environment());
     int rt = RUN_ALL_TESTS();

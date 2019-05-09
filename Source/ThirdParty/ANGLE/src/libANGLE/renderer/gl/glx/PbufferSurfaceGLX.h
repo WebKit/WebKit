@@ -9,8 +9,8 @@
 #ifndef LIBANGLE_RENDERER_GL_GLX_PBUFFERSURFACEGLX_H_
 #define LIBANGLE_RENDERER_GL_GLX_PBUFFERSURFACEGLX_H_
 
-#include "libANGLE/renderer/gl/glx/platform_glx.h"
 #include "libANGLE/renderer/gl/glx/SurfaceGLX.h"
+#include "libANGLE/renderer/gl/glx/platform_glx.h"
 
 namespace rx
 {
@@ -21,7 +21,6 @@ class PbufferSurfaceGLX : public SurfaceGLX
 {
   public:
     PbufferSurfaceGLX(const egl::SurfaceState &state,
-                      RendererGL *renderer,
                       EGLint width,
                       EGLint height,
                       bool largest,
@@ -30,7 +29,7 @@ class PbufferSurfaceGLX : public SurfaceGLX
     ~PbufferSurfaceGLX() override;
 
     egl::Error initialize(const egl::Display *display) override;
-    egl::Error makeCurrent() override;
+    egl::Error makeCurrent(const gl::Context *context) override;
 
     egl::Error swap(const gl::Context *context) override;
     egl::Error postSubBuffer(const gl::Context *context,
@@ -39,8 +38,10 @@ class PbufferSurfaceGLX : public SurfaceGLX
                              EGLint width,
                              EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
-    egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
-    egl::Error releaseTexImage(EGLint buffer) override;
+    egl::Error bindTexImage(const gl::Context *context,
+                            gl::Texture *texture,
+                            EGLint buffer) override;
+    egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(EGLint interval) override;
 
     EGLint getWidth() const override;
@@ -64,4 +65,4 @@ class PbufferSurfaceGLX : public SurfaceGLX
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_GLX_PBUFFERSURFACEGLX_H_
+#endif  // LIBANGLE_RENDERER_GL_GLX_PBUFFERSURFACEGLX_H_

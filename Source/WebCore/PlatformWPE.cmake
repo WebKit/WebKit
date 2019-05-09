@@ -16,12 +16,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "platform/SourcesGLib.txt"
 )
 
-# Allow building ANGLE on platforms that don't provide X11 headers.
-list(APPEND ANGLE_PLATFORM_DEFINITIONS "USE_WPE")
-
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${THIRDPARTY_DIR}/ANGLE/"
-    "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/epoxy"
     "${WEBCORE_DIR}/platform/graphics/glx"

@@ -6,12 +6,12 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "libANGLE/angletypes.h"
+
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/Config.h"
-#include "libANGLE/ContextState.h"
 #include "libANGLE/State.h"
 #include "libANGLE/Surface.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/FramebufferImpl_mock.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
 #include "tests/angle_unittests_utils.h"
@@ -30,13 +30,14 @@ class MockSurfaceImpl : public rx::SurfaceImpl
 
     MOCK_METHOD1(destroy, void(const egl::Display *));
     MOCK_METHOD1(initialize, egl::Error(const egl::Display *));
-    MOCK_METHOD1(createDefaultFramebuffer, rx::FramebufferImpl *(const gl::FramebufferState &data));
+    MOCK_METHOD2(createDefaultFramebuffer,
+                 rx::FramebufferImpl *(const gl::Context *, const gl::FramebufferState &data));
     MOCK_METHOD1(swap, egl::Error(const gl::Context *));
     MOCK_METHOD3(swapWithDamage, egl::Error(const gl::Context *, EGLint *, EGLint));
     MOCK_METHOD5(postSubBuffer, egl::Error(const gl::Context *, EGLint, EGLint, EGLint, EGLint));
-    MOCK_METHOD2(querySurfacePointerANGLE, egl::Error(EGLint, void**));
-    MOCK_METHOD2(bindTexImage, egl::Error(gl::Texture*, EGLint));
-    MOCK_METHOD1(releaseTexImage, egl::Error(EGLint));
+    MOCK_METHOD2(querySurfacePointerANGLE, egl::Error(EGLint, void **));
+    MOCK_METHOD3(bindTexImage, egl::Error(const gl::Context *context, gl::Texture *, EGLint));
+    MOCK_METHOD2(releaseTexImage, egl::Error(const gl::Context *context, EGLint));
     MOCK_METHOD3(getSyncValues, egl::Error(EGLuint64KHR *, EGLuint64KHR *, EGLuint64KHR *));
     MOCK_METHOD1(setSwapInterval, void(EGLint));
     MOCK_CONST_METHOD0(getWidth, EGLint());
@@ -44,10 +45,10 @@ class MockSurfaceImpl : public rx::SurfaceImpl
     MOCK_CONST_METHOD0(isPostSubBufferSupported, EGLint(void));
     MOCK_CONST_METHOD0(getSwapBehavior, EGLint(void));
     MOCK_METHOD4(getAttachmentRenderTarget,
-                 gl::Error(const gl::Context *,
-                           GLenum,
-                           const gl::ImageIndex &,
-                           rx::FramebufferAttachmentRenderTarget **));
+                 angle::Result(const gl::Context *,
+                               GLenum,
+                               const gl::ImageIndex &,
+                               rx::FramebufferAttachmentRenderTarget **));
 
     MOCK_METHOD0(destructor, void());
 
@@ -76,4 +77,4 @@ TEST(SurfaceTest, DestructionDeletesImpl)
     Mock::VerifyAndClear(impl);
 }
 
-} // namespace
+}  // namespace

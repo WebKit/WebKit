@@ -21,12 +21,14 @@
 namespace angle
 {
 struct Format;
+enum class FormatID;
 }  // namespace angle
 
 namespace gl
 {
 struct FormatType;
 struct InternalFormat;
+class State;
 }  // namespace gl
 
 namespace egl
@@ -36,6 +38,7 @@ class AttributeMap;
 
 namespace rx
 {
+class ContextImpl;
 
 class ResourceSerial
 {
@@ -71,6 +74,10 @@ class Serial final
     {
         return mValue != kInvalid && mValue == other.mValue;
     }
+    constexpr bool operator==(uint32_t value) const
+    {
+        return mValue != kInvalid && mValue == static_cast<uint64_t>(value);
+    }
     constexpr bool operator!=(const Serial &other) const
     {
         return mValue == kInvalid || mValue != other.mValue;
@@ -79,6 +86,11 @@ class Serial final
     constexpr bool operator>=(const Serial &other) const { return mValue >= other.mValue; }
     constexpr bool operator<(const Serial &other) const { return mValue < other.mValue; }
     constexpr bool operator<=(const Serial &other) const { return mValue <= other.mValue; }
+
+    constexpr bool operator<(uint32_t value) const { return mValue < static_cast<uint64_t>(value); }
+
+    // Useful for serialization.
+    constexpr uint64_t getValue() const { return mValue; }
 
   private:
     friend class SerialFactory;
@@ -112,26 +124,25 @@ using MipGenerationFunction = void (*)(size_t sourceWidth,
                                        size_t destRowPitch,
                                        size_t destDepthPitch);
 
-typedef void (*ColorReadFunction)(const uint8_t *source, uint8_t *dest);
-typedef void (*ColorWriteFunction)(const uint8_t *source, uint8_t *dest);
-typedef void (*ColorCopyFunction)(const uint8_t *source, uint8_t *dest);
+typedef void (*PixelReadFunction)(const uint8_t *source, uint8_t *dest);
+typedef void (*PixelWriteFunction)(const uint8_t *source, uint8_t *dest);
+typedef void (*PixelCopyFunction)(const uint8_t *source, uint8_t *dest);
 
 class FastCopyFunctionMap
 {
   public:
     struct Entry
     {
-        GLenum format;
-        GLenum type;
-        ColorCopyFunction func;
+        angle::FormatID formatID;
+        PixelCopyFunction func;
     };
 
     constexpr FastCopyFunctionMap() : FastCopyFunctionMap(nullptr, 0) {}
 
     constexpr FastCopyFunctionMap(const Entry *data, size_t size) : mSize(size), mData(data) {}
 
-    bool has(const gl::FormatType &formatType) const;
-    ColorCopyFunction get(const gl::FormatType &formatType) const;
+    bool has(angle::FormatID formatID) const;
+    PixelCopyFunction get(angle::FormatID formatID) const;
 
   private:
     size_t mSize;
@@ -142,19 +153,17 @@ struct PackPixelsParams
 {
     PackPixelsParams();
     PackPixelsParams(const gl::Rectangle &area,
-                     GLenum format,
-                     GLenum type,
+                     const angle::Format &destFormat,
                      GLuint outputPitch,
-                     const gl::PixelPackState &pack,
+                     bool reverseRowOrderIn,
                      gl::Buffer *packBufferIn,
                      ptrdiff_t offset);
 
     gl::Rectangle area;
-    GLenum format;
-    GLenum type;
+    const angle::Format *destFormat;
     GLuint outputPitch;
     gl::Buffer *packBuffer;
-    gl::PixelPackState pack;
+    bool reverseRowOrder;
     ptrdiff_t offset;
 };
 
@@ -163,10 +172,6 @@ void PackPixels(const PackPixelsParams &params,
                 int inputPitch,
                 const uint8_t *source,
                 uint8_t *destination);
-
-ColorWriteFunction GetColorWriteFunction(const gl::FormatType &formatType);
-ColorCopyFunction GetFastCopyFunction(const FastCopyFunctionMap &fastCopyFunctions,
-                                      const gl::FormatType &formatType);
 
 using InitializeTextureDataFunction = void (*)(size_t width,
                                                size_t height,
@@ -190,8 +195,7 @@ struct LoadImageFunctionInfo
     LoadImageFunctionInfo() : loadFunction(nullptr), requiresConversion(false) {}
     LoadImageFunctionInfo(LoadImageFunction loadFunction, bool requiresConversion)
         : loadFunction(loadFunction), requiresConversion(requiresConversion)
-    {
-    }
+    {}
 
     LoadImageFunction loadFunction;
     bool requiresConversion;
@@ -200,19 +204,23 @@ struct LoadImageFunctionInfo
 using LoadFunctionMap = LoadImageFunctionInfo (*)(GLenum);
 
 bool ShouldUseDebugLayers(const egl::AttributeMap &attribs);
+bool ShouldUseVirtualizedContexts(const egl::AttributeMap &attribs, bool defaultValue);
 
 void CopyImageCHROMIUM(const uint8_t *sourceData,
                        size_t sourceRowPitch,
                        size_t sourcePixelBytes,
-                       ColorReadFunction readFunction,
+                       size_t sourceDepthPitch,
+                       PixelReadFunction pixelReadFunction,
                        uint8_t *destData,
                        size_t destRowPitch,
                        size_t destPixelBytes,
-                       ColorWriteFunction colorWriteFunction,
+                       size_t destDepthPitch,
+                       PixelWriteFunction pixelWriteFunction,
                        GLenum destUnsizedFormat,
                        GLenum destComponentType,
                        size_t width,
                        size_t height,
+                       size_t depth,
                        bool unpackFlipY,
                        bool unpackPremultiplyAlpha,
                        bool unpackUnmultiplyAlpha);
@@ -228,8 +236,8 @@ class MultisampleTextureInitializer
 {
   public:
     virtual ~MultisampleTextureInitializer() {}
-    virtual gl::Error initializeMultisampleTextureToBlack(const gl::Context *context,
-                                                          gl::Texture *glTexture) = 0;
+    virtual angle::Result initializeMultisampleTextureToBlack(const gl::Context *context,
+                                                              gl::Texture *glTexture) = 0;
 };
 
 class IncompleteTextureSet final : angle::NonCopyable
@@ -240,15 +248,47 @@ class IncompleteTextureSet final : angle::NonCopyable
 
     void onDestroy(const gl::Context *context);
 
-    gl::Error getIncompleteTexture(const gl::Context *context,
-                                   GLenum type,
-                                   MultisampleTextureInitializer *multisampleInitializer,
-                                   gl::Texture **textureOut);
+    angle::Result getIncompleteTexture(const gl::Context *context,
+                                       gl::TextureType type,
+                                       MultisampleTextureInitializer *multisampleInitializer,
+                                       gl::Texture **textureOut);
 
   private:
     gl::TextureMap mIncompleteTextures;
 };
 
+// The return value indicate if the data was updated or not.
+template <int cols, int rows>
+bool SetFloatUniformMatrix(unsigned int arrayElementOffset,
+                           unsigned int elementCount,
+                           GLsizei countIn,
+                           GLboolean transpose,
+                           const GLfloat *value,
+                           uint8_t *targetData);
+
+// Helper method to de-tranpose a matrix uniform for an API query.
+void GetMatrixUniform(GLenum type, GLfloat *dataOut, const GLfloat *source, bool transpose);
+
+template <typename NonFloatT>
+void GetMatrixUniform(GLenum type, NonFloatT *dataOut, const NonFloatT *source, bool transpose);
+
+const angle::Format &GetFormatFromFormatType(GLenum format, GLenum type);
+
+angle::Result ComputeStartVertex(ContextImpl *contextImpl,
+                                 const gl::IndexRange &indexRange,
+                                 GLint baseVertex,
+                                 GLint *firstVertexOut);
+
+angle::Result GetVertexRangeInfo(const gl::Context *context,
+                                 GLint firstVertex,
+                                 GLsizei vertexOrIndexCount,
+                                 gl::DrawElementsType indexTypeOrInvalid,
+                                 const void *indices,
+                                 GLint baseVertex,
+                                 GLint *startVertexOut,
+                                 size_t *vertexCountOut);
+
+gl::Rectangle ClipRectToScissor(const gl::State &glState, const gl::Rectangle &rect, bool invertY);
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_RENDERER_UTILS_H_

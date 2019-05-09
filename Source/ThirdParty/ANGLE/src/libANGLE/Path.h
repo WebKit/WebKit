@@ -29,11 +29,11 @@ class Path final : angle::NonCopyable
 
     ~Path();
 
-    Error setCommands(GLsizei numCommands,
-                      const GLubyte *commands,
-                      GLsizei numCoords,
-                      GLenum coordType,
-                      const void *coords);
+    angle::Result setCommands(GLsizei numCommands,
+                              const GLubyte *commands,
+                              GLsizei numCoords,
+                              GLenum coordType,
+                              const void *coords);
 
     void setStrokeWidth(GLfloat width);
     void setStrokeBound(GLfloat bound);

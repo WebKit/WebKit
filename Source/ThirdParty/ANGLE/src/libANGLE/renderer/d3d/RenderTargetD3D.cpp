@@ -12,14 +12,9 @@ namespace rx
 {
 unsigned int RenderTargetD3D::mCurrentSerial = 1;
 
-RenderTargetD3D::RenderTargetD3D()
-    : mSerial(issueSerials(1))
-{
-}
+RenderTargetD3D::RenderTargetD3D() : mSerial(issueSerials(1)) {}
 
-RenderTargetD3D::~RenderTargetD3D()
-{
-}
+RenderTargetD3D::~RenderTargetD3D() {}
 
 unsigned int RenderTargetD3D::getSerial() const
 {
@@ -33,4 +28,4 @@ unsigned int RenderTargetD3D::issueSerials(unsigned int count)
     return firstSerial;
 }
 
-}
+}  // namespace rx

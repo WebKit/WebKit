@@ -9,6 +9,9 @@
 
 #include <string>
 
+namespace angle
+{
+
 namespace pp
 {
 
@@ -39,5 +42,7 @@ class DirectiveHandler
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_DIRECTIVEHANDLERBASE_H_

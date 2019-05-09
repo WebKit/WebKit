@@ -14,10 +14,10 @@
 #include "image_util/loadimage.h"
 
 #include "libANGLE/formatutils.h"
-#include "libANGLE/renderer/d3d/d3d11/copyvertex.h"
+#include "libANGLE/renderer/copyvertex.h"
+#include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/renderer/d3d/d3d11/dxgi_support_table.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
-#include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 
 namespace rx
 {
@@ -34,8 +34,7 @@ bool SupportsMipGen(DXGI_FORMAT dxgiFormat, D3D_FEATURE_LEVEL featureLevel)
 
 DXGIFormatSize::DXGIFormatSize(GLuint pixelBits, GLuint blockWidth, GLuint blockHeight)
     : pixelBytes(pixelBits / 8), blockWidth(blockWidth), blockHeight(blockHeight)
-{
-}
+{}
 
 const DXGIFormatSize &GetDXGIFormatSizeInfo(DXGI_FORMAT format)
 {
@@ -201,44 +200,42 @@ const DXGIFormatSize &GetDXGIFormatSizeInfo(DXGI_FORMAT format)
 
 constexpr VertexFormat::VertexFormat()
     : conversionType(VERTEX_CONVERT_NONE), nativeFormat(DXGI_FORMAT_UNKNOWN), copyFunction(nullptr)
-{
-}
+{}
 
 constexpr VertexFormat::VertexFormat(VertexConversionType conversionTypeIn,
                                      DXGI_FORMAT nativeFormatIn,
                                      VertexCopyFunction copyFunctionIn)
     : conversionType(conversionTypeIn), nativeFormat(nativeFormatIn), copyFunction(copyFunctionIn)
-{
-}
+{}
 
-const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormatType)
+const VertexFormat *GetVertexFormatInfo_FL_9_3(angle::FormatID vertexFormatID)
 {
     // D3D11 Feature Level 9_3 doesn't support as many formats for vertex buffer resource as Feature
     // Level 10_0+.
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ff471324(v=vs.85).aspx
 
-    switch (vertexFormatType)
+    switch (vertexFormatID)
     {
         // GL_BYTE -- unnormalized
-        case gl::VERTEX_FORMAT_SBYTE1:
+        case angle::FormatID::R8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16_SINT,
                                                &Copy8SintTo16SintVertexData<1, 2>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_SBYTE2:
+        case angle::FormatID::R8G8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16_SINT,
                                                &Copy8SintTo16SintVertexData<2, 2>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_SBYTE3:
+        case angle::FormatID::R8G8B8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &Copy8SintTo16SintVertexData<3, 4>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_SBYTE4:
+        case angle::FormatID::R8G8B8A8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &Copy8SintTo16SintVertexData<4, 4>);
@@ -246,25 +243,25 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         }
 
         // GL_BYTE -- normalized
-        case gl::VERTEX_FORMAT_SBYTE1_NORM:
+        case angle::FormatID::R8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16_SNORM,
                                                &Copy8SnormTo16SnormVertexData<1, 2>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_SBYTE2_NORM:
+        case angle::FormatID::R8G8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16_SNORM,
                                                &Copy8SnormTo16SnormVertexData<2, 2>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_SBYTE3_NORM:
+        case angle::FormatID::R8G8B8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_SNORM,
                                                &Copy8SnormTo16SnormVertexData<3, 4>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_SBYTE4_NORM:
+        case angle::FormatID::R8G8B8A8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_SNORM,
                                                &Copy8SnormTo16SnormVertexData<4, 4>);
@@ -274,13 +271,13 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         // GL_UNSIGNED_BYTE -- un-normalized
         // NOTE: 3 and 4 component unnormalized GL_UNSIGNED_BYTE should use the default format
         // table.
-        case gl::VERTEX_FORMAT_UBYTE1:
+        case angle::FormatID::R8_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R8G8B8A8_UINT,
                                                &CopyNativeVertexData<GLubyte, 1, 4, 1>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_UBYTE2:
+        case angle::FormatID::R8G8_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R8G8B8A8_UINT,
                                                &CopyNativeVertexData<GLubyte, 2, 4, 1>);
@@ -291,13 +288,13 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         // NOTE: 3 and 4 component normalized GL_UNSIGNED_BYTE should use the default format table.
 
         // GL_UNSIGNED_BYTE -- normalized
-        case gl::VERTEX_FORMAT_UBYTE1_NORM:
+        case angle::FormatID::R8_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R8G8B8A8_UNORM,
                                                &CopyNativeVertexData<GLubyte, 1, 4, UINT8_MAX>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_UBYTE2_NORM:
+        case angle::FormatID::R8G8_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R8G8B8A8_UNORM,
                                                &CopyNativeVertexData<GLubyte, 2, 4, UINT8_MAX>);
@@ -306,7 +303,7 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
 
         // GL_SHORT -- un-normalized
         // NOTE: 2, 3 and 4 component unnormalized GL_SHORT should use the default format table.
-        case gl::VERTEX_FORMAT_SSHORT1:
+        case angle::FormatID::R16_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16_SINT,
                                                &CopyNativeVertexData<GLshort, 1, 2, 0>);
@@ -315,7 +312,7 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
 
         // GL_SHORT -- normalized
         // NOTE: 2, 3 and 4 component normalized GL_SHORT should use the default format table.
-        case gl::VERTEX_FORMAT_SSHORT1_NORM:
+        case angle::FormatID::R16_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16_SNORM,
                                                &CopyNativeVertexData<GLshort, 1, 2, 0>);
@@ -323,25 +320,25 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         }
 
         // GL_UNSIGNED_SHORT -- un-normalized
-        case gl::VERTEX_FORMAT_USHORT1:
+        case angle::FormatID::R16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 1, 2, false>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_USHORT2:
+        case angle::FormatID::R16G16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 2, 2, false>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_USHORT3:
+        case angle::FormatID::R16G16B16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 3, 3, false>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_USHORT4:
+        case angle::FormatID::R16G16B16A16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 4, 4, false>);
@@ -349,25 +346,25 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         }
 
         // GL_UNSIGNED_SHORT -- normalized
-        case gl::VERTEX_FORMAT_USHORT1_NORM:
+        case angle::FormatID::R16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 1, 2, true>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_USHORT2_NORM:
+        case angle::FormatID::R16G16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 2, 2, true>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_USHORT3_NORM:
+        case angle::FormatID::R16G16B16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 3, 3, true>);
             return &info;
         }
-        case gl::VERTEX_FORMAT_USHORT4_NORM:
+        case angle::FormatID::R16G16B16A16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyTo32FVertexData<GLushort, 4, 4, true>);
@@ -377,7 +374,7 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         // GL_FIXED
         // TODO: Add test to verify that this works correctly.
         // NOTE: 2, 3 and 4 component GL_FIXED should use the default format table.
-        case gl::VERTEX_FORMAT_FIXED1:
+        case angle::FormatID::R32_FIXED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &Copy32FixedTo32FVertexData<1, 2>);
@@ -387,7 +384,7 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
         // GL_FLOAT
         // TODO: Add test to verify that this works correctly.
         // NOTE: 2, 3 and 4 component GL_FLOAT should use the default format table.
-        case gl::VERTEX_FORMAT_FLOAT1:
+        case angle::FormatID::R32_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyNativeVertexData<GLfloat, 1, 2, 0>);
@@ -399,43 +396,44 @@ const VertexFormat *GetVertexFormatInfo_FL_9_3(gl::VertexFormatType vertexFormat
     }
 }
 
-const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D3D_FEATURE_LEVEL featureLevel)
+const VertexFormat &GetVertexFormatInfo(angle::FormatID vertexFormatID,
+                                        D3D_FEATURE_LEVEL featureLevel)
 {
     if (featureLevel == D3D_FEATURE_LEVEL_9_3)
     {
-        const VertexFormat *result = GetVertexFormatInfo_FL_9_3(vertexFormatType);
+        const VertexFormat *result = GetVertexFormatInfo_FL_9_3(vertexFormatID);
         if (result)
         {
             return *result;
         }
     }
 
-    switch (vertexFormatType)
+    switch (vertexFormatID)
     {
         //
         // Float formats
         //
 
         // GL_BYTE -- un-normalized
-        case gl::VERTEX_FORMAT_SBYTE1:
+        case angle::FormatID::R8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R8_SINT,
                                                &CopyNativeVertexData<GLbyte, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE2:
+        case angle::FormatID::R8G8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R8G8_SINT,
                                                &CopyNativeVertexData<GLbyte, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE3:
+        case angle::FormatID::R8G8B8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R8G8B8A8_SINT,
                                                &CopyNativeVertexData<GLbyte, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE4:
+        case angle::FormatID::R8G8B8A8_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R8G8B8A8_SINT,
                                                &CopyNativeVertexData<GLbyte, 4, 4, 0>);
@@ -443,25 +441,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_BYTE -- normalized
-        case gl::VERTEX_FORMAT_SBYTE1_NORM:
+        case angle::FormatID::R8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8_SNORM,
                                                &CopyNativeVertexData<GLbyte, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE2_NORM:
+        case angle::FormatID::R8G8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8_SNORM,
                                                &CopyNativeVertexData<GLbyte, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE3_NORM:
+        case angle::FormatID::R8G8B8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R8G8B8A8_SNORM,
                                                &CopyNativeVertexData<GLbyte, 3, 4, INT8_MAX>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE4_NORM:
+        case angle::FormatID::R8G8B8A8_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8B8A8_SNORM,
                                                &CopyNativeVertexData<GLbyte, 4, 4, 0>);
@@ -469,25 +467,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_BYTE -- un-normalized
-        case gl::VERTEX_FORMAT_UBYTE1:
+        case angle::FormatID::R8_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R8_UINT,
                                                &CopyNativeVertexData<GLubyte, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE2:
+        case angle::FormatID::R8G8_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R8G8_UINT,
                                                &CopyNativeVertexData<GLubyte, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE3:
+        case angle::FormatID::R8G8B8_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R8G8B8A8_UINT,
                                                &CopyNativeVertexData<GLubyte, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE4:
+        case angle::FormatID::R8G8B8A8_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R8G8B8A8_UINT,
                                                &CopyNativeVertexData<GLubyte, 4, 4, 0>);
@@ -495,25 +493,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_BYTE -- normalized
-        case gl::VERTEX_FORMAT_UBYTE1_NORM:
+        case angle::FormatID::R8_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8_UNORM,
                                                &CopyNativeVertexData<GLubyte, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE2_NORM:
+        case angle::FormatID::R8G8_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8_UNORM,
                                                &CopyNativeVertexData<GLubyte, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE3_NORM:
+        case angle::FormatID::R8G8B8_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R8G8B8A8_UNORM,
                                                &CopyNativeVertexData<GLubyte, 3, 4, UINT8_MAX>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE4_NORM:
+        case angle::FormatID::R8G8B8A8_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8B8A8_UNORM,
                                                &CopyNativeVertexData<GLubyte, 4, 4, 0>);
@@ -521,25 +519,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_SHORT -- un-normalized
-        case gl::VERTEX_FORMAT_SSHORT1:
+        case angle::FormatID::R16_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R16_SINT,
                                                &CopyNativeVertexData<GLshort, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT2:
+        case angle::FormatID::R16G16_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R16G16_SINT,
                                                &CopyNativeVertexData<GLshort, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT3:
+        case angle::FormatID::R16G16B16_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &CopyNativeVertexData<GLshort, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT4:
+        case angle::FormatID::R16G16B16A16_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &CopyNativeVertexData<GLshort, 4, 4, 0>);
@@ -547,25 +545,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_SHORT -- normalized
-        case gl::VERTEX_FORMAT_SSHORT1_NORM:
+        case angle::FormatID::R16_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16_SNORM,
                                                &CopyNativeVertexData<GLshort, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT2_NORM:
+        case angle::FormatID::R16G16_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16_SNORM,
                                                &CopyNativeVertexData<GLshort, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT3_NORM:
+        case angle::FormatID::R16G16B16_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_SNORM,
                                                &CopyNativeVertexData<GLshort, 3, 4, INT16_MAX>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT4_NORM:
+        case angle::FormatID::R16G16B16A16_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16B16A16_SNORM,
                                                &CopyNativeVertexData<GLshort, 4, 4, 0>);
@@ -573,25 +571,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_SHORT -- un-normalized
-        case gl::VERTEX_FORMAT_USHORT1:
+        case angle::FormatID::R16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R16_UINT,
                                                &CopyNativeVertexData<GLushort, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT2:
+        case angle::FormatID::R16G16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R16G16_UINT,
                                                &CopyNativeVertexData<GLushort, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT3:
+        case angle::FormatID::R16G16B16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_BOTH, DXGI_FORMAT_R16G16B16A16_UINT,
                                                &CopyNativeVertexData<GLushort, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT4:
+        case angle::FormatID::R16G16B16A16_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R16G16B16A16_UINT,
                                                &CopyNativeVertexData<GLushort, 4, 4, 0>);
@@ -599,25 +597,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_SHORT -- normalized
-        case gl::VERTEX_FORMAT_USHORT1_NORM:
+        case angle::FormatID::R16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16_UNORM,
                                                &CopyNativeVertexData<GLushort, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT2_NORM:
+        case angle::FormatID::R16G16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16_UNORM,
                                                &CopyNativeVertexData<GLushort, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT3_NORM:
+        case angle::FormatID::R16G16B16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_UNORM,
                                                &CopyNativeVertexData<GLushort, 3, 4, UINT16_MAX>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT4_NORM:
+        case angle::FormatID::R16G16B16A16_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16B16A16_UNORM,
                                                &CopyNativeVertexData<GLushort, 4, 4, 0>);
@@ -625,25 +623,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_INT -- un-normalized
-        case gl::VERTEX_FORMAT_SINT1:
+        case angle::FormatID::R32_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32_SINT,
                                                &CopyNativeVertexData<GLint, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT2:
+        case angle::FormatID::R32G32_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32G32_SINT,
                                                &CopyNativeVertexData<GLint, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT3:
+        case angle::FormatID::R32G32B32_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32G32B32_SINT,
                                                &CopyNativeVertexData<GLint, 3, 3, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT4:
+        case angle::FormatID::R32G32B32A32_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32G32B32A32_SINT,
                                                &CopyNativeVertexData<GLint, 4, 4, 0>);
@@ -651,25 +649,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_INT -- normalized
-        case gl::VERTEX_FORMAT_SINT1_NORM:
+        case angle::FormatID::R32_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32_FLOAT,
                                                &CopyTo32FVertexData<GLint, 1, 1, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT2_NORM:
+        case angle::FormatID::R32G32_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyTo32FVertexData<GLint, 2, 2, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT3_NORM:
+        case angle::FormatID::R32G32B32_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32_FLOAT,
                                                &CopyTo32FVertexData<GLint, 3, 3, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT4_NORM:
+        case angle::FormatID::R32G32B32A32_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyTo32FVertexData<GLint, 4, 4, true>);
@@ -677,25 +675,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_INT -- un-normalized
-        case gl::VERTEX_FORMAT_UINT1:
+        case angle::FormatID::R32_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32_UINT,
                                                &CopyNativeVertexData<GLuint, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT2:
+        case angle::FormatID::R32G32_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32G32_UINT,
                                                &CopyNativeVertexData<GLuint, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT3:
+        case angle::FormatID::R32G32B32_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32G32B32_UINT,
                                                &CopyNativeVertexData<GLuint, 3, 3, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT4:
+        case angle::FormatID::R32G32B32A32_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_GPU, DXGI_FORMAT_R32G32B32A32_UINT,
                                                &CopyNativeVertexData<GLuint, 4, 4, 0>);
@@ -703,25 +701,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_INT -- normalized
-        case gl::VERTEX_FORMAT_UINT1_NORM:
+        case angle::FormatID::R32_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32_FLOAT,
                                                &CopyTo32FVertexData<GLuint, 1, 1, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT2_NORM:
+        case angle::FormatID::R32G32_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyTo32FVertexData<GLuint, 2, 2, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT3_NORM:
+        case angle::FormatID::R32G32B32_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32_FLOAT,
                                                &CopyTo32FVertexData<GLuint, 3, 3, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT4_NORM:
+        case angle::FormatID::R32G32B32A32_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyTo32FVertexData<GLuint, 4, 4, true>);
@@ -729,25 +727,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_FIXED
-        case gl::VERTEX_FORMAT_FIXED1:
+        case angle::FormatID::R32_FIXED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32_FLOAT,
                                                &Copy32FixedTo32FVertexData<1, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_FIXED2:
+        case angle::FormatID::R32G32_FIXED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32_FLOAT,
                                                &Copy32FixedTo32FVertexData<2, 2>);
             return info;
         }
-        case gl::VERTEX_FORMAT_FIXED3:
+        case angle::FormatID::R32G32B32_FIXED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32_FLOAT,
                                                &Copy32FixedTo32FVertexData<3, 3>);
             return info;
         }
-        case gl::VERTEX_FORMAT_FIXED4:
+        case angle::FormatID::R32G32B32A32_FIXED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &Copy32FixedTo32FVertexData<4, 4>);
@@ -755,25 +753,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_HALF_FLOAT
-        case gl::VERTEX_FORMAT_HALF1:
+        case angle::FormatID::R16_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16_FLOAT,
                                                &CopyNativeVertexData<GLhalf, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_HALF2:
+        case angle::FormatID::R16G16_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16_FLOAT,
                                                &CopyNativeVertexData<GLhalf, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_HALF3:
+        case angle::FormatID::R16G16B16_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_FLOAT,
                                                &CopyNativeVertexData<GLhalf, 3, 4, gl::Float16One>);
             return info;
         }
-        case gl::VERTEX_FORMAT_HALF4:
+        case angle::FormatID::R16G16B16A16_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16B16A16_FLOAT,
                                                &CopyNativeVertexData<GLhalf, 4, 4, 0>);
@@ -781,25 +779,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_FLOAT
-        case gl::VERTEX_FORMAT_FLOAT1:
+        case angle::FormatID::R32_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32_FLOAT,
                                                &CopyNativeVertexData<GLfloat, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_FLOAT2:
+        case angle::FormatID::R32G32_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32_FLOAT,
                                                &CopyNativeVertexData<GLfloat, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_FLOAT3:
+        case angle::FormatID::R32G32B32_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32B32_FLOAT,
                                                &CopyNativeVertexData<GLfloat, 3, 3, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_FLOAT4:
+        case angle::FormatID::R32G32B32A32_FLOAT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyNativeVertexData<GLfloat, 4, 4, 0>);
@@ -807,13 +805,13 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_INT_2_10_10_10_REV
-        case gl::VERTEX_FORMAT_SINT210:
+        case angle::FormatID::R10G10B10A2_SSCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyXYZ10W2ToXYZW32FVertexData<true, false, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT210_NORM:
+        case angle::FormatID::R10G10B10A2_SNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyXYZ10W2ToXYZW32FVertexData<true, true, true>);
@@ -821,13 +819,13 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_INT_2_10_10_10_REV
-        case gl::VERTEX_FORMAT_UINT210:
+        case angle::FormatID::R10G10B10A2_USCALED:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R32G32B32A32_FLOAT,
                                                &CopyXYZ10W2ToXYZW32FVertexData<false, false, true>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT210_NORM:
+        case angle::FormatID::R10G10B10A2_UNORM:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R10G10B10A2_UNORM,
                                                &CopyNativeVertexData<GLuint, 1, 1, 0>);
@@ -839,25 +837,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         //
 
         // GL_BYTE
-        case gl::VERTEX_FORMAT_SBYTE1_INT:
+        case angle::FormatID::R8_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8_SINT,
                                                &CopyNativeVertexData<GLbyte, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE2_INT:
+        case angle::FormatID::R8G8_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8_SINT,
                                                &CopyNativeVertexData<GLbyte, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE3_INT:
+        case angle::FormatID::R8G8B8_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R8G8B8A8_SINT,
                                                &CopyNativeVertexData<GLbyte, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SBYTE4_INT:
+        case angle::FormatID::R8G8B8A8_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8B8A8_SINT,
                                                &CopyNativeVertexData<GLbyte, 4, 4, 0>);
@@ -865,25 +863,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_BYTE
-        case gl::VERTEX_FORMAT_UBYTE1_INT:
+        case angle::FormatID::R8_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8_UINT,
                                                &CopyNativeVertexData<GLubyte, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE2_INT:
+        case angle::FormatID::R8G8_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8_UINT,
                                                &CopyNativeVertexData<GLubyte, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE3_INT:
+        case angle::FormatID::R8G8B8_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R8G8B8A8_UINT,
                                                &CopyNativeVertexData<GLubyte, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UBYTE4_INT:
+        case angle::FormatID::R8G8B8A8_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R8G8B8A8_UINT,
                                                &CopyNativeVertexData<GLubyte, 4, 4, 0>);
@@ -891,25 +889,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_SHORT
-        case gl::VERTEX_FORMAT_SSHORT1_INT:
+        case angle::FormatID::R16_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16_SINT,
                                                &CopyNativeVertexData<GLshort, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT2_INT:
+        case angle::FormatID::R16G16_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16_SINT,
                                                &CopyNativeVertexData<GLshort, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT3_INT:
+        case angle::FormatID::R16G16B16_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &CopyNativeVertexData<GLshort, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SSHORT4_INT:
+        case angle::FormatID::R16G16B16A16_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &CopyNativeVertexData<GLshort, 4, 4, 0>);
@@ -917,25 +915,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_SHORT
-        case gl::VERTEX_FORMAT_USHORT1_INT:
+        case angle::FormatID::R16_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16_UINT,
                                                &CopyNativeVertexData<GLushort, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT2_INT:
+        case angle::FormatID::R16G16_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16_UINT,
                                                &CopyNativeVertexData<GLushort, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT3_INT:
+        case angle::FormatID::R16G16B16_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_UINT,
                                                &CopyNativeVertexData<GLushort, 3, 4, 1>);
             return info;
         }
-        case gl::VERTEX_FORMAT_USHORT4_INT:
+        case angle::FormatID::R16G16B16A16_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R16G16B16A16_UINT,
                                                &CopyNativeVertexData<GLushort, 4, 4, 0>);
@@ -943,25 +941,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_INT
-        case gl::VERTEX_FORMAT_SINT1_INT:
+        case angle::FormatID::R32_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32_SINT,
                                                &CopyNativeVertexData<GLint, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT2_INT:
+        case angle::FormatID::R32G32_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32_SINT,
                                                &CopyNativeVertexData<GLint, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT3_INT:
+        case angle::FormatID::R32G32B32_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32B32_SINT,
                                                &CopyNativeVertexData<GLint, 3, 3, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_SINT4_INT:
+        case angle::FormatID::R32G32B32A32_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32B32A32_SINT,
                                                &CopyNativeVertexData<GLint, 4, 4, 0>);
@@ -969,25 +967,25 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_INT
-        case gl::VERTEX_FORMAT_UINT1_INT:
+        case angle::FormatID::R32_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32_SINT,
                                                &CopyNativeVertexData<GLuint, 1, 1, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT2_INT:
+        case angle::FormatID::R32G32_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32_SINT,
                                                &CopyNativeVertexData<GLuint, 2, 2, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT3_INT:
+        case angle::FormatID::R32G32B32_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32B32_SINT,
                                                &CopyNativeVertexData<GLuint, 3, 3, 0>);
             return info;
         }
-        case gl::VERTEX_FORMAT_UINT4_INT:
+        case angle::FormatID::R32G32B32A32_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R32G32B32A32_SINT,
                                                &CopyNativeVertexData<GLuint, 4, 4, 0>);
@@ -995,7 +993,7 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_INT_2_10_10_10_REV
-        case gl::VERTEX_FORMAT_SINT210_INT:
+        case angle::FormatID::R10G10B10A2_SINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_CPU, DXGI_FORMAT_R16G16B16A16_SINT,
                                                &CopyXYZ10W2ToXYZW32FVertexData<true, true, false>);
@@ -1003,7 +1001,7 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType, D
         }
 
         // GL_UNSIGNED_INT_2_10_10_10_REV
-        case gl::VERTEX_FORMAT_UINT210_INT:
+        case angle::FormatID::R10G10B10A2_UINT:
         {
             static constexpr VertexFormat info(VERTEX_CONVERT_NONE, DXGI_FORMAT_R10G10B10A2_UINT,
                                                &CopyNativeVertexData<GLuint, 1, 1, 0>);

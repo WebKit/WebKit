@@ -146,18 +146,10 @@ TEST_F(ConstantFoldingTest, Fold2x2MatrixInverse)
         "   my_Vec = m[0];\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        2.0f, 3.0f,
-        5.0f, 7.0f
-    };
+    float inputElements[] = {2.0f, 3.0f, 5.0f, 7.0f};
     std::vector<float> input(inputElements, inputElements + 4);
     ASSERT_FALSE(constantColumnMajorMatrixFoundInAST(input));
-    float outputElements[] =
-    {
-        -7.0f, 3.0f,
-        5.0f, -2.0f
-    };
+    float outputElements[] = {-7.0f, 3.0f, 5.0f, -2.0f};
     std::vector<float> result(outputElements, outputElements + 4);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -175,23 +167,15 @@ TEST_F(ConstantFoldingTest, Fold3x3MatrixInverse)
         "                                23.0f, 29.0f, 31.0f,\n"
         "                                37.0f, 41.0f, 43.0f));\n"
         "   mat3 m = m3 * mat3(i);\n"
-        "   my_Vec = m3[0];\n"
+        "   my_Vec = m[0];\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        11.0f, 13.0f, 19.0f,
-        23.0f, 29.0f, 31.0f,
-        37.0f, 41.0f, 43.0f
-    };
+    float inputElements[] = {11.0f, 13.0f, 19.0f, 23.0f, 29.0f, 31.0f, 37.0f, 41.0f, 43.0f};
     std::vector<float> input(inputElements, inputElements + 9);
     ASSERT_FALSE(constantVectorFoundInAST(input));
-    float outputElements[] =
-    {
-        3.0f / 85.0f, -11.0f / 34.0f, 37.0f / 170.0f,
-        -79.0f / 340.0f, 23.0f / 68.0f, -12.0f / 85.0f,
-        13.0f / 68.0f, -3.0f / 68.0f, -1.0f / 34.0f
-    };
+    float outputElements[] = {3.0f / 85.0f,    -11.0f / 34.0f, 37.0f / 170.0f,
+                              -79.0f / 340.0f, 23.0f / 68.0f,  -12.0f / 85.0f,
+                              13.0f / 68.0f,   -3.0f / 68.0f,  -1.0f / 34.0f};
     std::vector<float> result(outputElements, outputElements + 9);
     const float floatFaultTolerance = 0.000001f;
     ASSERT_TRUE(constantVectorNearFoundInAST(result, floatFaultTolerance));
@@ -214,22 +198,14 @@ TEST_F(ConstantFoldingTest, Fold4x4MatrixInverse)
         "   my_Vec = m[0];\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        29.0f, 31.0f, 37.0f, 41.0f,
-        43.0f, 47.0f, 53.0f, 59.0f,
-        61.0f, 67.0f, 71.0f, 73.0f,
-        79.0f, 83.0f, 89.0f, 97.0f
-    };
+    float inputElements[] = {29.0f, 31.0f, 37.0f, 41.0f, 43.0f, 47.0f, 53.0f, 59.0f,
+                             61.0f, 67.0f, 71.0f, 73.0f, 79.0f, 83.0f, 89.0f, 97.0f};
     std::vector<float> input(inputElements, inputElements + 16);
     ASSERT_FALSE(constantVectorFoundInAST(input));
-    float outputElements[] =
-    {
-        43.0f / 126.0f, -11.0f / 21.0f, -2.0f / 21.0f, 31.0f / 126.0f,
-        -5.0f / 7.0f, 9.0f / 14.0f, 1.0f / 14.0f, -1.0f / 7.0f,
-        85.0f / 126.0f, -11.0f / 21.0f, 43.0f / 210.0f, -38.0f / 315.0f,
-        -2.0f / 7.0f, 5.0f / 14.0f, -6.0f / 35.0f, 3.0f / 70.0f
-    };
+    float outputElements[] = {43.0f / 126.0f, -11.0f / 21.0f, -2.0f / 21.0f,  31.0f / 126.0f,
+                              -5.0f / 7.0f,   9.0f / 14.0f,   1.0f / 14.0f,   -1.0f / 7.0f,
+                              85.0f / 126.0f, -11.0f / 21.0f, 43.0f / 210.0f, -38.0f / 315.0f,
+                              -2.0f / 7.0f,   5.0f / 14.0f,   -6.0f / 35.0f,  3.0f / 70.0f};
     std::vector<float> result(outputElements, outputElements + 16);
     const float floatFaultTolerance = 0.00001f;
     ASSERT_TRUE(constantVectorNearFoundInAST(result, floatFaultTolerance));
@@ -251,11 +227,7 @@ TEST_F(ConstantFoldingTest, Fold2x2MatrixDeterminant)
         "   my_Float = f;\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        2.0f, 3.0f,
-        5.0f, 7.0f
-    };
+    float inputElements[] = {2.0f, 3.0f, 5.0f, 7.0f};
     std::vector<float> input(inputElements, inputElements + 4);
     ASSERT_FALSE(constantColumnMajorMatrixFoundInAST(input));
     ASSERT_TRUE(constantFoundInAST(-1.0f));
@@ -270,17 +242,12 @@ TEST_F(ConstantFoldingTest, Fold3x3MatrixDeterminant)
         "out float my_Float;"
         "void main() {\n"
         "   const float f = determinant(mat3(11.0f, 13.0f, 19.0f,\n"
-             "                               23.0f, 29.0f, 31.0f,\n"
+        "                               23.0f, 29.0f, 31.0f,\n"
         "                                    37.0f, 41.0f, 43.0f));\n"
         "   my_Float = f;\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        11.0f, 13.0f, 19.0f,
-        23.0f, 29.0f, 31.0f,
-        37.0f, 41.0f, 43.0f
-    };
+    float inputElements[] = {11.0f, 13.0f, 19.0f, 23.0f, 29.0f, 31.0f, 37.0f, 41.0f, 43.0f};
     std::vector<float> input(inputElements, inputElements + 9);
     ASSERT_FALSE(constantColumnMajorMatrixFoundInAST(input));
     ASSERT_TRUE(constantFoundInAST(-680.0f));
@@ -301,13 +268,8 @@ TEST_F(ConstantFoldingTest, Fold4x4MatrixDeterminant)
         "   my_Float = f;\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        29.0f, 31.0f, 37.0f, 41.0f,
-        43.0f, 47.0f, 53.0f, 59.0f,
-        61.0f, 67.0f, 71.0f, 73.0f,
-        79.0f, 83.0f, 89.0f, 97.0f
-    };
+    float inputElements[] = {29.0f, 31.0f, 37.0f, 41.0f, 43.0f, 47.0f, 53.0f, 59.0f,
+                             61.0f, 67.0f, 71.0f, 73.0f, 79.0f, 83.0f, 89.0f, 97.0f};
     std::vector<float> input(inputElements, inputElements + 16);
     ASSERT_FALSE(constantColumnMajorMatrixFoundInAST(input));
     ASSERT_TRUE(constantFoundInAST(-2520.0f));
@@ -330,20 +292,10 @@ TEST_F(ConstantFoldingTest, Fold3x3MatrixTranspose)
         "   my_Vec = m[0];\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float inputElements[] =
-    {
-        11.0f, 13.0f, 19.0f,
-        23.0f, 29.0f, 31.0f,
-        37.0f, 41.0f, 43.0f
-    };
+    float inputElements[] = {11.0f, 13.0f, 19.0f, 23.0f, 29.0f, 31.0f, 37.0f, 41.0f, 43.0f};
     std::vector<float> input(inputElements, inputElements + 9);
     ASSERT_FALSE(constantColumnMajorMatrixFoundInAST(input));
-    float outputElements[] =
-    {
-        11.0f, 23.0f, 37.0f,
-        13.0f, 29.0f, 41.0f,
-        19.0f, 31.0f, 43.0f
-    };
+    float outputElements[] = {11.0f, 23.0f, 37.0f, 13.0f, 29.0f, 41.0f, 19.0f, 31.0f, 43.0f};
     std::vector<float> result(outputElements, outputElements + 9);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -436,11 +388,7 @@ TEST_F(ConstantFoldingTest, FoldMat2ConstructorTakingMat2)
         "   gl_FragColor = vec4(m[0], m[1]);\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float outputElements[] =
-    {
-        0.0f, 1.0f,
-        2.0f, 3.0f
-    };
+    float outputElements[] = {0.0f, 1.0f, 2.0f, 3.0f};
     std::vector<float> result(outputElements, outputElements + 4);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -457,11 +405,7 @@ TEST_F(ConstantFoldingTest, FoldMat2ConstructorTakingScalar)
         "   gl_FragColor = vec4(m[0], m[1]);\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float outputElements[] =
-    {
-        3.0f, 0.0f,
-        0.0f, 3.0f
-    };
+    float outputElements[] = {3.0f, 0.0f, 0.0f, 3.0f};
     std::vector<float> result(outputElements, outputElements + 4);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -478,11 +422,7 @@ TEST_F(ConstantFoldingTest, FoldMat2ConstructorTakingMix)
         "   gl_FragColor = vec4(m[0], m[1]);\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float outputElements[] =
-    {
-        -1.0, 0.0f,
-        1.0f, 2.0f
-    };
+    float outputElements[] = {-1.0, 0.0f, 1.0f, 2.0f};
     std::vector<float> result(outputElements, outputElements + 4);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -499,11 +439,7 @@ TEST_F(ConstantFoldingTest, FoldMat2ConstructorTakingMat3)
         "   gl_FragColor = vec4(m[0], m[1]);\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float outputElements[] =
-    {
-        0.0f, 1.0f,
-        3.0f, 4.0f
-    };
+    float outputElements[] = {0.0f, 1.0f, 3.0f, 4.0f};
     std::vector<float> result(outputElements, outputElements + 4);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -524,17 +460,11 @@ TEST_F(ConstantFoldingTest, FoldMat4x3ConstructorTakingMat3x2)
         "   my_FragColor = vec4(m[0], m[1][0]);\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float outputElements[] =
-    {
-        1.0f, 2.0f, 0.0f,
-        3.0f, 4.0f, 0.0f,
-        5.0f, 6.0f, 1.0f,
-        0.0f, 0.0f, 0.0f
-    };
+    float outputElements[] = {1.0f, 2.0f, 0.0f, 3.0f, 4.0f, 0.0f,
+                              5.0f, 6.0f, 1.0f, 0.0f, 0.0f, 0.0f};
     std::vector<float> result(outputElements, outputElements + 12);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
-
 
 // Test that constant mat2 initialization with a vec4 parameter works correctly.
 TEST_F(ConstantFoldingTest, FoldMat2ConstructorTakingVec4)
@@ -548,11 +478,7 @@ TEST_F(ConstantFoldingTest, FoldMat2ConstructorTakingVec4)
         "   gl_FragColor = vec4(m[0], m[1]);\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-    float outputElements[] =
-    {
-        0.0f, 1.0f,
-        2.0f, 3.0f
-    };
+    float outputElements[] = {0.0f, 1.0f, 2.0f, 3.0f};
     std::vector<float> result(outputElements, outputElements + 4);
     ASSERT_TRUE(constantColumnMajorMatrixFoundInAST(result));
 }
@@ -933,6 +859,13 @@ TEST_F(ConstantFoldingTest, FoldIsInfOutOfRangeFloatLiteral)
         "}\n";
     compileAssumeSuccess(shaderString);
     ASSERT_TRUE(constantFoundInAST(true));
+}
+
+// Regression test case of unary + constant folding of a void struct member.
+TEST_F(ConstantFoldingTest, VoidStructMember)
+{
+    constexpr const char *kShaderString = "struct U{void t;}n(){+U().t";
+    ASSERT_FALSE(compile(kShaderString));
 }
 
 // Test that floats that are too small to be represented get flushed to zero.
@@ -1416,4 +1349,248 @@ TEST_F(ConstantFoldingExpressionTest, FoldLdexp)
     const std::string &floatString = "ldexp(0.625, 1)";
     evaluateFloat(floatString);
     ASSERT_TRUE(constantFoundInAST(1.25f));
+}
+
+// Fold a ternary operator.
+TEST_F(ConstantFoldingTest, FoldTernary)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp int;
+        uniform int u;
+        out int my_FragColor;
+        void main()
+        {
+            my_FragColor = (true ? 1 : u);
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_TRUE(constantFoundInAST(1));
+    ASSERT_FALSE(symbolFoundInMain("u"));
+}
+
+// Fold a ternary operator inside a consuming expression.
+TEST_F(ConstantFoldingTest, FoldTernaryInsideExpression)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp int;
+        uniform int u;
+        out int my_FragColor;
+        void main()
+        {
+            my_FragColor = ivec2((true ? 1 : u) + 2, 4).x;
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_TRUE(constantFoundInAST(3));
+    ASSERT_FALSE(symbolFoundInMain("u"));
+}
+
+// Fold indexing into an array constructor.
+TEST_F(ConstantFoldingExpressionTest, FoldArrayConstructorIndexing)
+{
+    const std::string &floatString = "(float[3](-1.0, 1.0, 2.0))[2]";
+    evaluateFloat(floatString);
+    ASSERT_FALSE(constantFoundInAST(-1.0f));
+    ASSERT_FALSE(constantFoundInAST(1.0f));
+    ASSERT_TRUE(constantFoundInAST(2.0f));
+}
+
+// Fold indexing into an array of arrays constructor.
+TEST_F(ConstantFoldingExpressionTest, FoldArrayOfArraysConstructorIndexing)
+{
+    const std::string &floatString = "(float[2][2](float[2](-1.0, 1.0), float[2](2.0, 3.0)))[1][0]";
+    evaluateFloat(floatString);
+    ASSERT_FALSE(constantFoundInAST(-1.0f));
+    ASSERT_FALSE(constantFoundInAST(1.0f));
+    ASSERT_FALSE(constantFoundInAST(3.0f));
+    ASSERT_TRUE(constantFoundInAST(2.0f));
+}
+
+// Fold indexing into a named constant array.
+TEST_F(ConstantFoldingTest, FoldNamedArrayIndexing)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp float;
+        const float[3] arr = float[3](-1.0, 1.0, 2.0);
+        out float my_FragColor;
+        void main()
+        {
+            my_FragColor = arr[1];
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_FALSE(constantFoundInAST(-1.0f));
+    ASSERT_FALSE(constantFoundInAST(2.0f));
+    ASSERT_TRUE(constantFoundInAST(1.0f));
+    // The variable should be pruned out since after folding the indexing, there are no more
+    // references to it.
+    ASSERT_FALSE(symbolFoundInAST("arr"));
+}
+
+// Fold indexing into a named constant array of arrays.
+TEST_F(ConstantFoldingTest, FoldNamedArrayOfArraysIndexing)
+{
+    const std::string &shaderString =
+        R"(#version 310 es
+        precision highp float;
+        const float[2][2] arr = float[2][2](float[2](-1.0, 1.0), float[2](2.0, 3.0));
+        out float my_FragColor;
+        void main()
+        {
+            my_FragColor = arr[0][1];
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_FALSE(constantFoundInAST(-1.0f));
+    ASSERT_FALSE(constantFoundInAST(2.0f));
+    ASSERT_FALSE(constantFoundInAST(3.0f));
+    ASSERT_TRUE(constantFoundInAST(1.0f));
+    // The variable should be pruned out since after folding the indexing, there are no more
+    // references to it.
+    ASSERT_FALSE(symbolFoundInAST("arr"));
+}
+
+// Fold indexing into an array constructor where some of the arguments are constant and others are
+// non-constant but without side effects.
+TEST_F(ConstantFoldingTest, FoldArrayConstructorIndexingWithMixedArguments)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp float;
+        uniform float u;
+        out float my_FragColor;
+        void main()
+        {
+            my_FragColor = float[2](u, 1.0)[1];
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_TRUE(constantFoundInAST(1.0f));
+    ASSERT_FALSE(constantFoundInAST(1));
+    ASSERT_FALSE(symbolFoundInMain("u"));
+}
+
+// Indexing into an array constructor where some of the arguments have side effects can't be folded.
+TEST_F(ConstantFoldingTest, CantFoldArrayConstructorIndexingWithSideEffects)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp float;
+        out float my_FragColor;
+        void main()
+        {
+            float sideEffectTarget = 0.0;
+            float f = float[3](sideEffectTarget = 1.0, 1.0, 2.0)[1];
+            my_FragColor = f + sideEffectTarget;
+        })";
+    compileAssumeSuccess(shaderString);
+    // All of the array constructor arguments should be present in the final AST.
+    ASSERT_TRUE(constantFoundInAST(1.0f));
+    ASSERT_TRUE(constantFoundInAST(2.0f));
+}
+
+// Fold comparing two array constructors.
+TEST_F(ConstantFoldingTest, FoldArrayConstructorEquality)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp float;
+        out float my_FragColor;
+        void main()
+        {
+            const bool b = (float[3](2.0, 1.0, -1.0) == float[3](2.0, 1.0, -1.0));
+            my_FragColor = b ? 3.0 : 4.0;
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_TRUE(constantFoundInAST(3.0f));
+    ASSERT_FALSE(constantFoundInAST(4.0f));
+}
+
+// Fold comparing two named constant arrays.
+TEST_F(ConstantFoldingExpressionTest, FoldNamedArrayEquality)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision highp float;
+        const float[3] arrA = float[3](-1.0, 1.0, 2.0);
+        const float[3] arrB = float[3](-1.0, 1.0, 2.0);
+        out float my_FragColor;
+        void main()
+        {
+            const bool b = (arrA == arrB);
+            my_FragColor = b ? 3.0 : 4.0;
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_TRUE(constantFoundInAST(3.0f));
+    ASSERT_FALSE(constantFoundInAST(4.0f));
+}
+
+// Fold comparing two array of arrays constructors.
+TEST_F(ConstantFoldingTest, FoldArrayOfArraysConstructorEquality)
+{
+    const std::string &shaderString =
+        R"(#version 310 es
+        precision highp float;
+        out float my_FragColor;
+        void main()
+        {
+            const bool b = (float[2][2](float[2](-1.0, 1.0), float[2](2.0, 3.0)) ==
+                            float[2][2](float[2](-1.0, 1.0), float[2](2.0, 1000.0)));
+            my_FragColor = b ? 4.0 : 5.0;
+        })";
+    compileAssumeSuccess(shaderString);
+    ASSERT_TRUE(constantFoundInAST(5.0f));
+    ASSERT_FALSE(constantFoundInAST(4.0f));
+}
+
+// Test that casting a negative float to uint results in a warning. ESSL 3.00.6 section 5.4.1
+// specifies this as an undefined conversion.
+TEST_F(ConstantFoldingExpressionTest, FoldNegativeFloatToUint)
+{
+    const std::string &uintString = "uint(-1.0)";
+    evaluateUint(uintString);
+    ASSERT_TRUE(constantFoundInAST(std::numeric_limits<unsigned int>::max()));
+    ASSERT_TRUE(hasWarning());
+}
+
+// Test that casting a negative float to uint inside a uvec constructor results in a warning. ESSL
+// 3.00.6 section 5.4.1 specifies this as an undefined conversion.
+TEST_F(ConstantFoldingExpressionTest, FoldNegativeFloatToUvec)
+{
+    const std::string &uintString = "uvec4(2.0, 1.0, vec2(0.0, -1.0)).w";
+    evaluateUint(uintString);
+    ASSERT_TRUE(constantFoundInAST(std::numeric_limits<unsigned int>::max()));
+    ASSERT_TRUE(hasWarning());
+}
+
+// Test that a negative float doesn't result in a warning when it is inside a constructor but isn't
+// actually converted.
+TEST_F(ConstantFoldingExpressionTest, NegativeFloatInsideUvecConstructorButOutOfRange)
+{
+    const std::string &uintString = "uvec2(1.0, vec2(0.0, -1.0)).x";
+    evaluateUint(uintString);
+    ASSERT_FALSE(hasWarning());
+}
+
+// Test that a large float (above max int32_t) is converted to unsigned integer correctly.
+TEST_F(ConstantFoldingExpressionTest, LargeFloatToUint)
+{
+    const std::string &uintString = "uint(3221225472.0)";
+    evaluateUint(uintString);
+    ASSERT_TRUE(constantFoundInAST(3221225472u));
+    ASSERT_FALSE(hasWarning());
+}
+
+// Test that folding % with a negative dividend generates a warning.
+TEST_F(ConstantFoldingExpressionTest, IntegerModulusNegativeDividend)
+{
+    const std::string &intString = "(-5) % 3";
+    evaluateInt(intString);
+    ASSERT_TRUE(hasWarning());
+}
+
+// Test that folding % with a negative divisor generates a warning.
+TEST_F(ConstantFoldingExpressionTest, IntegerModulusNegativeDivisor)
+{
+    const std::string &intString = "5 % (-3)";
+    evaluateInt(intString);
+    ASSERT_TRUE(hasWarning());
 }

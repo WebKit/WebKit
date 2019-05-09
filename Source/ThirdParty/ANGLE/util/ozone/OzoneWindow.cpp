@@ -6,17 +6,13 @@
 
 // OzoneWindow.cpp: Implementation of OSWindow for Ozone
 
-#include "ozone/OzoneWindow.h"
+#include "util/ozone/OzoneWindow.h"
 
 int OzoneWindow::sLastDepth = 0;
 
-OzoneWindow::OzoneWindow()
-{
-}
+OzoneWindow::OzoneWindow() {}
 
-OzoneWindow::~OzoneWindow()
-{
-}
+OzoneWindow::~OzoneWindow() {}
 
 bool OzoneWindow::initialize(const std::string &name, size_t width, size_t height)
 {
@@ -24,16 +20,16 @@ bool OzoneWindow::initialize(const std::string &name, size_t width, size_t heigh
     mNative.y = mY = 0;
     mNative.width = mWidth = width;
     mNative.height = mHeight = height;
-    mNative.borderWidth  = 5;
-    mNative.borderHeight = 5;
-    mNative.visible      = 0;
-    mNative.depth        = sLastDepth++;
+    mNative.borderWidth      = 5;
+    mNative.borderHeight     = 5;
+    mNative.visible          = 0;
+    mNative.depth            = sLastDepth++;
     return true;
 }
 
-void OzoneWindow::destroy()
-{
-}
+void OzoneWindow::destroy() {}
+
+void OzoneWindow::resetNativeWindow() {}
 
 EGLNativeWindowType OzoneWindow::getNativeWindow() const
 {
@@ -45,13 +41,9 @@ EGLNativeDisplayType OzoneWindow::getNativeDisplay() const
     return EGL_DEFAULT_DISPLAY;
 }
 
-void OzoneWindow::messageLoop()
-{
-}
+void OzoneWindow::messageLoop() {}
 
-void OzoneWindow::setMousePosition(int x, int y)
-{
-}
+void OzoneWindow::setMousePosition(int x, int y) {}
 
 bool OzoneWindow::setPosition(int x, int y)
 {
@@ -72,11 +64,10 @@ void OzoneWindow::setVisible(bool isVisible)
     mNative.visible = isVisible;
 }
 
-void OzoneWindow::signalTestEvent()
-{
-}
+void OzoneWindow::signalTestEvent() {}
 
-OSWindow *CreateOSWindow()
+// static
+OSWindow *OSWindow::New()
 {
     return new OzoneWindow();
 }

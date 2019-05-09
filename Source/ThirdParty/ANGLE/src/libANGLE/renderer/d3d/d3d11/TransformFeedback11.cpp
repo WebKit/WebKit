@@ -23,14 +23,12 @@ TransformFeedback11::TransformFeedback11(const gl::TransformFeedbackState &state
       mBuffers(state.getIndexedBuffers().size(), nullptr),
       mBufferOffsets(state.getIndexedBuffers().size(), 0),
       mSerial(mRenderer->generateSerial())
-{
-}
+{}
 
-TransformFeedback11::~TransformFeedback11()
-{
-}
+TransformFeedback11::~TransformFeedback11() {}
 
-void TransformFeedback11::begin(GLenum primitiveMode)
+angle::Result TransformFeedback11::begin(const gl::Context *context,
+                                         gl::PrimitiveMode primitiveMode)
 {
     // Reset all the cached offsets to the binding offsets
     mIsDirty = true;
@@ -46,33 +44,48 @@ void TransformFeedback11::begin(GLenum primitiveMode)
             mBufferOffsets[bindingIdx] = 0;
         }
     }
+    mRenderer->getStateManager()->invalidateTransformFeedback();
+    return angle::Result::Continue;
 }
 
-void TransformFeedback11::end()
+angle::Result TransformFeedback11::end(const gl::Context *context)
 {
+    mRenderer->getStateManager()->invalidateTransformFeedback();
     if (mRenderer->getWorkarounds().flushAfterEndingTransformFeedback)
     {
         mRenderer->getDeviceContext()->Flush();
     }
+    return angle::Result::Continue;
 }
 
-void TransformFeedback11::pause()
+angle::Result TransformFeedback11::pause(const gl::Context *context)
 {
+    mRenderer->getStateManager()->invalidateTransformFeedback();
+    return angle::Result::Continue;
 }
 
-void TransformFeedback11::resume()
+angle::Result TransformFeedback11::resume(const gl::Context *context)
 {
+    mRenderer->getStateManager()->invalidateTransformFeedback();
+    return angle::Result::Continue;
 }
 
-void TransformFeedback11::bindGenericBuffer(const gl::BindingPointer<gl::Buffer> &binding)
+angle::Result TransformFeedback11::bindGenericBuffer(const gl::Context *context,
+                                                     const gl::BindingPointer<gl::Buffer> &binding)
 {
+    mRenderer->getStateManager()->invalidateTransformFeedback();
+    return angle::Result::Continue;
 }
 
-void TransformFeedback11::bindIndexedBuffer(size_t index,
-                                            const gl::OffsetBindingPointer<gl::Buffer> &binding)
+angle::Result TransformFeedback11::bindIndexedBuffer(
+    const gl::Context *context,
+    size_t index,
+    const gl::OffsetBindingPointer<gl::Buffer> &binding)
 {
     mIsDirty              = true;
     mBufferOffsets[index] = static_cast<UINT>(binding.getOffset());
+    mRenderer->getStateManager()->invalidateTransformFeedback();
+    return angle::Result::Continue;
 }
 
 void TransformFeedback11::onApply()
@@ -94,8 +107,8 @@ UINT TransformFeedback11::getNumSOBuffers() const
     return static_cast<UINT>(mBuffers.size());
 }
 
-gl::ErrorOrResult<const std::vector<ID3D11Buffer *> *> TransformFeedback11::getSOBuffers(
-    const gl::Context *context)
+angle::Result TransformFeedback11::getSOBuffers(const gl::Context *context,
+                                                const std::vector<ID3D11Buffer *> **buffersOut)
 {
     for (size_t bindingIdx = 0; bindingIdx < mBuffers.size(); bindingIdx++)
     {
@@ -103,12 +116,13 @@ gl::ErrorOrResult<const std::vector<ID3D11Buffer *> *> TransformFeedback11::getS
         if (binding.get() != nullptr)
         {
             Buffer11 *storage = GetImplAs<Buffer11>(binding.get());
-            ANGLE_TRY_RESULT(storage->getBuffer(context, BUFFER_USAGE_VERTEX_OR_TRANSFORM_FEEDBACK),
-                             mBuffers[bindingIdx]);
+            ANGLE_TRY(storage->getBuffer(context, BUFFER_USAGE_VERTEX_OR_TRANSFORM_FEEDBACK,
+                                         &mBuffers[bindingIdx]));
         }
     }
 
-    return &mBuffers;
+    *buffersOut = &mBuffers;
+    return angle::Result::Continue;
 }
 
 const std::vector<UINT> &TransformFeedback11::getSOBufferOffsets() const

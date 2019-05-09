@@ -16,14 +16,16 @@
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramPipeline.h"
+#include "libANGLE/Renderbuffer.h"
 #include "libANGLE/Shader.h"
+#include "libANGLE/Texture.h"
 #include "libANGLE/TransformFeedback.h"
 #include "libANGLE/VertexArray.h"
 
 namespace gl
 {
-class ContextState;
-}
+class State;
+}  // namespace gl
 
 namespace rx
 {
@@ -33,6 +35,7 @@ class ContextImpl;
 class FenceNVImpl;
 class SyncImpl;
 class FramebufferImpl;
+class MemoryObjectImpl;
 class PathImpl;
 class ProgramImpl;
 class ProgramPipelineImpl;
@@ -51,8 +54,8 @@ class GLImplFactory : angle::NonCopyable
     virtual ~GLImplFactory() {}
 
     // Shader creation
-    virtual CompilerImpl *createCompiler() = 0;
-    virtual ShaderImpl *createShader(const gl::ShaderState &data) = 0;
+    virtual CompilerImpl *createCompiler()                           = 0;
+    virtual ShaderImpl *createShader(const gl::ShaderState &data)    = 0;
     virtual ProgramImpl *createProgram(const gl::ProgramState &data) = 0;
 
     // Framebuffer creation
@@ -62,7 +65,7 @@ class GLImplFactory : angle::NonCopyable
     virtual TextureImpl *createTexture(const gl::TextureState &state) = 0;
 
     // Renderbuffer creation
-    virtual RenderbufferImpl *createRenderbuffer() = 0;
+    virtual RenderbufferImpl *createRenderbuffer(const gl::RenderbufferState &state) = 0;
 
     // Buffer creation
     virtual BufferImpl *createBuffer(const gl::BufferState &state) = 0;
@@ -71,9 +74,9 @@ class GLImplFactory : angle::NonCopyable
     virtual VertexArrayImpl *createVertexArray(const gl::VertexArrayState &data) = 0;
 
     // Query and Fence creation
-    virtual QueryImpl *createQuery(GLenum type) = 0;
-    virtual FenceNVImpl *createFenceNV() = 0;
-    virtual SyncImpl *createSync()              = 0;
+    virtual QueryImpl *createQuery(gl::QueryType type) = 0;
+    virtual FenceNVImpl *createFenceNV()               = 0;
+    virtual SyncImpl *createSync()                     = 0;
 
     // Transform Feedback creation
     virtual TransformFeedbackImpl *createTransformFeedback(
@@ -86,6 +89,9 @@ class GLImplFactory : angle::NonCopyable
     virtual ProgramPipelineImpl *createProgramPipeline(const gl::ProgramPipelineState &data) = 0;
 
     virtual std::vector<PathImpl *> createPaths(GLsizei range) = 0;
+
+    // Memory object creation
+    virtual MemoryObjectImpl *createMemoryObject() = 0;
 };
 
 }  // namespace rx

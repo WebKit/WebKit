@@ -9,16 +9,15 @@
 #include "common/angleutils.h"
 #include "compiler/preprocessor/Token.h"
 
+namespace angle
+{
+
 namespace pp
 {
 
-Macro::Macro() : predefined(false), disabled(false), expansionCount(0), type(kTypeObj)
-{
-}
+Macro::Macro() : predefined(false), disabled(false), expansionCount(0), type(kTypeObj) {}
 
-Macro::~Macro()
-{
-}
+Macro::~Macro() {}
 
 bool Macro::equals(const Macro &other) const
 {
@@ -42,3 +41,5 @@ void PredefineMacro(MacroSet *macroSet, const char *name, int value)
 }
 
 }  // namespace pp
+
+}  // namespace angle

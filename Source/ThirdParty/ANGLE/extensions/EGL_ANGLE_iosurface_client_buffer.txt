@@ -1,0 +1,118 @@
+Name
+
+    ANGLE_iosurface_client_buffer
+
+Name Strings
+
+    EGL_ANGLE_iosurface_client_buffer
+
+Contributors
+
+    Corentin Wallez
+    Geoff Lang
+    James Darpinian
+
+Contacts
+
+    Corentin Wallez, Google Inc. (cwallez 'at' google.com)
+
+Status
+
+    Draft
+
+Version
+    Version 2, Apr 1, 2019
+
+Number
+
+    EGL Extension #??
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.4
+    Specification.
+
+Overview
+
+    This extension allows creating EGL surfaces from IOSurface objects.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    None
+
+New Tokens
+
+    Accepted in the <buftype> parameter of eglCreatePbufferFromClientBuffer:
+
+        EGL_IOSURFACE_ANGLE            0x3454
+        EGL_IOSURFACE_PLANE_ANGLE      0x345A
+        EGL_TEXTURE_RECTANGLE_ANGLE    0x345B
+        EGL_TEXTURE_TYPE_ANGLE         0x345C
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE 0x345D
+
+Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
+
+    Replace the last sentence of paragraph 1 of Section 3.5.3 with the
+    following text.
+    "Currently, the only client API resources which may be bound in this
+    fashion are OpenVG VGImage objects and IOSurface objects."
+
+    Replace the third paragraph of Section 3.5.3 with the following text.
+    "<buftype> specifies the type of buffer to be bound. The only allowed values
+    of <buftype> are EGL_OPENVG_IMAGE and EGL_IOSURFACE_ANGLE".
+
+    Append the following text to the fourth paragraph of Section 3.5.3.
+    "When <buftype> is EGL_IOSURFACE_ANGLE, <buffer> must be a valid IOSurface
+    object case into the type EGLClientBuffer."
+
+    Append to the end of Section 3.5.3.
+    "When <buftype> is EGL_IOSURFACE_ANGLE, <attrib_list> must contain all the
+    following attributes otherwise EGL_BAD_PARAMETER is generated. The
+    attributes must satisfy the following constraints otherwise
+    EGL_BAD_ATTRIBUTE is generated:
+      - EGL_TEXTURE_TYPE_ANGLE, and EGL_TEXTURE_INTERNAL_FORMAT_ANGLE followed
+    by OpenGL enums for texture types, and texture internal format
+    respectively.
+      - EGL_TEXTURE_FORMAT with a value of EGL_TEXTURE_RGBA
+      - EGL_WIDTH with a value between 1 and the width of <buffer>.
+      - EGL_HEIGHT with a value between 1 and the height of <buffer>.
+      - EGL_TEXTURE_TARGET with a value of EGL_TEXTURE_RECTANGLE_ANGLE
+      - EGL_IOSURFACE_PLANE_ANGLE with a value between 0 and the number of
+    planes of <buffer> (exclusive).
+
+    In addition the EGL_TEXTURE_TYPE_ANGLE and
+    EGL_TEXTURE_INTERNAL_FORMAT_ANGLE attributes must be one of the
+    combinations listed in table egl.iosurface.formats or an
+    EGL_BAD_PARAMETER is generated. The combination must also be a valid
+    combinations for glTexImage2D or EGL_BAD_PARAMETER is generated."
+
+    ---------------------------------------------------------------------------
+    Texture Type               Texture Internal Format
+    ---------------------------------------------------------------------------
+    GL_UNSIGNED_BYTE           GL_RED
+    GL_UNSIGNED_SHORT          GL_R16UI
+    GL_UNSIGNED_BYTE           GL_RG
+    GL_UNSIGNED_BYTE           GL_BGRA_EXT
+    GL_HALF_FLOAT              GL_RGBA
+    ---------------------------------------------------------------------------
+    Table egl.iosurface.formats - Valid combinations of format, type and
+    internal format for IOSurface-backed pbuffers.
+    ---------------------------------------------------------------------------
+
+    Append to the end of Section 3.5.3.
+    "When a pbuffer is created with type EGL_IOSURFACE_ANGLE, the contents
+    of the associcated IOSurface object are undefined while the pbuffer is
+    bound to a client texture."
+
+Issues
+
+    There are no issues, please move on.
+
+Revision History
+
+    Version 1, 2017/12/06 - first draft.
+    Version 2, 2019/04/01 - Allow MakeCurrent.

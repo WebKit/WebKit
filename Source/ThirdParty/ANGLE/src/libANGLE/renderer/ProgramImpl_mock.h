@@ -24,15 +24,15 @@ class MockProgramImpl : public rx::ProgramImpl
     MockProgramImpl() : ProgramImpl(gl::ProgramState()) {}
     virtual ~MockProgramImpl() { destructor(); }
 
-    MOCK_METHOD3(load, gl::LinkResult(const gl::Context *, gl::InfoLog &, gl::BinaryInputStream *));
+    MOCK_METHOD3(load, angle::Result(const gl::Context *, gl::InfoLog &, gl::BinaryInputStream *));
     MOCK_METHOD2(save, void(const gl::Context *, gl::BinaryOutputStream *));
     MOCK_METHOD1(setBinaryRetrievableHint, void(bool));
     MOCK_METHOD1(setSeparable, void(bool));
 
     MOCK_METHOD3(link,
-                 gl::LinkResult(const gl::Context *,
-                                const gl::ProgramLinkedResources &,
-                                gl::InfoLog &));
+                 std::unique_ptr<LinkEvent>(const gl::Context *,
+                                            const gl::ProgramLinkedResources &,
+                                            gl::InfoLog &));
     MOCK_METHOD2(validate, GLboolean(const gl::Caps &, gl::InfoLog *));
 
     MOCK_METHOD3(setUniform1fv, void(GLint, GLsizei, const GLfloat *));
@@ -62,7 +62,6 @@ class MockProgramImpl : public rx::ProgramImpl
     MOCK_CONST_METHOD3(getUniformiv, void(const gl::Context *, GLint, GLint *));
     MOCK_CONST_METHOD3(getUniformuiv, void(const gl::Context *, GLint, GLuint *));
 
-    MOCK_METHOD2(setUniformBlockBinding, void(GLuint, GLuint));
     MOCK_METHOD4(setPathFragmentInputGen,
                  void(const std::string &, GLenum, GLint, const GLfloat *));
 

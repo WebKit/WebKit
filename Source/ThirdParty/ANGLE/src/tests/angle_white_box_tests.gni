@@ -1,0 +1,22 @@
+# Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+angle_white_box_tests_sources = [
+  "util_tests/PrintSystemInfoTest.cpp",
+  "test_utils/angle_test_configs.cpp",
+  "test_utils/angle_test_configs.h",
+  "test_utils/angle_test_instantiate.cpp",
+  "test_utils/angle_test_instantiate.h",
+  "test_utils/ANGLETest.cpp",
+  "test_utils/ANGLETest.h",
+  "test_utils/gl_raii.h",
+]
+angle_white_box_tests_win_sources = [
+  "egl_tests/EGLDirectCompositionTest.cpp",
+  "gl_tests/D3D11EmulatedIndexedBufferTest.cpp",
+  "gl_tests/D3D11FormatTablesTest.cpp",
+  "gl_tests/D3D11InputLayoutCacheTest.cpp",
+  "gl_tests/D3DTextureTest.cpp",
+  "gl_tests/ErrorMessages.cpp",
+]

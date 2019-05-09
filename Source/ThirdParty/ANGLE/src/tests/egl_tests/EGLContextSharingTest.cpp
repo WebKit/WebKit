@@ -8,11 +8,9 @@
 
 #include <gtest/gtest.h>
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_configs.h"
+#include "util/EGLWindow.h"
 
 using namespace angle;
 
@@ -98,7 +96,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupContextCreation)
     mContexts[0] = eglCreateContext(display, config, nullptr, inShareGroupContextAttribs);
     mContexts[1] = eglCreateContext(display, config, mContexts[1], inShareGroupContextAttribs);
 
-    if (!ANGLETest::eglDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group"))
+    if (!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group"))
     {
         // Make sure an error is generated and early-exit
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
@@ -125,7 +123,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupContextCreation)
 TEST_P(EGLContextSharingTest, DisplayShareGroupObjectSharing)
 {
     EGLDisplay display = getEGLWindow()->getDisplay();
-    if (!ANGLETest::eglDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group"))
+    if (!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group"))
     {
         std::cout << "Test skipped because EGL_ANGLE_display_texture_share_group is not present."
                   << std::endl;
@@ -207,7 +205,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupObjectSharing)
 TEST_P(EGLContextSharingTest, DisplayShareGroupReleasedWithLastContext)
 {
     EGLDisplay display = getEGLWindow()->getDisplay();
-    if (!ANGLETest::eglDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group"))
+    if (!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group"))
     {
         std::cout << "Test skipped because EGL_ANGLE_display_texture_share_group is not present."
                   << std::endl;
@@ -254,4 +252,5 @@ ANGLE_INSTANTIATE_TEST(EGLContextSharingTest,
                        ES2_D3D11(),
                        ES3_D3D11(),
                        ES2_OPENGL(),
-                       ES3_OPENGL());
+                       ES3_OPENGL(),
+                       ES2_VULKAN());

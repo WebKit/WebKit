@@ -2046,10 +2046,10 @@
      (((range)&0x7FF) << 21))
 
 #define NV_CTRL_GVO_COMPOSITE_GET_RANGE(val, range, enable, min, max) \
-    (min) = ((val) >> 0) & 0x3FF;                                     \
-    (max) = ((val) >> 10) & 0x3FF;                                    \
+    (min)    = ((val) >> 0) & 0x3FF;                                  \
+    (max)    = ((val) >> 10) & 0x3FF;                                 \
     (enable) = ((val) >> 20) & 0x1;                                   \
-    (range) = ((val) >> 21) & 0x7FF;
+    (range)  = ((val) >> 21) & 0x7FF;
 
 /*
  * NV_CTRL_GVO_COMPOSITE_CR_KEY_RANGE - Set the values of a CR

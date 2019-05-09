@@ -10,8 +10,11 @@
 
 #include "ANGLEPerfTest.h"
 
+#include "util/gles_loader_autogen.h"
+
 namespace
 {
+constexpr unsigned int kIterationsPerStep = 5;
 
 enum class BufferType
 {
@@ -93,10 +96,11 @@ struct BlitFramebufferParams final : public RenderTestParams
 {
     BlitFramebufferParams()
     {
-        majorVersion = 3;
-        minorVersion = 0;
-        windowWidth  = 256;
-        windowHeight = 256;
+        iterationsPerStep = kIterationsPerStep;
+        majorVersion      = 3;
+        minorVersion      = 0;
+        windowWidth       = 256;
+        windowHeight      = 256;
     }
 
     std::string suffix() const override
@@ -114,7 +118,6 @@ struct BlitFramebufferParams final : public RenderTestParams
     BufferType type              = BufferType::COLOR;
     unsigned int framebufferSize = 512;
     unsigned int samples         = 0;
-    unsigned int iterations      = 5;
 };
 
 std::ostream &operator<<(std::ostream &os, const BlitFramebufferParams &params)
@@ -216,7 +219,7 @@ void BlitFramebufferPerf::drawBenchmark()
             break;
     }
 
-    for (unsigned int iteration = 0; iteration < param.iterations; ++iteration)
+    for (unsigned int iteration = 0; iteration < param.iterationsPerStep; ++iteration)
     {
         glBlitFramebuffer(0, 0, size, size, 0, 0, size, size, mask, GL_NEAREST);
     }
@@ -235,7 +238,6 @@ BlitFramebufferParams D3D11(BufferType type, unsigned int samples)
     params.samples       = samples;
     return params;
 }
-
 }  // anonymous namespace
 
 // TODO(jmadill): Programatically generate these combinations.
@@ -247,4 +249,4 @@ ANGLE_INSTANTIATE_TEST(BlitFramebufferPerf,
                        D3D11(BufferType::COLOR, 2),
                        D3D11(BufferType::DEPTH, 2),
                        D3D11(BufferType::STENCIL, 2),
-                       D3D11(BufferType::DEPTH_STENCIL, 2))
+                       D3D11(BufferType::DEPTH_STENCIL, 2));

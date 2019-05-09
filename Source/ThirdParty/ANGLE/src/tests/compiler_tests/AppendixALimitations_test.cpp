@@ -9,9 +9,9 @@
 
 #include "gtest/gtest.h"
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/ShaderCompileTreeTest.h"
 
 using namespace sh;
@@ -20,6 +20,7 @@ class AppendixALimitationsTest : public ShaderCompileTreeTest
 {
   public:
     AppendixALimitationsTest() {}
+
   protected:
     ::GLenum getShaderType() const override { return GL_FRAGMENT_SHADER; }
     ShShaderSpec getShaderSpec() const override { return SH_WEBGL_SPEC; }

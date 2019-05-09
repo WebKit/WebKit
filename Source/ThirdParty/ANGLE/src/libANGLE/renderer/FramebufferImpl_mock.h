@@ -23,34 +23,34 @@ class MockFramebufferImpl : public rx::FramebufferImpl
     MockFramebufferImpl() : rx::FramebufferImpl(gl::FramebufferState()) {}
     virtual ~MockFramebufferImpl() { destructor(); }
 
-    MOCK_METHOD3(discard, gl::Error(const gl::Context *, size_t, const GLenum *));
-    MOCK_METHOD3(invalidate, gl::Error(const gl::Context *, size_t, const GLenum *));
+    MOCK_METHOD3(discard, angle::Result(const gl::Context *, size_t, const GLenum *));
+    MOCK_METHOD3(invalidate, angle::Result(const gl::Context *, size_t, const GLenum *));
     MOCK_METHOD4(invalidateSub,
-                 gl::Error(const gl::Context *, size_t, const GLenum *, const gl::Rectangle &));
+                 angle::Result(const gl::Context *, size_t, const GLenum *, const gl::Rectangle &));
 
-    MOCK_METHOD2(clear, gl::Error(const gl::Context *, GLbitfield));
-    MOCK_METHOD4(clearBufferfv, gl::Error(const gl::Context *, GLenum, GLint, const GLfloat *));
-    MOCK_METHOD4(clearBufferuiv, gl::Error(const gl::Context *, GLenum, GLint, const GLuint *));
-    MOCK_METHOD4(clearBufferiv, gl::Error(const gl::Context *, GLenum, GLint, const GLint *));
-    MOCK_METHOD5(clearBufferfi, gl::Error(const gl::Context *, GLenum, GLint, GLfloat, GLint));
+    MOCK_METHOD2(clear, angle::Result(const gl::Context *, GLbitfield));
+    MOCK_METHOD4(clearBufferfv, angle::Result(const gl::Context *, GLenum, GLint, const GLfloat *));
+    MOCK_METHOD4(clearBufferuiv, angle::Result(const gl::Context *, GLenum, GLint, const GLuint *));
+    MOCK_METHOD4(clearBufferiv, angle::Result(const gl::Context *, GLenum, GLint, const GLint *));
+    MOCK_METHOD5(clearBufferfi, angle::Result(const gl::Context *, GLenum, GLint, GLfloat, GLint));
 
     MOCK_CONST_METHOD1(getImplementationColorReadFormat, GLenum(const gl::Context *));
     MOCK_CONST_METHOD1(getImplementationColorReadType, GLenum(const gl::Context *));
     MOCK_METHOD5(readPixels,
-                 gl::Error(const gl::Context *, const gl::Rectangle &, GLenum, GLenum, void *));
+                 angle::Result(const gl::Context *, const gl::Rectangle &, GLenum, GLenum, void *));
 
-    MOCK_CONST_METHOD2(getSamplePosition, gl::Error(size_t, GLfloat *));
+    MOCK_CONST_METHOD3(getSamplePosition, angle::Result(const gl::Context *, size_t, GLfloat *));
 
     MOCK_METHOD5(blit,
-                 gl::Error(const gl::Context *,
-                           const gl::Rectangle &,
-                           const gl::Rectangle &,
-                           GLbitfield,
-                           GLenum));
+                 angle::Result(const gl::Context *,
+                               const gl::Rectangle &,
+                               const gl::Rectangle &,
+                               GLbitfield,
+                               GLenum));
 
     MOCK_CONST_METHOD1(checkStatus, bool(const gl::Context *));
 
-    MOCK_METHOD2(syncState, void(const gl::Context *, const gl::Framebuffer::DirtyBits &));
+    MOCK_METHOD2(syncState, angle::Result(const gl::Context *, const gl::Framebuffer::DirtyBits &));
 
     MOCK_METHOD0(destructor, void());
 };

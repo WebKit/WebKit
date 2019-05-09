@@ -37,6 +37,12 @@ void RNG::reseed(unsigned int newSeed)
     mGenerator.seed(newSeed);
 }
 
+bool RNG::randomBool(float probTrue)
+{
+    std::bernoulli_distribution dist(probTrue);
+    return dist(mGenerator);
+}
+
 int RNG::randomInt()
 {
     std::uniform_int_distribution<int> intDistribution;
@@ -64,6 +70,13 @@ float RNG::randomFloat()
 float RNG::randomFloatBetween(float min, float max)
 {
     std::uniform_real_distribution<float> floatDistribution(min, max);
+    return floatDistribution(mGenerator);
+}
+
+float RNG::randomFloatNonnegative()
+{
+    std::uniform_real_distribution<float> floatDistribution(0.0f,
+                                                            std::numeric_limits<float>::max());
     return floatDistribution(mGenerator);
 }
 

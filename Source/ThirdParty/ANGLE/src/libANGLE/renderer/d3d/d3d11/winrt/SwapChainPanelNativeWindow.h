@@ -15,7 +15,8 @@
 
 namespace rx
 {
-class SwapChainPanelNativeWindow : public InspectableNativeWindow, public std::enable_shared_from_this<SwapChainPanelNativeWindow>
+class SwapChainPanelNativeWindow : public InspectableNativeWindow,
+                                   public std::enable_shared_from_this<SwapChainPanelNativeWindow>
 {
   public:
     ~SwapChainPanelNativeWindow();
@@ -38,16 +39,17 @@ class SwapChainPanelNativeWindow : public InspectableNativeWindow, public std::e
   private:
     ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> mSwapChainPanel;
     ComPtr<ABI::Windows::UI::Core::ICoreDispatcher> mSwapChainPanelDispatcher;
-    ComPtr<IMap<HSTRING, IInspectable*>> mPropertyMap;
+    ComPtr<IMap<HSTRING, IInspectable *>> mPropertyMap;
     ComPtr<IDXGISwapChain1> mSwapChain;
 };
 
-[uuid(8ACBD974-8187-4508-AD80-AEC77F93CF36)]
-class SwapChainPanelSizeChangedHandler :
-    public Microsoft::WRL::RuntimeClass<Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::ClassicCom>, ABI::Windows::UI::Xaml::ISizeChangedEventHandler>
+[uuid(8ACBD974 - 8187 - 4508 - AD80 - AEC77F93CF36)] class SwapChainPanelSizeChangedHandler
+    : public Microsoft::WRL::RuntimeClass<
+          Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::ClassicCom>,
+          ABI::Windows::UI::Xaml::ISizeChangedEventHandler>
 {
   public:
-    SwapChainPanelSizeChangedHandler() { }
+    SwapChainPanelSizeChangedHandler() {}
     HRESULT RuntimeClassInitialize(std::shared_ptr<InspectableNativeWindow> host)
     {
         if (!host)
@@ -60,7 +62,8 @@ class SwapChainPanelSizeChangedHandler :
     }
 
     // ISizeChangedEventHandler
-    IFACEMETHOD(Invoke)(IInspectable *sender, ABI::Windows::UI::Xaml::ISizeChangedEventArgs *sizeChangedEventArgs)
+    IFACEMETHOD(Invoke)
+    (IInspectable *sender, ABI::Windows::UI::Xaml::ISizeChangedEventArgs *sizeChangedEventArgs)
     {
         std::shared_ptr<InspectableNativeWindow> host = mHost.lock();
         if (host)
@@ -90,4 +93,4 @@ HRESULT GetSwapChainPanelSize(
     const ComPtr<ABI::Windows::UI::Core::ICoreDispatcher> &dispatcher,
     Size *windowSize);
 }
-#endif // LIBANGLE_RENDERER_D3D_D3D11_WINRT_SWAPCHAINPANELNATIVEWINDOW_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_WINRT_SWAPCHAINPANELNATIVEWINDOW_H_

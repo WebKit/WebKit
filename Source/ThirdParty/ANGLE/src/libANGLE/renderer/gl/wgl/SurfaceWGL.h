@@ -16,7 +16,7 @@ namespace rx
 class SurfaceWGL : public SurfaceGL
 {
   public:
-    SurfaceWGL(const egl::SurfaceState &state, RendererGL *renderer) : SurfaceGL(state, renderer) {}
+    SurfaceWGL(const egl::SurfaceState &state) : SurfaceGL(state) {}
 
     ~SurfaceWGL() override {}
 

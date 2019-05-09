@@ -27,7 +27,7 @@ class SRGBTextureTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vs =
+        constexpr char kVS[] =
             "precision highp float;\n"
             "attribute vec4 position;\n"
             "varying vec2 texcoord;\n"
@@ -38,7 +38,7 @@ class SRGBTextureTest : public ANGLETest
             "   texcoord = (position.xy * 0.5) + 0.5;\n"
             "}\n";
 
-        const std::string fs =
+        constexpr char kFS[] =
             "precision highp float;\n"
             "uniform sampler2D tex;\n"
             "varying vec2 texcoord;\n"
@@ -48,7 +48,7 @@ class SRGBTextureTest : public ANGLETest
             "   gl_FragColor = texture2D(tex, texcoord);\n"
             "}\n";
 
-        mProgram = CompileProgram(vs, fs);
+        mProgram = CompileProgram(kVS, kFS);
         ASSERT_NE(0u, mProgram);
 
         mTextureLocation = glGetUniformLocation(mProgram, "tex");
@@ -62,34 +62,55 @@ class SRGBTextureTest : public ANGLETest
         ANGLETest::TearDown();
     }
 
+    GLenum getSRGBA8TextureInternalFormat() const
+    {
+        return getClientMajorVersion() >= 3 ? GL_SRGB8_ALPHA8 : GL_SRGB_ALPHA_EXT;
+    }
+
+    GLenum getSRGBA8TextureFormat() const
+    {
+        return getClientMajorVersion() >= 3 ? GL_RGBA : GL_SRGB_ALPHA_EXT;
+    }
+
+    GLenum getSRGB8TextureInternalFormat() const
+    {
+        return getClientMajorVersion() >= 3 ? GL_SRGB8 : GL_SRGB_EXT;
+    }
+
+    GLenum getSRGB8TextureFormat() const
+    {
+        return getClientMajorVersion() >= 3 ? GL_RGB : GL_SRGB_EXT;
+    }
+
     GLuint mProgram        = 0;
     GLint mTextureLocation = -1;
 };
 
+// GenerateMipmaps should generate INVALID_OPERATION in ES 2.0 / WebGL 1.0 with EXT_sRGB.
+// https://bugs.chromium.org/p/chromium/issues/detail?id=769989
 TEST_P(SRGBTextureTest, SRGBValidation)
 {
     // TODO(fjhenigman): Figure out why this fails on Ozone Intel.
-    if (IsOzone() && IsIntel() && IsOpenGLES())
-    {
-        std::cout << "Test skipped on Ozone Intel." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel() && IsOpenGLES());
 
-    bool supported = extensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
+    bool supported = IsGLExtensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
 
     GLuint tex = 0;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
 
-    GLubyte pixel[3] = { 0 };
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, 1, 1, 0, GL_SRGB, GL_UNSIGNED_BYTE, pixel);
+    GLubyte pixel[3] = {0};
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGB8TextureInternalFormat(), 1, 1, 0,
+                 getSRGB8TextureFormat(), GL_UNSIGNED_BYTE, pixel);
     if (supported)
     {
         EXPECT_GL_NO_ERROR();
 
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, GL_SRGB, GL_UNSIGNED_BYTE, pixel);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, getSRGB8TextureFormat(), GL_UNSIGNED_BYTE,
+                        pixel);
         EXPECT_GL_NO_ERROR();
 
+        // Mipmap generation always generates errors for SRGB unsized in ES2 or SRGB8 sized in ES3.
         glGenerateMipmap(GL_TEXTURE_2D);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
     }
@@ -104,29 +125,27 @@ TEST_P(SRGBTextureTest, SRGBValidation)
 TEST_P(SRGBTextureTest, SRGBAValidation)
 {
     // TODO(fjhenigman): Figure out why this fails on Ozone Intel.
-    if (IsOzone() && IsIntel() && IsOpenGLES())
-    {
-        std::cout << "Test skipped on Ozone Intel." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel() && IsOpenGLES());
 
-    bool supported = extensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
+    bool supported = IsGLExtensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
 
     GLuint tex = 0;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
 
-    GLubyte pixel[4] = { 0 };
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE, pixel);
+    GLubyte pixel[4] = {0};
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, pixel);
     if (supported)
     {
         EXPECT_GL_NO_ERROR();
 
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE, pixel);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE,
+                        pixel);
         EXPECT_GL_NO_ERROR();
 
         glGenerateMipmap(GL_TEXTURE_2D);
-        if (getClientMajorVersion() == 2)
+        if (getClientMajorVersion() < 3)
         {
             EXPECT_GL_ERROR(GL_INVALID_OPERATION);
         }
@@ -143,9 +162,34 @@ TEST_P(SRGBTextureTest, SRGBAValidation)
     glDeleteTextures(1, &tex);
 }
 
+// Test that sized SRGBA formats allow generating mipmaps
+TEST_P(SRGBTextureTest, SRGBASizedValidation)
+{
+    // TODO(fjhenigman): Figure out why this fails on Ozone Intel.
+    ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel() && IsOpenGLES());
+
+    // ES3 required for sized SRGB textures
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    GLubyte pixel[4] = {0};
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, pixel);
+
+    EXPECT_GL_NO_ERROR();
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+    EXPECT_GL_NO_ERROR();
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+    EXPECT_GL_NO_ERROR();
+}
+
 TEST_P(SRGBTextureTest, SRGBARenderbuffer)
 {
-    bool supported = extensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
+    bool supported = IsGLExtensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
 
     GLuint rbo = 0;
     glGenRenderbuffers(1, &rbo);
@@ -173,7 +217,8 @@ TEST_P(SRGBTextureTest, SRGBARenderbuffer)
 
     GLint colorEncoding = 0;
     glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                          GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT, &colorEncoding);
+                                          GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT,
+                                          &colorEncoding);
     if (supported)
     {
         EXPECT_GL_NO_ERROR();
@@ -191,10 +236,10 @@ TEST_P(SRGBTextureTest, SRGBARenderbuffer)
 // Verify that if the srgb decode extension is available, srgb textures are too
 TEST_P(SRGBTextureTest, SRGBDecodeExtensionAvailability)
 {
-    bool hasSRGBDecode = extensionEnabled("GL_EXT_texture_sRGB_decode");
+    bool hasSRGBDecode = IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode");
     if (hasSRGBDecode)
     {
-        bool hasSRGBTextures = extensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() >= 3;
+        bool hasSRGBTextures = IsGLExtensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() >= 3;
         EXPECT_TRUE(hasSRGBTextures);
     }
 }
@@ -203,26 +248,17 @@ TEST_P(SRGBTextureTest, SRGBDecodeExtensionAvailability)
 TEST_P(SRGBTextureTest, SRGBDecodeTextureParameter)
 {
     // TODO(fjhenigman): Figure out why this fails on Ozone Intel.
-    if (IsOzone() && IsIntel() && IsOpenGLES())
-    {
-        std::cout << "Test skipped on Ozone Intel." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel() && IsOpenGLES());
 
-    if (!extensionEnabled("GL_EXT_texture_sRGB_decode"))
-    {
-        std::cout << "Test skipped because GL_EXT_texture_sRGB_decode is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
 
     GLColor linearColor(64, 127, 191, 255);
     GLColor srgbColor(13, 54, 133, 255);
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex.get());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
-                 &linearColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
     ASSERT_GL_NO_ERROR();
 
@@ -243,20 +279,16 @@ TEST_P(SRGBTextureTest, SRGBDecodeTextureParameter)
 // Test basic functionality of SRGB decode using the sampler parameter
 TEST_P(SRGBTextureTest, SRGBDecodeSamplerParameter)
 {
-    if (!extensionEnabled("GL_EXT_texture_sRGB_decode") || getClientMajorVersion() < 3)
-    {
-        std::cout << "Test skipped because GL_EXT_texture_sRGB_decode or ES3 is not available."
-                  << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode") ||
+                       getClientMajorVersion() < 3);
 
     GLColor linearColor(64, 127, 191, 255);
     GLColor srgbColor(13, 54, 133, 255);
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex.get());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
-                 &linearColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
     ASSERT_GL_NO_ERROR();
 
     GLSampler sampler;
@@ -280,17 +312,9 @@ TEST_P(SRGBTextureTest, SRGBDecodeSamplerParameter)
 // Test that mipmaps are generated correctly for sRGB textures
 TEST_P(SRGBTextureTest, GenerateMipmaps)
 {
-    if (getClientMajorVersion() < 3)
-    {
-        std::cout << "Test skipped because ES3 is not available." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
-    if (IsOpenGL() && (IsIntel() || IsAMD()))
-    {
-        std::cout << "Test skipped on Intel and AMD OpenGL drivers." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && ((IsIntel() && IsOSX()) || IsAMD()));
 
     auto createAndReadBackTexture = [this](GLenum internalFormat, const GLColor &color) {
         constexpr GLsizei width  = 128;
@@ -344,7 +368,8 @@ TEST_P(SRGBTextureTest, GenerateMipmaps)
     }
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(SRGBTextureTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
@@ -352,6 +377,7 @@ ANGLE_INSTANTIATE_TEST(SRGBTextureTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());
 
-} // namespace
+}  // namespace angle

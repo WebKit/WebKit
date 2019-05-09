@@ -1,0 +1,239 @@
+# Copyright 2017 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../gni/angle.gni")
+
+angle_executable("shader_translator") {
+  sources = [
+    "shader_translator/shader_translator.cpp",
+  ]
+  include_dirs = [ "../include" ]
+  deps = [
+    "../:translator",
+  ]
+}
+
+config("sample_util_config") {
+  include_dirs = [ "sample_util" ]
+}
+
+angle_static_library("sample_util") {
+  sources = [
+    "sample_util/SampleApplication.cpp",
+    "sample_util/SampleApplication.h",
+    "sample_util/texture_utils.cpp",
+    "sample_util/texture_utils.h",
+    "sample_util/tga_utils.cpp",
+    "sample_util/tga_utils.h",
+  ]
+  data_deps = [
+    "../:libEGL${angle_libs_suffix}",
+    "../:libGLESv1_CM${angle_libs_suffix}",
+    "../:libGLESv2${angle_libs_suffix}",
+  ]
+  public_deps = [
+    "../:angle_common",
+    "../:angle_util",
+    "../:angle_util_loader_headers",
+  ]
+  configs += [ "../:library_name_config" ]
+  public_configs = [
+    ":sample_util_config",
+    "../:no_gl_prototypes",
+  ]
+}
+
+template("angle_sample") {
+  if (defined(invoker.data)) {
+    copy(target_name + "_data") {
+      sources = invoker.data
+      outputs = [
+        "$root_out_dir/{{source_file_part}}",
+      ]
+    }
+  }
+
+  angle_executable(target_name) {
+    deps = [
+      ":sample_util",
+    ]
+    if (defined(invoker.data)) {
+      deps += [ ":${target_name}_data" ]
+    }
+    sources = invoker.sources
+  }
+}
+
+angle_sample("hello_triangle") {
+  sources = [
+    "hello_triangle/HelloTriangle.cpp",
+  ]
+}
+
+angle_sample("mip_map_2d") {
+  sources = [
+    "mip_map_2d/MipMap2D.cpp",
+  ]
+}
+
+angle_sample("multi_texture") {
+  sources = [
+    "multi_texture/MultiTexture.cpp",
+  ]
+  data = [
+    "multi_texture/basemap.tga",
+    "multi_texture/lightmap.tga",
+  ]
+}
+
+angle_sample("multi_window") {
+  sources = [
+    "multi_window/MultiWindow.cpp",
+  ]
+}
+
+angle_sample("multiple_draw_buffers") {
+  sources = [
+    "multiple_draw_buffers/MultipleDrawBuffers.cpp",
+  ]
+  data = [
+    "multiple_draw_buffers/multiple_draw_buffers_copy_fs.glsl",
+    "multiple_draw_buffers/multiple_draw_buffers_fs.glsl",
+    "multiple_draw_buffers/multiple_draw_buffers_vs.glsl",
+  ]
+}
+
+angle_sample("multiview") {
+  sources = [
+    "multiview/Multiview.cpp",
+  ]
+}
+
+angle_sample("particle_system") {
+  sources = [
+    "particle_system/ParticleSystem.cpp",
+  ]
+  data = [
+    "particle_system/smoke.tga",
+  ]
+}
+
+angle_sample("post_sub_buffer") {
+  sources = [
+    "post_sub_buffer/PostSubBuffer.cpp",
+  ]
+}
+
+angle_sample("simple_instancing") {
+  sources = [
+    "simple_instancing/SimpleInstancing.cpp",
+  ]
+}
+
+angle_sample("simple_texture_2d") {
+  sources = [
+    "simple_texture_2d/SimpleTexture2D.cpp",
+  ]
+}
+
+angle_sample("simple_texture_cubemap") {
+  sources = [
+    "simple_texture_cubemap/SimpleTextureCubemap.cpp",
+  ]
+}
+
+angle_sample("simple_vertex_shader") {
+  sources = [
+    "simple_vertex_shader/SimpleVertexShader.cpp",
+  ]
+}
+
+angle_sample("stencil_operations") {
+  sources = [
+    "stencil_operations/StencilOperations.cpp",
+  ]
+}
+
+angle_sample("tex_redef_microbench") {
+  sources = [
+    "tex_redef_microbench/TexRedefMicroBench.cpp",
+  ]
+}
+
+angle_sample("texture_wrap") {
+  sources = [
+    "texture_wrap/TextureWrap.cpp",
+  ]
+}
+
+angle_sample("tri_fan_microbench") {
+  sources = [
+    "tri_fan_microbench/TriFanMicroBench.cpp",
+  ]
+}
+
+angle_sample("window_test") {
+  sources = [
+    "WindowTest/WindowTest.cpp",
+  ]
+}
+
+angle_sample("gles1_hello_triangle") {
+  sources = [
+    "gles1/HelloTriangle.cpp",
+  ]
+}
+
+angle_sample("gles1_simple_texture_2d") {
+  sources = [
+    "gles1/SimpleTexture2D.cpp",
+  ]
+}
+
+angle_sample("gles1_simple_lighting") {
+  sources = [
+    "gles1/SimpleLighting.cpp",
+  ]
+}
+
+angle_sample("gles1_flat_shading") {
+  sources = [
+    "gles1/FlatShading.cpp",
+  ]
+}
+
+angle_sample("gles1_draw_texture") {
+  sources = [
+    "gles1/DrawTexture.cpp",
+  ]
+}
+
+group("all") {
+  testonly = true
+  deps = [
+    ":gles1_draw_texture",
+    ":gles1_flat_shading",
+    ":gles1_hello_triangle",
+    ":gles1_simple_lighting",
+    ":gles1_simple_texture_2d",
+    ":hello_triangle",
+    ":mip_map_2d",
+    ":multi_texture",
+    ":multi_window",
+    ":multiple_draw_buffers",
+    ":multiview",
+    ":particle_system",
+    ":post_sub_buffer",
+    ":sample_util",
+    ":simple_instancing",
+    ":simple_texture_2d",
+    ":simple_texture_cubemap",
+    ":simple_vertex_shader",
+    ":stencil_operations",
+    ":tex_redef_microbench",
+    ":texture_wrap",
+    ":tri_fan_microbench",
+    ":window_test",
+  ]
+}

@@ -64,28 +64,26 @@ class SwizzleTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vertexShaderSource =
-            R"(precision highp float;
-            attribute vec4 position;
-            varying vec2 texcoord;
+        constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_Position = position;
-                texcoord = (position.xy * 0.5) + 0.5;
-            })";
+void main()
+{
+    gl_Position = position;
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
 
-        const std::string fragmentShaderSource =
-            R"(precision highp float;
-            uniform sampler2D tex;
-            varying vec2 texcoord;
+        constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D tex;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_FragColor = texture2D(tex, texcoord);
-            })";
+void main()
+{
+    gl_FragColor = texture2D(tex, texcoord);
+})";
 
-        mProgram = CompileProgram(vertexShaderSource, fragmentShaderSource);
+        mProgram = CompileProgram(kVS, kFS);
         ASSERT_NE(0u, mProgram);
 
         mTextureUniformLocation = glGetUniformLocation(mProgram, "tex");
@@ -104,7 +102,7 @@ class SwizzleTest : public ANGLETest
     }
 
     template <typename T>
-    void init2DTexture(GLenum internalFormat, GLenum dataFormat, GLenum dataType, const T* data)
+    void init2DTexture(GLenum internalFormat, GLenum dataFormat, GLenum dataType, const T *data)
     {
         glGenTextures(1, &mTexture);
         glBindTexture(GL_TEXTURE_2D, mTexture);
@@ -114,11 +112,16 @@ class SwizzleTest : public ANGLETest
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
-    void init2DCompressedTexture(GLenum internalFormat, GLsizei width, GLsizei height, GLsizei dataSize, const GLubyte* data)
+    void init2DCompressedTexture(GLenum internalFormat,
+                                 GLsizei width,
+                                 GLsizei height,
+                                 GLsizei dataSize,
+                                 const GLubyte *data)
     {
         glGenTextures(1, &mTexture);
         glBindTexture(GL_TEXTURE_2D, mTexture);
-        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, width, height, 0, dataSize, data);
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, width, height, 0,
+                               dataSize, data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -128,25 +131,25 @@ class SwizzleTest : public ANGLETest
     {
         switch (swizzle)
         {
-          case GL_RED:   return unswizzled[0];
-          case GL_GREEN: return unswizzled[1];
-          case GL_BLUE:  return unswizzled[2];
-          case GL_ALPHA: return unswizzled[3];
-          case GL_ZERO:  return 0;
-          case GL_ONE:   return 255;
-          default:       return 0;
+            case GL_RED:
+                return unswizzled[0];
+            case GL_GREEN:
+                return unswizzled[1];
+            case GL_BLUE:
+                return unswizzled[2];
+            case GL_ALPHA:
+                return unswizzled[3];
+            case GL_ZERO:
+                return 0;
+            case GL_ONE:
+                return 255;
+            default:
+                return 0;
         }
     }
 
     void runTest2D()
     {
-        // TODO(jmadill): Figure out why this fails on Intel.
-        if (IsIntel() && GetParam().getRenderer() == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
-        {
-            std::cout << "Test skipped on Intel." << std::endl;
-            return;
-        }
-
         glUseProgram(mProgram);
         glBindTexture(GL_TEXTURE_2D, mTexture);
         glUniform1i(mTextureUniformLocation, 0);
@@ -174,8 +177,7 @@ class SwizzleTest : public ANGLETest
             glClear(GL_COLOR_BUFFER_BIT);
             drawQuad(mProgram, "position", 0.5f);
 
-            EXPECT_PIXEL_EQ(0, 0,
-                            getExpectedValue(permutation.swizzleRed, unswizzled),
+            EXPECT_PIXEL_EQ(0, 0, getExpectedValue(permutation.swizzleRed, unswizzled),
                             getExpectedValue(permutation.swizzleGreen, unswizzled),
                             getExpectedValue(permutation.swizzleBlue, unswizzled),
                             getExpectedValue(permutation.swizzleAlpha, unswizzled));
@@ -206,7 +208,7 @@ class SwizzleIntegerTest : public SwizzleTest
     {
         ANGLETest::SetUp();
 
-        const std::string vertexShaderSource =
+        constexpr char kVS[] =
             "#version 300 es\n"
             "precision highp float;\n"
             "in vec4 position;\n"
@@ -218,7 +220,7 @@ class SwizzleIntegerTest : public SwizzleTest
             "    texcoord = (position.xy * 0.5) + 0.5;\n"
             "}\n";
 
-        const std::string fragmentShaderSource =
+        constexpr char kFS[] =
             "#version 300 es\n"
             "precision highp float;\n"
             "precision highp usampler2D;\n"
@@ -236,7 +238,7 @@ class SwizzleIntegerTest : public SwizzleTest
             "    my_FragColor = vec4(s) / 255.0;\n"
             "}\n";
 
-        mProgram = CompileProgram(vertexShaderSource, fragmentShaderSource);
+        mProgram = CompileProgram(kVS, kFS);
         ASSERT_NE(0u, mProgram);
 
         mTextureUniformLocation = glGetUniformLocation(mProgram, "tex");
@@ -249,28 +251,28 @@ class SwizzleIntegerTest : public SwizzleTest
 
 TEST_P(SwizzleTest, RGBA8_2D)
 {
-    GLubyte data[] = { 1, 64, 128, 200 };
+    GLubyte data[] = {1, 64, 128, 200};
     init2DTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, RGB8_2D)
 {
-    GLubyte data[] = { 77, 66, 55 };
+    GLubyte data[] = {77, 66, 55};
     init2DTexture(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, RG8_2D)
 {
-    GLubyte data[] = { 11, 99 };
+    GLubyte data[] = {11, 99};
     init2DTexture(GL_RG8, GL_RG, GL_UNSIGNED_BYTE, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, R8_2D)
 {
-    GLubyte data[] = { 2 };
+    GLubyte data[] = {2};
     init2DTexture(GL_R8, GL_RED, GL_UNSIGNED_BYTE, data);
     runTest2D();
 }
@@ -284,49 +286,49 @@ TEST_P(SwizzleTest, RGB10_A2_2D)
 
 TEST_P(SwizzleTest, RGBA32F_2D)
 {
-    GLfloat data[] = { 0.25f, 0.5f, 0.75f, 0.8f };
+    GLfloat data[] = {0.25f, 0.5f, 0.75f, 0.8f};
     init2DTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, RGB32F_2D)
 {
-    GLfloat data[] = { 0.1f, 0.2f, 0.3f };
+    GLfloat data[] = {0.1f, 0.2f, 0.3f};
     init2DTexture(GL_RGB32F, GL_RGB, GL_FLOAT, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, RG32F_2D)
 {
-    GLfloat data[] = { 0.9f, 0.1f  };
+    GLfloat data[] = {0.9f, 0.1f};
     init2DTexture(GL_RG32F, GL_RG, GL_FLOAT, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, R32F_2D)
 {
-    GLfloat data[] = { 0.5f };
+    GLfloat data[] = {0.5f};
     init2DTexture(GL_R32F, GL_RED, GL_FLOAT, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, D32F_2D)
 {
-    GLfloat data[] = { 0.5f };
+    GLfloat data[] = {0.5f};
     init2DTexture(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, D16_2D)
 {
-    GLushort data[] = { 0xFF };
+    GLushort data[] = {0xFF};
     init2DTexture(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data);
     runTest2D();
 }
 
 TEST_P(SwizzleTest, D24_2D)
 {
-    GLuint data[] = { 0xFFFF };
+    GLuint data[] = {0xFFFF};
     init2DTexture(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, data);
     runTest2D();
 }
@@ -354,11 +356,7 @@ TEST_P(SwizzleTest, LA8_2D)
 
 TEST_P(SwizzleTest, L32F_2D)
 {
-    if (!extensionEnabled("GL_OES_texture_float"))
-    {
-        std::cout << "Test skipped due to missing GL_OES_texture_float." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
 
     GLfloat data[] = {0.7f};
     init2DTexture(GL_LUMINANCE, GL_LUMINANCE, GL_FLOAT, data);
@@ -367,11 +365,7 @@ TEST_P(SwizzleTest, L32F_2D)
 
 TEST_P(SwizzleTest, A32F_2D)
 {
-    if (!extensionEnabled("GL_OES_texture_float"))
-    {
-        std::cout << "Test skipped due to missing GL_OES_texture_float." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
 
     GLfloat data[] = {
         0.4f,
@@ -382,14 +376,11 @@ TEST_P(SwizzleTest, A32F_2D)
 
 TEST_P(SwizzleTest, LA32F_2D)
 {
-    if (!extensionEnabled("GL_OES_texture_float"))
-    {
-        std::cout << "Test skipped due to missing GL_OES_texture_float." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
 
     GLfloat data[] = {
-        0.5f, 0.6f,
+        0.5f,
+        0.6f,
     };
     init2DTexture(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_FLOAT, data);
     runTest2D();
@@ -399,13 +390,10 @@ TEST_P(SwizzleTest, LA32F_2D)
 
 TEST_P(SwizzleTest, CompressedDXT_2D)
 {
-    if (!extensionEnabled("GL_EXT_texture_compression_dxt1"))
-    {
-        std::cout << "Test skipped due to missing GL_EXT_texture_compression_dxt1." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
-    init2DCompressedTexture(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width, pixel_0_height, pixel_0_size, pixel_0_data);
+    init2DCompressedTexture(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width, pixel_0_height,
+                            pixel_0_size, pixel_0_data);
     runTest2D();
 }
 
@@ -447,7 +435,8 @@ TEST_P(SwizzleTest, SubUpdate)
     EXPECT_PIXEL_COLOR_EQ(0, 0, expectedUpdateData);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(SwizzleTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGL(3, 3), ES3_OPENGLES());
 ANGLE_INSTANTIATE_TEST(SwizzleIntegerTest,
                        ES3_D3D11(),
@@ -455,4 +444,4 @@ ANGLE_INSTANTIATE_TEST(SwizzleIntegerTest,
                        ES3_OPENGL(3, 3),
                        ES3_OPENGLES());
 
-} // namespace
+}  // namespace

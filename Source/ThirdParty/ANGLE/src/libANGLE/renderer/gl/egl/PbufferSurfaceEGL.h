@@ -9,8 +9,8 @@
 #ifndef LIBANGLE_RENDERER_GL_EGL_PBUFFERSURFACEEGL_H_
 #define LIBANGLE_RENDERER_GL_EGL_PBUFFERSURFACEEGL_H_
 
-#include <vector>
 #include <EGL/egl.h>
+#include <vector>
 
 #include "libANGLE/renderer/gl/egl/SurfaceEGL.h"
 
@@ -20,10 +20,7 @@ namespace rx
 class PbufferSurfaceEGL : public SurfaceEGL
 {
   public:
-    PbufferSurfaceEGL(const egl::SurfaceState &state,
-                      const FunctionsEGL *egl,
-                      EGLConfig config,
-                      RendererGL *renderer);
+    PbufferSurfaceEGL(const egl::SurfaceState &state, const FunctionsEGL *egl, EGLConfig config);
     ~PbufferSurfaceEGL() override;
 
     egl::Error initialize(const egl::Display *display) override;

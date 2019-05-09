@@ -71,6 +71,12 @@ struct ShaderVariable
     bool isArrayOfArrays() const { return arraySizes.size() >= 2u; }
     bool isArray() const { return !arraySizes.empty(); }
     unsigned int getArraySizeProduct() const;
+    // Return the inner array size product.
+    // For example, if there's a variable declared as size 3 array of size 4 array of size 5 array
+    // of int:
+    //   int a[3][4][5];
+    // then getInnerArraySizeProduct of a would be 4*5.
+    unsigned int getInnerArraySizeProduct() const;
 
     // Array size 0 means not an array when passed to or returned from these functions.
     // Note that setArraySize() is deprecated and should not be used inside ANGLE.
@@ -106,9 +112,10 @@ struct ShaderVariable
     // If no match is found, return false.
     bool findInfoByMappedName(const std::string &mappedFullName,
                               const ShaderVariable **leafVar,
-                              std::string* originalFullName) const;
+                              std::string *originalFullName) const;
 
     bool isBuiltIn() const;
+    bool isEmulatedBuiltIn() const;
 
     GLenum type;
     GLenum precision;
@@ -124,11 +131,26 @@ struct ShaderVariable
     //   int a[3][4];
     // then the flattenedOffsetInParentArrays of a[2] would be 2.
     // and flattenedOffsetInParentArrays of a[2][1] would be 2*4 + 1 = 9.
-    unsigned int flattenedOffsetInParentArrays;
+    int parentArrayIndex() const
+    {
+        return hasParentArrayIndex() ? flattenedOffsetInParentArrays : 0;
+    }
 
+    void setParentArrayIndex(int index) { flattenedOffsetInParentArrays = index; }
+
+    bool hasParentArrayIndex() const { return flattenedOffsetInParentArrays != -1; }
+
+    // Static use means that the variable is accessed somewhere in the shader source.
     bool staticUse;
+    // A variable is active unless the compiler determined that it is not accessed by the shader.
+    // All active variables are statically used, but not all statically used variables are
+    // necessarily active. GLES 3.0.5 section 2.12.6. GLES 3.1 section 7.3.1.
+    bool active;
     std::vector<ShaderVariable> fields;
     std::string structName;
+
+    // Only applies to interface block fields. Kept here for simplicity.
+    bool isRowMajorLayout;
 
   protected:
     bool isSameVariableAtLinkTime(const ShaderVariable &other,
@@ -136,10 +158,9 @@ struct ShaderVariable
                                   bool matchName) const;
 
     bool operator==(const ShaderVariable &other) const;
-    bool operator!=(const ShaderVariable &other) const
-    {
-        return !operator==(other);
-    }
+    bool operator!=(const ShaderVariable &other) const { return !operator==(other); }
+
+    int flattenedOffsetInParentArrays;
 };
 
 // A variable with an integer location to pass back to the GL API: either uniform (can have location
@@ -163,13 +184,13 @@ struct Uniform : public VariableWithLocation
     Uniform(const Uniform &other);
     Uniform &operator=(const Uniform &other);
     bool operator==(const Uniform &other) const;
-    bool operator!=(const Uniform &other) const
-    {
-        return !operator==(other);
-    }
+    bool operator!=(const Uniform &other) const { return !operator==(other); }
 
     int binding;
+    GLenum imageUnitFormat;
     int offset;
+    bool readonly;
+    bool writeonly;
 
     // Decide whether two uniforms are the same at shader link time,
     // assuming one from vertex shader and the other from fragment shader.
@@ -196,6 +217,9 @@ struct OutputVariable : public VariableWithLocation
     OutputVariable &operator=(const OutputVariable &other);
     bool operator==(const OutputVariable &other) const;
     bool operator!=(const OutputVariable &other) const { return !operator==(other); }
+
+    // From EXT_blend_func_extended.
+    int index;
 };
 
 struct InterfaceBlockField : public ShaderVariable
@@ -205,32 +229,23 @@ struct InterfaceBlockField : public ShaderVariable
     InterfaceBlockField(const InterfaceBlockField &other);
     InterfaceBlockField &operator=(const InterfaceBlockField &other);
     bool operator==(const InterfaceBlockField &other) const;
-    bool operator!=(const InterfaceBlockField &other) const
-    {
-        return !operator==(other);
-    }
+    bool operator!=(const InterfaceBlockField &other) const { return !operator==(other); }
 
     // Decide whether two InterfaceBlock fields are the same at shader
     // link time, assuming one from vertex shader and the other from
     // fragment shader.
     // See GLSL ES Spec 3.00.3, sec 4.3.7.
-    bool isSameInterfaceBlockFieldAtLinkTime(
-        const InterfaceBlockField &other) const;
-
-    bool isRowMajorLayout;
+    bool isSameInterfaceBlockFieldAtLinkTime(const InterfaceBlockField &other) const;
 };
 
 struct Varying : public VariableWithLocation
 {
     Varying();
     ~Varying();
-    Varying(const Varying &otherg);
+    Varying(const Varying &other);
     Varying &operator=(const Varying &other);
     bool operator==(const Varying &other) const;
-    bool operator!=(const Varying &other) const
-    {
-        return !operator==(other);
-    }
+    bool operator!=(const Varying &other) const { return !operator==(other); }
 
     // Decide whether two varyings are the same at shader link time,
     // assuming one from vertex shader and the other from fragment shader.
@@ -270,9 +285,14 @@ struct InterfaceBlock
     std::string instanceName;
     unsigned int arraySize;
     BlockLayoutType layout;
+
+    // Deprecated. Matrix packing should only be queried from individual fields of the block.
+    // TODO(oetuaho): Remove this once it is no longer used in Chromium.
     bool isRowMajorLayout;
+
     int binding;
     bool staticUse;
+    bool active;
     BlockType blockType;
     std::vector<InterfaceBlockField> fields;
 };
@@ -280,18 +300,8 @@ struct InterfaceBlock
 struct WorkGroupSize
 {
     // Must have a trivial default constructor since it is used in YYSTYPE.
-    WorkGroupSize() = default;
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-braces"
-#endif
-    explicit constexpr WorkGroupSize(int initialSize)
-        : localSizeQualifiers{initialSize, initialSize, initialSize}
-    {
-    }
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
+    inline WorkGroupSize() = default;
+    inline explicit constexpr WorkGroupSize(int initialSize);
 
     void fill(int fillValue);
     void setLocalSize(int localSizeX, int localSizeY, int localSizeZ);
@@ -314,9 +324,13 @@ struct WorkGroupSize
     // Checks whether either all of the values are set, or none of them are.
     bool isLocalSizeValid() const;
 
-    std::array<int, 3> localSizeQualifiers;
+    int localSizeQualifiers[3];
 };
+
+inline constexpr WorkGroupSize::WorkGroupSize(int initialSize)
+    : localSizeQualifiers{initialSize, initialSize, initialSize}
+{}
 
 }  // namespace sh
 
-#endif // GLSLANG_SHADERVARS_H_
+#endif  // GLSLANG_SHADERVARS_H_

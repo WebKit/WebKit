@@ -1673,6 +1673,46 @@ void R10G10B10A2::average(R10G10B10A2 *dst, const R10G10B10A2 *src1, const R10G1
     dst->A = gl::average(src1->A, src2->A);
 }
 
+void R10G10B10A2S::readColor(gl::ColorI *dst, const R10G10B10A2S *src)
+{
+    dst->red   = src->R;
+    dst->green = src->G;
+    dst->blue  = src->B;
+    dst->alpha = src->A;
+}
+
+void R10G10B10A2S::readColor(gl::ColorF *dst, const R10G10B10A2S *src)
+{
+    dst->red   = gl::normalizedToFloat<10>(src->R);
+    dst->green = gl::normalizedToFloat<10>(src->G);
+    dst->blue  = gl::normalizedToFloat<10>(src->B);
+    dst->alpha = gl::normalizedToFloat<2>(src->A);
+}
+
+void R10G10B10A2S::writeColor(R10G10B10A2S *dst, const gl::ColorI *src)
+{
+    dst->R = static_cast<int32_t>(src->red);
+    dst->G = static_cast<int32_t>(src->green);
+    dst->B = static_cast<int32_t>(src->blue);
+    dst->A = static_cast<int32_t>(src->alpha);
+}
+
+void R10G10B10A2S::writeColor(R10G10B10A2S *dst, const gl::ColorF *src)
+{
+    dst->R = gl::floatToNormalized<10, int32_t>(src->red);
+    dst->G = gl::floatToNormalized<10, int32_t>(src->green);
+    dst->B = gl::floatToNormalized<10, int32_t>(src->blue);
+    dst->A = gl::floatToNormalized<2, int32_t>(src->alpha);
+}
+
+void R10G10B10A2S::average(R10G10B10A2S *dst, const R10G10B10A2S *src1, const R10G10B10A2S *src2)
+{
+    dst->R = gl::average(src1->R, src2->R);
+    dst->G = gl::average(src1->G, src2->G);
+    dst->B = gl::average(src1->B, src2->B);
+    dst->A = gl::average(src1->A, src2->A);
+}
+
 void R9G9B9E5::readColor(gl::ColorF *dst, const R9G9B9E5 *src)
 {
     gl::convert999E5toRGBFloats(gl::bitCast<uint32_t>(*src), &dst->red, &dst->green, &dst->blue);
@@ -1719,4 +1759,77 @@ void R11G11B10F::average(R11G11B10F *dst, const R11G11B10F *src1, const R11G11B1
     dst->B = gl::averageFloat10(src1->B, src2->B);
 }
 
+void D24S8::ReadDepthStencil(DepthStencil *dst, const D24S8 *src)
+{
+    dst->depth   = gl::normalizedToFloat<24>(src->D);
+    dst->stencil = gl::getShiftedData<8, 24>(src->S);
+}
+
+void D24S8::WriteDepthStencil(D24S8 *dst, const DepthStencil *src)
+{
+    dst->D = gl::floatToNormalized<24, uint32_t>(static_cast<float>(src->depth));
+    dst->S = src->stencil & 0xFF;
+}
+
+void S8::ReadDepthStencil(DepthStencil *dst, const S8 *src)
+{
+    UNIMPLEMENTED();
+}
+
+void S8::WriteDepthStencil(S8 *dst, const DepthStencil *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D16::ReadDepthStencil(DepthStencil *dst, const D16 *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D16::WriteDepthStencil(D16 *dst, const DepthStencil *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D24::ReadDepthStencil(DepthStencil *dst, const D24 *src)
+{
+    dst->depth = gl::normalizedToFloat<24>(src->D);
+}
+
+void D24::WriteDepthStencil(D24 *dst, const DepthStencil *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D32F::ReadDepthStencil(DepthStencil *dst, const D32F *src)
+{
+    dst->depth = src->D;
+}
+
+void D32F::WriteDepthStencil(D32F *dst, const DepthStencil *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D32::ReadDepthStencil(DepthStencil *dst, const D32 *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D32::WriteDepthStencil(D32 *dst, const DepthStencil *src)
+{
+    UNIMPLEMENTED();
+}
+
+void D32FS8::ReadDepthStencil(DepthStencil *dst, const D32FS8 *src)
+{
+    dst->depth   = src->D;
+    dst->stencil = gl::getShiftedData<8, 24>(static_cast<uint32_t>(src->S));
+}
+
+void D32FS8::WriteDepthStencil(D32FS8 *dst, const DepthStencil *src)
+{
+    dst->D = static_cast<float>(src->depth);
+    dst->S = src->stencil & 0xFF;
+}
 }  // namespace angle

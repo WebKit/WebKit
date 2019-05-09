@@ -7,28 +7,31 @@
 #ifndef PREPROCESSOR_TESTS_MOCK_DIRECTIVE_HANDLER_H_
 #define PREPROCESSOR_TESTS_MOCK_DIRECTIVE_HANDLER_H_
 
-#include "gmock/gmock.h"
 #include "compiler/preprocessor/DirectiveHandlerBase.h"
+#include "gmock/gmock.h"
+
+namespace angle
+{
 
 class MockDirectiveHandler : public pp::DirectiveHandler
 {
   public:
-    MOCK_METHOD2(handleError,
-        void(const pp::SourceLocation& loc, const std::string& msg));
+    MOCK_METHOD2(handleError, void(const pp::SourceLocation &loc, const std::string &msg));
 
     MOCK_METHOD4(handlePragma,
-        void(const pp::SourceLocation& loc,
-             const std::string& name,
-             const std::string& value,
-             bool stdgl));
+                 void(const pp::SourceLocation &loc,
+                      const std::string &name,
+                      const std::string &value,
+                      bool stdgl));
 
     MOCK_METHOD3(handleExtension,
-        void(const pp::SourceLocation& loc,
-             const std::string& name,
-             const std::string& behavior));
+                 void(const pp::SourceLocation &loc,
+                      const std::string &name,
+                      const std::string &behavior));
 
-    MOCK_METHOD2(handleVersion,
-        void(const pp::SourceLocation& loc, int version));
+    MOCK_METHOD2(handleVersion, void(const pp::SourceLocation &loc, int version));
 };
+
+}  // namespace angle
 
 #endif  // PREPROCESSOR_TESTS_MOCK_DIRECTIVE_HANDLER_H_

@@ -32,7 +32,7 @@ class ClientArraysTest : public ANGLETest
 // the GL extension should always be present
 TEST_P(ClientArraysTest, ExtensionStringExposed)
 {
-    EXPECT_TRUE(extensionEnabled("GL_ANGLE_client_arrays"));
+    EXPECT_TRUE(IsGLExtensionEnabled("GL_ANGLE_client_arrays"));
 }
 
 // Verify that GL_CLIENT_ARRAYS_ANGLE can be queried but not changed
@@ -51,7 +51,7 @@ TEST_P(ClientArraysTest, QueryValidation)
     GLboolean boolValue = GL_TRUE;
     glGetBooleanv(GL_CLIENT_ARRAYS_ANGLE, &boolValue);
     EXPECT_GL_NO_ERROR();
-    EXPECT_GL_FALSE(GL_FALSE);
+    EXPECT_GL_FALSE(boolValue);
 
     EXPECT_GL_FALSE(glIsEnabled(GL_CLIENT_ARRAYS_ANGLE));
     EXPECT_GL_NO_ERROR();
@@ -76,21 +76,14 @@ TEST_P(ClientArraysTest, ForbidsClientSideElementBuffer)
 {
     ASSERT_GL_FALSE(glIsEnabled(GL_CLIENT_ARRAYS_ANGLE));
 
-    const std::string &vert =
+    constexpr char kVS[] =
         "attribute vec3 a_pos;\n"
         "void main()\n"
         "{\n"
         "    gl_Position = vec4(a_pos, 1.0);\n"
         "}\n";
 
-    const std::string &frag =
-        "precision highp float;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = vec4(1.0);\n"
-        "}\n";
-
-    ANGLE_GL_PROGRAM(program, vert, frag);
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
 
     GLint posLocation = glGetAttribLocation(program.get(), "a_pos");
     ASSERT_NE(-1, posLocation);
@@ -123,5 +116,6 @@ ANGLE_INSTANTIATE_TEST(ClientArraysTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
-}  // namespace
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());
+}  // namespace angle

@@ -11,6 +11,9 @@
 #include "compiler/preprocessor/Input.h"
 #include "compiler/preprocessor/Lexer.h"
 
+namespace angle
+{
+
 namespace pp
 {
 
@@ -54,5 +57,7 @@ class Tokenizer : public Lexer
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_TOKENIZER_H_

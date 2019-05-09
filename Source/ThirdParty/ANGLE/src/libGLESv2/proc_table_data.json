@@ -1,4 +1,177 @@
 {
+    "GLES1 core": [
+        "glAlphaFunc",
+        "glClearColor",
+        "glClearDepthf",
+        "glClipPlanef",
+        "glColor4f",
+        "glDepthRangef",
+        "glFogf",
+        "glFogfv",
+        "glFrustumf",
+        "glGetClipPlanef",
+        "glGetFloatv",
+        "glGetLightfv",
+        "glGetMaterialfv",
+        "glGetTexEnvfv",
+        "glGetTexParameterfv",
+        "glLightModelf",
+        "glLightModelfv",
+        "glLightf",
+        "glLightfv",
+        "glLineWidth",
+        "glLoadMatrixf",
+        "glMaterialf",
+        "glMaterialfv",
+        "glMultMatrixf",
+        "glMultiTexCoord4f",
+        "glNormal3f",
+        "glOrthof",
+        "glPointParameterf",
+        "glPointParameterfv",
+        "glPointSize",
+        "glPolygonOffset",
+        "glRotatef",
+        "glScalef",
+        "glTexEnvf",
+        "glTexEnvfv",
+        "glTexParameterf",
+        "glTexParameterfv",
+        "glTranslatef",
+        "glActiveTexture",
+        "glAlphaFuncx",
+        "glBindBuffer",
+        "glBindTexture",
+        "glBlendFunc",
+        "glBufferData",
+        "glBufferSubData",
+        "glClear",
+        "glClearColorx",
+        "glClearDepthx",
+        "glClearStencil",
+        "glClientActiveTexture",
+        "glClipPlanex",
+        "glColor4ub",
+        "glColor4x",
+        "glColorMask",
+        "glColorPointer",
+        "glCompressedTexImage2D",
+        "glCompressedTexSubImage2D",
+        "glCopyTexImage2D",
+        "glCopyTexSubImage2D",
+        "glCullFace",
+        "glDeleteBuffers",
+        "glDeleteTextures",
+        "glDepthFunc",
+        "glDepthMask",
+        "glDepthRangex",
+        "glDisable",
+        "glDisableClientState",
+        "glDrawArrays",
+        "glDrawElements",
+        "glEnable",
+        "glEnableClientState",
+        "glFinish",
+        "glFlush",
+        "glFogx",
+        "glFogxv",
+        "glFrontFace",
+        "glFrustumx",
+        "glGetBooleanv",
+        "glGetBufferParameteriv",
+        "glGetClipPlanex",
+        "glGenBuffers",
+        "glGenTextures",
+        "glGetError",
+        "glGetFixedv",
+        "glGetIntegerv",
+        "glGetLightxv",
+        "glGetMaterialxv",
+        "glGetPointerv",
+        "glGetString",
+        "glGetTexEnviv",
+        "glGetTexEnvxv",
+        "glGetTexParameteriv",
+        "glGetTexParameterxv",
+        "glHint",
+        "glIsBuffer",
+        "glIsEnabled",
+        "glIsTexture",
+        "glLightModelx",
+        "glLightModelxv",
+        "glLightx",
+        "glLightxv",
+        "glLineWidthx",
+        "glLoadIdentity",
+        "glLoadMatrixx",
+        "glLogicOp",
+        "glMaterialx",
+        "glMaterialxv",
+        "glMatrixMode",
+        "glMultMatrixx",
+        "glMultiTexCoord4x",
+        "glNormal3x",
+        "glNormalPointer",
+        "glOrthox",
+        "glPixelStorei",
+        "glPointParameterx",
+        "glPointParameterxv",
+        "glPointSizex",
+        "glPolygonOffsetx",
+        "glPopMatrix",
+        "glPushMatrix",
+        "glReadPixels",
+        "glRotatex",
+        "glSampleCoverage",
+        "glSampleCoveragex",
+        "glScalex",
+        "glScissor",
+        "glShadeModel",
+        "glStencilFunc",
+        "glStencilMask",
+        "glStencilOp",
+        "glTexCoordPointer",
+        "glTexEnvi",
+        "glTexEnvx",
+        "glTexEnviv",
+        "glTexEnvxv",
+        "glTexImage2D",
+        "glTexParameteri",
+        "glTexParameterx",
+        "glTexParameteriv",
+        "glTexParameterxv",
+        "glTexSubImage2D",
+        "glTranslatex",
+        "glVertexPointer",
+        "glViewport"
+    ],
+
+    "GL_OES_draw_texture": [
+        "glDrawTexsOES",
+        "glDrawTexiOES",
+        "glDrawTexxOES",
+        "glDrawTexsvOES",
+        "glDrawTexivOES",
+        "glDrawTexxvOES",
+        "glDrawTexfOES",
+        "glDrawTexfvOES"
+    ],
+
+    "GL_OES_matrix_palette": [
+        "glCurrentPaletteMatrixOES",
+        "glLoadPaletteFromModelViewMatrixOES",
+        "glMatrixIndexPointerOES",
+        "glWeightPointerOES"
+    ],
+
+    "GL_OES_point_size_array": [
+        "glPointSizePointerOES"
+    ],
+
+    "GL_OES_query_matrix": [
+        "glQueryMatrixxOES"
+    ],
+
     "GLES2 core": [
         "glActiveTexture",
         "glAttachShader",
@@ -170,8 +343,48 @@
         "glGetTranslatedShaderSourceANGLE"
     ],
 
+    "GL_CHROMIUM_framebuffer_mixed_samples": [
+         "glMatrixLoadfCHROMIUM",
+         "glMatrixLoadIdentityCHROMIUM",
+         "glCoverageModulationCHROMIUM"
+    ],
+
+    "GL_CHROMIUM_path_rendering": [
+         "glGenPathsCHROMIUM",
+         "glDeletePathsCHROMIUM",
+         "glIsPathCHROMIUM",
+         "glPathCommandsCHROMIUM",
+         "glPathParameterfCHROMIUM",
+         "glPathParameteriCHROMIUM",
+         "glGetPathParameterfvCHROMIUM",
+         "glGetPathParameterivCHROMIUM",
+         "glPathStencilFuncCHROMIUM",
+         "glStencilFillPathCHROMIUM",
+         "glStencilStrokePathCHROMIUM",
+         "glCoverFillPathCHROMIUM",
+         "glCoverStrokePathCHROMIUM",
+         "glStencilThenCoverFillPathCHROMIUM",
+         "glStencilThenCoverStrokePathCHROMIUM",
+         "glCoverFillPathInstancedCHROMIUM",
+         "glCoverStrokePathInstancedCHROMIUM",
+         "glStencilFillPathInstancedCHROMIUM",
+         "glStencilStrokePathInstancedCHROMIUM",
+         "glStencilThenCoverFillPathInstancedCHROMIUM",
+         "glStencilThenCoverStrokePathInstancedCHROMIUM",
+         "glBindFragmentInputLocationCHROMIUM",
+         "glProgramPathFragmentInputGenCHROMIUM"
+    ],
+
+    "GL_EXT_blend_func_extended": [
+        "glBindFragDataLocationIndexedEXT",
+        "glBindFragDataLocationEXT",
+        "glGetProgramResourceLocationIndexEXT",
+        "glGetFragDataIndexEXT"
+    ],
+
     "GL_EXT_texture_storage": [
-        "glTexStorage2DEXT"
+        "glTexStorage2DEXT",
+        "glTexStorage3DEXT"
     ],
 
     "GL_EXT_robustness": [
@@ -213,6 +426,12 @@
         "glDrawArraysInstancedANGLE",
         "glDrawElementsInstancedANGLE",
         "glVertexAttribDivisorANGLE"
+    ],
+
+    "GL_EXT_instanced_arrays": [
+        "glDrawArraysInstancedEXT",
+        "glDrawElementsInstancedEXT",
+        "glVertexAttribDivisorEXT"
     ],
 
     "GL_OES_get_program_binary": [
@@ -274,6 +493,11 @@
 
     "GL_CHROMIUM_copy_compressed_texture": [
         "glCompressedCopyTextureCHROMIUM"
+    ],
+
+    "GL_ANGLE_copy_texture_3D":[
+        "glCopyTexture3DANGLE",
+        "glCopySubTexture3DANGLE"
     ],
 
     "GL_ANGLE_request_extension": [
@@ -347,9 +571,34 @@
         "glGetQueryObjectui64vRobustANGLE"
     ],
 
-    "GL_ANGLE_multiview": [
-        "glFramebufferTextureMultiviewLayeredANGLE",
-        "glFramebufferTextureMultiviewSideBySideANGLE"
+    "GL_ANGLE_multi_draw": [
+      "glMultiDrawArraysANGLE",
+      "glMultiDrawArraysInstancedANGLE",
+      "glMultiDrawElementsANGLE",
+      "glMultiDrawElementsInstancedANGLE"
+    ],
+
+    "GL_OVR_multiview2": [
+        "glFramebufferTextureMultiviewOVR"
+    ],
+
+    "GL_KHR_parallel_shader_compile": [
+        "glMaxShaderCompilerThreadsKHR"
+    ],
+
+    "GL_OES_texture_storage_multisample_2d_array": [
+        "glTexStorage3DMultisampleOES"
+    ],
+
+    "GL_OES_texture_border_clamp": [
+        "glTexParameterIivOES",
+        "glTexParameterIuivOES",
+        "glGetTexParameterIivOES",
+        "glGetTexParameterIuivOES",
+        "glSamplerParameterIivOES",
+        "glSamplerParameterIuivOES",
+        "glGetSamplerParameterIivOES",
+        "glGetSamplerParameterIuivOES"
     ],
 
     "GLES3 core": [
@@ -530,6 +779,22 @@
         "glVertexBindingDivisor"
     ],
 
+    "GL_EXT_geometry_shader": [
+        "glFramebufferTextureEXT"
+    ],
+
+    "GL_ANGLE_texture_multisample": [
+      "glTexStorage2DMultisampleANGLE",
+      "glGetTexLevelParameterfvANGLE",
+      "glGetTexLevelParameterivANGLE",
+      "glGetMultisamplefvANGLE",
+      "glSampleMaskiANGLE"
+    ],
+
+    "GL_ANGLE_provoking_vertex": [
+      "glProvokingVertexANGLE"
+    ],
+
     "EGL 1.0": [
         "eglChooseConfig",
         "eglCopyBuffers",
@@ -598,7 +863,9 @@
     ],
 
     "EGL_EXT_platform_base": [
-        "eglGetPlatformDisplayEXT"
+        "eglGetPlatformDisplayEXT",
+        "eglCreatePlatformWindowSurfaceEXT",
+        "eglCreatePlatformPixmapSurfaceEXT"
     ],
 
     "EGL_EXT_device_query": [
@@ -635,17 +902,34 @@
         "eglStreamConsumerGLTextureExternalAttribsNV"
     ],
 
-    "EGL_ANGLE_stream_producer_d3d_texture_nv12": [
-        "eglCreateStreamProducerD3DTextureNV12ANGLE",
-        "eglStreamPostD3DTextureNV12ANGLE"
+    "EGL_ANGLE_stream_producer_d3d_texture": [
+        "eglCreateStreamProducerD3DTextureANGLE",
+        "eglStreamPostD3DTextureANGLE"
     ],
 
+    "EGL_KHR_fence_sync": [
+        "eglCreateSyncKHR",
+        "eglDestroySyncKHR",
+        "eglClientWaitSyncKHR",
+        "eglGetSyncAttribKHR"
+    ],
+    "EGL_KHR_wait_sync": [
+        "eglWaitSyncKHR"
+    ],
     "EGL_CHROMIUM_get_sync_values": [
         "eglGetSyncValuesCHROMIUM"
     ],
 
-    "EGL_EXT_swap_buffers_with_damage": [
-        "eglSwapBuffersWithDamageEXT"
+    "EGL_KHR_swap_buffers_with_damage": [
+        "eglSwapBuffersWithDamageKHR"
+    ],
+
+    "EGL_ANDROID_presentation_time": [
+        "eglPresentationTimeANDROID"
+    ],
+
+    "EGL_ANDROID_blob_cache": [
+        "eglSetBlobCacheFuncsANDROID"
     ],
 
     "EGL_ANGLE_program_cache_control": [
@@ -655,8 +939,62 @@
         "eglProgramCacheResizeANGLE"
     ],
 
+    "EGL_KHR_debug": [
+        "eglDebugMessageControlKHR",
+        "eglQueryDebugKHR",
+        "eglLabelObjectKHR"
+    ],
+
+    "EGL_ANDROID_get_frame_timestamps": [
+        "eglGetCompositorTimingSupportedANDROID",
+        "eglGetCompositorTimingANDROID",
+        "eglGetNextFrameIdANDROID",
+        "eglGetFrameTimestampSupportedANDROID",
+        "eglGetFrameTimestampsANDROID"
+    ],
+
     "angle::Platform related entry points": [
         "ANGLEGetDisplayPlatform",
         "ANGLEResetDisplayPlatform"
+    ],
+
+    "GL_EXT_memory_object/GL_EXT_semaphore": [
+        "glGetUnsignedBytevEXT",
+        "glGetUnsignedBytei_vEXT"
+    ],
+
+    "GL_EXT_memory_object": [
+        "glDeleteMemoryObjectsEXT",
+        "glIsMemoryObjectEXT",
+        "glCreateMemoryObjectsEXT",
+        "glMemoryObjectParameterivEXT",
+        "glGetMemoryObjectParameterivEXT",
+        "glTexStorageMem2DEXT",
+        "glTexStorageMem2DMultisampleEXT",
+        "glTexStorageMem3DEXT",
+        "glTexStorageMem3DMultisampleEXT",
+        "glBufferStorageMemEXT"
+    ],
+
+    "GL_EXT_memory_object_fd": [
+        "glImportMemoryFdEXT"
+    ],
+
+    "GL_EXT_semaphore": [
+        "glGenSemaphoresEXT",
+        "glDeleteSemaphoresEXT",
+        "glIsSemaphoreEXT",
+        "glSemaphoreParameterui64vEXT",
+        "glGetSemaphoreParameterui64vEXT",
+        "glWaitSemaphoreEXT",
+        "glSignalSemaphoreEXT"
+    ],
+
+    "GL_EXT_semaphore_fd": [
+        "glImportSemaphoreFdEXT"
+    ],
+
+    "GL_CHROMIUM_lose_context": [
+        "glLoseContextCHROMIUM"
     ]
 }

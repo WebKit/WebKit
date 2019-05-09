@@ -9,7 +9,7 @@
 #ifndef UTIL_ANDROID_WINDOW_H_
 #define UTIL_ANDROID_WINDOW_H_
 
-#include "OSWindow.h"
+#include "util/OSWindow.h"
 
 class AndroidWindow : public OSWindow
 {
@@ -20,6 +20,7 @@ class AndroidWindow : public OSWindow
     bool initialize(const std::string &name, size_t width, size_t height) override;
     void destroy() override;
 
+    void resetNativeWindow() override;
     EGLNativeWindowType getNativeWindow() const override;
     EGLNativeDisplayType getNativeDisplay() const override;
 

@@ -10,7 +10,7 @@
 #include <sstream>
 
 #include "ANGLEPerfTest.h"
-#include "shader_utils.h"
+#include "util/shader_utils.h"
 
 using namespace angle;
 
@@ -21,6 +21,8 @@ struct InterleavedAttributeDataParams final : public RenderTestParams
 {
     InterleavedAttributeDataParams()
     {
+        iterationsPerStep = 1;
+
         // Common default values
         majorVersion = 2;
         minorVersion = 0;
@@ -70,6 +72,11 @@ class InterleavedAttributeDataBenchmark
 InterleavedAttributeDataBenchmark::InterleavedAttributeDataBenchmark()
     : ANGLERenderTest("InterleavedAttributeData", GetParam()), mPointSpriteProgram(0)
 {
+    // Timing out on Intel. http://crbug.com/921004
+    if (GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
+    {
+        mSkipTest = true;
+    }
 }
 
 void InterleavedAttributeDataBenchmark::initializeBenchmark()
@@ -77,7 +84,7 @@ void InterleavedAttributeDataBenchmark::initializeBenchmark()
     const auto &params = GetParam();
 
     // Compile point sprite shaders
-    const std::string vs =
+    constexpr char kVS[] =
         "attribute vec4 aPosition;"
         "attribute vec4 aColor;"
         "varying vec4 vColor;"
@@ -88,7 +95,7 @@ void InterleavedAttributeDataBenchmark::initializeBenchmark()
         "    vColor = aColor;"
         "}";
 
-    const std::string fs =
+    constexpr char kFS[] =
         "precision mediump float;"
         "varying vec4 vColor;"
         "void main()"
@@ -96,7 +103,7 @@ void InterleavedAttributeDataBenchmark::initializeBenchmark()
         "    gl_FragColor = vColor;"
         "}";
 
-    mPointSpriteProgram = CompileProgram(vs, fs);
+    mPointSpriteProgram = CompileProgram(kVS, kFS);
     ASSERT_NE(0u, mPointSpriteProgram);
 
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -109,10 +116,12 @@ void InterleavedAttributeDataBenchmark::initializeBenchmark()
         {
             float pointSpriteX =
                 (static_cast<float>(rand() % getWindow()->getWidth()) / getWindow()->getWidth()) *
-                    2.0f - 1.0f;
+                    2.0f -
+                1.0f;
             float pointSpriteY =
                 (static_cast<float>(rand() % getWindow()->getHeight()) / getWindow()->getHeight()) *
-                    2.0f - 1.0f;
+                    2.0f -
+                1.0f;
             GLubyte pointSpriteRed   = static_cast<GLubyte>(rand() % 255);
             GLubyte pointSpriteGreen = static_cast<GLubyte>(rand() % 255);
             GLubyte pointSpriteBlue  = static_cast<GLubyte>(rand() % 255);
@@ -182,7 +191,6 @@ void InterleavedAttributeDataBenchmark::drawBenchmark()
 
             // Then draw the colored pointsprites
             glDrawArrays(GL_POINTS, 0, GetParam().numSprites);
-            glFlush();
 
             glDisableVertexAttribArray(positionLocation);
             glDisableVertexAttribArray(colorLocation);
@@ -225,10 +233,18 @@ InterleavedAttributeDataParams OpenGLOrGLESParams()
     return params;
 }
 
+InterleavedAttributeDataParams VulkanParams()
+{
+    InterleavedAttributeDataParams params;
+    params.eglParameters = egl_platform::VULKAN();
+    return params;
+}
+
 ANGLE_INSTANTIATE_TEST(InterleavedAttributeDataBenchmark,
                        D3D11Params(),
                        D3D11_9_3Params(),
                        D3D9Params(),
-                       OpenGLOrGLESParams());
+                       OpenGLOrGLESParams(),
+                       VulkanParams());
 
 }  // anonymous namespace

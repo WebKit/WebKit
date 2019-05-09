@@ -12,28 +12,27 @@
 
 #include <platform/Platform.h>
 
-#define ANGLE_HISTOGRAM_TIMES(name, sample) ANGLE_HISTOGRAM_CUSTOM_TIMES( \
-    name, sample, 1, 10000, 50)
+#define ANGLE_HISTOGRAM_TIMES(name, sample) ANGLE_HISTOGRAM_CUSTOM_TIMES(name, sample, 1, 10000, 50)
 
-#define ANGLE_HISTOGRAM_MEDIUM_TIMES(name, sample) ANGLE_HISTOGRAM_CUSTOM_TIMES( \
-    name, sample, 10, 180000, 50)
+#define ANGLE_HISTOGRAM_MEDIUM_TIMES(name, sample) \
+    ANGLE_HISTOGRAM_CUSTOM_TIMES(name, sample, 10, 180000, 50)
 
 // Use this macro when times can routinely be much longer than 10 seconds.
-#define ANGLE_HISTOGRAM_LONG_TIMES(name, sample) ANGLE_HISTOGRAM_CUSTOM_TIMES( \
-    name, sample, 1, 3600000, 50)
+#define ANGLE_HISTOGRAM_LONG_TIMES(name, sample) \
+    ANGLE_HISTOGRAM_CUSTOM_TIMES(name, sample, 1, 3600000, 50)
 
 // Use this macro when times can routinely be much longer than 10 seconds and
 // you want 100 buckets.
-#define ANGLE_HISTOGRAM_LONG_TIMES_100(name, sample) ANGLE_HISTOGRAM_CUSTOM_TIMES( \
-    name, sample, 1, 3600000, 100)
+#define ANGLE_HISTOGRAM_LONG_TIMES_100(name, sample) \
+    ANGLE_HISTOGRAM_CUSTOM_TIMES(name, sample, 1, 3600000, 100)
 
 // For folks that need real specific times, use this to select a precise range
 // of times you want plotted, and the number of buckets you want used.
 #define ANGLE_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count) \
     ANGLE_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count)
 
-#define ANGLE_HISTOGRAM_COUNTS(name, sample) ANGLE_HISTOGRAM_CUSTOM_COUNTS( \
-    name, sample, 1, 1000000, 50)
+#define ANGLE_HISTOGRAM_COUNTS(name, sample) \
+    ANGLE_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 1000000, 50)
 
 #define ANGLE_HISTOGRAM_COUNTS_100(name, sample) \
     ANGLE_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 100, 50)
@@ -55,11 +54,11 @@
     ANGLEPlatformCurrent()->histogramEnumeration(ANGLEPlatformCurrent(), name, sample, \
                                                  boundary_value)
 
-#define ANGLE_HISTOGRAM_MEMORY_KB(name, sample) ANGLE_HISTOGRAM_CUSTOM_COUNTS( \
-    name, sample, 1000, 500000, 50)
+#define ANGLE_HISTOGRAM_MEMORY_KB(name, sample) \
+    ANGLE_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1000, 500000, 50)
 
-#define ANGLE_HISTOGRAM_MEMORY_MB(name, sample) ANGLE_HISTOGRAM_CUSTOM_COUNTS( \
-    name, sample, 1, 1000, 50)
+#define ANGLE_HISTOGRAM_MEMORY_MB(name, sample) \
+    ANGLE_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 1000, 50)
 
 #define ANGLE_HISTOGRAM_SPARSE_SLOWLY(name, sample) \
     ANGLEPlatformCurrent()->histogramSparse(ANGLEPlatformCurrent(), name, sample)
@@ -86,8 +85,7 @@
       public:                                                                           \
         ScopedHistogramTimer##key()                                                     \
             : constructed_(ANGLEPlatformCurrent()->currentTime(ANGLEPlatformCurrent())) \
-        {                                                                               \
-        }                                                                               \
+        {}                                                                              \
         ~ScopedHistogramTimer##key()                                                    \
         {                                                                               \
             if (constructed_ == 0)                                                      \

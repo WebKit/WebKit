@@ -23,11 +23,12 @@ class StreamProducerImpl : angle::NonCopyable
 
     // Validates the ability for the producer to accept an arbitrary pointer to a frame. All
     // pointers should be validated through this function before being used to produce a frame.
-    virtual egl::Error validateD3DNV12Texture(void *pointer) const = 0;
+    virtual egl::Error validateD3DTexture(void *pointer,
+                                          const egl::AttributeMap &attributes) const = 0;
 
     // Constructs a frame from an arbitrary external pointer that points to producer specific frame
     // data. Replaces the internal frame with the new one.
-    virtual void postD3DNV12Texture(void *pointer, const egl::AttributeMap &attributes) = 0;
+    virtual void postD3DTexture(void *pointer, const egl::AttributeMap &attributes) = 0;
 
     // Returns an OpenGL texture interpretation of some frame attributes for the purpose of
     // constructing an OpenGL texture from a frame. Depending on the producer and consumer, some

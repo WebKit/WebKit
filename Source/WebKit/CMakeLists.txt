@@ -272,11 +272,6 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
             add_definitions(${EGL_DEFINITIONS})
         endif ()
     endif ()
-
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
-        "${THIRDPARTY_DIR}/ANGLE"
-        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
-    )
 endif ()
 
 if (ATOMIC_INT64_REQUIRES_LIBATOMIC)

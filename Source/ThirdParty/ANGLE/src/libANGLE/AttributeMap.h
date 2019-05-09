@@ -7,6 +7,7 @@
 #ifndef LIBANGLE_ATTRIBUTEMAP_H_
 #define LIBANGLE_ATTRIBUTEMAP_H_
 
+#include "common/PackedEnums.h"
 
 #include <EGL/egl.h>
 
@@ -25,10 +26,27 @@ class AttributeMap final
 
     void insert(EGLAttrib key, EGLAttrib value);
     bool contains(EGLAttrib key) const;
+
     EGLAttrib get(EGLAttrib key) const;
     EGLAttrib get(EGLAttrib key, EGLAttrib defaultValue) const;
     EGLint getAsInt(EGLAttrib key) const;
     EGLint getAsInt(EGLAttrib key, EGLint defaultValue) const;
+
+    template <typename PackedEnumT>
+    PackedEnumT getAsPackedEnum(EGLAttrib key) const
+    {
+        return FromEGLenum<PackedEnumT>(static_cast<EGLenum>(get(key)));
+    }
+
+    template <typename PackedEnumT>
+    PackedEnumT getAsPackedEnum(EGLAttrib key, PackedEnumT defaultValue) const
+    {
+        auto iter = mAttributes.find(key);
+        return (mAttributes.find(key) != mAttributes.end())
+                   ? FromEGLenum<PackedEnumT>(static_cast<EGLenum>(iter->second))
+                   : defaultValue;
+    }
+
     bool isEmpty() const;
     std::vector<EGLint> toIntVector() const;
 
@@ -43,7 +61,6 @@ class AttributeMap final
   private:
     std::map<EGLAttrib, EGLAttrib> mAttributes;
 };
+}  // namespace egl
 
-}
-
-#endif   // LIBANGLE_ATTRIBUTEMAP_H_
+#endif  // LIBANGLE_ATTRIBUTEMAP_H_

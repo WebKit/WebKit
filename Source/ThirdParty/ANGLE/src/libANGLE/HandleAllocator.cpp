@@ -10,6 +10,7 @@
 #include "libANGLE/HandleAllocator.h"
 
 #include <algorithm>
+#include <functional>
 
 #include "common/debug.h"
 
@@ -18,25 +19,21 @@ namespace gl
 
 struct HandleAllocator::HandleRangeComparator
 {
-    bool operator()(const HandleRange &range, GLuint handle) const
-    {
-        return (range.end < handle);
-    }
+    bool operator()(const HandleRange &range, GLuint handle) const { return (range.end < handle); }
 };
 
-HandleAllocator::HandleAllocator() : mBaseValue(1), mNextValue(1)
+HandleAllocator::HandleAllocator() : mBaseValue(1), mNextValue(1), mLoggingEnabled(false)
 {
     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
 }
 
-HandleAllocator::HandleAllocator(GLuint maximumHandleValue) : mBaseValue(1), mNextValue(1)
+HandleAllocator::HandleAllocator(GLuint maximumHandleValue)
+    : mBaseValue(1), mNextValue(1), mLoggingEnabled(false)
 {
     mUnallocatedList.push_back(HandleRange(1, maximumHandleValue));
 }
 
-HandleAllocator::~HandleAllocator()
-{
-}
+HandleAllocator::~HandleAllocator() {}
 
 void HandleAllocator::setBaseHandle(GLuint value)
 {
@@ -52,9 +49,15 @@ GLuint HandleAllocator::allocate()
     // Allocate from released list, logarithmic time for pop_heap.
     if (!mReleasedList.empty())
     {
-        std::pop_heap(mReleasedList.begin(), mReleasedList.end());
+        std::pop_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());
         GLuint reusedHandle = mReleasedList.back();
         mReleasedList.pop_back();
+
+        if (mLoggingEnabled)
+        {
+            WARN() << "HandleAllocator::allocate reusing " << reusedHandle << std::endl;
+        }
+
         return reusedHandle;
     }
 
@@ -73,18 +76,33 @@ GLuint HandleAllocator::allocate()
         listIt->begin++;
     }
 
+    if (mLoggingEnabled)
+    {
+        WARN() << "HandleAllocator::allocate allocating " << freeListHandle << std::endl;
+    }
+
     return freeListHandle;
 }
 
 void HandleAllocator::release(GLuint handle)
 {
+    if (mLoggingEnabled)
+    {
+        WARN() << "HandleAllocator::release releasing " << handle << std::endl;
+    }
+
     // Add to released list, logarithmic time for push_heap.
     mReleasedList.push_back(handle);
-    std::push_heap(mReleasedList.begin(), mReleasedList.end());
+    std::push_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());
 }
 
 void HandleAllocator::reserve(GLuint handle)
 {
+    if (mLoggingEnabled)
+    {
+        WARN() << "HandleAllocator::reserve reserving " << handle << std::endl;
+    }
+
     // Clear from released list -- might be a slow operation.
     if (!mReleasedList.empty())
     {
@@ -92,17 +110,19 @@ void HandleAllocator::reserve(GLuint handle)
         if (releasedIt != mReleasedList.end())
         {
             mReleasedList.erase(releasedIt);
+            std::make_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());
             return;
         }
     }
 
     // Not in released list, reserve in the unallocated list.
-    auto boundIt = std::lower_bound(mUnallocatedList.begin(), mUnallocatedList.end(), handle, HandleRangeComparator());
+    auto boundIt = std::lower_bound(mUnallocatedList.begin(), mUnallocatedList.end(), handle,
+                                    HandleRangeComparator());
 
     ASSERT(boundIt != mUnallocatedList.end());
 
     GLuint begin = boundIt->begin;
-    GLuint end = boundIt->end;
+    GLuint end   = boundIt->end;
 
     if (handle == begin || handle == end)
     {
@@ -137,6 +157,11 @@ void HandleAllocator::reset()
     mReleasedList.clear();
     mBaseValue = 1;
     mNextValue = 1;
+}
+
+void HandleAllocator::enableLogging(bool enabled)
+{
+    mLoggingEnabled = enabled;
 }
 
 }  // namespace gl

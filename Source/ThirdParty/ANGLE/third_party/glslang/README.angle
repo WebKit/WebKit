@@ -1,0 +1,10 @@
+Name: Khronos reference front-end for GLSL and ESSL
+Short Name: glslang
+URL: https://github.com/google/glslang
+Version: N/A
+Security Critical: yes
+License: MIT
+License File: LICENSE
+
+Description:
+An OpenGL and OpenGL ES shader front end and validator.

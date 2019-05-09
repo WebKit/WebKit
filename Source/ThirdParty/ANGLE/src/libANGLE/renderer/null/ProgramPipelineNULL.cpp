@@ -14,11 +14,8 @@ namespace rx
 
 ProgramPipelineNULL::ProgramPipelineNULL(const gl::ProgramPipelineState &state)
     : ProgramPipelineImpl(state)
-{
-}
+{}
 
-ProgramPipelineNULL::~ProgramPipelineNULL()
-{
-}
+ProgramPipelineNULL::~ProgramPipelineNULL() {}
 
 }  // namespace rx

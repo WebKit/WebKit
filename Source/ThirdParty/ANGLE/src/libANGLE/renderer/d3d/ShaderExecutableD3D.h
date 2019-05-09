@@ -13,8 +13,8 @@
 #include "common/MemoryBuffer.h"
 #include "common/debug.h"
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 namespace rx
 {
@@ -54,4 +54,4 @@ class UniformStorageD3D : angle::NonCopyable
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_SHADEREXECUTABLED3D_H_
+#endif  // LIBANGLE_RENDERER_D3D_SHADEREXECUTABLED3D_H_

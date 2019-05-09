@@ -7,9 +7,9 @@
 //   Tests for pruning empty declarations.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -22,8 +22,7 @@ class PruneEmptyDeclarationsTest : public MatchOutputCodeTest
   public:
     PruneEmptyDeclarationsTest()
         : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_GLSL_COMPATIBILITY_OUTPUT)
-    {
-    }
+    {}
 };
 
 TEST_F(PruneEmptyDeclarationsTest, EmptyDeclarationStartsDeclaratorList)

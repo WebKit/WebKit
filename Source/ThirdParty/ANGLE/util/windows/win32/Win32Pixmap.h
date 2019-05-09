@@ -11,7 +11,7 @@
 
 #include <windows.h>
 
-#include "OSPixmap.h"
+#include "util/OSPixmap.h"
 
 class Win32Pixmap : public OSPixmap
 {

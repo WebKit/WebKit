@@ -11,12 +11,9 @@ namespace sh
 {
 
 class TIntermTyped;
-class TParseContext;
 
 // Returns true if the initializer is valid.
-bool ValidateGlobalInitializer(TIntermTyped *initializer,
-                               const TParseContext *context,
-                               bool *warning);
+bool ValidateGlobalInitializer(TIntermTyped *initializer, int shaderVersion, bool *warning);
 
 }  // namespace sh
 

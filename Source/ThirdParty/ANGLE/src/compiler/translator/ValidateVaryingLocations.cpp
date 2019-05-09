@@ -10,7 +10,8 @@
 #include "ValidateVaryingLocations.h"
 
 #include "compiler/translator/Diagnostics.h"
-#include "compiler/translator/IntermTraverse.h"
+#include "compiler/translator/SymbolTable.h"
+#include "compiler/translator/tree_util/IntermTraverse.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -21,7 +22,7 @@ namespace
 
 void error(const TIntermSymbol &symbol, const char *reason, TDiagnostics *diagnostics)
 {
-    diagnostics->error(symbol.getLine(), reason, symbol.getSymbol().c_str());
+    diagnostics->error(symbol.getLine(), reason, symbol.getName().data());
 }
 
 int GetLocationCount(const TIntermSymbol *varying, bool ignoreVaryingArraySize)
@@ -40,7 +41,7 @@ int GetLocationCount(const TIntermSymbol *varying, bool ignoreVaryingArraySize)
         }
         return totalLocation;
     }
-    // [GL_OES_shader_io_blocks SPEC Chapter 4.4.1]
+    // [GL_EXT_shader_io_blocks SPEC Chapter 4.4.1]
     // Geometry shader inputs, tessellation control shader inputs and outputs, and tessellation
     // evaluation inputs all have an additional level of arrayness relative to other shader inputs
     // and outputs. This outer array level is removed from the type before considering how many
@@ -48,7 +49,7 @@ int GetLocationCount(const TIntermSymbol *varying, bool ignoreVaryingArraySize)
     else if (ignoreVaryingArraySize)
     {
         // Array-of-arrays cannot be inputs or outputs of a geometry shader.
-        // (GL_OES_geometry_shader SPEC issues(5))
+        // (GL_EXT_geometry_shader SPEC issues(5))
         ASSERT(!varyingType.isArrayOfArrays());
         return varyingType.getSecondarySize();
     }
@@ -82,10 +83,10 @@ void ValidateShaderInterface(TDiagnostics *diagnostics,
             const int offsetLocation = location + elementIndex;
             if (locationMap.find(offsetLocation) != locationMap.end())
             {
-                std::stringstream strstr;
-                strstr << "'" << varying->getSymbol()
+                std::stringstream strstr = sh::InitializeStream<std::stringstream>();
+                strstr << "'" << varying->getName()
                        << "' conflicting location with previously defined '"
-                       << locationMap[offsetLocation]->getSymbol() << "'";
+                       << locationMap[offsetLocation]->getName() << "'";
                 error(*varying, strstr.str().c_str(), diagnostics);
             }
             else
@@ -113,8 +114,7 @@ class ValidateVaryingLocationsTraverser : public TIntermTraverser
 
 ValidateVaryingLocationsTraverser::ValidateVaryingLocationsTraverser(GLenum shaderType)
     : TIntermTraverser(true, false, false), mShaderType(shaderType)
-{
-}
+{}
 
 bool ValidateVaryingLocationsTraverser::visitDeclaration(Visit visit, TIntermDeclaration *node)
 {
@@ -123,6 +123,11 @@ bool ValidateVaryingLocationsTraverser::visitDeclaration(Visit visit, TIntermDec
 
     const TIntermSymbol *symbol = sequence.front()->getAsSymbolNode();
     if (symbol == nullptr)
+    {
+        return false;
+    }
+
+    if (symbol->variable().symbolType() == SymbolType::Empty)
     {
         return false;
     }
@@ -156,7 +161,7 @@ void ValidateVaryingLocationsTraverser::validate(TDiagnostics *diagnostics)
     ASSERT(diagnostics);
 
     ValidateShaderInterface(diagnostics, mInputVaryingsWithLocation,
-                            mShaderType == GL_GEOMETRY_SHADER_OES);
+                            mShaderType == GL_GEOMETRY_SHADER_EXT);
     ValidateShaderInterface(diagnostics, mOutputVaryingsWithLocation, false);
 }
 

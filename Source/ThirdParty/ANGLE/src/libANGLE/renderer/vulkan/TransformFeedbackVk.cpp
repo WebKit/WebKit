@@ -16,42 +16,49 @@ namespace rx
 
 TransformFeedbackVk::TransformFeedbackVk(const gl::TransformFeedbackState &state)
     : TransformFeedbackImpl(state)
-{
-}
+{}
 
-TransformFeedbackVk::~TransformFeedbackVk()
-{
-}
+TransformFeedbackVk::~TransformFeedbackVk() {}
 
-void TransformFeedbackVk::begin(GLenum primitiveMode)
+angle::Result TransformFeedbackVk::begin(const gl::Context *context,
+                                         gl::PrimitiveMode primitiveMode)
 {
     UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
-void TransformFeedbackVk::end()
+angle::Result TransformFeedbackVk::end(const gl::Context *context)
 {
     UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
-void TransformFeedbackVk::pause()
+angle::Result TransformFeedbackVk::pause(const gl::Context *context)
 {
     UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
-void TransformFeedbackVk::resume()
+angle::Result TransformFeedbackVk::resume(const gl::Context *context)
 {
     UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
-void TransformFeedbackVk::bindGenericBuffer(const gl::BindingPointer<gl::Buffer> &binding)
+angle::Result TransformFeedbackVk::bindGenericBuffer(const gl::Context *context,
+                                                     const gl::BindingPointer<gl::Buffer> &binding)
 {
     UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
-void TransformFeedbackVk::bindIndexedBuffer(size_t index,
-                                            const gl::OffsetBindingPointer<gl::Buffer> &binding)
+angle::Result TransformFeedbackVk::bindIndexedBuffer(
+    const gl::Context *context,
+    size_t index,
+    const gl::OffsetBindingPointer<gl::Buffer> &binding)
 {
     UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
 }  // namespace rx

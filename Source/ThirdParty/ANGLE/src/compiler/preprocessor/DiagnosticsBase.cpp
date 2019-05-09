@@ -8,12 +8,13 @@
 
 #include "common/debug.h"
 
+namespace angle
+{
+
 namespace pp
 {
 
-Diagnostics::~Diagnostics()
-{
-}
+Diagnostics::~Diagnostics() {}
 
 void Diagnostics::report(ID id, const SourceLocation &loc, const std::string &text)
 {
@@ -141,3 +142,5 @@ const char *Diagnostics::message(ID id)
 }
 
 }  // namespace pp
+
+}  // namespace angle

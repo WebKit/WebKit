@@ -17,8 +17,7 @@ namespace
 {
 
 class TextureUploadFormatTest : public ANGLETest
-{
-};
+{};
 
 struct TexFormat final
 {
@@ -163,46 +162,90 @@ struct SizedFloat
         const auto sVal = static_cast<uint32_t>(v < 0.0f);
         return Assemble(sVal, eVal, mVal);
     }
+
+    static constexpr float Decode(const uint32_t sVal, const uint32_t eVal, const uint32_t mVal)
+    {
+        constexpr int eBias = (1 << (kEBits - 1)) - 1;
+        constexpr int mDiv  = 1 << kMBits;
+        float ret           = powf(-1.0f, static_cast<float>(sVal)) *
+                    powf(2.0f, static_cast<float>(int(eVal) - eBias)) * (1.0f + float(mVal) / mDiv);
+        return ret;
+    }
 };
 using Float16  = SizedFloat<1, 5, 10>;
 using UFloat11 = SizedFloat<0, 5, 6>;
 using UFloat10 = SizedFloat<0, 5, 5>;
 
-uint32_t EncodeRGB9_E5_Rev(const float signedR, const float signedG, const float signedB)
+struct RGB9_E5 final
 {
-    const float r       = std::max(0.0f, signedR);
-    const float g       = std::max(0.0f, signedG);
-    const float b       = std::max(0.0f, signedB);
-    const int eBits     = 5;
-    const int eBias     = (1 << (eBits - 1)) - 1;  // 15
-    const int eMax      = (1 << eBits) - 1;
-    const int mBits     = 9;
-    const uint32_t mMax = (1 << mBits) - 1;
-    // Maximize mVal for one channel
-    // => Find the lowest viable exponent
-    int minViableActualExp                    = 1 << eBits;
-    const auto fnMinimizeViableActualExponent = [&](const float v) {
-        const auto cur = static_cast<int>(ceil(log2f(v / mMax)));
-        if (cur < minViableActualExp)
-        {
-            minViableActualExp = cur;
-        }
-    };
-    fnMinimizeViableActualExponent(r);
-    fnMinimizeViableActualExponent(g);
-    fnMinimizeViableActualExponent(b);
-    const int eVal = std::max(0, std::min(minViableActualExp + eBias + mBits, eMax));
+    // GLES 3.0.5 p129
+    static constexpr int N = 9;   // number of mantissa bits per component
+    static constexpr int B = 15;  // exponent bias
 
-    const auto fnM = [&](const float v) {
-        const auto m = static_cast<uint32_t>(v * powf(2, static_cast<float>(mBits + eBias - eVal)));
-        return std::min(m, mMax);
-    };
+    static uint32_t Encode(const float red, const float green, const float blue)
+    {
+        const auto floori = [](const float x) { return static_cast<int>(floor(x)); };
+        // GLES 3.0.5 p129
+        constexpr int eMax = 31;  // max allowed biased exponent value
 
-    const auto mR = fnM(r);
-    const auto mG = fnM(g);
-    const auto mB = fnM(b);
-    return (mR << 0) | (mG << 9) | (mB << 18) | (eVal << 27);
-}
+        const float twoToN       = powf(2.0f, static_cast<float>(N));
+        const float sharedExpMax = (twoToN - 1.0f) / twoToN * powf(2.0f, eMax - B);
+
+        const auto fnClampColor = [&](const float color) {
+            return std::max(0.0f, std::min(color, sharedExpMax));
+        };
+        const float redC   = fnClampColor(red);
+        const float greenC = fnClampColor(green);
+        const float blueC  = fnClampColor(blue);
+
+        const float maxC = std::max({redC, greenC, blueC});
+        const int expP   = std::max(-B - 1, floori(log2f(maxC))) + 1 + B;
+
+        const auto fnColorS = [&](const float colorC, const float exp) {
+            return floori(colorC / powf(2, exp - B - N) + 0.5f);
+        };
+        const int maxS = fnColorS(maxC, static_cast<float>(expP));
+        const int expS = expP + ((maxS == (1 << N)) ? 1 : 0);
+
+        const int redS   = fnColorS(redC, static_cast<float>(expS));
+        const int greenS = fnColorS(greenC, static_cast<float>(expS));
+        const int blueS  = fnColorS(blueC, static_cast<float>(expS));
+
+        // Pack as u32 EGBR.
+        uint32_t ret = expS & 0x1f;
+        ret <<= 9;
+        ret |= blueS & 0x1ff;
+        ret <<= 9;
+        ret |= greenS & 0x1ff;
+        ret <<= 9;
+        ret |= redS & 0x1ff;
+        return ret;
+    }
+
+    static void Decode(uint32_t packed,
+                       float *const out_red,
+                       float *const out_green,
+                       float *const out_blue)
+    {
+        const auto redS = packed & 0x1ff;
+        packed >>= 9;
+        const auto greenS = packed & 0x1ff;
+        packed >>= 9;
+        const auto blueS = packed & 0x1ff;
+        packed >>= 9;
+        const auto expS = packed & 0x1f;
+
+        // These are *not* IEEE-like UFloat14s.
+        // GLES 3.0.5 p165:
+        // red = redS*pow(2,expS-B-N)
+        const auto fnToFloat = [&](const uint32_t x) {
+            return x * powf(2.0f, static_cast<float>(int(expS) - B - N));
+        };
+        *out_red   = fnToFloat(redS);
+        *out_green = fnToFloat(greenS);
+        *out_blue  = fnToFloat(blueS);
+    }
+};
 
 }  // anonymous namespace
 
@@ -212,6 +255,9 @@ uint32_t EncodeRGB9_E5_Rev(const float signedR, const float signedG, const float
 // re-encode by hand.
 TEST(TextureUploadFormatTestInternals, Float16Encoding)
 {
+    EXPECT_EQ(Float16::Decode(0, 0x0f, 0), 1.0f);
+    EXPECT_EQ(Float16::Decode(0, 0x0f - 1, 0), 0.5f);
+
     EXPECT_EQ(Float16::Assemble(0, 0x0f, 0), Float16::Encode(1.0));
     EXPECT_EQ(Float16::Assemble(0, 0x0f - 1, 0), Float16::Encode(1.0 / 2));
 
@@ -219,6 +265,20 @@ TEST(TextureUploadFormatTestInternals, Float16Encoding)
     EXPECT_EQ(Float16::Assemble(0, 0x0f - 2, 0), Float16::Encode(2.0 / 8));
     EXPECT_EQ(Float16::Assemble(0, 0x0f - 2, 1 << (Float16::kMBits - 1)), Float16::Encode(3.0 / 8));
     EXPECT_EQ(Float16::Assemble(0, 0x0f - 1, 1 << (Float16::kMBits - 2)), Float16::Encode(5.0 / 8));
+}
+
+// Ensure our RGB9_E5 encoding is reasonable, at least for our testcase.
+TEST(TextureUploadFormatTestInternals, RGB9E5Encoding)
+{
+    const auto fnTest = [](const float refR, const float refG, const float refB) {
+        const auto packed = RGB9_E5::Encode(refR, refG, refB);
+        float testR, testG, testB;
+        RGB9_E5::Decode(packed, &testR, &testG, &testB);
+        EXPECT_EQ(testR, refR);
+        EXPECT_EQ(testG, refG);
+        EXPECT_EQ(testB, refB);
+    };
+    fnTest(0.125f, 0.250f, 0.625f);
 }
 
 namespace
@@ -247,13 +307,12 @@ TEST_P(TextureUploadFormatTest, All)
 {
     ANGLE_SKIP_TEST_IF(IsD3D9() || IsD3D11_FL93());
 
-    constexpr char kVertShader[] = R"(
+    constexpr char kVertShaderES2[]     = R"(
         void main()
         {
             gl_PointSize = 1.0;
             gl_Position = vec4(0, 0, 0, 1);
         })";
-
     constexpr char kFragShader_Floats[] = R"(
         precision mediump float;
         uniform sampler2D uTex;
@@ -262,26 +321,7 @@ TEST_P(TextureUploadFormatTest, All)
         {
             gl_FragColor = texture2D(uTex, vec2(0,0));
         })";
-    constexpr char kFragShader_Ints[]   = R"(
-        precision mediump float;
-        uniform sampler2D uTex;
-
-        void main()
-        {
-            gl_FragColor = texture2D(uTex, vec2(0,0)) / 8.0;
-        })";
-    ANGLE_GL_PROGRAM(floatsProg, kVertShader, kFragShader_Floats);
-    ANGLE_GL_PROGRAM(intsProg, kVertShader, kFragShader_Ints);
-
-    GLint uTex = glGetUniformLocation(floatsProg, "uTex");
-    ASSERT_NE(uTex, -1);
-    glUseProgram(floatsProg);
-    glUniform1i(uTex, 0);
-
-    uTex = glGetUniformLocation(intsProg, "uTex");
-    ASSERT_NE(uTex, -1);
-    glUseProgram(intsProg);
-    glUniform1i(uTex, 0);
+    ANGLE_GL_PROGRAM(floatsProg, kVertShaderES2, kFragShader_Floats);
 
     glDisable(GL_DITHER);
 
@@ -306,6 +346,9 @@ TEST_P(TextureUploadFormatTest, All)
 
     GLTexture testTex;
     glBindTexture(GL_TEXTURE_2D, testTex);
+    // Must be nearest because some texture formats aren't filterable!
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     ASSERT_GL_NO_ERROR();
 
@@ -330,7 +373,7 @@ TEST_P(TextureUploadFormatTest, All)
         glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, 1, 1, 0, format.unpackFormat,
                      format.unpackType, data);
         const auto uploadErr = glGetError();
-        if (uploadErr)
+        if (uploadErr)  // Format might not be supported. (e.g. on ES2)
             return;
 
         glClearColor(1, 0, 1, 1);
@@ -533,6 +576,36 @@ TEST_P(TextureUploadFormatTest, All)
         fnTest({GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8}, {1, 0, 0, 0});
     }
 
+    if (getClientMajorVersion() < 3)
+        return;
+
+    constexpr char kVertShaderES3[]    = R"(#version 300 es
+        void main()
+        {
+            gl_PointSize = 1.0;
+            gl_Position = vec4(0, 0, 0, 1);
+        })";
+    constexpr char kFragShader_Ints[]  = R"(#version 300 es
+        precision mediump float;
+        uniform highp isampler2D uTex;
+        out vec4 oFragColor;
+
+        void main()
+        {
+            oFragColor = vec4(texture(uTex, vec2(0,0))) / 8.0;
+        })";
+    constexpr char kFragShader_Uints[] = R"(#version 300 es
+        precision mediump float;
+        uniform highp usampler2D uTex;
+        out vec4 oFragColor;
+
+        void main()
+        {
+            oFragColor = vec4(texture(uTex, vec2(0,0))) / 8.0;
+        })";
+    ANGLE_GL_PROGRAM(intsProg, kVertShaderES3, kFragShader_Ints);
+    ANGLE_GL_PROGRAM(uintsProg, kVertShaderES3, kFragShader_Uints);
+
     // Non-normalized ints
     glUseProgram(intsProg);
 
@@ -540,11 +613,6 @@ TEST_P(TextureUploadFormatTest, All)
     {
         constexpr uint8_t src[4] = {srcIntVals[0], srcIntVals[1], srcIntVals[2], srcIntVals[3]};
         ZeroAndCopy(srcBuffer, src);
-
-        fnTest({GL_RGBA8UI, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
-        fnTest({GL_RGB8UI, GL_RGB_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
-        fnTest({GL_RG8UI, GL_RG_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
-        fnTest({GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
 
         fnTest({GL_RGBA8I, GL_RGBA_INTEGER, GL_BYTE}, {1, 1, 1, 1});
         fnTest({GL_RGB8I, GL_RGB_INTEGER, GL_BYTE}, {1, 1, 1, 1});
@@ -557,11 +625,6 @@ TEST_P(TextureUploadFormatTest, All)
         constexpr uint16_t src[4] = {srcIntVals[0], srcIntVals[1], srcIntVals[2], srcIntVals[3]};
         ZeroAndCopy(srcBuffer, src);
 
-        fnTest({GL_RGBA16UI, GL_RGBA_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
-        fnTest({GL_RGB16UI, GL_RGB_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
-        fnTest({GL_RG16UI, GL_RG_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
-        fnTest({GL_R16UI, GL_RED_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
-
         fnTest({GL_RGBA16I, GL_RGBA_INTEGER, GL_SHORT}, {1, 1, 1, 1});
         fnTest({GL_RGB16I, GL_RGB_INTEGER, GL_SHORT}, {1, 1, 1, 1});
         fnTest({GL_RG16I, GL_RG_INTEGER, GL_SHORT}, {1, 1, 1, 1});
@@ -573,15 +636,46 @@ TEST_P(TextureUploadFormatTest, All)
         constexpr uint32_t src[4] = {srcIntVals[0], srcIntVals[1], srcIntVals[2], srcIntVals[3]};
         ZeroAndCopy(srcBuffer, src);
 
-        fnTest({GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
-        fnTest({GL_RGB32UI, GL_RGB_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
-        fnTest({GL_RG32UI, GL_RG_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
-        fnTest({GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
-
         fnTest({GL_RGBA32I, GL_RGBA_INTEGER, GL_INT}, {1, 1, 1, 1});
         fnTest({GL_RGB32I, GL_RGB_INTEGER, GL_INT}, {1, 1, 1, 1});
         fnTest({GL_RG32I, GL_RG_INTEGER, GL_INT}, {1, 1, 1, 1});
         fnTest({GL_R32I, GL_RED_INTEGER, GL_INT}, {1, 1, 1, 1});
+    }
+
+    // Non-normalized uints
+    glUseProgram(uintsProg);
+
+    // RGBA_INTEGER+UNSIGNED_BYTE
+    {
+        constexpr uint8_t src[4] = {srcIntVals[0], srcIntVals[1], srcIntVals[2], srcIntVals[3]};
+        ZeroAndCopy(srcBuffer, src);
+
+        fnTest({GL_RGBA8UI, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
+        fnTest({GL_RGB8UI, GL_RGB_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
+        fnTest({GL_RG8UI, GL_RG_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
+        fnTest({GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE}, {1, 1, 1, 1});
+    }
+
+    // RGBA_INTEGER+UNSIGNED_SHORT
+    {
+        constexpr uint16_t src[4] = {srcIntVals[0], srcIntVals[1], srcIntVals[2], srcIntVals[3]};
+        ZeroAndCopy(srcBuffer, src);
+
+        fnTest({GL_RGBA16UI, GL_RGBA_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
+        fnTest({GL_RGB16UI, GL_RGB_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
+        fnTest({GL_RG16UI, GL_RG_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
+        fnTest({GL_R16UI, GL_RED_INTEGER, GL_UNSIGNED_SHORT}, {1, 1, 1, 1});
+    }
+
+    // RGBA_INTEGER+UNSIGNED_INT
+    {
+        constexpr uint32_t src[4] = {srcIntVals[0], srcIntVals[1], srcIntVals[2], srcIntVals[3]};
+        ZeroAndCopy(srcBuffer, src);
+
+        fnTest({GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
+        fnTest({GL_RGB32UI, GL_RGB_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
+        fnTest({GL_RG32UI, GL_RG_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
+        fnTest({GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT}, {1, 1, 1, 1});
     }
 
     // RGBA_INTEGER+UNSIGNED_INT_2_10_10_10_REV
@@ -654,7 +748,7 @@ TEST_P(TextureUploadFormatTest, All)
 
     // UNSIGNED_INT_5_9_9_9_REV
     {
-        const uint32_t src[] = {EncodeRGB9_E5_Rev(srcVals[0], srcVals[1], srcVals[2])};
+        const uint32_t src[] = {RGB9_E5::Encode(srcVals[0], srcVals[1], srcVals[2])};
         ZeroAndCopy(srcBuffer, src);
 
         fnTest({GL_RGB9_E5, GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV}, {1, 1, 1, 0});
@@ -675,8 +769,11 @@ TEST_P(TextureUploadFormatTest, All)
 }
 
 ANGLE_INSTANTIATE_TEST(TextureUploadFormatTest,
-                       ES2_D3D11(),
+                       ES3_D3D11(),
                        ES2_D3D11_FL9_3(),
                        ES2_D3D9(),
                        ES2_OPENGL(),
-                       ES2_OPENGLES());
+                       ES3_OPENGL(),
+                       ES2_OPENGLES(),
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());

@@ -9,7 +9,11 @@
 
 #include "compiler/preprocessor/Lexer.h"
 #include "compiler/preprocessor/Macro.h"
+#include "compiler/preprocessor/Preprocessor.h"
 #include "compiler/preprocessor/SourceLocation.h"
+
+namespace angle
+{
 
 namespace pp
 {
@@ -25,7 +29,7 @@ class DirectiveParser : public Lexer
                     MacroSet *macroSet,
                     Diagnostics *diagnostics,
                     DirectiveHandler *directiveHandler,
-                    int maxMacroExpansionDepth);
+                    const PreprocessorSettings &settings);
     ~DirectiveParser() override;
 
     void lex(Token *token) override;
@@ -62,8 +66,7 @@ class DirectiveParser : public Lexer
 
         ConditionalBlock()
             : skipBlock(false), skipGroup(false), foundValidGroup(false), foundElseGroup(false)
-        {
-        }
+        {}
     };
     bool mPastFirstStatement;
     bool mSeenNonPreprocessorToken;  // Tracks if a non-preprocessor token has been seen yet.  Some
@@ -75,9 +78,11 @@ class DirectiveParser : public Lexer
     Diagnostics *mDiagnostics;
     DirectiveHandler *mDirectiveHandler;
     int mShaderVersion;
-    int mMaxMacroExpansionDepth;
+    const PreprocessorSettings mSettings;
 };
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_DIRECTIVEPARSER_H_

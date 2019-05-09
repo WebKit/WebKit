@@ -11,24 +11,22 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "OSWindow.h"
+#include "util/OSWindow.h"
 
 class OSXWindow;
 
-@interface WindowDelegate : NSObject
-{
+@interface WindowDelegate : NSObject {
     OSXWindow *mWindow;
 }
-- (id) initWithWindow: (OSXWindow*) window;
+- (id)initWithWindow:(OSXWindow *)window;
 @end
 
-@interface ContentView : NSView
-{
+@interface ContentView : NSView {
     OSXWindow *mWindow;
     NSTrackingArea *mTrackingArea;
     int mCurrentModifier;
 }
-- (id) initWithWindow: (OSXWindow*) window;
+- (id)initWithWindow:(OSXWindow *)window;
 @end
 
 class OSXWindow : public OSWindow
@@ -40,6 +38,7 @@ class OSXWindow : public OSWindow
     bool initialize(const std::string &name, size_t width, size_t height) override;
     void destroy() override;
 
+    void resetNativeWindow() override;
     EGLNativeWindowType getNativeWindow() const override;
     EGLNativeDisplayType getNativeDisplay() const override;
 
@@ -60,4 +59,4 @@ class OSXWindow : public OSWindow
     ContentView *mView;
 };
 
-#endif // UTIL_OSX_WINDOW_H_
+#endif  // UTIL_OSX_WINDOW_H_

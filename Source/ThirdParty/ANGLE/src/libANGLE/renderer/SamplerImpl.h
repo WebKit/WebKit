@@ -14,7 +14,7 @@
 namespace gl
 {
 class Context;
-struct SamplerState;
+class SamplerState;
 }  // namespace gl
 
 namespace rx

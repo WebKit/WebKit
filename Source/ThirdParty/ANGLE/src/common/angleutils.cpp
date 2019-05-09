@@ -17,7 +17,7 @@ namespace angle
 // dirtyPointer is a special value that will make the comparison with any valid pointer fail and
 // force the renderer to re-apply the state.
 const uintptr_t DirtyPointer = std::numeric_limits<uintptr_t>::max();
-}
+}  // namespace angle
 
 std::string ArrayString(unsigned int i)
 {
@@ -47,7 +47,7 @@ std::string ArrayIndexString(const std::vector<unsigned int> &indices)
     return strstr.str();
 }
 
-size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>& outBuffer)
+size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char> &outBuffer)
 {
     // The state of the va_list passed to vsnprintf is undefined after the call, do a copy in case
     // we need to grow the buffer.

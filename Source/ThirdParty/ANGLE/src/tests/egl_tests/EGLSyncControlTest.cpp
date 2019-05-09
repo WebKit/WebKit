@@ -8,12 +8,10 @@
 //   Tests pertaining to eglGetSyncValuesCHROMIUM.
 
 #include <d3d11.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
 
-#include "com_utils.h"
-#include "OSWindow.h"
 #include "test_utils/ANGLETest.h"
+#include "util/OSWindow.h"
+#include "util/com_utils.h"
 
 using namespace angle;
 
@@ -66,7 +64,7 @@ class EGLSyncControlTest : public testing::Test
         SafeRelease(mDevice);
         SafeRelease(mDeviceContext);
 
-        SafeDelete(mOSWindow);
+        OSWindow::Delete(&mOSWindow);
 
         if (mSurface != EGL_NO_SURFACE)
         {
@@ -112,7 +110,7 @@ class EGLSyncControlTest : public testing::Test
                                    EGL_NONE};
 
         // Create an OS Window
-        mOSWindow = CreateOSWindow();
+        mOSWindow = OSWindow::New();
         mOSWindow->initialize("EGLSyncControlTest", 64, 64);
         mOSWindow->setVisible(true);
 

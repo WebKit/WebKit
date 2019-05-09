@@ -1,0 +1,243 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build/config/ui.gni")  # import the use_x11 variable
+import("//build_overrides/angle.gni")
+import("//build_overrides/build.gni")
+import("//testing/test.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+}
+
+if (build_with_chromium) {
+  angle_root = "//third_party/angle"
+
+  import("//ui/ozone/ozone.gni")
+} else {
+  angle_root = "//"
+
+  declare_args() {
+    ozone_platform_gbm = false
+  }
+}
+
+# Subdirectory to place data files (e.g. layer JSON files).
+data_dir = "angledata"
+
+declare_args() {
+  if (current_cpu == "arm64" || current_cpu == "x64" ||
+      current_cpu == "mips64el" || current_cpu == "s390x" ||
+      current_cpu == "ppc64") {
+    angle_64bit_current_cpu = true
+  } else if (current_cpu == "arm" || current_cpu == "x86" ||
+             current_cpu == "mipsel" || current_cpu == "s390" ||
+             current_cpu == "ppc") {
+    angle_64bit_current_cpu = false
+  } else {
+    assert(false, "Unknown current CPU: $current_cpu")
+  }
+}
+
+declare_args() {
+  if (!is_android) {
+    ndk_api_level_at_least_26 = false
+  } else {
+    ndk_api_level_at_least_26 =
+        (!angle_64bit_current_cpu && android32_ndk_api_level >= 26) ||
+        (angle_64bit_current_cpu && android64_ndk_api_level >= 26)
+  }
+  angle_shared_libvulkan = false
+  angle_libs_suffix = ""
+}
+
+declare_args() {
+  angle_enable_d3d9 = is_win
+  angle_enable_d3d11 = is_win
+  angle_enable_gl = (ozone_platform_gbm || !is_linux ||
+                     (use_x11 && !is_chromeos)) && !is_fuchsia
+
+  # ANGLE Vulkan backend on Android requires API level 26, i.e. Oreo, due to
+  # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
+  # Otherwise, API level 24 would have been enough.
+  angle_enable_vulkan = is_win || (is_linux && use_x11 && !is_chromeos) ||
+                        (is_android && ndk_api_level_at_least_26) || is_fuchsia
+  angle_enable_null = true
+  angle_enable_essl = true
+  angle_enable_glsl = true
+  angle_force_thread_safety = false
+}
+
+declare_args() {
+  angle_enable_gl_null = angle_enable_gl
+  angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
+  angle_enable_trace = false
+
+  # Disable the layers in ubsan builds because of really slow builds.
+  angle_enable_vulkan_validation_layers =
+      angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan
+
+  if (angle_enable_vulkan) {
+    # Enable Vulkan GPU trace event capability
+    angle_enable_vulkan_gpu_trace_events = false
+
+    # Disallow non-conformant configurations in official builds.
+    angle_vulkan_conformant_configs_only = is_official_build
+
+    # Enable custom (cpu-side) secondary command buffers
+    angle_enable_custom_vulkan_cmd_buffers = true
+  }
+}
+
+if (is_win) {
+  import("//build/config/win/visual_studio_version.gni")
+}
+
+angle_common_configs = [
+  angle_root + ":extra_warnings",
+  angle_root + ":internal_config",
+]
+
+angle_remove_configs = [ "//build/config/compiler:default_include_dirs" ]
+
+if (is_clang) {
+  angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
+}
+
+set_defaults("angle_executable") {
+  configs = angle_common_configs
+  public_configs = []
+  suppressed_configs = angle_remove_configs
+}
+
+set_defaults("angle_shared_library") {
+  configs = angle_common_configs
+  public_configs = []
+  suppressed_configs = angle_remove_configs
+}
+
+set_defaults("angle_source_set") {
+  configs = angle_common_configs
+  public_configs = []
+  suppressed_configs = angle_remove_configs
+}
+
+set_defaults("angle_static_library") {
+  configs = angle_common_configs
+  public_configs = []
+  suppressed_configs = angle_remove_configs
+}
+
+set_defaults("angle_test") {
+  configs = angle_common_configs
+  public_configs = []
+  suppressed_configs = angle_remove_configs
+}
+
+template("angle_executable") {
+  executable(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+
+    # Needed because visibility is global.
+    forward_variables_from(invoker, [ "visibility" ])
+
+    configs += invoker.configs
+    configs -= invoker.suppressed_configs
+  }
+}
+
+template("angle_shared_library") {
+  shared_library(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+
+    # Needed because visibility is global.
+    forward_variables_from(invoker, [ "visibility" ])
+
+    configs += invoker.configs
+    configs -= invoker.suppressed_configs
+
+    public_configs += [ angle_root + ":shared_library_public_config" ]
+
+    if (is_android) {
+      configs += [ angle_root + ":build_id_config" ]
+      configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+    }
+  }
+}
+
+template("angle_source_set") {
+  source_set(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+
+    # Needed because visibility is global.
+    forward_variables_from(invoker, [ "visibility" ])
+
+    configs += invoker.configs
+    configs -= invoker.suppressed_configs
+  }
+}
+
+template("angle_static_library") {
+  static_library(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+
+    # Needed because visibility is global.
+    forward_variables_from(invoker, [ "visibility" ])
+
+    configs += invoker.configs
+    configs -= invoker.suppressed_configs
+  }
+}
+
+template("angle_test") {
+  test(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+
+    # Needed because visibility is global.
+    forward_variables_from(invoker, [ "visibility" ])
+
+    configs += invoker.configs
+    configs -= invoker.suppressed_configs
+
+    if (is_linux && !is_component_build) {
+      # Set rpath to find shared libs in a non-component build.
+      configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+    }
+
+    if (is_android) {
+      configs += [ angle_root + ":build_id_config" ]
+      configs -= [ "//build/config/android:hide_all_but_jni" ]
+    }
+  }
+}

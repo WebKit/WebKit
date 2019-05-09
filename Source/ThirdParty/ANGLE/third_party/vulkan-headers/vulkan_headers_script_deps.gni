@@ -1,0 +1,13 @@
+# Copyright 2018 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+raw_vulkan_headers_registry_dir = rebase_path("src/registry")
+
+# Common scripts & input used by multiple other repos
+vulkan_registry_script_files = [
+  "$raw_vulkan_headers_registry_dir/cgenerator.py",
+  "$raw_vulkan_headers_registry_dir/generator.py",
+  "$raw_vulkan_headers_registry_dir/reg.py",
+  "$raw_vulkan_headers_registry_dir/vk.xml",
+]

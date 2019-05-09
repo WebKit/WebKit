@@ -11,9 +11,9 @@
 
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
-#include "libANGLE/renderer/gl/TextureGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
+#include "libANGLE/renderer/gl/TextureGL.h"
 #include "libANGLE/renderer/gl/wgl/DisplayWGL.h"
 #include "libANGLE/renderer/gl/wgl/FunctionsWGL.h"
 
@@ -23,7 +23,7 @@ namespace rx
 {
 
 DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(const egl::SurfaceState &state,
-                                                             RendererGL *renderer,
+                                                             StateManagerGL *stateManager,
                                                              EGLNativeWindowType window,
                                                              ID3D11Device *device,
                                                              HANDLE deviceHandle,
@@ -31,11 +31,9 @@ DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(const egl::SurfaceS
                                                              const FunctionsGL *functionsGL,
                                                              const FunctionsWGL *functionsWGL,
                                                              EGLint orientation)
-    : SurfaceWGL(state, renderer),
+    : SurfaceWGL(state),
       mWindow(window),
-      mStateManager(renderer->getStateManager()),
-      mWorkarounds(renderer->getWorkarounds()),
-      mRenderer(renderer),
+      mStateManager(stateManager),
       mFunctionsGL(functionsGL),
       mFunctionsWGL(functionsWGL),
       mDevice(device),
@@ -50,15 +48,13 @@ DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(const egl::SurfaceS
       mColorRenderbufferID(0),
       mRenderbufferBufferHandle(nullptr),
       mDepthRenderbufferID(0),
-      mFramebufferID(0),
       mTextureID(0),
       mTextureHandle(nullptr),
       mWidth(0),
       mHeight(0),
       mSwapInterval(1),
       mOrientation(orientation)
-{
-}
+{}
 
 DXGISwapChainWindowSurfaceWGL::~DXGISwapChainWindowSurfaceWGL()
 {
@@ -107,14 +103,16 @@ egl::Error DXGISwapChainWindowSurfaceWGL::initialize(const egl::Display *display
     mSwapChainFlags    = 0;
     mDepthBufferFormat = GL_DEPTH24_STENCIL8;
 
-    mFunctionsGL->genFramebuffers(1, &mFramebufferID);
     mFunctionsGL->genRenderbuffers(1, &mColorRenderbufferID);
+    mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mColorRenderbufferID);
+
     mFunctionsGL->genRenderbuffers(1, &mDepthRenderbufferID);
+    mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mDepthRenderbufferID);
 
     return createSwapChain();
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::makeCurrent()
+egl::Error DXGISwapChainWindowSurfaceWGL::makeCurrent(const gl::Context *context)
 {
     return egl::NoError();
 }
@@ -144,6 +142,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::postSubBuffer(const gl::Context *conte
                                                         EGLint width,
                                                         EGLint height)
 {
+    ASSERT(width > 0 && height > 0);
     ASSERT(mSwapChain1 != nullptr);
 
     mFunctionsGL->flush();
@@ -180,7 +179,9 @@ egl::Error DXGISwapChainWindowSurfaceWGL::querySurfacePointerANGLE(EGLint attrib
     return egl::NoError();
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(const gl::Context *context,
+                                                       gl::Texture *texture,
+                                                       EGLint buffer)
 {
     ASSERT(mTextureHandle == nullptr);
 
@@ -188,7 +189,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(gl::Texture *texture, EGL
     GLuint textureID           = textureGL->getTextureID();
 
     ID3D11Texture2D *colorBuffer = nullptr;
-    HRESULT result = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+    HRESULT result               = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
                                            reinterpret_cast<void **>(&colorBuffer));
     if (FAILED(result))
     {
@@ -219,7 +220,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(gl::Texture *texture, EGL
     return egl::NoError();
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::releaseTexImage(EGLint buffer)
+egl::Error DXGISwapChainWindowSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     ASSERT(mTextureHandle != nullptr);
 
@@ -267,11 +268,35 @@ EGLint DXGISwapChainWindowSurfaceWGL::getSwapBehavior() const
 }
 
 FramebufferImpl *DXGISwapChainWindowSurfaceWGL::createDefaultFramebuffer(
+    const gl::Context *context,
     const gl::FramebufferState &data)
 {
-    return new FramebufferGL(mFramebufferID, data, mFunctionsGL, mWorkarounds,
-                             mRenderer->getBlitter(), mRenderer->getMultiviewClearer(),
-                             mStateManager);
+    const FunctionsGL *functions = GetFunctionsGL(context);
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+
+    GLuint framebufferID = 0;
+    functions->genFramebuffers(1, &framebufferID);
+    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                       mColorRenderbufferID);
+
+    if (mDepthBufferFormat != GL_NONE)
+    {
+        const gl::InternalFormat &depthStencilFormatInfo =
+            gl::GetSizedInternalFormatInfo(mDepthBufferFormat);
+        if (depthStencilFormatInfo.depthBits > 0)
+        {
+            functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                               mDepthRenderbufferID);
+        }
+        if (depthStencilFormatInfo.stencilBits > 0)
+        {
+            functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                               GL_RENDERBUFFER, mDepthRenderbufferID);
+        }
+    }
+
+    return new FramebufferGL(data, framebufferID, true);
 }
 
 HDC DXGISwapChainWindowSurfaceWGL::getDC() const
@@ -288,7 +313,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::setObjectsLocked(bool locked)
     }
 
     HANDLE resources[] = {
-        mRenderbufferBufferHandle, mTextureHandle,
+        mRenderbufferBufferHandle,
+        mTextureHandle,
     };
     GLint count = (mTextureHandle != nullptr) ? 2 : 1;
 
@@ -397,7 +423,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
     }
 
     IDXGIFactory2 *dxgiFactory2 = nullptr;
-    HRESULT result = dxgiFactory->QueryInterface(__uuidof(IDXGIFactory2),
+    HRESULT result              = dxgiFactory->QueryInterface(__uuidof(IDXGIFactory2),
                                                  reinterpret_cast<void **>(&dxgiFactory2));
     if (SUCCEEDED(result))
     {
@@ -411,7 +437,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         swapChainDesc.Format                = mSwapChainFormat;
         swapChainDesc.Stereo                = FALSE;
         swapChainDesc.SampleDesc.Count      = 1;
-        swapChainDesc.SampleDesc.Quality = 0;
+        swapChainDesc.SampleDesc.Quality    = 0;
         swapChainDesc.BufferUsage =
             DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_BACK_BUFFER;
         swapChainDesc.BufferCount = 1;
@@ -463,7 +489,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
     }
 
     ID3D11Texture2D *colorBuffer = nullptr;
-    result = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+    result                       = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
                                    reinterpret_cast<void **>(&colorBuffer));
     if (FAILED(result))
     {
@@ -471,7 +497,6 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
                                   << gl::FmtHR(result);
     }
 
-    mFunctionsGL->genRenderbuffers(1, &mColorRenderbufferID);
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mColorRenderbufferID);
     mRenderbufferBufferHandle =
         mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, colorBuffer, mColorRenderbufferID,
@@ -501,11 +526,6 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         return error;
     }
 
-    ASSERT(mFramebufferID != 0);
-    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
-    mFunctionsGL->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                          mColorRenderbufferID);
-
     if (mDepthBufferFormat != GL_NONE)
     {
         ASSERT(mDepthRenderbufferID != 0);
@@ -513,19 +533,6 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         mFunctionsGL->renderbufferStorage(GL_RENDERBUFFER, mDepthBufferFormat,
                                           static_cast<GLsizei>(mWidth),
                                           static_cast<GLsizei>(mHeight));
-
-        const gl::InternalFormat &depthStencilFormatInfo =
-            gl::GetSizedInternalFormatInfo(mDepthBufferFormat);
-        if (depthStencilFormatInfo.depthBits > 0)
-        {
-            mFunctionsGL->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                                  GL_RENDERBUFFER, mDepthRenderbufferID);
-        }
-        if (depthStencilFormatInfo.stencilBits > 0)
-        {
-            mFunctionsGL->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                                  GL_RENDERBUFFER, mDepthRenderbufferID);
-        }
     }
 
     mFirstSwap = true;

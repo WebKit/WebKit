@@ -17,6 +17,7 @@
 
 #include "common/angleutils.h"
 #include "libANGLE/AttributeMap.h"
+#include "libANGLE/Debug.h"
 
 namespace rx
 {
@@ -27,7 +28,7 @@ namespace gl
 {
 class Context;
 class Texture;
-}
+}  // namespace gl
 
 namespace egl
 {
@@ -35,11 +36,14 @@ class Display;
 class Error;
 class Thread;
 
-class Stream final : angle::NonCopyable
+class Stream final : public LabeledObject, angle::NonCopyable
 {
   public:
     Stream(Display *display, const AttributeMap &attribs);
-    ~Stream();
+    ~Stream() override;
+
+    void setLabel(EGLLabelKHR label) override;
+    EGLLabelKHR getLabel() const override;
 
     enum class ConsumerType
     {
@@ -51,7 +55,7 @@ class Stream final : angle::NonCopyable
     enum class ProducerType
     {
         NoProducer,
-        D3D11TextureNV12,
+        D3D11Texture,
     };
 
     // A GL texture interpretation of a part of a producer frame. For use with GL texture consumers
@@ -85,7 +89,7 @@ class Stream final : angle::NonCopyable
     Error createConsumerGLTextureExternal(const AttributeMap &attributes, gl::Context *context);
 
     // Producer creation methods
-    Error createProducerD3D11TextureNV12(const AttributeMap &attributes);
+    Error createProducerD3D11Texture(const AttributeMap &attributes);
 
     // Consumer methods
     Error consumerAcquire(const gl::Context *context);
@@ -96,10 +100,12 @@ class Stream final : angle::NonCopyable
     bool isConsumerBoundToContext(const gl::Context *context) const;
 
     // Producer methods
-    Error validateD3D11NV12Texture(void *texture) const;
-    Error postD3D11NV12Texture(void *texture, const AttributeMap &attributes);
+    Error validateD3D11Texture(void *texture, const AttributeMap &attributes) const;
+    Error postD3D11Texture(void *texture, const AttributeMap &attributes);
 
   private:
+    EGLLabelKHR mLabel;
+
     // Associated display
     Display *mDisplay;
 

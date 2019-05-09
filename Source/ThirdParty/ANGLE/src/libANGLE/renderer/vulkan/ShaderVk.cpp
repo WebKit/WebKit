@@ -10,34 +10,36 @@
 #include "libANGLE/renderer/vulkan/ShaderVk.h"
 
 #include "common/debug.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/renderer/vulkan/ContextVk.h"
+#include "platform/FeaturesVk.h"
 
 namespace rx
 {
 
-ShaderVk::ShaderVk(const gl::ShaderState &data) : ShaderImpl(data)
-{
-}
+ShaderVk::ShaderVk(const gl::ShaderState &data) : ShaderImpl(data) {}
 
-ShaderVk::~ShaderVk()
-{
-}
+ShaderVk::~ShaderVk() {}
 
-ShCompileOptions ShaderVk::prepareSourceAndReturnOptions(std::stringstream *sourceStream,
-                                                         std::string *sourcePath)
+std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *context,
+                                                        gl::ShCompilerInstance *compilerInstance,
+                                                        ShCompileOptions options)
 {
-    *sourceStream << mData.getSource();
-    return 0;
-}
+    ShCompileOptions compileOptions = SH_INITIALIZE_UNINITIALIZED_LOCALS;
 
-bool ShaderVk::postTranslateCompile(gl::Compiler *compiler, std::string *infoLog)
-{
-    // No work to do here.
-    return true;
+    ContextVk *contextVk = vk::GetImpl(context);
+
+    if (contextVk->getFeatures().clampPointSize)
+    {
+        compileOptions |= SH_CLAMP_POINT_SIZE;
+    }
+
+    return compileImpl(context, compilerInstance, mData.getSource(), compileOptions | options);
 }
 
 std::string ShaderVk::getDebugInfo() const
 {
-    return std::string();
+    return mData.getTranslatedSource();
 }
 
 }  // namespace rx

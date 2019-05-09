@@ -1,0 +1,26 @@
+# Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  build_with_chromium = false
+  ignore_elf32_limitations = true
+  linux_use_bundled_binutils_override = false
+
+  use_system_xcode = ""
+}
+
+if (host_os == "mac" && use_system_xcode == "") {
+  _result = exec_script("//build/mac/should_use_hermetic_xcode.py",
+                        [ target_os ],
+                        "value")
+
+  assert(_result != 2,
+         "Do not allow building targets with the default" +
+             "hermetic toolchain if the minimum OS version is not met.")
+  assert(_result != 3,
+         "iOS does not support building with a hermetic toolchain. " +
+             "Please install Xcode.")
+
+  use_system_xcode = _result != 1
+}

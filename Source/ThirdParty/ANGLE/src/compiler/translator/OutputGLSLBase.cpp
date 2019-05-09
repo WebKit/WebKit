@@ -46,6 +46,10 @@ bool isSingleStatement(TIntermNode *node)
     {
         return false;
     }
+    else if (node->getAsPreprocessorDirective())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -53,6 +57,7 @@ class CommaSeparatedListItemPrefixGenerator
 {
   public:
     CommaSeparatedListItemPrefixGenerator() : mFirst(true) {}
+
   private:
     bool mFirst;
 
@@ -94,8 +99,7 @@ TOutputGLSLBase::TOutputGLSLBase(TInfoSinkBase &objSink,
       mShaderVersion(shaderVersion),
       mOutput(output),
       mCompileOptions(compileOptions)
-{
-}
+{}
 
 void TOutputGLSLBase::writeInvariantQualifier(const TType &type)
 {
@@ -165,6 +169,13 @@ void TOutputGLSLBase::writeLayoutQualifier(TIntermTyped *variable)
         return;
     }
 
+    if (type.getBasicType() == EbtInterfaceBlock)
+    {
+        const TInterfaceBlock *interfaceBlock = type.getInterfaceBlock();
+        declareInterfaceBlockLayout(interfaceBlock);
+        return;
+    }
+
     TInfoSinkBase &out                      = objSink();
     const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
     out << "layout(";
@@ -177,6 +188,10 @@ void TOutputGLSLBase::writeLayoutQualifier(TIntermTyped *variable)
         if (layoutQualifier.location >= 0)
         {
             out << listItemPrefix << "location = " << layoutQualifier.location;
+        }
+        if (type.getQualifier() == EvqFragmentOut && layoutQualifier.index >= 0)
+        {
+            out << listItemPrefix << "index = " << layoutQualifier.index;
         }
     }
 
@@ -212,6 +227,15 @@ void TOutputGLSLBase::writeLayoutQualifier(TIntermTyped *variable)
     }
 
     out << ") ";
+}
+
+void TOutputGLSLBase::writeQualifier(TQualifier qualifier, const TSymbol *symbol)
+{
+    const char *result = mapQualifierToString(qualifier);
+    if (result && result[0] != '\0')
+    {
+        objSink() << result << " ";
+    }
 }
 
 const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
@@ -250,7 +274,7 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
     return sh::getQualifierString(qualifier);
 }
 
-void TOutputGLSLBase::writeVariableType(const TType &type)
+void TOutputGLSLBase::writeVariableType(const TType &type, const TSymbol *symbol)
 {
     TQualifier qualifier = type.getQualifier();
     TInfoSinkBase &out   = objSink();
@@ -258,18 +282,9 @@ void TOutputGLSLBase::writeVariableType(const TType &type)
     {
         writeInvariantQualifier(type);
     }
-    if (type.getBasicType() == EbtInterfaceBlock)
-    {
-        TInterfaceBlock *interfaceBlock = type.getInterfaceBlock();
-        declareInterfaceBlockLayout(interfaceBlock);
-    }
     if (qualifier != EvqTemporary && qualifier != EvqGlobal)
     {
-        const char *qualifierString = mapQualifierToString(qualifier);
-        if (qualifierString && qualifierString[0] != '\0')
-        {
-            out << qualifierString << " ";
-        }
+        writeQualifier(qualifier, symbol);
     }
 
     const TMemoryQualifier &memoryQualifier = type.getMemoryQualifier();
@@ -309,15 +324,10 @@ void TOutputGLSLBase::writeVariableType(const TType &type)
         const TStructure *structure = type.getStruct();
 
         declareStruct(structure);
-
-        if (!structure->name().empty())
-        {
-            mDeclaredStructs.insert(structure->uniqueId());
-        }
     }
     else if (type.getBasicType() == EbtInterfaceBlock)
     {
-        TInterfaceBlock *interfaceBlock = type.getInterfaceBlock();
+        const TInterfaceBlock *interfaceBlock = type.getInterfaceBlock();
         declareInterfaceBlock(interfaceBlock);
     }
     else
@@ -328,24 +338,23 @@ void TOutputGLSLBase::writeVariableType(const TType &type)
     }
 }
 
-void TOutputGLSLBase::writeFunctionParameters(const TIntermSequence &args)
+void TOutputGLSLBase::writeFunctionParameters(const TFunction *func)
 {
     TInfoSinkBase &out = objSink();
-    for (TIntermSequence::const_iterator iter = args.begin(); iter != args.end(); ++iter)
+    size_t paramCount  = func->getParamCount();
+    for (size_t i = 0; i < paramCount; ++i)
     {
-        const TIntermSymbol *arg = (*iter)->getAsSymbolNode();
-        ASSERT(arg != nullptr);
+        const TVariable *param = func->getParam(i);
+        const TType &type      = param->getType();
+        writeVariableType(type, param);
 
-        const TType &type = arg->getType();
-        writeVariableType(type);
-
-        if (!arg->getName().getString().empty())
-            out << " " << hashName(arg->getName());
+        if (param->symbolType() != SymbolType::Empty)
+            out << " " << hashName(param);
         if (type.isArray())
             out << ArrayString(type);
 
         // Put a comma if this is not the last argument.
-        if (iter != args.end() - 1)
+        if (i != paramCount - 1)
             out << ", ";
     }
 }
@@ -358,7 +367,7 @@ const TConstantUnion *TOutputGLSLBase::writeConstantUnion(const TType &type,
     if (type.getBasicType() == EbtStruct)
     {
         const TStructure *structure = type.getStruct();
-        out << hashName(TName(structure->name())) << "(";
+        out << hashName(structure) << "(";
 
         const TFieldList &fields = structure->fields();
         for (size_t i = 0; i < fields.size(); ++i)
@@ -433,7 +442,7 @@ void TOutputGLSLBase::writeConstructorTriplet(Visit visit, const TType &type)
 void TOutputGLSLBase::visitSymbol(TIntermSymbol *node)
 {
     TInfoSinkBase &out = objSink();
-    out << hashVariableName(node->getName());
+    out << hashName(&node->variable());
 
     if (mDeclaringVariable && node->getType().isArray())
         out << ArrayString(node->getType());
@@ -441,7 +450,7 @@ void TOutputGLSLBase::visitSymbol(TIntermSymbol *node)
 
 void TOutputGLSLBase::visitConstantUnion(TIntermConstantUnion *node)
 {
-    writeConstantUnion(node->getType(), node->getUnionArrayPointer());
+    writeConstantUnion(node->getType(), node->getConstantValue());
 }
 
 bool TOutputGLSLBase::visitSwizzle(Visit visit, TIntermSwizzle *node)
@@ -582,11 +591,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
                 const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
                 const TField *field               = structure->fields()[index->getIConst(0)];
 
-                TString fieldName = field->name();
-                if (!mSymbolTable->findBuiltIn(structure->name(), mShaderVersion))
-                    fieldName = hashName(TName(fieldName));
-
-                out << fieldName;
+                out << hashFieldName(field);
                 visitChildren = false;
             }
             break;
@@ -598,18 +603,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
                     node->getLeft()->getType().getInterfaceBlock();
                 const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
                 const TField *field               = interfaceBlock->fields()[index->getIConst(0)];
-
-                TString fieldName = field->name();
-                if (!mSymbolTable->findBuiltIn(interfaceBlock->name(), mShaderVersion))
-                {
-                    fieldName = hashName(TName(fieldName));
-                }
-                else
-                {
-                    ASSERT(interfaceBlock->name() == "gl_PerVertex");
-                }
-
-                out << fieldName;
+                out << hashFieldName(field);
                 visitChildren = false;
             }
             break;
@@ -691,8 +685,8 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
 
 bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
 {
-    TString preString;
-    TString postString = ")";
+    const char *preString  = "";
+    const char *postString = ")";
 
     switch (node->getOp())
     {
@@ -747,7 +741,7 @@ bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
         case EOpExp2:
         case EOpLog2:
         case EOpSqrt:
-        case EOpInverseSqrt:
+        case EOpInversesqrt:
         case EOpAbs:
         case EOpSign:
         case EOpFloor:
@@ -756,8 +750,8 @@ bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
         case EOpRoundEven:
         case EOpCeil:
         case EOpFract:
-        case EOpIsNan:
-        case EOpIsInf:
+        case EOpIsnan:
+        case EOpIsinf:
         case EOpFloatBitsToInt:
         case EOpFloatBitsToUint:
         case EOpIntBitsToFloat:
@@ -793,7 +787,7 @@ bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
             UNREACHABLE();
     }
 
-    writeTriplet(visit, preString.c_str(), nullptr, postString.c_str());
+    writeTriplet(visit, preString, nullptr, postString);
 
     return true;
 }
@@ -860,7 +854,7 @@ bool TOutputGLSLBase::visitBlock(Visit visit, TIntermBlock *node)
 {
     TInfoSinkBase &out = objSink();
     // Scope the blocks except when at the global scope.
-    if (mDepth > 0)
+    if (getCurrentTraversalDepth() > 0)
     {
         out << "{\n";
     }
@@ -877,7 +871,7 @@ bool TOutputGLSLBase::visitBlock(Visit visit, TIntermBlock *node)
     }
 
     // Scope the blocks except when at the global scope.
-    if (mDepth > 0)
+    if (getCurrentTraversalDepth() > 0)
     {
         out << "}\n";
     }
@@ -899,33 +893,30 @@ bool TOutputGLSLBase::visitInvariantDeclaration(Visit visit, TIntermInvariantDec
     TInfoSinkBase &out = objSink();
     ASSERT(visit == PreVisit);
     const TIntermSymbol *symbol = node->getSymbol();
-    out << "invariant " << hashVariableName(symbol->getName());
+    out << "invariant " << hashName(&symbol->variable());
     return false;
 }
 
-bool TOutputGLSLBase::visitFunctionPrototype(Visit visit, TIntermFunctionPrototype *node)
+void TOutputGLSLBase::visitFunctionPrototype(TIntermFunctionPrototype *node)
 {
     TInfoSinkBase &out = objSink();
-    ASSERT(visit == PreVisit);
 
     const TType &type = node->getType();
-    writeVariableType(type);
+    writeVariableType(type, node->getFunction());
     if (type.isArray())
         out << ArrayString(type);
 
-    out << " " << hashFunctionNameIfNeeded(*node->getFunctionSymbolInfo());
+    out << " " << hashFunctionNameIfNeeded(node->getFunction());
 
     out << "(";
-    writeFunctionParameters(*(node->getSequence()));
+    writeFunctionParameters(node->getFunction());
     out << ")";
-
-    return false;
 }
 
 bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
 {
-    bool visitChildren       = true;
-    TInfoSinkBase &out       = objSink();
+    bool visitChildren = true;
+    TInfoSinkBase &out = objSink();
     switch (node->getOp())
     {
         case EOpCallFunctionInAST:
@@ -936,11 +927,11 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
             {
                 if (node->getOp() == EOpCallBuiltInFunction)
                 {
-                    out << translateTextureFunction(node->getFunctionSymbolInfo()->getName());
+                    out << translateTextureFunction(node->getFunction()->name());
                 }
                 else
                 {
-                    out << hashFunctionNameIfNeeded(*node->getFunctionSymbolInfo());
+                    out << hashFunctionNameIfNeeded(node->getFunction());
                 }
                 out << "(";
             }
@@ -968,7 +959,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         case EOpClamp:
         case EOpMix:
         case EOpStep:
-        case EOpSmoothStep:
+        case EOpSmoothstep:
         case EOpFrexp:
         case EOpLdexp:
         case EOpDistance:
@@ -992,6 +983,14 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         case EOpMemoryBarrierImage:
         case EOpMemoryBarrierShared:
         case EOpGroupMemoryBarrier:
+        case EOpAtomicAdd:
+        case EOpAtomicMin:
+        case EOpAtomicMax:
+        case EOpAtomicAnd:
+        case EOpAtomicOr:
+        case EOpAtomicXor:
+        case EOpAtomicExchange:
+        case EOpAtomicCompSwap:
         case EOpEmitVertex:
         case EOpEndPrimitive:
             writeBuiltInFunctionTriplet(visit, node->getOp(), node->getUseEmulatedFunction());
@@ -1012,9 +1011,10 @@ bool TOutputGLSLBase::visitDeclaration(Visit visit, TIntermDeclaration *node)
         const TIntermSequence &sequence = *(node->getSequence());
         TIntermTyped *variable          = sequence.front()->getAsTyped();
         writeLayoutQualifier(variable);
-        writeVariableType(variable->getType());
+        TIntermSymbol *symbolNode = variable->getAsSymbolNode();
+        writeVariableType(variable->getType(), symbolNode ? &symbolNode->variable() : nullptr);
         if (variable->getAsSymbolNode() == nullptr ||
-            !variable->getAsSymbolNode()->getSymbol().empty())
+            variable->getAsSymbolNode()->variable().symbolType() != SymbolType::Empty)
         {
             out << " ";
         }
@@ -1121,73 +1121,112 @@ void TOutputGLSLBase::visitCodeBlock(TIntermBlock *node)
     }
 }
 
-TString TOutputGLSLBase::getTypeName(const TType &type)
+void TOutputGLSLBase::visitPreprocessorDirective(TIntermPreprocessorDirective *node)
+{
+    TInfoSinkBase &out = objSink();
+
+    out << "\n";
+
+    switch (node->getDirective())
+    {
+        case PreprocessorDirective::Define:
+            out << "#define";
+            break;
+        case PreprocessorDirective::Endif:
+            out << "#endif";
+            break;
+        case PreprocessorDirective::If:
+            out << "#if";
+            break;
+        case PreprocessorDirective::Ifdef:
+            out << "#ifdef";
+            break;
+
+        default:
+            UNREACHABLE();
+            break;
+    }
+
+    if (!node->getCommand().empty())
+    {
+        out << " " << node->getCommand();
+    }
+
+    out << "\n";
+}
+
+ImmutableString TOutputGLSLBase::getTypeName(const TType &type)
 {
     return GetTypeName(type, mHashFunction, &mNameMap);
 }
 
-TString TOutputGLSLBase::hashName(const TName &name)
+ImmutableString TOutputGLSLBase::hashName(const TSymbol *symbol)
 {
-    return HashName(name, mHashFunction, &mNameMap);
+    return HashName(symbol, mHashFunction, &mNameMap);
 }
 
-TString TOutputGLSLBase::hashVariableName(const TName &name)
+ImmutableString TOutputGLSLBase::hashFieldName(const TField *field)
 {
-    if (mSymbolTable->findBuiltIn(name.getString(), mShaderVersion) != nullptr ||
-        name.getString().substr(0, 3) == "gl_")
+    ASSERT(field->symbolType() != SymbolType::Empty);
+    if (field->symbolType() == SymbolType::UserDefined)
     {
-        if (mCompileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM &&
-            name.getString() == "gl_ViewID_OVR")
-        {
-            TName uniformName(TString("ViewID_OVR"));
-            uniformName.setInternal(true);
-            return hashName(uniformName);
-        }
-        return name.getString();
+        return HashName(field->name(), mHashFunction, &mNameMap);
     }
-    return hashName(name);
+
+    return field->name();
 }
 
-TString TOutputGLSLBase::hashFunctionNameIfNeeded(const TFunctionSymbolInfo &info)
+ImmutableString TOutputGLSLBase::hashFunctionNameIfNeeded(const TFunction *func)
 {
-    if (info.isMain())
+    if (func->isMain())
     {
-        return info.getName();
+        return func->name();
     }
     else
     {
-        return hashName(info.getNameObj());
+        return hashName(func);
     }
 }
 
 bool TOutputGLSLBase::structDeclared(const TStructure *structure) const
 {
     ASSERT(structure);
-    if (structure->name().empty())
+    if (structure->symbolType() == SymbolType::Empty)
     {
         return false;
     }
 
-    return (mDeclaredStructs.count(structure->uniqueId()) > 0);
+    return (mDeclaredStructs.count(structure->uniqueId().get()) > 0);
 }
 
 void TOutputGLSLBase::declareStruct(const TStructure *structure)
 {
     TInfoSinkBase &out = objSink();
 
-    out << "struct " << hashName(TName(structure->name())) << "{\n";
+    out << "struct ";
+
+    if (structure->symbolType() != SymbolType::Empty)
+    {
+        out << hashName(structure) << " ";
+    }
+    out << "{\n";
     const TFieldList &fields = structure->fields();
     for (size_t i = 0; i < fields.size(); ++i)
     {
         const TField *field = fields[i];
         if (writeVariablePrecision(field->type()->getPrecision()))
             out << " ";
-        out << getTypeName(*field->type()) << " " << hashName(TName(field->name()));
+        out << getTypeName(*field->type()) << " " << hashFieldName(field);
         if (field->type()->isArray())
             out << ArrayString(*field->type());
         out << ";\n";
     }
     out << "}";
+
+    if (structure->symbolType() != SymbolType::Empty)
+    {
+        mDeclaredStructs.insert(structure->uniqueId().get());
+    }
 }
 
 void TOutputGLSLBase::declareInterfaceBlockLayout(const TInterfaceBlock *interfaceBlock)
@@ -1221,29 +1260,10 @@ void TOutputGLSLBase::declareInterfaceBlockLayout(const TInterfaceBlock *interfa
             break;
     }
 
-    out << ", ";
-
-    if (interfaceBlock->blockBinding() > 0)
+    if (interfaceBlock->blockBinding() >= 0)
     {
-        out << "binding = " << interfaceBlock->blockBinding();
         out << ", ";
-    }
-
-    switch (interfaceBlock->matrixPacking())
-    {
-        case EmpUnspecified:
-        case EmpColumnMajor:
-            // Default matrix packing is column major.
-            out << "column_major";
-            break;
-
-        case EmpRowMajor:
-            out << "row_major";
-            break;
-
-        default:
-            UNREACHABLE();
-            break;
+        out << "binding = " << interfaceBlock->blockBinding();
     }
 
     out << ") ";
@@ -1253,14 +1273,35 @@ void TOutputGLSLBase::declareInterfaceBlock(const TInterfaceBlock *interfaceBloc
 {
     TInfoSinkBase &out = objSink();
 
-    out << hashName(TName(interfaceBlock->name())) << "{\n";
+    out << hashName(interfaceBlock) << "{\n";
     const TFieldList &fields = interfaceBlock->fields();
-    for (size_t i = 0; i < fields.size(); ++i)
+    for (const TField *field : fields)
     {
-        const TField *field = fields[i];
+        if (field->type()->isMatrix() || field->type()->isStructureContainingMatrices())
+        {
+            out << "layout(";
+            switch (field->type()->getLayoutQualifier().matrixPacking)
+            {
+                case EmpUnspecified:
+                case EmpColumnMajor:
+                    // Default matrix packing is column major.
+                    out << "column_major";
+                    break;
+
+                case EmpRowMajor:
+                    out << "row_major";
+                    break;
+
+                default:
+                    UNREACHABLE();
+                    break;
+            }
+            out << ") ";
+        }
+
         if (writeVariablePrecision(field->type()->getPrecision()))
             out << " ";
-        out << getTypeName(*field->type()) << " " << hashName(TName(field->name()));
+        out << getTypeName(*field->type()) << " " << hashFieldName(field);
         if (field->type()->isArray())
             out << ArrayString(*field->type());
         out << ";\n";
@@ -1325,7 +1366,7 @@ bool NeedsToWriteLayoutQualifier(const TType &type)
 {
     if (type.getBasicType() == EbtInterfaceBlock)
     {
-        return false;
+        return true;
     }
 
     const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();

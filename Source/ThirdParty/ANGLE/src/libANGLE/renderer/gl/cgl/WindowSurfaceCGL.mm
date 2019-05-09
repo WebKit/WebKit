@@ -13,10 +13,11 @@
 #import <QuartzCore/QuartzCore.h>
 
 #include "common/debug.h"
-#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#include "libANGLE/Context.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
+#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
 @interface SwapLayer : CAOpenGLLayer
 {
@@ -145,18 +146,14 @@
     WindowSurfaceCGL::WindowSurfaceCGL(const egl::SurfaceState &state,
                                        RendererGL *renderer,
                                        EGLNativeWindowType layer,
-                                       const FunctionsGL *functions,
                                        CGLContextObj context)
-        : SurfaceGL(state, renderer),
+        : SurfaceGL(state),
           mSwapLayer(nil),
           mCurrentSwapId(0),
           mLayer(reinterpret_cast<CALayer *>(layer)),
           mContext(context),
-          mFunctions(functions),
+          mFunctions(renderer->getFunctions()),
           mStateManager(renderer->getStateManager()),
-          mRenderer(renderer),
-          mWorkarounds(renderer->getWorkarounds()),
-          mFramebuffer(0),
           mDSRenderbuffer(0)
     {
         pthread_mutex_init(&mSwapState.mutex, nullptr);
@@ -165,11 +162,6 @@
 WindowSurfaceCGL::~WindowSurfaceCGL()
 {
     pthread_mutex_destroy(&mSwapState.mutex);
-    if (mFramebuffer != 0)
-    {
-        mFunctions->deleteFramebuffers(1, &mFramebuffer);
-        mFramebuffer = 0;
-    }
 
     if (mDSRenderbuffer != 0)
     {
@@ -202,7 +194,7 @@ egl::Error WindowSurfaceCGL::initialize(const egl::Display *display)
     for (size_t i = 0; i < ArraySize(mSwapState.textures); ++i)
     {
         mFunctions->genTextures(1, &mSwapState.textures[i].texture);
-        mStateManager->bindTexture(GL_TEXTURE_2D, mSwapState.textures[i].texture);
+        mStateManager->bindTexture(gl::TextureType::_2D, mSwapState.textures[i].texture);
         mFunctions->texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                                GL_UNSIGNED_BYTE, nullptr);
         mSwapState.textures[i].width  = width;
@@ -222,24 +214,20 @@ egl::Error WindowSurfaceCGL::initialize(const egl::Display *display)
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mDSRenderbuffer);
     mFunctions->renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 
-    mFunctions->genFramebuffers(1, &mFramebuffer);
-    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
-    mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                                     mSwapState.beingRendered->texture, 0);
-    mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                        mDSRenderbuffer);
-
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error WindowSurfaceCGL::makeCurrent()
+egl::Error WindowSurfaceCGL::makeCurrent(const gl::Context *context)
 {
     return egl::Error(EGL_SUCCESS);
 }
 
 egl::Error WindowSurfaceCGL::swap(const gl::Context *context)
 {
-    mFunctions->flush();
+    const FunctionsGL *functions = GetFunctionsGL(context);
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+
+    functions->flush();
     mSwapState.beingRendered->swapId = ++mCurrentSwapId;
 
     pthread_mutex_lock(&mSwapState.mutex);
@@ -254,20 +242,21 @@ egl::Error WindowSurfaceCGL::swap(const gl::Context *context)
 
     if (texture.width != width || texture.height != height)
     {
-        mStateManager->bindTexture(GL_TEXTURE_2D, texture.texture);
-        mFunctions->texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                               GL_UNSIGNED_BYTE, nullptr);
+        stateManager->bindTexture(gl::TextureType::_2D, texture.texture);
+        functions->texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+                              GL_UNSIGNED_BYTE, nullptr);
 
-        mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mDSRenderbuffer);
-        mFunctions->renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        stateManager->bindRenderbuffer(GL_RENDERBUFFER, mDSRenderbuffer);
+        functions->renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 
         texture.width  = width;
         texture.height = height;
     }
 
-    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
-    mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                                     mSwapState.beingRendered->texture, 0);
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(context->getFramebuffer(0));
+    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebufferGL->getFramebufferID());
+    functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                    mSwapState.beingRendered->texture, 0);
 
     return egl::Error(EGL_SUCCESS);
 }
@@ -288,13 +277,15 @@ egl::Error WindowSurfaceCGL::querySurfacePointerANGLE(EGLint attribute, void **v
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error WindowSurfaceCGL::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error WindowSurfaceCGL::bindTexImage(const gl::Context *context,
+                                          gl::Texture *texture,
+                                          EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error WindowSurfaceCGL::releaseTexImage(EGLint buffer)
+egl::Error WindowSurfaceCGL::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::Error(EGL_SUCCESS);
@@ -326,11 +317,21 @@ EGLint WindowSurfaceCGL::getSwapBehavior() const
     return EGL_BUFFER_DESTROYED;
 }
 
-FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::FramebufferState &state)
+FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::Context *context,
+                                                            const gl::FramebufferState &state)
 {
-    // TODO(cwallez) assert it happens only once?
-    return new FramebufferGL(mFramebuffer, state, mFunctions, mWorkarounds, mRenderer->getBlitter(),
-                             mRenderer->getMultiviewClearer(), mStateManager);
+    const FunctionsGL *functions = GetFunctionsGL(context);
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+
+    GLuint framebuffer = 0;
+    functions->genFramebuffers(1, &framebuffer);
+    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                    mSwapState.beingRendered->texture, 0);
+    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                       mDSRenderbuffer);
+
+    return new FramebufferGL(state, framebuffer, true);
 }
 
 }  // namespace rx

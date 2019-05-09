@@ -9,6 +9,6 @@
 #ifndef UTIL_OSX_PIXMAP_H_
 #define UTIL_OSX_PIXMAP_H_
 
-#include "OSPixmap.h"
+#include "util/OSPixmap.h"
 
-#endif // UTIL_OSX_PIXMAP_H_
+#endif  // UTIL_OSX_PIXMAP_H_

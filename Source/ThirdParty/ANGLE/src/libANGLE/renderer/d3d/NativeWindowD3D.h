@@ -24,9 +24,9 @@ class NativeWindowD3D : angle::NonCopyable
     NativeWindowD3D(EGLNativeWindowType window);
     virtual ~NativeWindowD3D();
 
-    virtual bool initialize() = 0;
+    virtual bool initialize()                     = 0;
     virtual bool getClientRect(LPRECT rect) const = 0;
-    virtual bool isIconic() const = 0;
+    virtual bool isIconic() const                 = 0;
 
     inline EGLNativeWindowType getNativeWindow() const { return mWindow; }
 

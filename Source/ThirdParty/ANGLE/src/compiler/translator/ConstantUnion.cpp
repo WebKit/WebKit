@@ -157,7 +157,16 @@ bool TConstantUnion::cast(TBasicType newType, const TConstantUnion &constant)
                     setUConst(static_cast<unsigned int>(constant.getBConst()));
                     break;
                 case EbtFloat:
-                    setUConst(static_cast<unsigned int>(constant.getFConst()));
+                    if (constant.getFConst() < 0.0f)
+                    {
+                        // Avoid undefined behavior in C++ by first casting to signed int.
+                        setUConst(
+                            static_cast<unsigned int>(static_cast<int>(constant.getFConst())));
+                    }
+                    else
+                    {
+                        setUConst(static_cast<unsigned int>(constant.getFConst()));
+                    }
                     break;
                 default:
                     return false;

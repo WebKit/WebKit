@@ -81,8 +81,26 @@ GLenum ConvertToGLenum(ParamType param)
     return ConvertToGLenum(GL_NONE, param);
 }
 
+template <typename OutType>
+OutType ConvertGLenum(GLenum param)
+{
+    return static_cast<OutType>(param);
+}
+
+template <typename InType, typename OutType>
+void ConvertGLenumValue(InType param, OutType *out)
+{
+    *out = ConvertGLenum<OutType>(static_cast<GLenum>(param));
+}
+
+template <typename PackedEnumType, typename OutType>
+void ConvertPackedEnum(PackedEnumType param, OutType *out)
+{
+    *out = static_cast<OutType>(ToGLenum(param));
+}
+
 template <typename ParamType>
-GLenum ConvertToGLint(ParamType param)
+GLint ConvertToGLint(ParamType param)
 {
     return CastQueryValueTo<GLint>(GL_NONE, param);
 }
@@ -101,8 +119,11 @@ GLboolean ConvertToGLBoolean(ParamType param)
 
 // The GL state query API types are: bool, int, uint, float, int64, uint64
 template <typename QueryT>
-void CastStateValues(Context *context, GLenum nativeType, GLenum pname,
-                     unsigned int numParams, QueryT *outParams);
+void CastStateValues(Context *context,
+                     GLenum nativeType,
+                     GLenum pname,
+                     unsigned int numParams,
+                     QueryT *outParams);
 
 // The GL state query API types are: bool, int, uint, float, int64, uint64
 template <typename QueryT>
@@ -112,6 +133,6 @@ void CastIndexedStateValues(Context *context,
                             GLuint index,
                             unsigned int numParams,
                             QueryT *outParams);
-}
+}  // namespace gl
 
 #endif  // LIBANGLE_QUERY_CONVERSIONS_H_

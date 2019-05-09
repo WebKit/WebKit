@@ -9,10 +9,12 @@
 
 #include "libANGLE/renderer/d3d/d3d11/RenderTarget11.h"
 
-#include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/renderer/d3d/d3d11/Context11.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
-#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 #include "libANGLE/renderer/d3d/d3d11/SwapChain11.h"
+#include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
+#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 #include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
 
 namespace rx
@@ -30,7 +32,7 @@ bool GetTextureProperties(ID3D11Resource *resource, unsigned int *mipLevels, uns
         SafeRelease(texture1D);
 
         *mipLevels = texDesc.MipLevels;
-        *samples = 0;
+        *samples   = 0;
 
         return true;
     }
@@ -43,7 +45,7 @@ bool GetTextureProperties(ID3D11Resource *resource, unsigned int *mipLevels, uns
         SafeRelease(texture2D);
 
         *mipLevels = texDesc.MipLevels;
-        *samples = texDesc.SampleDesc.Count > 1 ? texDesc.SampleDesc.Count : 0;
+        *samples   = texDesc.SampleDesc.Count > 1 ? texDesc.SampleDesc.Count : 0;
 
         return true;
     }
@@ -56,7 +58,7 @@ bool GetTextureProperties(ID3D11Resource *resource, unsigned int *mipLevels, uns
         SafeRelease(texture3D);
 
         *mipLevels = texDesc.MipLevels;
-        *samples = 0;
+        *samples   = 0;
 
         return true;
     }
@@ -69,7 +71,7 @@ unsigned int GetRTVSubresourceIndex(ID3D11Resource *resource, ID3D11RenderTarget
     D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
     view->GetDesc(&rtvDesc);
 
-    unsigned int mipSlice = 0;
+    unsigned int mipSlice   = 0;
     unsigned int arraySlice = 0;
 
     switch (rtvDesc.ViewDimension)
@@ -130,7 +132,7 @@ unsigned int GetDSVSubresourceIndex(ID3D11Resource *resource, ID3D11DepthStencil
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
     view->GetDesc(&dsvDesc);
 
-    unsigned int mipSlice = 0;
+    unsigned int mipSlice   = 0;
     unsigned int arraySlice = 0;
 
     switch (dsvDesc.ViewDimension)
@@ -194,22 +196,9 @@ const d3d11::Format &GetSurfaceFormatSet(bool depth, SwapChain11 *swapChain, Ren
 
 }  // anonymous namespace
 
-RenderTarget11::RenderTarget11(const d3d11::Format &formatSet) : mFormatSet(formatSet)
-{
-}
+RenderTarget11::RenderTarget11(const d3d11::Format &formatSet) : mFormatSet(formatSet) {}
 
-RenderTarget11::~RenderTarget11()
-{
-    ASSERT(mBroadcastChannel.empty());
-}
-
-void RenderTarget11::signalDirty(const gl::Context *context)
-{
-    mBroadcastChannel.signal(context);
-
-    // Clear the list. We can't do this in the receiver because it would mutate during iteration.
-    mBroadcastChannel.reset();
-}
+RenderTarget11::~RenderTarget11() {}
 
 TextureRenderTarget11::TextureRenderTarget11(d3d11::RenderTargetView &&rtv,
                                              const TextureHelper11 &resource,
@@ -238,7 +227,7 @@ TextureRenderTarget11::TextureRenderTarget11(d3d11::RenderTargetView &&rtv,
     {
         mSubresourceIndex = GetRTVSubresourceIndex(mTexture.get(), mRenderTarget.get());
     }
-    ASSERT(mFormatSet.formatID != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
+    ASSERT(mFormatSet.formatID != angle::FormatID::NONE || mWidth == 0 || mHeight == 0);
 }
 
 TextureRenderTarget11::TextureRenderTarget11(d3d11::DepthStencilView &&dsv,
@@ -267,12 +256,10 @@ TextureRenderTarget11::TextureRenderTarget11(d3d11::DepthStencilView &&dsv,
     {
         mSubresourceIndex = GetDSVSubresourceIndex(mTexture.get(), mDepthStencil.get());
     }
-    ASSERT(mFormatSet.formatID != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
+    ASSERT(mFormatSet.formatID != angle::FormatID::NONE || mWidth == 0 || mHeight == 0);
 }
 
-TextureRenderTarget11::~TextureRenderTarget11()
-{
-}
+TextureRenderTarget11::~TextureRenderTarget11() {}
 
 const TextureHelper11 &TextureRenderTarget11::getTexture() const
 {
@@ -289,12 +276,14 @@ const d3d11::DepthStencilView &TextureRenderTarget11::getDepthStencilView() cons
     return mDepthStencil;
 }
 
-const d3d11::SharedSRV &TextureRenderTarget11::getShaderResourceView() const
+const d3d11::SharedSRV &TextureRenderTarget11::getShaderResourceView(
+    const gl::Context *context) const
 {
     return mShaderResource;
 }
 
-const d3d11::SharedSRV &TextureRenderTarget11::getBlitShaderResourceView() const
+const d3d11::SharedSRV &TextureRenderTarget11::getBlitShaderResourceView(
+    const gl::Context *context) const
 {
     return mBlitShaderResource;
 }
@@ -339,9 +328,7 @@ SurfaceRenderTarget11::SurfaceRenderTarget11(SwapChain11 *swapChain,
     ASSERT(mSwapChain);
 }
 
-SurfaceRenderTarget11::~SurfaceRenderTarget11()
-{
-}
+SurfaceRenderTarget11::~SurfaceRenderTarget11() {}
 
 GLsizei SurfaceRenderTarget11::getWidth() const
 {
@@ -385,16 +372,18 @@ const d3d11::DepthStencilView &SurfaceRenderTarget11::getDepthStencilView() cons
     return mSwapChain->getDepthStencil();
 }
 
-const d3d11::SharedSRV &SurfaceRenderTarget11::getShaderResourceView() const
+const d3d11::SharedSRV &SurfaceRenderTarget11::getShaderResourceView(
+    const gl::Context *context) const
 {
     return (mDepth ? mSwapChain->getDepthStencilShaderResource()
-                   : mSwapChain->getRenderTargetShaderResource());
+                   : mSwapChain->getRenderTargetShaderResource(GetImplAs<Context11>(context)));
 }
 
-const d3d11::SharedSRV &SurfaceRenderTarget11::getBlitShaderResourceView() const
+const d3d11::SharedSRV &SurfaceRenderTarget11::getBlitShaderResourceView(
+    const gl::Context *context) const
 {
     // The SurfaceRenderTargetView format should always be such that the normal SRV works for blits.
-    return getShaderResourceView();
+    return getShaderResourceView(context);
 }
 
 unsigned int SurfaceRenderTarget11::getSubresourceIndex() const

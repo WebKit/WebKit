@@ -8,10 +8,10 @@
 //   This test can only be enabled when HLSL support is enabled.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "common/angleutils.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -42,15 +42,16 @@ class UnrollFlattenTest : public testing::Test
 
     void expect(const char *patterns[], size_t count)
     {
-        const char *badPatterns[] = { UNROLL, FLATTEN };
+        const char *badPatterns[] = {UNROLL, FLATTEN};
         for (size_t i = 0; i < count; i++)
         {
             const char *pattern = patterns[i];
-            auto position = mTranslatedSource.find(pattern, mCurrentPosition);
+            auto position       = mTranslatedSource.find(pattern, mCurrentPosition);
             if (position == std::string::npos)
             {
                 FAIL() << "Couldn't find '" << pattern << "' after expectations '"
-                       << mExpectationList << "' in translated source:\n" << mTranslatedSource;
+                       << mExpectationList << "' in translated source:\n"
+                       << mTranslatedSource;
             }
 
             for (size_t j = 0; j < ArraySize(badPatterns); j++)
@@ -59,8 +60,10 @@ class UnrollFlattenTest : public testing::Test
                 if (pattern != badPattern &&
                     mTranslatedSource.find(badPattern, mCurrentPosition) < position)
                 {
-                    FAIL() << "Found '" << badPattern << "' before '" << pattern << "' after expectations '"
-                           << mExpectationList << "' in translated source:\n" << mTranslatedSource;
+                    FAIL() << "Found '" << badPattern << "' before '" << pattern
+                           << "' after expectations '" << mExpectationList
+                           << "' in translated source:\n"
+                           << mTranslatedSource;
                 }
             }
             mExpectationList += " - " + std::string(pattern);
@@ -79,7 +82,7 @@ class UnrollFlattenTest : public testing::Test
     std::string mExpectationList;
 };
 
-const char *UnrollFlattenTest::UNROLL = "LOOP";
+const char *UnrollFlattenTest::UNROLL  = "LOOP";
 const char *UnrollFlattenTest::FLATTEN = "FLATTEN";
 
 // Check that the nothing is added if there is no gradient operation
@@ -89,20 +92,20 @@ TEST_F(UnrollFlattenTest, NoGradient)
     const std::string &shaderString =
         "precision mediump float;\n"
         "uniform float f;\n"
-        "float fun(float a){\n" // 1
-        "    if (a > 1.0) {return f;}\n" // 2
+        "float fun(float a){\n"           // 1
+        "    if (a > 1.0) {return f;}\n"  // 2
         "    else {return a + 1.0;}\n"
         "}\n"
-        "float fun2(float a){\n" // 3
-        "    for (int i = 0; i < 10; i++) {\n" // 4
-        "        if (a > 1.0) {break;}\n" // 5
-        "        a = fun(a);\n" // 6
+        "float fun2(float a){\n"                // 3
+        "    for (int i = 0; i < 10; i++) {\n"  // 4
+        "        if (a > 1.0) {break;}\n"       // 5
+        "        a = fun(a);\n"                 // 6
         "    }\n"
         "    return a;\n"
         "}\n"
         "void main() {\n"
         "    float accum = 0.0;\n"
-        "    if (f < 5.0) {accum = fun2(accum);}\n" // 7
+        "    if (f < 5.0) {accum = fun2(accum);}\n"  // 7
         "    gl_FragColor = vec4(accum);\n"
         "}\n";
     compile(shaderString);
@@ -113,12 +116,8 @@ TEST_F(UnrollFlattenTest, NoGradient)
     // 5 - no FLATTEN because does not contain loop with a gradient
     // 6 - call non-Lod0 version
     // 7 - no FLATTEN
-    const char *expectations[] =
-    {
-        "fun(", "if",
-        "fun2(", "for", "if", "break", "fun(",
-        "main(", "if", "fun2("
-    };
+    const char *expectations[] = {"fun(",  "if",   "fun2(", "for", "if",
+                                  "break", "fun(", "main(", "if",  "fun2("};
     expect(expectations, ArraySize(expectations));
 }
 
@@ -131,20 +130,20 @@ TEST_F(UnrollFlattenTest, GradientNotInDiscont)
         "precision mediump float;\n"
         "uniform float f;\n"
         "uniform sampler2D tex;"
-        "float fun(float a){\n" // 1
-        "    return texture2D(tex, vec2(0.5, f)).x;\n" // 2
+        "float fun(float a){\n"                         // 1
+        "    return texture2D(tex, vec2(0.5, f)).x;\n"  // 2
         "}\n"
-        "float fun2(float a){\n" // 3
-        "    for (int i = 0; i < 10; i++) {\n" // 4
-        "        if (a > 1.0) {}\n" // 5
-        "        a = fun(a);\n" // 6
-        "        a += texture2D(tex, vec2(a, 0.0)).x;" // 7
+        "float fun2(float a){\n"                        // 3
+        "    for (int i = 0; i < 10; i++) {\n"          // 4
+        "        if (a > 1.0) {}\n"                     // 5
+        "        a = fun(a);\n"                         // 6
+        "        a += texture2D(tex, vec2(a, 0.0)).x;"  // 7
         "    }\n"
         "    return a;\n"
         "}\n"
         "void main() {\n"
         "    float accum = 0.0;\n"
-        "    if (f < 5.0) {accum = fun2(accum);}\n" // 8
+        "    if (f < 5.0) {accum = fun2(accum);}\n"  // 8
         "    gl_FragColor = vec4(accum);\n"
         "}\n";
     // 1 - shouldn't get a Lod0 version generated
@@ -156,12 +155,8 @@ TEST_F(UnrollFlattenTest, GradientNotInDiscont)
     // 7 - call non-Lod0 version
     // 8 - FLATTEN because it contains a loop with a gradient
     compile(shaderString);
-    const char *expectations[] =
-    {
-        "fun(", "texture2D(",
-        "fun2(", "LOOP", "for", "if", "fun(", "texture2D(",
-        "main(", "FLATTEN", "if", "fun2("
-    };
+    const char *expectations[] = {"fun(", "texture2D(", "fun2(", "LOOP",    "for", "if",
+                                  "fun(", "texture2D(", "main(", "FLATTEN", "if",  "fun2("};
     expect(expectations, ArraySize(expectations));
 }
 
@@ -173,20 +168,20 @@ TEST_F(UnrollFlattenTest, GradientInDiscont)
         "precision mediump float;\n"
         "uniform float f;\n"
         "uniform sampler2D tex;"
-        "float fun(float a){\n" // 1
-        "    return texture2D(tex, vec2(0.5, f)).x;\n" // 2
+        "float fun(float a){\n"                         // 1
+        "    return texture2D(tex, vec2(0.5, f)).x;\n"  // 2
         "}\n"
-        "float fun2(float a){\n" // 3
-        "    for (int i = 0; i < 10; i++) {\n" // 4
-        "        if (a > 1.0) {break;}\n" // 5
-        "        a = fun(a);\n" // 6
-        "        a += texture2D(tex, vec2(a, 0.0)).x;" // 7
+        "float fun2(float a){\n"                        // 3
+        "    for (int i = 0; i < 10; i++) {\n"          // 4
+        "        if (a > 1.0) {break;}\n"               // 5
+        "        a = fun(a);\n"                         // 6
+        "        a += texture2D(tex, vec2(a, 0.0)).x;"  // 7
         "    }\n"
         "    return a;\n"
         "}\n"
         "void main() {\n"
         "    float accum = 0.0;\n"
-        "    if (f < 5.0) {accum = fun2(accum);}\n" // 8
+        "    if (f < 5.0) {accum = fun2(accum);}\n"  // 8
         "    gl_FragColor = vec4(accum);\n"
         "}\n";
     // 1 - should get a Lod0 version generated (gradient + discont loop)
@@ -198,13 +193,9 @@ TEST_F(UnrollFlattenTest, GradientInDiscont)
     // 7 - call Lod0 version
     // 8 - FLATTEN because it contains a loop with a gradient
     compile(shaderString);
-    const char *expectations[] =
-    {
-        "fun(", "texture2D(",
-        "funLod0(", "texture2DLod0(",
-        "fun2(", "LOOP", "for", "if", "break", "funLod0(", "texture2DLod0",
-        "main(", "FLATTEN", "if", "fun2("
-    };
+    const char *expectations[] = {
+        "fun(",  "texture2D(", "funLod0(",      "texture2DLod0(", "fun2(",   "LOOP", "for",  "if",
+        "break", "funLod0(",   "texture2DLod0", "main(",          "FLATTEN", "if",   "fun2("};
     expect(expectations, ArraySize(expectations));
 }
 
@@ -235,4 +226,4 @@ TEST_F(UnrollFlattenTest_ES3, TextureBuiltin)
     const char *expectations[] = {"main(", "LOOP", "Lod0("};
     expect(expectations, ArraySize(expectations));
 }
-}
+}  // namespace

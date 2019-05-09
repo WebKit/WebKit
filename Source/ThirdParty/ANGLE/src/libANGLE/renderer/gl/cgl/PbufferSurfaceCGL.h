@@ -16,6 +16,7 @@ namespace rx
 {
 
 class FunctionsGL;
+class RendererGL;
 class StateManagerGL;
 struct WorkaroundsGL;
 
@@ -25,12 +26,11 @@ class PbufferSurfaceCGL : public SurfaceGL
     PbufferSurfaceCGL(const egl::SurfaceState &state,
                       RendererGL *renderer,
                       EGLint width,
-                      EGLint height,
-                      const FunctionsGL *functions);
+                      EGLint height);
     ~PbufferSurfaceCGL() override;
 
     egl::Error initialize(const egl::Display *display) override;
-    egl::Error makeCurrent() override;
+    egl::Error makeCurrent(const gl::Context *context) override;
 
     egl::Error swap(const gl::Context *context) override;
     egl::Error postSubBuffer(const gl::Context *context,
@@ -39,8 +39,10 @@ class PbufferSurfaceCGL : public SurfaceGL
                              EGLint width,
                              EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
-    egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
-    egl::Error releaseTexImage(EGLint buffer) override;
+    egl::Error bindTexImage(const gl::Context *context,
+                            gl::Texture *texture,
+                            EGLint buffer) override;
+    egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     void setSwapInterval(EGLint interval) override;
 
     EGLint getWidth() const override;
@@ -49,21 +51,22 @@ class PbufferSurfaceCGL : public SurfaceGL
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
-    FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
+    FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
+                                              const gl::FramebufferState &state) override;
 
   private:
     unsigned mWidth;
     unsigned mHeight;
 
+    // TODO(geofflang): Don't store these, they are potentially specific to a single GL context.
+    // http://anglebug.com/2464
     const FunctionsGL *mFunctions;
     StateManagerGL *mStateManager;
-    RendererGL *mRenderer;
 
-    GLuint mFramebuffer;
     GLuint mColorRenderbuffer;
     GLuint mDSRenderbuffer;
 };
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_CGL_PBUFFERSURFACECGL_H_
+#endif  // LIBANGLE_RENDERER_GL_CGL_PBUFFERSURFACECGL_H_

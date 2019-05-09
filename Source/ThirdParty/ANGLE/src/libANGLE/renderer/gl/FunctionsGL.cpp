@@ -17,9 +17,11 @@
 namespace rx
 {
 
-static void GetGLVersion(PFNGLGETSTRINGPROC getStringFunction, gl::Version *outVersion, StandardGL *outStandard)
+static void GetGLVersion(PFNGLGETSTRINGPROC getStringFunction,
+                         gl::Version *outVersion,
+                         StandardGL *outStandard)
 {
-    const std::string version = reinterpret_cast<const char*>(getStringFunction(GL_VERSION));
+    const std::string version = reinterpret_cast<const char *>(getStringFunction(GL_VERSION));
     if (version.find("OpenGL ES") == std::string::npos)
     {
         // OpenGL spec states the GL_VERSION string will be in the following format:
@@ -28,18 +30,19 @@ static void GetGLVersion(PFNGLGETSTRINGPROC getStringFunction, gl::Version *outV
         // number.minor number.release number, where the numbers all have one or more
         // digits
         *outStandard = STANDARD_GL_DESKTOP;
-        *outVersion = gl::Version(version[0] - '0', version[2] - '0');
+        *outVersion  = gl::Version(version[0] - '0', version[2] - '0');
     }
     else
     {
         // ES spec states that the GL_VERSION string will be in the following format:
         // "OpenGL ES N.M vendor-specific information"
         *outStandard = STANDARD_GL_ES;
-        *outVersion = gl::Version(version[10] - '0', version[12] - '0');
+        *outVersion  = gl::Version(version[10] - '0', version[12] - '0');
     }
 }
 
-static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getIntegerFunction, PFNGLGETSTRINGIPROC getStringIFunction)
+static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getIntegerFunction,
+                                                     PFNGLGETSTRINGIPROC getStringIFunction)
 {
     std::vector<std::string> result;
 
@@ -50,7 +53,7 @@ static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getInt
 
     for (GLint i = 0; i < numExtensions; i++)
     {
-        result.push_back(reinterpret_cast<const char*>(getStringIFunction(GL_EXTENSIONS, i)));
+        result.push_back(reinterpret_cast<const char *>(getStringIFunction(GL_EXTENSIONS, i)));
     }
 
     return result;
@@ -92,13 +95,9 @@ static void INTERNAL_GL_APIENTRY DummyGetShaderiv(GLuint program, GLenum pname, 
 
 #define ASSIGN(NAME, FP) *reinterpret_cast<void **>(&FP) = loadProcAddress(NAME)
 
-FunctionsGL::FunctionsGL() : version(), standard(), extensions()
-{
-}
+FunctionsGL::FunctionsGL() : version(), standard(), extensions() {}
 
-FunctionsGL::~FunctionsGL()
-{
-}
+FunctionsGL::~FunctionsGL() {}
 
 void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
 {
@@ -125,12 +124,12 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
         extensionSet.insert(extension);
     }
 
-// Note:
-// Even though extensions are written against specific versions of GL, many drivers expose the
-// extensions in even older versions.  Always try loading the extensions regardless of GL
-// version.
+    // Note:
+    // Even though extensions are written against specific versions of GL, many drivers expose the
+    // extensions in even older versions.  Always try loading the extensions regardless of GL
+    // version.
 
-// Load the entry points
+    // Load the entry points
 
 #if defined(ANGLE_ENABLE_OPENGL_NULL)
     EGLint deviceType =
@@ -244,6 +243,7 @@ void FunctionsGL::initializeDummyFunctionsForNULLDriver(const std::set<std::stri
     ASSIGN("glGetString", getString);
     ASSIGN("glGetStringi", getStringi);
     ASSIGN("glGetIntegerv", getIntegerv);
+    ASSIGN("glGetIntegeri_v", getIntegeri_v);
 
     getProgramiv           = &DummyGetProgramiv;
     getShaderiv            = &DummyGetShaderiv;
@@ -267,4 +267,4 @@ void FunctionsGL::initializeDummyFunctionsForNULLDriver(const std::set<std::stri
 }
 #endif  // defined(ANGLE_ENABLE_OPENGL_NULL)
 
-}  // namespace gl
+}  // namespace rx

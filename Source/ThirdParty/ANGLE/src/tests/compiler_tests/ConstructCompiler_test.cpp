@@ -7,9 +7,9 @@
 //   Test the sh::ConstructCompiler interface with different parameters.
 //
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
-#include "GLSLANG/ShaderLang.h"
 
 // Test default parameters.
 TEST(ConstructCompilerTest, DefaultParameters)

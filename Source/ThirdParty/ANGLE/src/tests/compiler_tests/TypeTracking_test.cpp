@@ -8,10 +8,10 @@
 //   precision.
 //
 
-#include "angle_gl.h"
-#include "gtest/gtest.h"
 #include "GLSLANG/ShaderLang.h"
+#include "angle_gl.h"
 #include "compiler/translator/TranslatorESSL.h"
+#include "gtest/gtest.h"
 
 using namespace sh;
 
@@ -33,22 +33,19 @@ class TypeTrackingTest : public testing::Test
 
     void TearDown() override { delete mTranslator; }
 
-    void compile(const std::string& shaderString)
+    void compile(const std::string &shaderString)
     {
-        const char *shaderStrings[] = { shaderString.c_str() };
-        bool compilationSuccess = mTranslator->compile(shaderStrings, 1, SH_INTERMEDIATE_TREE);
-        TInfoSink &infoSink = mTranslator->getInfoSink();
+        const char *shaderStrings[] = {shaderString.c_str()};
+        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, SH_INTERMEDIATE_TREE);
+        TInfoSink &infoSink         = mTranslator->getInfoSink();
         mInfoLog                    = RemoveSymbolIdsFromInfoLog(infoSink.info.c_str());
         if (!compilationSuccess)
             FAIL() << "Shader compilation failed " << mInfoLog;
     }
 
-    bool foundErrorInIntermediateTree() const
-    {
-        return foundInIntermediateTree("ERROR:");
-    }
+    bool foundErrorInIntermediateTree() const { return foundInIntermediateTree("ERROR:"); }
 
-    bool foundInIntermediateTree(const char* stringToFind) const
+    bool foundInIntermediateTree(const char *stringToFind) const
     {
         return mInfoLog.find(stringToFind) != std::string::npos;
     }
@@ -153,7 +150,8 @@ TEST_F(TypeTrackingTest, BuiltInMatFunctionResultTypeAndPrecision)
         "   mat2x4 tmp24 = mat2x4(m);\n"
         "   mat4x3 tmp43 = mat4x3(m);\n"
         "   mat3x4 tmp34 = mat3x4(m);\n"
-        "   my_FragColor = vec4(tmp32[2][1] * tmp23[1][2], tmp42[3][1] * tmp24[1][3], tmp43[3][2] * tmp34[2][3], 1.0);\n"
+        "   my_FragColor = vec4(tmp32[2][1] * tmp23[1][2], tmp42[3][1] * tmp24[1][3], tmp43[3][2] "
+        "* tmp34[2][3], 1.0);\n"
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
@@ -222,7 +220,8 @@ TEST_F(TypeTrackingTest, BuiltInVecToBoolFunctionResultType)
 TEST_F(TypeTrackingTest, Texture2DResultTypeAndPrecision)
 {
     // ESSL spec section 4.5.3: sampler2D and samplerCube are lowp by default
-    // ESSL spec section 8: For the texture functions, the precision of the return type matches the precision of the sampler type.
+    // ESSL spec section 8: For the texture functions, the precision of the return type matches the
+    // precision of the sampler type.
     const std::string &shaderString =
         "precision mediump float;\n"
         "uniform sampler2D s;\n"
@@ -239,7 +238,8 @@ TEST_F(TypeTrackingTest, Texture2DResultTypeAndPrecision)
 TEST_F(TypeTrackingTest, TextureCubeResultTypeAndPrecision)
 {
     // ESSL spec section 4.5.3: sampler2D and samplerCube are lowp by default
-    // ESSL spec section 8: For the texture functions, the precision of the return type matches the precision of the sampler type.
+    // ESSL spec section 8: For the texture functions, the precision of the return type matches the
+    // precision of the sampler type.
     const std::string &shaderString =
         "precision mediump float;\n"
         "uniform samplerCube sc;\n"

@@ -12,6 +12,9 @@
 #include <string>
 #include <vector>
 
+namespace angle
+{
+
 namespace pp
 {
 
@@ -46,5 +49,7 @@ typedef std::map<std::string, std::shared_ptr<Macro>> MacroSet;
 void PredefineMacro(MacroSet *macroSet, const char *name, int value);
 
 }  // namespace pp
+
+}  // namespace angle
 
 #endif  // COMPILER_PREPROCESSOR_MACRO_H_

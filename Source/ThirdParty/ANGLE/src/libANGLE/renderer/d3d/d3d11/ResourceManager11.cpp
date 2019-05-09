@@ -23,6 +23,11 @@ constexpr FLOAT kDebugColorInitClearValue[4] = {0.3f, 0.5f, 0.7f, 0.5f};
 constexpr FLOAT kDebugDepthInitValue         = 0.2f;
 constexpr UINT8 kDebugStencilInitValue       = 3;
 
+// A hard limit on buffer size. This works around a problem in the NVIDIA drivers where buffer sizes
+// close to MAX_UINT would give undefined results. The limit of MAX_UINT/2 should be generous enough
+// for almost any demanding application.
+constexpr UINT kMaximumBufferSizeHardLimit = std::numeric_limits<UINT>::max() >> 1;
+
 uint64_t ComputeMippedMemoryUsage(unsigned int width,
                                   unsigned int height,
                                   unsigned int depth,
@@ -109,6 +114,12 @@ HRESULT CreateResource(ID3D11Device *device,
                        const D3D11_SUBRESOURCE_DATA *initData,
                        ID3D11Buffer **buffer)
 {
+    // Force buffers to be limited to a fixed max size.
+    if (desc->ByteWidth > kMaximumBufferSizeHardLimit)
+    {
+        return E_OUTOFMEMORY;
+    }
+
     return device->CreateBuffer(desc, initData, buffer);
 }
 
@@ -211,6 +222,14 @@ HRESULT CreateResource(ID3D11Device *device,
 }
 
 HRESULT CreateResource(ID3D11Device *device,
+                       const D3D11_UNORDERED_ACCESS_VIEW_DESC *desc,
+                       ID3D11Resource *resource,
+                       ID3D11UnorderedAccessView **resourceOut)
+{
+    return device->CreateUnorderedAccessView(resource, desc, resourceOut);
+}
+
+HRESULT CreateResource(ID3D11Device *device,
                        const D3D11_TEXTURE2D_DESC *desc,
                        const D3D11_SUBRESOURCE_DATA *initData,
                        ID3D11Texture2D **texture)
@@ -252,18 +271,22 @@ DXGI_FORMAT GetTypedDepthStencilFormat(DXGI_FORMAT dxgiFormat)
 }
 
 template <typename DescT, typename ResourceT>
-gl::Error ClearResource(Renderer11 *renderer, const DescT *desc, ResourceT *texture)
+angle::Result ClearResource(d3d::Context *context,
+                            Renderer11 *renderer,
+                            const DescT *desc,
+                            ResourceT *texture)
 {
     // No-op.
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 template <>
-gl::Error ClearResource(Renderer11 *renderer,
-                        const D3D11_TEXTURE2D_DESC *desc,
-                        ID3D11Texture2D *texture)
+angle::Result ClearResource(d3d::Context *context,
+                            Renderer11 *renderer,
+                            const D3D11_TEXTURE2D_DESC *desc,
+                            ID3D11Texture2D *texture)
 {
-    ID3D11DeviceContext *context = renderer->getDeviceContext();
+    ID3D11DeviceContext *deviceContext = renderer->getDeviceContext();
 
     if ((desc->BindFlags & D3D11_BIND_DEPTH_STENCIL) != 0)
     {
@@ -289,56 +312,63 @@ gl::Error ClearResource(Renderer11 *renderer,
             }
 
             d3d11::DepthStencilView dsv;
-            ANGLE_TRY(renderer->allocateResource(dsvDesc, texture, &dsv));
+            ANGLE_TRY(renderer->allocateResource(context, dsvDesc, texture, &dsv));
 
-            context->ClearDepthStencilView(dsv.get(), clearFlags, kDebugDepthInitValue,
-                                           kDebugStencilInitValue);
+            deviceContext->ClearDepthStencilView(dsv.get(), clearFlags, kDebugDepthInitValue,
+                                                 kDebugStencilInitValue);
         }
     }
     else
     {
         ASSERT((desc->BindFlags & D3D11_BIND_RENDER_TARGET) != 0);
         d3d11::RenderTargetView rtv;
-        ANGLE_TRY(renderer->allocateResourceNoDesc(texture, &rtv));
+        ANGLE_TRY(renderer->allocateResourceNoDesc(context, texture, &rtv));
 
-        context->ClearRenderTargetView(rtv.get(), kDebugColorInitClearValue);
+        deviceContext->ClearRenderTargetView(rtv.get(), kDebugColorInitClearValue);
     }
 
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 template <>
-gl::Error ClearResource(Renderer11 *renderer,
-                        const D3D11_TEXTURE3D_DESC *desc,
-                        ID3D11Texture3D *texture)
+angle::Result ClearResource(d3d::Context *context,
+                            Renderer11 *renderer,
+                            const D3D11_TEXTURE3D_DESC *desc,
+                            ID3D11Texture3D *texture)
 {
-    ID3D11DeviceContext *context = renderer->getDeviceContext();
+    ID3D11DeviceContext *deviceContext = renderer->getDeviceContext();
 
     ASSERT((desc->BindFlags & D3D11_BIND_DEPTH_STENCIL) == 0);
     ASSERT((desc->BindFlags & D3D11_BIND_RENDER_TARGET) != 0);
 
     d3d11::RenderTargetView rtv;
-    ANGLE_TRY(renderer->allocateResourceNoDesc(texture, &rtv));
+    ANGLE_TRY(renderer->allocateResourceNoDesc(context, texture, &rtv));
 
-    context->ClearRenderTargetView(rtv.get(), kDebugColorInitClearValue);
-    return gl::NoError();
+    deviceContext->ClearRenderTargetView(rtv.get(), kDebugColorInitClearValue);
+    return angle::Result::Continue;
 }
 
-#define ANGLE_RESOURCE_STRINGIFY_OP(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) #RESTYPE,
+#define ANGLE_RESOURCE_STRINGIFY_OP(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) \
+    "Error allocating " #RESTYPE,
 
-constexpr std::array<const char *, NumResourceTypes> kResourceTypeNames = {
+constexpr std::array<const char *, NumResourceTypes> kResourceTypeErrors = {
     {ANGLE_RESOURCE_TYPE_OP(Stringify, ANGLE_RESOURCE_STRINGIFY_OP)}};
-static_assert(kResourceTypeNames[NumResourceTypes - 1] != nullptr,
+static_assert(kResourceTypeErrors[NumResourceTypes - 1] != nullptr,
               "All members must be initialized.");
 
 }  // anonymous namespace
 
 // ResourceManager11 Implementation.
-ResourceManager11::ResourceManager11()
-    : mInitializeAllocations(false),
-      mAllocatedResourceCounts({{}}),
-      mAllocatedResourceDeviceMemory({{}})
+ResourceManager11::ResourceManager11() : mInitializeAllocations(false)
 {
+    for (auto &count : mAllocatedResourceCounts)
+    {
+        count = 0;
+    }
+    for (auto &memorySize : mAllocatedResourceDeviceMemory)
+    {
+        memorySize = 0;
+    }
 }
 
 ResourceManager11::~ResourceManager11()
@@ -355,10 +385,11 @@ ResourceManager11::~ResourceManager11()
 }
 
 template <typename T>
-gl::Error ResourceManager11::allocate(Renderer11 *renderer,
-                                      const GetDescFromD3D11<T> *desc,
-                                      GetInitDataFromD3D11<T> *initData,
-                                      Resource11<T> *resourceOut)
+angle::Result ResourceManager11::allocate(d3d::Context *context,
+                                          Renderer11 *renderer,
+                                          const GetDescFromD3D11<T> *desc,
+                                          GetInitDataFromD3D11<T> *initData,
+                                          Resource11<T> *resourceOut)
 {
     ID3D11Device *device = renderer->getDevice();
     T *resource          = nullptr;
@@ -370,27 +401,17 @@ gl::Error ResourceManager11::allocate(Renderer11 *renderer,
     }
 
     HRESULT hr = CreateResource(device, desc, shadowInitData, &resource);
-    if (FAILED(hr))
-    {
-        ASSERT(!resource);
-        if (d3d11::isDeviceLostError(hr))
-        {
-            renderer->notifyDeviceLost();
-        }
-        return gl::OutOfMemory() << "Error allocating "
-                                 << std::string(kResourceTypeNames[ResourceTypeIndex<T>()]) << ". "
-                                 << gl::FmtHR(hr);
-    }
+    ANGLE_TRY_HR(context, hr, kResourceTypeErrors[ResourceTypeIndex<T>()]);
 
     if (!shadowInitData && mInitializeAllocations)
     {
-        ANGLE_TRY(ClearResource(renderer, desc, resource));
+        ANGLE_TRY(ClearResource(context, renderer, desc, resource));
     }
 
     ASSERT(resource);
     incrResource(GetResourceTypeFromD3D11<T>(), ComputeMemoryUsage(desc));
     *resourceOut = std::move(Resource11<T>(resource, this));
-    return gl::NoError();
+    return angle::Result::Continue;
 }
 
 void ResourceManager11::incrResource(ResourceType resourceType, uint64_t memorySize)
@@ -522,12 +543,10 @@ void ResourceManager11::setAllocationsInitialized(bool initialize)
     mInitializeAllocations = initialize;
 }
 
-#define ANGLE_INSTANTIATE_OP(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE)  \
-    \
-template \
-gl::Error                                                                       \
-    ResourceManager11::allocate(Renderer11 *, const DESCTYPE *, INITDATATYPE *, \
-                                Resource11<D3D11TYPE> *);
+#define ANGLE_INSTANTIATE_OP(NAME, RESTYPE, D3D11TYPE, DESCTYPE, INITDATATYPE) \
+                                                                               \
+    template angle::Result ResourceManager11::allocate(                        \
+        d3d::Context *, Renderer11 *, const DESCTYPE *, INITDATATYPE *, Resource11<D3D11TYPE> *);
 
 ANGLE_RESOURCE_TYPE_OP(Instantitate, ANGLE_INSTANTIATE_OP)
 }  // namespace rx

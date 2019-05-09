@@ -1378,5 +1378,48 @@
          "borrow = uint4(x < y);",
          "return x - y;"
       ]
+   },
+   {
+      "comment":[
+         "We emulate tanh just to avoid overflow on large arguments."
+      ],
+      "op":"tanh",
+      "return_type":"float",
+      "args":[
+         "float x"
+      ],
+      "body":[
+         "return (abs(x) > 15.0) ? sign(x) : tanh(x);"
+      ]
+   },
+   {
+      "op":"tanh",
+      "return_type":"float2",
+      "args":[
+         "float2 x"
+      ],
+      "body":[
+         "return (abs(x) > 15.0) ? sign(x) : tanh(x);"
+      ]
+   },
+   {
+      "op":"tanh",
+      "return_type":"float3",
+      "args":[
+         "float3 x"
+      ],
+      "body":[
+         "return (abs(x) > 15.0) ? sign(x) : tanh(x);"
+      ]
+   },
+   {
+      "op":"tanh",
+      "return_type":"float4",
+      "args":[
+         "float4 x"
+      ],
+      "body":[
+         "return (abs(x) > 15.0) ? sign(x) : tanh(x);"
+      ]
    }
 ]

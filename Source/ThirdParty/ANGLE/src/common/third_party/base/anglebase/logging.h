@@ -11,16 +11,16 @@
 #include "common/debug.h"
 
 #ifndef DCHECK
-#define DCHECK(X) ASSERT(X)
+#    define DCHECK(X) ASSERT(X)
 #endif
 
 #ifndef CHECK
-#define CHECK(X) ASSERT(X)
+#    define CHECK(X) ASSERT(X)
 #endif
 
 // Unfortunately ANGLE relies on ASSERT being an empty statement, which these libs don't respect.
 #ifndef NOTREACHED
-#define NOTREACHED() UNREACHABLE()
+#    define NOTREACHED() ({ UNREACHABLE(); })
 #endif
 
 #endif  // ANGLEBASE_LOGGING_H_

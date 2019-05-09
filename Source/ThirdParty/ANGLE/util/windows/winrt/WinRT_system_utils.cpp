@@ -19,10 +19,9 @@ void SetLowPriorityProcess()
     // No equivalent to this in WinRT
 }
 
-Library *loadLibrary(const std::string &libraryName)
+bool StabilizeCPUForBenchmarking()
 {
-    // WinRT cannot load code dynamically.
-    return nullptr;
+    // No equivalent to this in WinRT
+    return true;
 }
-
 }  // namespace angle

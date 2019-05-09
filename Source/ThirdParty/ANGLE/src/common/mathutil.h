@@ -9,12 +9,12 @@
 #ifndef COMMON_MATHUTIL_H_
 #define COMMON_MATHUTIL_H_
 
-#include <limits>
-#include <algorithm>
 #include <math.h>
-#include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <limits>
 
 #include <anglebase/numerics/safe_math.h>
 
@@ -25,15 +25,15 @@ namespace angle
 {
 using base::CheckedNumeric;
 using base::IsValueInRangeForNumericType;
-}
+}  // namespace angle
 
 namespace gl
 {
 
-const unsigned int Float32One = 0x3F800000;
+const unsigned int Float32One   = 0x3F800000;
 const unsigned short Float16One = 0x3C00;
 
-template<typename T>
+template <typename T>
 inline bool isPow2(T x)
 {
     static_assert(std::is_integral<T>::value, "isPow2 must be called on an integer type.");
@@ -43,13 +43,15 @@ inline bool isPow2(T x)
 inline int log2(int x)
 {
     int r = 0;
-    while ((x >> r) > 1) r++;
+    while ((x >> r) > 1)
+        r++;
     return r;
 }
 
 inline unsigned int ceilPow2(unsigned int x)
 {
-    if (x != 0) x--;
+    if (x != 0)
+        x--;
     x |= x >> 1;
     x |= x >> 2;
     x |= x >> 4;
@@ -108,7 +110,7 @@ inline int clampCast(bool value)
     return static_cast<int>(value);
 }
 
-template<typename T, typename MIN, typename MAX>
+template <typename T, typename MIN, typename MAX>
 inline T clamp(T x, MIN min, MAX max)
 {
     // Since NaNs fail all comparison tests, a NaN value will default to min
@@ -120,7 +122,7 @@ inline float clamp01(float x)
     return clamp(x, 0.0f, 1.0f);
 }
 
-template<const int n>
+template <const int n>
 inline unsigned int unorm(float x)
 {
     const unsigned int max = 0xFFFFFFFF >> (32 - n);
@@ -142,7 +144,7 @@ inline unsigned int unorm(float x)
 inline bool supportsSSE2()
 {
 #if defined(ANGLE_USE_SSE)
-    static bool checked = false;
+    static bool checked  = false;
     static bool supports = false;
 
     if (checked)
@@ -150,7 +152,7 @@ inline bool supportsSSE2()
         return supports;
     }
 
-#if defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM)
+#    if defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM) && !defined(_M_ARM64)
     {
         int info[4];
         __cpuid(info, 0);
@@ -162,7 +164,7 @@ inline bool supportsSSE2()
             supports = (info[3] >> 26) & 1;
         }
     }
-#endif  // defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM)
+#    endif  // defined(ANGLE_PLATFORM_WINDOWS) && !defined(_M_ARM) && !defined(_M_ARM64)
     checked = true;
     return supports;
 #else  // defined(ANGLE_USE_SSE)
@@ -182,19 +184,19 @@ destType bitCast(const sourceType &source)
 inline unsigned short float32ToFloat16(float fp32)
 {
     unsigned int fp32i = bitCast<unsigned int>(fp32);
-    unsigned int sign = (fp32i & 0x80000000) >> 16;
-    unsigned int abs = fp32i & 0x7FFFFFFF;
+    unsigned int sign  = (fp32i & 0x80000000) >> 16;
+    unsigned int abs   = fp32i & 0x7FFFFFFF;
 
-    if(abs > 0x47FFEFFF)   // Infinity
+    if (abs > 0x47FFEFFF)  // Infinity
     {
         return static_cast<unsigned short>(sign | 0x7FFF);
     }
-    else if(abs < 0x38800000)   // Denormal
+    else if (abs < 0x38800000)  // Denormal
     {
         unsigned int mantissa = (abs & 0x007FFFFF) | 0x00800000;
-        int e = 113 - (abs >> 23);
+        int e                 = 113 - (abs >> 23);
 
-        if(e < 24)
+        if (e < 24)
         {
             abs = mantissa >> e;
         }
@@ -207,7 +209,8 @@ inline unsigned short float32ToFloat16(float fp32)
     }
     else
     {
-        return static_cast<unsigned short>(sign | (abs + 0xC8000000 + 0x00000FFF + ((abs >> 13) & 1)) >> 13);
+        return static_cast<unsigned short>(
+            sign | (abs + 0xC8000000 + 0x00000FFF + ((abs >> 13) & 1)) >> 13);
     }
 }
 
@@ -218,24 +221,24 @@ void convert999E5toRGBFloats(unsigned int input, float *red, float *green, float
 
 inline unsigned short float32ToFloat11(float fp32)
 {
-    const unsigned int float32MantissaMask = 0x7FFFFF;
-    const unsigned int float32ExponentMask = 0x7F800000;
-    const unsigned int float32SignMask = 0x80000000;
-    const unsigned int float32ValueMask = ~float32SignMask;
+    const unsigned int float32MantissaMask     = 0x7FFFFF;
+    const unsigned int float32ExponentMask     = 0x7F800000;
+    const unsigned int float32SignMask         = 0x80000000;
+    const unsigned int float32ValueMask        = ~float32SignMask;
     const unsigned int float32ExponentFirstBit = 23;
-    const unsigned int float32ExponentBias = 127;
+    const unsigned int float32ExponentBias     = 127;
 
-    const unsigned short float11Max = 0x7BF;
+    const unsigned short float11Max          = 0x7BF;
     const unsigned short float11MantissaMask = 0x3F;
     const unsigned short float11ExponentMask = 0x7C0;
-    const unsigned short float11BitMask = 0x7FF;
-    const unsigned int float11ExponentBias = 14;
+    const unsigned short float11BitMask      = 0x7FF;
+    const unsigned int float11ExponentBias   = 14;
 
     const unsigned int float32Maxfloat11 = 0x477E0000;
     const unsigned int float32Minfloat11 = 0x38800000;
 
     const unsigned int float32Bits = bitCast<unsigned int>(fp32);
-    const bool float32Sign = (float32Bits & float32SignMask) == float32SignMask;
+    const bool float32Sign         = (float32Bits & float32SignMask) == float32SignMask;
 
     unsigned int float32Val = float32Bits & float32ValueMask;
 
@@ -244,7 +247,9 @@ inline unsigned short float32ToFloat11(float fp32)
         // INF or NAN
         if ((float32Val & float32MantissaMask) != 0)
         {
-            return float11ExponentMask | (((float32Val >> 17) | (float32Val >> 11) | (float32Val >> 6) | (float32Val)) & float11MantissaMask);
+            return float11ExponentMask |
+                   (((float32Val >> 17) | (float32Val >> 11) | (float32Val >> 6) | (float32Val)) &
+                    float11MantissaMask);
         }
         else if (float32Sign)
         {
@@ -272,8 +277,10 @@ inline unsigned short float32ToFloat11(float fp32)
         {
             // The number is too small to be represented as a normalized float11
             // Convert it to a denormalized value.
-            const unsigned int shift = (float32ExponentBias - float11ExponentBias) - (float32Val >> float32ExponentFirstBit);
-            float32Val = ((1 << float32ExponentFirstBit) | (float32Val & float32MantissaMask)) >> shift;
+            const unsigned int shift = (float32ExponentBias - float11ExponentBias) -
+                                       (float32Val >> float32ExponentFirstBit);
+            float32Val =
+                ((1 << float32ExponentFirstBit) | (float32Val & float32MantissaMask)) >> shift;
         }
         else
         {
@@ -287,24 +294,24 @@ inline unsigned short float32ToFloat11(float fp32)
 
 inline unsigned short float32ToFloat10(float fp32)
 {
-    const unsigned int float32MantissaMask = 0x7FFFFF;
-    const unsigned int float32ExponentMask = 0x7F800000;
-    const unsigned int float32SignMask = 0x80000000;
-    const unsigned int float32ValueMask = ~float32SignMask;
+    const unsigned int float32MantissaMask     = 0x7FFFFF;
+    const unsigned int float32ExponentMask     = 0x7F800000;
+    const unsigned int float32SignMask         = 0x80000000;
+    const unsigned int float32ValueMask        = ~float32SignMask;
     const unsigned int float32ExponentFirstBit = 23;
-    const unsigned int float32ExponentBias = 127;
+    const unsigned int float32ExponentBias     = 127;
 
-    const unsigned short float10Max = 0x3DF;
+    const unsigned short float10Max          = 0x3DF;
     const unsigned short float10MantissaMask = 0x1F;
     const unsigned short float10ExponentMask = 0x3E0;
-    const unsigned short float10BitMask = 0x3FF;
-    const unsigned int float10ExponentBias = 14;
+    const unsigned short float10BitMask      = 0x3FF;
+    const unsigned int float10ExponentBias   = 14;
 
     const unsigned int float32Maxfloat10 = 0x477C0000;
     const unsigned int float32Minfloat10 = 0x38800000;
 
     const unsigned int float32Bits = bitCast<unsigned int>(fp32);
-    const bool float32Sign = (float32Bits & float32SignMask) == float32SignMask;
+    const bool float32Sign         = (float32Bits & float32SignMask) == float32SignMask;
 
     unsigned int float32Val = float32Bits & float32ValueMask;
 
@@ -313,7 +320,9 @@ inline unsigned short float32ToFloat10(float fp32)
         // INF or NAN
         if ((float32Val & float32MantissaMask) != 0)
         {
-            return float10ExponentMask | (((float32Val >> 18) | (float32Val >> 13) | (float32Val >> 3) | (float32Val)) & float10MantissaMask);
+            return float10ExponentMask |
+                   (((float32Val >> 18) | (float32Val >> 13) | (float32Val >> 3) | (float32Val)) &
+                    float10MantissaMask);
         }
         else if (float32Sign)
         {
@@ -341,8 +350,10 @@ inline unsigned short float32ToFloat10(float fp32)
         {
             // The number is too small to be represented as a normalized float11
             // Convert it to a denormalized value.
-            const unsigned int shift = (float32ExponentBias - float10ExponentBias) - (float32Val >> float32ExponentFirstBit);
-            float32Val = ((1 << float32ExponentFirstBit) | (float32Val & float32MantissaMask)) >> shift;
+            const unsigned int shift = (float32ExponentBias - float10ExponentBias) -
+                                       (float32Val >> float32ExponentFirstBit);
+            float32Val =
+                ((1 << float32ExponentFirstBit) | (float32Val & float32MantissaMask)) >> shift;
         }
         else
         {
@@ -379,12 +390,11 @@ inline float float11ToFloat32(unsigned short fp11)
             {
                 exponent--;
                 mantissa <<= 1;
-            }
-            while ((mantissa & 0x40) == 0);
+            } while ((mantissa & 0x40) == 0);
 
             mantissa = mantissa & 0x3F;
         }
-        else // The value is zero
+        else  // The value is zero
         {
             exponent = static_cast<unsigned short>(-112);
         }
@@ -418,12 +428,11 @@ inline float float10ToFloat32(unsigned short fp11)
             {
                 exponent--;
                 mantissa <<= 1;
-            }
-            while ((mantissa & 0x20) == 0);
+            } while ((mantissa & 0x20) == 0);
 
             mantissa = mantissa & 0x1F;
         }
-        else // The value is zero
+        else  // The value is zero
         {
             exponent = static_cast<unsigned short>(-112);
         }
@@ -432,13 +441,48 @@ inline float float10ToFloat32(unsigned short fp11)
     }
 }
 
+// Convers to and from float and 16.16 fixed point format.
+
+inline float FixedToFloat(uint32_t fixedInput)
+{
+    return static_cast<float>(fixedInput) / 65536.0f;
+}
+
+inline uint32_t FloatToFixed(float floatInput)
+{
+    static constexpr uint32_t kHighest = 32767 * 65536 + 65535;
+    static constexpr uint32_t kLowest  = static_cast<uint32_t>(-32768 * 65536 + 65535);
+
+    if (floatInput > 32767.65535)
+    {
+        return kHighest;
+    }
+    else if (floatInput < -32768.65535)
+    {
+        return kLowest;
+    }
+    else
+    {
+        return static_cast<uint32_t>(floatInput * 65536);
+    }
+}
+
 template <typename T>
 inline float normalizedToFloat(T input)
 {
     static_assert(std::numeric_limits<T>::is_integer, "T must be an integer.");
 
-    const float inverseMax = 1.0f / std::numeric_limits<T>::max();
-    return input * inverseMax;
+    if (sizeof(T) > 2)
+    {
+        // float has only a 23 bit mantissa, so we need to do the calculation in double precision
+        constexpr double inverseMax = 1.0 / std::numeric_limits<T>::max();
+        return static_cast<float>(input * inverseMax);
+    }
+    else
+    {
+        constexpr float inverseMax = 1.0f / std::numeric_limits<T>::max();
+        return input * inverseMax;
+    }
 }
 
 template <unsigned int inputBitCount, typename T>
@@ -447,21 +491,47 @@ inline float normalizedToFloat(T input)
     static_assert(std::numeric_limits<T>::is_integer, "T must be an integer.");
     static_assert(inputBitCount < (sizeof(T) * 8), "T must have more bits than inputBitCount.");
 
-    const float inverseMax = 1.0f / ((1 << inputBitCount) - 1);
-    return input * inverseMax;
+    if (inputBitCount > 23)
+    {
+        // float has only a 23 bit mantissa, so we need to do the calculation in double precision
+        constexpr double inverseMax = 1.0 / ((1 << inputBitCount) - 1);
+        return static_cast<float>(input * inverseMax);
+    }
+    else
+    {
+        constexpr float inverseMax = 1.0f / ((1 << inputBitCount) - 1);
+        return input * inverseMax;
+    }
 }
 
 template <typename T>
 inline T floatToNormalized(float input)
 {
-    return static_cast<T>(std::numeric_limits<T>::max() * input + 0.5f);
+    if (sizeof(T) > 2)
+    {
+        // float has only a 23 bit mantissa, so we need to do the calculation in double precision
+        return static_cast<T>(std::numeric_limits<T>::max() * static_cast<double>(input) + 0.5);
+    }
+    else
+    {
+        return static_cast<T>(std::numeric_limits<T>::max() * input + 0.5f);
+    }
 }
 
 template <unsigned int outputBitCount, typename T>
 inline T floatToNormalized(float input)
 {
     static_assert(outputBitCount < (sizeof(T) * 8), "T must have more bits than outputBitCount.");
-    return static_cast<T>(((1 << outputBitCount) - 1) * input + 0.5f);
+
+    if (outputBitCount > 23)
+    {
+        // float has only a 23 bit mantissa, so we need to do the calculation in double precision
+        return static_cast<T>(((1 << outputBitCount) - 1) * static_cast<double>(input) + 0.5);
+    }
+    else
+    {
+        return static_cast<T>(((1 << outputBitCount) - 1) * input + 0.5f);
+    }
 }
 
 template <unsigned int inputBitCount, unsigned int inputBitStart, typename T>
@@ -563,12 +633,16 @@ inline unsigned short averageHalfFloat(unsigned short a, unsigned short b)
 
 inline unsigned int averageFloat11(unsigned int a, unsigned int b)
 {
-    return float32ToFloat11((float11ToFloat32(static_cast<unsigned short>(a)) + float11ToFloat32(static_cast<unsigned short>(b))) * 0.5f);
+    return float32ToFloat11((float11ToFloat32(static_cast<unsigned short>(a)) +
+                             float11ToFloat32(static_cast<unsigned short>(b))) *
+                            0.5f);
 }
 
 inline unsigned int averageFloat10(unsigned int a, unsigned int b)
 {
-    return float32ToFloat10((float10ToFloat32(static_cast<unsigned short>(a)) + float10ToFloat32(static_cast<unsigned short>(b))) * 0.5f);
+    return float32ToFloat10((float10ToFloat32(static_cast<unsigned short>(a)) +
+                             float10ToFloat32(static_cast<unsigned short>(b))) *
+                            0.5f);
 }
 
 template <typename T>
@@ -628,6 +702,12 @@ class Range
     T low() const { return mLow; }
     T high() const { return mHigh; }
 
+    void invalidate()
+    {
+        mLow  = std::numeric_limits<T>::max();
+        mHigh = std::numeric_limits<T>::min();
+    }
+
   private:
     T mLow;
     T mHigh;
@@ -638,6 +718,9 @@ typedef Range<unsigned int> RangeUI;
 
 struct IndexRange
 {
+    struct Undefined
+    {};
+    IndexRange(Undefined) {}
     IndexRange() : IndexRange(0, 0, 0) {}
     IndexRange(size_t start_, size_t end_, size_t vertexIndexCount_)
         : start(start_), end(end_), vertexIndexCount(vertexIndexCount_)
@@ -681,21 +764,21 @@ inline float Ldexp(float x, int exp)
 inline uint32_t packSnorm2x16(float f1, float f2)
 {
     int16_t leastSignificantBits = static_cast<int16_t>(roundf(clamp(f1, -1.0f, 1.0f) * 32767.0f));
-    int16_t mostSignificantBits = static_cast<int16_t>(roundf(clamp(f2, -1.0f, 1.0f) * 32767.0f));
+    int16_t mostSignificantBits  = static_cast<int16_t>(roundf(clamp(f2, -1.0f, 1.0f) * 32767.0f));
     return static_cast<uint32_t>(mostSignificantBits) << 16 |
            (static_cast<uint32_t>(leastSignificantBits) & 0xFFFF);
 }
 
-// First, unpacks a single 32-bit unsigned integer u into a pair of 16-bit unsigned integers. Then, each
-// component is converted to a normalized floating-point value to generate the returned two float values.
-// The first float value will be extracted from the least significant bits of the input;
-// the last float value will be extracted from the most-significant bits.
-// The conversion for unpacked fixed-point value to floating point is done as follows:
-// unpackSnorm2x16 : clamp(f / 32767.0, -1, +1)
+// First, unpacks a single 32-bit unsigned integer u into a pair of 16-bit unsigned integers. Then,
+// each component is converted to a normalized floating-point value to generate the returned two
+// float values. The first float value will be extracted from the least significant bits of the
+// input; the last float value will be extracted from the most-significant bits. The conversion for
+// unpacked fixed-point value to floating point is done as follows: unpackSnorm2x16 : clamp(f /
+// 32767.0, -1, +1)
 inline void unpackSnorm2x16(uint32_t u, float *f1, float *f2)
 {
     int16_t leastSignificantBits = static_cast<int16_t>(u & 0xFFFF);
-    int16_t mostSignificantBits = static_cast<int16_t>(u >> 16);
+    int16_t mostSignificantBits  = static_cast<int16_t>(u >> 16);
     *f1 = clamp(static_cast<float>(leastSignificantBits) / 32767.0f, -1.0f, 1.0f);
     *f2 = clamp(static_cast<float>(mostSignificantBits) / 32767.0f, -1.0f, 1.0f);
 }
@@ -709,22 +792,22 @@ inline void unpackSnorm2x16(uint32_t u, float *f1, float *f2)
 inline uint32_t packUnorm2x16(float f1, float f2)
 {
     uint16_t leastSignificantBits = static_cast<uint16_t>(roundf(clamp(f1, 0.0f, 1.0f) * 65535.0f));
-    uint16_t mostSignificantBits = static_cast<uint16_t>(roundf(clamp(f2, 0.0f, 1.0f) * 65535.0f));
-    return static_cast<uint32_t>(mostSignificantBits) << 16 | static_cast<uint32_t>(leastSignificantBits);
+    uint16_t mostSignificantBits  = static_cast<uint16_t>(roundf(clamp(f2, 0.0f, 1.0f) * 65535.0f));
+    return static_cast<uint32_t>(mostSignificantBits) << 16 |
+           static_cast<uint32_t>(leastSignificantBits);
 }
 
-// First, unpacks a single 32-bit unsigned integer u into a pair of 16-bit unsigned integers. Then, each
-// component is converted to a normalized floating-point value to generate the returned two float values.
-// The first float value will be extracted from the least significant bits of the input;
-// the last float value will be extracted from the most-significant bits.
-// The conversion for unpacked fixed-point value to floating point is done as follows:
-// unpackUnorm2x16 : f / 65535.0
+// First, unpacks a single 32-bit unsigned integer u into a pair of 16-bit unsigned integers. Then,
+// each component is converted to a normalized floating-point value to generate the returned two
+// float values. The first float value will be extracted from the least significant bits of the
+// input; the last float value will be extracted from the most-significant bits. The conversion for
+// unpacked fixed-point value to floating point is done as follows: unpackUnorm2x16 : f / 65535.0
 inline void unpackUnorm2x16(uint32_t u, float *f1, float *f2)
 {
     uint16_t leastSignificantBits = static_cast<uint16_t>(u & 0xFFFF);
-    uint16_t mostSignificantBits = static_cast<uint16_t>(u >> 16);
-    *f1 = static_cast<float>(leastSignificantBits) / 65535.0f;
-    *f2 = static_cast<float>(mostSignificantBits) / 65535.0f;
+    uint16_t mostSignificantBits  = static_cast<uint16_t>(u >> 16);
+    *f1                           = static_cast<float>(leastSignificantBits) / 65535.0f;
+    *f2                           = static_cast<float>(mostSignificantBits) / 65535.0f;
 }
 
 // Helper functions intended to be used only here.
@@ -815,19 +898,20 @@ inline void UnpackSnorm4x8(uint32_t u, float *f)
 inline uint32_t packHalf2x16(float f1, float f2)
 {
     uint16_t leastSignificantBits = static_cast<uint16_t>(float32ToFloat16(f1));
-    uint16_t mostSignificantBits = static_cast<uint16_t>(float32ToFloat16(f2));
-    return static_cast<uint32_t>(mostSignificantBits) << 16 | static_cast<uint32_t>(leastSignificantBits);
+    uint16_t mostSignificantBits  = static_cast<uint16_t>(float32ToFloat16(f2));
+    return static_cast<uint32_t>(mostSignificantBits) << 16 |
+           static_cast<uint32_t>(leastSignificantBits);
 }
 
-// Returns two floating-point values obtained by unpacking a 32-bit unsigned integer into a pair of 16-bit values,
-// interpreting those values as 16-bit floating-point numbers according to the OpenGL ES Specification,
-// and converting them to 32-bit floating-point values.
-// The first float value is obtained from the 16 least-significant bits of u;
-// the second component is obtained from the 16 most-significant bits of u.
+// Returns two floating-point values obtained by unpacking a 32-bit unsigned integer into a pair of
+// 16-bit values, interpreting those values as 16-bit floating-point numbers according to the OpenGL
+// ES Specification, and converting them to 32-bit floating-point values. The first float value is
+// obtained from the 16 least-significant bits of u; the second component is obtained from the 16
+// most-significant bits of u.
 inline void unpackHalf2x16(uint32_t u, float *f1, float *f2)
 {
     uint16_t leastSignificantBits = static_cast<uint16_t>(u & 0xFFFF);
-    uint16_t mostSignificantBits = static_cast<uint16_t>(u >> 16);
+    uint16_t mostSignificantBits  = static_cast<uint16_t>(u >> 16);
 
     *f1 = float16ToFloat32(leastSignificantBits);
     *f2 = float16ToFloat32(mostSignificantBits);
@@ -883,32 +967,64 @@ inline uint32_t BitfieldReverse(uint32_t value)
 }
 
 // Count the 1 bits.
-#if defined(ANGLE_PLATFORM_WINDOWS)
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+#    define ANGLE_HAS_BITCOUNT_32
 inline int BitCount(uint32_t bits)
 {
     return static_cast<int>(__popcnt(bits));
 }
-#if defined(ANGLE_IS_64_BIT_CPU)
+#    if defined(_M_X64)
+#        define ANGLE_HAS_BITCOUNT_64
 inline int BitCount(uint64_t bits)
 {
     return static_cast<int>(__popcnt64(bits));
 }
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
-#endif  // defined(ANGLE_PLATFORM_WINDOWS)
+#    endif  // defined(_M_X64)
+#endif      // defined(_M_IX86) || defined(_M_X64)
 
 #if defined(ANGLE_PLATFORM_POSIX)
+#    define ANGLE_HAS_BITCOUNT_32
 inline int BitCount(uint32_t bits)
 {
     return __builtin_popcount(bits);
 }
 
-#if defined(ANGLE_IS_64_BIT_CPU)
+#    if defined(ANGLE_IS_64_BIT_CPU)
+#        define ANGLE_HAS_BITCOUNT_64
 inline int BitCount(uint64_t bits)
 {
     return __builtin_popcountll(bits);
 }
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
-#endif  // defined(ANGLE_PLATFORM_POSIX)
+#    endif  // defined(ANGLE_IS_64_BIT_CPU)
+#endif      // defined(ANGLE_PLATFORM_POSIX)
+
+int BitCountPolyfill(uint32_t bits);
+
+#if !defined(ANGLE_HAS_BITCOUNT_32)
+inline int BitCount(const uint32_t bits)
+{
+    return BitCountPolyfill(bits);
+}
+#endif  // !defined(ANGLE_HAS_BITCOUNT_32)
+
+#if !defined(ANGLE_HAS_BITCOUNT_64)
+inline int BitCount(const uint64_t bits)
+{
+    return BitCount(static_cast<uint32_t>(bits >> 32)) + BitCount(static_cast<uint32_t>(bits));
+}
+#endif  // !defined(ANGLE_HAS_BITCOUNT_64)
+#undef ANGLE_HAS_BITCOUNT_32
+#undef ANGLE_HAS_BITCOUNT_64
+
+inline int BitCount(uint8_t bits)
+{
+    return BitCount(static_cast<uint32_t>(bits));
+}
+
+inline int BitCount(uint16_t bits)
+{
+    return BitCount(static_cast<uint32_t>(bits));
+}
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
 // Return the index of the least significant bit set. Indexing is such that bit 0 is the least
@@ -922,7 +1038,7 @@ inline unsigned long ScanForward(uint32_t bits)
     return firstBitIndex;
 }
 
-#if defined(ANGLE_IS_64_BIT_CPU)
+#    if defined(ANGLE_IS_64_BIT_CPU)
 inline unsigned long ScanForward(uint64_t bits)
 {
     ASSERT(bits != 0u);
@@ -931,8 +1047,8 @@ inline unsigned long ScanForward(uint64_t bits)
     ASSERT(ret != 0u);
     return firstBitIndex;
 }
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
-#endif  // defined(ANGLE_PLATFORM_WINDOWS)
+#    endif  // defined(ANGLE_IS_64_BIT_CPU)
+#endif      // defined(ANGLE_PLATFORM_WINDOWS)
 
 #if defined(ANGLE_PLATFORM_POSIX)
 inline unsigned long ScanForward(uint32_t bits)
@@ -941,14 +1057,24 @@ inline unsigned long ScanForward(uint32_t bits)
     return static_cast<unsigned long>(__builtin_ctz(bits));
 }
 
-#if defined(ANGLE_IS_64_BIT_CPU)
+#    if defined(ANGLE_IS_64_BIT_CPU)
 inline unsigned long ScanForward(uint64_t bits)
 {
     ASSERT(bits != 0u);
     return static_cast<unsigned long>(__builtin_ctzll(bits));
 }
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
-#endif  // defined(ANGLE_PLATFORM_POSIX)
+#    endif  // defined(ANGLE_IS_64_BIT_CPU)
+#endif      // defined(ANGLE_PLATFORM_POSIX)
+
+inline unsigned long ScanForward(uint8_t bits)
+{
+    return ScanForward(static_cast<uint32_t>(bits));
+}
+
+inline unsigned long ScanForward(uint16_t bits)
+{
+    return ScanForward(static_cast<uint32_t>(bits));
+}
 
 // Return the index of the most significant bit set. Indexing is such that bit 0 is the least
 // significant bit.
@@ -963,7 +1089,7 @@ inline unsigned long ScanReverse(unsigned long bits)
 #elif defined(ANGLE_PLATFORM_POSIX)
     return static_cast<unsigned long>(sizeof(unsigned long) * CHAR_BIT - 1 - __builtin_clzl(bits));
 #else
-#error Please implement bit-scan-reverse for your platform!
+#    error Please implement bit-scan-reverse for your platform!
 #endif
 }
 
@@ -998,21 +1124,25 @@ int FindMSB(T bits)
 }
 
 // Returns whether the argument is Not a Number.
-// IEEE 754 single precision NaN representation: Exponent(8 bits) - 255, Mantissa(23 bits) - non-zero.
+// IEEE 754 single precision NaN representation: Exponent(8 bits) - 255, Mantissa(23 bits) -
+// non-zero.
 inline bool isNaN(float f)
 {
     // Exponent mask: ((1u << 8) - 1u) << 23 = 0x7f800000u
     // Mantissa mask: ((1u << 23) - 1u) = 0x7fffffu
-    return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) && (bitCast<uint32_t>(f) & 0x7fffffu);
+    return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) &&
+           (bitCast<uint32_t>(f) & 0x7fffffu);
 }
 
 // Returns whether the argument is infinity.
-// IEEE 754 single precision infinity representation: Exponent(8 bits) - 255, Mantissa(23 bits) - zero.
+// IEEE 754 single precision infinity representation: Exponent(8 bits) - 255, Mantissa(23 bits) -
+// zero.
 inline bool isInf(float f)
 {
     // Exponent mask: ((1u << 8) - 1u) << 23 = 0x7f800000u
     // Mantissa mask: ((1u << 23) - 1u) = 0x7fffffu
-    return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) && !(bitCast<uint32_t>(f) & 0x7fffffu);
+    return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) &&
+           !(bitCast<uint32_t>(f) & 0x7fffffu);
 }
 
 namespace priv
@@ -1083,6 +1213,17 @@ inline int32_t WrappingMul(int32_t lhs, int32_t rhs)
     return static_cast<int32_t>(resultWide);
 }
 
+inline float scaleScreenDimensionToNdc(float dimensionScreen, float viewportDimension)
+{
+    return 2.0f * dimensionScreen / viewportDimension;
+}
+
+inline float scaleScreenCoordinateToNdc(float coordinateScreen, float viewportDimension)
+{
+    float halfShifted = coordinateScreen / viewportDimension;
+    return 2.0f * (halfShifted - 0.5f);
+}
+
 }  // namespace gl
 
 namespace rx
@@ -1111,8 +1252,8 @@ inline unsigned int UnsignedCeilDivide(unsigned int value, unsigned int divisor)
 
 #if defined(_MSC_VER)
 
-#define ANGLE_ROTL(x,y) _rotl(x,y)
-#define ANGLE_ROTR16(x,y) _rotr16(x,y)
+#    define ANGLE_ROTL(x, y) _rotl(x, y)
+#    define ANGLE_ROTR16(x, y) _rotr16(x, y)
 
 #else
 
@@ -1126,11 +1267,15 @@ inline uint16_t RotR16(uint16_t x, int8_t r)
     return (x >> r) | (x << (16 - r));
 }
 
-#define ANGLE_ROTL(x, y) ::rx::RotL(x, y)
-#define ANGLE_ROTR16(x, y) ::rx::RotR16(x, y)
+#    define ANGLE_ROTL(x, y) ::rx::RotL(x, y)
+#    define ANGLE_ROTR16(x, y) ::rx::RotR16(x, y)
 
-#endif // namespace rx
+#endif  // namespace rx
 
+constexpr unsigned int Log2(unsigned int bytes)
+{
+    return bytes == 1 ? 0 : (1 + Log2(bytes / 2));
 }
+}  // namespace rx
 
-#endif   // COMMON_MATHUTIL_H_
+#endif  // COMMON_MATHUTIL_H_

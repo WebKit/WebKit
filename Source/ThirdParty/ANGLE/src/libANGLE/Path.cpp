@@ -10,8 +10,8 @@
 #include "libANGLE/Path.h"
 #include "libANGLE/renderer/PathImpl.h"
 
-#include "common/mathutil.h"
 #include "common/debug.h"
+#include "common/mathutil.h"
 
 namespace gl
 {
@@ -24,25 +24,24 @@ Path::Path(rx::PathImpl *impl)
       mStrokeWidth(1.0f),
       mStrokeBound(0.2f),
       mMiterLimit(4.0f)
-{
-}
+{}
 
 Path::~Path()
 {
     delete mPath;
 }
 
-Error Path::setCommands(GLsizei numCommands,
-                        const GLubyte *commands,
-                        GLsizei numCoords,
-                        GLenum coordType,
-                        const void *coords)
+angle::Result Path::setCommands(GLsizei numCommands,
+                                const GLubyte *commands,
+                                GLsizei numCoords,
+                                GLenum coordType,
+                                const void *coords)
 {
     ANGLE_TRY(mPath->setCommands(numCommands, commands, numCoords, coordType, coords));
 
     mHasData = true;
 
-    return NoError();
+    return angle::Result::Continue;
 }
 
 void Path::setStrokeWidth(GLfloat width)
@@ -75,4 +74,4 @@ void Path::setMiterLimit(GLfloat value)
     mPath->setPathParameter(GL_PATH_MITER_LIMIT_CHROMIUM, value);
 }
 
-}  // gl
+}  // namespace gl

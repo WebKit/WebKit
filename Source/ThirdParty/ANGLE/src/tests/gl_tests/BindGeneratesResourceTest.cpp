@@ -21,7 +21,7 @@ class BindGeneratesResourceTest : public ANGLETest
 // available so the GL extension should always be present
 TEST_P(BindGeneratesResourceTest, ExtensionStringExposed)
 {
-    EXPECT_TRUE(extensionEnabled("GL_CHROMIUM_bind_generates_resource"));
+    EXPECT_TRUE(IsGLExtensionEnabled("GL_CHROMIUM_bind_generates_resource"));
 }
 
 // Verify that GL_BIND_GENERATES_RESOURCE_CHROMIUM can be queried but not changed
@@ -30,7 +30,7 @@ TEST_P(BindGeneratesResourceTest, QueryValidation)
     GLint intValue = 2;
     glGetIntegerv(GL_BIND_GENERATES_RESOURCE_CHROMIUM, &intValue);
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(intValue, GL_FALSE);
+    EXPECT_GL_FALSE(intValue);
 
     float floatValue = 2.0f;
     glGetFloatv(GL_BIND_GENERATES_RESOURCE_CHROMIUM, &floatValue);
@@ -40,11 +40,11 @@ TEST_P(BindGeneratesResourceTest, QueryValidation)
     GLboolean boolValue = GL_TRUE;
     glGetBooleanv(GL_BIND_GENERATES_RESOURCE_CHROMIUM, &boolValue);
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(boolValue, GL_FALSE);
+    EXPECT_GL_FALSE(boolValue);
 
     boolValue = glIsEnabled(GL_BIND_GENERATES_RESOURCE_CHROMIUM);
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(boolValue, GL_FALSE);
+    EXPECT_GL_FALSE(boolValue);
 
     glEnable(GL_BIND_GENERATES_RESOURCE_CHROMIUM);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
@@ -118,6 +118,7 @@ ANGLE_INSTANTIATE_TEST(BindGeneratesResourceTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());
 
-}  // namespace
+}  // namespace angle

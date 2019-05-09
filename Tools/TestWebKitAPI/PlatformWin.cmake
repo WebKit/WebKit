@@ -57,7 +57,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND TestWebCore_LIBRARIES
         ${CAIRO_LIBRARIES}
         ${OPENSSL_LIBRARIES}
-        libANGLE
         mfuuid
         strmiids
         vcruntime

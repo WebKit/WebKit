@@ -47,9 +47,7 @@ const uint32_t Kabylake[] = {0x5916, 0x5913, 0x5906, 0x5926, 0x5921, 0x5915, 0x5
 
 }  // anonymous namespace
 
-IntelDriverVersion::IntelDriverVersion(uint16_t lastPart) : mVersionPart(lastPart)
-{
-}
+IntelDriverVersion::IntelDriverVersion(uint16_t lastPart) : mVersionPart(lastPart) {}
 
 bool IntelDriverVersion::operator==(const IntelDriverVersion &version)
 {
@@ -115,6 +113,25 @@ bool IsBroxton(uint32_t DeviceId)
 bool IsKabylake(uint32_t DeviceId)
 {
     return std::find(std::begin(Kabylake), std::end(Kabylake), DeviceId) != std::end(Kabylake);
+}
+
+const char *GetVendorString(uint32_t vendorId)
+{
+    switch (vendorId)
+    {
+        case VENDOR_ID_AMD:
+            return "Advanced Micro Devices";
+        case VENDOR_ID_NVIDIA:
+            return "NVIDIA";
+        case VENDOR_ID_INTEL:
+            return "Intel";
+        case VENDOR_ID_QUALCOMM:
+            return "Qualcomm";
+        default:
+            // TODO(jmadill): More vendor IDs.
+            ASSERT(vendorId == 0xba5eba11);  // Mock vendor ID used for tests.
+            return "Unknown";
+    }
 }
 
 }  // namespace rx

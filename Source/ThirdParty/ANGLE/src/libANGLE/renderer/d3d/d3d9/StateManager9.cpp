@@ -10,9 +10,9 @@
 #include "common/bitset_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/formatutils.h"
-#include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 #include "libANGLE/renderer/d3d/d3d9/Framebuffer9.h"
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
+#include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 
 namespace rx
 {
@@ -64,9 +64,7 @@ StateManager9::StateManager9(Renderer9 *renderer9)
     mScissorStateDirtyBits.set(DIRTY_BIT_SCISSOR_RECT);
 }
 
-StateManager9::~StateManager9()
-{
-}
+StateManager9::~StateManager9() {}
 
 void StateManager9::initialize()
 {
@@ -250,6 +248,7 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
                 {
                     mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                 }
+                break;
             }
             case gl::State::DIRTY_BIT_DEPTH_MASK:
                 if (state.getDepthStencilState().depthMask != mCurDepthStencilState.depthMask)
@@ -376,8 +375,7 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
     }
 }
 
-gl::Error StateManager9::setBlendDepthRasterStates(const gl::State &glState,
-                                                   unsigned int sampleMask)
+void StateManager9::setBlendDepthRasterStates(const gl::State &glState, unsigned int sampleMask)
 {
     const gl::Framebuffer *framebuffer = glState.getDrawFramebuffer();
 
@@ -469,14 +467,12 @@ gl::Error StateManager9::setBlendDepthRasterStates(const gl::State &glState,
     {
         setSampleMask(sampleMask);
     }
-
-    return gl::NoError();
 }
 
 void StateManager9::setViewportState(const gl::Rectangle &viewport,
                                      float zNear,
                                      float zFar,
-                                     GLenum drawMode,
+                                     gl::PrimitiveMode drawMode,
                                      GLenum frontFace,
                                      bool ignoreViewport)
 {
@@ -610,7 +606,7 @@ void StateManager9::setScissorRect(const gl::Rectangle &scissor, bool enabled)
 
     RECT rect;
     rect.left = gl::clamp(scissor.x, 0, static_cast<int>(mRenderTargetBounds.width));
-    rect.top = gl::clamp(scissor.y, 0, static_cast<int>(mRenderTargetBounds.height));
+    rect.top  = gl::clamp(scissor.y, 0, static_cast<int>(mRenderTargetBounds.height));
     rect.right =
         gl::clamp(scissor.x + scissor.width, 0, static_cast<int>(mRenderTargetBounds.width));
     rect.bottom =

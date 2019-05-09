@@ -31,20 +31,33 @@ call:BuildShader Passthrough2D11.hlsl PS_PassthroughR2D        ps_4_0_level_9_3 
 call:BuildShader Passthrough2D11.hlsl PS_PassthroughLum2D      ps_4_0_level_9_3  compiled\passthroughlum2d11ps.h      %debug%
 call:BuildShader Passthrough2D11.hlsl PS_PassthroughLumAlpha2D ps_4_0_level_9_3  compiled\passthroughlumalpha2d11ps.h %debug%
 
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_ps.h %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA ps_4_0 compiled\multiplyalpha_ftof_um_rgba_ps.h %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB  ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB  ps_4_0 compiled\multiplyalpha_ftof_um_rgb_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGBA ps_4_0 compiled\multiplyalpha_ftou_pt_rgba_ps.h %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGBA ps_4_0 compiled\multiplyalpha_ftou_pm_rgba_ps.h %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGBA ps_4_0 compiled\multiplyalpha_ftou_um_rgba_ps.h %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGB  ps_4_0 compiled\multiplyalpha_ftou_pt_rgb_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGB  ps_4_0 compiled\multiplyalpha_ftou_pm_rgb_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGB  ps_4_0 compiled\multiplyalpha_ftou_um_rgb_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMA ps_4_0 compiled\multiplyalpha_ftof_pm_luma_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMA ps_4_0 compiled\multiplyalpha_ftof_um_luma_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMAALPHA   ps_4_0 compiled\multiplyalpha_ftof_pm_lumaalpha_ps.h  %debug%
-call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMAALPHA   ps_4_0 compiled\multiplyalpha_ftof_um_lumaalpha_ps.h  %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D_4444 ps_4_0_level_9_3 compiled\passthroughrgba2d_4444_11ps.h %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGB2D_565   ps_4_0_level_9_3 compiled\passthroughrgb2d_565_11ps.h   %debug%
+call:BuildShader Passthrough2D11.hlsl PS_PassthroughRGBA2D_5551 ps_4_0_level_9_3 compiled\passthroughrgba2d_5551_11ps.h %debug%
+
+call:BuildShader ResolveColor.hlsl PS_ResolveColor2D ps_4_1 compiled\resolvecolor2dps.h %debug%
+
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_2D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_2D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB_2D  ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_2D  ps_4_0 compiled\multiplyalpha_ftof_um_rgb_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGBA_2D ps_4_0 compiled\multiplyalpha_ftou_pt_rgba_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGBA_2D ps_4_0 compiled\multiplyalpha_ftou_pm_rgba_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGBA_2D ps_4_0 compiled\multiplyalpha_ftou_um_rgba_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGB_2D  ps_4_0 compiled\multiplyalpha_ftou_pt_rgb_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGB_2D  ps_4_0 compiled\multiplyalpha_ftou_pm_rgb_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGB_2D  ps_4_0 compiled\multiplyalpha_ftou_um_rgb_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMA_2D ps_4_0 compiled\multiplyalpha_ftof_pm_luma_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMA_2D ps_4_0 compiled\multiplyalpha_ftof_um_luma_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMAALPHA_2D   ps_4_0 compiled\multiplyalpha_ftof_pm_lumaalpha_2d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMAALPHA_2D   ps_4_0 compiled\multiplyalpha_ftof_um_lumaalpha_2d_ps.h  %debug%
+
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_4444_2D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_4444_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_4444_2D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_4444_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB_565_2D   ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_565_2d_ps.h   %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_565_2D   ps_4_0 compiled\multiplyalpha_ftof_um_rgb_565_2d_ps.h   %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_5551_2D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_5551_2d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_5551_2D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_5551_2d_ps.h %debug%
 
 call:BuildShader Clear11.hlsl           VS_Clear_FL9             vs_4_0_level_9_3  compiled\clear11_fl9vs.h             %debug%
 call:BuildShader Clear11.hlsl           PS_ClearFloat_FL9        ps_4_0_level_9_3  compiled\clearfloat11_fl9ps.h        %debug%
@@ -90,6 +103,85 @@ call:BuildShader Passthrough3D11.hlsl       PS_PassthroughR3DUI      ps_4_0   co
 call:BuildShader Passthrough3D11.hlsl       PS_PassthroughR3DI       ps_4_0   compiled\passthroughr3di11ps.h       %debug%
 call:BuildShader Passthrough3D11.hlsl       PS_PassthroughLum3D      ps_4_0   compiled\passthroughlum3d11ps.h      %debug%
 call:BuildShader Passthrough3D11.hlsl       PS_PassthroughLumAlpha3D ps_4_0   compiled\passthroughlumalpha3d11ps.h %debug%
+
+call:BuildShader Passthrough3D11.hlsl PS_PassthroughRGBA3D_4444 ps_4_0 compiled\passthroughrgba3d_4444_11ps.h %debug%
+call:BuildShader Passthrough3D11.hlsl PS_PassthroughRGB3D_565   ps_4_0 compiled\passthroughrgb3d_565_11ps.h   %debug%
+call:BuildShader Passthrough3D11.hlsl PS_PassthroughRGBA3D_5551 ps_4_0 compiled\passthroughrgba3d_5551_11ps.h %debug%
+
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRGBA2DArray     ps_4_0   compiled\passthroughrgba2darray11ps.h     %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRGBA2DArrayUI   ps_4_0   compiled\passthroughrgba2darrayui11ps.h   %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRGBA2DArrayI    ps_4_0   compiled\passthroughrgba2darrayi11ps.h    %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRGB2DArray      ps_4_0   compiled\passthroughrgb2darray11ps.h      %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRGB2DArrayUI    ps_4_0   compiled\passthroughrgb2darrayui11ps.h    %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRGB2DArrayI     ps_4_0   compiled\passthroughrgb2darrayi11ps.h     %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRG2DArray       ps_4_0   compiled\passthroughrg2darray11ps.h       %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRG2DArrayUI     ps_4_0   compiled\passthroughrg2darrayui11ps.h     %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughRG2DArrayI      ps_4_0   compiled\passthroughrg2darrayi11ps.h      %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughR2DArray        ps_4_0   compiled\passthroughr2darray11ps.h        %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughR2DArrayUI      ps_4_0   compiled\passthroughr2darrayui11ps.h      %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughR2DArrayI       ps_4_0   compiled\passthroughr2darrayi11ps.h       %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughLum2DArray      ps_4_0   compiled\passthroughlum2darray11ps.h      %debug%
+call:BuildShader Passthrough2DArray11.hlsl       PS_PassthroughLumAlpha2DArray ps_4_0   compiled\passthroughlumalpha2darray11ps.h %debug%
+
+call:BuildShader Passthrough2DArray11.hlsl PS_PassthroughRGBA2DArray_4444 ps_4_0 compiled\passthroughrgba2darray_4444_11ps.h %debug%
+call:BuildShader Passthrough2DArray11.hlsl PS_PassthroughRGB2DArray_565   ps_4_0 compiled\passthroughrgb2darray_565_11ps.h   %debug%
+call:BuildShader Passthrough2DArray11.hlsl PS_PassthroughRGBA2DArray_5551 ps_4_0 compiled\passthroughrgba2darray_5551_11ps.h %debug%
+
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_3D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_3D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB_3D  ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_3D  ps_4_0 compiled\multiplyalpha_ftof_um_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGBA_3D ps_4_0 compiled\multiplyalpha_ftou_pt_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGBA_3D ps_4_0 compiled\multiplyalpha_ftou_pm_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGBA_3D ps_4_0 compiled\multiplyalpha_ftou_um_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGB_3D  ps_4_0 compiled\multiplyalpha_ftou_pt_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGB_3D  ps_4_0 compiled\multiplyalpha_ftou_pm_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGB_3D  ps_4_0 compiled\multiplyalpha_ftou_um_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PT_RGBA_3D ps_4_0 compiled\multiplyalpha_ftoi_pt_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PM_RGBA_3D ps_4_0 compiled\multiplyalpha_ftoi_pm_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_UM_RGBA_3D ps_4_0 compiled\multiplyalpha_ftoi_um_rgba_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PT_RGB_3D  ps_4_0 compiled\multiplyalpha_ftoi_pt_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PM_RGB_3D  ps_4_0 compiled\multiplyalpha_ftoi_pm_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_UM_RGB_3D  ps_4_0 compiled\multiplyalpha_ftoi_um_rgb_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMA_3D ps_4_0 compiled\multiplyalpha_ftof_pm_luma_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMA_3D ps_4_0 compiled\multiplyalpha_ftof_um_luma_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMAALPHA_3D   ps_4_0 compiled\multiplyalpha_ftof_pm_lumaalpha_3d_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMAALPHA_3D   ps_4_0 compiled\multiplyalpha_ftof_um_lumaalpha_3d_ps.h  %debug%
+
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_4444_3D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_4444_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_4444_3D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_4444_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB_565_3D   ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_565_3d_ps.h   %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_565_3D   ps_4_0 compiled\multiplyalpha_ftof_um_rgb_565_3d_ps.h   %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_5551_3D ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_5551_3d_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_5551_3D ps_4_0 compiled\multiplyalpha_ftof_um_rgba_5551_3d_ps.h %debug%
+
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftof_um_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftof_um_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftou_pt_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftou_pm_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftou_um_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PT_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftou_pt_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_PM_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftou_pm_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoU_UM_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftou_um_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PT_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftoi_pt_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PM_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftoi_pm_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_UM_RGBA_2DArray ps_4_0 compiled\multiplyalpha_ftoi_um_rgba_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PT_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftoi_pt_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_PM_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftoi_pm_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoI_UM_RGB_2DArray  ps_4_0 compiled\multiplyalpha_ftoi_um_rgb_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMA_2DArray ps_4_0 compiled\multiplyalpha_ftof_pm_luma_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMA_2DArray ps_4_0 compiled\multiplyalpha_ftof_um_luma_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_LUMAALPHA_2DArray   ps_4_0 compiled\multiplyalpha_ftof_pm_lumaalpha_2darray_ps.h  %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_LUMAALPHA_2DArray   ps_4_0 compiled\multiplyalpha_ftof_um_lumaalpha_2darray_ps.h  %debug%
+
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_4444_2DArray ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_4444_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_4444_2DArray ps_4_0 compiled\multiplyalpha_ftof_um_rgba_4444_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGB_565_2DArray   ps_4_0 compiled\multiplyalpha_ftof_pm_rgb_565_2darray_ps.h   %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGB_565_2DArray   ps_4_0 compiled\multiplyalpha_ftof_um_rgb_565_2darray_ps.h   %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_PM_RGBA_5551_2DArray ps_4_0 compiled\multiplyalpha_ftof_pm_rgba_5551_2darray_ps.h %debug%
+call:BuildShader MultiplyAlpha.hlsl PS_FtoF_UM_RGBA_5551_2DArray ps_4_0 compiled\multiplyalpha_ftof_um_rgba_5551_2darray_ps.h %debug%
 
 call:BuildShader Swizzle11.hlsl             PS_SwizzleF2D            ps_4_0   compiled\swizzlef2dps.h              %debug%
 call:BuildShader Swizzle11.hlsl             PS_SwizzleI2D            ps_4_0   compiled\swizzlei2dps.h              %debug%

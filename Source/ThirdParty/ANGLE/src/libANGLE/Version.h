@@ -27,8 +27,8 @@ bool operator>=(const Version &a, const Version &b);
 bool operator<=(const Version &a, const Version &b);
 bool operator<(const Version &a, const Version &b);
 bool operator>(const Version &a, const Version &b);
-}
+}  // namespace gl
 
 #include "Version.inl"
 
-#endif // LIBANGLE_VERSION_H_
+#endif  // LIBANGLE_VERSION_H_

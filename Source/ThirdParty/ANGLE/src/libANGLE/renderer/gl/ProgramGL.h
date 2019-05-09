@@ -12,13 +12,14 @@
 #include <string>
 #include <vector>
 
-#include "libANGLE/renderer/gl/WorkaroundsGL.h"
 #include "libANGLE/renderer/ProgramImpl.h"
+#include "libANGLE/renderer/gl/WorkaroundsGL.h"
 
 namespace rx
 {
 
 class FunctionsGL;
+class RendererGL;
 class StateManagerGL;
 
 class ProgramGL : public ProgramImpl
@@ -28,19 +29,20 @@ class ProgramGL : public ProgramImpl
               const FunctionsGL *functions,
               const WorkaroundsGL &workarounds,
               StateManagerGL *stateManager,
-              bool enablePathRendering);
+              bool enablePathRendering,
+              const std::shared_ptr<RendererGL> &renderer);
     ~ProgramGL() override;
 
-    gl::LinkResult load(const gl::Context *contextImpl,
-                        gl::InfoLog &infoLog,
-                        gl::BinaryInputStream *stream) override;
+    std::unique_ptr<LinkEvent> load(const gl::Context *context,
+                                    gl::BinaryInputStream *stream,
+                                    gl::InfoLog &infoLog) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
-    gl::LinkResult link(const gl::Context *contextImpl,
-                        const gl::ProgramLinkedResources &resources,
-                        gl::InfoLog &infoLog) override;
+    std::unique_ptr<LinkEvent> link(const gl::Context *contextImpl,
+                                    const gl::ProgramLinkedResources &resources,
+                                    gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -55,21 +57,46 @@ class ProgramGL : public ProgramImpl
     void setUniform2uiv(GLint location, GLsizei count, const GLuint *v) override;
     void setUniform3uiv(GLint location, GLsizei count, const GLuint *v) override;
     void setUniform4uiv(GLint location, GLsizei count, const GLuint *v) override;
-    void setUniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix2x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix3x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix2x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix4x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
-    void setUniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
+    void setUniformMatrix2fv(GLint location,
+                             GLsizei count,
+                             GLboolean transpose,
+                             const GLfloat *value) override;
+    void setUniformMatrix3fv(GLint location,
+                             GLsizei count,
+                             GLboolean transpose,
+                             const GLfloat *value) override;
+    void setUniformMatrix4fv(GLint location,
+                             GLsizei count,
+                             GLboolean transpose,
+                             const GLfloat *value) override;
+    void setUniformMatrix2x3fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix3x2fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix2x4fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix4x2fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix3x4fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
+    void setUniformMatrix4x3fv(GLint location,
+                               GLsizei count,
+                               GLboolean transpose,
+                               const GLfloat *value) override;
 
     void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
-
-    void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding) override;
 
     void setPathFragmentInputGen(const std::string &inputName,
                                  GLenum genMode,
@@ -77,17 +104,26 @@ class ProgramGL : public ProgramImpl
                                  const GLfloat *coeffs) override;
 
     void markUnusedUniformLocations(std::vector<gl::VariableLocation> *uniformLocations,
-                                    std::vector<gl::SamplerBinding> *samplerBindings) override;
+                                    std::vector<gl::SamplerBinding> *samplerBindings,
+                                    std::vector<gl::ImageBinding> *imageBindings) override;
 
-    GLuint getProgramID() const;
+    ANGLE_INLINE GLuint getProgramID() const { return mProgramID; }
 
     void enableSideBySideRenderingPath() const;
     void enableLayeredRenderingPath(int baseViewIndex) const;
 
+    angle::Result syncState(const gl::Context *context,
+                            const gl::Program::DirtyBits &dirtyBits) override;
+
   private:
+    class LinkTask;
+    class LinkEventNativeParallel;
+    class LinkEventGL;
+
     void preLink();
     bool checkLinkStatus(gl::InfoLog &infoLog);
     void postLink();
+
     void reapplyUBOBindingsIfNeeded(const gl::Context *context);
 
     bool getUniformBlockSize(const std::string &blockName,
@@ -102,7 +138,10 @@ class ProgramGL : public ProgramImpl
     bool getShaderStorageBlockSize(const std::string &blockName,
                                    const std::string &blockMappedName,
                                    size_t *sizeOut) const;
+    void getAtomicCounterBufferSizeMap(std::map<int, unsigned int> *sizeMapOut) const;
+
     void linkResources(const gl::ProgramLinkedResources &resources);
+    void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 
     // Helper function, makes it simpler to type.
     GLint uniLoc(GLint glLocation) const { return mUniformRealLocationMap[glLocation]; }
@@ -125,8 +164,12 @@ class ProgramGL : public ProgramImpl
     GLint mMultiviewBaseViewLayerIndexUniformLocation;
 
     GLuint mProgramID;
+
+    std::shared_ptr<RendererGL> mRenderer;
+
+    bool mLinkedInParallel;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_PROGRAMGL_H_
+#endif  // LIBANGLE_RENDERER_GL_PROGRAMGL_H_

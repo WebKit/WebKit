@@ -17,12 +17,11 @@ namespace rx
 {
 
 WindowSurfaceWGL::WindowSurfaceWGL(const egl::SurfaceState &state,
-                                   RendererGL *renderer,
                                    EGLNativeWindowType window,
                                    int pixelFormat,
                                    const FunctionsWGL *functions,
                                    EGLint orientation)
-    : SurfaceWGL(state, renderer),
+    : SurfaceWGL(state),
       mPixelFormat(pixelFormat),
       mWindow(window),
       mDeviceContext(nullptr),
@@ -49,12 +48,14 @@ egl::Error WindowSurfaceWGL::initialize(const egl::Display *display)
                << gl::FmtErr(GetLastError());
     }
 
-    // Require that the pixel format for this window has not been set yet or is equal to the Display's pixel format.
+    // Require that the pixel format for this window has not been set yet or is equal to the
+    // Display's pixel format.
     int windowPixelFormat = GetPixelFormat(mDeviceContext);
     if (windowPixelFormat == 0)
     {
-        PIXELFORMATDESCRIPTOR pixelFormatDescriptor = { 0 };
-        if (!DescribePixelFormat(mDeviceContext, mPixelFormat, sizeof(pixelFormatDescriptor), &pixelFormatDescriptor))
+        PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {0};
+        if (!DescribePixelFormat(mDeviceContext, mPixelFormat, sizeof(pixelFormatDescriptor),
+                                 &pixelFormatDescriptor))
         {
             return egl::EglBadNativeWindow()
                    << "Failed to DescribePixelFormat, " << gl::FmtErr(GetLastError());
@@ -91,7 +92,7 @@ egl::Error WindowSurfaceWGL::initialize(const egl::Display *display)
     return egl::NoError();
 }
 
-egl::Error WindowSurfaceWGL::makeCurrent()
+egl::Error WindowSurfaceWGL::makeCurrent(const gl::Context *context)
 {
     return egl::NoError();
 }
@@ -123,13 +124,15 @@ egl::Error WindowSurfaceWGL::querySurfacePointerANGLE(EGLint attribute, void **v
     return egl::NoError();
 }
 
-egl::Error WindowSurfaceWGL::bindTexImage(gl::Texture *texture, EGLint buffer)
+egl::Error WindowSurfaceWGL::bindTexImage(const gl::Context *context,
+                                          gl::Texture *texture,
+                                          EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::NoError();
 }
 
-egl::Error WindowSurfaceWGL::releaseTexImage(EGLint buffer)
+egl::Error WindowSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::NoError();
@@ -179,4 +182,4 @@ HDC WindowSurfaceWGL::getDC() const
 {
     return mDeviceContext;
 }
-}
+}  // namespace rx

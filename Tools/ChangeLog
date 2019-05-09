@@ -1,3 +1,13 @@
+2019-05-08  Don Olmstead  <don.olmstead@sony.com>
+
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=197676
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        Remove unnecessary library linkage.
+
 2019-05-08  Stephan Szabo  <stephan.szabo@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] build-webkit should be ready for Visual Studio 2019

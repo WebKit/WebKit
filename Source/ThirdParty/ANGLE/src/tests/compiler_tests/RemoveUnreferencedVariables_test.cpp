@@ -18,8 +18,7 @@ class RemoveUnreferencedVariablesTest : public MatchOutputCodeTest
 {
   public:
     RemoveUnreferencedVariablesTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, 0, SH_ESSL_OUTPUT)
-    {
-    }
+    {}
 };
 
 // Test that a simple unreferenced declaration is pruned.
@@ -685,4 +684,30 @@ TEST_F(RemoveUnreferencedVariablesTest, UserDefinedTypeInUniformBlock)
     compile(shaderString);
 
     ASSERT_TRUE(foundInCode("struct _umyStructType"));
+}
+
+// Test that a struct type that is referenced from an initializer with a constructor can be removed.
+TEST_F(RemoveUnreferencedVariablesTest, UserDefinedTypeConstructorInitializer)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+
+        precision highp float;
+        out vec4 my_FragColor;
+
+        struct myStructType
+        {
+            int iMember;
+        };
+
+        uniform int ui;
+
+        void main()
+        {
+            myStructType S = myStructType(ui);
+            my_FragColor = vec4(0, 1, 0, 1);
+        })";
+    compile(shaderString);
+
+    ASSERT_TRUE(notFoundInCode("myStructType"));
 }

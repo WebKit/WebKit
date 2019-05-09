@@ -20,8 +20,7 @@ namespace rx
 {
 NativeWindow11WinRT::NativeWindow11WinRT(EGLNativeWindowType window, bool hasAlpha)
     : NativeWindow11(window), mHasAlpha(hasAlpha)
-{
-}
+{}
 
 bool NativeWindow11WinRT::initialize()
 {
@@ -105,9 +104,7 @@ HRESULT NativeWindow11WinRT::createSwapChain(ID3D11Device *device,
     return E_UNEXPECTED;
 }
 
-void NativeWindow11WinRT::commitChange()
-{
-}
+void NativeWindow11WinRT::commitChange() {}
 
 // static
 bool NativeWindow11WinRT::IsValidNativeWindow(EGLNativeWindowType window)

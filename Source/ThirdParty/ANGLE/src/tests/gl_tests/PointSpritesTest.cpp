@@ -13,6 +13,18 @@
 
 using namespace angle;
 
+constexpr char kVertexShaderSource[] =
+    R"(attribute vec4 vPosition;
+        uniform float uPointSize;
+        void main()
+        {
+            gl_PointSize = uPointSize;
+            gl_Position  = vPosition;
+        })";
+
+// TODO(ynovikov): Improve the tests to work with point size 1. http://anglebug.com/2553
+constexpr GLfloat kMinMaxPointSize = 2.0f;
+
 class PointSpritesTest : public ANGLETest
 {
   protected:
@@ -31,6 +43,79 @@ class PointSpritesTest : public ANGLETest
     virtual void SetUp() { ANGLETest::SetUp(); }
 
     float s2p(float s) { return (s + 1.0f) * 0.5f * (GLfloat)windowWidth; }
+
+    void testPointCoordAndPointSizeCompliance(GLProgram program)
+    {
+        glUseProgram(program);
+
+        GLfloat pointSizeRange[2] = {};
+        glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+
+        GLfloat maxPointSize = pointSizeRange[1];
+
+        ASSERT_TRUE(maxPointSize >= 1);
+        maxPointSize = floorf(maxPointSize);
+        ASSERT_TRUE((int)maxPointSize % 1 == 0);
+
+        maxPointSize       = std::min(maxPointSize, 64.0f);
+        GLfloat pointWidth = maxPointSize / windowWidth;
+        GLint step         = static_cast<GLint>(floorf(maxPointSize / 4));
+        GLint pointStep    = std::max<GLint>(1, step);
+
+        GLint pointSizeLoc = glGetUniformLocation(program, "uPointSize");
+        ASSERT_GL_NO_ERROR();
+
+        glUniform1f(pointSizeLoc, maxPointSize);
+        ASSERT_GL_NO_ERROR();
+
+        GLfloat pixelOffset = ((int)maxPointSize % 2) ? (1.0f / (GLfloat)windowWidth) : 0;
+        GLBuffer vertexObject;
+
+        glBindBuffer(GL_ARRAY_BUFFER, vertexObject.get());
+        ASSERT_GL_NO_ERROR();
+
+        GLfloat thePoints[] = {-0.5f + pixelOffset, -0.5f + pixelOffset, 0.5f + pixelOffset,
+                               -0.5f + pixelOffset, -0.5f + pixelOffset, 0.5f + pixelOffset,
+                               0.5f + pixelOffset,  0.5f + pixelOffset};
+
+        glBufferData(GL_ARRAY_BUFFER, sizeof(thePoints), thePoints, GL_STATIC_DRAW);
+        ASSERT_GL_NO_ERROR();
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glDrawArrays(GL_POINTS, 0, 4);
+        ASSERT_GL_NO_ERROR();
+
+        for (float py = 0; py < 2; ++py)
+        {
+            for (float px = 0; px < 2; ++px)
+            {
+                float pointX = -0.5f + px + pixelOffset;
+                float pointY = -0.5f + py + pixelOffset;
+                for (int yy = 0; yy < maxPointSize; yy += pointStep)
+                {
+                    for (int xx = 0; xx < maxPointSize; xx += pointStep)
+                    {
+                        // formula for s and t from OpenGL ES 2.0 spec section 3.3
+                        float xw         = s2p(pointX);
+                        float yw         = s2p(pointY);
+                        float u          = xx / maxPointSize * 2 - 1;
+                        float v          = yy / maxPointSize * 2 - 1;
+                        int xf           = static_cast<int>(floorf(s2p(pointX + u * pointWidth)));
+                        int yf           = static_cast<int>(floorf(s2p(pointY + v * pointWidth)));
+                        float s          = 0.5f + (xf + 0.5f - xw) / maxPointSize;
+                        float t          = 0.5f + (yf + 0.5f - yw) / maxPointSize;
+                        GLubyte color[4] = {static_cast<GLubyte>(floorf(s * 255)),
+                                            static_cast<GLubyte>(floorf((1 - t) * 255)), 0, 255};
+                        EXPECT_PIXEL_NEAR(xf, yf, color[0], color[1], color[2], color[3], 4);
+                    }
+                }
+            }
+        }
+    }
 };
 
 // Checks gl_PointCoord and gl_PointSize
@@ -39,100 +124,45 @@ TEST_P(PointSpritesTest, PointCoordAndPointSizeCompliance)
 {
     // TODO(jmadill): Investigate potential AMD driver bug.
     // http://anglebug.com/1643
-    if (IsAMD() && IsDesktopOpenGL() && IsWindows())
-    {
-        std::cout << "Test skipped on desktop GL AMD Windows." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL() && IsWindows());
 
-    const std::string fs =
+    constexpr char fs[] =
         R"(precision mediump float;
         void main()
         {
             gl_FragColor = vec4(gl_PointCoord.x, gl_PointCoord.y, 0, 1);
         })";
 
-    const std::string vs =
-        R"(attribute vec4 vPosition;
-        uniform float uPointSize;
+    ANGLE_GL_PROGRAM(program, kVertexShaderSource, fs);
+
+    testPointCoordAndPointSizeCompliance(program);
+}
+
+// Checks gl_PointCoord and gl_PointSize, but use the gl_PointCoord inside a function.
+// In Vulkan, we need to inject some code into the shader to flip the Y coordinate, and we
+// need to make sure this code injection works even if someone uses gl_PointCoord outside the
+// main function.
+TEST_P(PointSpritesTest, UsingPointCoordInsideFunction)
+{
+    // TODO(jmadill): Investigate potential AMD driver bug.
+    // http://anglebug.com/1643
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL() && IsWindows());
+
+    constexpr char fs[] =
+        R"(precision mediump float;
+        void foo() 
+        {
+            gl_FragColor = vec4(gl_PointCoord.x, gl_PointCoord.y, 0, 1);
+        }
+
         void main()
         {
-            gl_PointSize = uPointSize;
-            gl_Position  = vPosition;
+            foo();
         })";
 
-    ANGLE_GL_PROGRAM(program, vs, fs);
+    ANGLE_GL_PROGRAM(program, kVertexShaderSource, fs);
 
-    glUseProgram(program);
-
-    GLfloat pointSizeRange[2] = {};
-    glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
-
-    GLfloat maxPointSize = pointSizeRange[1];
-
-    ASSERT_TRUE(maxPointSize >= 1);
-    maxPointSize = floorf(maxPointSize);
-    ASSERT_TRUE((int)maxPointSize % 1 == 0);
-
-    maxPointSize       = std::min(maxPointSize, 64.0f);
-    GLfloat pointWidth = maxPointSize / windowWidth;
-    GLint step         = static_cast<GLint>(floorf(maxPointSize / 4));
-    GLint pointStep    = std::max<GLint>(1, step);
-
-    GLint pointSizeLoc = glGetUniformLocation(program, "uPointSize");
-    ASSERT_GL_NO_ERROR();
-
-    glUniform1f(pointSizeLoc, maxPointSize);
-    ASSERT_GL_NO_ERROR();
-
-    GLfloat pixelOffset = ((int)maxPointSize % 2) ? (1.0f / (GLfloat)windowWidth) : 0;
-    GLBuffer vertexObject;
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexObject.get());
-    ASSERT_GL_NO_ERROR();
-
-    GLfloat thePoints[] = {-0.5f + pixelOffset, -0.5f + pixelOffset, 0.5f + pixelOffset,
-                           -0.5f + pixelOffset, -0.5f + pixelOffset, 0.5f + pixelOffset,
-                           0.5f + pixelOffset,  0.5f + pixelOffset};
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(thePoints), thePoints, GL_STATIC_DRAW);
-    ASSERT_GL_NO_ERROR();
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glDrawArrays(GL_POINTS, 0, 4);
-    ASSERT_GL_NO_ERROR();
-
-    std::string debugText;
-    for (float py = 0; py < 2; ++py)
-    {
-        for (float px = 0; px < 2; ++px)
-        {
-            float pointX = -0.5f + px + pixelOffset;
-            float pointY = -0.5f + py + pixelOffset;
-            for (int yy = 0; yy < maxPointSize; yy += pointStep)
-            {
-                for (int xx = 0; xx < maxPointSize; xx += pointStep)
-                {
-                    // formula for s and t from OpenGL ES 2.0 spec section 3.3
-                    float xw         = s2p(pointX);
-                    float yw         = s2p(pointY);
-                    float u          = xx / maxPointSize * 2 - 1;
-                    float v          = yy / maxPointSize * 2 - 1;
-                    int xf           = static_cast<int>(floorf(s2p(pointX + u * pointWidth)));
-                    int yf           = static_cast<int>(floorf(s2p(pointY + v * pointWidth)));
-                    float s          = 0.5f + (xf + 0.5f - xw) / maxPointSize;
-                    float t          = 0.5f + (yf + 0.5f - yw) / maxPointSize;
-                    GLubyte color[4] = {static_cast<GLubyte>(floorf(s * 255)),
-                                        static_cast<GLubyte>(floorf((1 - t) * 255)), 0, 255};
-                    EXPECT_PIXEL_NEAR(xf, yf, color[0], color[1], color[2], color[3], 4);
-                }
-            }
-        }
-    }
+    testPointCoordAndPointSizeCompliance(program);
 }
 
 // Verify that drawing a point without enabling any attributes succeeds
@@ -141,27 +171,20 @@ TEST_P(PointSpritesTest, PointWithoutAttributesCompliance)
 {
     // TODO(jmadill): Investigate potential AMD driver bug.
     // http://anglebug.com/1643
-    if (IsAMD() && IsDesktopOpenGL() && IsWindows())
-    {
-        std::cout << "Test skipped on desktop GL AMD Windows." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL() && IsWindows());
 
-    const std::string fs =
-        R"(precision mediump float;
-        void main()
-        {
-            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-        })";
+    GLfloat pointSizeRange[2] = {};
+    glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+    GLfloat maxPointSize = pointSizeRange[1];
+    ANGLE_SKIP_TEST_IF(maxPointSize < kMinMaxPointSize);
 
-    const std::string vs =
-        R"(void main()
-        {
-            gl_PointSize = 2.0;
-            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-        })";
+    constexpr char kVS[] = R"(void main()
+{
+    gl_PointSize = 2.0;
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+})";
 
-    ANGLE_GL_PROGRAM(program, vs, fs);
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Blue());
     ASSERT_GL_NO_ERROR();
 
     glUseProgram(program);
@@ -169,8 +192,8 @@ TEST_P(PointSpritesTest, PointWithoutAttributesCompliance)
     glDrawArrays(GL_POINTS, 0, 1);
     ASSERT_GL_NO_ERROR();
 
-    // expect the center pixel to be green
-    EXPECT_PIXEL_EQ((windowWidth - 1) / 2, (windowHeight - 1) / 2, 0, 255, 0, 255);
+    // expect the center pixel to be blue
+    EXPECT_PIXEL_COLOR_EQ((windowWidth - 1) / 2, (windowHeight - 1) / 2, GLColor::blue);
 }
 
 // This is a regression test for a graphics driver bug affecting end caps on roads in MapsGL
@@ -179,51 +202,43 @@ TEST_P(PointSpritesTest, PointCoordRegressionTest)
 {
     // TODO(jmadill): Investigate potential AMD driver bug.
     // http://anglebug.com/1643
-    if (IsAMD() && IsDesktopOpenGL() && IsWindows())
-    {
-        std::cout << "Test skipped on desktop GL AMD Windows." << std::endl;
-        return;
-    }
-
-    const std::string fs =
-        R"(precision mediump float;
-        varying vec4 v_color;
-        void main()
-        {
-            // It seems as long as this mathematical expression references
-            // gl_PointCoord, the fragment's color is incorrect.
-            vec2 diff = gl_PointCoord - vec2(.5, .5);
-            if (length(diff) > 0.5)
-                discard;
-
-            // The point should be a solid color.
-            gl_FragColor = v_color;
-        })";
-
-    const std::string vs =
-        R"(varying vec4 v_color;
-        // The X and Y coordinates of the center of the point.
-        attribute vec2 a_vertex;
-        uniform float u_pointSize;
-        void main()
-        {
-            gl_PointSize = u_pointSize;
-            gl_Position  = vec4(a_vertex, 0.0, 1.0);
-            // The color of the point.
-            v_color = vec4(0.0, 1.0, 0.0, 1.0);
-        })";
-
-    ANGLE_GL_PROGRAM(program, vs, fs);
-    ASSERT_GL_NO_ERROR();
-
-    glUseProgram(program);
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL() && IsWindows());
 
     GLfloat pointSizeRange[2] = {};
     glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
-
     GLfloat maxPointSize = pointSizeRange[1];
+    ANGLE_SKIP_TEST_IF(maxPointSize < kMinMaxPointSize);
 
-    ASSERT_TRUE(maxPointSize > 2);
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec4 v_color;
+void main()
+{
+    // It seems as long as this mathematical expression references
+    // gl_PointCoord, the fragment's color is incorrect.
+    vec2 diff = gl_PointCoord - vec2(.5, .5);
+    if (length(diff) > 0.5)
+        discard;
+
+    // The point should be a solid color.
+    gl_FragColor = v_color;
+})";
+
+    constexpr char kVS[] = R"(varying vec4 v_color;
+// The X and Y coordinates of the center of the point.
+attribute vec2 a_vertex;
+uniform float u_pointSize;
+void main()
+{
+    gl_PointSize = u_pointSize;
+    gl_Position  = vec4(a_vertex, 0.0, 1.0);
+    // The color of the point.
+    v_color = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(program);
 
     glClearColor(0, 0, 0, 1);
     glDisable(GL_DEPTH_TEST);
@@ -263,38 +278,32 @@ TEST_P(PointSpritesTest, PointSizeEnabledCompliance)
 {
     // TODO(jmadill): Investigate potential AMD driver bug.
     // http://anglebug.com/1643
-    if (IsAMD() && IsDesktopOpenGL() && IsWindows())
-    {
-        std::cout << "Test skipped on desktop GL AMD Windows." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL() && IsWindows());
 
-    const std::string fs =
-        R"(precision mediump float;
-        varying vec4 color;
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec4 color;
 
-        void main()
-        {
-            gl_FragColor = color;
-        })";
+void main()
+{
+    gl_FragColor = color;
+})";
 
-    const std::string vs =
-        R"(attribute vec3 pos;
-        attribute vec4 colorIn;
-        uniform float pointSize;
-        varying vec4 color;
+    constexpr char kVS[] = R"(attribute vec3 pos;
+attribute vec4 colorIn;
+uniform float pointSize;
+varying vec4 color;
 
-        void main()
-        {
-            gl_PointSize = pointSize;
-            color        = colorIn;
-            gl_Position  = vec4(pos, 1.0);
-        })";
+void main()
+{
+    gl_PointSize = pointSize;
+    color        = colorIn;
+    gl_Position  = vec4(pos, 1.0);
+})";
 
     // The WebGL test is drawn on a 2x2 canvas. Emulate this by setting a 2x2 viewport.
     glViewport(0, 0, 2, 2);
 
-    ANGLE_GL_PROGRAM(program, vs, fs);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
     ASSERT_GL_NO_ERROR();
 
     glUseProgram(program);
@@ -387,22 +396,14 @@ TEST_P(PointSpritesTest, PointSizeEnabledCompliance)
 // Verify that rendering works correctly when gl_PointSize is declared in a shader but isn't used
 TEST_P(PointSpritesTest, PointSizeDeclaredButUnused)
 {
-    const std::string vs =
-        R"(attribute highp vec4 position;
+    constexpr char kVS[] = R"(attribute highp vec4 position;
+void main(void)
+{
+    gl_PointSize = 1.0;
+    gl_Position  = position;
+})";
 
-        void main(void)
-        {
-            gl_PointSize = 1.0;
-            gl_Position  = position;
-        })";
-
-    const std::string fs =
-        R"(void main(void)
-        {
-            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-        })";
-
-    ANGLE_GL_PROGRAM(program, vs, fs);
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
     ASSERT_GL_NO_ERROR();
 
     glUseProgram(program);
@@ -418,38 +419,21 @@ TEST_P(PointSpritesTest, PointSizeDeclaredButUnused)
 // spites.
 TEST_P(PointSpritesTest, PointSpriteAlternatingDrawTypes)
 {
-    const std::string pointFS =
-        R"(precision mediump float;
-        void main()
-        {
-            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-        })";
+    GLfloat pointSizeRange[2] = {};
+    glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+    GLfloat maxPointSize = pointSizeRange[1];
+    ANGLE_SKIP_TEST_IF(maxPointSize < kMinMaxPointSize);
 
-    const std::string pointVS =
-        R"(void main()
-        {
-            gl_PointSize = 16.0;
-            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-        })";
+    constexpr char kVS[] = R"(uniform float u_pointSize;
+void main()
+{
+    gl_PointSize = u_pointSize;
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+})";
 
-    const std::string quadFS =
-        R"(precision mediump float;
-        void main()
-        {
-            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-        })";
+    ANGLE_GL_PROGRAM(pointProgram, kVS, essl1_shaders::fs::Blue());
 
-    const std::string quadVS =
-        R"(precision mediump float;
-        attribute vec4 pos;
-        void main()
-        {
-            gl_Position = pos;
-        })";
-
-    ANGLE_GL_PROGRAM(pointProgram, pointVS, pointFS);
-
-    ANGLE_GL_PROGRAM(quadProgram, quadVS, quadFS);
+    ANGLE_GL_PROGRAM(quadProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
     ASSERT_GL_NO_ERROR();
 
     glEnable(GL_CULL_FACE);
@@ -462,17 +446,23 @@ TEST_P(PointSpritesTest, PointSpriteAlternatingDrawTypes)
     };
 
     glUseProgram(quadProgram);
-    GLint positionLocation = glGetAttribLocation(quadProgram, "pos");
+    GLint positionLocation = glGetAttribLocation(quadProgram, essl1_shaders::PositionAttrib());
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices);
     glEnableVertexAttribArray(positionLocation);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glUseProgram(pointProgram);
+    GLint pointSizeLoc = glGetUniformLocation(pointProgram, "u_pointSize");
+    ASSERT_GL_NO_ERROR();
+    GLfloat pointSize = std::min<GLfloat>(16.0f, maxPointSize);
+    glUniform1f(pointSizeLoc, pointSize);
+    ASSERT_GL_NO_ERROR();
+
     glDrawArrays(GL_POINTS, 0, 1);
     ASSERT_GL_NO_ERROR();
 
-    // expect the center pixel to be green
-    EXPECT_PIXEL_EQ(getWindowWidth() / 2, getWindowHeight() / 2, 0, 255, 0, 255);
+    // expect the center pixel to be blue
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::blue);
 }
 
 // This checks for an NVIDIA driver bug where points larger than the maximum reported point size can
@@ -480,21 +470,17 @@ TEST_P(PointSpritesTest, PointSpriteAlternatingDrawTypes)
 // 3.4.
 TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
 {
-    if (IsD3D9())
-    {
-        // Failed on NVIDIA GeForce GTX 1080 - no pixels from the point were detected in the
-        // framebuffer. http://anglebug.com/2111
-        std::cout << "Test skipped on D3D9." << std::endl;
-        return;
-    }
+    // Failed on NVIDIA GeForce GTX 1080 - no pixels from the point were detected in the
+    // framebuffer. http://anglebug.com/2111
+    ANGLE_SKIP_TEST_IF(IsD3D9());
 
-    if (IsAMD() && IsOpenGL())
-    {
-        // Failed on AMD OSX and Windows trybots - no pixels from the point were detected in the
-        // framebuffer. http://anglebug.com/2113
-        std::cout << "Test skipped on AMD OpenGL." << std::endl;
-        return;
-    }
+    // Failed on AMD OSX and Windows trybots - no pixels from the point were detected in the
+    // framebuffer. http://anglebug.com/2113
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
+
+    // If the center of the point ends up being outside the renderable surface, no point gets
+    // rendered at all on AMD. http://anglebug.com/2113
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan());
 
     GLfloat pointSizeRange[2] = {};
     glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
@@ -506,7 +492,7 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
         return;
     }
 
-    const std::string &vs =
+    constexpr char kVS[] =
         "attribute vec4 vPosition;\n"
         "uniform float uPointSize;\n"
         "void main()\n"
@@ -514,13 +500,7 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
         "    gl_PointSize = uPointSize;\n"
         "    gl_Position  = vPosition;\n"
         "}\n";
-    const std::string &fs =
-        "precision mediump float;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = vec4(1, 0, 0, 1);\n"
-        "}\n";
-    ANGLE_GL_PROGRAM(program, vs, fs);
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
     glUseProgram(program);
     ASSERT_GL_NO_ERROR();
 
@@ -568,4 +548,5 @@ ANGLE_INSTANTIATE_TEST(PointSpritesTest,
                        ES2_D3D11(),
                        ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
-                       ES2_OPENGLES());
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());

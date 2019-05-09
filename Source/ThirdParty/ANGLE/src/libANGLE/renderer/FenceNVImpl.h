@@ -15,20 +15,23 @@
 
 #include "angle_gl.h"
 
+namespace gl
+{
+class Context;
+}  // namespace gl
+
 namespace rx
 {
-
 class FenceNVImpl : angle::NonCopyable
 {
   public:
-    FenceNVImpl() { };
-    virtual ~FenceNVImpl() { };
+    FenceNVImpl() {}
+    virtual ~FenceNVImpl() {}
 
-    virtual gl::Error set(GLenum condition) = 0;
-    virtual gl::Error test(GLboolean *outFinished) = 0;
-    virtual gl::Error finish() = 0;
+    virtual angle::Result set(const gl::Context *context, GLenum condition)        = 0;
+    virtual angle::Result test(const gl::Context *context, GLboolean *outFinished) = 0;
+    virtual angle::Result finish(const gl::Context *context)                       = 0;
 };
+}  // namespace rx
 
-}
-
-#endif // LIBANGLE_RENDERER_FENCENVIMPL_H_
+#endif  // LIBANGLE_RENDERER_FENCENVIMPL_H_

@@ -59,4 +59,4 @@ class FunctionsGL : public DispatchTableGL
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_FUNCTIONSGL_H_
+#endif  // LIBANGLE_RENDERER_GL_FUNCTIONSGL_H_

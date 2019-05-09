@@ -11,6 +11,8 @@
 
 #include "compiler/translator/OutputVulkanGLSL.h"
 
+#include "compiler/translator/BaseTypes.h"
+#include "compiler/translator/Symbol.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -34,8 +36,7 @@ TOutputVulkanGLSL::TOutputVulkanGLSL(TInfoSinkBase &objSink,
                   shaderVersion,
                   output,
                   compileOptions)
-{
-}
+{}
 
 // TODO(jmadill): This is not complete.
 void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
@@ -45,7 +46,7 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
     bool needsCustomLayout =
         (type.getQualifier() == EvqAttribute || type.getQualifier() == EvqFragmentOut ||
          type.getQualifier() == EvqVertexIn || IsVarying(type.getQualifier()) ||
-         IsSampler(type.getBasicType()));
+         IsSampler(type.getBasicType()) || type.isInterfaceBlock());
 
     if (!NeedsToWriteLayoutQualifier(type) && !needsCustomLayout)
     {
@@ -54,18 +55,19 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
 
     TInfoSinkBase &out                      = objSink();
     const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
-    out << "layout(";
 
     // This isn't super clean, but it gets the job done.
     // See corresponding code in GlslangWrapper.cpp.
-    // TODO(jmadill): Ensure declarations are separated.
-
     TIntermSymbol *symbol = variable->getAsSymbolNode();
     ASSERT(symbol);
 
     if (needsCustomLayout)
     {
-        out << "@@ LAYOUT-" << symbol->getName().getString() << " @@";
+        out << "@@ LAYOUT-" << symbol->getName() << " @@";
+    }
+    else
+    {
+        out << "layout(";
     }
 
     if (IsImage(type.getBasicType()) && layoutQualifier.imageInternalFormat != EiifUnspecified)
@@ -74,7 +76,49 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
         out << getImageInternalFormatString(layoutQualifier.imageInternalFormat);
     }
 
-    out << ") ";
+    if (!needsCustomLayout)
+    {
+        out << ") ";
+    }
 }
 
+void TOutputVulkanGLSL::writeQualifier(TQualifier qualifier, const TSymbol *symbol)
+{
+    if (qualifier != EvqUniform && qualifier != EvqVaryingIn && qualifier != EvqVaryingOut &&
+        qualifier != EvqAttribute)
+    {
+        TOutputGLSLBase::writeQualifier(qualifier, symbol);
+        return;
+    }
+
+    if (symbol == nullptr)
+    {
+        return;
+    }
+
+    TInfoSinkBase &out = objSink();
+    out << "@@ QUALIFIER-" << symbol->name().data() << " @@ ";
+}
+
+void TOutputVulkanGLSL::writeVariableType(const TType &type, const TSymbol *symbol)
+{
+    TType overrideType(type);
+
+    // External textures are treated as 2D textures in the vulkan back-end
+    if (type.getBasicType() == EbtSamplerExternalOES)
+    {
+        overrideType.setBasicType(EbtSampler2D);
+    }
+
+    TOutputGLSL::writeVariableType(overrideType, symbol);
+}
+
+void TOutputVulkanGLSL::writeStructType(const TStructure *structure)
+{
+    if (!structDeclared(structure))
+    {
+        declareStruct(structure);
+        objSink() << ";\n";
+    }
+}
 }  // namespace sh

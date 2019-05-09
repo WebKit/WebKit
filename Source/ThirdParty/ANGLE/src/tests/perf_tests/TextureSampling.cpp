@@ -16,23 +16,25 @@
 #include <random>
 #include <sstream>
 
-#include "shader_utils.h"
+#include "util/shader_utils.h"
 
 using namespace angle;
 
 namespace
 {
+constexpr unsigned int kIterationsPerStep = 4;
 
 struct TextureSamplingParams final : public RenderTestParams
 {
     TextureSamplingParams()
     {
+        iterationsPerStep = kIterationsPerStep;
+
         // Common default params
         majorVersion = 2;
         minorVersion = 0;
         windowWidth  = 720;
         windowHeight = 720;
-        iterations   = 4;
 
         numSamplers = 2;
         textureSize = 32;
@@ -43,9 +45,6 @@ struct TextureSamplingParams final : public RenderTestParams
     unsigned int numSamplers;
     unsigned int textureSize;
     unsigned int kernelSize;
-
-    // static parameters
-    unsigned int iterations;
 };
 
 std::ostream &operator<<(std::ostream &os, const TextureSamplingParams &params)
@@ -85,14 +84,11 @@ class TextureSamplingBenchmark : public ANGLERenderTest,
 
 TextureSamplingBenchmark::TextureSamplingBenchmark()
     : ANGLERenderTest("TextureSampling", GetParam()), mProgram(0u), mBuffer(0u)
-{
-}
+{}
 
 void TextureSamplingBenchmark::initializeBenchmark()
 {
     const auto &params = GetParam();
-
-    ASSERT_LT(0u, params.iterations);
 
     // Verify "numSamplers" is within MAX_TEXTURE_IMAGE_UNITS limit
     GLint maxTextureImageUnits;
@@ -135,23 +131,28 @@ void TextureSamplingBenchmark::initShaders()
     fstrstr << "void main()\n"
                "{\n"
                "    const float inverseTextureSize = 1.0 / "
-            << params.textureSize << ".0;\n"
-                                     "    vec4 colorOut = vec4(0.0, 0.0, 0.0, 1.0);\n";
+            << params.textureSize
+            << ".0;\n"
+               "    vec4 colorOut = vec4(0.0, 0.0, 0.0, 1.0);\n";
     for (unsigned int count = 0; count < params.numSamplers; count++)
     {
-        fstrstr << "    for (int x = 0; x < " << params.kernelSize << "; ++x)\n"
+        fstrstr << "    for (int x = 0; x < " << params.kernelSize
+                << "; ++x)\n"
                    "    {\n"
-                   "        for (int y = 0; y < " << params.kernelSize << "; ++y)\n"
+                   "        for (int y = 0; y < "
+                << params.kernelSize
+                << "; ++y)\n"
                    "        {\n"
-                   "            colorOut += texture2D(uSampler" << count
-                   << ", vTextureCoordinates + vec2(x, y) * inverseTextureSize) * 0.1;\n"
+                   "            colorOut += texture2D(uSampler"
+                << count
+                << ", vTextureCoordinates + vec2(x, y) * inverseTextureSize) * 0.1;\n"
                    "        }\n"
                    "    }\n";
     }
     fstrstr << "    gl_FragColor = colorOut;\n"
                "}\n";
 
-    mProgram = CompileProgram(vstrstr.str(), fstrstr.str());
+    mProgram = CompileProgram(vstrstr.str().c_str(), fstrstr.str().c_str());
     ASSERT_NE(0u, mProgram);
 
     // Use the program object
@@ -249,7 +250,7 @@ void TextureSamplingBenchmark::drawBenchmark()
 
     const auto &params = GetParam();
 
-    for (unsigned int it = 0; it < params.iterations; ++it)
+    for (unsigned int it = 0; it < params.iterationsPerStep; ++it)
     {
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
@@ -278,6 +279,13 @@ TextureSamplingParams OpenGLOrGLESParams()
     return params;
 }
 
+TextureSamplingParams VulkanParams()
+{
+    TextureSamplingParams params;
+    params.eglParameters = egl_platform::VULKAN();
+    return params;
+}
+
 }  // anonymous namespace
 
 TEST_P(TextureSamplingBenchmark, Run)
@@ -285,4 +293,8 @@ TEST_P(TextureSamplingBenchmark, Run)
     run();
 }
 
-ANGLE_INSTANTIATE_TEST(TextureSamplingBenchmark, D3D11Params(), D3D9Params(), OpenGLOrGLESParams());
+ANGLE_INSTANTIATE_TEST(TextureSamplingBenchmark,
+                       D3D11Params(),
+                       D3D9Params(),
+                       OpenGLOrGLESParams(),
+                       VulkanParams());

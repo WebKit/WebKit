@@ -9,9 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/gl_raii.h"
@@ -21,17 +18,15 @@ using namespace angle;
 namespace
 {
 
-class EGLSurfacelessContextTest : public ANGLETest
+class EGLSurfacelessContextTest : public EGLTest,
+                                  public testing::WithParamInterface<PlatformParameters>
 {
   public:
     EGLSurfacelessContextTest() : mDisplay(0) {}
 
     void SetUp() override
     {
-        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
-            reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(
-                eglGetProcAddress("eglGetPlatformDisplayEXT"));
-        ASSERT_TRUE(eglGetPlatformDisplayEXT != nullptr);
+        EGLTest::SetUp();
 
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
@@ -71,7 +66,7 @@ class EGLSurfacelessContextTest : public ANGLETest
             eglDestroyContext(mDisplay, mContext);
         }
 
-        if (mContext != EGL_NO_SURFACE)
+        if (mPbuffer != EGL_NO_SURFACE)
         {
             eglDestroySurface(mDisplay, mPbuffer);
         }
@@ -112,7 +107,7 @@ class EGLSurfacelessContextTest : public ANGLETest
 
     bool checkExtension(bool verbose = true) const
     {
-        if (!ANGLETest::eglDisplayExtensionEnabled(mDisplay, "EGL_KHR_surfaceless_context"))
+        if (!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_surfaceless_context"))
         {
             if (verbose)
             {
@@ -265,4 +260,8 @@ TEST_P(EGLSurfacelessContextTest, Switcheroo)
 
 }  // anonymous namespace
 
-ANGLE_INSTANTIATE_TEST(EGLSurfacelessContextTest, ES2_D3D9(), ES2_D3D11(), ES2_OPENGL());
+ANGLE_INSTANTIATE_TEST(EGLSurfacelessContextTest,
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES2_OPENGL(),
+                       ES2_VULKAN());

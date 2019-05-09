@@ -10,62 +10,66 @@
 #ifndef LIBANGLE_SAMPLER_H_
 #define LIBANGLE_SAMPLER_H_
 
-#include "libANGLE/angletypes.h"
 #include "libANGLE/Debug.h"
+#include "libANGLE/Observer.h"
 #include "libANGLE/RefCountObject.h"
+#include "libANGLE/angletypes.h"
 
 namespace rx
 {
 class GLImplFactory;
 class SamplerImpl;
-}
+}  // namespace rx
 
 namespace gl
 {
 
-class Sampler final : public RefCountObject, public LabeledObject
+class Sampler final : public RefCountObject, public LabeledObject, public angle::Subject
 {
   public:
     Sampler(rx::GLImplFactory *factory, GLuint id);
     ~Sampler() override;
 
-    Error onDestroy(const Context *context) override;
+    void onDestroy(const Context *context) override;
 
-    void setLabel(const std::string &label) override;
+    void setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
-    void setMinFilter(GLenum minFilter);
+    void setMinFilter(const Context *context, GLenum minFilter);
     GLenum getMinFilter() const;
 
-    void setMagFilter(GLenum magFilter);
+    void setMagFilter(const Context *context, GLenum magFilter);
     GLenum getMagFilter() const;
 
-    void setWrapS(GLenum wrapS);
+    void setWrapS(const Context *context, GLenum wrapS);
     GLenum getWrapS() const;
 
-    void setWrapT(GLenum wrapT);
+    void setWrapT(const Context *context, GLenum wrapT);
     GLenum getWrapT() const;
 
-    void setWrapR(GLenum wrapR);
+    void setWrapR(const Context *context, GLenum wrapR);
     GLenum getWrapR() const;
 
-    void setMaxAnisotropy(float maxAnisotropy);
+    void setMaxAnisotropy(const Context *context, float maxAnisotropy);
     float getMaxAnisotropy() const;
 
-    void setMinLod(GLfloat minLod);
+    void setMinLod(const Context *context, GLfloat minLod);
     GLfloat getMinLod() const;
 
-    void setMaxLod(GLfloat maxLod);
+    void setMaxLod(const Context *context, GLfloat maxLod);
     GLfloat getMaxLod() const;
 
-    void setCompareMode(GLenum compareMode);
+    void setCompareMode(const Context *context, GLenum compareMode);
     GLenum getCompareMode() const;
 
-    void setCompareFunc(GLenum compareFunc);
+    void setCompareFunc(const Context *context, GLenum compareFunc);
     GLenum getCompareFunc() const;
 
-    void setSRGBDecode(GLenum sRGBDecode);
+    void setSRGBDecode(const Context *context, GLenum sRGBDecode);
     GLenum getSRGBDecode() const;
+
+    void setBorderColor(const Context *context, const ColorGeneric &color);
+    const ColorGeneric &getBorderColor() const;
 
     const SamplerState &getSamplerState() const;
 
@@ -82,4 +86,4 @@ class Sampler final : public RefCountObject, public LabeledObject
 
 }  // namespace gl
 
-#endif // LIBANGLE_SAMPLER_H_
+#endif  // LIBANGLE_SAMPLER_H_

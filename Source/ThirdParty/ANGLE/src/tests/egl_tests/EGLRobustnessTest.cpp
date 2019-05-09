@@ -8,25 +8,22 @@
 
 #include <gtest/gtest.h>
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
-#include "OSWindow.h"
 #include "test_utils/ANGLETest.h"
+#include "util/OSWindow.h"
 
 using namespace angle;
 
-class EGLRobustnessTest : public ::testing::TestWithParam<angle::PlatformParameters>
+class EGLRobustnessTest : public EGLTest,
+                          public ::testing::WithParamInterface<angle::PlatformParameters>
 {
   public:
     void SetUp() override
     {
-        mOSWindow = CreateOSWindow();
+        EGLTest::SetUp();
+
+        mOSWindow = OSWindow::New();
         mOSWindow->initialize("EGLRobustnessTest", 500, 500);
         mOSWindow->setVisible(true);
-
-        auto eglGetPlatformDisplayEXT = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(
-            eglGetProcAddress("eglGetPlatformDisplayEXT"));
 
         const auto &platform = GetParam().eglParameters;
 
@@ -83,7 +80,7 @@ class EGLRobustnessTest : public ::testing::TestWithParam<angle::PlatformParamet
         eglTerminate(mDisplay);
         EXPECT_EGL_SUCCESS();
 
-        SafeDelete(mOSWindow);
+        OSWindow::Delete(&mOSWindow);
     }
 
     void createContext(EGLint resetStrategy)
@@ -99,10 +96,6 @@ class EGLRobustnessTest : public ::testing::TestWithParam<angle::PlatformParamet
 
         const char *extensionString = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
         ASSERT_NE(nullptr, strstr(extensionString, "GL_ANGLE_instanced_arrays"));
-
-        mDrawElementsInstancedANGLE =
-            (PFNGLDRAWELEMENTSINSTANCEDANGLEPROC)eglGetProcAddress("glDrawElementsInstancedANGLE");
-        ASSERT_NE(nullptr, mDrawElementsInstancedANGLE);
     }
 
     void forceContextReset()
@@ -141,17 +134,16 @@ class EGLRobustnessTest : public ::testing::TestWithParam<angle::PlatformParamet
         glViewport(0, 0, mOSWindow->getWidth(), mOSWindow->getHeight());
         glClearColor(1.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        mDrawElementsInstancedANGLE(GL_TRIANGLES, kNumQuads * 6, GL_UNSIGNED_SHORT, indices.data(),
-                                    10000);
+        glDrawElementsInstancedANGLE(GL_TRIANGLES, kNumQuads * 6, GL_UNSIGNED_SHORT, indices.data(),
+                                     10000);
 
         glFinish();
     }
 
   protected:
-    EGLDisplay mDisplay                                             = EGL_NO_DISPLAY;
-    EGLSurface mWindow                                              = EGL_NO_SURFACE;
-    bool mInitialized                                               = false;
-    PFNGLDRAWELEMENTSINSTANCEDANGLEPROC mDrawElementsInstancedANGLE = nullptr;
+    EGLDisplay mDisplay = EGL_NO_DISPLAY;
+    EGLSurface mWindow  = EGL_NO_SURFACE;
+    bool mInitialized   = false;
 
   private:
     EGLContext mContext = EGL_NO_CONTEXT;
@@ -228,7 +220,7 @@ TEST_P(EGLRobustnessTest, DISABLED_ResettingDisplayWorks)
 // if there was a TDR caused by D3D so we don't run D3D tests at the same time as the OpenGL tests.
 #define D3D_HAS_PRIORITY 1
 #if D3D_HAS_PRIORITY && (defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11))
-ANGLE_INSTANTIATE_TEST(EGLRobustnessTest, ES2_D3D9(), ES2_D3D11());
+ANGLE_INSTANTIATE_TEST(EGLRobustnessTest, ES2_VULKAN(), ES2_D3D9(), ES2_D3D11());
 #else
-ANGLE_INSTANTIATE_TEST(EGLRobustnessTest, ES2_OPENGL());
+ANGLE_INSTANTIATE_TEST(EGLRobustnessTest, ES2_VULKAN(), ES2_OPENGL());
 #endif

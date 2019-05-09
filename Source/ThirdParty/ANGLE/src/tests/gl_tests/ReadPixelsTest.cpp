@@ -11,7 +11,7 @@
 
 #include <array>
 
-#include "random_utils.h"
+#include "util/random_utils.h"
 
 using namespace angle;
 
@@ -36,11 +36,7 @@ class ReadPixelsTest : public ANGLETest
 TEST_P(ReadPixelsTest, OutOfBounds)
 {
     // TODO: re-enable once root cause of http://anglebug.com/1413 is fixed
-    if (IsAndroid() && IsAdreno() && IsOpenGLES())
-    {
-        std::cout << "Test skipped on Adreno OpenGLES on Android." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -188,11 +184,7 @@ TEST_P(ReadPixelsPBOTest, ArrayBufferTarget)
 TEST_P(ReadPixelsPBOTest, ExistingDataPreserved)
 {
     // TODO(geofflang): Figure out why this fails on AMD OpenGL (http://anglebug.com/1291)
-    if (IsAMD() && getPlatformRenderer() == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
-    {
-        std::cout << "Test disabled on AMD OpenGL." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     // Clear backbuffer to red
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -257,7 +249,7 @@ TEST_P(ReadPixelsPBOTest, SubDataPreservesContents)
 TEST_P(ReadPixelsPBOTest, SubDataOffsetPreservesContents)
 {
     // anglebug.com/1415
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
+    ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && IsAdreno() && IsOpenGLES());
     // anglebug.com/2185
     ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
 
@@ -294,7 +286,7 @@ class ReadPixelsPBODrawTest : public ReadPixelsPBOTest
     {
         ReadPixelsPBOTest::SetUp();
 
-        const char *vertexShaderSrc =
+        constexpr char kVS[] =
             "attribute vec4 aTest; attribute vec2 aPosition; varying vec4 vTest;\n"
             "void main()\n"
             "{\n"
@@ -303,14 +295,14 @@ class ReadPixelsPBODrawTest : public ReadPixelsPBOTest
             "    gl_PointSize = 1.0;\n"
             "}";
 
-        const char *fragmentShaderSrc =
+        constexpr char kFS[] =
             "precision mediump float; varying vec4 vTest;\n"
             "void main()\n"
             "{\n"
             "    gl_FragColor = vTest;\n"
             "}";
 
-        mProgram = CompileProgram(vertexShaderSrc, fragmentShaderSrc);
+        mProgram = CompileProgram(kVS, kFS);
         ASSERT_NE(0u, mProgram);
 
         glGenBuffers(1, &mPositionVBO);
@@ -420,7 +412,7 @@ class ReadPixelsMultisampleTest : public ReadPixelsTest
 // Test ReadPixels from a multisampled framebuffer.
 TEST_P(ReadPixelsMultisampleTest, BasicClear)
 {
-    if (getClientMajorVersion() < 3 && !extensionEnabled("GL_ANGLE_framebuffer_multisample"))
+    if (getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_ANGLE_framebuffer_multisample"))
     {
         std::cout
             << "Test skipped because ES3 or GL_ANGLE_framebuffer_multisample is not available."
@@ -428,7 +420,7 @@ TEST_P(ReadPixelsMultisampleTest, BasicClear)
         return;
     }
 
-    if (extensionEnabled("GL_ANGLE_framebuffer_multisample"))
+    if (IsGLExtensionEnabled("GL_ANGLE_framebuffer_multisample"))
     {
         glRenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, 2, GL_RGBA8, 4, 4);
     }
@@ -719,7 +711,7 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(ReadPixelsTest, ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES());
+ANGLE_INSTANTIATE_TEST(ReadPixelsTest, ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN());
 ANGLE_INSTANTIATE_TEST(ReadPixelsPBOTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 ANGLE_INSTANTIATE_TEST(ReadPixelsPBODrawTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 ANGLE_INSTANTIATE_TEST(ReadPixelsMultisampleTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());

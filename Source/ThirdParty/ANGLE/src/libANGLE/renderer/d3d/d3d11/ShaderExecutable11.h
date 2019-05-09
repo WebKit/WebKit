@@ -51,7 +51,9 @@ class UniformStorage11 : public UniformStorageD3D
     UniformStorage11(size_t initialSize);
     ~UniformStorage11() override;
 
-    gl::Error getConstantBuffer(Renderer11 *renderer, const d3d11::Buffer **bufferOut);
+    angle::Result getConstantBuffer(const gl::Context *context,
+                                    Renderer11 *renderer,
+                                    const d3d11::Buffer **bufferOut);
 
   private:
     d3d11::Buffer mConstantBuffer;
@@ -59,4 +61,4 @@ class UniformStorage11 : public UniformStorageD3D
 
 }  // namespace rx
 
-#endif // LIBANGLE_RENDERER_D3D_D3D11_SHADEREXECUTABLE11_H_
+#endif  // LIBANGLE_RENDERER_D3D_D3D11_SHADEREXECUTABLE11_H_

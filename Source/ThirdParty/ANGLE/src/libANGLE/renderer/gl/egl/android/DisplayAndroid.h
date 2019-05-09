@@ -11,12 +11,15 @@
 
 #include <map>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "libANGLE/renderer/gl/egl/DisplayEGL.h"
 
 namespace rx
 {
+
+class RendererEGL;
 
 class DisplayAndroid : public DisplayEGL
 {
@@ -40,9 +43,11 @@ class DisplayAndroid : public DisplayEGL
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
-    ImageImpl *createImage(const egl::ImageState &state,
-                           EGLenum target,
-                           const egl::AttributeMap &attribs) override;
+    ContextImpl *createContext(const gl::State &state,
+                               gl::ErrorSet *errorSet,
+                               const egl::Config *configuration,
+                               const gl::Context *shareContext,
+                               const egl::AttributeMap &attribs) override;
 
     egl::ConfigSet generateConfigs() override;
 
@@ -50,17 +55,40 @@ class DisplayAndroid : public DisplayEGL
     egl::Error restoreLostDevice(const egl::Display *display) override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
+    egl::Error validateImageClientBuffer(const gl::Context *context,
+                                         EGLenum target,
+                                         EGLClientBuffer clientBuffer,
+                                         const egl::AttributeMap &attribs) const override;
 
-    egl::Error getDevice(DeviceImpl **device) override;
+    ExternalImageSiblingImpl *createExternalImageSibling(const gl::Context *context,
+                                                         EGLenum target,
+                                                         EGLClientBuffer buffer,
+                                                         const egl::AttributeMap &attribs) override;
 
-    egl::Error waitClient(const gl::Context *context) const override;
-    egl::Error waitNative(const gl::Context *context, EGLint engine) const override;
+    DeviceImpl *createDevice() override;
+
+    egl::Error waitClient(const gl::Context *context) override;
+    egl::Error waitNative(const gl::Context *context, EGLint engine) override;
 
     egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
+    gl::Version getMaxSupportedESVersion() const override;
+
+    void destroyNativeContext(EGLContext context) override;
+
+    WorkerContext *createWorkerContext(std::string *infoLog,
+                                       EGLContext sharedContext,
+                                       const native_egl::AttributeVector workerAttribs) override;
+
   private:
+    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
+
+    egl::Error createRenderer(EGLContext shareContext,
+                              bool makeNewContextCurrent,
+                              std::shared_ptr<RendererEGL> *outRenderer);
+
     egl::Error makeCurrentSurfaceless(gl::Context *context) override;
 
     template <typename T>
@@ -73,10 +101,23 @@ class DisplayAndroid : public DisplayEGL
                                     const char *extension,
                                     const U &defaultValue) const;
 
+    bool mVirtualizedContexts;
+    std::shared_ptr<RendererEGL> mRenderer;
+
+    egl::AttributeMap mDisplayAttributes;
+
+    bool mSupportsSurfaceless;
+
     std::vector<EGLint> mConfigAttribList;
     std::map<EGLint, EGLint> mConfigIds;
     EGLSurface mDummyPbuffer;
-    EGLSurface mCurrentSurface;
+
+    struct CurrentNativeContext
+    {
+        EGLSurface surface = EGL_NO_SURFACE;
+        EGLContext context = EGL_NO_CONTEXT;
+    };
+    std::unordered_map<std::thread::id, CurrentNativeContext> mCurrentNativeContext;
 };
 
 }  // namespace rx

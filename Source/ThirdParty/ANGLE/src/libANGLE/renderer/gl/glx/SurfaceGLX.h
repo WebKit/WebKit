@@ -10,6 +10,7 @@
 #define LIBANGLE_RENDERER_GL_GLX_SURFACEGLX_H_
 
 #include "libANGLE/renderer/gl/SurfaceGL.h"
+#include "libANGLE/renderer/gl/glx/platform_glx.h"
 
 namespace rx
 {
@@ -17,11 +18,11 @@ namespace rx
 class SurfaceGLX : public SurfaceGL
 {
   public:
-    SurfaceGLX(const egl::SurfaceState &state, RendererGL *renderer) : SurfaceGL(state, renderer) {}
+    SurfaceGLX(const egl::SurfaceState &state) : SurfaceGL(state) {}
 
-    virtual egl::Error checkForResize() = 0;
+    virtual egl::Error checkForResize()       = 0;
     virtual glx::Drawable getDrawable() const = 0;
 };
-}
+}  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_GL_GLX_SURFACEGLX_H_

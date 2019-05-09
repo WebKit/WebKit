@@ -28,28 +28,26 @@ class IncompleteTextureTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vertexShaderSource =
-            R"(precision highp float;
-            attribute vec4 position;
-            varying vec2 texcoord;
+        constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_Position = position;
-                texcoord = (position.xy * 0.5) + 0.5;
-            })";
+void main()
+{
+    gl_Position = position;
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
 
-        const std::string fragmentShaderSource =
-            R"(precision highp float;
-            uniform sampler2D tex;
-            varying vec2 texcoord;
+        constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D tex;
+varying vec2 texcoord;
 
-            void main()
-            {
-                gl_FragColor = texture2D(tex, texcoord);
-            })";
+void main()
+{
+    gl_FragColor = texture2D(tex, texcoord);
+})";
 
-        mProgram = CompileProgram(vertexShaderSource, fragmentShaderSource);
+        mProgram = CompileProgram(kVS, kFS);
         if (mProgram == 0)
         {
             FAIL() << "shader compilation failed.";
@@ -67,6 +65,20 @@ class IncompleteTextureTest : public ANGLETest
 
     GLuint mProgram;
     GLint mTextureUniformLocation;
+};
+
+class IncompleteTextureTestES3 : public ANGLETest
+{
+  protected:
+    IncompleteTextureTestES3()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
 };
 
 class IncompleteTextureTestES31 : public ANGLETest
@@ -163,20 +175,34 @@ TEST_P(IncompleteTextureTest, UpdateTexture)
                           GLColor::green);
 }
 
+// Tests that incomplete textures don't get initialized with the unpack buffer contents.
+TEST_P(IncompleteTextureTestES3, UnpackBufferBound)
+{
+    std::vector<GLColor> red(16, GLColor::red);
+
+    GLBuffer unpackBuffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, red.size() * sizeof(GLColor), red.data(), GL_STATIC_DRAW);
+
+    draw2DTexturedQuad(0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+}
+
 // Tests that the incomplete multisample texture has the correct alpha value.
 TEST_P(IncompleteTextureTestES31, MultisampleTexture)
 {
-    const std::string vertexShader = R"(#version 310 es
+    constexpr char kVS[] = R"(#version 310 es
 in vec2 position;
 out vec2 texCoord;
 void main()
 {
     gl_Position = vec4(position, 0, 1);
     texCoord = (position * 0.5) + 0.5;
-}
-)";
+})";
 
-    const std::string fragmentShader = R"(#version 310 es
+    constexpr char kFS[] = R"(#version 310 es
 precision mediump float;
 in vec2 texCoord;
 out vec4 color;
@@ -186,26 +212,27 @@ void main()
     ivec2 texSize = textureSize(tex);
     ivec2 texel = ivec2(vec2(texSize) * texCoord);
     color = texelFetch(tex, texel, 0);
-}
-)";
+})";
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     // The zero texture will be incomplete by default.
-    ANGLE_GL_PROGRAM(program, vertexShader, fragmentShader);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
     drawQuad(program, "position", 0.5f);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(IncompleteTextureTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_OPENGL(),
-                       ES2_OPENGLES());
-
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST(IncompleteTextureTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 ANGLE_INSTANTIATE_TEST(IncompleteTextureTestES31, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());

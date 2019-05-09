@@ -3,28 +3,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+// OSWindow:
+//   Operating system window integration base class.
 
-#ifndef SAMPLE_UTIL_WINDOW_H
-#define SAMPLE_UTIL_WINDOW_H
+#ifndef UTIL_OSWINDOW_H_
+#define UTIL_OSWINDOW_H_
 
-#include <list>
 #include <stdint.h>
+#include <list>
 #include <string>
 
-#include <export.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include "Event.h"
+#include "util/Event.h"
+#include "util/util_export.h"
 
-class ANGLE_EXPORT OSWindow
+class ANGLE_UTIL_EXPORT OSWindow
 {
   public:
-    OSWindow();
-    virtual ~OSWindow();
+    static OSWindow *New();
+    static void Delete(OSWindow **osWindow);
 
     virtual bool initialize(const std::string &name, size_t width, size_t height) = 0;
-    virtual void destroy() = 0;
+    virtual void destroy()                                                        = 0;
 
     int getX() const;
     int getY() const;
@@ -37,7 +39,13 @@ class ANGLE_EXPORT OSWindow
     // just grab the pixels of the window. Returns if it was successful.
     virtual bool takeScreenshot(uint8_t *pixelData);
 
-    virtual EGLNativeWindowType getNativeWindow() const = 0;
+    // Re-initializes the native window. This is used on platforms which do not
+    // have a reusable EGLNativeWindowType in order to recreate it, and is
+    // needed by the test suite because it re-uses the same OSWindow for
+    // multiple EGLSurfaces.
+    virtual void resetNativeWindow() = 0;
+
+    virtual EGLNativeWindowType getNativeWindow() const   = 0;
     virtual EGLNativeDisplayType getNativeDisplay() const = 0;
 
     virtual void messageLoop() = 0;
@@ -46,9 +54,9 @@ class ANGLE_EXPORT OSWindow
     virtual void pushEvent(Event event);
 
     virtual void setMousePosition(int x, int y) = 0;
-    virtual bool setPosition(int x, int y) = 0;
-    virtual bool resize(int width, int height) = 0;
-    virtual void setVisible(bool isVisible) = 0;
+    virtual bool setPosition(int x, int y)      = 0;
+    virtual bool resize(int width, int height)  = 0;
+    virtual void setVisible(bool isVisible)     = 0;
 
     virtual void signalTestEvent() = 0;
 
@@ -56,6 +64,10 @@ class ANGLE_EXPORT OSWindow
     bool didTestEventFire();
 
   protected:
+    OSWindow();
+    virtual ~OSWindow();
+    friend ANGLE_UTIL_EXPORT void FreeOSWindow(OSWindow *window);
+
     int mX;
     int mY;
     int mWidth;
@@ -64,6 +76,4 @@ class ANGLE_EXPORT OSWindow
     std::list<Event> mEvents;
 };
 
-ANGLE_EXPORT OSWindow *CreateOSWindow();
-
-#endif // SAMPLE_UTIL_WINDOW_H
+#endif  // UTIL_OSWINDOW_H_

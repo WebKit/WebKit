@@ -32,33 +32,26 @@ class DisplayGL : public DisplayImpl
     void terminate() override;
 
     ImageImpl *createImage(const egl::ImageState &state,
+                           const gl::Context *context,
                            EGLenum target,
                            const egl::AttributeMap &attribs) override;
 
-    ContextImpl *createContext(const gl::ContextState &state) override;
+    StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
+                                                       const egl::AttributeMap &attribs) override;
 
-    StreamProducerImpl *createStreamProducerD3DTextureNV12(
-        egl::Stream::ConsumerType consumerType,
-        const egl::AttributeMap &attribs) override;
-
-    egl::Error makeCurrent(egl::Surface *drawSurface, egl::Surface *readSurface, gl::Context *context) override;
-
-    gl::Version getMaxSupportedESVersion() const override;
+    egl::Error makeCurrent(egl::Surface *drawSurface,
+                           egl::Surface *readSurface,
+                           gl::Context *context) override;
 
   protected:
-    RendererGL *getRenderer() const { return mRenderer; };
-
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 
   private:
-    virtual const FunctionsGL *getFunctionsGL() const = 0;
     virtual egl::Error makeCurrentSurfaceless(gl::Context *context);
-
-    RendererGL *mRenderer;
 
     egl::Surface *mCurrentDrawSurface;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_DISPLAYGL_H_
+#endif  // LIBANGLE_RENDERER_GL_DISPLAYGL_H_

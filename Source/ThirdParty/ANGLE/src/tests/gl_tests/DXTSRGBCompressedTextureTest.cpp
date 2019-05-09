@@ -35,7 +35,7 @@ class DXTSRGBCompressedTextureTest : public ANGLETest
     {
         ANGLETest::SetUp();
 
-        const std::string vsSource = std::string(
+        constexpr char kVS[] =
             "precision highp float;\n"
             "attribute vec4 position;\n"
             "varying vec2 texcoord;\n"
@@ -43,17 +43,17 @@ class DXTSRGBCompressedTextureTest : public ANGLETest
             "    gl_Position = position;\n"
             "    texcoord = (position.xy * 0.5) + 0.5;\n"
             "    texcoord.y = 1.0 - texcoord.y;\n"
-            "}");
+            "}";
 
-        const std::string textureFSSource = std::string(
+        constexpr char kFS[] =
             "precision highp float;\n"
             "uniform sampler2D tex;\n"
             "varying vec2 texcoord;\n"
             "void main() {\n"
             "    gl_FragColor = texture2D(tex, texcoord);\n"
-            "}\n");
+            "}\n";
 
-        mTextureProgram = CompileProgram(vsSource, textureFSSource);
+        mTextureProgram = CompileProgram(kVS, kFS);
         ASSERT_NE(0u, mTextureProgram);
 
         mTextureUniformLocation = glGetUniformLocation(mTextureProgram, "tex");
@@ -93,13 +93,7 @@ class DXTSRGBCompressedTextureTest : public ANGLETest
 
     void runTest(GLenum format)
     {
-        if (!extensionEnabled("GL_EXT_texture_compression_s3tc_srgb"))
-        {
-            std::cout
-                << "Test skipped because GL_EXT_texture_compression_s3tc_srgb is not available."
-                << std::endl;
-            return;
-        }
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc_srgb"));
 
         const TestCase &test = kTests.at(format);
 
@@ -167,4 +161,5 @@ ANGLE_INSTANTIATE_TEST(DXTSRGBCompressedTextureTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());

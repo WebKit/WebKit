@@ -8,26 +8,24 @@
 
 #include "libANGLE/renderer/gl/SurfaceGL.h"
 
+#include "libANGLE/Context.h"
+#include "libANGLE/Surface.h"
+#include "libANGLE/renderer/gl/BlitGL.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 
 namespace rx
 {
 
-SurfaceGL::SurfaceGL(const egl::SurfaceState &state, RendererGL *renderer)
-    : SurfaceImpl(state), mRenderer(renderer)
-{
-}
+SurfaceGL::SurfaceGL(const egl::SurfaceState &state) : SurfaceImpl(state) {}
 
-SurfaceGL::~SurfaceGL()
-{
-}
+SurfaceGL::~SurfaceGL() {}
 
-FramebufferImpl *SurfaceGL::createDefaultFramebuffer(const gl::FramebufferState &data)
+FramebufferImpl *SurfaceGL::createDefaultFramebuffer(const gl::Context *context,
+                                                     const gl::FramebufferState &data)
 {
-    return new FramebufferGL(data, mRenderer->getFunctions(), mRenderer->getStateManager(),
-                             mRenderer->getWorkarounds(), mRenderer->getBlitter(),
-                             mRenderer->getMultiviewClearer(), true);
+    return new FramebufferGL(data, 0, true);
 }
 
 egl::Error SurfaceGL::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
@@ -41,11 +39,16 @@ egl::Error SurfaceGL::unMakeCurrent()
     return egl::NoError();
 }
 
-gl::Error SurfaceGL::initializeContents(const gl::Context *context,
-                                        const gl::ImageIndex &imageIndex)
+angle::Result SurfaceGL::initializeContents(const gl::Context *context,
+                                            const gl::ImageIndex &imageIndex)
 {
-    // UNIMPLEMENTED();
-    return gl::NoError();
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(context->getFramebuffer(0));
+    ASSERT(framebufferGL->isDefault());
+
+    BlitGL *blitter = GetBlitGL(context);
+    ANGLE_TRY(blitter->clearFramebuffer(framebufferGL));
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

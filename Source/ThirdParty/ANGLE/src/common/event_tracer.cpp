@@ -45,7 +45,6 @@ angle::TraceEventHandle AddTraceEvent(char phase,
         angle::TraceEventHandle handle =
             platform->addTraceEvent(platform, phase, categoryGroupEnabled, name, id, timestamp,
                                     numArgs, argNames, argTypes, argValues, flags);
-        ASSERT(handle != 0);
         return handle;
     }
 

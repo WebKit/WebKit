@@ -11,7 +11,7 @@
 
 #include <functional>
 
-#include "angle_gl.h"
+#include "util/shader_utils.h"
 
 namespace angle
 {
@@ -22,12 +22,11 @@ namespace angle
 using GLGen    = decltype(glGenBuffers);
 using GLDelete = decltype(glDeleteBuffers);
 
-template <GLGen GenF, GLDelete DeleteF>
 class GLWrapper : angle::NonCopyable
 {
   public:
-    GLWrapper() {}
-    ~GLWrapper() { DeleteF(1, &mHandle); }
+    GLWrapper(GLGen *genFunc, GLDelete *deleteFunc) : mGenFunc(genFunc), mDeleteFunc(deleteFunc) {}
+    ~GLWrapper() { (*mDeleteFunc)(1, &mHandle); }
 
     // The move-constructor and move-assignment operators are necessary so that the data within a
     // GLWrapper object can be relocated.
@@ -45,7 +44,7 @@ class GLWrapper : angle::NonCopyable
     {
         if (mHandle != 0u)
         {
-            DeleteF(1, &mHandle);
+            (*mDeleteFunc)(1, &mHandle);
             mHandle = 0u;
         }
     }
@@ -54,7 +53,7 @@ class GLWrapper : angle::NonCopyable
     {
         if (!mHandle)
         {
-            GenF(1, &mHandle);
+            (*mGenFunc)(1, &mHandle);
         }
         return mHandle;
     }
@@ -62,22 +61,79 @@ class GLWrapper : angle::NonCopyable
     operator GLuint() { return get(); }
 
   private:
+    GLGen *mGenFunc;
+    GLDelete *mDeleteFunc;
     GLuint mHandle = 0u;
 };
 
-using GLVertexArray       = GLWrapper<glGenVertexArrays, glDeleteVertexArrays>;
-using GLBuffer            = GLWrapper<glGenBuffers, glDeleteBuffers>;
-using GLTexture           = GLWrapper<glGenTextures, glDeleteTextures>;
-using GLFramebuffer       = GLWrapper<glGenFramebuffers, glDeleteFramebuffers>;
-using GLRenderbuffer      = GLWrapper<glGenRenderbuffers, glDeleteRenderbuffers>;
-using GLSampler           = GLWrapper<glGenSamplers, glDeleteSamplers>;
-using GLTransformFeedback = GLWrapper<glGenTransformFeedbacks, glDeleteTransformFeedbacks>;
-using GLProgramPipeline   = GLWrapper<glGenProgramPipelines, glDeleteProgramPipelines>;
-using GLQueryEXT          = GLWrapper<glGenQueriesEXT, glDeleteQueriesEXT>;
-
-// Don't use GLProgram directly, use ANGLE_GL_PROGRAM.
-namespace priv
+class GLVertexArray : public GLWrapper
 {
+  public:
+    GLVertexArray() : GLWrapper(&glGenVertexArrays, &glDeleteVertexArrays) {}
+};
+class GLBuffer : public GLWrapper
+{
+  public:
+    GLBuffer() : GLWrapper(&glGenBuffers, &glDeleteBuffers) {}
+};
+class GLTexture : public GLWrapper
+{
+  public:
+    GLTexture() : GLWrapper(&glGenTextures, &glDeleteTextures) {}
+};
+class GLFramebuffer : public GLWrapper
+{
+  public:
+    GLFramebuffer() : GLWrapper(&glGenFramebuffers, &glDeleteFramebuffers) {}
+};
+class GLMemoryObject : public GLWrapper
+{
+  public:
+    GLMemoryObject() : GLWrapper(&glCreateMemoryObjectsEXT, &glDeleteMemoryObjectsEXT) {}
+};
+class GLRenderbuffer : public GLWrapper
+{
+  public:
+    GLRenderbuffer() : GLWrapper(&glGenRenderbuffers, &glDeleteRenderbuffers) {}
+};
+class GLSampler : public GLWrapper
+{
+  public:
+    GLSampler() : GLWrapper(&glGenSamplers, &glDeleteSamplers) {}
+};
+class GLTransformFeedback : public GLWrapper
+{
+  public:
+    GLTransformFeedback() : GLWrapper(&glGenTransformFeedbacks, &glDeleteTransformFeedbacks) {}
+};
+class GLProgramPipeline : public GLWrapper
+{
+  public:
+    GLProgramPipeline() : GLWrapper(&glGenProgramPipelines, &glDeleteProgramPipelines) {}
+};
+class GLQueryEXT : public GLWrapper
+{
+  public:
+    GLQueryEXT() : GLWrapper(&glGenQueriesEXT, &glDeleteQueriesEXT) {}
+};
+
+class GLShader : angle::NonCopyable
+{
+  public:
+    GLShader() = delete;
+    explicit GLShader(GLenum shaderType) { mHandle = glCreateShader(shaderType); }
+
+    ~GLShader() { glDeleteShader(mHandle); }
+
+    GLuint get() { return mHandle; }
+
+    operator GLuint() { return get(); }
+
+  private:
+    GLuint mHandle;
+};
+
+// Prefer ANGLE_GL_PROGRAM for local variables.
 class GLProgram
 {
   public:
@@ -85,18 +141,24 @@ class GLProgram
 
     ~GLProgram() { glDeleteProgram(mHandle); }
 
-    void makeCompute(const std::string &computeShader)
-    {
-        mHandle = CompileComputeProgram(computeShader);
-    }
+    void makeEmpty() { mHandle = glCreateProgram(); }
 
-    void makeRaster(const std::string &vertexShader, const std::string &fragmentShader)
+    void makeCompute(const char *computeShader) { mHandle = CompileComputeProgram(computeShader); }
+
+    void makeRaster(const char *vertexShader, const char *fragmentShader)
     {
         mHandle = CompileProgram(vertexShader, fragmentShader);
     }
 
-    void makeRasterWithTransformFeedback(const std::string &vertexShader,
-                                         const std::string &fragmentShader,
+    void makeRaster(const char *vertexShader,
+                    const char *geometryShader,
+                    const char *fragmentShader)
+    {
+        mHandle = CompileProgramWithGS(vertexShader, geometryShader, fragmentShader);
+    }
+
+    void makeRasterWithTransformFeedback(const char *vertexShader,
+                                         const char *fragmentShader,
                                          const std::vector<std::string> &tfVaryings,
                                          GLenum bufferMode)
     {
@@ -116,43 +178,48 @@ class GLProgram
 
     bool valid() const { return mHandle != 0; }
 
-    GLuint get()
-    {
-        ASSERT(valid());
-        return mHandle;
-    }
+    GLuint get() { return mHandle; }
 
     operator GLuint() { return get(); }
 
   private:
     GLuint mHandle;
 };
-}  // namespace priv
+
+#define ANGLE_GL_EMPTY_PROGRAM(name) \
+    GLProgram name;                  \
+    name.makeEmpty();                \
+    ASSERT_TRUE(name.valid())
 
 #define ANGLE_GL_PROGRAM(name, vertex, fragment) \
-    priv::GLProgram name;                        \
+    GLProgram name;                              \
     name.makeRaster(vertex, fragment);           \
-    ASSERT_TRUE(name.valid());
+    ASSERT_TRUE(name.valid())
+
+#define ANGLE_GL_PROGRAM_WITH_GS(name, vertex, geometry, fragment) \
+    GLProgram name;                                                \
+    name.makeRaster(vertex, geometry, fragment);                   \
+    ASSERT_TRUE(name.valid())
 
 #define ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(name, vertex, fragment, tfVaryings, bufferMode) \
-    priv::GLProgram name;                                                                   \
+    GLProgram name;                                                                         \
     name.makeRasterWithTransformFeedback(vertex, fragment, tfVaryings, bufferMode);         \
-    ASSERT_TRUE(name.valid());
+    ASSERT_TRUE(name.valid())
 
 #define ANGLE_GL_COMPUTE_PROGRAM(name, compute) \
-    priv::GLProgram name;                       \
+    GLProgram name;                             \
     name.makeCompute(compute);                  \
-    ASSERT_TRUE(name.valid());
+    ASSERT_TRUE(name.valid())
 
 #define ANGLE_GL_BINARY_OES_PROGRAM(name, binary, binaryFormat) \
-    priv::GLProgram name;                                       \
+    GLProgram name;                                             \
     name.makeBinaryOES(binary, binaryFormat);                   \
-    ASSERT_TRUE(name.valid());
+    ASSERT_TRUE(name.valid())
 
 #define ANGLE_GL_BINARY_ES3_PROGRAM(name, binary, binaryFormat) \
-    priv::GLProgram name;                                       \
+    GLProgram name;                                             \
     name.makeBinaryES3(binary, binaryFormat);                   \
-    ASSERT_TRUE(name.valid());
+    ASSERT_TRUE(name.valid())
 
 }  // namespace angle
 

@@ -10,7 +10,7 @@ using namespace angle;
 
 class DiscardFramebufferEXTTest : public ANGLETest
 {
-protected:
+  protected:
     DiscardFramebufferEXTTest()
     {
         setWindowWidth(256);
@@ -26,50 +26,42 @@ protected:
 
 TEST_P(DiscardFramebufferEXTTest, DefaultFramebuffer)
 {
-    if (!extensionEnabled("EXT_discard_framebuffer"))
-    {
-        std::cout << "Test skipped because EXT_discard_framebuffer is not available." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("EXT_discard_framebuffer"));
 
     // These should succeed on the default framebuffer
-    const GLenum discards1[] = { GL_COLOR_EXT };
+    const GLenum discards1[] = {GL_COLOR_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards1);
     EXPECT_GL_NO_ERROR();
 
-    const GLenum discards2[] = { GL_DEPTH_EXT };
+    const GLenum discards2[] = {GL_DEPTH_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards2);
     EXPECT_GL_NO_ERROR();
 
-    const GLenum discards3[] = { GL_STENCIL_EXT };
+    const GLenum discards3[] = {GL_STENCIL_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards3);
     EXPECT_GL_NO_ERROR();
 
-    const GLenum discards4[] = { GL_STENCIL_EXT, GL_COLOR_EXT, GL_DEPTH_EXT };
+    const GLenum discards4[] = {GL_STENCIL_EXT, GL_COLOR_EXT, GL_DEPTH_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 3, discards4);
     EXPECT_GL_NO_ERROR();
 
     // These should fail on the default framebuffer
-    const GLenum discards5[] = { GL_COLOR_ATTACHMENT0 };
+    const GLenum discards5[] = {GL_COLOR_ATTACHMENT0};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards5);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-    const GLenum discards6[] = { GL_DEPTH_ATTACHMENT };
+    const GLenum discards6[] = {GL_DEPTH_ATTACHMENT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards6);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-    const GLenum discards7[] = { GL_STENCIL_ATTACHMENT };
+    const GLenum discards7[] = {GL_STENCIL_ATTACHMENT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards7);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
 TEST_P(DiscardFramebufferEXTTest, NonDefaultFramebuffer)
 {
-    if (!extensionEnabled("EXT_discard_framebuffer"))
-    {
-        std::cout << "Test skipped because EXT_discard_framebuffer is not available." << std::endl;
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("EXT_discard_framebuffer"));
 
     GLuint tex2D;
     GLuint framebuffer;
@@ -88,37 +80,38 @@ TEST_P(DiscardFramebufferEXTTest, NonDefaultFramebuffer)
     ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
     // These should fail on the non-default framebuffer
-    const GLenum discards1[] = { GL_COLOR_EXT };
+    const GLenum discards1[] = {GL_COLOR_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards1);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-    const GLenum discards2[] = { GL_DEPTH_EXT };
+    const GLenum discards2[] = {GL_DEPTH_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards2);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-    const GLenum discards3[] = { GL_STENCIL_EXT };
+    const GLenum discards3[] = {GL_STENCIL_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards3);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-    const GLenum discards4[] = { GL_STENCIL_EXT, GL_COLOR_EXT, GL_DEPTH_EXT };
+    const GLenum discards4[] = {GL_STENCIL_EXT, GL_COLOR_EXT, GL_DEPTH_EXT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 3, discards4);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
     // These should succeed on the non-default framebuffer
-    const GLenum discards5[] = { GL_COLOR_ATTACHMENT0 };
+    const GLenum discards5[] = {GL_COLOR_ATTACHMENT0};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards5);
     EXPECT_GL_NO_ERROR();
 
-    const GLenum discards6[] = { GL_DEPTH_ATTACHMENT };
+    const GLenum discards6[] = {GL_DEPTH_ATTACHMENT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards6);
     EXPECT_GL_NO_ERROR();
 
-    const GLenum discards7[] = { GL_STENCIL_ATTACHMENT };
+    const GLenum discards7[] = {GL_STENCIL_ATTACHMENT};
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards7);
     EXPECT_GL_NO_ERROR();
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these tests should be run against.
+// Use this to select which configurations (e.g. which renderer, which GLES major version) these
+// tests should be run against.
 ANGLE_INSTANTIATE_TEST(DiscardFramebufferEXTTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
@@ -126,4 +119,5 @@ ANGLE_INSTANTIATE_TEST(DiscardFramebufferEXTTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
-                       ES3_OPENGLES());
+                       ES3_OPENGLES(),
+                       ES2_VULKAN());

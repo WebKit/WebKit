@@ -18,17 +18,17 @@ namespace rx
 class QueryNULL : public QueryImpl
 {
   public:
-    QueryNULL(GLenum type);
+    QueryNULL(gl::QueryType type);
     ~QueryNULL() override;
 
-    gl::Error begin() override;
-    gl::Error end() override;
-    gl::Error queryCounter() override;
-    gl::Error getResult(GLint *params) override;
-    gl::Error getResult(GLuint *params) override;
-    gl::Error getResult(GLint64 *params) override;
-    gl::Error getResult(GLuint64 *params) override;
-    gl::Error isResultAvailable(bool *available) override;
+    angle::Result begin(const gl::Context *context) override;
+    angle::Result end(const gl::Context *context) override;
+    angle::Result queryCounter(const gl::Context *context) override;
+    angle::Result getResult(const gl::Context *context, GLint *params) override;
+    angle::Result getResult(const gl::Context *context, GLuint *params) override;
+    angle::Result getResult(const gl::Context *context, GLint64 *params) override;
+    angle::Result getResult(const gl::Context *context, GLuint64 *params) override;
+    angle::Result isResultAvailable(const gl::Context *context, bool *available) override;
 };
 
 }  // namespace rx

@@ -24,21 +24,21 @@
 #ifndef TCU_RANDOM_ORDER_EXECUTOR_H_
 #define TCU_RANDOM_ORDER_EXECUTOR_H_
 
-#include "tcuTestHierarchyIterator.hpp"
 #include "deUniquePtr.hpp"
+#include "tcuTestHierarchyIterator.hpp"
 
 namespace tcu
 {
 
 class RandomOrderExecutor
 {
-   public:
+  public:
     RandomOrderExecutor(TestPackageRoot &root, TestContext &testCtx);
     ~RandomOrderExecutor(void);
 
     TestStatus execute(const std::string &path);
 
-   private:
+  private:
     void pruneStack(size_t newStackSize);
     TestCase *seekToCase(const std::string &path);
 
@@ -61,6 +61,6 @@ class RandomOrderExecutor
     de::MovePtr<TestCaseExecutor> m_caseExecutor;
 };
 
-}  // tcu
+}  // namespace tcu
 
 #endif  // TCU_RANDOM_ORDER_EXECUTOR_H_

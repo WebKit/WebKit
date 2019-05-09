@@ -14,11 +14,8 @@ namespace rx
 
 ProgramPipelineVk::ProgramPipelineVk(const gl::ProgramPipelineState &state)
     : ProgramPipelineImpl(state)
-{
-}
+{}
 
-ProgramPipelineVk::~ProgramPipelineVk()
-{
-}
+ProgramPipelineVk::~ProgramPipelineVk() {}
 
 }  // namespace rx

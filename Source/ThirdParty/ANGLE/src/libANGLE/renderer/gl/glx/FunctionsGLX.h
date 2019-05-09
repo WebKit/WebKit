@@ -64,7 +64,10 @@ class FunctionsGLX
     void queryDrawable(glx::Drawable drawable, int attribute, unsigned int *value) const;
 
     // GLX_ARB_create_context
-    glx::Context createContextAttribsARB(glx::FBConfig config, glx::Context shareContext, Bool direct, const int *attribList) const;
+    glx::Context createContextAttribsARB(glx::FBConfig config,
+                                         glx::Context shareContext,
+                                         Bool direct,
+                                         const int *attribList) const;
 
     // GLX_EXT_swap_control
     void swapIntervalEXT(glx::Drawable drawable, int interval) const;
@@ -78,8 +81,8 @@ class FunctionsGLX
   private:
     // So as to isolate GLX from angle we do not include angleutils.h and cannot
     // use angle::NonCopyable so we replicated it here instead.
-    FunctionsGLX(const FunctionsGLX&) = delete;
-    void operator=(const FunctionsGLX&) = delete;
+    FunctionsGLX(const FunctionsGLX &) = delete;
+    void operator=(const FunctionsGLX &) = delete;
 
     struct GLXFunctionTable;
 
@@ -91,6 +94,6 @@ class FunctionsGLX
     std::vector<std::string> mExtensions;
 };
 
-}
+}  // namespace rx
 
-#endif // LIBANGLE_RENDERER_GL_GLX_FUNCTIONSGLX_H_
+#endif  // LIBANGLE_RENDERER_GL_GLX_FUNCTIONSGLX_H_

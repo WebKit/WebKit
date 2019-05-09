@@ -10,11 +10,10 @@
 #ifndef UTIL_MATRIX_H
 #define UTIL_MATRIX_H
 
-#include <export.h>
-
 #include "common/vector_utils.h"
+#include "util/util_export.h"
 
-struct ANGLE_EXPORT Matrix4
+struct ANGLE_UTIL_EXPORT Matrix4
 {
     float data[16];
 
@@ -51,13 +50,13 @@ struct ANGLE_EXPORT Matrix4
     static angle::Vector3 transform(const Matrix4 &mat, const angle::Vector4 &pt);
 };
 
-ANGLE_EXPORT Matrix4 operator*(const Matrix4 &a, const Matrix4 &b);
-ANGLE_EXPORT Matrix4 &operator*=(Matrix4 &a, const Matrix4 &b);
-ANGLE_EXPORT Matrix4 operator*(const Matrix4 &a, float b);
-ANGLE_EXPORT Matrix4 &operator*=(Matrix4 &a, float b);
-ANGLE_EXPORT angle::Vector4 operator*(const Matrix4 &a, const angle::Vector4 &b);
+ANGLE_UTIL_EXPORT Matrix4 operator*(const Matrix4 &a, const Matrix4 &b);
+ANGLE_UTIL_EXPORT Matrix4 &operator*=(Matrix4 &a, const Matrix4 &b);
+ANGLE_UTIL_EXPORT Matrix4 operator*(const Matrix4 &a, float b);
+ANGLE_UTIL_EXPORT Matrix4 &operator*=(Matrix4 &a, float b);
+ANGLE_UTIL_EXPORT angle::Vector4 operator*(const Matrix4 &a, const angle::Vector4 &b);
 
-ANGLE_EXPORT bool operator==(const Matrix4 &a, const Matrix4 &b);
-ANGLE_EXPORT bool operator!=(const Matrix4 &a, const Matrix4 &b);
+ANGLE_UTIL_EXPORT bool operator==(const Matrix4 &a, const Matrix4 &b);
+ANGLE_UTIL_EXPORT bool operator!=(const Matrix4 &a, const Matrix4 &b);
 
 #endif  // UTIL_MATRIX_H

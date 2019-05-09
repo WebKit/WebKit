@@ -32,16 +32,25 @@
   "GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC": {
     "R8G8B8A8_UNORM_SRGB": {
       "GL_UNSIGNED_BYTE": "LoadETC2SRGBA8ToSRGBA8"
+    },
+    "ETC2_R8G8B8A8_SRGB_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
     }
   },
   "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2": {
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadETC2RGB8A1ToRGBA8"
+    },
+    "ETC2_R8G8B8A1_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_RGB32UI": {
     "R32G32B32A32_UINT": {
       "GL_UNSIGNED_INT": "LoadToNative3To4<GLuint, 0x00000001>"
+    },
+    "R32G32B32_UINT": {
+      "GL_UNSIGNED_INT": "LoadToNative<GLuint, 3>"
     }
   },
   "GL_ALPHA32F_EXT": {
@@ -63,8 +72,11 @@
     }
   },
   "GL_COMPRESSED_R11_EAC": {
-    "R8_UNORM": {
-      "GL_UNSIGNED_BYTE": "LoadEACR11ToR8"
+    "R16_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadEACR11ToR16"
+    },
+    "EAC_R11_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_RGBA32UI": {
@@ -85,6 +97,9 @@
   "GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2": {
     "R8G8B8A8_UNORM_SRGB": {
       "GL_UNSIGNED_BYTE": "LoadETC2SRGB8A1ToRGBA8"
+    },
+    "ETC2_R8G8B8A1_SRGB_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_R16F": {
@@ -99,12 +114,6 @@
       "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"
     }
   },
-  "GL_BGRA4_ANGLEX": {
-    "NONE": {
-      "GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT": "LoadRGBA4ToRGBA8",
-      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"
-    }
-  },
   "GL_RGBA16F": {
     "R16G16B16A16_FLOAT": {
       "GL_HALF_FLOAT": "LoadToNative<GLhalf, 4>",
@@ -113,7 +122,10 @@
     }
   },
   "GL_LUMINANCE8_EXT": {
-    "NONE": {
+    "R8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 1>"
+    },
+    "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadL8ToRGBA8"
     }
   },
@@ -129,6 +141,9 @@
     }
   },
   "GL_RGB5_A1": {
+    "A1R5G5B5_UNORM": {
+      "GL_UNSIGNED_SHORT_5_5_5_1": "LoadRGB5A1ToA1RGB5"
+    },
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadRGB10A2ToRGBA8",
       "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>",
@@ -143,6 +158,9 @@
   "GL_RGB16UI": {
     "R16G16B16A16_UINT": {
       "GL_UNSIGNED_SHORT": "LoadToNative3To4<GLushort, 0x0001>"
+    },
+    "R16G16B16_UINT": {
+      "GL_UNSIGNED_SHORT": "LoadToNative<GLushort, 3>"
     }
   },
   "GL_BGRA_EXT": {
@@ -153,6 +171,9 @@
   "GL_COMPRESSED_RGB8_ETC2": {
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadETC2RGB8ToRGBA8"
+    },
+    "ETC2_R8G8B8_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_RGBA32F": {
@@ -166,7 +187,10 @@
     }
   },
   "GL_LUMINANCE8_ALPHA8_EXT": {
-    "NONE": {
+    "R8G8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 2>"
+    },
+    "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadLA8ToRGBA8"
     }
   },
@@ -181,8 +205,11 @@
     }
   },
   "GL_COMPRESSED_SIGNED_RG11_EAC": {
-    "R8G8_SNORM": {
-      "GL_UNSIGNED_BYTE": "LoadEACRG11SToRG8"
+    "R16G16_SNORM": {
+      "GL_UNSIGNED_BYTE": "LoadEACRG11SToRG16"
+    },
+    "EAC_R11G11_SNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
     }
   },
   "GL_DEPTH_COMPONENT16": {
@@ -194,6 +221,9 @@
   "GL_RGB32I": {
     "R32G32B32A32_SINT": {
       "GL_INT": "LoadToNative3To4<GLint, 0x00000001>"
+    },
+    "R32G32B32_SINT": {
+      "GL_INT": "LoadToNative<GLint, 3>"
     }
   },
   "GL_R8": {
@@ -204,6 +234,9 @@
   "GL_RGB32F": {
     "R32G32B32A32_FLOAT": {
       "GL_FLOAT": "LoadToNative3To4<GLfloat, gl::Float32One>"
+    },
+    "R32G32B32_FLOAT": {
+      "GL_FLOAT": "LoadToNative<GLfloat, 3>"
     }
   },
   "GL_R11F_G11F_B10F": {
@@ -244,6 +277,9 @@
   "GL_RGB8_SNORM": {
     "R8G8B8A8_SNORM": {
       "GL_BYTE": "LoadToNative3To4<GLbyte, 0x7F>"
+    },
+    "R8G8B8_SNORM": {
+      "GL_BYTE": "LoadToNative<GLbyte, 3>"
     }
   },
   "GL_RG32F": {
@@ -262,6 +298,9 @@
     }
   },
   "GL_ALPHA8_EXT": {
+    "R8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 1>"
+    },
     "A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 1>"
     },
@@ -282,21 +321,33 @@
   "GL_COMPRESSED_RGBA8_ETC2_EAC": {
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadETC2RGBA8ToRGBA8"
+    },
+    "ETC2_R8G8B8A8_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
     }
   },
   "GL_RGB8I": {
     "R8G8B8A8_SINT": {
       "GL_BYTE": "LoadToNative3To4<GLbyte, 0x01>"
+    },
+    "R8G8B8_SINT": {
+      "GL_BYTE": "LoadToNative<GLbyte, 3>"
     }
   },
   "GL_COMPRESSED_SRGB8_ETC2": {
     "R8G8B8A8_UNORM_SRGB": {
       "GL_UNSIGNED_BYTE": "LoadETC2SRGB8ToRGBA8"
+    },
+    "ETC2_R8G8B8_SRGB_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_DEPTH32F_STENCIL8": {
     "D32_FLOAT_S8X24_UINT": {
       "GL_FLOAT_32_UNSIGNED_INT_24_8_REV": "LoadD32FS8X24ToD32FS8X24"
+    },
+    "D24_UNORM_S8_UINT": {
+      "GL_FLOAT_32_UNSIGNED_INT_24_8_REV": "LoadD32FS8X24ToD24S8"
     }
   },
   "GL_RG8I": {
@@ -309,21 +360,151 @@
       "GL_UNSIGNED_INT": "LoadToNative<GLuint, 1>"
     }
   },
-  "GL_BGR5_A1_ANGLEX": {
-    "NONE": {
-      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>",
-      "GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT": "LoadRGB5A1ToRGBA8"
+  "GL_BGRX8_ANGLEX" : {
+    "B8G8R8X8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"
+    },
+    "B8G8R8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"
     }
   },
   "GL_BGR565_ANGLEX": {
     "B5G6R5_UNORM": {
       "GL_UNSIGNED_SHORT_5_6_5": "LoadRGB565ToBGR565",
-      "GL_UNSIGNED_BYTE": "LoadToNative<GLushort, 1>"
+      "GL_UNSIGNED_BYTE": "LoadRGB8ToBGR565"
+    }
+  },
+  "GL_BGRA4_ANGLEX": {
+    "NONE": {
+      "GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT": "LoadRGBA4ToRGBA8",
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"
+    }
+  },
+  "GL_BGR5_A1_ANGLEX": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadRGB5A1ToRGBA8",
+      "GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT": "LoadToNative<GLushort, 1>"
+    }
+  },
+  "GL_BGRA8_SRGB_ANGLEX" : {
+     "B8G8R8A8_UNORM_SRGB": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"
+     }
+  },
+  "GL_A1RGB5_ANGLEX" : {
+    "A1R5G5B5_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadRGB5A1ToRGBA8",
+      "GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT": "LoadToNative<GLushort, 1>"
+    }
+  },
+  "GL_R8_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RG8_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGB8_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGBA8_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_R8_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RG8_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGB8_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGBA8_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_R16_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RG16_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGB16_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGBA16_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_R16_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RG16_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGB16_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGBA16_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGB10_A2_SINT_ANGLEX" : {
+    "R10G10B10A2_SINT": {
+      "GL_UNSIGNED_BYTE": "LoadRGB10A2ToRGBA8",
+      "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadToNative<GLuint, 1>"
+    }
+  },
+  "GL_RGB10_A2_SNORM_ANGLEX" : {
+    "R10G10B10A2_SNORM": {
+      "GL_UNSIGNED_BYTE": "LoadRGB10A2ToRGBA8",
+      "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadToNative<GLuint, 1>"
+    }
+  },
+  "GL_RGB10_A2_SSCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
+    }
+  },
+  "GL_RGB10_A2_USCALED_ANGLEX" : {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "UnreachableLoadFunction"
     }
   },
   "GL_COMPRESSED_RG11_EAC": {
-    "R8G8_UNORM": {
-      "GL_UNSIGNED_BYTE": "LoadEACRG11ToRG8"
+    "R16G16_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadEACRG11ToRG16"
+    },
+    "EAC_R11G11_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
     }
   },
   "GL_SRGB8_ALPHA8": {
@@ -347,11 +528,17 @@
   "GL_DEPTH24_STENCIL8": {
     "D24_UNORM_S8_UINT": {
       "GL_UNSIGNED_INT_24_8": "LoadR32ToR24G8"
+    },
+    "D32_FLOAT_S8X24_UINT": {
+      "GL_UNSIGNED_INT_24_8": "LoadD24S8ToD32FS8X24"
     }
   },
   "GL_RGB16I": {
     "R16G16B16A16_SINT": {
       "GL_SHORT": "LoadToNative3To4<GLshort, 0x0001>"
+    },
+    "R16G16B16_SINT": {
+      "GL_SHORT": "LoadToNative<GLshort, 3>"
     }
   },
   "GL_R8UI": {
@@ -376,11 +563,19 @@
       "GL_HALF_FLOAT": "LoadToNative3To4<GLhalf, gl::Float16One>",
       "GL_FLOAT": "LoadRGB32FToRGBA16F",
       "GL_HALF_FLOAT_OES": "LoadToNative3To4<GLhalf, gl::Float16One>"
+    },
+    "R16G16B16_FLOAT": {
+      "GL_HALF_FLOAT": "LoadToNative<GLhalf, 3>",
+      "GL_FLOAT": "LoadRGB32FToRGB16F",
+      "GL_HALF_FLOAT_OES": "LoadToNative<GLhalf, 3>"
     }
   },
   "GL_COMPRESSED_SIGNED_R11_EAC": {
-    "R8_SNORM": {
-      "GL_UNSIGNED_BYTE": "LoadEACR11SToR8"
+    "R16_SNORM": {
+      "GL_UNSIGNED_BYTE": "LoadEACR11SToR16"
+    },
+    "EAC_R11_SNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_COMPRESSED_RGB_S3TC_DXT1_EXT": {
@@ -406,11 +601,17 @@
   "GL_RGB8UI": {
     "R8G8B8A8_UINT": {
       "GL_UNSIGNED_BYTE": "LoadToNative3To4<GLubyte, 0x01>"
+    },
+    "R8G8B8_UINT": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 3>"
     }
   },
   "GL_DEPTH_COMPONENT24": {
     "D24_UNORM_S8_UINT": {
       "GL_UNSIGNED_INT": "LoadR32ToR24G8"
+    },
+    "D32_FLOAT_S8X24_UINT": {
+      "GL_UNSIGNED_INT_24_8": "LoadD24S8ToD32FS8X24"
     }
   },
   "GL_R32I": {
@@ -436,6 +637,10 @@
     }
   },
   "GL_RGB565": {
+    "R5G6B5_UNORM" : {
+      "GL_UNSIGNED_BYTE": "LoadRGB8ToBGR565",
+      "GL_UNSIGNED_SHORT_5_6_5": "LoadToNative<GLushort, 1>"
+    },
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadToNative3To4<GLubyte, 0xFF>",
       "GL_UNSIGNED_SHORT_5_6_5": "LoadR5G6B5ToRGBA8"
@@ -512,6 +717,12 @@
   "GL_ETC1_RGB8_OES": {
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadETC1RGB8ToRGBA8"
+    },
+    "ETC1_R8G8B8_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
+    },
+    "ETC2_R8G8B8_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
     }
   },
   "GL_ETC1_RGB8_LOSSY_DECODE_ANGLE": {
@@ -552,6 +763,9 @@
   "GL_RGB16_EXT": {
     "R16G16B16A16_UNORM": {
       "GL_UNSIGNED_SHORT": "LoadToNative3To4<GLushort, 0xFFFF>"
+    },
+    "R16G16B16_UNORM": {
+      "GL_UNSIGNED_SHORT": "LoadToNative<GLushort, 3>"
     }
   },
   "GL_RGBA16_EXT": {
@@ -572,6 +786,9 @@
   "GL_RGB16_SNORM_EXT": {
     "R16G16B16A16_SNORM": {
       "GL_SHORT": "LoadToNative3To4<GLushort, 0x7FFF>"
+    },
+    "R16G16B16_SNORM": {
+      "GL_SHORT": "LoadToNative<GLushort, 3>"
     }
   },
   "GL_RGBA16_SNORM_EXT": {
@@ -597,6 +814,166 @@
   "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT": {
     "NONE": {
       "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_BPTC_UNORM_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_4x4_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_5x4_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<5, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_5x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<5, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_6x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<6, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_6x6_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<6, 6, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_8x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<8, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_8x6_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<8, 6, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_8x8_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<8, 8, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_10x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_10x6_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 6, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_10x8_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 8, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_10x10_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 10, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_12x10_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<12, 10, 16>"
+    }
+  },
+  "GL_COMPRESSED_RGBA_ASTC_12x12_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<12, 12, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<5, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<5, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<6, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<6, 6, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<8, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<8, 6, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<8, 8, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 5, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 6, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 8, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<10, 10, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<12, 10, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<12, 12, 16>"
     }
   }
 }

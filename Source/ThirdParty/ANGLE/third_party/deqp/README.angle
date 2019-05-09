@@ -1,0 +1,13 @@
+Name: drawElements Quality Program
+Short Name: dEQP
+Version: 1.0
+URL: https://source.android.com/devices/graphics/testing.html
+SOURCE CODE: git clone -b deqp-dev https://android.googlesource.com/platform/external/deqp/
+Date: 20/06/2016
+Revision: f4f3d8079e7a37d7675ab93583e6438d0bca0e58
+Security Critical: no
+License: Apache 2.0
+License File: LICENSE
+
+Description:
+dEQP is a set of tests and testing tools for GPUs and their drivers. It currently supports OpenGL ES 2.0 - 3.1 & AEP and EGL. The dEQP has been part of the Android CTS since the L release.

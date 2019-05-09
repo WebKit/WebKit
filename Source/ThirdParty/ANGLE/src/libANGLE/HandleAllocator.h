@@ -34,6 +34,8 @@ class HandleAllocator final : angle::NonCopyable
     void reserve(GLuint handle);
     void reset();
 
+    void enableLogging(bool enabled);
+
   private:
     GLuint mBaseValue;
     GLuint mNextValue;
@@ -56,8 +58,10 @@ class HandleAllocator final : angle::NonCopyable
     // released, stored in a heap.
     std::vector<HandleRange> mUnallocatedList;
     std::vector<GLuint> mReleasedList;
+
+    bool mLoggingEnabled;
 };
 
 }  // namespace gl
 
-#endif   // LIBANGLE_HANDLEALLOCATOR_H_
+#endif  // LIBANGLE_HANDLEALLOCATOR_H_

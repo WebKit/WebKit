@@ -108,7 +108,7 @@ bool GetSystemInfo(SystemInfo *info)
             }
         }
 
-        if (IsNvidia(gpu->vendorId))
+        if (IsNVIDIA(gpu->vendorId))
         {
             std::string version;
             if (GetNvidiaDriverVersionWithXNVCtrl(&version))
@@ -127,7 +127,7 @@ bool GetSystemInfo(SystemInfo *info)
             if (GetNvidiaDriverVersionWithXNVCtrl(&version))
             {
                 GPUDeviceInfo nvidiaInfo;
-                nvidiaInfo.vendorId = kVendorID_Nvidia;
+                nvidiaInfo.vendorId = kVendorID_NVIDIA;
                 nvidiaInfo.deviceId = 0;
                 gpu->driverVendor   = "Nvidia";
                 gpu->driverVersion  = std::move(version);

@@ -364,7 +364,7 @@ CheckedUnsignedAbs(T value)
 
 // These are the floating point stubs that the compiler needs to see. Only the
 // negation operation is ever called.
-#define ANGLEBASE_FLOAT_ARITHMETIC_STUBS(NAME)                                              \
+#define ANGLEBASE_FLOAT_ARITHMETIC_STUBS(NAME)                                         \
     template <typename T>                                                              \
     typename std::enable_if<std::numeric_limits<T>::is_iec559, T>::type Checked##NAME( \
         T, T, RangeConstraint *)                                                       \
@@ -416,8 +416,7 @@ struct GetNumericRepresentation
 
 template <typename T, NumericRepresentation type = GetNumericRepresentation<T>::value>
 class CheckedNumericState
-{
-};
+{};
 
 // Integrals require quite a bit of additional housekeeping to manage state.
 template <typename T>
@@ -446,16 +445,14 @@ class CheckedNumericState<T, NUMERIC_INTEGER>
     CheckedNumericState(const CheckedNumericState<Src> &rhs)
         : value_(static_cast<T>(rhs.value())),
           validity_(GetRangeConstraint(rhs.validity() | DstRangeRelationToSrcRange<T>(rhs.value())))
-    {
-    }
+    {}
 
     template <typename Src>
     explicit CheckedNumericState(
         Src value,
         typename std::enable_if<std::numeric_limits<Src>::is_specialized, int>::type = 0)
         : value_(static_cast<T>(value)), validity_(DstRangeRelationToSrcRange<T>(value))
-    {
-    }
+    {}
 
     RangeConstraint validity() const { return validity_; }
     T value() const { return value_; }
@@ -508,14 +505,12 @@ class CheckedNumericState<T, NUMERIC_FLOATING>
         Src value,
         typename std::enable_if<std::numeric_limits<Src>::is_specialized, int>::type = 0)
         : value_(static_cast<T>(value))
-    {
-    }
+    {}
 
     // Copy constructor.
     template <typename Src>
     CheckedNumericState(const CheckedNumericState<Src> &rhs) : value_(static_cast<T>(rhs.value()))
-    {
-    }
+    {}
 
     RangeConstraint validity() const
     {
