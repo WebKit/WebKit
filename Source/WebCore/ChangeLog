@@ -1,3 +1,24 @@
+2019-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r239915): [FreeType] White space skipped when rendering plain text with noto CJK font
+        https://bugs.webkit.org/show_bug.cgi?id=197658
+
+        Reviewed by Michael Catanzaro.
+
+        Since r239915 we no longer overwrite control characters with zero width space, they are handled later when
+        filling the glyph pages. In Font::platformGlyphInit() there's an optimization to get the glyph of zero with
+        space character that assumes that control characters are always overwritten. Since the glyph for character at 0
+        index is always overwritten with zero width space, we can avoid loading the page for the actual zero width space
+        character and use the first page instead. In the particular case of noto CJK font, character at 0 is mapped to
+        the same glyph as space character, so space and zero width space end up being the same glyph. That breaks the
+        space width calculation, that returns 0 when isZeroWidthSpaceGlyph() is true. That's why spaces are no
+        longer rendered, ComplexTextController::adjustGlyphsAndAdvances() is setting the x advance for the space glyphs
+        to 0.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::platformGlyphInit): Use the actual zero width space page to get the glyph instead of 0 when
+        using FreeType.
+
 2019-05-08  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r243197): [GStreamer] Error playing redirected streams
