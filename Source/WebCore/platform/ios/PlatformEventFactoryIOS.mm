@@ -322,7 +322,7 @@ String codeForKeyEvent(WebEvent *event)
     // NumpadBackspace.
     // NumpadClear.
     // NumpadClearEntry.
-    case VK_SEPARATOR: return "NumpadComma"_s;
+    case VK_SEPARATOR: return "NumpadComma"_s; // On JIS keyboard
     case VK_DECIMAL: return "NumpadDecimal"_s;
     case VK_DIVIDE: return "NumpadDivide"_s;
     // NumpadEnter.
@@ -427,8 +427,6 @@ static bool isKeypadEvent(WebEvent* event)
     if (event.type != WebEventKeyDown && event.type != WebEventKeyUp)
         return false;
 
-    // With the exception of keypad comma, the following corresponds to the criterion for UIKeyModifierNumericPad.
-    // FIXME: Recognize keypad comma.
     switch (event.keyCode) {
     case VK_CLEAR: // Num Pad Clear
     case VK_OEM_PLUS: // Num Pad =
@@ -438,6 +436,7 @@ static bool isKeypadEvent(WebEvent* event)
     case VK_ADD:
     case VK_RETURN: // Num Pad Enter
     case VK_DECIMAL: // Num Pad .
+    case VK_SEPARATOR: // Num Pad , (on JIS keyboard)
     case VK_NUMPAD0:
     case VK_NUMPAD1:
     case VK_NUMPAD2:

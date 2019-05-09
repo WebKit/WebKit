@@ -197,6 +197,7 @@ enum {
     kHIDUsage_KeyboardF13 = 0x68,
     kHIDUsage_KeyboardF24 = 0x73,
     kHIDUsage_KeyboardMenu = 0x76,
+    kHIDUsage_KeypadComma = 0x85,
     kHIDUsage_KeyboardLeftControl = 0xE0,
     kHIDUsage_KeyboardLeftShift = 0xE1,
     kHIDUsage_KeyboardLeftAlt = 0xE2,

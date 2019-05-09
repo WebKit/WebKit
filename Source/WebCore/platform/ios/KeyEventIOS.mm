@@ -172,8 +172,10 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
         /* 0x80 */ VK_VOLUME_UP, // Volume Up
         /* 0x81 */ VK_VOLUME_DOWN, // Volume Down
     };
-    // Check if key is a modifier.
+    // Check if key is a modifier or the keypad comma (on JIS keyboard).
     switch (keyCode) {
+    case kHIDUsage_KeypadComma:
+        return VK_SEPARATOR;
     case kHIDUsage_KeyboardLeftControl:
         return VK_LCONTROL;
     case kHIDUsage_KeyboardLeftShift:

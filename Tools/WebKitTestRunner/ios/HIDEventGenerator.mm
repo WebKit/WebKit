@@ -973,6 +973,8 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         return kHIDUsage_KeyboardLeftAlt;
     if ([key isEqualToString:@"rightAlt"])
         return kHIDUsage_KeyboardRightAlt;
+    if ([key isEqualToString:@"numpadComma"])
+        return kHIDUsage_KeypadComma;
 
     return 0;
 }
