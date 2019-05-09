@@ -1,3 +1,9 @@
+2019-05-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline test that is now passing after r245088.
+
+        * platform/ios-simulator/webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+
 2019-05-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Unable to commit search on MSN.com, qq.com, or sina.com.cn using enter key (hardware or software keyboard)
