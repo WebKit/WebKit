@@ -72,7 +72,6 @@ private:
     JSTestEventTargetPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
-        didBecomePrototype();
     }
 
     void finishCreation(JSC::VM&);
@@ -82,9 +81,7 @@ using JSTestEventTargetConstructor = JSDOMConstructorNotConstructable<JSTestEven
 
 template<> JSValue JSTestEventTargetConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    auto result = JSEventTarget::getConstructor(vm, &globalObject);
-    result.getObject()->didBecomePrototype();
-    return result;
+    return JSEventTarget::getConstructor(vm, &globalObject);
 }
 
 template<> void JSTestEventTargetConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)

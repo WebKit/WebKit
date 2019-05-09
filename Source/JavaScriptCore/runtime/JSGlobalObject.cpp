@@ -232,9 +232,7 @@ static JSValue createReflectProperty(VM& vm, JSObject* object)
 static JSValue createConsoleProperty(VM& vm, JSObject* object)
 {
     JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
-    JSValue prototype = constructEmptyObject(global->globalExec());
-    prototype.getObject()->didBecomePrototype();
-    return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, prototype));
+    return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, constructEmptyObject(global->globalExec())));
 }
 
 static EncodedJSValue JSC_HOST_CALL makeBoundFunction(ExecState* exec)

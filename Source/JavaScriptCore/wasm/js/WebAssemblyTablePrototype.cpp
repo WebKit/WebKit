@@ -164,7 +164,6 @@ void WebAssemblyTablePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    didBecomePrototype();
 }
 
 WebAssemblyTablePrototype::WebAssemblyTablePrototype(VM& vm, Structure* structure)

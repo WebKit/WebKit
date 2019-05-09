@@ -7070,7 +7070,6 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    ${prototypeClassName}(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)\n");
     push(@$outputArray, "        : JSC::JSNonFinalObject(vm, structure)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        didBecomePrototype();\n");
     push(@$outputArray, "    }\n");
 
     if (PrototypeHasStaticPropertyTable($interface)) {
@@ -7305,9 +7304,7 @@ sub GenerateConstructorHelperMethods
 
     if (!$generatingNamedConstructor and $interface->parentType) {
         my $parentClassName = "JS" . $interface->parentType->name;
-        push(@$outputArray, "    auto result = ${parentClassName}::getConstructor(vm, &globalObject);\n");
-        push(@$outputArray, "    result.getObject()->didBecomePrototype();\n");
-        push(@$outputArray, "    return result;\n");
+        push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
     } else {
         AddToImplIncludes("<JavaScriptCore/FunctionPrototype.h>");
         push(@$outputArray, "    UNUSED_PARAM(vm);\n");
