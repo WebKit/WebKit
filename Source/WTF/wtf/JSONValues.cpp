@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -163,7 +163,7 @@ bool parseStringToken(const UChar* start, const UChar* end, const UChar** tokenE
 {
     while (start < end) {
         UChar c = *start++;
-        if ('\\' == c) {
+        if ('\\' == c && start < end) {
             c = *start++;
             // Make sure the escaped char is valid.
             switch (c) {
@@ -269,6 +269,8 @@ bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
             output.append(c);
             continue;
         }
+        if (UNLIKELY(start >= end))
+            return false;
         c = *start++;
         switch (c) {
         case '"':
@@ -294,10 +296,14 @@ bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
             c = '\v';
             break;
         case 'x':
+            if (UNLIKELY(start + 1 >= end))
+                return false;
             c = toASCIIHexValue(start[0], start[1]);
             start += 2;
             break;
         case 'u':
+            if (UNLIKELY(start + 3 >= end))
+                return false;
             c = toASCIIHexValue(start[0], start[1]) << 8 | toASCIIHexValue(start[2], start[3]);
             start += 4;
             break;

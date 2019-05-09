@@ -348,6 +348,10 @@ function (jsonObject){
     }
 PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject){
+        return jsonObject.parse('\\')
+    }
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unrecognized token '\'.
+function (jsonObject){
         return jsonObject.parse(JSON.stringify(simpleObject));
     }
 PASS JSON.stringify(tests[i](nativeJSON)) is tests[i].expected

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -655,10 +655,25 @@ TEST(JSONValue, ParseJSON)
         EXPECT_TRUE(JSON::Value::parseJSON(" 1 ", value));
         EXPECT_TRUE(JSON::Value::parseJSON(" {} ", value));
         EXPECT_TRUE(JSON::Value::parseJSON(" [] ", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("\"\\xFF\"", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("\"\\u1234\"", value));
 
         EXPECT_FALSE(JSON::Value::parseJSON("1 1", value));
         EXPECT_FALSE(JSON::Value::parseJSON("{} {}", value));
         EXPECT_FALSE(JSON::Value::parseJSON("[] []", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF\"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF \"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1\"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1   \"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12\"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12  \"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123\"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123 \"", value));
     }
 }
 
