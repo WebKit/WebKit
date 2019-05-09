@@ -275,7 +275,7 @@ String codeForKeyEvent(WebEvent *event)
     case VK_RCONTROL: return "ControlRight"_s;
     case VK_RETURN: return "Enter"_s; //  Labeled Return on Apple keyboards.
     case VK_LWIN: return "MetaLeft"_s;
-    case VK_RWIN: return "MetaRight"_s;
+    case VK_APPS: return "MetaRight"_s;
     case VK_LSHIFT: return "ShiftLeft"_s;
     case VK_RSHIFT: return "ShiftRight"_s;
     case VK_SPACE: return "Space"_s;

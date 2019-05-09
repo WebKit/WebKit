@@ -38,8 +38,8 @@ type: keydown, key: Enter, code: Enter, keyIdentifier: Enter, keyCode: 13, charC
 type: keyup, key: Dead, code: Enter, keyIdentifier: Unidentified, keyCode: 13, charCode: 0, keyCode: 13, which: 13
 type: keydown, key: Alt, code: Unidentified, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18
 type: keyup, key: Alt, code: Unidentified, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18
-type: keydown, key: Meta, code: Unidentified, keyIdentifier: Meta, keyCode: 93, charCode: 0, keyCode: 93, which: 93
-type: keyup, key: Meta, code: Unidentified, keyIdentifier: Meta, keyCode: 93, charCode: 0, keyCode: 93, which: 93
+type: keydown, key: Meta, code: MetaRight, keyIdentifier: Meta, keyCode: 93, charCode: 0, keyCode: 93, which: 93
+type: keyup, key: Meta, code: MetaRight, keyIdentifier: Meta, keyCode: 93, charCode: 0, keyCode: 93, which: 93
 type: keydown, key: Control, code: ControlRight, keyIdentifier: Control, keyCode: 17, charCode: 0, keyCode: 17, which: 17
 type: keyup, key: Control, code: ControlRight, keyIdentifier: Control, keyCode: 17, charCode: 0, keyCode: 17, which: 17
 type: keydown, key: Shift, code: ShiftRight, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16
