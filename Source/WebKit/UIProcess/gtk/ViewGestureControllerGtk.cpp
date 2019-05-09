@@ -34,6 +34,7 @@ using namespace WebCore;
 
 static const Seconds swipeMinAnimationDuration = 100_ms;
 static const Seconds swipeMaxAnimationDuration = 400_ms;
+static const double swipeAnimationBaseVelocity = 0.002;
 
 // This is derivative of the easing function at t=0
 static const double swipeAnimationDurationMultiplier = 3;
@@ -213,11 +214,12 @@ void ViewGestureController::SwipeProgressTracker::startAnimation()
     else
         m_endProgress = m_viewGestureController.isPhysicallySwipingLeft(m_direction) ? 1 : -1;
 
-    Seconds duration = swipeMaxAnimationDuration;
-    if ((m_endProgress - m_progress) * m_velocity > 0) {
-        duration = Seconds::fromMilliseconds(std::abs((m_progress - m_endProgress) / m_velocity * swipeAnimationDurationMultiplier));
-        duration = clampTo<WTF::Seconds>(duration, swipeMinAnimationDuration, swipeMaxAnimationDuration);
-    }
+    double velocity = swipeAnimationBaseVelocity;
+    if ((m_endProgress - m_progress) * m_velocity > 0)
+        velocity = m_velocity;
+
+    Seconds duration = Seconds::fromMilliseconds(std::abs((m_progress - m_endProgress) / velocity * swipeAnimationDurationMultiplier));
+    duration = clampTo<Seconds>(duration, swipeMinAnimationDuration, swipeMaxAnimationDuration);
 
     GtkWidget* widget = m_webPageProxy.viewWidget();
     m_startTime = Seconds::fromMicroseconds(gdk_frame_clock_get_frame_time(gtk_widget_get_frame_clock(widget)));
