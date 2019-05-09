@@ -1,3 +1,14 @@
+2019-05-09  Antti Koivisto  <antti@apple.com>
+
+        Elements with "display: inline-block" don't have a touch-action region
+        https://bugs.webkit.org/show_bug.cgi?id=197281
+        <rdar://problem/50535081>
+
+        Reviewed by Antoine Quint.
+
+        * pointerevents/ios/touch-action-region-inline-block-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-inline-block.html: Added.
+
 2019-05-08  Antoine Quint  <graouts@apple.com>
 
         [iOS] Correctly handle overlapping regions for elements with a touch-action property
