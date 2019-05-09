@@ -168,11 +168,6 @@ static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm15) == PROBE_CPU_XMM
 static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State::size's matches ctiMasmProbeTrampoline");
 static_assert((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), "Must have room after ProbeContext to stash the probe handler");
 
-#if CPU(X86)
-// SSE2 is a hard requirement on x86.
-static_assert(isSSE2Present(), "SSE2 support is required in JavaScriptCore");
-#endif
-
 #undef PROBE_OFFSETOF
 
 #if CPU(X86)
@@ -792,7 +787,6 @@ void MacroAssemblerX86Common::collectCPUFeatures()
     std::call_once(onceKey, [] {
         {
             CPUID cpuid = getCPUID(0x1);
-            s_sse2CheckState = (cpuid[3] & (1 << 26)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_sse4_1CheckState = (cpuid[2] & (1 << 19)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_sse4_2CheckState = (cpuid[2] & (1 << 20)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_popcntCheckState = (cpuid[2] & (1 << 23)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
@@ -809,7 +803,6 @@ void MacroAssemblerX86Common::collectCPUFeatures()
     });
 }
 
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse2CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_1CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_2CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_avxCheckState = CPUIDCheckState::NotChecked;

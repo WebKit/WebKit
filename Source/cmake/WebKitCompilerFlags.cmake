@@ -144,6 +144,15 @@ if (COMPILER_IS_GCC_OR_CLANG)
     if (CMAKE_COMPILER_IS_GNUCXX)
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-expansion-to-defined)
     endif ()
+
+    # Force SSE2 fp on x86 builds.
+    if (WTF_CPU_X86 AND NOT CMAKE_CROSSCOMPILING)
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-msse2 -mfpmath=sse)
+        include(DetectSSE2)
+        if (NOT SSE2_SUPPORT_FOUND)
+            message(FATAL_ERROR "SSE2 support is required to compile WebKit")
+        endif ()
+    endif ()
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
