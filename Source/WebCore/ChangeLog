@@ -1,5 +1,37 @@
 2019-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [ATK] Defer the emision of AtkObject::children-changed signal after layout is done
+        https://bugs.webkit.org/show_bug.cgi?id=187948
+
+        Reviewed by Michael Catanzaro.
+
+        The signal AtkObject::children-changed is emitted from AXObjectCache::attachWrapper() and
+        AXObjectCache::detachWrapper(). Both can be called in the middle of a layout, so we need to defer the emission
+        of the signal after the layout is done, to avoid other atk entry points from being called at that point, since
+        most of them update the backing store at the beginning.
+
+        Fixes: accessibility/children-changed-sends-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::performDeferredCacheUpdate): Call platformPerformDeferredCacheUpdate().
+        * accessibility/AXObjectCache.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::wrapperParent): Helper to get the AtkObject parent of a given WebKitAccessible.
+        (WebCore::AXObjectCache::detachWrapper): Add wrapper to m_deferredDetachedWrapperList.
+        (WebCore::AXObjectCache::attachWrapper): Add object to m_deferredAttachedWrapperObjectList.
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate): Emit AtkObject::children-changed::add for objects
+        in m_deferredAttachedWrapperObjectList and AtkObject::children-changed::remove for wrappers in m_deferredDetachedWrapperList.
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate):
+        * accessibility/wpe/AXObjectCacheWPE.cpp:
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate):
+
+2019-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATK] Test accessibility/insert-children-assert.html is crashing since added in r216980
         https://bugs.webkit.org/show_bug.cgi?id=172281
         <rdar://problem/37030990>

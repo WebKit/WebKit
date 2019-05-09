@@ -535,6 +535,10 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
 {
 }
 
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+}
+
 }
 
 #endif // HAVE(ACCESSIBILITY) && PLATFORM(MAC)

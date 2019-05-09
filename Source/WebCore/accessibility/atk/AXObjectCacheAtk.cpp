@@ -36,6 +36,18 @@
 
 namespace WebCore {
 
+static AtkObject* wrapperParent(WebKitAccessible* wrapper)
+{
+    // Look for the right object to emit the signal from, but using the implementation
+    // of atk_object_get_parent from AtkObject class (which uses a cached pointer if set)
+    // since the accessibility hierarchy in WebCore will no longer be navigable.
+    gpointer webkitAccessibleClass = g_type_class_peek_parent(WEBKIT_ACCESSIBLE_GET_CLASS(wrapper));
+    gpointer atkObjectClass = g_type_class_peek_parent(webkitAccessibleClass);
+    AtkObject* atkParent = ATK_OBJECT_CLASS(atkObjectClass)->get_parent(ATK_OBJECT(wrapper));
+    // We don't want to emit any signal from an object outside WebKit's world.
+    return WEBKIT_IS_ACCESSIBLE(atkParent) ? atkParent : nullptr;
+}
+
 void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachmentType detachmentType)
 {
     auto* wrapper = obj->wrapper();
@@ -43,23 +55,8 @@ void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachm
 
     // If an object is being detached NOT because of the AXObjectCache being destroyed,
     // then it's being removed from the accessibility tree and we should emit a signal.
-    if (detachmentType != AccessibilityDetachmentType::CacheDestroyed) {
-        if (obj->document()) {
-            // Look for the right object to emit the signal from, but using the implementation
-            // of atk_object_get_parent from AtkObject class (which uses a cached pointer if set)
-            // since the accessibility hierarchy in WebCore will no longer be navigable.
-            gpointer webkitAccessibleClass = g_type_class_peek_parent(WEBKIT_ACCESSIBLE_GET_CLASS(wrapper));
-            gpointer atkObjectClass = g_type_class_peek_parent(webkitAccessibleClass);
-            AtkObject* atkParent = ATK_OBJECT_CLASS(atkObjectClass)->get_parent(ATK_OBJECT(wrapper));
-
-            // We don't want to emit any signal from an object outside WebKit's world.
-            if (WEBKIT_IS_ACCESSIBLE(atkParent)) {
-                // The accessibility hierarchy is already invalid, so the parent-children relationships
-                // in the AccessibilityObject tree are not there anymore, so we can't know the offset.
-                g_signal_emit_by_name(atkParent, "children-changed::remove", -1, wrapper);
-            }
-        }
-    }
+    if (detachmentType != AccessibilityDetachmentType::CacheDestroyed && obj->document() && wrapperParent(wrapper))
+        m_deferredDetachedWrapperList.add(wrapper);
 
     webkitAccessibleDetach(WEBKIT_ACCESSIBLE(wrapper));
 }
@@ -87,18 +84,39 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     if (!obj->renderer())
         return;
 
-    // Don't emit the signal for objects whose parents won't be exposed directly.
-    AccessibilityObject* coreParent = obj->parentObjectUnignored();
-    if (!coreParent || coreParent->accessibilityIsIgnoredByDefault())
-        return;
+    m_deferredAttachedWrapperObjectList.add(obj);
+}
 
-    // Look for the right object to emit the signal from.
-    auto* atkParent = coreParent->wrapper();
-    if (!atkParent)
-        return;
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+    for (auto& coreObject : m_deferredAttachedWrapperObjectList) {
+        auto* wrapper = coreObject->wrapper();
+        if (!wrapper)
+            continue;
 
-    size_t index = coreParent->children(false).find(obj);
-    g_signal_emit_by_name(atkParent, "children-changed::add", index != notFound ? index : -1, wrapper.get());
+        // Don't emit the signal for objects whose parents won't be exposed directly.
+        auto* coreParent = coreObject->parentObjectUnignored();
+        if (!coreParent || coreParent->accessibilityIsIgnoredByDefault())
+            continue;
+
+        // Look for the right object to emit the signal from.
+        auto* atkParent = coreParent->wrapper();
+        if (!atkParent)
+            continue;
+
+        size_t index = coreParent->children(false).find(coreObject);
+        g_signal_emit_by_name(atkParent, "children-changed::add", index != notFound ? index : -1, wrapper);
+    }
+    m_deferredAttachedWrapperObjectList.clear();
+
+    for (auto& wrapper : m_deferredDetachedWrapperList) {
+        if (auto* atkParent = wrapperParent(wrapper.get())) {
+            // The accessibility hierarchy is already invalid, so the parent-children relationships
+            // in the AccessibilityObject tree are not there anymore, so we can't know the offset.
+            g_signal_emit_by_name(atkParent, "children-changed::remove", -1, wrapper.get());
+        }
+    }
+    m_deferredDetachedWrapperList.clear();
 }
 
 static AccessibilityObject* getListObject(AccessibilityObject* object)

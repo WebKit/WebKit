@@ -60,6 +60,11 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
     notImplemented();
 }
 
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+    notImplemented();
+}
+
 } // namespace WebCore
 
 #endif // HAVE(ACCESSIBILITY)
