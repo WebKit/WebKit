@@ -216,20 +216,24 @@ void State::setGenericBufferBinding<BufferBinding::ElementArray>(const Context *
     mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
 }
 
-const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter> State::kBufferSetters = {{
-    GetBufferBindingSetter<BufferBinding::Array>(),
-    GetBufferBindingSetter<BufferBinding::AtomicCounter>(),
-    GetBufferBindingSetter<BufferBinding::CopyRead>(),
-    GetBufferBindingSetter<BufferBinding::CopyWrite>(),
-    GetBufferBindingSetter<BufferBinding::DispatchIndirect>(),
-    GetBufferBindingSetter<BufferBinding::DrawIndirect>(),
-    GetBufferBindingSetter<BufferBinding::ElementArray>(),
-    GetBufferBindingSetter<BufferBinding::PixelPack>(),
-    GetBufferBindingSetter<BufferBinding::PixelUnpack>(),
-    GetBufferBindingSetter<BufferBinding::ShaderStorage>(),
-    GetBufferBindingSetter<BufferBinding::TransformFeedback>(),
-    GetBufferBindingSetter<BufferBinding::Uniform>(),
-}};
+const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter>& State::kBufferSetters()
+{
+    static const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter> setters {{
+        GetBufferBindingSetter<BufferBinding::Array>(),
+        GetBufferBindingSetter<BufferBinding::AtomicCounter>(),
+        GetBufferBindingSetter<BufferBinding::CopyRead>(),
+        GetBufferBindingSetter<BufferBinding::CopyWrite>(),
+        GetBufferBindingSetter<BufferBinding::DispatchIndirect>(),
+        GetBufferBindingSetter<BufferBinding::DrawIndirect>(),
+        GetBufferBindingSetter<BufferBinding::ElementArray>(),
+        GetBufferBindingSetter<BufferBinding::PixelPack>(),
+        GetBufferBindingSetter<BufferBinding::PixelUnpack>(),
+        GetBufferBindingSetter<BufferBinding::ShaderStorage>(),
+        GetBufferBindingSetter<BufferBinding::TransformFeedback>(),
+        GetBufferBindingSetter<BufferBinding::Uniform>(),
+    }};
+    return setters;
+}
 
 State::State(ContextID contextIn,
              const State *shareContextState,

@@ -1,3 +1,13 @@
+2019-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix High Sierra build.
+
+        * src/libANGLE/State.cpp:
+        (gl::State::kBufferSetters):
+        * src/libANGLE/State.h:
+        (gl::State::setBufferBinding):
+        Remove the need for a global constructor.
+
 2019-05-08  Don Olmstead  <don.olmstead@sony.com>
 
         Update ANGLE
