@@ -60,8 +60,6 @@ GType webkit_web_page_accessibility_object_get_type();
 
 AtkObject* webkitWebPageAccessibilityObjectNew(WebKit::WebPage*);
 
-void webkitWebPageAccessibilityObjectRefresh(WebKitWebPageAccessibilityObject*);
-
 G_END_DECLS
 
 #endif // HAVE(ACCESSIBILITY)

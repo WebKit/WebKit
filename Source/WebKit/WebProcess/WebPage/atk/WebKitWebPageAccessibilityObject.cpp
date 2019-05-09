@@ -30,6 +30,7 @@
 
 #include "WebPage.h"
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/AccessibilityScrollView.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
@@ -43,6 +44,25 @@ struct _WebKitWebPageAccessibilityObjectPrivate {
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebPageAccessibilityObject, webkit_web_page_accessibility_object, ATK_TYPE_PLUG)
+
+static void coreRootObjectWrapperDetachedCallback(AtkObject* wrapper, const char*, gboolean value, AtkObject* atkObject)
+{
+    if (!value)
+        return;
+
+    g_signal_emit_by_name(atkObject, "children-changed::remove", 0, wrapper);
+}
+
+static AccessibilityObjectWrapper* rootWebAreaWrapper(AccessibilityObject& rootObject)
+{
+    if (!rootObject.isAccessibilityScrollView())
+        return nullptr;
+
+    if (auto* webAreaObject = downcast<AccessibilityScrollView>(rootObject).webAreaObject())
+        return webAreaObject->wrapper();
+
+    return nullptr;
+}
 
 static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
 {
@@ -69,7 +89,21 @@ static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
     if (!coreRootObject)
         return nullptr;
 
-    return ATK_OBJECT(coreRootObject->wrapper());
+    auto* wrapper = ATK_OBJECT(coreRootObject->wrapper());
+    if (!wrapper)
+        return nullptr;
+
+    if (atk_object_peek_parent(wrapper) != ATK_OBJECT(accessible)) {
+        atk_object_set_parent(wrapper, ATK_OBJECT(accessible));
+        g_signal_emit_by_name(accessible, "children-changed::add", 0, wrapper);
+
+        if (auto* webAreaWrapper = rootWebAreaWrapper(*coreRootObject)) {
+            g_signal_connect_object(webAreaWrapper, "state-change::defunct",
+                G_CALLBACK(coreRootObjectWrapperDetachedCallback), accessible, static_cast<GConnectFlags>(0));
+        }
+    }
+
+    return wrapper;
 }
 
 static void webkitWebPageAccessibilityObjectInitialize(AtkObject* atkObject, gpointer data)
@@ -98,14 +132,10 @@ static AtkObject* webkitWebPageAccessibilityObjectRefChild(AtkObject* atkObject,
     if (index && index != 1)
         return nullptr;
 
-    AtkObject* rootObject = accessibilityRootObjectWrapper(atkObject);
-    if (!rootObject)
-        return nullptr;
+    if (auto* rootObjectWrapper = accessibilityRootObjectWrapper(atkObject))
+        return ATK_OBJECT(g_object_ref(rootObjectWrapper));
 
-    atk_object_set_parent(rootObject, atkObject);
-    g_object_ref(rootObject);
-
-    return rootObject;
+    return nullptr;
 }
 
 static void webkit_web_page_accessibility_object_class_init(WebKitWebPageAccessibilityObjectClass* klass)
@@ -125,15 +155,6 @@ AtkObject* webkitWebPageAccessibilityObjectNew(WebPage* page)
     AtkObject* object = ATK_OBJECT(g_object_new(WEBKIT_TYPE_WEB_PAGE_ACCESSIBILITY_OBJECT, nullptr));
     atk_object_initialize(object, page);
     return object;
-}
-
-void webkitWebPageAccessibilityObjectRefresh(WebKitWebPageAccessibilityObject* accessible)
-{
-    // We just need to ensure that there's a connection in the ATK
-    // world between this accessibility object and the AtkObject of
-    // the accessibility object for the root of the DOM tree.
-    if (auto* rootObject = accessibilityRootObjectWrapper(ATK_OBJECT(accessible)))
-        atk_object_set_parent(rootObject, ATK_OBJECT(accessible));
 }
 
 #endif // HAVE(ACCESSIBILITY)
