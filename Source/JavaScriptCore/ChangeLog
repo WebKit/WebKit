@@ -1,5 +1,20 @@
 2019-05-09  Keith Miller  <keith_miller@apple.com>
 
+        parseStatementListItem needs a stack overflow check
+        https://bugs.webkit.org/show_bug.cgi?id=197749
+        <rdar://problem/50302697>
+
+        Reviewed by Saam Barati.
+
+        There currently exists a path in the parser where you can loop
+        arbibrarily many times without a stack overflow check. This patch
+        adds a check to parseStatementListItem to break that cycle.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatementListItem):
+
+2019-05-09  Keith Miller  <keith_miller@apple.com>
+
         REGRESSION (r245064): ASSERTION FAILED: m_ptr seen with wasm.yaml/wasm/js-api/test_Data.js.wasm-slow-memory
         https://bugs.webkit.org/show_bug.cgi?id=197740
 
