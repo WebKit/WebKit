@@ -654,8 +654,7 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
         if (layer.isComposited()) {
             ts << " (composited, bounds=" << layer.backing()->compositedBounds() << ", drawsContent=" << layer.backing()->graphicsLayer()->drawsContent()
                 << ", paints into ancestor=" << layer.backing()->paintsIntoCompositedAncestor() << ")";
-        } else if (layer.paintsIntoProvidedBacking())
-            ts << " (shared backing of " << layer.backingProviderLayer() << ")";
+        }
     }
 
 #if ENABLE(CSS_COMPOSITING)

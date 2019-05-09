@@ -691,8 +691,6 @@ webkit.org/b/190627 [ Mojave+ ] compositing/masks/compositing-clip-path-change-n
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
 
-webkit.org/b/197695 [ Debug ] fast/hidpi/video-controls-in-hidpi.html [ Skip ]
-
 webkit.org/b/194309 media/modern-media-controls/compact-media-controls/compact-media-controls-layout.html [ Pass Failure ]
 
 webkit.org/b/195098 pointerevents/mouse/over-enter-out-leave.html [ Failure ]

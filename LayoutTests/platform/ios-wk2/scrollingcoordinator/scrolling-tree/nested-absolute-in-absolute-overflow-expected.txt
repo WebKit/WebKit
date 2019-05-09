@@ -1,5 +1,4 @@
-abs
-abs
+absabs
 
 (Frame scrolling node
   (scrollable area size 800 600)
@@ -14,10 +13,10 @@ abs
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,0))
   (behavior for fixed 0)
-  (children 5
+  (children 3
     (Overflow scrolling node
       (scrollable area size 300 300)
-      (contents size 381 530)
+      (contents size 381 500)
       (parent relative scrollable rect at (30,35) size 300x300)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
@@ -29,19 +28,7 @@ abs
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (10,10))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
         (layer-position-at-last-layout (50,50))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (62,82))
         (positioning-behavior moves))
       (related overflow nodes 1)
     )

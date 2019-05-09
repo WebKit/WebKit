@@ -59,9 +59,6 @@ editing/pasteboard/ios [ Skip ]
 editing/pasteboard/mac [ Skip ]
 fast/media/ios [ Skip ]
 
-# Requires async overflow scrolling
-compositing/shared-backing/overflow-scroll [ Skip ]
-
 # WebKit2 only.
 printing/printing-events.html [ Skip ]
 

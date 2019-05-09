@@ -26,7 +26,7 @@ Stacking
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,229))
   (behavior for fixed 0)
-  (children 19
+  (children 12
     (Overflow scrolling node
       (scrollable area size 220 170)
       (contents size 220 1020)
@@ -40,19 +40,13 @@ Stacking
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (20,40))
+        (layer-position-at-last-layout (10,30))
         (positioning-behavior moves))
       (related overflow nodes 1)
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (10,60))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,80))
+        (layer-position-at-last-layout (10,50))
         (positioning-behavior moves))
       (related overflow nodes 1)
     )
@@ -69,13 +63,7 @@ Stacking
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (20,40))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,60))
+        (layer-position-at-last-layout (10,30))
         (positioning-behavior moves))
       (related overflow nodes 1)
     )
@@ -90,12 +78,6 @@ Stacking
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
     )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,40))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
     (Overflow scrolling node
       (scrollable area size 220 170)
       (contents size 220 1020)
@@ -106,12 +88,6 @@ Stacking
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,40))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
     )
     (Overflow scrolling node
       (scrollable area size 220 170)
@@ -126,25 +102,13 @@ Stacking
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (20,40))
+        (layer-position-at-last-layout (10,30))
         (positioning-behavior moves))
       (related overflow nodes 1)
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (10,60))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (20,90))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (110,110))
+        (layer-position-at-last-layout (110,50))
         (positioning-behavior moves))
       (related overflow nodes 1)
     )
@@ -161,19 +125,13 @@ Stacking
     )
     (Positioned node
       (layout constraints 
-        (layer-position-at-last-layout (20,40))
-        (positioning-behavior moves))
-      (related overflow nodes 1)
-    )
-    (Positioned node
-      (layout constraints 
-        (layer-position-at-last-layout (10,60))
+        (layer-position-at-last-layout (10,30))
         (positioning-behavior moves))
       (related overflow nodes 1)
       (children 1
         (Positioned node
           (layout constraints 
-            (layer-position-at-last-layout (79,50))
+            (layer-position-at-last-layout (79,20))
             (positioning-behavior stationary))
           (related overflow nodes 1)
         )
