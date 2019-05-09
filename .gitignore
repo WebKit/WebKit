@@ -12,10 +12,12 @@ autoinstall.cache.d
 project.xcworkspace
 xcuserdata
 
-# Ignore auto-generated files by VS2005 and VS2010.
+# Ignore auto-generated files by VS & VSCode.
 *.vcproj.*.user
 *.suo
 *.ncb
+/.vs/
+/.vscode/
 
 # Ignore common tool auto-generated files.
 .gdbinit
