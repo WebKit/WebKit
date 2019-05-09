@@ -1353,9 +1353,6 @@ webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failur
 
 webkit.org/b/194385 imported/w3c/web-platform-tests/service-workers/service-worker/clients-get.https.html [ Crash ]
 
-webkit.org/b/194630 accessibility/removed-anonymous-block-child-causes-crash.html [ Crash ]
-webkit.org/b/194630 accessibility/removed-continuation-element-causes-crash.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

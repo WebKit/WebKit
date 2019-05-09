@@ -1,3 +1,14 @@
+2019-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r241289): [GTK] accessibility/removed-continuation-element-causes-crash.html and accessibility/removed-anonymous-block-child-causes-crash.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=194630
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expectations for tests that are passing now.
+
+        * platform/gtk/TestExpectations:
+
 2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Layout test accessibility/aria-hidden-false-works-in-subtrees.html fails after r184890

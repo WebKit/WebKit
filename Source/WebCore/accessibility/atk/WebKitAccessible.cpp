@@ -348,11 +348,12 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
     if (!coreChild)
         return nullptr;
 
-    auto* child = ATK_OBJECT(coreChild->wrapper());
-    atk_object_set_parent(child, object);
-    g_object_ref(child);
+    auto* child = coreChild->wrapper();
+    if (!child)
+        return nullptr;
 
-    return child;
+    atk_object_set_parent(ATK_OBJECT(child), object);
+    return ATK_OBJECT(g_object_ref(child));
 }
 
 static gint webkitAccessibleGetIndexInParent(AtkObject* object)
