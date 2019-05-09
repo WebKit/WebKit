@@ -1,3 +1,15 @@
+2019-05-09  Antoine Quint  <graouts@apple.com>
+
+        pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html is a timeout
+        https://bugs.webkit.org/show_bug.cgi?id=197738
+        <rdar://problem/50588613>
+
+        Reviewed by Antti Koivisto.
+
+        To pass, this test must also disable the legacy "-webkit-overflow-scrolling: touch" behavior.
+
+        * pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html:
+
 2019-05-09  Antti Koivisto  <antti@apple.com>
 
         Elements with "display: inline-block" don't have a touch-action region

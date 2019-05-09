@@ -79,7 +79,9 @@
 {
 #if ENABLE(POINTER_EVENTS)
     if (![scrollView isZooming]) {
-        auto touchActions = _scrollingTreeNodeDelegate->activeTouchActionsForGestureRecognizer(scrollView.panGestureRecognizer);
+        auto touchActions = _scrollingTreeNodeDelegate->activeTouchActions();
+        _scrollingTreeNodeDelegate->clearActiveTouchActions();
+        
         if (touchActions && !touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation })) {
             bool canPanX = true;
             bool canPanY = true;
@@ -147,7 +149,9 @@
 - (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
 {
     auto* panGestureRecognizer = scrollView.panGestureRecognizer;
-    auto touchActions = _scrollingTreeNodeDelegate->activeTouchActionsForGestureRecognizer(panGestureRecognizer);
+    _scrollingTreeNodeDelegate->computeActiveTouchActionsForGestureRecognizer(panGestureRecognizer);
+    auto touchActions = _scrollingTreeNodeDelegate->activeTouchActions();
+
     if (!touchActions) {
         [self cancelPointersForGestureRecognizer:panGestureRecognizer];
         return offset;
@@ -336,12 +340,11 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(uns
 }
 
 #if ENABLE(POINTER_EVENTS)
-OptionSet<TouchAction> ScrollingTreeScrollingNodeDelegateIOS::activeTouchActionsForGestureRecognizer(UIGestureRecognizer* gestureRecognizer) const
+void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
     auto& scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
     if (auto touchIdentifier = scrollingCoordinatorProxy.webPageProxy().pageClient().activeTouchIdentifierForGestureRecognizer(gestureRecognizer))
-        return scrollingCoordinatorProxy.activeTouchActionsForTouchIdentifier(*touchIdentifier);
-    return { };
+        m_activeTouchActions = scrollingCoordinatorProxy.activeTouchActionsForTouchIdentifier(*touchIdentifier);
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)

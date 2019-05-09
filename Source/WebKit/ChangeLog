@@ -1,3 +1,28 @@
+2019-05-09  Antoine Quint  <graouts@apple.com>
+
+        pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html is a timeout
+        https://bugs.webkit.org/show_bug.cgi?id=197738
+        <rdar://problem/50588613>
+
+        Reviewed by Antti Koivisto.
+
+        We clear the touch actions for a given touch identifier when the matching touch is released in -[WKContentViewInteraction _handleTouchActionsForTouchEvent:].
+        This happens before -[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:] is called and thus, which we correctly
+        respected the touch actions during the panning gesture, we would not be able to respect them during the deceleration animation. This caused the test to fail
+        because it would check that no scrolling happened after the panning gesture completed, ie. during the deceleration animation.
+
+        To work around this, we now store the touch actions for a given UIScrollView interaction in the ScrollingTreeScrollingNodeDelegateIOS object when the interaction
+        starts.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::activeTouchActions const):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::clearActiveTouchActions):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        (-[WKScrollingNodeScrollViewDelegate _scrollView:adjustedOffsetForOffset:translation:startPoint:locationInView:horizontalVelocity:verticalVelocity:]):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureRecognizer):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::activeTouchActionsForGestureRecognizer const): Deleted.
+
 2019-05-08  Antoine Quint  <graouts@apple.com>
 
         [iOS] Correctly handle overlapping regions for elements with a touch-action property
