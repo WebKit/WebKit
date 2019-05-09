@@ -1,3 +1,28 @@
+2019-05-08  Stephan Szabo  <stephan.szabo@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] build-webkit should be ready for Visual Studio 2019
+        https://bugs.webkit.org/show_bug.cgi?id=196622
+
+        Reviewed by Ross Kirsling.
+
+        1. Accommodated to the new msbuild.exe location of VS 2019.
+        2. Removed the hard coded "Visual Studio 15" generator.
+
+        build-webkit is going to choose a Visual Studio generator version
+        matching with the latest installed VS. If you invoke vcvars.bat
+        before build-webkit, it chooses the corresponding Visual Studio
+        generator version by cheking 'VisualStudioVersion' env var which
+        is set by vcvars.bat.
+
+        * Scripts/webkitdirs.pm: Renamed $vcBuildPath to $msBuildPath. Removed $msBuildInstallDir.
+        (msBuildPath): When looking for MSBuild, look in
+        "MSBuild\Current\bin" (the new expected location) and fallback
+        to "MSBuild\15.0\bin" if we can't find an MSBuild.exe in the
+        first location.
+        (msBuildInstallDir): Renamed to msBuildPath.
+        (generateBuildSystemFromCMakeProject): Use -A switch to specify x64.
+        Add -G "Visual Studio " switch if a env var 'VisualStudioVersion'
+
 2019-05-08  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Update port options

@@ -159,9 +159,8 @@ my $unknownPortProhibited = 0;
 
 # Variables for Win32 support
 my $programFilesPath;
-my $vcBuildPath;
+my $msBuildPath;
 my $vsInstallDir;
-my $msBuildInstallDir;
 my $vsVersion;
 my $windowsSourceDir;
 my $winVersion;
@@ -676,18 +675,20 @@ sub visualStudioInstallDir
     return $vsInstallDir;
 }
 
-sub msBuildInstallDir
+sub msBuildPath
 {
-    return $msBuildInstallDir if defined $msBuildInstallDir;
-
     my $installDir = visualStudioInstallDir();
-    $msBuildInstallDir = File::Spec->catdir($installDir,
-        "MSBuild", "15.0", "bin");
 
-    chomp($msBuildInstallDir = `cygpath "$msBuildInstallDir"`) if isCygwin();
+    # FIXME: vswhere.exe should be used to find msbuild.exe after AppleWin will get vswhere with -find switch.
+    # <https://github.com/Microsoft/vswhere/wiki/Find-MSBuild>
+    # <https://github.com/Microsoft/vswhere/releases/tag/2.6.6%2Bd9dbe79db3>
+    my $path = File::Spec->catdir($installDir, "MSBuild", "Current", "bin", "MSBuild.exe");
+    $path = File::Spec->catdir($installDir, "MSBuild", "15.0", "bin", "MSBuild.exe") unless -e $path;
 
-    print "Using MSBuild: $msBuildInstallDir\n";
-    return $msBuildInstallDir;
+    chomp($path = `cygpath "$path"`) if isCygwin();
+
+    print "Using MSBuild: $path\n";
+    return $path;
 }
 
 sub determineConfigurationForVisualStudio
@@ -1836,7 +1837,7 @@ sub setupAppleWinEnv()
 sub setupCygwinEnv()
 {
     return if !isAnyWindows();
-    return if $vcBuildPath;
+    return if $msBuildPath;
 
     my $programFilesPath = programFilesPath();
 
@@ -1848,10 +1849,10 @@ sub setupCygwinEnv()
 
     # We will actually use MSBuild to build WebKit, but we need to find the Visual Studio install (above) to make
     # sure we use the right options.
-    $vcBuildPath = File::Spec->catfile(msBuildInstallDir(), qw(MSBuild.exe));
-    if (! -e $vcBuildPath) {
+    $msBuildPath = msBuildPath();
+    if (! -e $msBuildPath) {
         print "*************************************************************\n";
-        print "Cannot find '$vcBuildPath'\n";
+        print "Cannot find '$msBuildPath'\n";
         print "Please make sure execute that the Microsoft .NET Framework SDK\n";
         print "is installed on this machine.\n";
         print "*************************************************************\n";
@@ -1911,7 +1912,7 @@ sub buildVisualStudioProject
 
     my $maxCPUCount = '/maxcpucount:' . numberOfCPUs();
 
-    my @command = ($vcBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $errorLogging, "/fl1", $warningLogging, $maxCPUCount);
+    my @command = ($msBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $errorLogging, "/fl1", $warningLogging, $maxCPUCount);
     print join(" ", @command), "\n";
     return system @command;
 }
@@ -2195,11 +2196,14 @@ sub generateBuildSystemFromCMakeProject
             push @args, "Ninja";
         }
         push @args, "-DUSE_THIN_ARCHIVES=OFF" if isPlayStation();
-    } elsif (isAnyWindows() && isWin64()) {
-        push @args, '-G "Visual Studio 15 2017 Win64"';
-        push @args, '-DCMAKE_GENERATOR_TOOLSET="host=x64"';
-    } elsif (isPlayStation()) {
-        push @args, '-G "Visual Studio 15"';
+    } else {
+        if (isAnyWindows() && isWin64()) {
+            push @args, '-A x64';
+        }
+        if ((isAnyWindows() || isPlayStation()) && defined $ENV{VisualStudioVersion}) {
+            my $var = int($ENV{VisualStudioVersion});
+            push @args, qq(-G "Visual Studio $var");
+        }
     }
 
     # Do not show progress of generating bindings in interactive Ninja build not to leave noisy lines on tty
