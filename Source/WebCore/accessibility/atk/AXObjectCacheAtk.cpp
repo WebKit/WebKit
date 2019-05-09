@@ -29,7 +29,7 @@
 #include "HTMLSelectElement.h"
 #include "Range.h"
 #include "TextIterator.h"
-#include "WebKitAccessibleWrapperAtk.h"
+#include "WebKitAccessible.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>

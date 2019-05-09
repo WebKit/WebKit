@@ -26,7 +26,8 @@
 #include "Document.h"
 #include "Frame.h"
 #include "RenderListItem.h"
-#include "WebKitAccessibleWrapperAtk.h"
+#include "WebKitAccessible.h"
+#include "WebKitAccessibleUtil.h"
 #include <glib.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>

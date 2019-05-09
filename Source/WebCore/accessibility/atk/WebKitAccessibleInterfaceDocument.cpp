@@ -37,8 +37,8 @@
 #include "AccessibilityObject.h"
 #include "Document.h"
 #include "DocumentType.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -47,7 +47,7 @@ static AccessibilityObject* core(AtkDocument* document)
     if (!WEBKIT_IS_ACCESSIBLE(document))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(document));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(document));
 }
 
 static const gchar* documentAttributeValue(AtkDocument* document, const gchar* attribute)
@@ -56,7 +56,7 @@ static const gchar* documentAttributeValue(AtkDocument* document, const gchar* a
     if (!coreDocument)
         return 0;
 
-    String value = String();
+    String value;
     AtkCachedProperty atkCachedProperty;
 
     if (!g_ascii_strcasecmp(attribute, "DocType") && coreDocument->doctype()) {
@@ -71,7 +71,7 @@ static const gchar* documentAttributeValue(AtkDocument* document, const gchar* a
     }
 
     if (!value.isEmpty())
-        return cacheAndReturnAtkProperty(ATK_OBJECT(document), atkCachedProperty, value);
+        return webkitAccessibleCacheAndReturnAtkProperty(WEBKIT_ACCESSIBLE(document), atkCachedProperty, value.utf8());
 
     return 0;
 }

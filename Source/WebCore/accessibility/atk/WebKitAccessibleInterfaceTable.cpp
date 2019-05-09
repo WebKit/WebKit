@@ -40,9 +40,9 @@
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
 #include "RenderElement.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleInterfaceText.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -51,7 +51,7 @@ static AccessibilityObject* core(AtkTable* table)
     if (!WEBKIT_IS_ACCESSIBLE(table))
         return nullptr;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(table));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(table));
 }
 
 static AccessibilityTableCell* cell(AtkTable* table, guint row, guint column)

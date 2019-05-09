@@ -36,8 +36,8 @@
 
 #include "AccessibilityObject.h"
 #include "NotImplemented.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -46,7 +46,7 @@ static AccessibilityObject* core(AtkAction* action)
     if (!WEBKIT_IS_ACCESSIBLE(action))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(action));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(action));
 }
 
 static gboolean webkitAccessibleActionDoAction(AtkAction* action, gint index)
@@ -77,23 +77,21 @@ static const gchar* webkitAccessibleActionGetDescription(AtkAction* action, gint
     return "";
 }
 
-static const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint index)
+static const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint)
 {
-    g_return_val_if_fail(ATK_IS_ACTION(action), 0);
-    g_return_val_if_fail(!index, 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(action);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     // FIXME: Construct a proper keybinding string.
-    return cacheAndReturnAtkProperty(ATK_OBJECT(action), AtkCachedActionKeyBinding, core(action)->accessKey().string());
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedActionKeyBinding, core(action)->accessKey().string().utf8());
 }
 
-static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint index)
+static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint)
 {
-    g_return_val_if_fail(ATK_IS_ACTION(action), 0);
-    g_return_val_if_fail(!index, 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(action);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
-    return cacheAndReturnAtkProperty(ATK_OBJECT(action), AtkCachedActionName, core(action)->actionVerb());
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedActionName, core(action)->actionVerb().utf8());
 }
 
 void webkitAccessibleActionInterfaceInit(AtkActionIface* iface)
