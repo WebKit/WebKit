@@ -5135,6 +5135,8 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 
     Ref<Frame> protector(frame);
 
+    UserGestureIndicator gestureIndicator { options.processingUserGesture ? ProcessingUserGesture : NotProcessingUserGesture, frame.document() };
+
     bool replacesText = false;
     if (replacementEditingRange.location != notFound) {
         if (auto replacementRange = EditingRange::toRange(frame, replacementEditingRange, options.editingRangeIsRelativeTo)) {

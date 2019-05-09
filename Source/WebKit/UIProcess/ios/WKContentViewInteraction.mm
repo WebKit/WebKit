@@ -4179,7 +4179,12 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
-    _page->insertTextAsync(aStringValue, WebKit::EditingRange(), { });
+    auto* keyboard = [UIKeyboardImpl sharedInstance];
+
+    WebKit::InsertTextOptions options;
+    options.processingUserGesture = [keyboard respondsToSelector:@selector(isCallingInputDelegate)] && keyboard.isCallingInputDelegate;
+
+    _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
 }
 
 - (BOOL)hasText
@@ -4671,6 +4676,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName
 {
+    // FIXME: Editing commands are not considered by WebKit as user initiated even if they are the result
+    // of keydown or keyup. We need to query the keyboard to determine if this was called from the keyboard
+    // or not to know whether to tell WebKit to treat this command as user initiated or not.
     [self beginSelectionChange];
     RetainPtr<WKContentView> view = self;
     _page->executeEditCommand(commandName, { }, [view](WebKit::CallbackBase::Error) {

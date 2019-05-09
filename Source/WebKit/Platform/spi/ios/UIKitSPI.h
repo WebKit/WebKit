@@ -1126,6 +1126,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (BOOL)handleKeyTextCommandForCurrentEvent;
 - (BOOL)handleKeyAppCommandForCurrentEvent;
 - (BOOL)handleKeyInputMethodCommandForCurrentEvent;
+- (BOOL)isCallingInputDelegate;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 

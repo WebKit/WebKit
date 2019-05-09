@@ -1,3 +1,45 @@
+2019-05-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Unable to commit search on MSN.com, qq.com, or sina.com.cn using enter key (hardware or software keyboard)
+        https://bugs.webkit.org/show_bug.cgi?id=197632
+        <rdar://problem/47902054>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes an issue where it is not possible to submit a <form> with target = "_blank": a form that
+        opens a new window.
+
+        By default we only allow popups to open if they were user initiated (like when a person clicks
+        on a link). We achieve this by putting a token on the stack, called the UserGestureToken when
+        WebCore processes an event from WebKit. So long as this token is on the stack we consider
+        all requests to open a popup to be user initiated. And we implicitly submit a form when pressing
+        the Return key in an HTML input element during the processing of a TextInputEvent dispatched as
+        part of inserting a '\n' into the field. On Mac, the keydown dispatches a TextInputEvent synchronously.
+        However on iOS text insertion, and hence a dispatch of a TextInputEvent event, occurs asynchronously
+        with respect to the keydown event. So, by the time the UI process calls back to the WebProcess
+        to perform the text insertion of '\n' we have long since popped the UserGestureToken off the stack
+        and hence we disallow opening a popup. To fix this, when -insertText is called we query the keyboard
+        to determine if it's being called by the keyboard. If it is then we can assume that this is
+        part of key event handling and hence was initiated by the user. We can pass along this detail
+        to the WebProcess for it to push a new UserGestureToken onto the stack.
+
+        For now we only track whether text inserted by the keyboard was user initiated or not. In
+        <https://bugs.webkit.org/show_bug.cgi?id=197721> we will fix this up for all editing commands.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose SPI.
+        * Shared/Cocoa/InsertTextOptions.cpp:
+        (IPC::ArgumentCoder<WebKit::InsertTextOptions>::encode):
+        (IPC::ArgumentCoder<WebKit::InsertTextOptions>::decode):
+        Encode and decode whether we are processing a user gesture.
+
+        * Shared/Cocoa/InsertTextOptions.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertText:]): Query the keyboard to determine whether it called us or
+        the embedding client did. We only want to privilege user initiated actions (the keyboard).
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync): Push a UserGestureToken onto the stack that is initialized
+        depending on whether we are or are not processing a user gesture.
+
 2019-05-09  Antoine Quint  <graouts@apple.com>
 
         pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html is a timeout
