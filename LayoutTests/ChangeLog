@@ -1,3 +1,14 @@
+2019-05-08  Zalan Bujtas  <zalan@apple.com>
+
+        Do not mix inline and block level boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=197462
+        <rdar://problem/50369362>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/ruby/continuation-and-column-spanner-crash-expected.txt: Added.
+        * fast/ruby/continuation-and-column-spanner-crash.html: Added.
+
 2019-05-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline test that is now passing after r245088.
