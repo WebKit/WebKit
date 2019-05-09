@@ -1,5 +1,22 @@
 2019-04-25  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] gst_element_get_state: assertion 'GST_IS_ELEMENT (element)' failed in WebCore::MediaPlayerPrivateGStreamer::paused
+        https://bugs.webkit.org/show_bug.cgi?id=196691
+
+        Reviewed by Eric Carlson.
+
+        For gif assets, fail media loading early and notify the
+        MediaPlayer by setting both network and ready states, so that the
+        MediaPlayer will try with with the next media engine or pass the
+        error to HTMLMediaElement if there are none.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::loadingFailed):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+2019-04-25  Philippe Normand  <pnormand@igalia.com>
+
         [REGRESSION(r243197)][GStreamer] http/tests/media/clearkey/collect-webkit-media-session.html hits an ASSERT
         https://bugs.webkit.org/show_bug.cgi?id=197230
 

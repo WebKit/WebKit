@@ -116,7 +116,7 @@ public:
     void timeChanged();
     void didEnd();
     virtual void durationChanged();
-    void loadingFailed(MediaPlayer::NetworkState);
+    void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::HaveNothing, bool forceNotifications = false);
 
     virtual void sourceSetup(GstElement*);
 
