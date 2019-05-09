@@ -1,3 +1,18 @@
+2019-05-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [ANGLE] Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=197676
+        <rdar://problem/50609501>
+
+        Reviewed by Alex Christensen.
+
+        * changes.diff:
+        Updated with all the previous fixes.
+        * include/EGL/eglplatform.h:
+        Use the more generic name USE_SYSTEM_EGL not USE_WPE.
+        * src/common/debug.h:
+        Fix a stray COMPILER_GCC to be __GNUC__.
+
 2019-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal and Windows builds.

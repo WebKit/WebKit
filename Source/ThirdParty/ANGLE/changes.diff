@@ -1,5 +1,5 @@
 diff --git a/include/EGL/eglplatform.h b/include/EGL/eglplatform.h
-index 543f8e5cb..9203604a3 100644
+index 543f8e5cb..bfd9bd68e 100644
 --- a/include/EGL/eglplatform.h
 +++ b/include/EGL/eglplatform.h
 @@ -110,7 +110,7 @@ typedef void*                           EGLNativeDisplayType;
@@ -7,25 +7,29 @@ index 543f8e5cb..9203604a3 100644
  typedef struct ANativeWindow*           EGLNativeWindowType;
  
 -#elif defined(USE_OZONE)
-+#elif defined(USE_OZONE) || defined(USE_WPE)
++#elif defined(USE_OZONE) || defined(USE_SYSTEM_EGL)
  
  typedef intptr_t EGLNativeDisplayType;
  typedef intptr_t EGLNativePixmapType;
 diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
-index c804715d2..a7cee1d46 100644
+index c804715d2..1e5ee2979 100644
 --- a/include/GLSLANG/ShaderLang.h
 +++ b/include/GLSLANG/ShaderLang.h
-@@ -8,7 +8,7 @@
+@@ -8,7 +8,11 @@
  
  #include <stddef.h>
  
 -#include "KHR/khrplatform.h"
++#if defined(__APPLE__)
 +#include "khrplatform.h"
++#else
++#include "../KHR/khrplatform.h"
++#endif
  
  #include <array>
  #include <map>
 diff --git a/src/common/PoolAlloc.cpp b/src/common/PoolAlloc.cpp
-index b6e3702f8..20645c5e3 100644
+index b6e3702f8..e0eb53388 100644
 --- a/src/common/PoolAlloc.cpp
 +++ b/src/common/PoolAlloc.cpp
 @@ -55,7 +55,7 @@ PoolAllocator::PoolAllocator(int growthIncrement, int allocationAlignment)
@@ -37,13 +41,28 @@ index b6e3702f8..20645c5e3 100644
          mAlignmentMask = mAlignment - 1;
  
  #if !defined(ANGLE_DISABLE_POOL_ALLOC)
-@@ -331,4 +331,4 @@ void Allocation::checkAllocList() const
-         alloc->check();
- }
+diff --git a/src/common/debug.h b/src/common/debug.h
+index 64783687b..3bfafb5b9 100644
+--- a/src/common/debug.h
++++ b/src/common/debug.h
+@@ -248,7 +248,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
+ #    define EVENT(message, ...) (void(0))
+ #endif
  
--}  // namespace angle
-\ No newline at end of file
-+}  // namespace angle
+-#if defined(COMPILER_GCC) || defined(__clang__)
++#if defined(__GNUC__) || defined(__clang__)
+ #    define ANGLE_CRASH() __builtin_trap()
+ #else
+ #    define ANGLE_CRASH() ((void)(*(volatile char *)0 = 0)), __assume(0)
+@@ -336,7 +336,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
+ #    define ANGLE_ENABLE_STRUCT_PADDING_WARNINGS \
+         _Pragma("clang diagnostic push") _Pragma("clang diagnostic error \"-Wpadded\"")
+ #    define ANGLE_DISABLE_STRUCT_PADDING_WARNINGS _Pragma("clang diagnostic pop")
+-#elif defined(COMPILER_GCC)
++#elif defined(__GNUC__)
+ #    define ANGLE_ENABLE_STRUCT_PADDING_WARNINGS \
+         _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic error \"-Wpadded\"")
+ #    define ANGLE_DISABLE_STRUCT_PADDING_WARNINGS _Pragma("GCC diagnostic pop")
 diff --git a/src/common/mathutil.h b/src/common/mathutil.h
 index edf63dd15..6573dd589 100644
 --- a/src/common/mathutil.h
@@ -57,6 +76,51 @@ index edf63dd15..6573dd589 100644
  #    define ANGLE_HAS_BITCOUNT_32
  inline int BitCount(uint32_t bits)
  {
+diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
+index 84be99016..295b8f1a0 100644
+--- a/src/common/utilities.cpp
++++ b/src/common/utilities.cpp
+@@ -617,11 +617,16 @@ bool IsTriangleMode(PrimitiveMode drawMode)
+ 
+ namespace priv
+ {
+-const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes = {
+-    {{PrimitiveMode::LineLoop, true},
+-     {PrimitiveMode::LineStrip, true},
+-     {PrimitiveMode::LineStripAdjacency, true},
+-     {PrimitiveMode::Lines, true}}};
++const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes()
++{
++    static const angle::PackedEnumMap<PrimitiveMode, bool> modes {
++        { PrimitiveMode::LineLoop, true },
++        { PrimitiveMode::LineStrip, true },
++        { PrimitiveMode::LineStripAdjacency, true },
++        { PrimitiveMode::Lines, true }
++    };
++    return modes;
++};
+ }  // namespace priv
+ 
+ bool IsIntegerFormat(GLenum unsizedFormat)
+diff --git a/src/common/utilities.h b/src/common/utilities.h
+index 9dcb06e8a..7a1429a43 100644
+--- a/src/common/utilities.h
++++ b/src/common/utilities.h
+@@ -78,12 +78,12 @@ bool IsTriangleMode(PrimitiveMode drawMode);
+ 
+ namespace priv
+ {
+-extern const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes;
++extern const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes();
+ }  // namespace priv
+ 
+ ANGLE_INLINE bool IsLineMode(PrimitiveMode primitiveMode)
+ {
+-    return priv::gLineModes[primitiveMode];
++    return priv::gLineModes()[primitiveMode];
+ }
+ 
+ bool IsIntegerFormat(GLenum unsizedFormat);
 diff --git a/src/compiler/preprocessor/ExpressionParser.cpp b/src/compiler/preprocessor/ExpressionParser.cpp
 index 461c2145d..5da6a22d6 100644
 --- a/src/compiler/preprocessor/ExpressionParser.cpp
@@ -69,6 +133,32 @@ index 461c2145d..5da6a22d6 100644
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+diff --git a/src/compiler/preprocessor/Tokenizer.cpp b/src/compiler/preprocessor/Tokenizer.cpp
+index 2ce67b738..429026e98 100644
+--- a/src/compiler/preprocessor/Tokenizer.cpp
++++ b/src/compiler/preprocessor/Tokenizer.cpp
+@@ -700,8 +700,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
+ #if defined(__clang__)
+ // Flex uses `/*FALLTHROUGH*/` instead of dedicated statements.
+ #    pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+-// Flex isn't semi-colon clean.
+-#    pragma clang diagnostic ignored "-Wextra-semi-stmt"
+ #endif
+ 
+ // Workaround for flex using the register keyword, deprecated in C++11.
+diff --git a/src/compiler/preprocessor/Tokenizer.l b/src/compiler/preprocessor/Tokenizer.l
+index 94db185ef..3df736713 100644
+--- a/src/compiler/preprocessor/Tokenizer.l
++++ b/src/compiler/preprocessor/Tokenizer.l
+@@ -41,8 +41,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
+ #if defined(__clang__)
+ // Flex uses `/*FALLTHROUGH*/` instead of dedicated statements.
+ #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+-// Flex isn't semi-colon clean.
+-#pragma clang diagnostic ignored "-Wextra-semi-stmt"
+ #endif
+ 
+ // Workaround for flex using the register keyword, deprecated in C++11.
 diff --git a/src/compiler/translator/ShaderVars.cpp b/src/compiler/translator/ShaderVars.cpp
 index 202ed2111..2c2592ffb 100644
 --- a/src/compiler/translator/ShaderVars.cpp
@@ -136,8 +226,34 @@ index 7d0609ec8..898be505f 100644
      }
      else
      {
+diff --git a/src/compiler/translator/glslang.l b/src/compiler/translator/glslang.l
+index 8af29a8a7..c6aa91d52 100644
+--- a/src/compiler/translator/glslang.l
++++ b/src/compiler/translator/glslang.l
+@@ -40,8 +40,6 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
+ #endif
+ #if defined(__clang__)
+ #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+-// Flex isn't semi-colon clean.
+-#pragma clang diagnostic ignored "-Wextra-semi-stmt"
+ #endif
+ }
+ 
+diff --git a/src/compiler/translator/glslang_lex.cpp b/src/compiler/translator/glslang_lex.cpp
+index 2bf0ab37b..f35e05ada 100644
+--- a/src/compiler/translator/glslang_lex.cpp
++++ b/src/compiler/translator/glslang_lex.cpp
+@@ -25,8 +25,6 @@
+ #endif
+ #if defined(__clang__)
+ #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+-// Flex isn't semi-colon clean.
+-#pragma clang diagnostic ignored "-Wextra-semi-stmt"
+ #endif
+ 
+ 
 diff --git a/src/compiler/translator/glslang_tab.cpp b/src/compiler/translator/glslang_tab.cpp
-index a60203b85..fabad4f96 100644
+index a60203b85..56c7fbd9b 100644
 --- a/src/compiler/translator/glslang_tab.cpp
 +++ b/src/compiler/translator/glslang_tab.cpp
 @@ -1,5 +1,7 @@
@@ -148,13 +264,6 @@ index a60203b85..fabad4f96 100644
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
-@@ -5198,4 +5200,4 @@ yyreturn:
- int glslang_parse(TParseContext* context) {
-     return yyparse(context, context->getScanner());
- }
-- 
-\ No newline at end of file
-+ 
 diff --git a/src/compiler/translator/glslang_tab.h b/src/compiler/translator/glslang_tab.h
 index e05076fcb..19be0f89d 100644
 --- a/src/compiler/translator/glslang_tab.h
@@ -235,10 +344,49 @@ index 6cbbd1e80..e987ff0eb 100644
 +    g_platformMethods() = angle::PlatformMethods();
  }
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 7223bb9de..e4ed138a7 100644
+index 7223bb9de..9e47bda44 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
-@@ -1214,7 +1214,7 @@ void State::detachSampler(const Context *context, GLuint sampler)
+@@ -216,20 +216,24 @@ void State::setGenericBufferBinding<BufferBinding::ElementArray>(const Context *
+     mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
+ }
+ 
+-const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter> State::kBufferSetters = {{
+-    GetBufferBindingSetter<BufferBinding::Array>(),
+-    GetBufferBindingSetter<BufferBinding::AtomicCounter>(),
+-    GetBufferBindingSetter<BufferBinding::CopyRead>(),
+-    GetBufferBindingSetter<BufferBinding::CopyWrite>(),
+-    GetBufferBindingSetter<BufferBinding::DispatchIndirect>(),
+-    GetBufferBindingSetter<BufferBinding::DrawIndirect>(),
+-    GetBufferBindingSetter<BufferBinding::ElementArray>(),
+-    GetBufferBindingSetter<BufferBinding::PixelPack>(),
+-    GetBufferBindingSetter<BufferBinding::PixelUnpack>(),
+-    GetBufferBindingSetter<BufferBinding::ShaderStorage>(),
+-    GetBufferBindingSetter<BufferBinding::TransformFeedback>(),
+-    GetBufferBindingSetter<BufferBinding::Uniform>(),
+-}};
++const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter>& State::kBufferSetters()
++{
++    static const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter> setters {{
++        GetBufferBindingSetter<BufferBinding::Array>(),
++        GetBufferBindingSetter<BufferBinding::AtomicCounter>(),
++        GetBufferBindingSetter<BufferBinding::CopyRead>(),
++        GetBufferBindingSetter<BufferBinding::CopyWrite>(),
++        GetBufferBindingSetter<BufferBinding::DispatchIndirect>(),
++        GetBufferBindingSetter<BufferBinding::DrawIndirect>(),
++        GetBufferBindingSetter<BufferBinding::ElementArray>(),
++        GetBufferBindingSetter<BufferBinding::PixelPack>(),
++        GetBufferBindingSetter<BufferBinding::PixelUnpack>(),
++        GetBufferBindingSetter<BufferBinding::ShaderStorage>(),
++        GetBufferBindingSetter<BufferBinding::TransformFeedback>(),
++        GetBufferBindingSetter<BufferBinding::Uniform>(),
++    }};
++    return setters;
++}
+ 
+ State::State(ContextID contextIn,
+              const State *shareContextState,
+@@ -1214,7 +1218,7 @@ void State::detachSampler(const Context *context, GLuint sampler)
      {
          if (mSamplers[i].id() == sampler)
          {
@@ -247,6 +395,28 @@ index 7223bb9de..e4ed138a7 100644
          }
      }
  }
+diff --git a/src/libANGLE/State.h b/src/libANGLE/State.h
+index bec9a5e09..5a49431f3 100644
+--- a/src/libANGLE/State.h
++++ b/src/libANGLE/State.h
+@@ -318,7 +318,7 @@ class State : angle::NonCopyable
+     //// Typed buffer binding point manipulation ////
+     ANGLE_INLINE void setBufferBinding(const Context *context, BufferBinding target, Buffer *buffer)
+     {
+-        (this->*(kBufferSetters[target]))(context, buffer);
++        (this->*(kBufferSetters()[target]))(context, buffer);
+     }
+ 
+     ANGLE_INLINE Buffer *getTargetBuffer(BufferBinding target) const
+@@ -693,7 +693,7 @@ class State : angle::NonCopyable
+     static_assert(DIRTY_OBJECT_MAX == 9, "check DIRTY_OBJECT_MAX");
+ 
+     // Dispatch table for buffer update functions.
+-    static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter> kBufferSetters;
++    static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter>& kBufferSetters();
+ 
+     Version mClientVersion;
+     ContextID mContext;
 diff --git a/src/libANGLE/VertexArray.cpp b/src/libANGLE/VertexArray.cpp
 index f14876668..56a783f8a 100644
 --- a/src/libANGLE/VertexArray.cpp
@@ -282,16 +452,96 @@ index e819ba8df..996aa7e1e 100644
                          }
                      }
                  }
-diff --git a/src/third_party/khronos/GL/wglext.h b/src/third_party/khronos/GL/wglext.h
-index daba41091..86134ca73 100644
---- a/src/third_party/khronos/GL/wglext.h
-+++ b/src/third_party/khronos/GL/wglext.h
-@@ -33,7 +33,7 @@ extern "C" {
- ** used to make the header, and the header can be found at
- **   http://www.opengl.org/registry/
- **
--** Khronos $Revision: 27684 $ on $Date: 2014-08-11 01:21:35 -0700 (Mon, 11 Aug 2014) $
-+** Khronos $Revision: 225340 $ on $Date: 2017-11-30 12:39:54 -0800 (Thu, 30 Nov 2017) $
- */
+diff --git a/src/libANGLE/validationES3.cpp b/src/libANGLE/validationES3.cpp
+index 1acb57843..94db8b545 100644
+--- a/src/libANGLE/validationES3.cpp
++++ b/src/libANGLE/validationES3.cpp
+@@ -4166,7 +4166,7 @@ bool ValidateBindFragDataLocationIndexedEXT(Context *context,
+         context->validationError(GL_INVALID_OPERATION, kES3Required);
+         return false;
+     }
+-    if (index < 0 || index > 1)
++    if (index > 1)
+     {
+         // This error is not explicitly specified but the spec does say that "<index> may be zero or
+         // one to specify that the color be used as either the first or second color input to the
+diff --git a/src/tests/compiler_tests/QualificationOrder_test.cpp b/src/tests/compiler_tests/QualificationOrder_test.cpp
+index c0249dbb9..f8b1c5fdc 100644
+--- a/src/tests/compiler_tests/QualificationOrder_test.cpp
++++ b/src/tests/compiler_tests/QualificationOrder_test.cpp
+@@ -429,7 +429,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersInvariant)
+         "}\n"
+         "void main()\n"
+         "{\n"
+-        "	gl_FragColor = vec4(foo0(value));\n"
++        "    gl_FragColor = vec4(foo0(value));\n"
+         "}\n";
  
- #if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__) && !defined(__SCITECH_SNAP__)
+     if (compile(shaderString))
+@@ -449,7 +449,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersAttribute)
+         "}\n"
+         "void main()\n"
+         "{\n"
+-        "	gl_FragColor = vec4(foo0(value));\n"
++        "    gl_FragColor = vec4(foo0(value));\n"
+         "}\n";
+ 
+     if (compile(shaderString))
+@@ -469,7 +469,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersVarying)
+         "}\n"
+         "void main()\n"
+         "{\n"
+-        "	gl_FragColor = vec4(foo0(value));\n"
++        "    gl_FragColor = vec4(foo0(value));\n"
+         "}\n";
+ 
+     if (compile(shaderString))
+@@ -491,7 +491,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersLayout)
+         "out vec4 colorOUT;\n"
+         "void main()\n"
+         "{\n"
+-        "	colorOUT = vec4(foo0(value));\n"
++        "    colorOUT = vec4(foo0(value));\n"
+         "}\n";
+ 
+     if (compile(shaderString))
+@@ -513,7 +513,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersCentroidIn
+         "out vec4 colorOUT;\n"
+         "void main()\n"
+         "{\n"
+-        "	colorOUT = vec4(foo0(value));\n"
++        "    colorOUT = vec4(foo0(value));\n"
+         "}\n";
+ 
+     if (compile(shaderString))
+@@ -535,7 +535,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersFlatIn)
+         "out vec4 colorOUT;\n"
+         "void main()\n"
+         "{\n"
+-        "	colorOUT = vec4(foo0(value));\n"
++        "    colorOUT = vec4(foo0(value));\n"
+         "}\n";
+ 
+     if (compile(shaderString))
+diff --git a/src/tests/perf_tests/MultiviewPerf.cpp b/src/tests/perf_tests/MultiviewPerf.cpp
+index df6408d02..9144dfa36 100644
+--- a/src/tests/perf_tests/MultiviewPerf.cpp
++++ b/src/tests/perf_tests/MultiviewPerf.cpp
+@@ -276,7 +276,7 @@ void MultiviewCPUBoundBenchmark::initializeBenchmark()
+         "{\n"
+         "   vec4 v = vPosition;\n"
+         "   v.xy += uOffset;\n"
+-        "	gl_Position = v;\n"
++        "   gl_Position = v;\n"
+         "}\n";
+ 
+     const std::string fs =
+@@ -374,7 +374,7 @@ void MultiviewGPUBoundBenchmark::initializeBenchmark()
+         "   frag_Col3 = vert_Col3;\n"
+         "   frag_Col4 = vert_Col4;\n"
+         "   frag_Col5 = vert_Col5;\n"
+-        "	gl_Position = vPosition;\n"
++        "   gl_Position = vPosition;\n"
+         "}\n";
+ 
+     const std::string &fs =

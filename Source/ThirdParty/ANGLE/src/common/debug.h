@@ -336,7 +336,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #    define ANGLE_ENABLE_STRUCT_PADDING_WARNINGS \
         _Pragma("clang diagnostic push") _Pragma("clang diagnostic error \"-Wpadded\"")
 #    define ANGLE_DISABLE_STRUCT_PADDING_WARNINGS _Pragma("clang diagnostic pop")
-#elif defined(COMPILER_GCC)
+#elif defined(__GNUC__)
 #    define ANGLE_ENABLE_STRUCT_PADDING_WARNINGS \
         _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic error \"-Wpadded\"")
 #    define ANGLE_DISABLE_STRUCT_PADDING_WARNINGS _Pragma("GCC diagnostic pop")

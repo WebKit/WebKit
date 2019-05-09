@@ -110,7 +110,7 @@ typedef void*                           EGLNativeDisplayType;
 typedef struct egl_native_pixmap_t*     EGLNativePixmapType;
 typedef struct ANativeWindow*           EGLNativeWindowType;
 
-#elif defined(USE_OZONE) || defined(USE_WPE)
+#elif defined(USE_OZONE) || defined(USE_SYSTEM_EGL)
 
 typedef intptr_t EGLNativeDisplayType;
 typedef intptr_t EGLNativePixmapType;
