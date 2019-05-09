@@ -560,8 +560,6 @@ set(libangle_d3d11_sources
 set(libangle_d3d11_win32_sources
     src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp
     src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.h
-    src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.cpp
-    src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h
     src/third_party/systeminfo/SystemInfo.cpp
     src/third_party/systeminfo/SystemInfo.h
 )

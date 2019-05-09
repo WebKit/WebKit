@@ -2,6 +2,16 @@
 
         Fix High Sierra and Windows builds.
 
+        * GLESv2.cmake:
+        CompositorNativeWindow11.cpp was also having a hard time compiling on the bots.
+        * src/libANGLE/validationES3.cpp:
+        (gl::ValidateBindFragDataLocationIndexedEXT):
+        Remove a check for if an unsigned integer is less than 0.
+
+2019-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix High Sierra and Windows builds.
+
         * src/common/utilities.cpp:
         (gl::priv::gLineModes):
         * src/common/utilities.h:

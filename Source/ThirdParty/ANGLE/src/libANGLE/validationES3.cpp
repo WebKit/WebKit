@@ -4166,7 +4166,7 @@ bool ValidateBindFragDataLocationIndexedEXT(Context *context,
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
     }
-    if (index < 0 || index > 1)
+    if (index > 1)
     {
         // This error is not explicitly specified but the spec does say that "<index> may be zero or
         // one to specify that the color be used as either the first or second color input to the
