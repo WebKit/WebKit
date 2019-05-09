@@ -98,8 +98,7 @@ public:
         return getRangeImpl(
             reinterpret_cast<char*>(data),
             count * sizeof(typename Adaptor::Type),
-            offset * sizeof(typename Adaptor::Type),
-            byteLength());
+            offset * sizeof(typename Adaptor::Type));
     }
 
     bool checkInboundData(unsigned offset, size_t count) const
