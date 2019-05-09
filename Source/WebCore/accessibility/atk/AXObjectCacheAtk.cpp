@@ -99,7 +99,7 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
         return;
 
     size_t index = coreParent->children(false).find(obj);
-    g_signal_emit_by_name(atkParent, "children-changed::add", index, atkObj);
+    g_signal_emit_by_name(atkParent, "children-changed::add", index != notFound ? index : -1, atkObj);
 }
 
 static AccessibilityObject* getListObject(AccessibilityObject* object)
