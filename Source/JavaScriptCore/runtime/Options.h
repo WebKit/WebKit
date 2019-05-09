@@ -445,6 +445,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, airForceBriggsAllocator, false, Normal, nullptr) \
     v(bool, airForceIRCAllocator, false, Normal, nullptr) \
     v(bool, airRandomizeRegs, false, Normal, nullptr) \
+    v(unsigned, airRandomizeRegsSeed, 0, Normal, nullptr) \
     v(bool, coalesceSpillSlots, true, Normal, nullptr) \
     v(bool, logAirRegisterPressure, false, Normal, nullptr) \
     v(bool, useB3TailDup, true, Normal, nullptr) \
