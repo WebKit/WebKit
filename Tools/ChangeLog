@@ -1,3 +1,14 @@
+2019-05-08  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Update port options
+        https://bugs.webkit.org/show_bug.cgi?id=197723
+
+        Reviewed by Ross Kirsling.
+
+        ICU headers were missing from TestWTF.
+
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+
 2019-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Don't crash when DOMNode.addEventListener:listener:useCapture: is called with a nil listener

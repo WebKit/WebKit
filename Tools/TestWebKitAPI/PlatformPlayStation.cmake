@@ -10,6 +10,10 @@ list(APPEND TestWTF_SOURCES
     generic/UtilitiesGeneric.cpp
 )
 
+list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
+    ${ICU_INCLUDE_DIRS}
+)
+
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 )

@@ -1,3 +1,14 @@
+2019-05-08  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Update port options
+        https://bugs.webkit.org/show_bug.cgi?id=197723
+
+        Reviewed by Ross Kirsling.
+
+        Update the options used.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2019-05-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add .vs and .vscode directories to .gitignore.
