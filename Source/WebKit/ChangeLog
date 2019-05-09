@@ -1,5 +1,29 @@
 2019-05-09  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r241734): 1% slower PLT on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=197745
+        <rdar://problem/50457731>
+
+        Reviewed by Per Arne Vollan.
+
+        For now, only create a keyboard when WKContentView becomes first responder if a hardware keyboard
+        is attached or an editable element is focused to recover the 1% loss when a keyboard is not attached.
+        We can do better and by that I mean be lazier. We'll do this <https://bugs.webkit.org/show_bug.cgi?id=197746>.
+
+        In r241734 we unified the key event handling code paths so we use exactly one for both software and
+        hardware key events. We took a simple approach of always requesting UIKit to create a keyboard when
+        the WKContentView becomes first responder. We did this so that we could continue listening for hardware
+        key events even when a non-editable element is focused and dispatch DOM events. As it turns out, always
+        creating a keyboard is expensive and caused a ~1% slowdown in page load time on iPad.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]): Only create a keyboard if a hardware keyboard is
+        attached or an editable element is focused.
+        (-[WKContentView _hardwareKeyboardAvailabilityChanged]): Reload all input view (this will cause keyboard
+        creation) if -_requiresKeyboardWhenFirstResponder returns YES.
+
+2019-05-09  Daniel Bates  <dabates@apple.com>
+
         [iOS] Unable to commit search on MSN.com, qq.com, or sina.com.cn using enter key (hardware or software keyboard)
         https://bugs.webkit.org/show_bug.cgi?id=197632
         <rdar://problem/47902054>
