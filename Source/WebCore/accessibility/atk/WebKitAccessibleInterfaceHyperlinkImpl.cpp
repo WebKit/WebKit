@@ -24,24 +24,14 @@
 
 #include "WebKitAccessibleHyperlink.h"
 
-using namespace WebCore;
-
-static GQuark hyperlinkObjectQuark = 0;
-
 static AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperlink)
 {
-    AtkHyperlink* hyperlinkObject = ATK_HYPERLINK(g_object_get_qdata(G_OBJECT(hyperlink), hyperlinkObjectQuark));
-    if (!hyperlinkObject) {
-        hyperlinkObject = ATK_HYPERLINK(webkitAccessibleHyperlinkNew(hyperlink));
-        g_object_set_qdata(G_OBJECT(hyperlink), hyperlinkObjectQuark, hyperlinkObject);
-    }
-    return hyperlinkObject;
+    return ATK_HYPERLINK(webkitAccessibleHyperlinkGetOrCreate(hyperlink));
 }
 
 void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
 {
     iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
-    hyperlinkObjectQuark = g_quark_from_static_string("webkit-accessible-hyperlink-object");
 }
 
-#endif
+#endif // HAVE(ACCESSIBILITY)

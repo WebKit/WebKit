@@ -23,27 +23,22 @@
 
 #include <atk/atk.h>
 
-namespace WebCore {
-class AccessibilityObject;
-}
-
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_ACCESSIBLE_HYPERLINK                  (webkitAccessibleHyperlinkGetType ())
-#define WEBKIT_ACCESSIBLE_HYPERLINK(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlink))
-#define WEBKIT_ACCESSIBLE_HYPERLINK_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlinkClass))
-#define WEBKIT_IS_ACCESSIBLE_HYPERLINK(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK))
-#define WEBKIT_IS_ACCESSIBLE_HYPERLINK_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK))
-#define WEBKIT_ACCESSIBLE_HYPERLINK_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlinkClass))
+#define WEBKIT_TYPE_ACCESSIBLE_HYPERLINK             (webkit_accessible_hyperlink_get_type())
+#define WEBKIT_ACCESSIBLE_HYPERLINK(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlink))
+#define WEBKIT_ACCESSIBLE_HYPERLINK_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlinkClass))
+#define WEBKIT_IS_ACCESSIBLE_HYPERLINK(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK))
+#define WEBKIT_IS_ACCESSIBLE_HYPERLINK_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK))
+#define WEBKIT_ACCESSIBLE_HYPERLINK_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlinkClass))
 
-typedef struct _WebKitAccessibleHyperlink                WebKitAccessibleHyperlink;
-typedef struct _WebKitAccessibleHyperlinkClass           WebKitAccessibleHyperlinkClass;
-typedef struct _WebKitAccessibleHyperlinkPrivate         WebKitAccessibleHyperlinkPrivate;
+typedef struct _WebKitAccessibleHyperlink        WebKitAccessibleHyperlink;
+typedef struct _WebKitAccessibleHyperlinkClass   WebKitAccessibleHyperlinkClass;
+typedef struct _WebKitAccessibleHyperlinkPrivate WebKitAccessibleHyperlinkPrivate;
 
 struct _WebKitAccessibleHyperlink {
     AtkHyperlink parent;
 
-    // private
     WebKitAccessibleHyperlinkPrivate *priv;
 };
 
@@ -51,11 +46,9 @@ struct _WebKitAccessibleHyperlinkClass {
     AtkHyperlinkClass parentClass;
 };
 
-GType webkitAccessibleHyperlinkGetType(void) G_GNUC_CONST;
+GType webkit_accessible_hyperlink_get_type(void);
 
-WebKitAccessibleHyperlink* webkitAccessibleHyperlinkNew(AtkHyperlinkImpl*);
-
-WebCore::AccessibilityObject* webkitAccessibleHyperlinkGetAccessibilityObject(WebKitAccessibleHyperlink*);
+WebKitAccessibleHyperlink* webkitAccessibleHyperlinkGetOrCreate(AtkHyperlinkImpl*);
 
 G_END_DECLS
 
