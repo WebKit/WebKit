@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,7 +135,7 @@ protected:
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
-        void* vector() const { return m_vector.get(m_length); }
+        void* vector() const { return m_vector.getMayBeNull(m_length); }
         uint32_t length() const { return m_length; }
         TypedArrayMode mode() const { return m_mode; }
         Butterfly* butterfly() const { return m_butterfly; }

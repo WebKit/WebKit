@@ -1,3 +1,16 @@
+2019-05-09  Keith Miller  <keith_miller@apple.com>
+
+        REGRESSION (r245064): ASSERTION FAILED: m_ptr seen with wasm.yaml/wasm/js-api/test_Data.js.wasm-slow-memory
+        https://bugs.webkit.org/show_bug.cgi?id=197740
+
+        Reviewed by Saam Barati.
+
+        If a TypedArray constructor is called with just 0 as the first argument, we don't allocate a backing vector.
+        This means we need to handle null when calling vector() in ConstructionContext.
+
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::ConstructionContext::vector const):
+
 2019-05-09  Xan López  <xan@igalia.com>
 
         [CMake] Detect SSE2 at compile time
