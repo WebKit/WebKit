@@ -102,14 +102,20 @@ void Font::initCharWidths()
 
 void Font::platformGlyphInit()
 {
-    auto* glyphPageZero = glyphPage(0);
+#if USE(FREETYPE)
+    auto* glyphPageZeroWidthSpace = glyphPage(GlyphPage::pageNumberForCodePoint(zeroWidthSpace));
+    UChar32 zeroWidthSpaceCharacter = zeroWidthSpace;
+#else
+    // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
+    // are mapped to the ZERO WIDTH SPACE glyph for non FreeType based ports.
+    auto* glyphPageZeroWidthSpace = glyphPage(0);
+    UChar32 zeroWidthSpaceCharacter = 0;
+#endif
     auto* glyphPageCharacterZero = glyphPage(GlyphPage::pageNumberForCodePoint('0'));
     auto* glyphPageSpace = glyphPage(GlyphPage::pageNumberForCodePoint(space));
 
-    // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
-    // are mapped to the ZERO WIDTH SPACE glyph.
-    if (glyphPageZero)
-        m_zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
+    if (glyphPageZeroWidthSpace)
+        m_zeroWidthSpaceGlyph = glyphPageZeroWidthSpace->glyphDataForCharacter(zeroWidthSpaceCharacter).glyph;
 
     // Nasty hack to determine if we should round or ceil space widths.
     // If the font is monospace or fake monospace we ceil to ensure that 
