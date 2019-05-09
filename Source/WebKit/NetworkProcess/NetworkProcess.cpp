@@ -2435,11 +2435,6 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
 }
 
 #if !PLATFORM(COCOA)
-void NetworkProcess::removeCredential(WebCore::Credential&&, WebCore::ProtectionSpace&&, CompletionHandler<void()>&& completionHandler)
-{
-    completionHandler();
-}
-
 void NetworkProcess::originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&& completionHandler)
 {
     completionHandler(Vector<WebCore::SecurityOriginData>());

@@ -428,8 +428,6 @@ private:
 
     void platformSyncAllCookies(CompletionHandler<void()>&&);
 
-    void removeCredential(WebCore::Credential&&, WebCore::ProtectionSpace&&, CompletionHandler<void()>&&);
-
     void originsWithPersistentCredentials(CompletionHandler<void(Vector<WebCore::SecurityOriginData>)>&&);
     void removeCredentialsWithOrigins(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
     

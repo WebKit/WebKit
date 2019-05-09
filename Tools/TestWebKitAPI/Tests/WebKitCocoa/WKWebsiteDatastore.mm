@@ -192,8 +192,10 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
     TestWebKitAPI::Util::run(&done);
     
     __block bool removedCredential = false;
-    [[[webView configuration] processPool] _removeCredential:persistentCredential.get() forProtectionSpace:[[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease] completionHandler:^{
-        removedCredential = true;
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] forDataRecords:dataRecords completionHandler:^(void) {
+            removedCredential = true;
+        }];
     }];
     TestWebKitAPI::Util::run(&removedCredential);
 }

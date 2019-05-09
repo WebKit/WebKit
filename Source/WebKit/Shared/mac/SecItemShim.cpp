@@ -78,6 +78,7 @@ static WorkQueue& workQueue()
 
 static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
+    WTFLogAlways("sendSecItemRequest CALLED BY ALEX");
     if (!globalNetworkProcess())
         return WTF::nullopt;
 

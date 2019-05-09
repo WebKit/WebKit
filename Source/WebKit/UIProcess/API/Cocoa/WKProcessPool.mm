@@ -519,13 +519,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->preconnectToServer(serverURL);
 }
 
-- (void)_removeCredential:(NSURLCredential *)credential forProtectionSpace:(NSURLProtectionSpace *)protectionSpace completionHandler:(void(^)())completionHandler
-{
-    _processPool->removeCredential(WebCore::Credential(credential), WebCore::ProtectionSpace(protectionSpace), [completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
-}
-
 - (size_t)_pluginProcessCount
 {
 #if !PLATFORM(IOS_FAMILY)

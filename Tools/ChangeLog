@@ -1,3 +1,15 @@
+2019-05-09  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary test SPI after r244883
+        https://bugs.webkit.org/show_bug.cgi?id=197575
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+
 2019-05-09  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add migrations file to repository

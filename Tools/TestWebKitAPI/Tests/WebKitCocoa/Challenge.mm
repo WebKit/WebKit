@@ -31,6 +31,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool navigationFinished;
@@ -302,10 +303,12 @@ TEST(Challenge, BasicProposedCredential)
     Util::run(&navigationFinished);
     EXPECT_TRUE(receivedSecondChallenge);
     
-    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
     __block bool removedCredential = false;
-    [[webView configuration].processPool _removeCredential:persistentCredential.get() forProtectionSpace:protectionSpace completionHandler:^{
-        removedCredential = true;
+    WKWebsiteDataStore *websiteDataStore = [webView configuration].websiteDataStore;
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] forDataRecords:dataRecords completionHandler:^(void) {
+            removedCredential = true;
+        }];
     }];
     Util::run(&removedCredential);
 }
