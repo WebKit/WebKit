@@ -23,11 +23,10 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowBlur_h
-#define ShadowBlur_h
+#pragma once
 
 #include "Color.h"
 #include "FloatRect.h"
@@ -63,12 +62,17 @@ public:
     void drawRectShadow(GraphicsContext&, const FloatRoundedRect&);
     void drawInsetShadow(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect);
 
-    using DrawBufferCallback = WTF::Function<void(ImageBuffer&, const FloatPoint&, const FloatSize&, const FloatRect&)>;
-    void drawRectShadow(const AffineTransform&, const IntRect&, const FloatRoundedRect&, const DrawBufferCallback&);
-    void drawInsetShadow(const AffineTransform&, const IntRect&, const FloatRect&, const FloatRoundedRect&, const DrawBufferCallback&);
-
+    using DrawBufferCallback = WTF::Function<void(ImageBuffer&, const FloatPoint&, const FloatSize&)>;
+    using DrawImageCallback = WTF::Function<void(ImageBuffer&, const FloatRect&, const FloatRect&)>;
+    using FillRectCallback = WTF::Function<void(const FloatRect&, const Color&)>;
+    using FillRectWithHoleCallback = WTF::Function<void(const FloatRect&, const FloatRect&, const Color&)>;
     using DrawShadowCallback = WTF::Function<void(GraphicsContext&)>;
-    void drawShadowLayer(const AffineTransform&, const IntRect&, const FloatRect&, const DrawShadowCallback&, const DrawBufferCallback&);
+
+    // DrawBufferCallback is for drawing shadow without tiling.
+    // DrawImageCallback and FillRectCallback is for drawing shadow with tiling.
+    void drawRectShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRoundedRect& shadowedRect, const DrawBufferCallback&, const DrawImageCallback&, const FillRectCallback&);
+    void drawInsetShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const DrawBufferCallback&, const DrawImageCallback&, const FillRectWithHoleCallback&);
+    void drawShadowLayer(const AffineTransform&, const IntRect& clipBounds, const FloatRect& layerArea, const DrawShadowCallback&, const DrawBufferCallback&);
 
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
 
@@ -82,29 +86,29 @@ private:
     void drawShadowBuffer(GraphicsContext&);
 
     void adjustBlurRadius(const AffineTransform&);
-    
+
     enum ShadowDirection {
         OuterShadow,
         InnerShadow
     };
-    
+
     IntSize calculateLayerBoundingRect(const AffineTransform&, const FloatRect& layerArea, const IntRect& clipRect);
     IntSize templateSize(const IntSize& blurredEdgeSize, const FloatRoundedRect::Radii&) const;
 
-    void drawRectShadowWithoutTiling(GraphicsContext&, const FloatRoundedRect&, const IntSize& layerSize);
-    void drawRectShadowWithTiling(GraphicsContext&, const FloatRoundedRect&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
-
-    void drawInsetShadowWithoutTiling(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect, const IntSize& layerSize);
-    void drawInsetShadowWithTiling(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
-    
-    void drawLayerPieces(GraphicsContext&, const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection);
-    
     void blurShadowBuffer(const IntSize& templateSize);
     void blurAndColorShadowBuffer(const IntSize& templateSize);
-    
+
+    void drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& layerSize, const DrawBufferCallback&);
+    void drawInsetShadowWithTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectWithHoleCallback&);
+
+    void drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& layerSize, const DrawBufferCallback&);
+    void drawRectShadowWithTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize, const DrawImageCallback&, const FillRectCallback&);
+
+    void drawLayerPiecesAndFillCenter(const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&, const FillRectCallback&);
+    void drawLayerPieces(const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, const DrawImageCallback&);
+
     IntSize blurredEdgeSize() const;
-    
-    
+
     ShadowType m_type { NoShadow };
 
     Color m_color;
@@ -113,7 +117,7 @@ private:
 
     ImageBuffer* m_layerImage { nullptr }; // Buffer to where the temporary shadow will be drawn to.
 
-    FloatRect m_sourceRect; // Sub-rect of m_layerImage that contains the shadow pixels.
+    FloatSize m_shadowedResultSize; // Size of the result of shadowing which is same as shadowedRect + blurred edges.
     FloatPoint m_layerOrigin; // Top-left corner of the (possibly clipped) bounding rect to draw the shadow to.
     FloatSize m_layerSize; // Size of m_layerImage pixels that need blurring.
     FloatSize m_layerContextTranslation; // Translation to apply to m_layerContext for the shadow to be correctly clipped.
@@ -122,5 +126,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ShadowBlur_h
