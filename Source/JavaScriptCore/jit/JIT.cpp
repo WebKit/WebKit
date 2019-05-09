@@ -681,6 +681,22 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     sampleInstruction(m_codeBlock->instructions().begin());
 #endif
 
+    int frameTopOffset = stackPointerOffsetFor(m_codeBlock) * sizeof(Register);
+    unsigned maxFrameSize = -frameTopOffset;
+    addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
+    JumpList stackOverflow;
+    if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
+        stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
+    stackOverflow.append(branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
+
+    move(regT1, stackPointerRegister);
+    checkStackPointerAlignment();
+    if (Options::zeroStackFrame())
+        clearStackFrame(callFrameRegister, stackPointerRegister, regT0, maxFrameSize);
+
+    emitSaveCalleeSaves();
+    emitMaterializeTagCheckRegisters();
+
     if (m_codeBlock->codeType() == FunctionCode) {
         ASSERT(m_bytecodeOffset == std::numeric_limits<unsigned>::max());
         if (shouldEmitProfiling()) {
@@ -700,22 +716,6 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
             }
         }
     }
-
-    int frameTopOffset = stackPointerOffsetFor(m_codeBlock) * sizeof(Register);
-    unsigned maxFrameSize = -frameTopOffset;
-    addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
-    JumpList stackOverflow;
-    if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
-        stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
-    stackOverflow.append(branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
-
-    move(regT1, stackPointerRegister);
-    checkStackPointerAlignment();
-    if (Options::zeroStackFrame())
-        clearStackFrame(callFrameRegister, stackPointerRegister, regT0, maxFrameSize);
-
-    emitSaveCalleeSaves();
-    emitMaterializeTagCheckRegisters();
     
     RELEASE_ASSERT(!JITCode::isJIT(m_codeBlock->jitType()));
 
