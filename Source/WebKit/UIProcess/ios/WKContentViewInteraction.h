@@ -324,6 +324,7 @@ struct WKAutoCorrectionData {
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     BOOL _candidateViewNeedsUpdate;
+    BOOL _seenHardwareKeyDownInNonEditableElement;
 #endif
 
     BOOL _becomingFirstResponder;

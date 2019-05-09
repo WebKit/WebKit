@@ -1,3 +1,25 @@
+2019-05-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Lazily request keyboard on first hardware keydown when a non-editable element is focused
+        https://bugs.webkit.org/show_bug.cgi?id=197746
+        <rdar://problem/50630406>
+
+        Reviewed by Brent Fulgham.
+
+        Be even lazier. We only need to create a keyboard if an editable element is focused or on
+        the first hardware keydown when a non-editable element is focused. We currently do the former.
+        Let's also do the latter.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]): Reset bookkeeping.
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]): Further condition the result on
+        whether we have seen a hardware keydown event in a non-editable element.
+        (-[WKContentView _handleKeyUIEvent:]): If this is the first hardware key event we've seen then
+        update state and call -reloadInputView. -reloadInputView will call us back in -_requiresKeyboardWhenFirstResponder
+        and we will now return YES. So, it will create the keyboard.
+        (-[WKContentView _hardwareKeyboardAvailabilityChanged]): Reset bookkeeping.
+
 2019-05-08  Dean Jackson  <dino@apple.com>
 
         Guard long press link preview with a USE macro rather than complicated includes

@@ -842,6 +842,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     _candidateViewNeedsUpdate = NO;
+    _seenHardwareKeyDownInNonEditableElement = NO;
 #endif
 
     if (_interactionViewsContainerView) {
@@ -1664,14 +1665,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
-    // FIXME: Only create keyboard if [self shouldShowAutomaticKeyboardUI] returns YES or
-    // on first hardware keydown in a non-editable element. See <https://bugs.webkit.org/show_bug.cgi?id=197746>.
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
-    if (GSEventIsHardwareKeyboardAttached())
-        return YES;
-#endif
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
-    return [self shouldShowAutomaticKeyboardUI];
+    return [self shouldShowAutomaticKeyboardUI]
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+        || _seenHardwareKeyDownInNonEditableElement
+#endif
+        ;
 }
 
 - (BOOL)_requiresKeyboardResetOnReload
@@ -4487,6 +4486,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
                 return;
         }
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
+        if (!_seenHardwareKeyDownInNonEditableElement) {
+            _seenHardwareKeyDownInNonEditableElement = YES;
+            [self reloadInputViews];
+        }
         [super _handleKeyUIEvent:event];
 #else
         [self handleKeyEvent:event];
@@ -5220,6 +5223,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_hardwareKeyboardAvailabilityChanged
 {
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    _seenHardwareKeyDownInNonEditableElement = NO;
+#endif
     [self reloadInputViews];
 }
 
