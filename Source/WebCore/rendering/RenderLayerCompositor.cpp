@@ -955,7 +955,13 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         addToOverlapMap(overlapMap, layer, layerExtent);
 
 #if ENABLE(CSS_COMPOSITING)
+    bool isolatedCompositedBlending = layer.isolatesCompositedBlending();
     layer.setHasNotIsolatedCompositedBlendingDescendants(childState.hasNotIsolatedCompositedBlendingDescendants);
+    if (layer.isolatesCompositedBlending() != isolatedCompositedBlending) {
+        // isolatedCompositedBlending affects the result of clippedByAncestor().
+        layer.setChildrenNeedCompositingGeometryUpdate();
+    }
+
     ASSERT(!layer.hasNotIsolatedCompositedBlendingDescendants() || layer.hasNotIsolatedBlendingDescendants());
 #endif
     // Now check for reasons to become composited that depend on the state of descendant layers.
