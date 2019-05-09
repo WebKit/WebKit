@@ -6300,12 +6300,10 @@ void Document::loadEventDelayTimerFired()
     // FIXME: Should this also call DocumentLoader::checkLoadComplete?
     // FIXME: Not obvious why checkCompleted needs to go first. The order these are called is
     // visible to WebKit clients, but it's more like a race than a well-defined relationship.
-    auto weakThis = makeWeakPtr(this);
+    Ref<Document> protectedThis(*this);
     checkCompleted();
-    if (weakThis) {
-        if (auto* frame = this->frame())
-            frame->loader().checkLoadComplete();
-    }
+    if (auto* frame = this->frame())
+        frame->loader().checkLoadComplete();
 }
 
 void Document::checkCompleted()
