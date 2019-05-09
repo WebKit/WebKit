@@ -78,12 +78,12 @@ bool IsTriangleMode(PrimitiveMode drawMode);
 
 namespace priv
 {
-extern const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes;
+extern const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes();
 }  // namespace priv
 
 ANGLE_INLINE bool IsLineMode(PrimitiveMode primitiveMode)
 {
-    return priv::gLineModes[primitiveMode];
+    return priv::gLineModes()[primitiveMode];
 }
 
 bool IsIntegerFormat(GLenum unsizedFormat);

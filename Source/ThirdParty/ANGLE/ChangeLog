@@ -1,5 +1,18 @@
 2019-05-08  Alex Christensen  <achristensen@webkit.org>
 
+        Fix High Sierra and Windows builds.
+
+        * src/common/utilities.cpp:
+        (gl::priv::gLineModes):
+        * src/common/utilities.h:
+        (gl::IsLineMode):
+        Don't have a global constructor.  Use a function scoped static variable instead.
+        * GLESv2.cmake:
+        Renderer11.cpp was not building successfully on the bots.
+        I don't think it's needed, so just don't build it.
+
+2019-05-08  Alex Christensen  <achristensen@webkit.org>
+
         Fix High Sierra build.
 
         * src/libANGLE/State.cpp:

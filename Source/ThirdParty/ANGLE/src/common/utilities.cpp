@@ -617,11 +617,16 @@ bool IsTriangleMode(PrimitiveMode drawMode)
 
 namespace priv
 {
-const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes = {
-    {{PrimitiveMode::LineLoop, true},
-     {PrimitiveMode::LineStrip, true},
-     {PrimitiveMode::LineStripAdjacency, true},
-     {PrimitiveMode::Lines, true}}};
+const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes()
+{
+    static const angle::PackedEnumMap<PrimitiveMode, bool> modes {
+        { PrimitiveMode::LineLoop, true },
+        { PrimitiveMode::LineStrip, true },
+        { PrimitiveMode::LineStripAdjacency, true },
+        { PrimitiveMode::Lines, true }
+    };
+    return modes;
+};
 }  // namespace priv
 
 bool IsIntegerFormat(GLenum unsizedFormat)

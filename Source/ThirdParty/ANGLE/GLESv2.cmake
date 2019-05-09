@@ -472,8 +472,6 @@ set(libangle_d3d11_sources
     src/libANGLE/renderer/d3d/d3d11/ProgramPipeline11.h
     src/libANGLE/renderer/d3d/d3d11/Query11.cpp
     src/libANGLE/renderer/d3d/d3d11/Query11.h
-    src/libANGLE/renderer/d3d/d3d11/Renderer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Renderer11.h
     src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp
     src/libANGLE/renderer/d3d/d3d11/renderer11_utils.h
     src/libANGLE/renderer/d3d/d3d11/RenderStateCache.cpp
