@@ -45,19 +45,15 @@ macro(CHECK_FOR_SSE2)
             a = _mm_loadu_pd (vals);
             b = _mm_add_pd (a,a);
             _mm_storeu_pd (vals,b);
-            return(0);
+            return 0;
         }"
         HAVE_SSE2_EXTENSIONS)
 
-    if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
+    if (COMPILER_IS_GCC_OR_CLANG OR (MSVC AND NOT CMAKE_CL_64))
         if (HAVE_SSE2_EXTENSIONS)
             set(SSE2_SUPPORT_FOUND TRUE)
+            message(STATUS "Found SSE2 extensions")
         endif ()
-    elseif (MSVC AND NOT CMAKE_CL_64)
-        if (HAVE_SSE2_EXTENSIONS)
-            set(SSE2_SUPPORT_FOUND TRUE)
-            message(STATUS "Found SSE2 extensions.")
-        endif (HAVE_SSE2_EXTENSIONS)
     endif ()
 
 endmacro(CHECK_FOR_SSE2)

@@ -2266,13 +2266,6 @@ sub generateBuildSystemFromCMakeProject
     my $cmakeSourceDir = isCygwin() ? windowsSourceDir() : sourceDir();
     push @args, '"' . $cmakeSourceDir . '"';
 
-    # Compiler options to keep floating point values consistent
-    # between 32-bit and 64-bit architectures.
-    determineArchitecture();
-    if ($architecture eq "i686" && !isCrossCompilation() && !isAnyWindows()) {
-        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
-    }
-
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
