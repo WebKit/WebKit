@@ -168,10 +168,12 @@ void GStreamerRegistryScanner::initialize()
         if (vp8DecoderAvailable) {
             m_codecMap.add(AtomicString("vp8"), vp8DecoderAvailable.isUsingHardware);
             m_codecMap.add(AtomicString("x-vp8"), vp8DecoderAvailable.isUsingHardware);
+            m_codecMap.add(AtomicString("vp8.0"), vp8DecoderAvailable.isUsingHardware);
         }
         if (vp9DecoderAvailable) {
             m_codecMap.add(AtomicString("vp9"), vp9DecoderAvailable.isUsingHardware);
             m_codecMap.add(AtomicString("x-vp9"), vp9DecoderAvailable.isUsingHardware);
+            m_codecMap.add(AtomicString("vp9.0"), vp9DecoderAvailable.isUsingHardware);
         }
         if (opusSupported)
             m_mimeTypeSet.add(AtomicString("audio/webm"));
