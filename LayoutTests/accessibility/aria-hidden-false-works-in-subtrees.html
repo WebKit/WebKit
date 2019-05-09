@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -84,7 +85,7 @@ text3
         }
         var indent = "";
         for (var k = 0; k < level; k++) { indent += "  "; }
-        debug(indent + element.role + "\n" + indent + element.description + "\n");
+        debug(indent + element.role + "\n" + indent + platformValueForW3CName(element, true) + "\n");
         var childrenCount = element.childrenCount;
         for (var k = 0; k < childrenCount; k++) {
             dumpAccessibilityChildren(element.childAtIndex(k), level+1);
@@ -98,16 +99,30 @@ text3
         dumpAccessibilityChildren(root, 0);
 
         // Text inside aria-hidden=false inherits from parent.
-        var object = accessibilityController.accessibleElementById("group3").childAtIndex(0);
-        shouldBe("object.role", "'AXRole: AXStaticText'");
+        var object;
+        if (accessibilityController.platformName == "atk") {
+            object = accessibilityController.accessibleElementById("group3");
+            shouldBe("object.role", "'AXRole: AXSection'");
+        } else {
+            object = accessibilityController.accessibleElementById("group3").childAtIndex(0);
+            shouldBe("object.role", "'AXRole: AXStaticText'");
+        }
         var stringValue = object.stringValue.replace(/\n/g, '');
         shouldBe("stringValue", "'AXValue: text3'");
 
         // Text inside nested aria-hidden=false inherits from parent.
-        object = accessibilityController.accessibleElementById("group4").childAtIndex(0).childAtIndex(0);
-        shouldBe("object.role", "'AXRole: AXStaticText'");
+        if (accessibilityController.platformName == "atk") {
+            object = accessibilityController.accessibleElementById("group4").childAtIndex(0);
+            shouldBe("object.role", "'AXRole: AXGroup'");
+        } else {
+            object = accessibilityController.accessibleElementById("group4").childAtIndex(0).childAtIndex(0);
+            shouldBe("object.role", "'AXRole: AXStaticText'");
+        }
         stringValue = object.stringValue.replace(/\n/g, '');
-        shouldBe("stringValue", "'AXValue:     text4  '");
+        if (accessibilityController.platformName == "atk")
+            shouldBe("stringValue", "'AXValue: text4'");
+        else
+            shouldBe("stringValue", "'AXValue:     text4  '");
 
         // When not all the parents have aria-hidden=false, element should not be visible.
         object = accessibilityController.accessibleElementById("group5").childAtIndex(0);
@@ -115,12 +130,18 @@ text3
 
         // Objects that don't have aria-hidden=false are not visible when the parents have that attribute.
         object = accessibilityController.accessibleElementById("group6").childAtIndex(0);
-        shouldBe("object.role", "'AXRole: AXGroup'");
+        if (accessibilityController.platformName == "atk")
+            shouldBe("object.role", "'AXRole: AXSection'");
+        else
+            shouldBe("object.role", "'AXRole: AXGroup'");
         shouldBe("object.childrenCount", "0");
 
         // When all objects have aria-hidden=false, then the elements are visible.
         object = accessibilityController.accessibleElementById("group7").childAtIndex(0);
-        shouldBe("object.role", "'AXRole: AXGroup'");
+        if (accessibilityController.platformName == "atk")
+            shouldBe("object.role", "'AXRole: AXSection'");
+        else
+            shouldBe("object.role", "'AXRole: AXGroup'");
         shouldBe("object.childrenCount", "1");
         shouldBe("object.childAtIndex(0).role", "'AXRole: AXButton'");
     }
