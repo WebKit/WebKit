@@ -1,3 +1,30 @@
+2019-05-08  Dean Jackson  <dino@apple.com>
+
+        Guard long press link preview with a USE macro rather than complicated includes
+        https://bugs.webkit.org/show_bug.cgi?id=197728
+        <rdar://problem/50604700>
+
+        Reviewed by Wenson Hsieh.
+
+        It was getting complicated to manage the coordination between WebKitAdditions
+        and WebKit without having to split up the includes into multiple files
+        or have lots of duplication.
+
+        Instead, WebKitAdditions will now define a USE macro which can be used
+        in various places through WebKit.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+        (previewIdentifierForElementAction):
+        (-[WKContentView shouldUsePreviewForLongPress]):
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView _unregisterPreview]):
+        (shouldUsePreviewForLongPress): Deleted.
+        (-[WKContentView _registerPreviewLongPress]): Deleted.
+        (-[WKContentView _unregisterPreviewLongPress]): Deleted.
+
 2019-05-09  Alex Christensen  <achristensen@webkit.org>
 
         Remove now-unnecessary Connection::sendMessageWithReply
