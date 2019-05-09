@@ -9,7 +9,7 @@ function test()
         var str = " ".repeat("Source: ".length);
         str += " ".repeat(range.startOffset);
         str += "^";
-        str += "~".repeat(range.endOffset - range.startOffset - 1);
+        str += "~".repeat(Math.max(range.endOffset - range.startOffset - 1, 0));
         InspectorTest.log(str);
     }
 
