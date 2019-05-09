@@ -36,7 +36,6 @@ namespace WebKit {
     
 class SecItemResponseData {
 public:
-    SecItemResponseData() = default;
     SecItemResponseData(OSStatus, RetainPtr<CFTypeRef>&& result);
 
     void encode(IPC::Encoder&) const;
