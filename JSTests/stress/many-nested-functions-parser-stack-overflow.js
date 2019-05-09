@@ -9,5 +9,10 @@ code += ";\n";
 code += "  return 80000;\n"; 
  
 code += "}\n"; 
- 
-eval(code); 
+
+try {
+    eval(code);
+} catch (e) {
+    if (!(e instanceof RangeError))
+        throw new Error(`threw an error: ${e} but it wasn't a RangeError`);
+}
