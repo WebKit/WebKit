@@ -1228,28 +1228,17 @@ static gboolean webkitWebViewBaseEvent(GtkWidget* widget, GdkEvent* event)
 
 static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
 {
-    // If the socket has already been created and embedded a plug ID, return it.
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
-    if (priv->accessible && atk_socket_is_occupied(ATK_SOCKET(priv->accessible.get())))
-        return priv->accessible.get();
-
-    // Create the accessible object and associate it to the widget.
     if (!priv->accessible) {
+        // Create the accessible object and associate it to the widget.
         priv->accessible = adoptGRef(ATK_OBJECT(webkitWebViewBaseAccessibleNew(widget)));
 
-        // Set the parent not to break bottom-up navigation.
-        GtkWidget* parentWidget = gtk_widget_get_parent(widget);
-        AtkObject* axParent = parentWidget ? gtk_widget_get_accessible(parentWidget) : 0;
-        if (axParent)
-            atk_object_set_parent(priv->accessible.get(), axParent);
+        // Set the parent to not break bottom-up navigation.
+        if (auto* parentWidget = gtk_widget_get_parent(widget)) {
+            if (auto* axParent = gtk_widget_get_accessible(parentWidget))
+                atk_object_set_parent(priv->accessible.get(), axParent);
+        }
     }
-
-    // Try to embed the plug in the socket, if posssible.
-    String plugID = priv->pageProxy->accessibilityPlugID();
-    if (plugID.isNull())
-        return priv->accessible.get();
-
-    atk_socket_embed(ATK_SOCKET(priv->accessible.get()), const_cast<gchar*>(plugID.utf8().data()));
 
     return priv->accessible.get();
 }
