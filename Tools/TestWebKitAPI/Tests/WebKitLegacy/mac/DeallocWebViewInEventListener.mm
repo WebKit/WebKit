@@ -81,6 +81,7 @@ TEST(WebKitLegacy, DeallocWebViewInEventListener)
 
         auto listener = adoptNS([[DeallocWebViewInEventListener alloc] init]);
         [[[webView mainFrameDocument] body] addEventListener:@"keypress" listener:listener.get() useCapture:NO];
+        [[[webView mainFrameDocument] body] addEventListener:@"keypress" listener:nullptr useCapture:NO];
         listener = nullptr;
         [webView close];
         [pool drain];

@@ -1,3 +1,15 @@
+2019-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Don't crash when DOMNode.addEventListener:listener:useCapture: is called with a nil listener
+        https://bugs.webkit.org/show_bug.cgi?id=197712
+        <rdar://problem/50429770>
+
+        Reviewed by Tim Horton.
+
+        * DOM/ObjCEventListener.h:
+        * DOM/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::wrap):
+
 2019-05-08  Daniel Bates  <dabates@apple.com>
 
         [Legacy WebKit] REGRESSION (r238078): Crash in hardwareKeyboardAvailabilityChangedCallback()

@@ -47,12 +47,13 @@ ObjCEventListener* ObjCEventListener::find(ObjCListener listener)
     return map->get(listener);
 }
 
-Ref<ObjCEventListener> ObjCEventListener::wrap(ObjCListener listener)
+RefPtr<ObjCEventListener> ObjCEventListener::wrap(ObjCListener listener)
 {
-    RefPtr<ObjCEventListener> wrapper = find(listener);
-    if (wrapper)
-        return wrapper.releaseNonNull();
-    return adoptRef(*new ObjCEventListener(listener));
+    if (!listener)
+        return nullptr;
+    if (RefPtr<ObjCEventListener> wrapper = find(listener))
+        return wrapper;
+    return adoptRef(new ObjCEventListener(listener));
 }
 
 ObjCEventListener::ObjCEventListener(ObjCListener listener)
