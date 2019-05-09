@@ -1,3 +1,15 @@
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Cleanup WebPageAccessibilityObjectAtk
+        https://bugs.webkit.org/show_bug.cgi?id=196537
+
+        Reviewed by Michael Catanzaro.
+
+        Also consider files under atk directories as exceptions for GObject conventions.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] User data not correctly passed to callback of functions and constructors with no parameters

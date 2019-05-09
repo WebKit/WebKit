@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebPageAccessibilityObject.h"
+#include "WebKitWebPageAccessibilityObject.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -33,28 +33,33 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 using namespace WebCore;
 
-G_DEFINE_TYPE(WebPageAccessibilityObject, web_page_accessibility_object, ATK_TYPE_PLUG)
+struct _WebKitWebPageAccessibilityObjectPrivate {
+    WebPage* page;
+};
+
+WEBKIT_DEFINE_TYPE(WebKitWebPageAccessibilityObject, webkit_web_page_accessibility_object, ATK_TYPE_PLUG)
 
 static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
 {
     if (!AXObjectCache::accessibilityEnabled())
         AXObjectCache::enableAccessibility();
 
-    WebPageAccessibilityObject* accessible = WEB_PAGE_ACCESSIBILITY_OBJECT(atkObject);
-    if (!accessible->m_page)
-        return 0;
+    auto* accessible = WEBKIT_WEB_PAGE_ACCESSIBILITY_OBJECT(atkObject);
+    if (!accessible->priv->page)
+        return nullptr;
 
-    Page* corePage = accessible->m_page->corePage();
+    Page* corePage = accessible->priv->page->corePage();
     if (!corePage)
-        return 0;
+        return nullptr;
 
     Frame& coreFrame = corePage->mainFrame();
     if (!coreFrame.document())
-        return 0;
+        return nullptr;
 
     AXObjectCache* cache = coreFrame.document()->axObjectCache();
     if (!cache)
@@ -62,48 +67,44 @@ static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
 
     AccessibilityObject* coreRootObject = cache->rootObject();
     if (!coreRootObject)
-        return 0;
+        return nullptr;
 
     AtkObject* rootObject = coreRootObject->wrapper();
     if (!rootObject || !ATK_IS_OBJECT(rootObject))
-        return 0;
+        return nullptr;
 
     return rootObject;
 }
 
-static void webPageAccessibilityObjectInitialize(AtkObject* atkObject, gpointer data)
+static void webkitWebPageAccessibilityObjectInitialize(AtkObject* atkObject, gpointer data)
 {
-    if (ATK_OBJECT_CLASS(web_page_accessibility_object_parent_class)->initialize)
-        ATK_OBJECT_CLASS(web_page_accessibility_object_parent_class)->initialize(atkObject, data);
+    if (ATK_OBJECT_CLASS(webkit_web_page_accessibility_object_parent_class)->initialize)
+        ATK_OBJECT_CLASS(webkit_web_page_accessibility_object_parent_class)->initialize(atkObject, data);
 
-    WEB_PAGE_ACCESSIBILITY_OBJECT(atkObject)->m_page = reinterpret_cast<WebPage*>(data);
+    WEBKIT_WEB_PAGE_ACCESSIBILITY_OBJECT(atkObject)->priv->page = reinterpret_cast<WebPage*>(data);
     atk_object_set_role(atkObject, ATK_ROLE_FILLER);
 }
 
-static gint webPageAccessibilityObjectGetIndexInParent(AtkObject*)
+static gint webkitWebPageAccessibilityObjectGetIndexInParent(AtkObject*)
 {
     // An AtkPlug is the only child an AtkSocket can have.
     return 0;
 }
 
-static gint webPageAccessibilityObjectGetNChildren(AtkObject* atkObject)
+static gint webkitWebPageAccessibilityObjectGetNChildren(AtkObject* atkObject)
 {
-    AtkObject* rootObject = accessibilityRootObjectWrapper(atkObject);
-    if (!rootObject)
-        return 0;
-
-    return 1;
+    return accessibilityRootObjectWrapper(atkObject) ? 1 : 0;
 }
 
-static AtkObject* webPageAccessibilityObjectRefChild(AtkObject* atkObject, gint index)
+static AtkObject* webkitWebPageAccessibilityObjectRefChild(AtkObject* atkObject, gint index)
 {
     // It's supposed to have either one child or zero.
     if (index && index != 1)
-        return 0;
+        return nullptr;
 
     AtkObject* rootObject = accessibilityRootObjectWrapper(atkObject);
     if (!rootObject)
-        return 0;
+        return nullptr;
 
     atk_object_set_parent(rootObject, atkObject);
     g_object_ref(rootObject);
@@ -111,39 +112,32 @@ static AtkObject* webPageAccessibilityObjectRefChild(AtkObject* atkObject, gint 
     return rootObject;
 }
 
-static void web_page_accessibility_object_init(WebPageAccessibilityObject*)
-{
-}
-
-static void web_page_accessibility_object_class_init(WebPageAccessibilityObjectClass* klass)
+static void webkit_web_page_accessibility_object_class_init(WebKitWebPageAccessibilityObjectClass* klass)
 {
     AtkObjectClass* atkObjectClass = ATK_OBJECT_CLASS(klass);
-
     // No need to implement get_parent() here since this is a subclass
     // of AtkPlug and all the logic related to that function will be
     // implemented by the ATK bridge.
-    atkObjectClass->initialize = webPageAccessibilityObjectInitialize;
-    atkObjectClass->get_index_in_parent = webPageAccessibilityObjectGetIndexInParent;
-    atkObjectClass->get_n_children = webPageAccessibilityObjectGetNChildren;
-    atkObjectClass->ref_child = webPageAccessibilityObjectRefChild;
+    atkObjectClass->initialize = webkitWebPageAccessibilityObjectInitialize;
+    atkObjectClass->get_index_in_parent = webkitWebPageAccessibilityObjectGetIndexInParent;
+    atkObjectClass->get_n_children = webkitWebPageAccessibilityObjectGetNChildren;
+    atkObjectClass->ref_child = webkitWebPageAccessibilityObjectRefChild;
 }
 
-WebPageAccessibilityObject* webPageAccessibilityObjectNew(WebPage* page)
+AtkObject* webkitWebPageAccessibilityObjectNew(WebPage* page)
 {
-    AtkObject* object = ATK_OBJECT(g_object_new(WEB_TYPE_PAGE_ACCESSIBILITY_OBJECT, NULL));
+    AtkObject* object = ATK_OBJECT(g_object_new(WEBKIT_TYPE_WEB_PAGE_ACCESSIBILITY_OBJECT, nullptr));
     atk_object_initialize(object, page);
-    return WEB_PAGE_ACCESSIBILITY_OBJECT(object);
+    return object;
 }
 
-void webPageAccessibilityObjectRefresh(WebPageAccessibilityObject* accessible)
+void webkitWebPageAccessibilityObjectRefresh(WebKitWebPageAccessibilityObject* accessible)
 {
     // We just need to ensure that there's a connection in the ATK
     // world between this accessibility object and the AtkObject of
     // the accessibility object for the root of the DOM tree.
-    AtkObject* rootObject = accessibilityRootObjectWrapper(ATK_OBJECT(accessible));
-    if (!rootObject)
-        return;
-    atk_object_set_parent(rootObject, ATK_OBJECT(accessible));
+    if (auto* rootObject = accessibilityRootObjectWrapper(ATK_OBJECT(accessible)))
+        atk_object_set_parent(rootObject, ATK_OBJECT(accessible));
 }
 
-#endif
+#endif // HAVE(ACCESSIBILITY)
