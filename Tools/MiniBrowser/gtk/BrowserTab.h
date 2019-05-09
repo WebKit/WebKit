@@ -54,6 +54,7 @@ void browser_tab_stop_search(BrowserTab*);
 void browser_tab_add_accelerators(BrowserTab*, GtkAccelGroup*);
 void browser_tab_enter_fullscreen(BrowserTab*);
 void browser_tab_leave_fullscreen(BrowserTab*);
+void browser_tab_set_background_color(BrowserTab*, GdkRGBA*);
 
 G_END_DECLS
 

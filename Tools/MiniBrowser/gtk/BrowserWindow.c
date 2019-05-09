@@ -65,6 +65,7 @@ struct _BrowserWindow {
     GtkWindow *parentWindow;
     guint resetEntryProgressTimeoutId;
     gchar *sessionFile;
+    GdkRGBA backgroundColor;
 };
 
 struct _BrowserWindowClass {
@@ -917,6 +918,9 @@ static void browser_window_init(BrowserWindow *window)
 {
     windowList = g_list_append(windowList, window);
 
+    window->backgroundColor.red = window->backgroundColor.green = window->backgroundColor.blue = 255;
+    window->backgroundColor.alpha = 1;
+
     gtk_window_set_title(GTK_WINDOW(window), defaultWindowTitle);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
@@ -1155,6 +1159,8 @@ void browser_window_append_view(BrowserWindow *window, WebKitWebView *webView)
     }
 
     GtkWidget *tab = browser_tab_new(webView);
+    if (gtk_widget_get_app_paintable(GTK_WIDGET(window)))
+        browser_tab_set_background_color(BROWSER_TAB(tab), &window->backgroundColor);
     browser_tab_add_accelerators(BROWSER_TAB(tab), window->accelGroup);
     gtk_notebook_append_page(GTK_NOTEBOOK(window->notebook), tab, browser_tab_get_title_widget(BROWSER_TAB(tab)));
     gtk_container_child_set(GTK_CONTAINER(window->notebook), tab, "tab-expand", TRUE, NULL);
@@ -1203,11 +1209,12 @@ void browser_window_set_background_color(BrowserWindow *window, GdkRGBA *rgba)
     g_return_if_fail(BROWSER_IS_WINDOW(window));
     g_return_if_fail(rgba);
 
-    WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
-    GdkRGBA viewRGBA;
-    webkit_web_view_get_background_color(webView, &viewRGBA);
-    if (gdk_rgba_equal(rgba, &viewRGBA))
+    g_assert(!window->activeTab);
+
+    if (gdk_rgba_equal(rgba, &window->backgroundColor))
         return;
+
+    window->backgroundColor = *rgba;
 
     GdkVisual *rgbaVisual = gdk_screen_get_rgba_visual(gtk_window_get_screen(GTK_WINDOW(window)));
     if (!rgbaVisual)
@@ -1215,8 +1222,6 @@ void browser_window_set_background_color(BrowserWindow *window, GdkRGBA *rgba)
 
     gtk_widget_set_visual(GTK_WIDGET(window), rgbaVisual);
     gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
-
-    webkit_web_view_set_background_color(webView, rgba);
 }
 
 WebKitWebView *browser_window_get_or_create_web_view_for_automation(void)

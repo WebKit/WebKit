@@ -589,6 +589,9 @@ int main(int argc, char *argv[])
     else if (geometry)
         gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
 
+    if (backgroundColor)
+        browser_window_set_background_color(mainWindow, backgroundColor);
+
     GtkWidget *firstTab = NULL;
     if (uriArguments) {
         int i;
@@ -604,9 +607,6 @@ int main(int argc, char *argv[])
     } else {
         WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager);
         firstTab = GTK_WIDGET(webView);
-
-        if (backgroundColor)
-            browser_window_set_background_color(mainWindow, backgroundColor);
 
         if (!editorMode) {
             if (sessionFile)
