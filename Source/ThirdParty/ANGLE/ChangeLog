@@ -1,5 +1,14 @@
 2019-05-08  Alex Christensen  <achristensen@webkit.org>
 
+        Fix internal and Windows builds.
+
+        * ANGLE.txt: Added.
+        Restore this file.  It was deleted, but it's needed.
+        * GLESv2.cmake:
+        It turns out CompositorNativeWindow11.cpp and Renderer11.cpp are needed, but the bot doesn't seem to have the right SDK.
+
+2019-05-08  Alex Christensen  <achristensen@webkit.org>
+
         Fix High Sierra and Windows builds.
 
         * GLESv2.cmake:
