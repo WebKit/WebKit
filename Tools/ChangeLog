@@ -1,5 +1,19 @@
 2019-05-09  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Fix formatting issues and typos
+        https://bugs.webkit.org/show_bug.cgi?id=197737
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Removed extra empty line.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunWebKitPerlTests): Fixed typo.
+        * BuildSlaveSupport/ews-app/ews/models/step.py:
+        (Step.save_step): Changed log level to info so that it is logged in production.
+
+2019-05-09  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Production and Development env should configure DEBUG appropriately
         https://bugs.webkit.org/show_bug.cgi?id=197700
 

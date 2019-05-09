@@ -318,7 +318,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
+class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -1234,7 +1234,7 @@ Testing completed, Exit status: 3
         self.expectOutcome(result=FAILURE, state_string='4 api tests failed or timed out (failure)')
         return self.runStep()
 
-    def test_unexpecte_failure(self):
+    def test_unexpected_failure(self):
         self.setupStep(RunAPITests())
         self.setProperty('fullPlatform', 'mac-mojave')
         self.setProperty('platform', 'mac')

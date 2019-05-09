@@ -617,7 +617,6 @@ class CompileWebKit(shell.Compile):
         else:
             self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct()])
 
-
         return super(CompileWebKit, self).evaluateCommand(cmd)
 
 
