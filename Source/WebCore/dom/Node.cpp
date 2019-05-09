@@ -2118,13 +2118,6 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent)
         targetNode->document().domWindow()->incrementScrollEventListenersCount();
 
-    // FIXME: Would it be sufficient to special-case this code for <body> and <frameset>?
-    //
-    // This code was added to address <rdar://problem/5846492> Onorientationchange event not working for document.body.
-    // Forward this call to addEventListener() to the window since these are window-only events.
-    if (eventType == eventNames().orientationchangeEvent || eventType == eventNames().resizeEvent)
-        targetNode->document().domWindow()->addEventListener(eventType, WTFMove(listener), options);
-
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchRelatedEventType(targetNode->document(), eventType))
         targetNode->document().addTouchEventListener(*targetNode);
@@ -2159,12 +2152,6 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 #if PLATFORM(IOS_FAMILY)
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent)
         targetNode->document().domWindow()->decrementScrollEventListenersCount();
-
-    // FIXME: Would it be sufficient to special-case this code for <body> and <frameset>? See <rdar://problem/15647823>.
-    // This code was added to address <rdar://problem/5846492> Onorientationchange event not working for document.body.
-    // Forward this call to removeEventListener() to the window since these are window-only events.
-    if (eventType == eventNames().orientationchangeEvent || eventType == eventNames().resizeEvent)
-        targetNode->document().domWindow()->removeEventListener(eventType, listener, options);
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchRelatedEventType(targetNode->document(), eventType))

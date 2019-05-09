@@ -1,3 +1,16 @@
+2019-05-08  Chris Dumez  <cdumez@apple.com>
+
+        [iOS Debug] ASSERTION FAILED: !m_originalNode in WebCore::JSLazyEventListener::checkValidityForEventTarget(WebCore::EventTarget &)
+        https://bugs.webkit.org/show_bug.cgi?id=197696
+        <rdar://problem/50586956>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/events/ios/rotation/orientationchange-event-listener-on.body-expected.txt: Added.
+        * fast/events/ios/rotation/orientationchange-event-listener-on.body.html: Added.
+
 2019-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245058.
