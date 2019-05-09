@@ -37,6 +37,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeViews.h"
 #import "SmartMagnificationController.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
@@ -1257,6 +1258,20 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 #endif
 }
+
+- (WTF::Optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+#if HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
+    // FIXME: <rdar://problem/48035706>
+    NSMapTable<NSNumber *, UITouch *> *activeTouches = [_touchEventGestureRecognizer activeTouchesByIdentifier];
+    for (NSNumber *touchIdentifier in activeTouches) {
+        UITouch *touch = [activeTouches objectForKey:touchIdentifier];
+        if ([touch.gestureRecognizers containsObject:gestureRecognizer])
+            return [touchIdentifier unsignedIntValue];
+    }
+#endif
+    return WTF::nullopt;
+}
 #endif
 
 inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecognizer *recognizer)
@@ -1318,19 +1333,18 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     for (const auto& touchPoint : touchEvent.touchPoints()) {
         auto phase = touchPoint.phase();
         if (phase == WebKit::WebPlatformTouchPoint::TouchPressed) {
-            auto touchActionData = scrollingCoordinator->touchActionDataAtPoint(touchPoint.location());
-            if (!touchActionData || touchActionData->touchActions.contains(WebCore::TouchAction::Manipulation))
+            auto touchActions = WebKit::touchActionsForPoint(self, touchPoint.location());
+            if (!touchActions || touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation }))
                 continue;
-            if (auto scrollingNodeID = touchActionData->scrollingNodeID)
-                scrollingCoordinator->setTouchDataForTouchIdentifier(*touchActionData, touchPoint.identifier());
-            else {
-                if (!touchActionData->touchActions.contains(WebCore::TouchAction::PinchZoom))
-                    _webView.scrollView.pinchGestureRecognizer.enabled = NO;
-                _preventsPanningInXAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanX);
-                _preventsPanningInYAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanY);
-            }
+            scrollingCoordinator->setTouchActionsForTouchIdentifier(touchActions, touchPoint.identifier());
+
+            if (!touchActions.contains(WebCore::TouchAction::PinchZoom))
+                _webView.scrollView.pinchGestureRecognizer.enabled = NO;
+            _preventsPanningInXAxis = !touchActions.contains(WebCore::TouchAction::PanX);
+            _preventsPanningInYAxis = !touchActions.contains(WebCore::TouchAction::PanY);
+
         } else if (phase == WebKit::WebPlatformTouchPoint::TouchReleased || phase == WebKit::WebPlatformTouchPoint::TouchCancelled)
-            scrollingCoordinator->clearTouchDataForTouchIdentifier(touchPoint.identifier());
+            scrollingCoordinator->clearTouchActionsForTouchIdentifier(touchPoint.identifier());
     }
 }
 #endif

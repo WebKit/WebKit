@@ -1,3 +1,23 @@
+2019-05-08  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Correctly handle overlapping regions for elements with a touch-action property
+        https://bugs.webkit.org/show_bug.cgi?id=194813
+        <rdar://problem/48194708>
+
+        Reviewed by Antti Koivisto.
+
+        Add new tests that check that an element overlapping another element with a "touch-action" property is not affected
+        by the property set on that underlying element.
+
+        * pointerevents/ios/touch-action-none-overlap-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-overlap.html: Added.
+        * pointerevents/ios/touch-action-pan-x-overlap-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-x-overlap.html: Added.
+        * pointerevents/ios/touch-action-pan-y-overlap-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-y-overlap.html: Added.
+        * pointerevents/ios/touch-action-pinch-zoom-overlap-expected.txt: Added.
+        * pointerevents/ios/touch-action-pinch-zoom-overlap.html: Added.
+
 2019-05-08  Chris Dumez  <cdumez@apple.com>
 
         [iOS Debug] ASSERTION FAILED: !m_originalNode in WebCore::JSLazyEventListener::checkValidityForEventTarget(WebCore::EventTarget &)

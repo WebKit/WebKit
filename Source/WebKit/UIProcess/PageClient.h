@@ -501,6 +501,7 @@ public:
 
 #if ENABLE(POINTER_EVENTS)
     virtual void cancelPointersForGestureRecognizer(UIGestureRecognizer*) { }
+    virtual WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) { return WTF::nullopt; }
 #endif
 
 #if PLATFORM(WPE)

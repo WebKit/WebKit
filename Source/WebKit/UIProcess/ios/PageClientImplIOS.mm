@@ -866,6 +866,11 @@ void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* ges
 {
     [m_contentView cancelPointersForGestureRecognizer:gestureRecognizer];
 }
+
+WTF::Optional<unsigned> PageClientImpl::activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
+{
+    return [m_contentView activeTouchIdentifierForGestureRecognizer:gestureRecognizer];
+}
 #endif
 
 void PageClientImpl::handleAutocorrectionContext(const WebAutocorrectionContext& context)

@@ -251,6 +251,7 @@ private:
 
 #if ENABLE(POINTER_EVENTS)
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
+    WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
 #endif
 
     WKContentView *m_contentView;

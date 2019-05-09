@@ -1,3 +1,48 @@
+2019-05-08  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Correctly handle overlapping regions for elements with a touch-action property
+        https://bugs.webkit.org/show_bug.cgi?id=194813
+        <rdar://problem/48194708>
+
+        Reviewed by Antti Koivisto.
+
+        We now use WebKit::touchActionsForPoint() to determine the touch actions for a given touch using its location in -[WKContentViewInteraction
+        _handleTouchActionsForTouchEvent:]. We then record these touch actions for the touch's identifier on the RemoteScrollingCoordinatorProxy.
+
+        Then, as we interact with a UIScrollView, we get its gesture recognizer and get its active touch identifier through the new
+        -[WKContentViewInteraction activeTouchIdentifierForGestureRecognizer:] method, and query the RemoteScrollingCoordinatorProxy for the touch
+        actions matching that touch identifier.
+
+        Tests: pointerevents/ios/touch-action-none-overlap.html
+               pointerevents/ios/touch-action-pan-x-overlap.html
+               pointerevents/ios/touch-action-pan-y-overlap.html
+               pointerevents/ios/touch-action-pinch-zoom-overlap.html
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::activeTouchIdentifierForGestureRecognizer):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp: Maintain a touch identifier to touch actions map.
+        (WebKit::RemoteScrollingCoordinatorProxy::activeTouchActionsForTouchIdentifier const):
+        (WebKit::RemoteScrollingCoordinatorProxy::setTouchActionsForTouchIdentifier):
+        (WebKit::RemoteScrollingCoordinatorProxy::clearTouchActionsForTouchIdentifier):
+        (WebKit::RemoteScrollingCoordinatorProxy::touchActionDataAtPoint const): Deleted.
+        (WebKit::RemoteScrollingCoordinatorProxy::touchActionDataForScrollNodeID const): Deleted.
+        (WebKit::RemoteScrollingCoordinatorProxy::setTouchDataForTouchIdentifier): Deleted.
+        (WebKit::RemoteScrollingCoordinatorProxy::clearTouchDataForTouchIdentifier): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        (-[WKScrollingNodeScrollViewDelegate _scrollView:adjustedOffsetForOffset:translation:startPoint:locationInView:horizontalVelocity:verticalVelocity:]):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::activeTouchActionsForGestureRecognizer const):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::touchActionData const): Deleted.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::activeTouchIdentifierForGestureRecognizer):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView activeTouchIdentifierForGestureRecognizer:]):
+        (-[WKContentView _handleTouchActionsForTouchEvent:]):
+
 2019-05-08  Megan Gardner  <megan_gardner@apple.com>
 
         Add quirks to emulate undo and redo in hidden editable areas on some websites

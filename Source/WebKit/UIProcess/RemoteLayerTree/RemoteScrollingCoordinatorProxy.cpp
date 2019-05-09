@@ -247,28 +247,22 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
 }
 
 #if ENABLE(POINTER_EVENTS)
-Optional<TouchActionData> RemoteScrollingCoordinatorProxy::touchActionDataAtPoint(const IntPoint p) const
+OptionSet<TouchAction> RemoteScrollingCoordinatorProxy::activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const
 {
-    return m_scrollingTree->touchActionDataAtPoint(p);
+    auto iterator = m_touchActionsByTouchIdentifier.find(touchIdentifier);
+    if (iterator == m_touchActionsByTouchIdentifier.end())
+        return { };
+    return iterator->value;
 }
 
-Optional<TouchActionData> RemoteScrollingCoordinatorProxy::touchActionDataForScrollNodeID(ScrollingNodeID scrollingNodeID) const
+void RemoteScrollingCoordinatorProxy::setTouchActionsForTouchIdentifier(OptionSet<TouchAction> touchActions, unsigned touchIdentifier)
 {
-    for (auto& touchActionData : m_touchActionDataByTouchIdentifier.values()) {
-        if (touchActionData.scrollingNodeID == scrollingNodeID)
-            return touchActionData;
-    }
-    return WTF::nullopt;
+    m_touchActionsByTouchIdentifier.set(touchIdentifier, touchActions);
 }
 
-void RemoteScrollingCoordinatorProxy::setTouchDataForTouchIdentifier(TouchActionData touchActionData, unsigned touchIdentifier)
+void RemoteScrollingCoordinatorProxy::clearTouchActionsForTouchIdentifier(unsigned touchIdentifier)
 {
-    m_touchActionDataByTouchIdentifier.set(touchIdentifier, touchActionData);
-}
-
-void RemoteScrollingCoordinatorProxy::clearTouchDataForTouchIdentifier(unsigned touchIdentifier)
-{
-    m_touchActionDataByTouchIdentifier.remove(touchIdentifier);
+    m_touchActionsByTouchIdentifier.remove(touchIdentifier);
 }
 
 #endif
