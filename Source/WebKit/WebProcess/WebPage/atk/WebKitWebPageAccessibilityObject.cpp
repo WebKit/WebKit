@@ -69,11 +69,7 @@ static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
     if (!coreRootObject)
         return nullptr;
 
-    AtkObject* rootObject = coreRootObject->wrapper();
-    if (!rootObject || !ATK_IS_OBJECT(rootObject))
-        return nullptr;
-
-    return rootObject;
+    return ATK_OBJECT(coreRootObject->wrapper());
 }
 
 static void webkitWebPageAccessibilityObjectInitialize(AtkObject* atkObject, gpointer data)

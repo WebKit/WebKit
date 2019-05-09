@@ -96,7 +96,7 @@ static AtkObject* webkitAccessibleTableRefAt(AtkTable* table, gint row, gint col
     if (!axCell)
         return 0;
 
-    AtkObject* cell = axCell->wrapper();
+    auto* cell = axCell->wrapper();
     if (!cell)
         return 0;
 
@@ -215,7 +215,7 @@ static AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable* table, gint col
             std::pair<unsigned, unsigned> columnRange;
             downcast<AccessibilityTableCell>(*columnHeader).columnIndexRange(columnRange);
             if (columnRange.first <= static_cast<unsigned>(column) && static_cast<unsigned>(column) < columnRange.first + columnRange.second)
-                return columnHeader->wrapper();
+                return ATK_OBJECT(columnHeader->wrapper());
         }
     }
     return nullptr;
@@ -235,7 +235,7 @@ static AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
             std::pair<unsigned, unsigned> rowRange;
             downcast<AccessibilityTableCell>(*rowHeader).rowIndexRange(rowRange);
             if (rowRange.first <= static_cast<unsigned>(row) && static_cast<unsigned>(row) < rowRange.first + rowRange.second)
-                return rowHeader->wrapper();
+                return ATK_OBJECT(rowHeader->wrapper());
         }
     }
     return nullptr;
@@ -252,7 +252,7 @@ static AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
         if (is<HTMLTableElement>(node)) {
             auto caption = downcast<HTMLTableElement>(*node).caption();
             if (caption)
-                return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->element())->wrapper();
+                return ATK_OBJECT(AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->element())->wrapper());
         }
     }
     return nullptr;

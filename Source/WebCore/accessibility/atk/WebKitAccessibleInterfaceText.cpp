@@ -231,7 +231,7 @@ static guint accessibilityObjectLength(const AccessibilityObject* object)
 
     // For those objects implementing the AtkText interface we use the
     // well known API to always get the text in a consistent way
-    AtkObject* atkObj = ATK_OBJECT(object->wrapper());
+    auto* atkObj = ATK_OBJECT(object->wrapper());
     if (ATK_IS_TEXT(atkObj)) {
         GUniquePtr<gchar> text(webkitAccessibleTextGetText(ATK_TEXT(atkObj), 0, -1));
         return g_utf8_strlen(text.get(), -1);

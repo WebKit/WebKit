@@ -50,6 +50,10 @@
 #include "COMPtr.h"
 #endif
 
+#if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 #if PLATFORM(COCOA)
 
 typedef struct _NSRange NSRange;
@@ -66,8 +70,8 @@ OBJC_CLASS WebAccessibilityObjectWrapper;
 typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 
 #elif PLATFORM(GTK)
-typedef struct _AtkObject AtkObject;
-typedef struct _AtkObject AccessibilityObjectWrapper;
+typedef struct _WebKitAccessible WebKitAccessible;
+typedef struct _WebKitAccessible AccessibilityObjectWrapper;
 #elif PLATFORM(WPE)
 class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #else
@@ -940,20 +944,12 @@ public:
     bool isAXHidden() const;
     bool isDOMHidden() const;
     bool isHidden() const { return isAXHidden() || isDOMHidden(); }
-    
+
 #if HAVE(ACCESSIBILITY)
-#if PLATFORM(GTK)
-    AccessibilityObjectWrapper* wrapper() const;
-    void setWrapper(AccessibilityObjectWrapper*);
-#else
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
-    void setWrapper(AccessibilityObjectWrapper* wrapper) 
-    {
-        m_wrapper = wrapper;
-    }
+    void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
 #endif
-#endif
-    
+
 #if PLATFORM(COCOA)
     void overrideAttachmentParent(AccessibilityObject* parent);
 #else
@@ -1049,7 +1045,7 @@ protected:
 #elif PLATFORM(WIN)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(GTK)
-    AtkObject* m_wrapper { nullptr };
+    GRefPtr<WebKitAccessible> m_wrapper;
 #elif PLATFORM(WPE)
     RefPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif
