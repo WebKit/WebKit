@@ -1,3 +1,30 @@
+2019-05-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r244937. rdar://problem/50628473
+
+    iOS JSC tests frequently exiting with execption after stress/json-stringify-string-builder-overflow.js.no-cjit-validate-phases
+    https://bugs.webkit.org/show_bug.cgi?id=197586
+    
+    Reviewed by Keith Miller.
+    
+    We should only run one config of this test and only when we think we'll have the memory.
+    
+    * stress/json-stringify-string-builder-overflow.js:
+    
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@244937 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-03  Michael Saboff  <msaboff@apple.com>
+
+            iOS JSC tests frequently exiting with execption after stress/json-stringify-string-builder-overflow.js.no-cjit-validate-phases
+            https://bugs.webkit.org/show_bug.cgi?id=197586
+
+            Reviewed by Keith Miller.
+
+            We should only run one config of this test and only when we think we'll have the memory.
+
+            * stress/json-stringify-string-builder-overflow.js:
+
 2019-04-24  Alan Coon  <alancoon@apple.com>
 
         Revert r244122. rdar://problem/50132675

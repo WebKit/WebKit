@@ -1,5 +1,7 @@
 //@ slow!
+//@ skip if $memoryLimited
 //@ skip if $architecture != "arm64" and $architecture != "x86-64"
+//@ runDefault if !$memoryLimited
 
 var exception;
 try {
