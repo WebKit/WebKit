@@ -1,3 +1,33 @@
+2019-05-09  Alex Christensen  <achristensen@webkit.org>
+
+        Remove now-unnecessary Connection::sendMessageWithReply
+        https://bugs.webkit.org/show_bug.cgi?id=197747
+
+        Reviewed by Tim Horton.
+
+        The WebProcess messages that use it already do the right thing with CompletionHandlers and can be replaced by sendWithAsyncReply.
+        The SecItemShim message that uses it can be replaced by sendSync.
+
+        This patch only increases responsiveness when clearing website data and removes the need for a WorkQueue dedicated entirely to the SecItemShim.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::invalidate):
+        (IPC::Connection::processIncomingSyncReply):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::sendMessageWithReply): Deleted.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithReply): Deleted.
+        * Shared/mac/SecItemResponseData.h:
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        (WebKit::workQueue): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        * WebProcess/WebProcess.messages.in:
+
 2019-05-09  Dean Jackson  <dino@apple.com>
 
         Build fix for iOS.

@@ -64,38 +64,16 @@ static WeakPtr<NetworkProcess>& globalNetworkProcess()
     return networkProcess.get();
 }
 
-static WorkQueue& workQueue()
-{
-    static WorkQueue* workQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        workQueue = &WorkQueue::create("com.apple.WebKit.SecItemShim").leakRef();
-
-    });
-
-    return *workQueue;
-}
-
 static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
-    WTFLogAlways("sendSecItemRequest CALLED BY ALEX");
     if (!globalNetworkProcess())
         return WTF::nullopt;
 
-    Optional<SecItemResponseData> response;
+    SecItemResponseData response;
+    if (!globalNetworkProcess()->parentProcessConnection()->sendSync(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), Messages::SecItemShimProxy::SecItemRequest::Reply(response), 0))
+        return WTF::nullopt;
 
-    BinarySemaphore semaphore;
-
-    globalNetworkProcess()->parentProcessConnection()->sendWithReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), 0, workQueue(), [&response, &semaphore](auto reply) {
-        if (reply)
-            response = WTFMove(std::get<0>(*reply));
-
-        semaphore.signal();
-    });
-
-    semaphore.wait();
-
-    return response;
+    return WTFMove(response);
 }
 
 static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)

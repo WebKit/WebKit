@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecItemResponseData_h
-#define SecItemResponseData_h
+#pragma once
 
 #include <wtf/RetainPtr.h>
 
@@ -37,6 +36,7 @@ namespace WebKit {
     
 class SecItemResponseData {
 public:
+    SecItemResponseData() = default;
     SecItemResponseData(OSStatus, RetainPtr<CFTypeRef>&& result);
 
     void encode(IPC::Encoder&) const;
@@ -51,5 +51,3 @@ private:
 };
     
 } // namespace WebKit
-
-#endif // SecItemResponseData_h
