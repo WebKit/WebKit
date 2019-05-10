@@ -1,3 +1,18 @@
+2019-05-10  Robin Morisset  <rmorisset@apple.com>
+
+        testb3 failing with crash in JSC::B3::BasicBlock::appendNonTerminal
+        https://bugs.webkit.org/show_bug.cgi?id=197756
+        <rdar://problem/50641659>
+
+        Reviewed by Saam Barati.
+
+        When I added https://bugs.webkit.org/show_bug.cgi?id=197265 I assumed that which block is the root does not change in the middle of strength reduction.
+        But specializeSelect can use splitForward, which uses a new block for the first half of the given block.
+        So if the block being split is the root block I must update m_root and erase the m_valueInConstant cache.
+        Erasing the cache cannot cause wrong results: at most it can make us miss some optimization opportunities in this iteration of the fixpoint.
+
+        * b3/B3ReduceStrength.cpp:
+
 2019-05-09  Keith Miller  <keith_miller@apple.com>
 
         Fix crashes related to pointer authentication for primitive gigacage

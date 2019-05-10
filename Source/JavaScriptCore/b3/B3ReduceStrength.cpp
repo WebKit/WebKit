@@ -2162,6 +2162,7 @@ private:
                 m_valueForConstant.add(key, m_value);
             else {
                 Value* constInRoot = m_proc.clone(m_value);
+                ASSERT(m_root && m_root->size() >= 1);
                 m_root->appendNonTerminal(constInRoot);
                 m_valueForConstant.add(key, constInRoot);
                 m_value->replaceWithIdentity(constInRoot);
@@ -2224,8 +2225,11 @@ private:
 
         // This mutates startIndex to account for the fact that m_block got the front of it
         // chopped off.
-        BasicBlock* predecessor =
-            m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+        BasicBlock* predecessor = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+        if (m_block == m_root) {
+            m_root = predecessor;
+            m_valueForConstant.clear();
+        }
 
         // Splitting will commit the insertion set, which changes the exact position of the
         // source. That's why we do the search after splitting.
