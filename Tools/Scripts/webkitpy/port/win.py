@@ -507,5 +507,8 @@ class WinCairoPort(WinPort):
 
         paths.append(self.port_name + '-' + wk_version)
         paths.append(self.port_name)
+        if self.get_option('webkit_test_runner'):
+            paths.append('wk2')
+        paths.extend(self.get_option("additional_platform_directory", []))
 
         return paths
