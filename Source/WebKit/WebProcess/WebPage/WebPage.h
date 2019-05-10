@@ -958,6 +958,8 @@ public:
     void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
 
     void updateStringForFind(const String&);
+    
+    bool canShowWhileLocked() const { return m_canShowWhileLocked; }
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -1829,6 +1831,7 @@ private:
     WebCore::FloatSize m_maximumUnobscuredSize;
     int32_t m_deviceOrientation { 0 };
     bool m_keyboardIsAttached { false };
+    bool m_canShowWhileLocked { false };
     bool m_inDynamicSizeUpdate { false };
     HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
     RefPtr<WebCore::Node> m_pendingSyntheticClickNode;

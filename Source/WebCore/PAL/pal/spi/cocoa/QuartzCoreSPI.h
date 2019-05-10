@@ -238,6 +238,7 @@ extern NSString * const kCAContextIgnoresHitTest;
 extern NSString * const kCAContextPortNumber;
 
 #if PLATFORM(IOS_FAMILY)
+extern NSString * const kCAContextSecure;
 extern NSString * const kCAContentsFormatRGBA10XR;
 #endif
 

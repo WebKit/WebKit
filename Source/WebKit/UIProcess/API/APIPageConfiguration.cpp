@@ -72,6 +72,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_treatsSHA1SignedCertificatesAsInsecure = this->m_treatsSHA1SignedCertificatesAsInsecure;
 #if PLATFORM(IOS_FAMILY)
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
+    copy->m_canShowWhileLocked = this->m_canShowWhileLocked;
 #endif
     copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
     copy->m_waitsForPaintAfterViewDidMoveToWindow = this->m_waitsForPaintAfterViewDidMoveToWindow;

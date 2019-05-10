@@ -40,17 +40,26 @@ class MachSendRight;
 namespace WebKit {
 
 using LayerHostingContextID = uint32_t;
+    
+struct LayerHostingContextOptions {
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked { false };
+#endif
+};
 
 class LayerHostingContext {
     WTF_MAKE_NONCOPYABLE(LayerHostingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<LayerHostingContext> createForPort(const WTF::MachSendRight& serverPort);
+    
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess();
+    static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess(const LayerHostingContextOptions& = { });
+
 #if PLATFORM(MAC)
     static std::unique_ptr<LayerHostingContext> createForExternalPluginHostingProcess();
 #endif
-#endif
+    
+#endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 
     LayerHostingContext();
     ~LayerHostingContext();

@@ -78,6 +78,13 @@ LayerHostingMode RemoteLayerTreeContext::layerHostingMode() const
     return m_webPage.layerHostingMode();
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool RemoteLayerTreeContext::canShowWhileLocked() const
+{
+    return m_webPage.canShowWhileLocked();
+}
+#endif
+
 void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type)
 {
     GraphicsLayer::PlatformLayerID layerID = layer.layerID();
