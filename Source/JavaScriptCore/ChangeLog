@@ -1,5 +1,24 @@
 2019-05-09  Keith Miller  <keith_miller@apple.com>
 
+        Fix crashes related to pointer authentication for primitive gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=197763
+        <rdar://problem/50629257>
+
+        Reviewed by Saam Barati.
+
+        This fixes two bugs related to PAC for caging. The first is that
+        we didn't clear the high bits of the size register going into the
+        patchpoint to tag the new buffer for NewArrayBuffer. The second is
+        that the GC needs to strip all stack pointers when considering
+        them as a conservative root.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+
+2019-05-09  Keith Miller  <keith_miller@apple.com>
+
         parseStatementListItem needs a stack overflow check
         https://bugs.webkit.org/show_bug.cgi?id=197749
         <rdar://problem/50302697>
