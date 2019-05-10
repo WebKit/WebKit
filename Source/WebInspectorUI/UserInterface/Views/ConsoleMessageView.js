@@ -376,7 +376,11 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                 if (result === WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound || result === WI.RemoteObject.SourceCodeLocationPromise.MissingObjectId)
                     return;
 
-                var link = this._linkifyLocation(result.sourceCode.sourceURL || result.sourceCode.url, result.lineNumber, result.columnNumber);
+                let link = WI.linkifySourceCode(result.sourceCode, new WI.SourceCodePosition(result.lineNumber, result.columnNumber), {
+                    className: "console-message-url",
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
                 link.classList.add("console-message-location");
 
                 if (this._element.hasChildNodes())
@@ -764,16 +768,6 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
     _shouldHideURL(url)
     {
         return url === "undefined" || url === "[native code]";
-    }
-
-    _linkifyLocation(url, lineNumber, columnNumber)
-    {
-        const options = {
-            className: "console-message-url",
-            ignoreNetworkTab: true,
-            ignoreSearchTab: true,
-        };
-        return WI.linkifyLocation(url, new WI.SourceCodePosition(lineNumber, columnNumber), options);
     }
 
     _userProvidedColumnNames(columnNamesArgument)

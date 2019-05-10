@@ -1,3 +1,21 @@
+2019-05-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: null is not an object (evaluating 'url.startsWith')
+        https://bugs.webkit.org/show_bug.cgi?id=196662
+        <rdar://problem/49659633>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._appendLocationLink):
+        (WI.ConsoleMessageView.prototype._linkifyLocation): Deleted.
+
+        * UserInterface/Base/Main.js:
+        (WI.linkifyLocation):
+        (WI.linkifySourceCode): Added.
+        Split the logic into two functions, as there's no need to re-fetch the `SourceCode` from a
+        given url if you already have the `SourceCode` in the caller.
+
 2019-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r244952.

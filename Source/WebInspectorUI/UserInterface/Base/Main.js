@@ -2849,17 +2849,20 @@ WI.createSourceCodeLocationLink = function(sourceCodeLocation, options = {})
 WI.linkifyLocation = function(url, sourceCodePosition, options = {})
 {
     var sourceCode = WI.sourceCodeForURL(url);
+    if (sourceCode)
+        return WI.linkifySourceCode(sourceCode);
 
-    if (!sourceCode) {
-        var anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.lineNumber = sourceCodePosition.lineNumber;
-        if (options.className)
-            anchor.className = options.className;
-        anchor.append(WI.displayNameForURL(url) + ":" + sourceCodePosition.lineNumber);
-        return anchor;
-    }
+    var anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.lineNumber = sourceCodePosition.lineNumber;
+    if (options.className)
+        anchor.className = options.className;
+    anchor.append(WI.displayNameForURL(url) + ":" + sourceCodePosition.lineNumber);
+    return anchor;
+};
 
+WI.linkifySourceCode = function(sourceCode, sourceCodePosition, options = {})
+{
     let sourceCodeLocation = sourceCode.createSourceCodeLocation(sourceCodePosition.lineNumber, sourceCodePosition.columnNumber);
     let linkElement = WI.createSourceCodeLocationLink(sourceCodeLocation, {
         ...options,
