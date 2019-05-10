@@ -44,9 +44,9 @@ public:
     void shouldAllowAccess(WebPageProxy&, WebFrameProxy&, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
     void clearPermissions();
 
-private:
-    WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationPermission(const WebCore::SecurityOriginData&) const;
+    WebCore::DeviceOrientationOrMotionPermissionState cachedDeviceOrientationPermission(const WebCore::SecurityOriginData&) const;
 
+private:
     HashMap<WebCore::SecurityOriginData, bool> m_deviceOrientationPermissionDecisions;
     HashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>>> m_pendingRequests;
 };

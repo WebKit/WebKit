@@ -2780,6 +2780,17 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         data->contentBlockersEnabled = false;
     }
 
+#if ENABLE(DEVICE_ORIENTATION)
+    if (navigation && (!data || data->deviceOrientationAndMotionAccessState == WebCore::DeviceOrientationOrMotionPermissionState::Prompt)) {
+        auto deviceOrientationPermission = websiteDataStore->deviceOrientationAndMotionAccessController().cachedDeviceOrientationPermission(SecurityOriginData::fromURL(navigation->currentRequest().url()));
+        if (deviceOrientationPermission != WebCore::DeviceOrientationOrMotionPermissionState::Prompt) {
+            if (!data)
+                data = WebsitePoliciesData { };
+            data->deviceOrientationAndMotionAccessState = deviceOrientationPermission;
+        }
+    }
+#endif
+
 #if PLATFORM(COCOA)
     static const bool forceDownloadFromDownloadAttribute = false;
 #else

@@ -250,4 +250,54 @@ TEST(DeviceOrientation, RememberPermissionForSession)
     askedClientForPermission = false;
 }
 
+TEST(DeviceOrientation, FireOrientationEventsRightAwayIfPermissionAlreadyGranted)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // Request permission.
+    [webView evaluateJavaScript:@"DeviceOrientationEvent.requestPermission().then((granted) => { webkit.messageHandlers.testHandler.postMessage(granted) });" completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_TRUE(askedClientForPermission);
+    askedClientForPermission = false;
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+
+    // Go to the same origin again in a new view.
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // This time, we do not request permission but set our event listener.
+    bool addedEventListener = false;
+    [webView evaluateJavaScript:@"addEventListener('deviceorientation', (e) => { webkit.messageHandlers.testHandler.postMessage('received-event') });" completionHandler: [&] (id result, NSError *error) {
+        addedEventListener = true;
+    }];
+
+    TestWebKitAPI::Util::run(&addedEventListener);
+    addedEventListener = false;
+
+    // Simulate a device orientation event. The page's event listener should get called even though it did not request permission,
+    // because it was previously granted permission during this browsing session.
+    [webView _simulateDeviceOrientationChangeWithAlpha:1.0 beta:2.0 gamma:3.0];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
