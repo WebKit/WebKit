@@ -3264,3 +3264,5 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 
 # FIXME: Unskip the following test once we have the fix for <rdar://problem/50596032>.
 fast/events/ios/submit-form-target-blank-using-return-key.html
+
+webkit.org/b/197778 [ Debug ] webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
