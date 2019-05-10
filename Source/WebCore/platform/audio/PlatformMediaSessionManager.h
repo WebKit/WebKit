@@ -121,8 +121,8 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual void configureWireLessTargetMonitoring() { }
-    virtual bool hasWirelessTargetsAvailable() { return false; }
 #endif
+    virtual bool hasWirelessTargetsAvailable() { return false; }
 
     void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession() const;

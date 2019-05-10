@@ -183,9 +183,14 @@ void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    forEachSession([haveTargets = [m_objcObserver hasWirelessTargetsAvailable]] (PlatformMediaSession& session, size_t) {
+
+    auto haveTargets = [m_objcObserver hasWirelessTargetsAvailable];
+    ALWAYS_LOG(LOGIDENTIFIER, haveTargets);
+
+    forEachSession([haveTargets] (PlatformMediaSession& session, size_t) {
         session.externalOutputDeviceAvailableDidChange(haveTargets);
     });
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -289,6 +294,8 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
             protectedSelf->_routeDetector = adoptNS([PAL::allocAVRouteDetectorInstance() init]);
             protectedSelf->_routeDetector.get().routeDetectionEnabled = protectedSelf->_monitoringAirPlayRoutes;
             [[NSNotificationCenter defaultCenter] addObserver:protectedSelf selector:@selector(wirelessRoutesAvailableDidChange:) name:AVRouteDetectorMultipleRoutesDetectedDidChangeNotification object:protectedSelf->_routeDetector.get()];
+
+            protectedSelf->_callback->externalOutputDeviceAvailableDidChange();
             END_BLOCK_OBJC_EXCEPTIONS
         }
 

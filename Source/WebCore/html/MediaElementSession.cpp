@@ -110,6 +110,7 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
     , m_restrictions(NoRestrictions)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_targetAvailabilityChangedTimer(*this, &MediaElementSession::targetAvailabilityChangedTimerFired)
+    , m_hasPlaybackTargets(PlatformMediaSessionManager::sharedManager().hasWirelessTargetsAvailable())
 #endif
     , m_mainContentCheckTimer(*this, &MediaElementSession::mainContentCheckTimerFired)
     , m_clientDataBufferingTimer(*this, &MediaElementSession::clientDataBufferingTimerFired)
