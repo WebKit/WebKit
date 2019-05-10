@@ -668,16 +668,27 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 origin = resource.urlComponents.scheme + "://" + resource.urlComponents.host;
                 if (resource.urlComponents.port)
                     origin += ":" + resource.urlComponents.port;
-            } else
+            } else if (resource.parentFrame)
                 origin = resource.parentFrame.securityOrigin;
 
-            let frameTreeElement = this._originTreeElementMap.get(origin);
-            if (!frameTreeElement) {
-                frameTreeElement = new WI.FolderTreeElement(origin, origin === resource.parentFrame.securityOrigin ? resource.parentFrame : null);
-                this._originTreeElementMap.set(origin, frameTreeElement);
+            let parentTreeElement = null;
+            if (origin) {
+                let frameTreeElement = this._originTreeElementMap.get(origin);
+                if (!frameTreeElement) {
+                    frameTreeElement = new WI.FolderTreeElement(origin, origin === resource.parentFrame.securityOrigin ? resource.parentFrame : null);
+                    this._originTreeElementMap.set(origin, frameTreeElement);
 
-                let index = insertionIndexForObjectInListSortedByFunction(frameTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
-                this._resourcesTreeOutline.insertChild(frameTreeElement, index);
+                    let index = insertionIndexForObjectInListSortedByFunction(frameTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                    this._resourcesTreeOutline.insertChild(frameTreeElement, index);
+                }
+
+                let subpath = resource.urlComponents.path;
+                if (subpath && subpath[0] === "/")
+                    subpath = subpath.substring(1);
+
+                parentTreeElement = frameTreeElement.createFoldersAsNeededForSubpath(subpath);
+            } else {
+                parentTreeElement = this._resourcesTreeOutline;
             }
 
             let resourceTreeElement = null;
@@ -686,13 +697,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             else
                 resourceTreeElement = new WI.ResourceTreeElement(resource, resource, {allowDirectoryAsName: true, hideOrigin: true});
 
-            let subpath = resource.urlComponents.path;
-            if (subpath && subpath[0] === "/")
-                subpath = subpath.substring(1);
-
-            let parent = frameTreeElement.createFoldersAsNeededForSubpath(subpath);
-            let index = insertionIndexForObjectInListSortedByFunction(resourceTreeElement, parent.children, this._boundCompareTreeElements);
-            parent.insertChild(resourceTreeElement, index);
+            let index = insertionIndexForObjectInListSortedByFunction(resourceTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
+            parentTreeElement.insertChild(resourceTreeElement, index);
         }
 
         if (resource.type === WI.Resource.Type.Document || resource.type === WI.Resource.Type.Script) {
