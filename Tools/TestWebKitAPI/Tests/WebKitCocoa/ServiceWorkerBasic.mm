@@ -32,6 +32,7 @@
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
@@ -1502,6 +1503,7 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    [webView _close];
     webView = nullptr;
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkersPath.path]);

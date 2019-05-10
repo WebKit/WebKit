@@ -1,3 +1,13 @@
+2019-05-10  Youenn Fablet  <youenn@apple.com>
+
+        A service worker instance should be terminated when its SWServer is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=197801
+        <rdar://problem/50587270>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-05-10  Chris Dumez  <cdumez@apple.com>
 
         Do not wait until requestPermission() is called to fire deviceorientation events if permission was already granted

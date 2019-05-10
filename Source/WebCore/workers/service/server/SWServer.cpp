@@ -69,6 +69,14 @@ SWServer::~SWServer()
     auto connections = WTFMove(m_connections);
     connections.clear();
 
+    Vector<SWServerWorker*> runningWorkers;
+    for (auto& worker : m_runningOrTerminatingWorkers.values()) {
+        if (worker->isRunning())
+            runningWorkers.append(worker.ptr());
+    }
+    for (auto& runningWorker : runningWorkers)
+        terminateWorker(*runningWorker);
+
     allServers().remove(this);
 }
 
