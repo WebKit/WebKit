@@ -45,9 +45,9 @@ assert.sameValue(typeof lf.format, "function", "format should be supported");
 for (const f of transforms) {
   assert.sameValue(lf.format(f([])), "");
   assert.sameValue(lf.format(f(["foo"])), "foo");
-  assert.sameValue(lf.format(f(["foo", "bar"])), "foo and bar");
-  assert.sameValue(lf.format(f(["foo", "bar", "baz"])), "foo, bar, and baz");
-  assert.sameValue(lf.format(f(["foo", "bar", "baz", "quux"])), "foo, bar, baz, and quux");
+  assert.sameValue(lf.format(f(["foo", "bar"])), "foo & bar");
+  assert.sameValue(lf.format(f(["foo", "bar", "baz"])), "foo, bar, & baz");
+  assert.sameValue(lf.format(f(["foo", "bar", "baz", "quux"])), "foo, bar, baz, & quux");
 }
 
-assert.sameValue(lf.format("foo"), "f, o, and o");
+assert.sameValue(lf.format("foo"), "f, o, & o");

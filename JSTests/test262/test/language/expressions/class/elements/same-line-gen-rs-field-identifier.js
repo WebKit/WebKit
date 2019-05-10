@@ -8,7 +8,6 @@ features: [class-fields-public, class, generators]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
-    
     ClassElement :
       ...
       FieldDefinition ;

@@ -54,6 +54,8 @@ var P = function(executor) {
   });
 };
 
+P.resolve = Promise.resolve;
+
 Promise.all.call(P, [])
   .then(function() {
     $DONE('Promise incorrectly fulfilled.');

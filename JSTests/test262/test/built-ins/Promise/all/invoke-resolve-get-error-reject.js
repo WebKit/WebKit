@@ -15,13 +15,15 @@ info: |
 
     [...]
 
-    25.4.4.1.1 Runtime Semantics: PerformPromiseAll
+    Runtime Semantics: PerformPromiseAll
 
-    [...]
-    6. Repeat
-        [...]
-        i. Let nextPromise be Invoke(constructor, "resolve", «nextValue»).
-        j. ReturnIfAbrupt(nextPromise ).
+    ...
+    1. Let promiseResolve be ? Get(constructor, `"resolve"`).
+    ...
+    1. Repeat,
+      1. Let next be IteratorStep(iteratorRecord).
+      ...
+      1. Let nextPromise be ? Call(promiseResolve, constructor, < nextValue >).
 flags: [async]
 ---*/
 

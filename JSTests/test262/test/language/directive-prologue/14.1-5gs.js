@@ -15,5 +15,5 @@ flags: [raw]
 "a";
 "use strict";
 "c";
-throw new Error("This code should not execute");
+throw "Test262: This statement should not be evaluated.";
 eval = 42;

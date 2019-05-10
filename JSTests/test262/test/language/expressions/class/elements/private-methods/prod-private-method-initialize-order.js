@@ -67,7 +67,6 @@ info: |
     6. Append { [[PrivateName]]: P, [[PrivateFieldDescriptor]]: desc } to O.[[PrivateFieldDescriptors]].
 
 
-    
     InitializeInstanceElements ( O, constructor )
       ...
       4. For each item element in order from elements,

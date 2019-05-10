@@ -8,7 +8,6 @@ features: [class-methods-private, class-fields-private, class, class-fields-publ
 flags: [generated, async]
 includes: [propertyHelper.js]
 info: |
-    
     ClassElement :
       MethodDefinition
       ...

@@ -9,8 +9,7 @@ info: |
   2. Let oldValue be ? ToNumeric(? GetValue(expr)).
   3. Let newValue be ? Type(oldvalue)::subtract(oldValue, Type(oldValue)::unit).
   4. Perform ? PutValue(expr, newValue).
-  5. Return oldValue. 
-
+  5. Return oldValue.
 features: [BigInt]
 ---*/
 

@@ -52,9 +52,19 @@ var testData = [
     },
     {
         tag: "aar-x-private",
-    },
+        // "aar" should be canonicalized into "aa" because "aar" matches the type attribute of
+        // a languageAlias element in 
+        // https://www.unicode.org/repos/cldr/trunk/common/supplemental/supplementalMetadata.xml
+        canonical: "aa-x-private",
+        maximized: "aa-Latn-ET-x-private",
+   },
     {
         tag: "heb-x-private",
+        // "heb" should be canonicalized into "he" because "heb" matches the type attribute of
+        // a languageAlias element in 
+        // https://www.unicode.org/repos/cldr/trunk/common/supplemental/supplementalMetadata.xml
+        canonical: "he-x-private",
+        maximized: "he-Hebr-IL-x-private",
     },
     {
         tag: "de-u-kf",
@@ -62,6 +72,11 @@ var testData = [
     },
     {
         tag: "ces",
+        // "ces" should be canonicalized into "cs" because "ces" matches the type attribute of
+        // a languageAlias element in 
+        // https://www.unicode.org/repos/cldr/trunk/common/supplemental/supplementalMetadata.xml
+        canonical: "cs",
+        maximized: "cs-Latn-CZ",
     },
     {
         tag: "hy-arevela",
@@ -75,12 +90,6 @@ var testData = [
 ];
 
 for (const {tag, canonical = tag, maximized = canonical, minimized = canonical} of testData) {
-    assert.sameValue(
-      Intl.getCanonicalLocales(tag)[0],
-      canonical,
-      'The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical`'
-    );
-
     const loc = new Intl.Locale(tag);
     assert.sameValue(
       new Intl.Locale(tag).toString(),

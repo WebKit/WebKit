@@ -21,7 +21,7 @@ info: |
     and AssignmentTargetType(LeftHandSideExpression) is not simple.
 flags: [module]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [import.meta, destructuring-assignment, object-rest]
 ---*/

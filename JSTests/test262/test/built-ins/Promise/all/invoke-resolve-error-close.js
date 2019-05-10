@@ -42,7 +42,7 @@ iterDoneSpy[Symbol.iterator] = function() {
 };
 
 Promise.resolve = function() {
-  throw new Error();
+  throw new Test262Error();
 };
 
 Promise.all(iterDoneSpy);

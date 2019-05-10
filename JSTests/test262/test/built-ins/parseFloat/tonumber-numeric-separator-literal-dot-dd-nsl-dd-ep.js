@@ -6,7 +6,6 @@ esid: sec-tonumber-applied-to-the-string-type
 description: >
   The NSL does not affect strings parsed by parseFloat - . StrDecimalDigits StrExponentPart
 info: |
-
   StrUnsignedDecimalLiteral :::
     . StrDecimalDigits StrExponentPart
 

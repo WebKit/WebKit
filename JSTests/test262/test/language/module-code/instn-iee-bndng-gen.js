@@ -42,16 +42,22 @@ features: [generators]
 ---*/
 
 assert.sameValue(
-  g2().next().value,
+  B().next().value,
   455,
   'binding is initialized to function value prior to module evaluation'
 );
 
 assert.throws(TypeError, function() {
-  g2 = null;
+  B = null;
 });
 
-assert.sameValue(g2().next().value, 455, 'binding value is immutable');
+assert.sameValue(B().next().value, 455, 'binding value is immutable');
 
-import { g2 } from './instn-iee-bndng-gen_FIXTURE.js';
-export function* g () { return 455; }
+import { B, results } from './instn-iee-bndng-gen_FIXTURE.js';
+export function* A () { return 455; }
+
+assert.sameValue(results.length, 4);
+assert.sameValue(results[0], 'ReferenceError');
+assert.sameValue(results[1], 'undefined');
+assert.sameValue(results[2], 'ReferenceError');
+assert.sameValue(results[3], 'undefined');

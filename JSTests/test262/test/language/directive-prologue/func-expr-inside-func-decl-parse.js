@@ -9,10 +9,12 @@ description: >
     is strict function code if FunctionExpression is contained in use
     strict
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [noStrict]
 ---*/
+
+$DONOTEVALUATE();
 
 function testcase() {
   "use strict";

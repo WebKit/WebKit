@@ -26,4 +26,4 @@ for (const [granularity, expected] of validOptions) {
   assert.sameValue(resolvedOptions.granularity, expected);
 }
 
-assert.throws(RangeError, () => new Intl.Segmenter([], {granularity: "line"});
+assert.throws(RangeError, () => new Intl.Segmenter([], {granularity: "line"}));

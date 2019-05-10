@@ -8,7 +8,6 @@ features: [class-fields-public, class, async-functions]
 flags: [generated, async]
 includes: [propertyHelper.js]
 info: |
-    
     ClassElement :
       ...
       FieldDefinition ;

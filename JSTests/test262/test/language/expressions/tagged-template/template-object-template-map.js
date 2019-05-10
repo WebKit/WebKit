@@ -5,7 +5,6 @@ esid: sec-gettemplateobject
 description: >
   Template objects are canonicalized separately for each realm using its Realm Record's [[TemplateMap]]. Each [[Site]] value is a Parse Node that is a TemplateLiteral
 info: |
-
   Let rawStrings be TemplateStrings of templateLiteral with argument true.
   Let realm be the current Realm Record.
   Let templateRegistry be realm.[[TemplateMap]].

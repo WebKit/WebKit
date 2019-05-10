@@ -8,10 +8,12 @@ description: >
     Strict Mode - Function code of a FunctionExpression contains Use
     Strict Directive which appears at the start of the block
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [noStrict]
 ---*/
+
+$DONOTEVALUATE();
 
 (function() {
   "use strict";

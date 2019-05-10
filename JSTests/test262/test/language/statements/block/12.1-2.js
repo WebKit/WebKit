@@ -6,9 +6,11 @@ es5id: 12.1-2
 description: >
     12.1 - block '{ StatementListopt };' is not allowed:
     try-catch-finally
+negative:
+  phase: parse
+  type: SyntaxError
 ---*/
 
+$DONOTEVALUATE();
 
-assert.throws(SyntaxError, function() {
-            eval("try{};catch{};finally{}");
-});
+try{};catch{};finally{}

@@ -40,16 +40,23 @@ flags: [module]
 ---*/
 
 assert.sameValue(
-  y,
+  B,
   undefined,
   'binding is initialized to `undefined` prior to module evaulation'
 );
 
 assert.throws(TypeError, function() {
-  y = null;
+  B = null;
 }, 'binding rejects assignment');
 
-assert.sameValue(y, undefined, 'binding value is immutable');
+assert.sameValue(B, undefined, 'binding value is immutable');
 
-import { y } from './instn-iee-bndng-var_FIXTURE.js';
-export var x = 99;
+import { B, results } from './instn-iee-bndng-var_FIXTURE.js';
+export var A = 99;
+
+assert.sameValue(results.length, 4);
+assert.sameValue(results[0], 'ReferenceError');
+assert.sameValue(results[1], 'undefined');
+assert.sameValue(results[2], 'ReferenceError');
+assert.sameValue(results[3], 'undefined');
+

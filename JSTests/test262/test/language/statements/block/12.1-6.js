@@ -6,9 +6,11 @@ es5id: 12.1-6
 description: >
     12.1 - block '{ StatementListopt };' is not allowed:
     if-else-if-else
+negative:
+  phase: parse
+  type: SyntaxError
 ---*/
 
+$DONOTEVALUATE();
 
-assert.throws(SyntaxError, function() {
-            eval("if{};else if{};else{}");
-});
+if{};else if{};else{}

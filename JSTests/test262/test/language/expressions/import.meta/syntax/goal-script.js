@@ -8,7 +8,7 @@ description: >
 info: |
   It is an early Syntax Error if Module is not the syntactic goal symbol.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [import.meta]
 ---*/

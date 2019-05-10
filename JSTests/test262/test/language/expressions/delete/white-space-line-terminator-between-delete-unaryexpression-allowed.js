@@ -5,7 +5,6 @@ esid: sec-delete-operator
 description: >
   White Space and Line Terminator between "delete" and UnaryExpression are allowed
 info: |
-
   UnaryExpression :
       delete UnaryExpression
 

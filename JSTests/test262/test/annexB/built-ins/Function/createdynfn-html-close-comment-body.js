@@ -17,4 +17,4 @@ info: |
     ...
 ---*/
 
-Function("-->");
+Function("\n-->");

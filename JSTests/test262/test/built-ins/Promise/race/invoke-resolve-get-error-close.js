@@ -25,10 +25,14 @@ features: [Symbol.iterator]
 ---*/
 
 var iter = {};
+
 var returnCount = 0;
+var nextCount = 0;
+
 iter[Symbol.iterator] = function() {
   return {
     next: function() {
+      nextCount += 1;
       return {
         done: false
       };
@@ -40,11 +44,12 @@ iter[Symbol.iterator] = function() {
   };
 };
 Object.defineProperty(Promise, 'resolve', {
-  get: function() {
+  get() {
     throw new Test262Error();
   }
 });
 
 Promise.race(iter);
 
-assert.sameValue(returnCount, 1);
+assert.sameValue(nextCount, 0);
+assert.sameValue(returnCount, 0);

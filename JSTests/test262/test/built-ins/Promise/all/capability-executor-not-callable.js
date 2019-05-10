@@ -25,59 +25,83 @@ info: |
 ---*/
 
 var checkPoint = "";
+function fn1(executor) {
+  checkPoint += "a";
+}
+Object.defineProperty(fn1, 'resolve', {
+  get() { throw new Test262Error; }
+});
 assert.throws(TypeError, function() {
-  Promise.all.call(function(executor) {
-    checkPoint += "a";
-  }, []);
+  Promise.all.call(fn1, []);
 }, "executor not called at all");
 assert.sameValue(checkPoint, "a", "executor not called at all");
 
-var checkPoint = "";
+checkPoint = "";
+function fn2(executor) {
+  checkPoint += "a";
+  executor();
+  checkPoint += "b";
+}
+Object.defineProperty(fn2, 'resolve', {
+  get() { throw new Test262Error; }
+});
 assert.throws(TypeError, function() {
-  Promise.all.call(function(executor) {
-    checkPoint += "a";
-    executor();
-    checkPoint += "b";
-  }, []);
+  Promise.all.call(fn2, []);
 }, "executor called with no arguments");
 assert.sameValue(checkPoint, "ab", "executor called with no arguments");
 
-var checkPoint = "";
+checkPoint = "";
+function fn3(executor) {
+  checkPoint += "a";
+  executor(undefined, undefined);
+  checkPoint += "b";
+}
+Object.defineProperty(fn3, 'resolve', {
+  get() { throw new Test262Error; }
+});
 assert.throws(TypeError, function() {
-  Promise.all.call(function(executor) {
-    checkPoint += "a";
-    executor(undefined, undefined);
-    checkPoint += "b";
-  }, []);
+  Promise.all.call(fn3, []);
 }, "executor called with (undefined, undefined)");
 assert.sameValue(checkPoint, "ab", "executor called with (undefined, undefined)");
 
-var checkPoint = "";
+checkPoint = "";
+function fn4(executor) {
+  checkPoint += "a";
+  executor(undefined, function() {});
+  checkPoint += "b";
+}
+Object.defineProperty(fn4, 'resolve', {
+  get() { throw new Test262Error; }
+});
 assert.throws(TypeError, function() {
-  Promise.all.call(function(executor) {
-    checkPoint += "a";
-    executor(undefined, function() {});
-    checkPoint += "b";
-  }, []);
+  Promise.all.call(fn4, []);
 }, "executor called with (undefined, function)");
 assert.sameValue(checkPoint, "ab", "executor called with (undefined, function)");
 
-var checkPoint = "";
+checkPoint = "";
+function fn5(executor) {
+  checkPoint += "a";
+  executor(function() {}, undefined);
+  checkPoint += "b";
+}
+Object.defineProperty(fn5, 'resolve', {
+  get() { throw new Test262Error; }
+});
 assert.throws(TypeError, function() {
-  Promise.all.call(function(executor) {
-    checkPoint += "a";
-    executor(function() {}, undefined);
-    checkPoint += "b";
-  }, []);
+  Promise.all.call(fn5, []);
 }, "executor called with (function, undefined)");
 assert.sameValue(checkPoint, "ab", "executor called with (function, undefined)");
 
-var checkPoint = "";
+checkPoint = "";
+function fn6(executor) {
+  checkPoint += "a";
+  executor(123, "invalid value");
+  checkPoint += "b";
+}
+Object.defineProperty(fn6, 'resolve', {
+  get() { throw new Test262Error; }
+});
 assert.throws(TypeError, function() {
-  Promise.all.call(function(executor) {
-    checkPoint += "a";
-    executor(123, "invalid value");
-    checkPoint += "b";
-  }, []);
+  Promise.all.call(fn6, []);
 }, "executor called with (Number, String)");
 assert.sameValue(checkPoint, "ab", "executor called with (Number, String)");

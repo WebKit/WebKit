@@ -7,7 +7,6 @@ esid: prod-ClassElement
 features: [class-fields-private, class]
 flags: [generated]
 info: |
-    
     ClassElement :
       MethodDefinition
       static MethodDefinition

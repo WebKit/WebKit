@@ -6,7 +6,6 @@ esid: sec-update-expressions
 description: >
   In non-strict code, "eval--" does not produce an early error.
 info: |
-
   sec-identifiers-static-semantics-assignmenttargettype
 
     If this IdentifierReference is contained in strict mode code and StringValue of Identifier is "eval" or  "arguments", return strict.
@@ -18,7 +17,6 @@ info: |
 
     It is an early Reference Error if AssignmentTargetType of LeftHandSideExpression is invalid.
     It is an early Syntax Error if AssignmentTargetType of LeftHandSideExpression is strict.
-
 flags: [noStrict]
 ---*/
 

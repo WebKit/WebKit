@@ -16,7 +16,7 @@ if (Number.MAX_VALUE - -Number.MAX_VALUE !== Number.POSITIVE_INFINITY) {
 
 //CHECK#2
 if (-Number.MAX_VALUE - Number.MAX_VALUE !== Number.NEGATIVE_INFINITY) {
-  $ERROR('#2: -Number.MAX_VALUE - umber.MAX_VALUE === Number.NEGATIVE_INFINITY. Actual: ' + (-Number.MAX_VALUE - umber.MAX_VALUE));
+  $ERROR('#2: -Number.MAX_VALUE - umber.MAX_VALUE === Number.NEGATIVE_INFINITY. Actual: ' + (-Number.MAX_VALUE - Number.MAX_VALUE));
 }
 
 //CHECK#3
