@@ -1,3 +1,15 @@
+2019-05-09  Rob Buis  <rbuis@igalia.com>
+
+        Limit number of prefetches of a given page
+        https://bugs.webkit.org/show_bug.cgi?id=197736
+
+        Reviewed by Darin Adler.
+
+        Limit prefetches for same url to 1.
+
+        * NetworkProcess/cache/PrefetchCache.cpp:
+        (WebKit::PrefetchCache::store):
+
 2019-05-09  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out most of r245151.

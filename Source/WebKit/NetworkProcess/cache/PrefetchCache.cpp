@@ -69,7 +69,10 @@ void PrefetchCache::store(const URL& requestUrl, WebCore::ResourceResponse&& res
 {
     if (!m_sessionPrefetches)
         m_sessionPrefetches = std::make_unique<PrefetchEntriesMap>();
-    m_sessionPrefetches->set(requestUrl, std::make_unique<PrefetchCache::Entry>(WTFMove(response), WTFMove(buffer)));
+    auto addResult = m_sessionPrefetches->add(requestUrl, std::make_unique<PrefetchCache::Entry>(WTFMove(response), WTFMove(buffer)));
+    // Limit prefetches for same url to 1.
+    if (!addResult.isNewEntry)
+        return;
     m_sessionExpirationList.append(std::make_tuple(requestUrl, WallTime::now()));
     if (!m_expirationTimer.isActive())
         m_expirationTimer.startOneShot(expirationTimeout);
