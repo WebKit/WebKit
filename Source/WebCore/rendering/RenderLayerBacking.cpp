@@ -259,12 +259,54 @@ void RenderLayerBacking::willBeDestroyed()
 {
     ASSERT(m_owningLayer.backing() == this);
     compositor().removeFromScrollCoordinatedLayers(m_owningLayer);
+
+    LOG(Compositing, "RenderLayer(backing) %p willBeDestroyed", &m_owningLayer);
+
+    clearBackingSharingLayers();
 }
 
 void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
 {
     if (layer && layer->type() == GraphicsLayer::Type::Normal && layer->tiledBacking())
         compositor().layerTiledBackingUsageChanged(layer, false);
+}
+
+static void clearBackingSharingLayerProviders(Vector<WeakPtr<RenderLayer>>& sharingLayers)
+{
+    for (auto& layerWeakPtr : sharingLayers) {
+        if (!layerWeakPtr)
+            continue;
+        layerWeakPtr->setBackingProviderLayer(nullptr);
+    }
+}
+
+void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& sharingLayers)
+{
+    if (m_backingSharingLayers == sharingLayers) {
+        sharingLayers.clear();
+        return;
+    }
+
+    clearBackingSharingLayerProviders(m_backingSharingLayers);
+    m_backingSharingLayers = WTFMove(sharingLayers);
+    for (auto& layerWeakPtr : m_backingSharingLayers)
+        layerWeakPtr->setBackingProviderLayer(&m_owningLayer);
+}
+
+void RenderLayerBacking::removeBackingSharingLayer(RenderLayer& layer)
+{
+    LOG(Compositing, "RenderLayer %p removeBackingSharingLayer %p", &m_owningLayer, &layer);
+
+    layer.setBackingProviderLayer(nullptr);
+    m_backingSharingLayers.removeAll(&layer);
+}
+
+void RenderLayerBacking::clearBackingSharingLayers()
+{
+    LOG(Compositing, "RenderLayer %p clearBackingSharingLayers", &m_owningLayer);
+
+    clearBackingSharingLayerProviders(m_backingSharingLayers);
+    m_backingSharingLayers.clear();
 }
 
 Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
@@ -606,7 +648,7 @@ static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
 
 bool RenderLayerBacking::updateCompositedBounds()
 {
-    LayoutRect layerBounds = m_owningLayer.calculateLayerBounds(&m_owningLayer, LayoutSize(), RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+    LayoutRect layerBounds = m_owningLayer.calculateLayerBounds(&m_owningLayer, { }, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
     // Clip to the size of the document or enclosing overflow-scroll layer.
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
@@ -628,7 +670,15 @@ bool RenderLayerBacking::updateCompositedBounds()
 
         layerBounds.intersect(clippingBounds);
     }
-    
+
+    for (auto& layerWeakPtr : m_backingSharingLayers) {
+        auto* boundsRootLayer = &m_owningLayer;
+        ASSERT(layerWeakPtr->isDescendantOf(m_owningLayer));
+        auto offset = layerWeakPtr->offsetFromAncestor(&m_owningLayer);
+        auto bounds = layerWeakPtr->calculateLayerBounds(boundsRootLayer, offset, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+        layerBounds.unite(bounds);
+    }
+
     // If the element has a transform-origin that has fixed lengths, and the renderer has zero size,
     // then we need to ensure that the compositing layer has non-zero size so that we can apply
     // the transform-origin via the GraphicsLayer anchorPoint (which is expressed as a fractional value).
@@ -1397,7 +1447,7 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
         bool hasNonScrollingPaintedContent = m_owningLayer.hasVisibleContent() && m_owningLayer.hasVisibleBoxDecorationsOrBackground();
         m_graphicsLayer->setDrawsContent(hasNonScrollingPaintedContent);
 
-        bool hasScrollingPaintedContent = m_owningLayer.hasVisibleContent() && (renderer().hasBackground() || contentsInfo.paintsContent());
+        bool hasScrollingPaintedContent = hasBackingSharingLayers() || (m_owningLayer.hasVisibleContent() && (renderer().hasBackground() || contentsInfo.paintsContent()));
         m_scrolledContentsLayer->setDrawsContent(hasScrollingPaintedContent);
         return;
     }
@@ -2133,6 +2183,9 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (m_owningLayer.isRenderViewLayer())
         return false;
 
+    if (hasBackingSharingLayers())
+        return false;
+
     if (renderer().isRenderReplaced() && (!isCompositedPlugin(renderer()) || isRestartedPlugin(renderer())))
         return false;
 
@@ -2603,23 +2656,46 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&renderer());
 #endif
 
-    FrameView::PaintingState paintingState;
-    if (m_owningLayer.isRenderViewLayer())
-        renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+    auto paintOneLayer = [&](RenderLayer& layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags) {
+        InspectorInstrumentation::willPaint(layer.renderer());
 
-    RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
+        FrameView::PaintingState paintingState;
+        if (layer.isRenderViewLayer())
+            renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
 
-    m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags);
+        RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
 
-    if (m_owningLayer.containsDirtyOverlayScrollbars())
-        m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
+        layer.paintLayerContents(context, paintingInfo, paintFlags);
 
-    if (m_owningLayer.isRenderViewLayer())
-        renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
+        if (layer.containsDirtyOverlayScrollbars())
+            layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
+
+        if (layer.isRenderViewLayer())
+            renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
+
+        ASSERT(!m_owningLayer.m_usedTransparency);
+
+        InspectorInstrumentation::didPaint(layer.renderer(), paintDirtyRect);
+    };
+
+    paintOneLayer(m_owningLayer, paintFlags);
+    
+    // FIXME: Need to check m_foregroundLayer, masking etc. webkit.org/b/197565.
+    GraphicsLayer* destinationForSharingLayers = m_scrolledContentsLayer ? m_scrolledContentsLayer.get() : m_graphicsLayer.get();
+
+    if (graphicsLayer == destinationForSharingLayers) {
+        OptionSet<RenderLayer::PaintLayerFlag> sharingLayerPaintFlags = {
+            RenderLayer::PaintLayerPaintingCompositingBackgroundPhase,
+            RenderLayer::PaintLayerPaintingCompositingForegroundPhase };
+
+        if (paintingPhase & GraphicsLayerPaintOverflowContents)
+            sharingLayerPaintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
+
+        for (auto& layerWeakPtr : m_backingSharingLayers)
+            paintOneLayer(*layerWeakPtr, sharingLayerPaintFlags);
+    }
 
     compositor().didPaintBacking(this);
-
-    ASSERT(!m_owningLayer.m_usedTransparency);
 }
 
 // Up-call from compositing layer drawing callback.
@@ -2647,7 +2723,6 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         || graphicsLayer == m_maskLayer.get()
         || graphicsLayer == m_childClippingMaskLayer.get()
         || graphicsLayer == m_scrolledContentsLayer.get()) {
-        InspectorInstrumentation::willPaint(renderer());
 
         if (!(paintingPhase & GraphicsLayerPaintOverflowContents))
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
@@ -2661,21 +2736,18 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             behavior.add(PaintBehavior::TileFirstPaint);
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior, paintingPhase);
-
-        InspectorInstrumentation::didPaint(renderer(), dirtyRect);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
         paintScrollbar(m_owningLayer.horizontalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
         paintScrollbar(m_owningLayer.verticalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForScrollCorner()) {
         const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
-        context.save();
+        GraphicsContextStateSaver stateSaver(context);
         context.translate(-scrollCornerAndResizer.location());
         LayoutRect transformedClip = LayoutRect(clip);
         transformedClip.moveBy(scrollCornerAndResizer.location());
         m_owningLayer.paintScrollCorner(context, IntPoint(), snappedIntRect(transformedClip));
         m_owningLayer.paintResizer(context, IntPoint(), transformedClip);
-        context.restore();
     }
 #ifndef NDEBUG
     renderer().page().setIsPainting(false);
