@@ -1,3 +1,17 @@
+2019-05-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Returning incorrect marked text rects
+        https://bugs.webkit.org/show_bug.cgi?id=197758
+        <rdar://problem/46548586>
+
+        Reviewed by Tim Horton.
+
+        We are not returning marked text rects in the correct view coordinate space.
+        This is the same translation we are applying to the caret rects. 
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2019-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Let WebKit clients supply an application name for user agent in modern compatibility mode
