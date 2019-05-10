@@ -603,6 +603,7 @@ TEST(FloatRect, FitToPoints)
     EXPECT_FLOAT_EQ(190.0f, rect.maxY());
 }
 
+#if USE(CG) || PLATFORM(WIN)
 static void checkCastRect(const WebCore::FloatRect& rect)
 {
     EXPECT_FLOAT_EQ(10.0f, rect.x());
@@ -612,6 +613,7 @@ static void checkCastRect(const WebCore::FloatRect& rect)
     EXPECT_FLOAT_EQ(30.0f, rect.width());
     EXPECT_FLOAT_EQ(40.0f, rect.height());
 }
+#endif
 
 TEST(FloatRect, Casting)
 {

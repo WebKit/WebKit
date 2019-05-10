@@ -1187,6 +1187,7 @@ TEST(TransformationMatrix, Equality)
     ASSERT_TRUE(test3 != test4);
 }
 
+#if USE(CA)
 static void testTranslationMatrix(const WebCore::TransformationMatrix& matrix)
 {
     EXPECT_DOUBLE_EQ(1.0, matrix.m11());
@@ -1206,6 +1207,7 @@ static void testTranslationMatrix(const WebCore::TransformationMatrix& matrix)
     EXPECT_DOUBLE_EQ(30.0, matrix.m43());
     EXPECT_DOUBLE_EQ(1.0, matrix.m44());
 }
+#endif
 
 TEST(TransformationMatrix, Casting)
 {

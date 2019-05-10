@@ -5500,7 +5500,7 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
     RefPtr<ClipRects> parentClipRects;
     // For transformed layers, the root layer was shifted to be us, so there is no need to
     // examine the parent. We want to cache clip rects with us as the root.
-    if (auto* parentLayer = (clipRectsContext.rootLayer != this ? parent() : nullptr))
+    if (clipRectsContext.rootLayer != this && parent())
         parentClipRects = this->parentClipRects(clipRectsContext);
 
     auto clipRects = ClipRects::create();

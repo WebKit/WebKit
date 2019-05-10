@@ -138,13 +138,16 @@ static bool shouldSnapshotBitmapRendererAction(const String& name)
     return name == "transferFromImageBitmap";
 }
 
+#if ENABLE(WEBGL)
 static bool shouldSnapshotWebGLAction(const String& name)
 {
     return name == "clear"
         || name == "drawArrays"
         || name == "drawElements";
 }
+#endif
 
+#if ENABLE(WEBGL2)
 static bool shouldSnapshotWebGL2Action(const String& name)
 {
     return name == "clear"
@@ -153,6 +156,7 @@ static bool shouldSnapshotWebGL2Action(const String& name)
         || name == "drawElements"
         || name == "drawElementsInstanced";
 }
+#endif
 
 void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {

@@ -181,7 +181,11 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
     RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "About to fire an attribution request for a conversion.");
 
     m_pingLoadFunction(WTFMove(loadParameters), [](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
+#if PLATFORM(COCOA)
         RELEASE_LOG_ERROR_IF(!error.isNull(), AdClickAttribution, "Received error: '%{public}s' for ad click attribution request.", error.localizedDescription().utf8().data());
+#else
+        RELEASE_LOG_ERROR_IF(!error.isNull(), AdClickAttribution, "Received error: '%s' for ad click attribution request.", error.localizedDescription().utf8().data());
+#endif
         UNUSED_PARAM(response);
         UNUSED_PARAM(error);
     });

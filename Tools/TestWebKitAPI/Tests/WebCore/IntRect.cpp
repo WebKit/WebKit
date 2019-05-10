@@ -481,6 +481,7 @@ TEST(IntRect, Transpose)
     EXPECT_EQ(120, transposed.maxY());
 }
 
+#if USE(CG) || PLATFORM(WIN)
 static void checkCastRect(const WebCore::IntRect& rect)
 {
     EXPECT_EQ(10, rect.x());
@@ -490,6 +491,7 @@ static void checkCastRect(const WebCore::IntRect& rect)
     EXPECT_EQ(30, rect.width());
     EXPECT_EQ(40, rect.height());
 }
+#endif
 
 TEST(IntRect, Casting)
 {
@@ -584,6 +586,7 @@ TEST(IntRect, Equality)
     ASSERT_FALSE(rect == rightSide);
 }
 
+#if USE(CG)
 static void checkEnclosingIntRect(const WebCore::IntRect& rect)
 {
     EXPECT_EQ(10, rect.x());
@@ -593,6 +596,7 @@ static void checkEnclosingIntRect(const WebCore::IntRect& rect)
     EXPECT_EQ(31, rect.width());
     EXPECT_EQ(41, rect.height());
 }
+#endif
 
 TEST(IntRect, EnclosingIntRect)
 {

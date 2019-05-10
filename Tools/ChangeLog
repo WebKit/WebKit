@@ -1,5 +1,18 @@
 2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Fix a bunch of compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=197785
+
+        Reviewed by Don Olmstead.
+
+        Add preprocessor guards to avoid -Wunused-function warnings.
+
+        * TestWebKitAPI/Tests/WebCore/FloatRect.cpp:
+        * TestWebKitAPI/Tests/WebCore/IntRect.cpp:
+        * TestWebKitAPI/Tests/WebCore/TransformationMatrix.cpp:
+
+2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Add webkit_frame_get_id() API
         https://bugs.webkit.org/show_bug.cgi?id=197270
 
