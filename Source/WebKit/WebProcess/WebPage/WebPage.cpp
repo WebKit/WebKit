@@ -677,6 +677,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if USE(AUDIO_SESSION)
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(true);
 #endif
+
+    updateThrottleState();
 }
 
 #if ENABLE(WEB_RTC)
