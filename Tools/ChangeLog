@@ -1,3 +1,14 @@
+2019-05-10  Keith Miller  <keith_miller@apple.com>
+
+        Remove legacy test262 import script
+        https://bugs.webkit.org/show_bug.cgi?id=197788
+
+        Reviewed by Yusuke Suzuki.
+
+        import-test262-tests doesn't work anymore. We should be using test262-import instead.
+
+        * Scripts/import-test262-tests: Removed.
+
 2019-05-10  Charlie Turner  <cturner@igalia.com>
 
         [WPE] Forward libepoxy cflags
