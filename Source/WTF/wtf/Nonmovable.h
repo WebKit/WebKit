@@ -26,7 +26,6 @@
 #pragma once
 
 #define WTF_MAKE_NONMOVABLE(ClassName) \
-    private: \
-        ClassName(ClassName&&) = delete; \
-        ClassName& operator=(ClassName&&) = delete; \
+    ClassName(ClassName&&) = delete; \
+    ClassName& operator=(ClassName&&) = delete; \
 
