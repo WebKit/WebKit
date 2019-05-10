@@ -37,10 +37,12 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
 
+enum class ShouldDelayClosingUntilEnteringAcceleratedCompositingMode : bool { No, Yes };
+
 class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeWeakPtr<SuspendedPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, uint64_t mainFrameID);
+    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, uint64_t mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
     ~SuspendedPageProxy();
 
     WebPageProxy& page() const { return m_page; }
@@ -51,9 +53,9 @@ public:
 
     void waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&&);
     void unsuspend();
-    void close();
 
     void pageEnteredAcceleratedCompositingMode();
+    void closeWithoutFlashing();
 
 #if !LOG_DISABLED
     const char* loggingString() const;
@@ -64,6 +66,8 @@ private:
     void didProcessRequestToSuspend(SuspensionState);
     void suspensionTimedOut();
 
+    void close();
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
@@ -72,7 +76,8 @@ private:
     Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
     bool m_isClosed { false };
-    bool m_shouldDelayClosingOnFailure { false };
+    ShouldDelayClosingUntilEnteringAcceleratedCompositingMode m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode { ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No };
+    bool m_shouldCloseWhenEnteringAcceleratedCompositingMode { false };
 
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;

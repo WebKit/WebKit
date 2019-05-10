@@ -1554,7 +1554,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    bool suspendCurrentPageIfPossible(API::Navigation&, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient);
+    bool suspendCurrentPageIfPossible(API::Navigation&, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
 
     enum class ResetStateReason {
         PageInvalidated,

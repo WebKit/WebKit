@@ -78,13 +78,11 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, uint64_t mainFrameID)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, uint64_t mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
     : m_page(page)
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
-#if PLATFORM(MAC)
-    , m_shouldDelayClosingOnFailure(m_page.drawingArea() && m_page.drawingArea()->type() == DrawingAreaTypeTiledCoreAnimation)
-#endif
+    , m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode(shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if PLATFORM(IOS_FAMILY)
     , m_suspensionToken(m_process->throttler().backgroundActivityToken())
@@ -159,18 +157,29 @@ void SuspendedPageProxy::close()
     if (m_isClosed)
         return;
 
+    RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::close()", this);
     m_isClosed = true;
     m_process->send(Messages::WebPage::Close(), m_page.pageID());
 }
 
 void SuspendedPageProxy::pageEnteredAcceleratedCompositingMode()
 {
-    m_shouldDelayClosingOnFailure = false;
+    m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No;
 
-    if (m_suspensionState == SuspensionState::FailedToSuspend) {
-        // We needed the failed suspended page to stay alive to avoid flashing. Now we can get rid of it.
+    if (m_suspensionState == SuspensionState::FailedToSuspend || m_shouldCloseWhenEnteringAcceleratedCompositingMode) {
+        // We needed the suspended page to stay alive to avoid flashing. Now we can get rid of it.
         close();
     }
+}
+
+void SuspendedPageProxy::closeWithoutFlashing()
+{
+    RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::closeWithoutFlashing() shouldDelayClosingUntilEnteringAcceleratedCompositingMode? %d", this, m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes);
+    if (m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes) {
+        m_shouldCloseWhenEnteringAcceleratedCompositingMode = true;
+        return;
+    }
+    close();
 }
 
 void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensionState)
@@ -191,7 +200,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
 
-    if (m_suspensionState == SuspensionState::FailedToSuspend && !m_shouldDelayClosingOnFailure)
+    if (m_suspensionState == SuspensionState::FailedToSuspend && m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No)
         close();
 
     if (m_readyToUnsuspendHandler)

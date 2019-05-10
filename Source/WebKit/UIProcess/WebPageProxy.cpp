@@ -742,18 +742,12 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
     finishAttachingToWebProcess(IsProcessSwap::No);
 }
 
-bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient)
+bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
 {
     m_lastSuspendedPage = nullptr;
 
     if (!mainFrameID)
         return false;
-
-    // If the client forced a swap then it may not be Web-compatible to suspend the previous page because other windows may have an opener link to the page.
-    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes) {
-        RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because the swap was requested by the client", m_process->processIdentifier());
-        return false;
-    }
 
     if (!hasCommittedAnyProvisionalLoads()) {
         RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because has not committed any load yet", m_process->processIdentifier());
@@ -781,9 +775,14 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     }
 
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_process->processIdentifier());
-    auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID);
+    auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID, shouldDelayClosingUntilEnteringAcceleratedCompositingMode);
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
+
+    // If the client forced a swap then it may not be web-compatible to keep the previous page because other windows may have an opener link to it. We thus close it as soon as we
+    // can do so without flashing.
+    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
+        suspendedPage->closeWithoutFlashing();
 
     if (fromItem && m_preferences->usesPageCache())
         fromItem->setSuspendedPage(suspendedPage.get());
@@ -2884,11 +2883,19 @@ void WebPageProxy::commitProvisionalPage(uint64_t frameID, uint64_t navigationID
 
     ASSERT(m_process.ptr() != &m_provisionalPage->process());
 
+    auto shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No;
+#if PLATFORM(MAC)
+    // On macOS, when not using UI-side compositing, we need to make sure we do not close the page in the previous process until we've
+    // entered accelerated compositing for the new page or we will flash on navigation.
+    if (drawingArea()->type() == DrawingAreaTypeTiledCoreAnimation)
+        shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes;
+#endif
+
     processDidTerminate(ProcessTerminationReason::NavigationSwap);
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     auto* navigation = navigationState().navigation(m_provisionalPage->navigationID());
-    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient()) : false;
+    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient(), shouldDelayClosingUntilEnteringAcceleratedCompositingMode) : false;
     m_process->removeWebPage(*this, m_websiteDataStore.ptr() == &m_provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);
 
     // There is no way we'll be able to return to the page in the previous page so close it.
