@@ -847,9 +847,11 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
 
 #endif
 
-void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<Element>>& elements)
+void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<Element>>& elements, WebCore::Frame& frame)
 {
-    return m_page.injectedBundleFormClient().didAssociateFormControls(&m_page, elements);
+    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    ASSERT(webFrame);
+    return m_page.injectedBundleFormClient().didAssociateFormControls(&m_page, elements, webFrame);
 }
 
 bool WebChromeClient::shouldNotifyOnFormChanges()

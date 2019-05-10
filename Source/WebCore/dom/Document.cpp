@@ -6959,8 +6959,10 @@ void Document::didAssociateFormControlsTimerFired()
 {
     auto vector = copyToVector(m_associatedFormControls);
     m_associatedFormControls.clear();
-    if (auto* page = this->page())
-        page->chrome().client().didAssociateFormControls(vector);
+    if (auto* page = this->page()) {
+        ASSERT(m_frame);
+        page->chrome().client().didAssociateFormControls(vector, *m_frame);
+    }
 }
 
 void Document::setCachedDOMCookies(const String& cookies)

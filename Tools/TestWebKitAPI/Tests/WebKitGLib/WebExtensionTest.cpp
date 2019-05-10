@@ -316,9 +316,8 @@ static void emitFormControlsAssociated(GDBusConnection* connection, const char* 
     g_assert_true(ok);
 }
 
-static void formControlsAssociatedCallback(WebKitWebPage* webPage, GPtrArray* formElements, WebKitWebExtension* extension)
+static void formControlsAssociatedForFrameCallback(WebKitWebPage* webPage, GPtrArray* formElements, WebKitFrame* frame, WebKitWebExtension* extension)
 {
-    auto* frame = webkit_web_page_get_main_frame(webPage);
     GString* formIdsBuilder = g_string_new(nullptr);
     for (guint i = 0; i < formElements->len; ++i) {
         g_assert_true(WEBKIT_DOM_IS_ELEMENT(g_ptr_array_index(formElements, i)));
@@ -413,7 +412,7 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
     g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
     g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
-    g_signal_connect(webPage, "form-controls-associated", G_CALLBACK(formControlsAssociatedCallback), extension);
+    g_signal_connect(webPage, "form-controls-associated-for-frame", G_CALLBACK(formControlsAssociatedForFrameCallback), extension);
     g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormCallback), extension);
 }
 

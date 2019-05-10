@@ -39,6 +39,7 @@ typedef void (*WKBundlePageWillSendSubmitEventCallback)(WKBundlePageRef page, WK
 typedef void (*WKBundlePageDidFocusTextFieldCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
 typedef bool (*WKBundlePageShouldNotifyOnFormChangesCallback)(WKBundlePageRef page, const void* clientInfo);
 typedef void (*WKBundlePageDidAssociateFormControlsCallback)(WKBundlePageRef page, WKArrayRef elementHandles, const void* clientInfo);
+typedef void (*WKBundlePageDidAssociateFormControlsForFrameCallback)(WKBundlePageRef page, WKArrayRef elementHandles, WKBundleFrameRef frame, const void* clientInfo);
 
 typedef struct WKBundlePageFormClientBase {
     int                                                                 version;
@@ -91,5 +92,28 @@ typedef struct WKBundlePageFormClientV2 {
     WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
     WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
 } WKBundlePageFormClientV2;
+
+typedef struct WKBundlePageFormClientV3 {
+    WKBundlePageFormClientBase                                          base;
+
+    // Version 0.
+    WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
+    WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
+    WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
+    WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
+    WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
+    WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
+
+    // Version 1.
+    WKBundlePageWillSendSubmitEventCallback                             willSendSubmitEvent;
+
+    // version 2.
+    WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
+    WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
+    WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
+
+    // version 3.
+    WKBundlePageDidAssociateFormControlsForFrameCallback                didAssociateFormControlsForFrame;
+} WKBundlePageFormClientV3;
 
 #endif // WKBundlePageFormClient_h

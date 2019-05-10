@@ -157,9 +157,9 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const Vector<RefPtr<WebCore::Element>>& elements)
+void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const Vector<RefPtr<WebCore::Element>>& elements, WebFrame* frame)
 {
-    if (!m_client.didAssociateFormControls)
+    if (!m_client.didAssociateFormControls && !m_client.didAssociateFormControlsForFrame)
         return;
 
     Vector<RefPtr<API::Object>> elementHandles;
@@ -168,7 +168,12 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     for (const auto& element : elements)
         elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
 
-    m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTFMove(elementHandles)).ptr()), m_client.base.clientInfo);
+    if (!m_client.didAssociateFormControlsForFrame) {
+        m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTFMove(elementHandles)).ptr()), m_client.base.clientInfo);
+        return;
+    }
+
+    m_client.didAssociateFormControlsForFrame(toAPI(page), toAPI(API::Array::create(WTFMove(elementHandles)).ptr()), toAPI(frame), m_client.base.clientInfo);
 }
 
 bool InjectedBundlePageFormClient::shouldNotifyOnFormChanges(WebPage* page)

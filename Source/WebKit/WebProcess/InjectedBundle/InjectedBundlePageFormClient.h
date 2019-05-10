@@ -33,7 +33,7 @@
 namespace API {
 
 template<> struct ClientTraits<WKBundlePageFormClientBase> {
-    typedef std::tuple<WKBundlePageFormClientV0, WKBundlePageFormClientV1, WKBundlePageFormClientV2> Versions;
+    typedef std::tuple<WKBundlePageFormClientV0, WKBundlePageFormClientV1, WKBundlePageFormClientV2, WKBundlePageFormClientV3> Versions;
 };
 }
 
@@ -51,7 +51,7 @@ public:
     bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement*, InputFieldAction, WebFrame*) override;    
     void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&, RefPtr<API::Object>& userData) override;
     void willSendSubmitEvent(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&) override;
-    void didAssociateFormControls(WebPage*, const Vector<RefPtr<WebCore::Element>>&) override;
+    void didAssociateFormControls(WebPage*, const Vector<RefPtr<WebCore::Element>>&, WebFrame*) override;
     bool shouldNotifyOnFormChanges(WebPage*) override;
 };
 

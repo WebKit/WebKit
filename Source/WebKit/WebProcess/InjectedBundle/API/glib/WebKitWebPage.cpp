@@ -68,6 +68,7 @@ enum {
     CONTEXT_MENU,
     CONSOLE_MESSAGE_SENT,
     FORM_CONTROLS_ASSOCIATED,
+    FORM_CONTROLS_ASSOCIATED_FOR_FRAME,
     WILL_SUBMIT_FORM,
 
     LAST_SIGNAL
@@ -380,13 +381,14 @@ public:
         fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT, formElement, frame, sourceFrame, values);
     }
 
-    void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements) override
+    void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements, WebFrame* frame) override
     {
         GRefPtr<GPtrArray> formElements = adoptGRef(g_ptr_array_sized_new(elements.size()));
         for (size_t i = 0; i < elements.size(); ++i)
             g_ptr_array_add(formElements.get(), WebKit::kit(elements[i].get()));
 
         g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED], 0, formElements.get());
+        g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME], 0, formElements.get(), webkitFrameGetOrCreate(frame));
     }
 
     bool shouldNotifyOnFormChanges(WebPage*) override { return true; }
@@ -565,15 +567,46 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * keep them alive after the signal handler returns.
      *
      * Since: 2.16
+     *
+     * Deprecated: 2.26, use #WebKitWebPage::form-controls-associated-for-frame instead.
      */
     signals[FORM_CONTROLS_ASSOCIATED] = g_signal_new(
         "form-controls-associated",
         G_TYPE_FROM_CLASS(klass),
-        G_SIGNAL_RUN_LAST,
+        static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DEPRECATED),
         0, 0, nullptr,
         g_cclosure_marshal_VOID__BOXED,
         G_TYPE_NONE, 1,
         G_TYPE_PTR_ARRAY);
+
+    /**
+     * WebKitWebPage::form-controls-associated-for-frame:
+     * @web_page: the #WebKitWebPage on which the signal is emitted
+     * @elements: (element-type WebKitDOMElement) (transfer none): a #GPtrArray of
+     *     #WebKitDOMElement with the list of forms in the page
+     * @frame: the #WebKitFrame
+     *
+     * Emitted after form elements (or form associated elements) are associated to a particular web
+     * page. This is useful to implement form auto filling for web pages where form fields are added
+     * dynamically. This signal might be emitted multiple times for the same web page.
+     *
+     * Note that this signal could be also emitted when form controls are moved between forms. In
+     * that case, the @elements array carries the list of those elements which have moved.
+     *
+     * Clients should take a reference to the members of the @elements array if it is desired to
+     * keep them alive after the signal handler returns.
+     *
+     * Since: 2.26
+     */
+    signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME] = g_signal_new(
+        "form-controls-associated-for-frame",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, 0, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        G_TYPE_PTR_ARRAY,
+        WEBKIT_TYPE_FRAME);
 
     /**
      * WebKitWebPage::will-submit-form:
