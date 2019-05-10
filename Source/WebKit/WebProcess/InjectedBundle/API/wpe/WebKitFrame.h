@@ -56,6 +56,9 @@ struct _WebKitFrameClass {
 WEBKIT_API GType
 webkit_frame_get_type                                    (void);
 
+WEBKIT_API guint64
+webkit_frame_get_id                                      (WebKitFrame       *frame);
+
 WEBKIT_API gboolean
 webkit_frame_is_main_frame                               (WebKitFrame       *frame);
 

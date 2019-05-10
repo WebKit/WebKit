@@ -1,5 +1,27 @@
 2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Add webkit_frame_get_id() API
+        https://bugs.webkit.org/show_bug.cgi?id=197270
+
+        Reviewed by Carlos Garcia Campos.
+
+        This was hard, but I added a test to verify that two different WebKitFrames of the same
+        WebKitWebPage return two different frame IDs.
+
+        * TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp:
+        (WebKitFrameTest::willSubmitFormCallback):
+        (WebKitFrameTest::testSubframe):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp:
+        (testWebKitFrameSubframe):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (willSubmitFormCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/resources/form-in-frame.html: Added.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/webkitglib-tests.gresource.xml:
+
+2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Add WebKitWebPage::did-associate-form-controls-for-frame and deprecate original did-associate-form-controls
         https://bugs.webkit.org/show_bug.cgi?id=197271
 

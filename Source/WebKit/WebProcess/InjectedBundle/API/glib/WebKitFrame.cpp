@@ -59,6 +59,25 @@ WebFrame* webkitFrameGetWebFrame(WebKitFrame* frame)
 }
 
 /**
+ * webkit_frame_get_id:
+ * @frame: a #WebKitFrame
+ *
+ * Gets the process-unique identifier of this #WebKitFrame. No other
+ * frame in the same web process will have the same ID; however, frames
+ * in other web processes may.
+ *
+ * Returns: the identifier of @frame
+ *
+ * Since: 2.26
+ */
+guint64 webkit_frame_get_id(WebKitFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), 0);
+
+    return frame->priv->webFrame->frameID();
+}
+
+/**
  * webkit_frame_is_main_frame:
  * @frame: a #WebKitFrame
  *

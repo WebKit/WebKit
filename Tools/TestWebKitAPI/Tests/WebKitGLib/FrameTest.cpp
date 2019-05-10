@@ -131,6 +131,49 @@ private:
         return true;
     }
 
+    static void willSubmitFormCallback(WebKitWebPage* page, WebKitDOMElement*, WebKitFormSubmissionStep, WebKitFrame* sourceFrame, WebKitFrame*, GPtrArray*, GPtrArray*, gpointer userData)
+    {
+        // The form is submitted from a subframe. It should have a different ID than the main frame.
+        WebKitFrame* mainFrame = webkit_web_page_get_main_frame(page);
+        g_assert_cmpuint(webkit_frame_get_id(mainFrame), !=, webkit_frame_get_id(sourceFrame));
+
+        auto* test = static_cast<WebKitFrameTest*>(userData);
+        g_main_loop_quit(test->m_mainLoop.get());
+    }
+
+    bool testSubframe(WebKitWebPage* page)
+    {
+        WebKitFrame* mainFrame = webkit_web_page_get_main_frame(page);
+        g_assert_true(WEBKIT_IS_FRAME(mainFrame));
+
+        GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(mainFrame));
+        g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
+
+        GRefPtr<JSCValue> jsParentDocument = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
+        g_assert_true(JSC_IS_VALUE(jsParentDocument.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsParentDocument.get()));
+
+        GRefPtr<JSCValue> subframe = adoptGRef(jsc_value_object_invoke_method(jsParentDocument.get(), "getElementById", G_TYPE_STRING, "frame", G_TYPE_NONE));
+        g_assert_true(JSC_IS_VALUE(subframe.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(subframe.get()));
+
+        GRefPtr<JSCValue> contentWindow = adoptGRef(jsc_value_object_get_property(subframe.get(), "contentWindow"));
+        g_assert_true(JSC_IS_VALUE(contentWindow.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(contentWindow.get()));
+
+        GRefPtr<JSCValue> undefined = adoptGRef(jsc_value_object_invoke_method(contentWindow.get(), "postMessage", G_TYPE_STRING, "submit the form!", G_TYPE_STRING, "*", G_TYPE_NONE));
+        g_assert_true(JSC_IS_VALUE(undefined.get()));
+        g_assert_true(jsc_value_is_undefined(undefined.get()));
+
+        g_signal_connect(page, "will-submit-form", reinterpret_cast<GCallback>(willSubmitFormCallback), this);
+
+        m_mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
+        g_main_loop_run(m_mainLoop.get());
+
+        return true;
+    }
+
     bool runTest(const char* testName, WebKitWebPage* page) override
     {
         if (!strcmp(testName, "main-frame"))
@@ -141,10 +184,14 @@ private:
             return testJavaScriptContext(page);
         if (!strcmp(testName, "javascript-values"))
             return testJavaScriptValues(page);
+        if (!strcmp(testName, "subframe"))
+            return testSubframe(page);
 
         g_assert_not_reached();
         return false;
     }
+
+    GRefPtr<GMainLoop> m_mainLoop;
 };
 
 static void __attribute__((constructor)) registerTests()
@@ -153,4 +200,5 @@ static void __attribute__((constructor)) registerTests()
     REGISTER_TEST(WebKitFrameTest, "WebKitFrame/uri");
     REGISTER_TEST(WebKitFrameTest, "WebKitFrame/javascript-context");
     REGISTER_TEST(WebKitFrameTest, "WebKitFrame/javascript-values");
+    REGISTER_TEST(WebKitFrameTest, "WebKitFrame/subframe");
 }

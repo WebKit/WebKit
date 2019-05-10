@@ -1,5 +1,21 @@
 2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Add webkit_frame_get_id() API
+        https://bugs.webkit.org/show_bug.cgi?id=197270
+
+        Reviewed by Carlos Garcia Campos.
+
+        It's as simple as can be: just an API to return the ID of a frame.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp:
+        (webkit_frame_get_id):
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitFrame.h:
+        * WebProcess/InjectedBundle/API/wpe/docs/wpe-webextensions-1.0-sections.txt:
+
+2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Add WebKitWebPage::did-associate-form-controls-for-frame and deprecate original did-associate-form-controls
         https://bugs.webkit.org/show_bug.cgi?id=197271
 

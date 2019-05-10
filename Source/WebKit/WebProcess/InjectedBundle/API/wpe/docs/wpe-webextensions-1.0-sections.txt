@@ -76,6 +76,7 @@ webkit_web_editor_get_type
 <SECTION>
 <FILE>WebKitFrame</FILE>
 WebKitFrame
+webkit_frame_get_id
 webkit_frame_is_main_frame
 webkit_frame_get_uri
 webkit_frame_get_js_context

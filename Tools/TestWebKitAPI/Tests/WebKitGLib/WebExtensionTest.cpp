@@ -386,7 +386,7 @@ static void willSubmitFormCallback(WebKitWebPage* webPage, WebKitDOMElement* for
     g_assert_true(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(formElement));
     G_GNUC_END_IGNORE_DEPRECATIONS;
 #endif
-    GRefPtr<JSCValue> jsFormElement = adoptGRef(webkit_frame_get_js_value_for_dom_object(webkit_web_page_get_main_frame(webPage), WEBKIT_DOM_OBJECT(formElement)));
+    GRefPtr<JSCValue> jsFormElement = adoptGRef(webkit_frame_get_js_value_for_dom_object(sourceFrame, WEBKIT_DOM_OBJECT(formElement)));
     g_assert_true(JSC_IS_VALUE(jsFormElement.get()));
     g_assert_true(jsc_value_is_object(jsFormElement.get()));
     g_assert_true(jsc_value_object_is_instance_of(jsFormElement.get(), "HTMLFormElement"));

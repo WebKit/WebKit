@@ -42,12 +42,19 @@ static void testWebKitFrameJavaScriptValues(WebViewTest* test, gconstpointer)
     g_assert_true(test->runWebProcessTest("WebKitFrame", "javascript-values", testHTML));
 }
 
+static void testWebKitFrameSubframe(WebViewTest* test, gconstpointer)
+{
+    static const char* testHTML = "<html><body><iframe src='resource:///org/webkit/glib/tests/form-in-frame.html' id='frame'></iframe></body></html>";
+    g_assert_true(test->runWebProcessTest("WebKitFrame", "subframe", testHTML));
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitFrame", "main-frame", testWebKitFrameMainFrame);
     WebViewTest::add("WebKitFrame", "uri", testWebKitFrameURI);
     WebViewTest::add("WebKitFrame", "javascript-context", testWebKitFrameJavaScriptContext);
     WebViewTest::add("WebKitFrame", "javascript-values", testWebKitFrameJavaScriptValues);
+    WebViewTest::add("WebKitFrame", "subframe", testWebKitFrameSubframe);
 }
 
 void afterAll()
