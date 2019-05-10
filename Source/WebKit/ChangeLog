@@ -1,3 +1,18 @@
+2019-05-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebKit: WebKit::WebSpeechSynthesisClient::speak
+        https://bugs.webkit.org/show_bug.cgi?id=197761
+        <rdar://problem/50237614>
+
+        Reviewed by Per Arne Vollan.
+
+        It's valid for the incoming voice to be nil, so we need to protect against that.
+
+        Tests: fast/speechsynthesis/speech-synthesis-real-client-version.html
+
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp:
+        (WebKit::WebSpeechSynthesisClient::speak):
+
 2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Add webkit_frame_get_id() API

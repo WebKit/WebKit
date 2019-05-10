@@ -58,7 +58,13 @@ void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtte
     };
 
     auto voice = utterance->voice();
-    m_page.sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisSpeak(utterance->text(), utterance->lang(), utterance->volume(), utterance->rate(), utterance->pitch(), utterance->startTime(), voice->voiceURI(), voice->name(), voice->lang(), voice->localService(), voice->isDefault()), WTFMove(completionHandler));
+    auto voiceURI = voice ? voice->voiceURI() : "";
+    auto name = voice ? voice->name() : "";
+    auto lang = voice ? voice->lang() : "";
+    auto localService = voice ? voice->localService() : false;
+    auto isDefault = voice ? voice->isDefault() : false;
+
+    m_page.sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisSpeak(utterance->text(), utterance->lang(), utterance->volume(), utterance->rate(), utterance->pitch(), utterance->startTime(), voiceURI, name, lang, localService, isDefault), WTFMove(completionHandler));
 
     m_page.corePage()->speechSynthesisClient()->observer()->didStartSpeaking();
 }
