@@ -1,3 +1,18 @@
+2019-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Streamline test-and-clear operation for ContextMenu
+        https://bugs.webkit.org/show_bug.cgi?id=197795
+        <rdar://problem/50473746>
+
+        Reviewed by Wenson Hsieh.
+
+        Rather than performing a check when entering the function, doing work,
+        then clearing the member variable, perform the check and clear in
+        a single operation. Only perform the selection if the menu exists.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didSelectItemFromActiveContextMenu):
+
 2019-05-10  Megan Gardner  <megan_gardner@apple.com>
 
         Returning incorrect marked text rects

@@ -4236,11 +4236,8 @@ void WebPage::failedToShowPopupMenu()
 #if ENABLE(CONTEXT_MENUS)
 void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
-    if (!m_contextMenu)
-        return;
-
-    m_contextMenu->itemSelected(item);
-    m_contextMenu = nullptr;
+    if (auto contextMenu = std::exchange(m_contextMenu, nullptr))
+        contextMenu->itemSelected(item);
 }
 #endif
 
