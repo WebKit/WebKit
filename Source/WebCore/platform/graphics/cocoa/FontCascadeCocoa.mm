@@ -276,8 +276,10 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     if (syntheticBoldOffset && !contextCTM.isIdentityOrTranslationOrFlipped()) {
         FloatSize horizontalUnitSizeInDevicePixels = contextCTM.mapSize(FloatSize(1, 0));
         float horizontalUnitLengthInDevicePixels = sqrtf(horizontalUnitSizeInDevicePixels.width() * horizontalUnitSizeInDevicePixels.width() + horizontalUnitSizeInDevicePixels.height() * horizontalUnitSizeInDevicePixels.height());
-        if (horizontalUnitLengthInDevicePixels)
-            syntheticBoldOffset /= horizontalUnitLengthInDevicePixels;
+        if (horizontalUnitLengthInDevicePixels) {
+            // Make sure that a scaled down context won't blow up the gap between the glyphs. 
+            syntheticBoldOffset = std::min(syntheticBoldOffset, syntheticBoldOffset / horizontalUnitLengthInDevicePixels);
+        }
     };
 
     bool hasSimpleShadow = context.textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();

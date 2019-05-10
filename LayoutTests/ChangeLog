@@ -1,3 +1,14 @@
+2019-05-10  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] baidu.com: Synthetic bold renders too far apart, appears doubled.
+        https://bugs.webkit.org/show_bug.cgi?id=197781
+        <rdar://problem/48027412>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/large-synthetic-bold-with-scale-transform-expected.html: Added.
+        * fast/text/large-synthetic-bold-with-scale-transform.html: Added.
+
 2019-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant()) on nytimes.com after r245170
