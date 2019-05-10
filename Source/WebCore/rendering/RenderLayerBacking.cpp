@@ -1493,6 +1493,9 @@ void RenderLayerBacking::updateEventRegion()
     auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags() | RenderLayer::PaintLayerCollectingEventRegion;
     m_owningLayer.paintLayerContents(nullContext, paintingInfo, paintFlags);
 
+    for (auto& layerWeakPtr : m_backingSharingLayers)
+        layerWeakPtr->paintLayerContents(nullContext, paintingInfo, paintFlags);
+
     auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
     eventRegion.translate(contentOffset);
     m_graphicsLayer->setEventRegion(WTFMove(eventRegion));

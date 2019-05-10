@@ -1,3 +1,15 @@
+2019-05-10  Antti Koivisto  <antti@apple.com>
+
+        Event region generation needs to know about backing-sharing
+        https://bugs.webkit.org/show_bug.cgi?id=197694
+        <rdar://problem/50584991>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-wk2/TestExpectations:
+        * pointerevents/ios/touch-action-region-backing-sharing-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-backing-sharing.html: Added.
+
 2019-05-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS Debug] Layout Test webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html is a flaky timeout
