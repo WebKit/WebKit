@@ -36,6 +36,8 @@ set(WPEToolingBackends_LIBRARIES
     ${WPEBACKEND_FDO_LIBRARIES}
 )
 
+add_definitions(${LIBEPOXY_DEFINITIONS})
+
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-protocol.c
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml

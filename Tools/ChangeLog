@@ -1,3 +1,17 @@
+2019-05-10  Charlie Turner  <cturner@igalia.com>
+
+        [WPE] Forward libepoxy cflags
+        https://bugs.webkit.org/show_bug.cgi?id=197784
+
+        Reviewed by Žan Doberšek.
+
+        Patch by Zan Dobersek.
+
+        * wpe/backends/CMakeLists.txt: This is required to keep
+        -DMESA_EGL_NO_X11_HEADERS in the build, if we don't do this, EGL ends
+        up trying to include X11 headers even when they're not present in the
+        environment.
+
 2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix a bunch of compiler warnings
