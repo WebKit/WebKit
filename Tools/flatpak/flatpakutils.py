@@ -155,8 +155,8 @@ def load_manifest(manifest_path, port_name=None, command=None):
         contents = contents % {"COMMAND": command, "PORTNAME": port_name}
         if is_yaml:
             import yaml
-
-            manifest = yaml.load(contents)
+            yaml_load = getattr(yaml, "safe_load", yaml.load)
+            manifest = yaml_load(contents)
         else:
             contents = remove_comments(contents)
             manifest = json.loads(contents)
