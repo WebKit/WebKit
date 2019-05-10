@@ -1,3 +1,22 @@
+2019-05-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Test262] Unreviewed expectations update following r245188.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-is-infinity-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-is-nan-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-undefined-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-x-greater-than-y-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/this-is-not-object-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-is-infinity-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-is-nan-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-undefined-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-x-greater-than-y-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/this-is-not-object-throws.js:
+        These files have invalid YAML comments. Will also submit corrections back to Test262.
+
 2019-05-10  Keith Miller  <keith_miller@apple.com>
 
         Update test262 tests.
