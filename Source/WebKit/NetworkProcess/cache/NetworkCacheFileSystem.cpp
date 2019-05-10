@@ -87,7 +87,11 @@ void traverseDirectory(const String& path, const Function<void (const String&, D
     }
     closedir(dir);
 #else
-    function(String(), DirectoryEntryType::File);
+    auto entries = FileSystem::listDirectory(path);
+    for (auto& entry : entries) {
+        auto type = FileSystem::fileIsDirectory(entry, FileSystem::ShouldFollowSymbolicLinks::No) ? DirectoryEntryType::Directory : DirectoryEntryType::File;
+        function(entry, type);
+    }
 #endif
 }
 
@@ -127,7 +131,9 @@ FileTimes fileTimes(const String& path)
     return { WallTime::fromRawSeconds(g_ascii_strtoull(birthtimeString, nullptr, 10)),
         WallTime::fromRawSeconds(g_file_info_get_attribute_uint64(fileInfo.get(), "time::modified")) };
 #elif OS(WINDOWS)
-    return FileTimes();
+    auto createTime = FileSystem::getFileCreationTime(path);
+    auto modifyTime = FileSystem::getFileModificationTime(path);
+    return { createTime.valueOr(WallTime()), modifyTime.valueOr(WallTime()) };
 #endif
 }
 
@@ -142,6 +148,14 @@ void updateFileModificationTimeIfNeeded(const String& path)
 #if !OS(WINDOWS)
     // This really updates both the access time and the modification time.
     utimes(FileSystem::fileSystemRepresentation(path).data(), nullptr);
+#else
+    FILETIME time;
+    GetSystemTimeAsFileTime(&time);
+    auto file = CreateFile(path.wideCharacters().data(), GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE)
+        return;
+    SetFileTime(file, &time, &time, &time);
+    CloseHandle(file);
 #endif
 }
 

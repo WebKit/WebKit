@@ -52,7 +52,11 @@ public:
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
 
-    int fileDescriptor() const { return m_fileDescriptor; }
+#if !USE(SOUP)
+    bool isOpened() const { return FileSystem::isHandleValid(m_fileDescriptor); }
+#else
+    bool isOpened() const { return true; }
+#endif
 
     ~IOChannel();
 
@@ -66,7 +70,9 @@ private:
     String m_path;
     Type m_type;
 
-    int m_fileDescriptor { 0 };
+#if !USE(SOUP)
+    FileSystem::PlatformFileHandle m_fileDescriptor { FileSystem::invalidPlatformFileHandle };
+#endif
     std::atomic<bool> m_wasDeleted { false }; // Try to narrow down a crash, https://bugs.webkit.org/show_bug.cgi?id=165659
 #if PLATFORM(COCOA)
     OSObjectPtr<dispatch_io_t> m_dispatchIO;

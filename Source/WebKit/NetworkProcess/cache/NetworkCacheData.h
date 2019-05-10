@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/FileSystem.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/SHA1.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -52,7 +53,9 @@ public:
     ~Data() { }
 
     static Data empty();
+#if !OS(WINDOWS)
     static Data adoptMap(void* map, size_t, int fd);
+#endif
 
 #if PLATFORM(COCOA)
     enum class Backing { Buffer, Map };
@@ -60,6 +63,9 @@ public:
 #endif
 #if USE(SOUP)
     Data(GRefPtr<SoupBuffer>&&, int fd = -1);
+#elif OS(WINDOWS)
+    explicit Data(Vector<uint8_t>&&);
+    Data(FileSystem::PlatformFileHandle, size_t offset, size_t);
 #endif
     bool isNull() const;
     bool isEmpty() const { return !m_size; }
@@ -73,7 +79,7 @@ public:
 
     bool apply(const Function<bool (const uint8_t*, size_t)>&) const;
 
-    Data mapToFile(const char* path) const;
+    Data mapToFile(const String& path) const;
 
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
@@ -90,6 +96,9 @@ private:
     mutable GRefPtr<SoupBuffer> m_buffer;
     int m_fileDescriptor { -1 };
 #endif
+#if OS(WINDOWS)
+    Vector<uint8_t> m_buffer;
+#endif
     mutable const uint8_t* m_data { nullptr };
     size_t m_size { 0 };
     bool m_isMap { false };
@@ -97,11 +106,18 @@ private:
 
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
-Data adoptAndMapFile(int fd, size_t offset, size_t);
+#if !OS(WINDOWS)
+Data adoptAndMapFile(int, size_t offset, size_t);
+#else
+Data adoptAndMapFile(FileSystem::PlatformFileHandle, size_t offset, size_t);
+#endif
 #if USE(GLIB) && !PLATFORM(WIN)
 Data adoptAndMapFile(GFileIOStream*, size_t offset, size_t);
 #endif
+#if !OS(WINDOWS)
 Data mapFile(const char* path);
+#endif
+Data mapFile(const String& path);
 
 using Salt = std::array<uint8_t, 8>;
 

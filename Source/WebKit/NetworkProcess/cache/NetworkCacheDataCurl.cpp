@@ -26,55 +26,65 @@
 #include "config.h"
 #include "NetworkCacheData.h"
 
-#include <WebCore/NotImplemented.h>
-
 namespace WebKit {
 namespace NetworkCache {
 
 Data::Data(const uint8_t* data, size_t size)
 {
-    notImplemented();
+    m_buffer.resize(size);
+    m_size = size;
+    memcpy(m_buffer.data(), data, size);
+}
+
+Data::Data(FileSystem::PlatformFileHandle file, size_t offset, size_t size)
+{
+    m_buffer.resize(size);
+    m_size = size;
+    FileSystem::seekFile(file, offset, FileSystem::FileSeekOrigin::Beginning);
+    FileSystem::readFromFile(file, reinterpret_cast<char*>(m_buffer.data()), size);
+    FileSystem::closeFile(file);
+}
+
+Data::Data(Vector<uint8_t>&& buffer)
+    : m_buffer(WTFMove(buffer))
+{
+    m_size = m_buffer.size();
 }
 
 Data Data::empty()
 {
-    notImplemented();
     return { };
 }
 
 const uint8_t* Data::data() const
 {
-    notImplemented();
-    return nullptr;
+    return m_buffer.data();
 }
 
 bool Data::isNull() const
 {
-    notImplemented();
-    return true;
+    return m_buffer.isEmpty();
 }
 
 bool Data::apply(const Function<bool(const uint8_t*, size_t)>& applier) const
 {
-    notImplemented();
-    return false;
+    if (isEmpty())
+        return false;
+
+    return applier(reinterpret_cast<const uint8_t*>(m_buffer.data()), m_buffer.size());
 }
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { };
+    return { m_buffer.data() + offset, size };
 }
 
 Data concatenate(const Data& a, const Data& b)
 {
-    notImplemented();
-    return { };
-}
-
-Data Data::adoptMap(void* map, size_t size, int fd)
-{
-    notImplemented();
-    return { };
+    Vector<uint8_t> buffer(a.size() + b.size());
+    memcpy(buffer.data(), a.data(), a.size());
+    memcpy(buffer.data() + a.size(), b.data(), b.size());
+    return Data(WTFMove(buffer));
 }
 
 } // namespace NetworkCache

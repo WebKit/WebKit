@@ -429,10 +429,10 @@ bool moveFile(const String& oldPath, const String& newPath)
     return g_file_move(oldFile.get(), newFile.get(), G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, nullptr);
 }
 
-bool hardLinkOrCopyFile(const String& source, const String& destination)
+bool hardLink(const String& source, const String& destination)
 {
 #if OS(WINDOWS)
-    return !!::CopyFile(source.charactersWithNullTermination().data(), destination.charactersWithNullTermination().data(), TRUE);
+    return CreateHardLink(destination.wideCharacters().data(), source.wideCharacters().data(), nullptr);
 #else
     auto sourceFilename = fileSystemRepresentation(source);
     if (!validRepresentation(sourceFilename))
@@ -442,10 +442,27 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
     if (!validRepresentation(destinationFilename))
         return false;
 
-    if (!link(sourceFilename.data(), destinationFilename.data()))
+    return !link(sourceFilename.data(), destinationFilename.data());
+#endif
+}
+
+bool hardLinkOrCopyFile(const String& source, const String& destination)
+{
+    if (hardLink(source, destination))
         return true;
 
     // Hard link failed. Perform a copy instead.
+#if OS(WINDOWS)
+    return !!::CopyFile(source.wideCharacters().data(), destination.wideCharacters().data(), TRUE);
+#else
+    auto sourceFilename = fileSystemRepresentation(source);
+    if (!validRepresentation(sourceFilename))
+        return false;
+
+    auto destinationFilename = fileSystemRepresentation(destination);
+    if (!validRepresentation(destinationFilename))
+        return false;
+
     GRefPtr<GFile> sourceFile = adoptGRef(g_file_new_for_path(sourceFilename.data()));
     GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_path(destinationFilename.data()));
     return g_file_copy(sourceFile.get(), destinationFile.get(), G_FILE_COPY_NONE, nullptr, nullptr, nullptr, nullptr);

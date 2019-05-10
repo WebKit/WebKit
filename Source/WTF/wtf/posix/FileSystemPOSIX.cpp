@@ -444,23 +444,39 @@ end:
 }
 #endif // !PLATFORM(COCOA)
 
-bool hardLinkOrCopyFile(const String& source, const String& destination)
+bool hardLink(const String& source, const String& destination)
 {
     if (source.isEmpty() || destination.isEmpty())
         return false;
 
-    CString fsSource = fileSystemRepresentation(source);
+    auto fsSource = fileSystemRepresentation(source);
     if (!fsSource.data())
         return false;
 
-    CString fsDestination = fileSystemRepresentation(destination);
+    auto fsDestination = fileSystemRepresentation(destination);
     if (!fsDestination.data())
         return false;
 
-    if (!link(fsSource.data(), fsDestination.data()))
+    return !link(fsSource.data(), fsDestination.data());
+}
+
+bool hardLinkOrCopyFile(const String& source, const String& destination)
+{
+    if (hardLink(source, destination))
         return true;
 
     // Hard link failed. Perform a copy instead.
+    if (source.isEmpty() || destination.isEmpty())
+        return false;
+
+    auto fsSource = fileSystemRepresentation(source);
+    if (!fsSource.data())
+        return false;
+
+    auto fsDestination = fileSystemRepresentation(destination);
+    if (!fsDestination.data())
+        return false;
+
     auto handle = open(fsDestination.data(), O_WRONLY | O_CREAT | O_EXCL, 0666);
     if (handle == -1)
         return false;

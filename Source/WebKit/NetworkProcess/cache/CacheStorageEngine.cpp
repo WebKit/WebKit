@@ -423,7 +423,7 @@ void Engine::readFile(const String& filename, CompletionHandler<void(const Netwo
     m_pendingReadCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, filename = filename.isolatedCopy()]() mutable {
         auto channel = IOChannel::open(filename, IOChannel::Type::Read);
-        if (channel->fileDescriptor() < 0) {
+        if (!channel->isOpened()) {
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), identifier]() mutable {
                 if (!weakThis)
                     return;

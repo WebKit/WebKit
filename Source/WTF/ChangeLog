@@ -1,3 +1,22 @@
+2019-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] storage/indexeddb tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=196289
+
+        Reviewed by Alex Christensen.
+
+        * wtf/FileSystem.h: Added hardLink.
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::hardLink):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::hardLink):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::hardLink):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        Added hardLink. Let hardLinkOrCopyFile use the hardLink.
+
 2019-05-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Remove "private:" from Noncopyable and Nonmovable macros

@@ -496,8 +496,17 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
     return static_cast<int>(bytesRead);
 }
 
+bool hardLink(const String& source, const String& destination)
+{
+    return CreateHardLink(destination.wideCharacters().data(), source.wideCharacters().data(), nullptr);
+}
+
 bool hardLinkOrCopyFile(const String& source, const String& destination)
 {
+    if (hardLink(source, destination))
+        return true;
+
+    // Hard link failed. Perform a copy instead.
     return !!::CopyFile(source.wideCharacters().data(), destination.wideCharacters().data(), TRUE);
 }
 
