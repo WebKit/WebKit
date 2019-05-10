@@ -1,3 +1,13 @@
+2019-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant()) on nytimes.com after r245170
+        https://bugs.webkit.org/show_bug.cgi?id=197776
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share-expected.txt: Added.
+        * compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share.html: Added.
+
 2019-05-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebKit: WebKit::WebSpeechSynthesisClient::speak
