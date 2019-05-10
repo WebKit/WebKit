@@ -300,14 +300,12 @@ WI.TreeElement = class TreeElement extends WI.Object
     static treeElementToggled(event)
     {
         let element = event.currentTarget;
-        if (!element || !element.treeElement)
+        if (!element)
             return;
 
         let treeElement = element.treeElement;
-        if (!treeElement.treeOutline.selectable) {
-            treeElement.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementClicked, {treeElement});
+        if (!treeElement)
             return;
-        }
 
         let toggleOnClick = treeElement.toggleOnClick && !treeElement.selectable;
         let isInTriangle = treeElement.isEventWithinDisclosureTriangle(event);
@@ -326,6 +324,9 @@ WI.TreeElement = class TreeElement extends WI.Object
                 treeElement.expand();
         }
         event.stopPropagation();
+
+        if (!treeElement.treeOutline.selectable)
+            treeElement.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementClicked, {treeElement});
     }
 
     static treeElementDoubleClicked(event)
