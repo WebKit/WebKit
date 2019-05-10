@@ -1,3 +1,21 @@
+2019-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Let WebKit clients supply an application name for user agent in modern compatibility mode
+        https://bugs.webkit.org/show_bug.cgi?id=197782
+        <rdar://problem/50646747>
+
+        Reviewed by Beth Dakin.
+
+        Add plumbing for a new private property on WKWebpagePreferences.
+
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _applicationNameForUserAgentWithModernCompatibility]):
+        (-[WKWebpagePreferences _setApplicationNameForUserAgentWithModernCompatibility:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+
 2019-05-10  Chris Dumez  <cdumez@apple.com>
 
         The active tab sometimes app naps even though it should not
