@@ -1143,21 +1143,21 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
+    JSString* string = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
 
-    int len = s.length();
-    RELEASE_ASSERT(len >= 0);
+    int length = string->length();
+    RELEASE_ASSERT(length >= 0);
 
     // The arg processing is very much like ArrayProtoFunc::Slice
     double start = a0.toInteger(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    double end = a1.isUndefined() ? len : a1.toInteger(exec);
+    double end = a1.isUndefined() ? length : a1.toInteger(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(stringSlice(vm, WTFMove(s), start, end));
+    RELEASE_AND_RETURN(scope, JSValue::encode(stringSlice(exec, vm, string, length, start, end)));
 }
 
 // Return true in case of early return (resultLength got to limitLength).

@@ -1,3 +1,44 @@
+2019-05-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] String substring operation should return ropes consistently
+        https://bugs.webkit.org/show_bug.cgi?id=197765
+        <rdar://problem/37689944>
+
+        Reviewed by Michael Saboff.
+
+        Currently we have different policies per string substring operation function.
+
+            1. String#slice returns the resolved non-rope string
+            2. String#substring returns rope string
+            3. String#substr returns rope string in runtime function, non-rope string in DFG and FTL
+
+        Due to (3), we see large memory use in the tested web page[1]. Non rope substring have a problem.
+        First of all, that returned string seems not used immediately. It is possible that the resulted
+        string is used as a part of the other ropes (like, xxx.substring(...) + "Hello"). To avoid the
+        eager materialization of the string, we are using StringImpl::createSubstringSharingImpl for the
+        resulted non rope string. StringImpl::createSubstringSharingImpl is StringImpl's substring feature: the
+        substring is pointing the owner StringImpl. While this has memory saving benefit, it can retain owner
+        StringImpl so long, and it could keep very large owner StringImpl alive.
+
+        The problem we are attempting to solve with StringImpl::createSubstringSharingImpl can be solved by
+        the rope string simply. Rope string can share the underlying string. And good feature of the rope
+        string is that, when resolving rope string, the rope string always create a new StringImpl instead of
+        using StringImpl::createSubstringSharingImpl. So we allow the owner StringImpl to be destroyed. And this
+        resolving only happens when we actually want to use the content of the rope string. In addition, we recently
+        shrunk the sizeof(JSRopeString) from 48 to 32, so JSRopeString is cheap.
+
+        In this patch, we change (2) and (3) to (1), using rope String as a result of substring operations.
+
+        RAMification and JetStream2 are neutral. The web page[1] shows large memory footprint improvement from 776MB to 681MB.
+
+        [1]: https://beta.observablehq.com/@ldgardner/assignment-4-visualizations-and-multiple-views
+
+        * dfg/DFGOperations.cpp:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSlice):
+        * runtime/StringPrototypeInlines.h:
+        (JSC::stringSlice):
+
 2019-05-10  Robin Morisset  <rmorisset@apple.com>
 
         testb3 failing with crash in JSC::B3::BasicBlock::appendNonTerminal
