@@ -1,5 +1,24 @@
 2019-05-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Layer bounds are incorrect for sharing layers that paint with transforms
+        https://bugs.webkit.org/show_bug.cgi?id=197768
+        <rdar://problem/50695493>
+
+        Reviewed by Zalan Bujtas.
+
+        Tests for backing-shared layer bounds in various configurations.
+
+        * compositing/shared-backing/sharing-bounds-clip-expected.txt: Added.
+        * compositing/shared-backing/sharing-bounds-clip.html: Added.
+        * compositing/shared-backing/sharing-bounds-expected.txt: Added.
+        * compositing/shared-backing/sharing-bounds-non-clipping-shared-layer-expected.txt: Added.
+        * compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html: Added.
+        * compositing/shared-backing/sharing-bounds-transformed-sharing-layer-expected.txt: Added.
+        * compositing/shared-backing/sharing-bounds-transformed-sharing-layer.html: Added.
+        * compositing/shared-backing/sharing-bounds.html: Added.
+
+2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
         Translucent gradient rendering bug due to will-change transform
         https://bugs.webkit.org/show_bug.cgi?id=197654
         <rdar://problem/50547664>

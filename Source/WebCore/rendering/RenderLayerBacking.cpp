@@ -671,12 +671,15 @@ bool RenderLayerBacking::updateCompositedBounds()
         layerBounds.intersect(clippingBounds);
     }
 
-    for (auto& layerWeakPtr : m_backingSharingLayers) {
-        auto* boundsRootLayer = &m_owningLayer;
-        ASSERT(layerWeakPtr->isDescendantOf(m_owningLayer));
-        auto offset = layerWeakPtr->offsetFromAncestor(&m_owningLayer);
-        auto bounds = layerWeakPtr->calculateLayerBounds(boundsRootLayer, offset, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
-        layerBounds.unite(bounds);
+    // If the backing provider has overflow:clip, we know all sharing layers are affected by the clip because they are containing-block descendants.
+    if (!renderer().hasOverflowClip()) {
+        for (auto& layerWeakPtr : m_backingSharingLayers) {
+            auto* boundsRootLayer = &m_owningLayer;
+            ASSERT(layerWeakPtr->isDescendantOf(m_owningLayer));
+            auto offset = layerWeakPtr->offsetFromAncestor(&m_owningLayer);
+            auto bounds = layerWeakPtr->calculateLayerBounds(boundsRootLayer, offset, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+            layerBounds.unite(bounds);
+        }
     }
 
     // If the element has a transform-origin that has fixed lengths, and the renderer has zero size,
