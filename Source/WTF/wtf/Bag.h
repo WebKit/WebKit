@@ -65,14 +65,6 @@ public:
         other.m_head = nullptr;
     }
 
-    template<typename U>
-    Bag& operator=(Bag<T, U>&& other)
-    {
-        m_head = other.unwrappedHead();
-        other.m_head = nullptr;
-        return *this;
-    }
-    
     ~Bag()
     {
         clear();

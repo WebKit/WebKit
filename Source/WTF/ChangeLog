@@ -1,3 +1,16 @@
+2019-05-10  Saam barati  <sbarati@apple.com>
+
+        Bag's move operator= leaks memory
+        https://bugs.webkit.org/show_bug.cgi?id=197757
+
+        Reviewed by Keith Miller.
+
+        It was unused. So I'm just removing it. We can implement it properly
+        if we ever need it.
+
+        * wtf/Bag.h:
+        (WTF::Bag::operator=): Deleted.
+
 2019-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] storage/indexeddb tests are timing out
