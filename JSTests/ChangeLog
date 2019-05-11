@@ -1,3 +1,15 @@
+2019-05-10  Saam barati  <sbarati@apple.com>
+
+        Call to JSToWasmICCallee::createStructure passes in wrong prototype value
+        https://bugs.webkit.org/show_bug.cgi?id=197807
+        <rdar://problem/50530400>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/js-to-wasm-callee-has-correct-prototype.js: Added.
+        (test.getInstance):
+        (test):
+
 2019-05-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Test262] Unreviewed expectations update following r245188.

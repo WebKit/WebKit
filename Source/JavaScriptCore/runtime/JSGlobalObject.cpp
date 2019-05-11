@@ -1062,7 +1062,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
             });
         m_jsToWasmICCalleeStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                init.set(JSToWasmICCallee::createStructure(init.vm, init.owner, JSValue()));
+                init.set(JSToWasmICCallee::createStructure(init.vm, init.owner, jsNull()));
             });
         m_webAssemblyWrapperFunctionStructure.initLater(
             [] (const Initializer<Structure>& init) {
