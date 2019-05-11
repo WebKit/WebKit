@@ -1,5 +1,14 @@
 2019-05-11  Alexey Proskuryakov  <ap@apple.com>
 
+        Cleaning up results for legacy-animation-engine tests
+
+        Two tests were fixed in bug 188357.
+        The third one is still broken, and we have bug 184611 tracking it.
+
+        * platform/mac-wk1/TestExpectations:
+
+2019-05-11  Alexey Proskuryakov  <ap@apple.com>
+
         Removing flaky expectation for fast/repaint/canvas-object-fit.html
         https://bugs.webkit.org/show_bug.cgi?id=188910
 
