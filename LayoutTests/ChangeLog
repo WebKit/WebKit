@@ -1,3 +1,29 @@
+2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Backing-sharing layers with transforms render incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=197692
+        <rdar://problem/50652127>
+
+        Reviewed by Antti Koivisto.
+        
+        Ref tests for effects on sharing layers. The references make "clipping" be stacking context via z-index,
+        which eliminates sharing.
+
+        * compositing/shared-backing/nested-shared-layers-with-opacity-expected.html: Added.
+        * compositing/shared-backing/nested-shared-layers-with-opacity.html: Added.
+        * compositing/shared-backing/shared-layer-has-blending-expected.html: Added.
+        * compositing/shared-backing/shared-layer-has-blending.html: Added.
+        * compositing/shared-backing/shared-layer-has-filter-expected.html: Added.
+        * compositing/shared-backing/shared-layer-has-filter.html: Added.
+        * compositing/shared-backing/shared-layer-has-opacity-expected.html: Added.
+        * compositing/shared-backing/shared-layer-has-opacity.html: Added.
+        * compositing/shared-backing/shared-layer-has-reflection-expected.html: Added.
+        * compositing/shared-backing/shared-layer-has-reflection.html: Added.
+        * compositing/shared-backing/shared-layer-has-transform-expected.html: Added.
+        * compositing/shared-backing/shared-layer-has-transform.html: Added.
+        * compositing/shared-backing/shared-layer-isolates-blending-expected.html: Added.
+        * compositing/shared-backing/shared-layer-isolates-blending.html: Added.
+
 2019-05-10  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] baidu.com: Synthetic bold renders too far apart, appears doubled.

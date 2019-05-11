@@ -2668,10 +2668,13 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
         RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
 
-        layer.paintLayerContents(context, paintingInfo, paintFlags);
+        if (&layer == &m_owningLayer) {
+            layer.paintLayerContents(context, paintingInfo, paintFlags);
 
-        if (layer.containsDirtyOverlayScrollbars())
-            layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
+            if (layer.containsDirtyOverlayScrollbars())
+                layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
+        } else
+            layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
 
         if (layer.isRenderViewLayer())
             renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
