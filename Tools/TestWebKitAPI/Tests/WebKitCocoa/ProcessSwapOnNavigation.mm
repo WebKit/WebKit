@@ -4574,14 +4574,22 @@ TEST(ProcessSwap, OpenerLinkAfterAPIControlledProcessSwappingOfOpener)
 
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_NE(pid1, pid2);
-
-    // Auxiliary window's opener should no longer have an opener.
-    [createdWebView evaluateJavaScript:@"window.opener ? 'true' : 'false'" completionHandler: [&] (id hasOpener, NSError *error) {
-        EXPECT_WK_STREQ(@"false", hasOpener);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    
+    bool hasOpener = true;
+    int timeout = 50;
+    do {
+        if (timeout != 50)
+            TestWebKitAPI::Util::sleep(0.1);
+        
+        // Auxiliary window's opener should no longer have an opener.
+        [createdWebView evaluateJavaScript:@"window.opener ? 'true' : 'false'" completionHandler: [&] (id hasOpenerString, NSError *error) {
+            hasOpener = [hasOpenerString isEqualToString:@"true"];
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    } while (hasOpener && (--timeout));
+    EXPECT_FALSE(hasOpener);
 
     [createdWebView evaluateJavaScript:@"savedOpener.closed ? 'true' : 'false'" completionHandler: [&] (id savedOpenerIsClosed, NSError *error) {
         EXPECT_WK_STREQ(@"true", savedOpenerIsClosed);
