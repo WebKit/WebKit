@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scrollable {
+            overflow-y: scroll;
+            height: 400px;
+            width: 300px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+
+        .sharing {
+            margin: 20px;
+            width: 150px;
+            height: 130px;
+            background-color: green;
+            opacity: 0.75;
+        }
+    
+        .spacer {
+            height: 100px;
+            width: 20px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div class="scrollable">
+        <div class="sharing">
+        </div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>

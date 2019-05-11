@@ -2366,6 +2366,9 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
     if (!ancestorCompositedBounds.contains(layerCompositedBoundsInAncestor))
         return true;
 
+    if (layer.isComposited() && layer.backing()->hasBackingSharingLayers())
+        return true;
+
     return false;
 }
 

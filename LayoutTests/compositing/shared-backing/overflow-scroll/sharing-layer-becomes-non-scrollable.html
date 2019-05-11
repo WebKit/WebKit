@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that the sharing layer still has backing store and paints shared layers after a tree config change</title>
+    <style>
+        .scrollable {
+            overflow-y: scroll;
+            height: 400px;
+            width: 300px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+
+        .sharing {
+            margin: 20px;
+            width: 150px;
+            height: 130px;
+            background-color: green;
+            opacity: 0.75;
+        }
+    
+        .spacer {
+            height: 500px;
+            width: 20px;
+            background-color: silver;
+        }
+        
+        .spacer.changed {
+            height: 100px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.spacer').classList.add('changed');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scrollable">
+        <div class="sharing">
+        </div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>
