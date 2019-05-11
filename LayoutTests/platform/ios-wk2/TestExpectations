@@ -8,6 +8,7 @@
 
 compositing/ios [ Pass ]
 compositing/shared-backing/overflow-scroll [ Pass ]
+compositing/scrolling/async-overflow-scrolling [ Pass ]
 fast/device-orientation [ Pass ]
 fast/history/ios [ Pass ]
 fast/scrolling/ios [ Pass ]

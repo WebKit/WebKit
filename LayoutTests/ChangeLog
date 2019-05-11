@@ -1,3 +1,20 @@
+2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow scroll that becomes non-scrollable should stop being composited
+        https://bugs.webkit.org/show_bug.cgi?id=197817
+        <rdar://problem/50697290>
+
+        Reviewed by Antti Koivisto.
+
+        Put in a compositing/scrolling/async-overflow-scrolling dir so we can enable it only
+        for platforms that have async overflow scrolling.
+
+        * TestExpectations:
+        * compositing/scrolling/async-overflow-scrolling/become-non-scrollable-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/become-non-scrollable.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-05-11  Alexey Proskuryakov  <ap@apple.com>
 
         Cleaning up results for legacy-animation-engine tests

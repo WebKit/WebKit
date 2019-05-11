@@ -3709,10 +3709,8 @@ void RenderLayer::updateScrollInfoAfterLayout()
         setNeedsCompositingConfigurationUpdate();
     }
 
-#if PLATFORM(IOS_FAMILY)
     if (canUseCompositedScrolling())
         setNeedsPostLayoutCompositingUpdate();
-#endif
 
     updateScrollSnapState();
 }

@@ -61,6 +61,7 @@ fast/media/ios [ Skip ]
 
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]
+compositing/scrolling/async-overflow-scrolling [ Skip ]
 
 # WebKit2 only.
 printing/printing-events.html [ Skip ]
