@@ -434,6 +434,7 @@ private:
 #endif
     bool m_backgroundLayerPaintsFixedRootBackground { false };
     bool m_requiresBackgroundLayer { false };
+    bool m_hasSubpixelRounding { false };
     bool m_paintsSubpixelAntialiasedText { false }; // This is for logging only.
 };
 

@@ -1,5 +1,16 @@
 2019-05-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Translucent gradient rendering bug due to will-change transform
+        https://bugs.webkit.org/show_bug.cgi?id=197654
+        <rdar://problem/50547664>
+
+        Reviewed by Dean Jackson.
+
+        * compositing/contents-opaque/background-change-to-transparent-expected.txt: Added.
+        * compositing/contents-opaque/background-change-to-transparent.html: Added.
+
+2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
         When the scroller hosting a shared layer becomes non-scrollable, content disappears
         https://bugs.webkit.org/show_bug.cgi?id=197766
         <rdar://problem/50695808>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests that contentsOpaque is re-evaluated after a background style change</title>
+    <style>
+        .composited {
+            margin: 20px;
+            height: 300px;
+            width: 300px;
+            margin: 10px;
+            background-color: silver;
+            transform: translateZ(0);
+        }
+        
+        .composited.changed {
+            background: none;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.composited').classList.add('changed');
+                if (window.internals)
+                    document.getElementById('layers').textContent = window.internals.layerTreeAsText(document);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="composited">Text here</div>
+<pre id="layers"></pre>
+</body>
+</html>
+
