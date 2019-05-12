@@ -45,24 +45,33 @@ public:
 
     virtual ~AdaptiveInferredPropertyValueWatchpointBase() = default;
 
+    class StructureWatchpoint final : public Watchpoint {
+    public:
+        StructureWatchpoint()
+            : Watchpoint(Watchpoint::Type::AdaptiveInferredPropertyValueStructure)
+        { }
+
+        void fireInternal(VM&, const FireDetail&);
+    };
+    // Own destructor may not be called. Keep members trivially destructible.
+    static_assert(sizeof(StructureWatchpoint) == sizeof(Watchpoint), "");
+
+    class PropertyWatchpoint final : public Watchpoint {
+    public:
+        PropertyWatchpoint()
+            : Watchpoint(Watchpoint::Type::AdaptiveInferredPropertyValueProperty)
+        { }
+
+        void fireInternal(VM&, const FireDetail&);
+    };
+    // Own destructor may not be called. Keep members trivially destructible.
+    static_assert(sizeof(PropertyWatchpoint) == sizeof(Watchpoint), "");
+
 protected:
     virtual bool isValid() const;
     virtual void handleFire(VM&, const FireDetail&) = 0;
 
 private:
-    class StructureWatchpoint final : public Watchpoint {
-    public:
-        StructureWatchpoint() { }
-    protected:
-        void fireInternal(VM&, const FireDetail&) override;
-    };
-    class PropertyWatchpoint final : public Watchpoint {
-    public:
-        PropertyWatchpoint() { }
-    protected:
-        void fireInternal(VM&, const FireDetail&) override;
-    };
-
     void fire(VM&, const FireDetail&);
 
     ObjectPropertyCondition m_key;

@@ -172,14 +172,10 @@ template<typename T> char (&ArrayLengthHelperFunction(T (&)[0]))[0];
 #endif
 #define WTF_ARRAY_LENGTH(array) sizeof(::WTF::ArrayLengthHelperFunction(array))
 
-ALWAYS_INLINE constexpr size_t roundUpToMultipleOfImpl0(size_t remainderMask, size_t x)
-{
-    return (x + remainderMask) & ~remainderMask;
-}
-
 ALWAYS_INLINE constexpr size_t roundUpToMultipleOfImpl(size_t divisor, size_t x)
 {
-    return roundUpToMultipleOfImpl0(divisor - 1, x);
+    size_t remainderMask = divisor - 1;
+    return (x + remainderMask) & ~remainderMask;
 }
 
 // Efficient implementation that takes advantage of powers of two.

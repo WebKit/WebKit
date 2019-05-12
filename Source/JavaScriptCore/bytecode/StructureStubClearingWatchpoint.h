@@ -44,20 +44,19 @@ class StructureStubClearingWatchpoint final : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureStubClearingWatchpoint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructureStubClearingWatchpoint(
-        const ObjectPropertyCondition& key,
-        WatchpointsOnStructureStubInfo& holder)
-        : m_key(key)
-        , m_holder(holder)
+    StructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
+        : Watchpoint(Watchpoint::Type::StructureStubClearing)
+        , m_holder(&holder)
+        , m_key(key)
     {
     }
 
-protected:
-    void fireInternal(VM&, const FireDetail&) override;
+    void fireInternal(VM&, const FireDetail&);
 
 private:
-    ObjectPropertyCondition m_key;
-    WatchpointsOnStructureStubInfo& m_holder;
+    // Own destructor may not be called. Keep members trivially destructible.
+    JSC_WATCHPOINT_FIELD(PackedPtr<WatchpointsOnStructureStubInfo>, m_holder);
+    JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
 };
 
 class WatchpointsOnStructureStubInfo {

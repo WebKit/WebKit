@@ -232,14 +232,9 @@ private:
         return bitwise_cast<InlineCallFrame*>(value);
     }
 
-#if CPU(ARM64) && CPU(ADDRESS64)
-    static constexpr unsigned s_freeBitsAtTop = 28;
-    static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000000ffffffff8;
-#elif CPU(ADDRESS64)
-    static constexpr unsigned s_freeBitsAtTop = 16;
-    static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000fffffffffff8;
-#endif
 #if CPU(ADDRESS64)
+    static constexpr unsigned s_freeBitsAtTop = 64 - WTF_CPU_EFFECTIVE_ADDRESS_WIDTH;
+    static constexpr uintptr_t s_maskCompositeValueForPointer = ((1ULL << WTF_CPU_EFFECTIVE_ADDRESS_WIDTH) - 1) & ~(8ULL - 1);
     static uintptr_t buildCompositeValue(InlineCallFrame* inlineCallFrame, unsigned bytecodeIndex)
     {
         if (bytecodeIndex == s_invalidBytecodeIndex)

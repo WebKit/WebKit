@@ -60,6 +60,7 @@ set(TestWTF_SOURCES
     Tests/WTF/NeverDestroyed.cpp
     Tests/WTF/OptionSet.cpp
     Tests/WTF/Optional.cpp
+    Tests/WTF/Packed.cpp
     Tests/WTF/ParkingLot.cpp
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RedBlackTree.cpp

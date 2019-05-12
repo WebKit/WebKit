@@ -1,3 +1,89 @@
+2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Compress Watchpoint size by using enum type and Packed<> data structure
+        https://bugs.webkit.org/show_bug.cgi?id=197730
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a new data structures, WTF::Packed, WTF::PackedPtr, and WTF::PackedAlignedPtr.
+
+        - WTF::Packed
+
+            WTF::Packed is data storage. We can read and write trivial (in C++ term [1]) data to this storage. The difference to
+            the usual storage is that the alignment of this storage is always 1. We access the underlying data by using unalignedLoad/unalignedStore.
+            This class offers alignment = 1 data structure instead of missing the following characteristics.
+
+                1. Load / Store are non atomic even if the data size is within a pointer width. We should not use this for a member which can be accessed
+                   in a racy way. (e.g. fields accessed optimistically from the concurrent compilers).
+
+                2. We cannot take reference / pointer to the underlying storage since they are unaligned.
+
+                3. Access to this storage is unaligned access. The code is using memcpy, and the compiler will convert to an appropriate unaligned access
+                   in certain architectures (x86_64 / ARM64). It could be slow. So use it for non performance sensitive & memory sensitive places.
+
+        - WTF::PackedPtr
+
+            WTF::PackedPtr is a specialization of WTF::Packed<T*>. And it is basically WTF::PackedAlignedPtr with alignment = 1. We further compact
+            the pointer by leveraging the platform specific knowledge. In 64bit architectures, the effective width of pointers are less than 64 bit.
+            In x86_64, it is 48 bits. And Darwin ARM64 is further smaller, 36 bits. This information allows us to compact the pointer to 6 bytes in
+            x86_64 and 5 bytes in Darwin ARM64.
+
+        - WTF::PackedAlignedPtr
+
+            WTF::PackedAlignedPtr is the WTF::PackedPtr with alignment information of the T. If we use this alignment information, we could reduce the
+            size of packed pointer further in some cases. For example, since we guarantee that JSCells are 16 byte aligned, low 4 bits are empty. Leveraging
+            this information in Darwin ARM64 platform allows us to make packed JSCell pointer 4 bytes (36 - 4 bits). We do not use passed alignment
+            information if it is not profitable.
+
+        We also have PackedPtrTraits. This is new PtrTraits and use it for various data structures such as Bag<>.
+
+        [1]: https://en.cppreference.com/w/cpp/types/is_trivial
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bag.h:
+        (WTF::Bag::clear):
+        (WTF::Bag::iterator::operator++):
+        * wtf/CMakeLists.txt:
+        * wtf/DumbPtrTraits.h:
+        * wtf/DumbValueTraits.h:
+        * wtf/MathExtras.h:
+        (WTF::clzConstexpr):
+        (WTF::clz):
+        (WTF::ctzConstexpr):
+        (WTF::ctz):
+        (WTF::getLSBSetConstexpr):
+        (WTF::getMSBSetConstexpr):
+        * wtf/Packed.h: Added.
+        (WTF::Packed::Packed):
+        (WTF::Packed::get const):
+        (WTF::Packed::set):
+        (WTF::Packed::operator=):
+        (WTF::Packed::exchange):
+        (WTF::Packed::swap):
+        (WTF::alignof):
+        (WTF::PackedPtrTraits::exchange):
+        (WTF::PackedPtrTraits::swap):
+        (WTF::PackedPtrTraits::unwrap):
+        * wtf/Platform.h:
+        * wtf/SentinelLinkedList.h:
+        (WTF::BasicRawSentinelNode::BasicRawSentinelNode):
+        (WTF::BasicRawSentinelNode::prev):
+        (WTF::BasicRawSentinelNode::next):
+        (WTF::PtrTraits>::remove):
+        (WTF::PtrTraits>::prepend):
+        (WTF::PtrTraits>::append):
+        (WTF::RawNode>::SentinelLinkedList):
+        (WTF::RawNode>::remove):
+        (WTF::BasicRawSentinelNode<T>::remove): Deleted.
+        (WTF::BasicRawSentinelNode<T>::prepend): Deleted.
+        (WTF::BasicRawSentinelNode<T>::append): Deleted.
+        * wtf/StdLibExtras.h:
+        (WTF::roundUpToMultipleOfImpl):
+        (WTF::roundUpToMultipleOfImpl0): Deleted.
+        * wtf/UnalignedAccess.h:
+        (WTF::unalignedLoad):
+        (WTF::unalignedStore):
+
 2019-05-10  Saam barati  <sbarati@apple.com>
 
         Bag's move operator= leaks memory

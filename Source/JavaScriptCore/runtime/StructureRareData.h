@@ -35,8 +35,8 @@ namespace JSC {
 
 class JSPropertyNameEnumerator;
 class Structure;
-class ObjectToStringAdaptiveStructureWatchpoint;
 class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
+class ObjectToStringAdaptiveStructureWatchpoint;
 
 class StructureRareData final : public JSCell {
 public:

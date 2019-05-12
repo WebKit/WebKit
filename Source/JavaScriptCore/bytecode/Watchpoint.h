@@ -90,21 +90,75 @@ LazyFireDetail<Types...> createLazyFireDetail(const Types&... types)
 
 class WatchpointSet;
 
-class Watchpoint : public BasicRawSentinelNode<Watchpoint> {
+// Really unfortunately, we do not have the way to dispatch appropriate destructor in base class' destructor
+// based on enum type. If we call destructor explicitly in the base class, it ends up calling the base destructor
+// twice. C++20 allows this by using std::std::destroying_delete_t. But we are not using C++20 right now.
+//
+// Because we cannot dispatch destructors of derived classes in the destructor of the base class, what it means is,
+// 1. Calling Watchpoint::~Watchpoint directly is illegal.
+// 2. `delete watchpoint` where watchpoint is non-final derived class is illegal. If watchpoint is final derived class, it works.
+// 3. If we really want to do (2), we need to call `watchpoint->destroy()` instead, and dispatch an appropriate destructor in Watchpoint::destroy.
+//
+// Luckily, none of our derived watchpoint classes have members which require destructors. So we do not dispatch
+// the destructor call to the drived class in the base class. If it becomes really required, we can introduce
+// a custom deleter for some classes which directly call "delete" to the allocated non-final Watchpoint class
+// (e.g. std::unique_ptr<Watchpoint>, RefPtr<Watchpoint>), and call Watchpoint::destroy instead of "delete"
+// operator. But since we do not require it for now, we are doing the simplest thing.
+#define JSC_WATCHPOINT_TYPES_WITHOUT_JIT(macro) \
+    macro(AdaptiveInferredPropertyValueStructure, AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint) \
+    macro(AdaptiveInferredPropertyValueProperty, AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint) \
+    macro(CodeBlockJettisoning, CodeBlockJettisoningWatchpoint) \
+    macro(LLIntPrototypeLoadAdaptiveStructure, LLIntPrototypeLoadAdaptiveStructureWatchpoint) \
+    macro(FunctionRareDataAllocationProfileClearing, FunctionRareData::AllocationProfileClearingWatchpoint) \
+    macro(ObjectToStringAdaptiveStructure, ObjectToStringAdaptiveStructureWatchpoint)
+
+#if ENABLE(JIT)
+#define JSC_WATCHPOINT_TYPES_WITHOUT_DFG(macro) \
+    JSC_WATCHPOINT_TYPES_WITHOUT_JIT(macro) \
+    macro(StructureStubClearing, StructureStubClearingWatchpoint)
+
+#if ENABLE(DFG_JIT)
+#define JSC_WATCHPOINT_TYPES(macro) \
+    JSC_WATCHPOINT_TYPES_WITHOUT_DFG(macro) \
+    macro(AdaptiveStructure, DFG::AdaptiveStructureWatchpoint)
+#else
+#define JSC_WATCHPOINT_TYPES(macro) \
+    JSC_WATCHPOINT_TYPES_WITHOUT_DFG(macro)
+#endif
+
+#else
+#define JSC_WATCHPOINT_TYPES(macro) \
+    JSC_WATCHPOINT_TYPES_WITHOUT_JIT(macro)
+#endif
+
+#define JSC_WATCHPOINT_FIELD(type, member) \
+    type member; \
+    static_assert(std::is_trivially_destructible<type>::value, ""); \
+
+
+class Watchpoint : public PackedRawSentinelNode<Watchpoint> {
     WTF_MAKE_NONCOPYABLE(Watchpoint);
     WTF_MAKE_NONMOVABLE(Watchpoint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Watchpoint() = default;
-    
-    virtual ~Watchpoint();
+#define JSC_DEFINE_WATCHPOINT_TYPES(type, _) type,
+    enum class Type : uint8_t {
+        JSC_WATCHPOINT_TYPES(JSC_DEFINE_WATCHPOINT_TYPES)
+    };
+#undef JSC_DEFINE_WATCHPOINT_TYPES
+
+    Watchpoint(Type type)
+        : m_type(type)
+    { }
 
 protected:
-    virtual void fireInternal(VM&, const FireDetail&) = 0;
+    ~Watchpoint();
 
 private:
     friend class WatchpointSet;
     void fire(VM&, const FireDetail&);
+
+    Type m_type;
 };
 
 enum WatchpointState {
@@ -239,7 +293,7 @@ private:
     int8_t m_state;
     int8_t m_setIsNotEmpty;
 
-    SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
+    SentinelLinkedList<Watchpoint, PackedRawSentinelNode<Watchpoint>> m_set;
 };
 
 // InlineWatchpointSet is a low-overhead, non-copyable watchpoint set in which

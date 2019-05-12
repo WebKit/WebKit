@@ -32,6 +32,8 @@ namespace WTF {
     
 template<typename T>
 struct DumbPtrTraits {
+    template<typename U> using RebindTraits = DumbPtrTraits<U>;
+
     using StorageType = T*;
 
     template<typename U>

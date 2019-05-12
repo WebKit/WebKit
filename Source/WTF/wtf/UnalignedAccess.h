@@ -31,20 +31,20 @@
 
 namespace WTF {
 
-template<typename IntegralType>
-inline IntegralType unalignedLoad(const void* pointer)
+template<typename Type>
+inline Type unalignedLoad(const void* pointer)
 {
-    static_assert(std::is_integral<IntegralType>::value || std::is_pointer<IntegralType>::value, "");
-    IntegralType result { };
-    memcpy(&result, pointer, sizeof(IntegralType));
+    static_assert(std::is_trivial<Type>::value, "");
+    Type result { };
+    memcpy(&result, pointer, sizeof(Type));
     return result;
 }
 
-template<typename IntegralType>
-inline void unalignedStore(void* pointer, IntegralType value)
+template<typename Type>
+inline void unalignedStore(void* pointer, Type value)
 {
-    static_assert(std::is_integral<IntegralType>::value || std::is_pointer<IntegralType>::value, "");
-    memcpy(pointer, &value, sizeof(IntegralType));
+    static_assert(std::is_trivial<Type>::value, "");
+    memcpy(pointer, &value, sizeof(Type));
 }
 
 } // namespace WTF

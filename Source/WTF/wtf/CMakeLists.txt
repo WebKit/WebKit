@@ -150,6 +150,7 @@ set(WTF_PUBLIC_HEADERS
     OptionSet.h
     Optional.h
     OrderMaker.h
+    Packed.h
     PackedIntVector.h
     PageAllocation.h
     PageBlock.h

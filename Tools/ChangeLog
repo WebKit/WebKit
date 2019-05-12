@@ -1,3 +1,17 @@
+2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Compress Watchpoint size by using enum type and Packed<> data structure
+        https://bugs.webkit.org/show_bug.cgi?id=197730
+
+        Reviewed by Filip Pizlo.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Packed.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2019-05-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix ProcessSwap.OpenerLinkAfterAPIControlledProcessSwappingOfOpener API test

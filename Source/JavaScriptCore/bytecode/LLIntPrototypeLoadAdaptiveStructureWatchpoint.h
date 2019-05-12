@@ -27,6 +27,7 @@
 
 #include "BytecodeStructs.h"
 #include "ObjectPropertyCondition.h"
+#include "PackedCellPtr.h"
 #include "Watchpoint.h"
 
 namespace JSC {
@@ -41,13 +42,13 @@ public:
 
     const ObjectPropertyCondition& key() const { return m_key; }
 
-protected:
-    void fireInternal(VM&, const FireDetail&) override;
+    void fireInternal(VM&, const FireDetail&);
 
 private:
-    CodeBlock* m_owner;
-    ObjectPropertyCondition m_key;
-    unsigned m_bytecodeOffset;
+    // Own destructor may not be called. Keep members trivially destructible.
+    JSC_WATCHPOINT_FIELD(PackedCellPtr<CodeBlock>, m_owner);
+    JSC_WATCHPOINT_FIELD(Packed<unsigned>, m_bytecodeOffset);
+    JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
 };
 
 } // namespace JSC

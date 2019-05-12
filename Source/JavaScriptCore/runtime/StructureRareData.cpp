@@ -32,6 +32,7 @@
 #include "JSString.h"
 #include "JSCInlines.h"
 #include "ObjectPropertyConditionSet.h"
+#include "ObjectToStringAdaptiveStructureWatchpoint.h"
 
 namespace JSC {
 
@@ -87,22 +88,6 @@ private:
     bool isValid() const override;
     void handleFire(VM&, const FireDetail&) override;
 
-    StructureRareData* m_structureRareData;
-};
-
-class ObjectToStringAdaptiveStructureWatchpoint final : public Watchpoint {
-public:
-    ObjectToStringAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
-
-    void install(VM&);
-
-    const ObjectPropertyCondition& key() const { return m_key; }
-
-protected:
-    void fireInternal(VM&, const FireDetail&) override;
-    
-private:
-    ObjectPropertyCondition m_key;
     StructureRareData* m_structureRareData;
 };
 
@@ -164,7 +149,7 @@ void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structur
     m_objectToStringValue.set(vm, this, value);
 }
 
-inline void StructureRareData::clearObjectToStringValue()
+void StructureRareData::clearObjectToStringValue()
 {
     m_objectToStringAdaptiveWatchpointSet.clear();
     m_objectToStringAdaptiveInferredValueWatchpoint.reset();
@@ -188,34 +173,6 @@ void StructureRareData::finalizeUnconditionally(VM& vm)
 }
 
 // ------------- Methods for Object.prototype.toString() helper watchpoint classes --------------
-
-ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, StructureRareData* structureRareData)
-    : m_key(key)
-    , m_structureRareData(structureRareData)
-{
-    RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
-    RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
-}
-
-void ObjectToStringAdaptiveStructureWatchpoint::install(VM& vm)
-{
-    RELEASE_ASSERT(m_key.isWatchable());
-
-    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
-}
-
-void ObjectToStringAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
-{
-    if (!m_structureRareData->isLive())
-        return;
-
-    if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        install(vm);
-        return;
-    }
-
-    m_structureRareData->clearObjectToStringValue();
-}
 
 ObjectToStringAdaptiveInferredPropertyValueWatchpoint::ObjectToStringAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition& key, StructureRareData* structureRareData)
     : Base(key)

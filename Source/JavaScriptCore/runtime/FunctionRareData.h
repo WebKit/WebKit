@@ -28,6 +28,7 @@
 #include "InternalFunctionAllocationProfile.h"
 #include "JSCast.h"
 #include "ObjectAllocationProfile.h"
+#include "PackedCellPtr.h"
 #include "Watchpoint.h"
 
 namespace JSC {
@@ -110,23 +111,25 @@ public:
         return m_allocationProfileClearingWatchpoint.get();
     }
 
+    class AllocationProfileClearingWatchpoint final : public Watchpoint {
+    public:
+        AllocationProfileClearingWatchpoint(FunctionRareData* rareData)
+            : Watchpoint(Watchpoint::Type::FunctionRareDataAllocationProfileClearing)
+            , m_rareData(rareData)
+        { }
+
+        void fireInternal(VM&, const FireDetail&);
+
+    private:
+        // Own destructor may not be called. Keep members trivially destructible.
+        JSC_WATCHPOINT_FIELD(PackedCellPtr<FunctionRareData>, m_rareData);
+    };
+
 protected:
     FunctionRareData(VM&);
     ~FunctionRareData();
 
 private:
-
-    class AllocationProfileClearingWatchpoint final : public Watchpoint {
-    public:
-        AllocationProfileClearingWatchpoint(FunctionRareData* rareData)
-            : m_rareData(rareData)
-        { }
-    protected:
-        void fireInternal(VM&, const FireDetail&) override;
-    private:
-        FunctionRareData* m_rareData;
-    };
-
     friend class LLIntOffsetsExtractor;
 
     // Ideally, there would only be one allocation profile for subclassing but due to Reflect.construct we

@@ -33,11 +33,10 @@
 
 namespace JSC { namespace DFG {
 
-AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint(
-    const ObjectPropertyCondition& key,
-    CodeBlock* codeBlock)
-    : m_key(key)
+AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, CodeBlock* codeBlock)
+    : Watchpoint(Watchpoint::Type::AdaptiveStructure)
     , m_codeBlock(codeBlock)
+    , m_key(key)
 {
     RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());

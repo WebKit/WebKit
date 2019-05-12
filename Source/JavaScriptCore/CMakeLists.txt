@@ -606,6 +606,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MarkedSpace.h
     heap/MarkingConstraint.h
     heap/MutatorState.h
+    heap/PackedCellPtr.h
     heap/RegisterState.h
     heap/RunningScope.h
     heap/SimpleMarkingConstraint.h

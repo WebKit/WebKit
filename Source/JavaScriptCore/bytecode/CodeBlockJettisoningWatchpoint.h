@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PackedCellPtr.h"
 #include "Watchpoint.h"
 
 namespace JSC {
@@ -34,15 +35,15 @@ class CodeBlock;
 class CodeBlockJettisoningWatchpoint final : public Watchpoint {
 public:
     CodeBlockJettisoningWatchpoint(CodeBlock* codeBlock)
-        : m_codeBlock(codeBlock)
+        : Watchpoint(Watchpoint::Type::CodeBlockJettisoning)
+        , m_codeBlock(codeBlock)
     {
     }
     
-protected:
-    void fireInternal(VM&, const FireDetail&) override;
+    void fireInternal(VM&, const FireDetail&);
 
 private:
-    CodeBlock* m_codeBlock;
+    JSC_WATCHPOINT_FIELD(PackedCellPtr<CodeBlock>, m_codeBlock);
 };
 
 } // namespace JSC

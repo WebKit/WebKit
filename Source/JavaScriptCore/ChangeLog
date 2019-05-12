@@ -1,5 +1,83 @@
 2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Compress Watchpoint size by using enum type and Packed<> data structure
+        https://bugs.webkit.org/show_bug.cgi?id=197730
+
+        Reviewed by Filip Pizlo.
+
+        Watchpoint takes 5~ MB memory in Gmail (total memory starts with 400 - 500 MB), so 1~%. Since it is allocated massively,
+        reducing each size of Watchpoint reduces memory footprint significantly.
+
+        As a first step, this patch uses Packed<> and enum to reduce the size of Watchpoint.
+
+        1. Watchpoint should have enum type and should not use vtable. vtable takes one pointer, and it is too costly for such a
+           memory sensitive objects. We perform downcast and dispatch the method of the derived classes based on this enum. Since
+           the # of derived Watchpoint classes are limited (Only 8), we can list up them easily. One unfortunate thing is that
+           we cannot do this for destructor so long as we use "delete" for deleting objects. If we dispatch the destructor of derived
+           class in the destructor of the base class, we call the destructor of the base class multiple times. delete operator override
+           does not help since custom delete operator is called after the destructor is called. While we can fix this issue by always
+           using custom deleter, currently we do not since all the watchpoints do not have members which have non trivial destructor.
+           Once it is strongly required, we can start using custom deleter, but for now, we do not need to do this.
+
+        2. We use Packed<> to compact pointers in Watchpoint. Since Watchpoint is a node of doubly linked list, each one has two
+           pointers for prev and next. This is also too costly. PackedPtr reduces the size and makes alignment 1.S
+
+        3. We use PackedCellPtr<> for JSCells in Watchpoint. This leverages alignment information and makes pointers smaller in
+           Darwin ARM64. One important thing to note here is that since this pointer is packed, it cannot be found by conservative
+           GC scan. It is OK for watchpoint since they are allocated in the heap anyway.
+
+        We applied this change to Watchpoint and get the following memory reduction. The highlight is that CodeBlockJettisoningWatchpoint in
+        ARM64 only takes 2 pointers size.
+
+                                                                              ORIGINAL    X86_64   ARM64
+            WatchpointSet:                                                    40          32       28
+            CodeBlockJettisoningWatchpoint:                                   32          19       15
+            StructureStubClearingWatchpoint:                                  56          48       40
+            AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint: 24          13       11
+            AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint:  24          13       11
+            FunctionRareData::AllocationProfileClearingWatchpoint:            32          19       15
+            ObjectToStringAdaptiveStructureWatchpoint:                        56          48       40
+            LLIntPrototypeLoadAdaptiveStructureWatchpoint:                    64          48       48
+            DFG::AdaptiveStructureWatchpoint:                                 56          48       40
+
+        While we will re-architect the mechanism of Watchpoint, anyway Packed<> mechanism and enum types will be used too.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        * bytecode/CodeOrigin.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * bytecode/Watchpoint.cpp:
+        (JSC::Watchpoint::fire):
+        * bytecode/Watchpoint.h:
+        (JSC::Watchpoint::Watchpoint):
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint):
+        * dfg/DFGAdaptiveStructureWatchpoint.h:
+        * heap/PackedCellPtr.h: Added.
+        * runtime/FunctionRareData.h:
+        * runtime/ObjectToStringAdaptiveStructureWatchpoint.cpp: Added.
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchpoint):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::install):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal):
+        * runtime/ObjectToStringAdaptiveStructureWatchpoint.h: Added.
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::clearObjectToStringValue):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchpoint): Deleted.
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::install): Deleted.
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal): Deleted.
+        * runtime/StructureRareData.h:
+
+2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Compact generator code's bytecode size
         https://bugs.webkit.org/show_bug.cgi?id=197822
 

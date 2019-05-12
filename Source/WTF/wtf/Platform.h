@@ -747,6 +747,17 @@
 #define USE_SYSTEM_MALLOC 1
 #endif
 
+#if CPU(ADDRESS64)
+#if OS(DARWIN) && CPU(ARM64)
+#define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 36
+#else
+/* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
+#define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 48
+#endif
+#else
+#define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 32
+#endif
+
 #if !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64)
 #if CPU(ADDRESS64) || CPU(ARM64)
 #define USE_JSVALUE64 1
