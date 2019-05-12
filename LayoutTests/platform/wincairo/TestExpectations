@@ -948,6 +948,7 @@ http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Pass ]
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Pass ]
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Pass ]
 
+http/tests/ssl/curl/certificate-and-authentication.html [ Pass ]
 http/tests/ssl/media-stream [ Skip ]
 
 [ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]

@@ -425,12 +425,13 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
     ASSERT(m_curlRequest);
 
     auto previousRequest = m_curlRequest->resourceRequest();
+    auto shouldDisableServerTrustEvaluation = protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested || m_curlRequest->isServerTrustEvaluationDisabled();
     m_curlRequest->cancel();
 
     m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
     m_curlRequest->setAuthenticationScheme(protectionSpace.authenticationScheme());
     m_curlRequest->setUserPass(credential.user(), credential.password());
-    if (protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested)
+    if (shouldDisableServerTrustEvaluation)
         m_curlRequest->disableServerTrustEvaluation();
     m_curlRequest->setStartTime(m_startTime);
     m_curlRequest->start();

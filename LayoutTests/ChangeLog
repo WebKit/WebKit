@@ -1,3 +1,17 @@
+2019-05-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Suppress extra didReceiveAuthenticationChallenge call when accessing a server which checks basic auth.
+        https://bugs.webkit.org/show_bug.cgi?id=197650
+
+        Reviewed by Fujii Hironori.
+
+        * TestExpectations:
+        * http/tests/resources/basic-auth.php: Added.
+        * http/tests/ssl/curl/certificate-and-authentication-expected.txt: Added.
+        * http/tests/ssl/curl/certificate-and-authentication.html: Added.
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2019-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow scroll that becomes non-scrollable should stop being composited

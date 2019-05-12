@@ -21,6 +21,7 @@ http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip 
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
 
 # Server trust evaluation only supported in WK2.
+http/tests/ssl/curl/certificate-and-authentication.html [ Skip ]
 http/tests/ssl/iframe-upgrade.https.html [ Skip ]
 http/tests/ssl/mixedContent/insecure-websocket.html [ Failure ]
 http/tests/ssl/upgrade-origin-usage.html [ Failure ]

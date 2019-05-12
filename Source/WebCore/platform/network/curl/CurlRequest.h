@@ -74,6 +74,7 @@ public:
     void invalidateClient();
     WEBCORE_EXPORT void setAuthenticationScheme(ProtectionSpaceAuthenticationScheme);
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
+    bool isServerTrustEvaluationDisabled() { return m_shouldDisableServerTrustEvaluation; }
     void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
     void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime; }
 
