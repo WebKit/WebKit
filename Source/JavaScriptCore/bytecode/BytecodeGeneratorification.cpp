@@ -252,7 +252,7 @@ void BytecodeGeneratorification::run()
                     storage.identifierIndex, // identifier
                     operand, // value
                     GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), // info
-                    m_generatorFrameSymbolTableIndex, // symbol table constant index
+                    SymbolTableOrScopeDepth::symbolTable(VirtualRegister { m_generatorFrameSymbolTableIndex }), // symbol table constant index
                     storage.scopeOffset.offset() // scope offset
                 );
             });

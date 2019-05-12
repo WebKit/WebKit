@@ -33,6 +33,7 @@
 #include "PutByIdFlags.h"
 #include "ResultType.h"
 #include "SpecialPointer.h"
+#include "SymbolTableOrScopeDepth.h"
 #include "VirtualRegister.h"
 #include <type_traits>
 
@@ -129,6 +130,25 @@ struct Fits<VirtualRegister, OpcodeSize::Narrow> {
         if (i >= s_firstConstantIndex)
             return VirtualRegister { (i - s_firstConstantIndex) + FirstConstantRegisterIndex };
         return VirtualRegister { i };
+    }
+};
+
+template<>
+struct Fits<SymbolTableOrScopeDepth, OpcodeSize::Narrow> {
+    static bool check(SymbolTableOrScopeDepth u)
+    {
+        return u.raw() <= UINT8_MAX;
+    }
+
+    static uint8_t convert(SymbolTableOrScopeDepth u)
+    {
+        ASSERT(check(u));
+        return static_cast<uint8_t>(u.raw());
+    }
+
+    static SymbolTableOrScopeDepth convert(uint8_t u)
+    {
+        return SymbolTableOrScopeDepth::raw(u);
     }
 };
 

@@ -963,6 +963,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Symbol.h
     runtime/SymbolPrototype.h
     runtime/SymbolTable.h
+    runtime/SymbolTableOrScopeDepth.h
     runtime/TemplateObjectDescriptor.h
     runtime/TestRunnerUtils.h
     runtime/ThrowScope.h

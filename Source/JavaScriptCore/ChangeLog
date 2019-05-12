@@ -1,3 +1,43 @@
+2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Compact generator code's bytecode size
+        https://bugs.webkit.org/show_bug.cgi?id=197822
+
+        Reviewed by Michael Saboff.
+
+        op_put_to_scope's symbolTableOrScopeDepth is represented as int. This was OK for the old bytecode format since
+        VirtualRegister / scope depth can be represented by int anyway. But it is problematic now since only int8_t range
+        will be represented in narrow bytecode. When this field is used for symbol table constant index, it is always
+        larger than FirstConstantRegisterIndex. So it always exceeds the range of int8_t, and results in wide bytecode.
+        It makes all generator's op_put_to_scope wide bytecode.
+
+        In this patch, we introduce a new (logically) union type SymbolTableOrScopeDepth. It holds unsigned value, and we store the
+        SymbolTableConstantIndex - FirstConstantRegisterIndex in this unsigned value to make op_put_to_scope narrow bytecode.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Fits.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitProfileType):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::localScopeDepth const):
+        * bytecompiler/BytecodeGenerator.h:
+        * runtime/SymbolTableOrScopeDepth.h: Added.
+        (JSC::SymbolTableOrScopeDepth::symbolTable):
+        (JSC::SymbolTableOrScopeDepth::scopeDepth):
+        (JSC::SymbolTableOrScopeDepth::raw):
+        (JSC::SymbolTableOrScopeDepth::symbolTable const):
+        (JSC::SymbolTableOrScopeDepth::scopeDepth const):
+        (JSC::SymbolTableOrScopeDepth::raw const):
+        (JSC::SymbolTableOrScopeDepth::dump const):
+        (JSC::SymbolTableOrScopeDepth::SymbolTableOrScopeDepth):
+
 2019-05-10  Saam barati  <sbarati@apple.com>
 
         Call to JSToWasmICCallee::createStructure passes in wrong prototype value

@@ -551,7 +551,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     entry.disableWatching(*m_vm);
                     functionSymbolTable->set(NoLockingNecessary, name, entry);
                 }
-                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgument(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), symbolTableConstantIndex, offset.offset());
+                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgument(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
             }
             
             // This creates a scoped arguments object and copies the overflow arguments into the
@@ -589,7 +589,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
             functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(offset)));
             
-            OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgument(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), symbolTableConstantIndex, offset.offset());
+            OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgument(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
         }
     }
     
@@ -1803,7 +1803,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTy
     if (!registerToProfile)
         return;
 
-    OpProfileType::emit(this, registerToProfile, 0, flag, { }, resolveType());
+    OpProfileType::emit(this, registerToProfile, { }, flag, { }, resolveType());
 
     // Don't emit expression info for this version of profile type. This generally means
     // we're profiling information for something that isn't in the actual text of a JavaScript
@@ -1823,7 +1823,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTy
     if (!registerToProfile)
         return;
 
-    OpProfileType::emit(this, registerToProfile, 0,  flag, { }, resolveType());
+    OpProfileType::emit(this, registerToProfile, { },  flag, { }, resolveType());
     emitTypeProfilerExpressionInfo(startDivot, endDivot);
 }
 
@@ -1836,14 +1836,14 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const Var
         return;
 
     ProfileTypeBytecodeFlag flag;
-    int symbolTableOrScopeDepth;
+    SymbolTableOrScopeDepth symbolTableOrScopeDepth;
     if (var.local() || var.offset().isScope()) {
         flag = ProfileTypeBytecodeLocallyResolved;
         ASSERT(var.symbolTableConstantIndex());
-        symbolTableOrScopeDepth = var.symbolTableConstantIndex();
+        symbolTableOrScopeDepth = SymbolTableOrScopeDepth::symbolTable(VirtualRegister { var.symbolTableConstantIndex() });
     } else {
         flag = ProfileTypeBytecodeClosureVar;
-        symbolTableOrScopeDepth = localScopeDepth();
+        symbolTableOrScopeDepth = SymbolTableOrScopeDepth::scopeDepth(localScopeDepth());
     }
 
     OpProfileType::emit(this, registerToProfile, symbolTableOrScopeDepth, flag, addConstant(var.ident()), resolveType());
@@ -2512,18 +2512,18 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
     case VarKind::Scope:
     case VarKind::Invalid: {
         GetPutInfo getPutInfo(0);
-        int scopeDepth;
+        SymbolTableOrScopeDepth symbolTableOrScopeDepth;
         ScopeOffset offset;
         if (variable.offset().isScope()) {
             offset = variable.offset().scopeOffset();
             getPutInfo = GetPutInfo(resolveMode, LocalClosureVar, initializationMode);
-            scopeDepth = variable.symbolTableConstantIndex();
+            symbolTableOrScopeDepth = SymbolTableOrScopeDepth::symbolTable(VirtualRegister { variable.symbolTableConstantIndex() });
         } else {
             ASSERT(resolveType() != LocalClosureVar);
             getPutInfo = GetPutInfo(resolveMode, resolveType(), initializationMode);
-            scopeDepth = localScopeDepth();
+            symbolTableOrScopeDepth = SymbolTableOrScopeDepth::scopeDepth(localScopeDepth());
         }
-        OpPutToScope::emit(this, scope, addConstant(variable.ident()), value, getPutInfo, scopeDepth, !!offset ? offset.offset() : 0);
+        OpPutToScope::emit(this, scope, addConstant(variable.ident()), value, getPutInfo, symbolTableOrScopeDepth, !!offset ? offset.offset() : 0);
         m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return value;
     } }
@@ -3743,7 +3743,7 @@ RegisterID* BytecodeGenerator::emitArgumentCount(RegisterID* dst)
     return dst;
 }
 
-int BytecodeGenerator::localScopeDepth() const
+unsigned BytecodeGenerator::localScopeDepth() const
 {
     return m_localScopeDepth;
 }

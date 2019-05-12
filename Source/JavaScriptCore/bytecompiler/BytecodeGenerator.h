@@ -1235,10 +1235,10 @@ namespace JSC {
         SegmentedVector<Label, 32> m_labels;
         SegmentedVector<LabelScope, 32> m_labelScopes;
         unsigned m_finallyDepth { 0 };
-        int m_localScopeDepth { 0 };
+        unsigned m_localScopeDepth { 0 };
         const CodeType m_codeType;
 
-        int localScopeDepth() const;
+        unsigned localScopeDepth() const;
         void pushLocalControlFlowScope();
         void popLocalControlFlowScope();
 
