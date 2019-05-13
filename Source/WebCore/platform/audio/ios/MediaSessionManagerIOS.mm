@@ -184,7 +184,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    auto haveTargets = [m_objcObserver hasWirelessTargetsAvailable];
+    bool haveTargets = [m_objcObserver hasWirelessTargetsAvailable];
     ALWAYS_LOG(LOGIDENTIFIER, haveTargets);
 
     forEachSession([haveTargets] (PlatformMediaSession& session, size_t) {
