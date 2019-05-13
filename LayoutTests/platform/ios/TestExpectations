@@ -3261,3 +3261,6 @@ webkit.org/b/191711 quicklook/numbers.html [ ImageOnlyFailure ]
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
 webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
+
+# FIXME: Unskip the following test once we have the fix for <rdar://problem/50596032>.
+fast/events/ios/submit-form-target-blank-using-return-key.html

@@ -33,6 +33,7 @@ namespace WebKit {
 struct InsertTextOptions {
     bool registerUndoGroup { false };
     bool suppressSelectionUpdate { false };
+    bool processingUserGesture { false };
     EditingRangeIsRelativeTo editingRangeIsRelativeTo { EditingRangeIsRelativeTo::EditableRoot };
 };
 
