@@ -7215,8 +7215,12 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
+#if USE(LONG_PRESS_FOR_LINK_PREVIEW)
+        return @{ userInterfaceItem: @{ @"pageURL": WTF::userVisibleString(_positionInformation.url) } };
+#else
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
         return @{ userInterfaceItem: @{ @"pageURL": url } };
+#endif
     }
 #endif
 
@@ -7233,28 +7237,35 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 #if HAVE(LINK_PREVIEW)
 
-@implementation WKContentView (WKInteractionPreview)
+static NSString *previewIdentifierForElementAction(_WKElementAction *action)
+{
+    switch (action.type) {
+    case _WKElementActionTypeOpen:
+        return WKPreviewActionItemIdentifierOpen;
+    case _WKElementActionTypeCopy:
+        return WKPreviewActionItemIdentifierCopy;
+#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
+    case _WKElementActionTypeAddToReadingList:
+        return WKPreviewActionItemIdentifierAddToReadingList;
+#endif
+    case _WKElementActionTypeShare:
+        return WKPreviewActionItemIdentifierShare;
+    default:
+        return nil;
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKInteractionPreviewAdditions.mm>)
+#if USE(LONG_PRESS_FOR_LINK_PREVIEW)
 #include <WebKitAdditions/WKInteractionPreviewAdditions.mm>
 #else
-static BOOL shouldUsePreviewForLongPress()
-{
-    return NO;
-}
 
-- (void)_registerPreviewLongPress
-{
-}
-
-- (void)_unregisterPreviewLongPress
-{
-}
-#endif
+@implementation WKContentView (WKInteractionPreview)
 
 - (BOOL)shouldUsePreviewForLongPress
 {
-    return shouldUsePreviewForLongPress();
+    return NO;
 }
 
 - (void)_registerPreview
@@ -7262,27 +7273,19 @@ static BOOL shouldUsePreviewForLongPress()
     if (!_webView.allowsLinkPreview)
         return;
 
-    if (shouldUsePreviewForLongPress())
-        [self _registerPreviewLongPress];
-    else {
-        _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
-        [_previewItemController setDelegate:self];
-        _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
-        if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
-            _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
-    }
+    _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
+    [_previewItemController setDelegate:self];
+    _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
+    if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
+        _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
 }
 
 - (void)_unregisterPreview
 {
-    if (shouldUsePreviewForLongPress())
-        [self _unregisterPreviewLongPress];
-    else {
-        [_previewItemController setDelegate:nil];
-        _previewGestureRecognizer = nil;
-        _previewSecondaryGestureRecognizer = nil;
-        _previewItemController = nil;
-    }
+    [_previewItemController setDelegate:nil];
+    _previewGestureRecognizer = nil;
+    _previewSecondaryGestureRecognizer = nil;
+    _previewItemController = nil;
 }
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
@@ -7414,26 +7417,6 @@ static BOOL shouldUsePreviewForLongPress()
 - (CGRect)_presentationRectForPreviewItemController:(UIPreviewItemController *)controller
 {
     return _positionInformation.bounds;
-}
-
-static NSString *previewIdentifierForElementAction(_WKElementAction *action)
-{
-    switch (action.type) {
-    case _WKElementActionTypeOpen:
-        return WKPreviewActionItemIdentifierOpen;
-    case _WKElementActionTypeCopy:
-        return WKPreviewActionItemIdentifierCopy;
-#if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
-    case _WKElementActionTypeAddToReadingList:
-        return WKPreviewActionItemIdentifierAddToReadingList;
-#endif
-    case _WKElementActionTypeShare:
-        return WKPreviewActionItemIdentifierShare;
-    default:
-        return nil;
-    }
-    ASSERT_NOT_REACHED();
-    return nil;
 }
 
 - (UIViewController *)_presentedViewControllerForPreviewItemController:(UIPreviewItemController *)controller
@@ -7605,6 +7588,8 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 }
 
 @end
+
+#endif // USE(LONG_PRESS_FOR_LINK_PREVIEW)
 
 #endif // HAVE(LINK_PREVIEW)
 
