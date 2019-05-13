@@ -1,3 +1,10 @@
+2019-05-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused variable warnings in release builds
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::clearWebProcessHasUploads):
+
 2019-05-12  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Suppress extra didReceiveAuthenticationChallenge call when accessing a server which checks basic auth.

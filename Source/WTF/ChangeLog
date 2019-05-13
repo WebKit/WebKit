@@ -1,3 +1,10 @@
+2019-05-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused variable warnings in release builds
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::escapeUnsafeCharacters):
+
 2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Compress Watchpoint size by using enum type and Packed<> data structure

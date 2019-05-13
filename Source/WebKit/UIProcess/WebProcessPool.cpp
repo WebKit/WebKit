@@ -2555,7 +2555,7 @@ void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
     ASSERT_UNUSED(result, result);
 
     auto* process = WebProcessProxy::processForIdentifier(processID);
-    ASSERT(process);
+    ASSERT_UNUSED(process, process);
     RELEASE_LOG(ProcessSuspension, "Web process pid %u no longer has uploads in progress", (unsigned)process->processIdentifier());
 
     if (m_processesWithUploads.isEmpty()) {
