@@ -412,6 +412,7 @@ UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
 
 UIProcess/WebStorage/LocalStorageDatabase.cpp
 UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
+UIProcess/WebStorage/StorageManager.cpp
 
 UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp
 UIProcess/WebsiteData/WebsiteDataRecord.cpp

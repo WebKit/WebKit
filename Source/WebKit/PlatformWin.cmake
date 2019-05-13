@@ -50,8 +50,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
 
-    UIProcess/WebStorage/StorageManager.cpp
-
     UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
 
     UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp

@@ -1,3 +1,19 @@
+2019-05-13  Don Olmstead  <don.olmstead@sony.com>
+
+        Move StorageManager.cpp into WebKit/Sources.txt
+        https://bugs.webkit.org/show_bug.cgi?id=197842
+
+        Reviewed by Michael Catanzaro.
+
+        StorageManager.cpp is used by all ports so it should just go into Sources.txt.
+
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+
 2019-05-13  Chris Dumez  <cdumez@apple.com>
 
         Update TBA macros for API / SPI that has already shipped

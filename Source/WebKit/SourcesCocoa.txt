@@ -488,8 +488,6 @@ UIProcess/WebAuthentication/Mock/MockLocalService.mm
 
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
-UIProcess/WebStorage/StorageManager.cpp
-
 UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm
 
 WebProcess/API/Cocoa/WKWebProcess.cpp

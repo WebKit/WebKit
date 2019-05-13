@@ -279,8 +279,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm
     UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm
 
-    UIProcess/WebStorage/StorageManager.cpp
-
     UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
     UIProcess/mac/CorrectionPanel.mm

@@ -197,8 +197,6 @@ UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
 UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
-UIProcess/WebStorage/StorageManager.cpp
-
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 

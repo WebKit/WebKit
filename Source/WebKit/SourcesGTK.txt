@@ -224,8 +224,6 @@ UIProcess/Plugins/gtk/PluginInfoCache.cpp @no-unify
 UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp @no-unify
 UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp @no-unify
 
-UIProcess/WebStorage/StorageManager.cpp
-
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
