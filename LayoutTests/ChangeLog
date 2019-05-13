@@ -1,3 +1,17 @@
+2019-05-13  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r245208): compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=197818
+        <rdar://problem/50705762>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/event-region-scale-transform-shared-expected.txt: Added.
+        * fast/scrolling/ios/event-region-scale-transform-shared.html: Added.
+        * fast/scrolling/ios/event-region-translate-transform-shared-expected.txt: Added.
+        * fast/scrolling/ios/event-region-translate-transform-shared.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Font formatting options don't work when composing a message in Yahoo mail

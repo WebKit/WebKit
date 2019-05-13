@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .relative {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 10px;
+            width: 10px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+        
+        .sharing {
+			position: relative;
+			top: 50px;
+			left: 50px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+            transform: translate(100px, 100px);
+            transform-origin: top left;
+        }
+        
+        .inner {
+            position: absolute;
+            left: 200px;
+            top: 200px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+
+        .trigger {
+            transform: translateZ(0);
+            width: 500px;
+            height: 500px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="trigger"></div>
+    <div class="relative">
+        <div class="sharing">
+            <div class="inner">
+            </div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
