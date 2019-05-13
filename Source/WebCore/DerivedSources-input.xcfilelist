@@ -15,6 +15,7 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/generate-js-builtins.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/lazywriter.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/make-js-file-arrays.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/wkbuiltins.py
+$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
 $(PROJECT_DIR)/Configurations/FeatureDefines.xcconfig
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
@@ -342,6 +343,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUTextureUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexAttributeDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexInputDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/NavigatorGPU.idl
+$(PROJECT_DIR)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
 $(PROJECT_DIR)/Modules/webgpu/WebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapter.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUBindGroup.idl
