@@ -505,6 +505,9 @@ public:
     void setWebProcessHasUploads(WebCore::ProcessIdentifier);
     void clearWebProcessHasUploads(WebCore::ProcessIdentifier);
 
+    void setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier);
+    void clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier);
+
     void disableDelayedWebProcessLaunch() { m_isDelayedWebProcessLaunchDisabled = true; }
 
 private:
@@ -788,6 +791,10 @@ private:
 
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesWithUploads;
     std::unique_ptr<ProcessAssertion> m_uiProcessUploadAssertion;
+
+    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesPlayingAudibleMedia;
+    std::unique_ptr<ProcessAssertion> m_uiProcessMediaPlaybackAssertion;
+
 #if PLATFORM(IOS)
     // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).
     bool m_isDelayedWebProcessLaunchDisabled { true };

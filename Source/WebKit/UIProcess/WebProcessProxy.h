@@ -306,6 +306,8 @@ public:
     void processWasUnexpectedlyUnsuspended(CompletionHandler<void()>&&);
 #endif
 
+    void webPageMediaStateDidChange(WebPageProxy&);
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
@@ -485,6 +487,7 @@ private:
     unsigned m_suspendedPageCount { 0 };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
+    bool m_hasAudibleWebPage { false };
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;

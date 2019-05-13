@@ -1209,7 +1209,20 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
     UNUSED_PARAM(state);
 #endif
 }
-    
+
+void WebProcessProxy::webPageMediaStateDidChange(WebPageProxy&)
+{
+    bool newHasAudibleWebPage = WTF::anyOf(m_pageMap.values(), [] (auto& page) { return page->isPlayingAudio(); });
+    if (m_hasAudibleWebPage == newHasAudibleWebPage)
+        return;
+    m_hasAudibleWebPage = newHasAudibleWebPage;
+
+    if (m_hasAudibleWebPage)
+        processPool().setWebProcessIsPlayingAudibleMedia(coreProcessIdentifier());
+    else
+        processPool().clearWebProcessIsPlayingAudibleMedia(coreProcessIdentifier());
+}
+
 void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {

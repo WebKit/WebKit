@@ -52,6 +52,7 @@ enum class AssertionReason {
     Extension,
     FinishTask,
     FinishTaskUnbounded,
+    MediaPlayback,
 };
 
 class ProcessAssertion : public CanMakeWeakPtr<ProcessAssertion> {
