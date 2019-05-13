@@ -71,15 +71,6 @@ constexpr const int SigThreadSuspendResume = SIGUSR1;
 
 #endif
 
-// FIXME: The following functions remain because they are used from WebKit Windows support library,
-// WebKitQuartzCoreAdditions.dll. When updating the support library, we should use new API instead
-// and the following workaound should be removed. And new code should not use the following APIs.
-// Remove this workaround code when <rdar://problem/31793213> is fixed.
-#if OS(WINDOWS)
-WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
-WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
-#endif
-
 enum class GCThreadType : uint8_t {
     None = 0,
     Main,
@@ -90,9 +81,6 @@ class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
     friend WTF_EXPORT_PRIVATE void initializeThreading();
-#if OS(WINDOWS)
-    friend WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
-#endif
 
     WTF_EXPORT_PRIVATE ~Thread();
 
@@ -369,9 +357,3 @@ inline Thread& Thread::current()
 
 using WTF::Thread;
 using WTF::GCThreadType;
-
-#if OS(WINDOWS)
-using WTF::ThreadIdentifier;
-using WTF::createThread;
-using WTF::waitForThreadCompletion;
-#endif

@@ -287,7 +287,6 @@ Thread* Thread::currentDying()
     return threadMap().get(currentID());
 }
 
-// FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
 RefPtr<Thread> Thread::get(ThreadIdentifier id)
 {
     auto locker = holdLock(threadMapMutex);
@@ -425,30 +424,6 @@ void ThreadCondition::signal()
 void ThreadCondition::broadcast()
 {
     WakeAllConditionVariable(&m_condition);
-}
-
-// Remove this workaround code when <rdar://problem/31793213> is fixed.
-ThreadIdentifier createThread(ThreadFunction function, void* data, const char* threadName)
-{
-    return Thread::create(threadName, [function, data] {
-        function(data);
-    })->id();
-}
-
-int waitForThreadCompletion(ThreadIdentifier threadID)
-{
-    // This function is implemented based on the old Threading implementation.
-    // It remains only due to the support library using old Threading APIs and
-    // it should not be used in new code.
-    ASSERT(threadID);
-
-    RefPtr<Thread> thread = Thread::get(threadID);
-    if (!thread) {
-        LOG_ERROR("ThreadIdentifier %u did not correspond to an active thread when trying to quit", threadID);
-        return WAIT_FAILED;
-    }
-    return thread->waitForCompletion();
-
 }
 
 void Thread::yield()
