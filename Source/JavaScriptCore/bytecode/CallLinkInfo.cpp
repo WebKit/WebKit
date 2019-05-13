@@ -63,8 +63,6 @@ CallLinkInfo::CallLinkInfo()
     , m_clearedByJettison(false)
     , m_callType(None)
     , m_calleeGPR(255)
-    , m_maxNumArguments(0)
-    , m_slowPathCount(0)
 {
 }
 
@@ -100,7 +98,7 @@ void CallLinkInfo::unlink(VM& vm)
 CodeLocationNearCall<JSInternalPtrTag> CallLinkInfo::callReturnLocation()
 {
     RELEASE_ASSERT(!isDirect());
-    return CodeLocationNearCall<JSInternalPtrTag>(m_callReturnLocationOrPatchableJump, Regular);
+    return CodeLocationNearCall<JSInternalPtrTag>(m_callReturnLocationOrPatchableJump, NearCallMode::Regular);
 }
 
 CodeLocationJump<JSInternalPtrTag> CallLinkInfo::patchableJump()

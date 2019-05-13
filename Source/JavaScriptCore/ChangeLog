@@ -1,3 +1,105 @@
+2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Compress miscelaneous JIT related data structures with Packed<>
+        https://bugs.webkit.org/show_bug.cgi?id=197830
+
+        Reviewed by Saam Barati.
+
+        This patch leverages Packed<> to compress miscelaneous data structures related to JIT.
+
+        1. JIT IC data structures
+
+        2. ValueRecovery
+
+            We use Packed<> for EncodedJSValue in ValueRecovery. This means that conservative GC cannot find
+            these values. But this is OK anyway since ValueRecovery's constant should be already registered
+            in DFG graph. From 16 (alignment 8) to 9 (alignment 1).
+
+        3. FTL::ExitValue
+
+            We use Packed<> for EncodedJSValue in FTL::ExitValue. This is also OK since this constant should
+            be already registered by DFG/FTL graph. From 16 (alignment 8) to 9 (alignment 1).
+
+        * assembler/CodeLocation.h:
+        * bytecode/ByValInfo.h:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::callReturnLocation):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::nearCallMode const):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::addJITSubIC):
+        (JSC::CodeBlock::addJITNegIC):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addMathIC):
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::InlineCallFrame):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::inGPR):
+        (JSC::ValueRecovery::inPair):
+        (JSC::ValueRecovery::inFPR):
+        (JSC::ValueRecovery::displacedInJSStack):
+        (JSC::ValueRecovery::constant):
+        (JSC::ValueRecovery::directArgumentsThatWereNotCreated):
+        (JSC::ValueRecovery::clonedArgumentsThatWereNotCreated):
+        (JSC::ValueRecovery::gpr const):
+        (JSC::ValueRecovery::tagGPR const):
+        (JSC::ValueRecovery::payloadGPR const):
+        (JSC::ValueRecovery::fpr const):
+        (JSC::ValueRecovery::virtualRegister const):
+        (JSC::ValueRecovery::withLocalsOffset const):
+        (JSC::ValueRecovery::constant const):
+        (JSC::ValueRecovery::nodeID const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::materializeNewObject):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::inJSStack):
+        (JSC::FTL::ExitValue::inJSStackAsInt32):
+        (JSC::FTL::ExitValue::inJSStackAsInt52):
+        (JSC::FTL::ExitValue::inJSStackAsDouble):
+        (JSC::FTL::ExitValue::constant):
+        (JSC::FTL::ExitValue::exitArgument):
+        (JSC::FTL::ExitValue::exitArgument const):
+        (JSC::FTL::ExitValue::adjustStackmapLocationsIndexByOffset):
+        (JSC::FTL::ExitValue::constant const):
+        (JSC::FTL::ExitValue::virtualRegister const):
+        (JSC::FTL::ExitValue::objectMaterialization const):
+        (JSC::FTL::ExitValue::withVirtualRegister const):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        * jit/CachedRecovery.h:
+        * jit/CallFrameShuffleData.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        (JSC::JITBinaryMathIC::JITBinaryMathIC):
+        (JSC::JITUnaryMathIC::JITUnaryMathIC):
+        * jit/PolymorphicCallStubRoutine.h:
+        (JSC::PolymorphicCallNode::hasCallLinkInfo):
+        * jit/SnippetOperand.h:
+        (JSC::SnippetOperand::asRawBits const):
+        (JSC::SnippetOperand::asConstInt32 const):
+        (JSC::SnippetOperand::asConstDouble const):
+        (JSC::SnippetOperand::setConstInt32):
+        (JSC::SnippetOperand::setConstDouble):
+
 2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Compress Watchpoint size by using enum type and Packed<> data structure

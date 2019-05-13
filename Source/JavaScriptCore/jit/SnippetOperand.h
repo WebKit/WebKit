@@ -28,11 +28,12 @@
 #if ENABLE(JIT)
 
 #include "ResultType.h"
+#include <wtf/Packed.h>
 
 namespace JSC {
 
 class SnippetOperand {
-    enum ConstOrVarType {
+    enum ConstOrVarType : uint8_t {
         Variable,
         ConstInt32,
         ConstDouble
@@ -55,18 +56,18 @@ public:
     bool isConstDouble() const { return m_type == ConstDouble; }
     bool isPositiveConstInt32() const { return isConstInt32() && asConstInt32() > 0; }
 
-    int64_t asRawBits() const { return m_val.rawBits; }
+    int64_t asRawBits() const { return m_val.get().rawBits; }
 
     int32_t asConstInt32() const
     {
         ASSERT(m_type == ConstInt32);
-        return m_val.int32Val;
+        return m_val.get().int32Val;
     }
 
     double asConstDouble() const
     {
         ASSERT(m_type == ConstDouble);
-        return m_val.doubleVal;
+        return m_val.get().doubleVal;
     }
 
     double asConstNumber() const
@@ -80,24 +81,30 @@ public:
     void setConstInt32(int32_t value)
     {
         m_type = ConstInt32;
-        m_val.int32Val = value;
+        UnionType u;
+        u.int32Val = value;
+        m_val = WTFMove(u);
     }
 
     void setConstDouble(double value)
     {
         m_type = ConstDouble;
-        m_val.doubleVal = value;
+        UnionType u;
+        u.doubleVal = value;
+        m_val = WTFMove(u);
     }
 
 private:
     ResultType m_resultType;
     ConstOrVarType m_type { Variable };
-    union {
+    union UnionType {
         int32_t int32Val;
         double doubleVal;
         int64_t rawBits;
-    } m_val;
+    };
+    Packed<UnionType> m_val;
 };
+static_assert(alignof(SnippetOperand) == 1);
 
 } // namespace JSC
 

@@ -123,10 +123,10 @@ public:
 
     FPRReg wantedFPR() const { return m_wantedFPR; }
 private:
+    Vector<VirtualRegister, 1> m_targets;
     ValueRecovery m_recovery;
     JSValueRegs m_wantedJSValueRegs;
     FPRReg m_wantedFPR { InvalidFPRReg };
-    Vector<VirtualRegister, 1> m_targets;
 };
 
 } // namespace JSC

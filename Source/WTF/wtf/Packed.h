@@ -161,6 +161,7 @@ public:
     T* operator->() const { return get(); }
     T& operator*() const { return *get(); }
     bool operator!() const { return !get(); }
+    explicit operator bool() const { return get(); }
 
     PackedAlignedPtr& operator=(T* value)
     {

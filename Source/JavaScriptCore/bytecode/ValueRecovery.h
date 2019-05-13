@@ -43,7 +43,7 @@ struct InlineCallFrame;
 
 // Describes how to recover a given bytecode virtual register at a given
 // code point.
-enum ValueRecoveryTechnique {
+enum ValueRecoveryTechnique : uint8_t {
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
@@ -116,7 +116,9 @@ public:
             result.m_technique = UnboxedCellInGPR;
         else
             result.m_technique = InGPR;
-        result.m_source.gpr = gpr;
+        UnionType u;
+        u.gpr = gpr;
+        result.m_source = WTFMove(u);
         return result;
     }
     
@@ -125,8 +127,10 @@ public:
     {
         ValueRecovery result;
         result.m_technique = InPair;
-        result.m_source.pair.tagGPR = tagGPR;
-        result.m_source.pair.payloadGPR = payloadGPR;
+        UnionType u;
+        u.pair.tagGPR = tagGPR;
+        u.pair.payloadGPR = payloadGPR;
+        result.m_source = WTFMove(u);
         return result;
     }
 #endif
@@ -139,7 +143,9 @@ public:
             result.m_technique = UnboxedDoubleInFPR;
         else
             result.m_technique = InFPR;
-        result.m_source.fpr = fpr;
+        UnionType u;
+        u.fpr = fpr;
+        result.m_source = WTFMove(u);
         return result;
     }
     
@@ -176,7 +182,9 @@ public:
             result.m_technique = DisplacedInJSStack;
             break;
         }
-        result.m_source.virtualReg = virtualReg.offset();
+        UnionType u;
+        u.virtualReg = virtualReg.offset();
+        result.m_source = WTFMove(u);
         return result;
     }
     
@@ -184,7 +192,9 @@ public:
     {
         ValueRecovery result;
         result.m_technique = Constant;
-        result.m_source.constant = JSValue::encode(value);
+        UnionType u;
+        u.constant = JSValue::encode(value);
+        result.m_source = WTFMove(u);
         return result;
     }
     
@@ -192,7 +202,9 @@ public:
     {
         ValueRecovery result;
         result.m_technique = DirectArgumentsThatWereNotCreated;
-        result.m_source.nodeID = id.bits();
+        UnionType u;
+        u.nodeID = id.bits();
+        result.m_source = WTFMove(u);
         return result;
     }
     
@@ -200,7 +212,9 @@ public:
     {
         ValueRecovery result;
         result.m_technique = ClonedArgumentsThatWereNotCreated;
-        result.m_source.nodeID = id.bits();
+        UnionType u;
+        u.nodeID = id.bits();
+        result.m_source = WTFMove(u);
         return result;
     }
 
@@ -292,20 +306,20 @@ public:
     MacroAssembler::RegisterID gpr() const
     {
         ASSERT(isInGPR());
-        return m_source.gpr;
+        return m_source.get().gpr;
     }
     
 #if USE(JSVALUE32_64)
     MacroAssembler::RegisterID tagGPR() const
     {
         ASSERT(m_technique == InPair);
-        return m_source.pair.tagGPR;
+        return m_source.get().pair.tagGPR;
     }
     
     MacroAssembler::RegisterID payloadGPR() const
     {
         ASSERT(m_technique == InPair);
-        return m_source.pair.payloadGPR;
+        return m_source.get().pair.payloadGPR;
     }
 
     bool isInJSValueRegs() const
@@ -330,13 +344,13 @@ public:
     MacroAssembler::FPRegisterID fpr() const
     {
         ASSERT(isInFPR());
-        return m_source.fpr;
+        return m_source.get().fpr;
     }
     
     VirtualRegister virtualRegister() const
     {
         ASSERT(isInJSStack());
-        return VirtualRegister(m_source.virtualReg);
+        return VirtualRegister(m_source.get().virtualReg);
     }
     
     ValueRecovery withLocalsOffset(int offset) const
@@ -351,7 +365,9 @@ public:
         case StrictInt52DisplacedInJSStack: {
             ValueRecovery result;
             result.m_technique = m_technique;
-            result.m_source.virtualReg = m_source.virtualReg + offset;
+            UnionType u;
+            u.virtualReg = m_source.get().virtualReg + offset;
+            result.m_source = WTFMove(u);
             return result;
         }
             
@@ -363,13 +379,13 @@ public:
     JSValue constant() const
     {
         ASSERT(isConstant());
-        return JSValue::decode(m_source.constant);
+        return JSValue::decode(m_source.get().constant);
     }
     
     DFG::MinifiedID nodeID() const
     {
         ASSERT(m_technique == DirectArgumentsThatWereNotCreated || m_technique == ClonedArgumentsThatWereNotCreated);
-        return DFG::MinifiedID::fromBits(m_source.nodeID);
+        return DFG::MinifiedID::fromBits(m_source.get().nodeID);
     }
     
     JSValue recover(ExecState*) const;
@@ -408,7 +424,7 @@ public:
 
 private:
     ValueRecoveryTechnique m_technique;
-    union {
+    union UnionType {
         MacroAssembler::RegisterID gpr;
         MacroAssembler::FPRegisterID fpr;
 #if USE(JSVALUE32_64)
@@ -420,7 +436,9 @@ private:
         int virtualReg;
         EncodedJSValue constant;
         unsigned nodeID;
-    } m_source;
+    };
+    Packed<UnionType> m_source;
 };
+static_assert(alignof(ValueRecovery) == 1);
 
 } // namespace JSC

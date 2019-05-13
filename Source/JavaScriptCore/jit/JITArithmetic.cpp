@@ -453,7 +453,7 @@ void JIT::emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&)
 void JIT::emit_op_negate(const Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = &currentInstruction->as<OpNegate>().metadata(m_codeBlock).m_arithProfile;
-    JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile, currentInstruction);
+    JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, negateIC);
     emitMathICFast<OpNegate>(negateIC, currentInstruction, operationArithNegateProfiled, operationArithNegate);
 }
@@ -641,7 +641,7 @@ ALWAYS_INLINE static OperandTypes getOperandTypes(const ArithProfile& arithProfi
 void JIT::emit_op_add(const Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = &currentInstruction->as<OpAdd>().metadata(m_codeBlock).m_arithProfile;
-    JITAddIC* addIC = m_codeBlock->addJITAddIC(arithProfile, currentInstruction);
+    JITAddIC* addIC = m_codeBlock->addJITAddIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, addIC);
     emitMathICFast<OpAdd>(addIC, currentInstruction, operationValueAddProfiled, operationValueAdd);
 }
@@ -960,7 +960,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 void JIT::emit_op_mul(const Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = &currentInstruction->as<OpMul>().metadata(m_codeBlock).m_arithProfile;
-    JITMulIC* mulIC = m_codeBlock->addJITMulIC(arithProfile, currentInstruction);
+    JITMulIC* mulIC = m_codeBlock->addJITMulIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, mulIC);
     emitMathICFast<OpMul>(mulIC, currentInstruction, operationValueMulProfiled, operationValueMul);
 }
@@ -976,7 +976,7 @@ void JIT::emitSlow_op_mul(const Instruction* currentInstruction, Vector<SlowCase
 void JIT::emit_op_sub(const Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = &currentInstruction->as<OpSub>().metadata(m_codeBlock).m_arithProfile;
-    JITSubIC* subIC = m_codeBlock->addJITSubIC(arithProfile, currentInstruction);
+    JITSubIC* subIC = m_codeBlock->addJITSubIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, subIC);
     emitMathICFast<OpSub>(subIC, currentInstruction, operationValueSubProfiled, operationValueSub);
 }

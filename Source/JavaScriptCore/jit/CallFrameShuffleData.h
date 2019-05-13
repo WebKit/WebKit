@@ -35,7 +35,6 @@ namespace JSC {
 struct CallFrameShuffleData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ValueRecovery callee;
     Vector<ValueRecovery> args;
     unsigned numLocals { UINT_MAX };
     unsigned numPassedArgs { UINT_MAX };
@@ -45,6 +44,7 @@ public:
 
     void setupCalleeSaveRegisters(CodeBlock*);
 #endif
+    ValueRecovery callee;
 };
 
 } // namespace JSC

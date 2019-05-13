@@ -39,7 +39,7 @@ class Symbol;
 
 class StructureStubInfo;
 
-enum JITArrayMode {
+enum JITArrayMode : uint8_t {
     JITInt32,
     JITDouble,
     JITContiguous,

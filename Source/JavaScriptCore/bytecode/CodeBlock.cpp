@@ -1427,28 +1427,28 @@ StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
     return ensureJITData(locker).m_stubInfos.add(accessType);
 }
 
-JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile, const Instruction* instruction)
+JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_addICs.add(arithProfile, instruction);
+    return ensureJITData(locker).m_addICs.add(arithProfile);
 }
 
-JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile, const Instruction* instruction)
+JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_mulICs.add(arithProfile, instruction);
+    return ensureJITData(locker).m_mulICs.add(arithProfile);
 }
 
-JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile, const Instruction* instruction)
+JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_subICs.add(arithProfile, instruction);
+    return ensureJITData(locker).m_subICs.add(arithProfile);
 }
 
-JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile, const Instruction* instruction)
+JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_negICs.add(arithProfile, instruction);
+    return ensureJITData(locker).m_negICs.add(arithProfile);
 }
 
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)

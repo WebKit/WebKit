@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-enum NearCallMode { Regular, Tail };
+enum class NearCallMode : uint8_t { Regular, Tail };
 
 template<PtrTag> class CodeLocationInstruction;
 template<PtrTag> class CodeLocationLabel;
@@ -153,7 +153,7 @@ public:
         : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)), m_callMode(callMode) { }
     NearCallMode callMode() { return m_callMode; }
 private:
-    NearCallMode m_callMode = NearCallMode::Regular;
+    NearCallMode m_callMode { NearCallMode::Regular };
 };
 
 template<PtrTag tag>
