@@ -1,3 +1,13 @@
+2019-05-13  Youenn Fablet  <youenn@apple.com>
+
+        Use kDNSServiceFlagsKnownUnique for DNSServiceRegisterRecord only on platforms supporting it
+        https://bugs.webkit.org/show_bug.cgi?id=197802
+
+        Reviewed by Eric Carlson.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+
 2019-05-13  Don Olmstead  <don.olmstead@sony.com>
 
         decidePolicyForInstallMissingMediaPluginsPermissionRequest requires GStreamer
