@@ -55,7 +55,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly) BOOL HTMLTextAreaElementIsUserEdited;
 @property (nonatomic, readonly) WKWebProcessPlugInNodeHandle *HTMLTableCellElementCellAbove;
 @property (nonatomic, readonly) WKWebProcessPlugInFrame *frame;
-@property (nonatomic, readonly) BOOL isSelectElement WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL isSelectElement WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 - (BOOL)isTextField;
 

@@ -63,7 +63,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setInvisibleAutoplayNotPermitted:) BOOL _invisibleAutoplayNotPermitted WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setMediaDataLoadsAutomatically:) BOOL _mediaDataLoadsAutomatically WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setAttachmentElementEnabled:) BOOL _attachmentElementEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
-@property (nonatomic, setter=_setAttachmentFileWrapperClass:) Class _attachmentFileWrapperClass WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAttachmentFileWrapperClass:) Class _attachmentFileWrapperClass WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, setter=_setInitialCapitalizationEnabled:) BOOL _initialCapitalizationEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setApplePayEnabled:) BOOL _applePayEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setWaitsForPaintAfterViewDidMoveToWindow:) BOOL _waitsForPaintAfterViewDidMoveToWindow WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
@@ -103,9 +103,9 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setAllowMediaContentTypesRequiringHardwareSupportAsFallback:) BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 // The input of this SPI is an array of image UTI (Uniform Type Identifier).
-@property (nonatomic, copy, setter=_setAdditionalSupportedImageTypes:) NSArray<NSString *> *_additionalSupportedImageTypes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, copy, setter=_setAdditionalSupportedImageTypes:) NSArray<NSString *> *_additionalSupportedImageTypes WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
-@property (nonatomic, setter=_setEditableImagesEnabled:) BOOL _editableImagesEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setEditableImagesEnabled:) BOOL _editableImagesEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, setter=_setUndoManagerAPIEnabled:) BOOL _undoManagerAPIEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
