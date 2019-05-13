@@ -774,7 +774,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     }
 
     if (Node* mousePressNode = newFocusedFrame->eventHandler().mousePressNode()) {
-        if (mousePressNode->renderer() && !mousePressNode->canStartSelection()) {
+        if (!mousePressNode->canStartSelection()) {
             // Don't clear the selection for contentEditable elements, but do clear it for input and textarea. See bug 38696.
             auto* root = selection.rootEditableElement();
             if (!root)

@@ -1,3 +1,17 @@
+2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Font formatting options don't work when composing a message in Yahoo mail
+        https://bugs.webkit.org/show_bug.cgi?id=197813
+        <rdar://problem/49382250>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test to verify that DOM selection is preserved after clicking a button that hides itself
+        upon mousedown.
+
+        * editing/selection/preserve-selection-when-clicking-button-expected.txt: Added.
+        * editing/selection/preserve-selection-when-clicking-button.html: Added.
+
 2019-05-13  Sihui Liu  <sihui_liu@apple.com>
 
         [ Mojave Debug ] REGRESSION (r242975) Layout Test imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order.html is a flaky failure
