@@ -77,6 +77,10 @@ public:
     bool nextFlushIsForImmediatePaint() const { return m_nextFlushIsForImmediatePaint; }
 
     void adoptLayersFromContext(RemoteLayerTreeContext&);
+    
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const;
+#endif
 
 private:
     // WebCore::GraphicsLayerFactory

@@ -59,7 +59,11 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, Pl
         break;
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     case LayerHostingMode::OutOfProcess:
-        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess({
+#if PLATFORM(IOS_FAMILY)
+            context.canShowWhileLocked()
+#endif
+        });
 #if PLATFORM(IOS_FAMILY)
         if (layerType == LayerTypeAVPlayerLayer) {
             float scaleFactor = context.deviceScaleFactor();

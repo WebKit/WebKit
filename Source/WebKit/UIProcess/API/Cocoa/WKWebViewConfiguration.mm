@@ -771,6 +771,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _shouldDecidePolicyBeforeLoadingQuickLookPreview = shouldDecide;
 }
 
+- (void)_setCanShowWhileLocked:(BOOL)value
+{
+    _pageConfiguration->setCanShowWhileLocked(value);
+}
+
+- (BOOL)_canShowWhileLocked
+{
+    return _pageConfiguration->canShowWhileLocked();
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_invisibleAutoplayNotPermitted

@@ -94,7 +94,10 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
-    void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; } 
+    void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; }
+    
+    bool canShowWhileLocked() const { return m_canShowWhileLocked; }
+    void setCanShowWhileLocked(bool canShowWhileLocked) { m_canShowWhileLocked = canShowWhileLocked; }
 #endif
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
@@ -147,6 +150,7 @@ private:
     bool m_treatsSHA1SignedCertificatesAsInsecure { true };
 #if PLATFORM(IOS_FAMILY)
     bool m_alwaysRunsAtForegroundPriority { false };
+    bool m_canShowWhileLocked { false };
 #endif
     bool m_initialCapitalizationEnabled { true };
     bool m_waitsForPaintAfterViewDidMoveToWindow { true };

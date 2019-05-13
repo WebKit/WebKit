@@ -96,6 +96,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << maximumUnobscuredSize;
     encoder << deviceOrientation;
     encoder << keyboardIsAttached;
+    encoder << canShowWhileLocked;
     encoder << overrideViewportArguments;
 #endif
 #if PLATFORM(COCOA)
@@ -282,6 +283,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.deviceOrientation))
         return WTF::nullopt;
     if (!decoder.decode(parameters.keyboardIsAttached))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.canShowWhileLocked))
         return WTF::nullopt;
 
     Optional<Optional<WebCore::ViewportArguments>> overrideViewportArguments;
