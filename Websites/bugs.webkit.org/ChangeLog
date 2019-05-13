@@ -1,3 +1,15 @@
+2019-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Bugzilla should convert "r12345" to a trac.webkit.org link
+        https://bugs.webkit.org/show_bug.cgi?id=197790
+
+        Reviewed by Alexey Proskuryakov.
+
+        * extensions/Trac/Config.pm: Added.
+        * extensions/Trac/Extension.pm: Added.
+        (bug_format_comment):
+        (_replace_revision):
+
 2019-04-04  Aakash Jain  <aakash_jain@apple.com>
 
         Add another status-bubble iframe to display results from new EWS
