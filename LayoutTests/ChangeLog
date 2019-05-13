@@ -1,3 +1,15 @@
+2019-05-13  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mojave Debug ] REGRESSION (r242975) Layout Test imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=195961
+        <rdar://problem/49031397>
+
+        Reviewed by Youenn Fablet.
+
+        r244674 should have fixed this regression.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r245208): compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html asserts
