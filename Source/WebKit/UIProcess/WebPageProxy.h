@@ -1986,10 +1986,8 @@ private:
     void fixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize) { m_fixedLayoutSize = fixedLayoutSize; }
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&);
-#if ENABLE(VIDEO)
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     void requestInstallMissingMediaPlugins(const String& details, const String& description);
-#endif
 #endif
 
     void startURLSchemeTask(URLSchemeTaskParameters&&);

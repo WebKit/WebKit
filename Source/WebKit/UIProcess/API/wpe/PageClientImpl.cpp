@@ -334,7 +334,7 @@ void PageClientImpl::derefView()
 {
 }
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&)
 {
     return false;
