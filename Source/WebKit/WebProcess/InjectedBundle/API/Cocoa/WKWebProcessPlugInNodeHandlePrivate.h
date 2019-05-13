@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, _WKAutoFillButtonType) {
     _WKAutoFillButtonTypeCredentials,
     _WKAutoFillButtonTypeContacts,
     _WKAutoFillButtonTypeStrongPassword,
-    _WKAutoFillButtonTypeCreditCard WK_API_AVAILABLE(macos(10.14.4), ios(12.2)),
+    _WKAutoFillButtonTypeCreditCard WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 @interface WKWebProcessPlugInNodeHandle (WKPrivate)

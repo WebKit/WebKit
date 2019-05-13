@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT int WKWebProcessMain(int argc, const char** argv) WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+WK_EXPORT int WKWebProcessMain(int argc, const char** argv) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #ifdef __cplusplus
 }

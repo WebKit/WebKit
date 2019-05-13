@@ -34,12 +34,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 - (void)cancel;
 
-- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSURLRequest *request;
 @property (nonatomic, readonly, weak) WKWebView *originatingWebView;
 @property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
