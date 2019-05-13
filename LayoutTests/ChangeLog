@@ -1,3 +1,13 @@
+2019-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        When the set of backing-sharing layers changes, we need to issue a repaint
+        https://bugs.webkit.org/show_bug.cgi?id=197825
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll-expected.html: Added.
+        * compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll.html: Added.
+
 2019-05-12  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Suppress extra didReceiveAuthenticationChallenge call when accessing a server which checks basic auth.
