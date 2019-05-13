@@ -326,10 +326,7 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
             if (!frameRateRange)
                 return;
 
-            if (requestedFrameRate < frameRateRange.minFrameRate)
-                requestedFrameRate = frameRateRange.minFrameRate;
-            else if (requestedFrameRate > frameRateRange.maxFrameRate)
-                requestedFrameRate = frameRateRange.maxFrameRate;
+            requestedFrameRate = clampTo(requestedFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
             ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", requestedFrameRate);
             [device() setActiveVideoMinFrameDuration: CMTimeMake(1, requestedFrameRate)];
