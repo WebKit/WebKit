@@ -1,5 +1,16 @@
 2019-05-12  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r245208): compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=197818
+
+        Approved by Jon Lee.
+
+        Skip this test until a fix for bug 197818 lands.
+
+        * platform/ios-wk2/TestExpectations:
+
+2019-05-12  Simon Fraser  <simon.fraser@apple.com>
+
         When the set of backing-sharing layers changes, we need to issue a repaint
         https://bugs.webkit.org/show_bug.cgi?id=197825
 
