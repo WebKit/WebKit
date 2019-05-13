@@ -1,3 +1,15 @@
+2019-05-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct the sandbox to allow loading libraries from /Library/Apple 
+        https://bugs.webkit.org/show_bug.cgi?id=197844
+
+        Reviewed by Per Arne Vollan.
+
+        Grant access to '/Library/Apple' as an appropriate place to load
+        system frameworks.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-05-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r245240.
