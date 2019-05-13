@@ -34,7 +34,7 @@ long& flsKeyCount()
 
 DWORD* flsKeys()
 {
-    static DWORD keys[kMaxFlsKeySize];
+    static DWORD keys[maxFlsKeySize];
     return keys;
 }
 

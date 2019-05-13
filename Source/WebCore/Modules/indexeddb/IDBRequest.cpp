@@ -267,7 +267,7 @@ bool IDBRequest::canSuspendForDocumentSuspension() const
 
 bool IDBRequest::hasPendingActivity() const
 {
-    ASSERT(&originThread() == &Thread::current() || mayBeGCThread());
+    ASSERT(&originThread() == &Thread::current() || Thread::mayBeGCThread());
     return !m_contextStopped && m_hasPendingActivity;
 }
 

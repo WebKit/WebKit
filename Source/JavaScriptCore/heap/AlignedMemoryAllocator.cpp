@@ -45,7 +45,7 @@ void AlignedMemoryAllocator::registerDirectory(BlockDirectory* directory)
     RELEASE_ASSERT(!directory->nextDirectoryInAlignedMemoryAllocator());
     
     if (m_directories.isEmpty()) {
-        ASSERT(!mayBeGCThread() || directory->heap()->worldIsStopped());
+        ASSERT(!Thread::mayBeGCThread() || directory->heap()->worldIsStopped());
         for (Subspace* subspace = m_subspaces.first(); subspace; subspace = subspace->nextSubspaceInAlignedMemoryAllocator())
             subspace->didCreateFirstDirectory(directory);
     }

@@ -331,7 +331,7 @@ bool IDBTransaction::canSuspendForDocumentSuspension() const
 
 bool IDBTransaction::hasPendingActivity() const
 {
-    ASSERT(&m_database->originThread() == &Thread::current() || mayBeGCThread());
+    ASSERT(&m_database->originThread() == &Thread::current() || Thread::mayBeGCThread());
     return !m_contextStopped && m_state != IndexedDB::TransactionState::Finished;
 }
 

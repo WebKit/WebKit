@@ -57,7 +57,6 @@ void initializeMainThread()
     std::call_once(initializeKey, [] {
         initializeThreading();
         initializeMainThreadPlatform();
-        initializeGCThreads();
     });
 }
 
@@ -68,7 +67,6 @@ void initializeMainThreadToProcessMainThread()
     std::call_once(initializeKey, [] {
         initializeThreading();
         initializeMainThreadToProcessMainThreadPlatform();
-        initializeGCThreads();
     });
 }
 #else
@@ -157,44 +155,12 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-static ThreadSpecific<Optional<GCThreadType>, CanBeGCThread::True>* isGCThread;
-
-void initializeGCThreads()
-{
-    static std::once_flag flag;
-    std::call_once(
-        flag,
-        [] {
-            isGCThread = new ThreadSpecific<Optional<GCThreadType>, CanBeGCThread::True>();
-        });
-}
-
-void registerGCThread(GCThreadType type)
-{
-    if (!isGCThread) {
-        // This happens if we're running in a process that doesn't care about
-        // MainThread.
-        return;
-    }
-
-    **isGCThread = type;
-}
-
 bool isMainThreadOrGCThread()
 {
-    if (mayBeGCThread())
+    if (Thread::mayBeGCThread())
         return true;
 
     return isMainThread();
-}
-
-Optional<GCThreadType> mayBeGCThread()
-{
-    if (!isGCThread)
-        return WTF::nullopt;
-    if (!isGCThread->isSet())
-        return WTF::nullopt;
-    return **isGCThread;
 }
 
 void callOnMainThreadAndWait(WTF::Function<void()>&& function)

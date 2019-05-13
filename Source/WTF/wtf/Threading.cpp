@@ -259,6 +259,24 @@ void Thread::removeFromThreadGroup(const AbstractLocker& threadGroupLocker, Thre
     });
 }
 
+bool Thread::exchangeIsCompilationThread(bool newValue)
+{
+    auto& thread = Thread::current();
+    bool oldValue = thread.m_isCompilationThread;
+    thread.m_isCompilationThread = newValue;
+    return oldValue;
+}
+
+void Thread::registerGCThread(GCThreadType gcThreadType)
+{
+    Thread::current().m_gcThreadType = static_cast<unsigned>(gcThreadType);
+}
+
+bool Thread::mayBeGCThread()
+{
+    return Thread::current().gcThreadType() != GCThreadType::None;
+}
+
 void Thread::setCurrentThreadIsUserInteractive(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)

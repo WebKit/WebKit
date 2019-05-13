@@ -43,7 +43,6 @@
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/ThreadSpecific.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomicStringTable.h>
@@ -80,6 +79,12 @@ constexpr const int SigThreadSuspendResume = SIGUSR1;
 WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
 WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 #endif
+
+enum class GCThreadType : uint8_t {
+    None = 0,
+    Main,
+    Helper,
+};
 
 class Thread : public ThreadSafeRefCounted<Thread> {
 public:
@@ -150,6 +155,10 @@ public:
     WTF_EXPORT_PRIVATE static const unsigned lockSpinLimit;
     WTF_EXPORT_PRIVATE static void yield();
 
+    WTF_EXPORT_PRIVATE static bool exchangeIsCompilationThread(bool newValue);
+    WTF_EXPORT_PRIVATE static void registerGCThread(GCThreadType);
+    WTF_EXPORT_PRIVATE static bool mayBeGCThread();
+
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
     static void initializePlatformThreading();
@@ -202,10 +211,13 @@ public:
     mach_port_t machThread() { return m_platformThread; }
 #endif
 
+    bool isCompilationThread() const { return m_isCompilationThread; }
+    GCThreadType gcThreadType() const { return static_cast<GCThreadType>(m_gcThreadType); }
+
     struct NewThreadContext;
     static void entryPoint(NewThreadContext*);
 protected:
-    Thread() = default;
+    Thread();
 
     void initializeInThread();
 
@@ -238,11 +250,11 @@ protected:
         Detached,
     };
 
-    JoinableState joinableState() { return m_joinableState; }
+    JoinableState joinableState() const { return m_joinableState; }
     void didBecomeDetached() { m_joinableState = Detached; }
     void didExit();
     void didJoin() { m_joinableState = Joined; }
-    bool hasExited() { return m_didExit; }
+    bool hasExited() const { return m_didExit; }
 
     // These functions are only called from ThreadGroup.
     ThreadGroupAddResult addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
@@ -280,9 +292,11 @@ protected:
     static void THREAD_SPECIFIC_CALL destructTLS(void* data);
 
     JoinableState m_joinableState { Joinable };
-    bool m_isShuttingDown { false };
-    bool m_didExit { false };
-    bool m_isDestroyedOnce { false };
+    bool m_isShuttingDown : 1;
+    bool m_didExit : 1;
+    bool m_isDestroyedOnce : 1;
+    bool m_isCompilationThread: 1;
+    unsigned m_gcThreadType : 2;
 
     // Lock & ParkingLot rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
     // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
@@ -310,6 +324,15 @@ protected:
 public:
     void* m_apiData { nullptr };
 };
+
+inline Thread::Thread()
+    : m_isShuttingDown(false)
+    , m_didExit(false)
+    , m_isDestroyedOnce(false)
+    , m_isCompilationThread(false)
+    , m_gcThreadType(static_cast<unsigned>(GCThreadType::None))
+{
+}
 
 inline Thread* Thread::currentMayBeNull()
 {
@@ -345,6 +368,7 @@ inline Thread& Thread::current()
 } // namespace WTF
 
 using WTF::Thread;
+using WTF::GCThreadType;
 
 #if OS(WINDOWS)
 using WTF::ThreadIdentifier;

@@ -68,17 +68,6 @@ inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
 #endif // USE(WEB_THREAD)
 
-WTF_EXPORT_PRIVATE void initializeGCThreads();
-
-enum class GCThreadType {
-    Main,
-    Helper
-};
-
-void printInternal(PrintStream&, GCThreadType);
-
-WTF_EXPORT_PRIVATE void registerGCThread(GCThreadType);
-WTF_EXPORT_PRIVATE Optional<GCThreadType> mayBeGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
@@ -98,7 +87,6 @@ void initializeMainThreadToProcessMainThreadPlatform();
 
 } // namespace WTF
 
-using WTF::GCThreadType;
 using WTF::callOnMainThread;
 using WTF::callOnMainThreadAndWait;
 using WTF::canAccessThreadLocalDataForThread;
@@ -106,7 +94,6 @@ using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
 using WTF::isUIThread;
 using WTF::isWebThread;
-using WTF::mayBeGCThread;
 using WTF::setMainThreadCallbacksPaused;
 #if PLATFORM(COCOA)
 using WTF::dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded;

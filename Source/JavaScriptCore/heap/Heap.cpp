@@ -148,7 +148,7 @@ bool isValidSharedInstanceThreadState(VM* vm)
 
 bool isValidThreadState(VM* vm)
 {
-    if (vm->atomicStringTable() != WTF::Thread::current().atomicStringTable())
+    if (vm->atomicStringTable() != Thread::current().atomicStringTable())
         return false;
 
     if (vm->isSharedInstance() && !isValidSharedInstanceThreadState(vm))
@@ -231,9 +231,9 @@ private:
 
 } // anonymous namespace
 
-class Heap::Thread : public AutomaticThread {
+class Heap::HeapThread : public AutomaticThread {
 public:
-    Thread(const AbstractLocker& locker, Heap& heap)
+    HeapThread(const AbstractLocker& locker, Heap& heap)
         : AutomaticThread(locker, heap.m_threadLock, heap.m_threadCondition.copyRef())
         , m_heap(heap)
     {
@@ -264,7 +264,7 @@ protected:
     
     void threadDidStart() override
     {
-        WTF::registerGCThread(GCThreadType::Main);
+        Thread::registerGCThread(GCThreadType::Main);
     }
 
 private:
@@ -323,7 +323,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     m_maxEdenSizeWhenCritical = memoryAboveCriticalThreshold / 4;
 
     LockHolder locker(*m_threadLock);
-    m_thread = adoptRef(new Thread(locker, *this));
+    m_thread = adoptRef(new HeapThread(locker, *this));
 }
 
 Heap::~Heap()
@@ -1169,7 +1169,7 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
 {
     checkConn(conn);
     m_currentThreadState = currentThreadState;
-    m_currentThread = &WTF::Thread::current();
+    m_currentThread = &Thread::current();
     
     if (conn == GCConductor::Mutator)
         sanitizeStackForVM(vm());
@@ -1298,7 +1298,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
                     slotVisitor = m_availableParallelSlotVisitors.takeLast();
             }
 
-            WTF::registerGCThread(GCThreadType::Helper);
+            Thread::registerGCThread(GCThreadType::Helper);
 
             {
                 ParallelModeEnabler parallelModeEnabler(*slotVisitor);
@@ -1695,7 +1695,7 @@ NEVER_INLINE void Heap::resumeThePeriphery()
                 slotVisitorsToUpdate.takeLast();
             }
         }
-        WTF::Thread::yield();
+        Thread::yield();
     }
     
     for (SlotVisitor* slotVisitor : slotVisitorsToUpdate)
@@ -2105,7 +2105,7 @@ Heap::Ticket Heap::requestCollection(GCRequest request)
     stopIfNecessary();
     
     ASSERT(vm()->currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(vm()->atomicStringTable() == WTF::Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm()->atomicStringTable() == Thread::current().atomicStringTable());
     
     LockHolder locker(*m_threadLock);
     // We may be able to steal the conn. That only works if the collector is definitely not running
@@ -2548,7 +2548,7 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
 
 bool Heap::isCurrentThreadBusy()
 {
-    return mayBeGCThread() || mutatorState() != MutatorState::Running;
+    return Thread::mayBeGCThread() || mutatorState() != MutatorState::Running;
 }
 
 void Heap::reportExtraMemoryVisited(size_t size)
@@ -2864,7 +2864,7 @@ void Heap::notifyIsSafeToCollect()
     m_isSafeToCollect = true;
     
     if (Options::collectContinuously()) {
-        m_collectContinuouslyThread = WTF::Thread::create(
+        m_collectContinuouslyThread = Thread::create(
             "JSC DEBUG Continuous GC",
             [this] () {
                 MonotonicTime initialTime = MonotonicTime::now();

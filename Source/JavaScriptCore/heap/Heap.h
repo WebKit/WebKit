@@ -426,8 +426,8 @@ private:
     friend class VM;
     friend class WeakSet;
 
-    class Thread;
-    friend class Thread;
+    class HeapThread;
+    friend class HeapThread;
 
     static const size_t minExtraMemory = 256;
     
@@ -727,7 +727,7 @@ private:
     Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
 
-    RefPtr<WTF::Thread> m_collectContinuouslyThread { nullptr };
+    RefPtr<Thread> m_collectContinuouslyThread { nullptr };
     
     MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
@@ -737,7 +737,7 @@ private:
     uintptr_t m_barriersExecuted { 0 };
     
     CurrentThreadState* m_currentThreadState { nullptr };
-    WTF::Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
+    Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_precentAvailableMemoryCachedCallCount;

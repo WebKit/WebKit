@@ -173,19 +173,19 @@ inline void Heap::releaseSoon(std::unique_ptr<JSCGLibWrapperObject>&& object)
 
 inline void Heap::incrementDeferralDepth()
 {
-    ASSERT(!mayBeGCThread() || m_worldIsStopped);
+    ASSERT(!Thread::mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth++;
 }
 
 inline void Heap::decrementDeferralDepth()
 {
-    ASSERT(!mayBeGCThread() || m_worldIsStopped);
+    ASSERT(!Thread::mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth--;
 }
 
 inline void Heap::decrementDeferralDepthAndGCIfNeeded()
 {
-    ASSERT(!mayBeGCThread() || m_worldIsStopped);
+    ASSERT(!Thread::mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth--;
     
     if (UNLIKELY(m_didDeferGCWork)) {

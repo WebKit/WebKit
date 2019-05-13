@@ -77,7 +77,7 @@ IDBDatabase::~IDBDatabase()
 
 bool IDBDatabase::hasPendingActivity() const
 {
-    ASSERT(&originThread() == &Thread::current() || mayBeGCThread());
+    ASSERT(&originThread() == &Thread::current() || Thread::mayBeGCThread());
 
     if (m_closedInServer || isContextStopped())
         return false;

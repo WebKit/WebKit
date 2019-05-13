@@ -1,5 +1,59 @@
 2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [WTF] Simplify GCThread and CompilationThread flags by adding them to WTF::Thread
+        https://bugs.webkit.org/show_bug.cgi?id=197146
+
+        Reviewed by Saam Barati.
+
+        Since GCThread and CompilationThread flags exist in WTF, we put these flags into WTF::Thread directly instead of holding them in ThreadSpecific<>.
+        And this patch removes dependency from Threading.h to ThreadSpecific.h. ThreadSpecific.h's OS threading primitives are moved to ThreadingPrimitives.h,
+        and Threading.h relies on it instead.
+
+        * wtf/CompilationThread.cpp:
+        (WTF::isCompilationThread):
+        (WTF::initializeCompilationThreads): Deleted.
+        (WTF::exchangeIsCompilationThread): Deleted.
+        * wtf/CompilationThread.h:
+        (WTF::CompilationScope::CompilationScope):
+        (WTF::CompilationScope::~CompilationScope):
+        (WTF::CompilationScope::leaveEarly):
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        (WTF::initializeMainThreadToProcessMainThread):
+        (WTF::isMainThreadOrGCThread):
+        (WTF::initializeGCThreads): Deleted.
+        (WTF::registerGCThread): Deleted.
+        (WTF::mayBeGCThread): Deleted.
+        * wtf/MainThread.h:
+        * wtf/ThreadSpecific.h:
+        (WTF::canBeGCThread>::ThreadSpecific):
+        (WTF::canBeGCThread>::set):
+        (WTF::threadSpecificKeyCreate): Deleted.
+        (WTF::threadSpecificKeyDelete): Deleted.
+        (WTF::threadSpecificSet): Deleted.
+        (WTF::threadSpecificGet): Deleted.
+        * wtf/Threading.cpp:
+        (WTF::Thread::exchangeIsCompilationThread):
+        (WTF::Thread::registerGCThread):
+        (WTF::Thread::mayBeGCThread):
+        * wtf/Threading.h:
+        (WTF::Thread::isCompilationThread const):
+        (WTF::Thread::gcThreadType const):
+        (WTF::Thread::joinableState const):
+        (WTF::Thread::hasExited const):
+        (WTF::Thread::Thread):
+        (WTF::Thread::joinableState): Deleted.
+        (WTF::Thread::hasExited): Deleted.
+        * wtf/ThreadingPrimitives.h:
+        (WTF::threadSpecificKeyCreate):
+        (WTF::threadSpecificKeyDelete):
+        (WTF::threadSpecificSet):
+        (WTF::threadSpecificGet):
+        * wtf/win/ThreadSpecificWin.cpp:
+        (WTF::flsKeys):
+
+2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, follow-up after r245214
         https://bugs.webkit.org/show_bug.cgi?id=197730
 

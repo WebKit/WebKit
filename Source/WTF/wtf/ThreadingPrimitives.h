@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <limits.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
@@ -41,6 +42,16 @@
 
 #if USE(PTHREADS)
 #include <pthread.h>
+#if !defined(PTHREAD_KEYS_MAX)
+// PTHREAD_KEYS_MAX is not defined in bionic nor in Hurd, so explicitly define it here.
+#define PTHREAD_KEYS_MAX 1024
+#endif
+#endif
+
+#if OS(WINDOWS) && CPU(X86)
+#define THREAD_SPECIFIC_CALL __stdcall
+#else
+#define THREAD_SPECIFIC_CALL
 #endif
 
 namespace WTF {
@@ -51,11 +62,13 @@ using ThreadFunction = void (*)(void* argument);
 using PlatformThreadHandle = pthread_t;
 using PlatformMutex = pthread_mutex_t;
 using PlatformCondition = pthread_cond_t;
+using ThreadSpecificKey = pthread_key_t;
 #elif OS(WINDOWS)
 using ThreadIdentifier = uint32_t;
 using PlatformThreadHandle = HANDLE;
 using PlatformMutex = SRWLOCK;
 using PlatformCondition = CONDITION_VARIABLE;
+using ThreadSpecificKey = DWORD;
 #else
 #error "Not supported platform"
 #endif
@@ -103,6 +116,64 @@ private:
     PlatformCondition m_condition = CONDITION_VARIABLE_INIT;
 #endif
 };
+
+#if USE(PTHREADS)
+
+static constexpr ThreadSpecificKey InvalidThreadSpecificKey = PTHREAD_KEYS_MAX;
+
+inline void threadSpecificKeyCreate(ThreadSpecificKey* key, void (*destructor)(void *))
+{
+    int error = pthread_key_create(key, destructor);
+    if (error)
+        CRASH();
+}
+
+inline void threadSpecificKeyDelete(ThreadSpecificKey key)
+{
+    int error = pthread_key_delete(key);
+    if (error)
+        CRASH();
+}
+
+inline void threadSpecificSet(ThreadSpecificKey key, void* value)
+{
+    pthread_setspecific(key, value);
+}
+
+inline void* threadSpecificGet(ThreadSpecificKey key)
+{
+    return pthread_getspecific(key);
+}
+
+#elif OS(WINDOWS)
+
+static constexpr ThreadSpecificKey InvalidThreadSpecificKey = FLS_OUT_OF_INDEXES;
+
+inline void threadSpecificKeyCreate(ThreadSpecificKey* key, void (THREAD_SPECIFIC_CALL *destructor)(void *))
+{
+    DWORD flsKey = FlsAlloc(destructor);
+    if (flsKey == FLS_OUT_OF_INDEXES)
+        CRASH();
+
+    *key = flsKey;
+}
+
+inline void threadSpecificKeyDelete(ThreadSpecificKey key)
+{
+    FlsFree(key);
+}
+
+inline void threadSpecificSet(ThreadSpecificKey key, void* data)
+{
+    FlsSetValue(key, data);
+}
+
+inline void* threadSpecificGet(ThreadSpecificKey key)
+{
+    return FlsGetValue(key);
+}
+
+#endif
 
 } // namespace WTF
 
