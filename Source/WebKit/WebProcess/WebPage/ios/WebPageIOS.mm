@@ -193,15 +193,16 @@ static bool enclosingLayerIsTransparentOrFullyClipped(const RenderObject& render
 
 void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
+    FrameView* view = frame.view();
     if (frame.editor().hasComposition()) {
         RefPtr<Range> compositionRange = frame.editor().compositionRange();
         Vector<WebCore::SelectionRect> compositionRects;
         if (compositionRange) {
             compositionRange->collectSelectionRects(compositionRects);
             if (compositionRects.size())
-                result.firstMarkedRect = compositionRects[0].rect();
+                result.firstMarkedRect = view->contentsToRootView(compositionRects[0].rect());
             if (compositionRects.size() > 1)
-                result.lastMarkedRect = compositionRects.last().rect();
+                result.lastMarkedRect = view->contentsToRootView(compositionRects.last().rect());
             else
                 result.lastMarkedRect = result.firstMarkedRect;
             result.markedText = plainTextReplacingNoBreakSpace(compositionRange.get());
@@ -223,7 +224,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     }
 
     auto& postLayoutData = result.postLayoutData();
-    FrameView* view = frame.view();
+    
     const VisibleSelection& selection = frame.selection().selection();
     postLayoutData.isStableStateUpdate = m_isInStableState;
     bool startNodeIsInsideFixedPosition = false;
