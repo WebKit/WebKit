@@ -35,6 +35,7 @@
 #include "MediaSampleAVFObjC.h"
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
+#include "PlatformScreen.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoUtilities.h"
 
@@ -303,6 +304,14 @@ Optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPe
 
 void ScreenDisplayCaptureSourceMac::screenCaptureDevices(Vector<CaptureDevice>& displays)
 {
+    auto screenID = displayID([NSScreen mainScreen]);
+    if (CGDisplayIDToOpenGLDisplayMask(screenID)) {
+        CaptureDevice displayDevice(String::number(screenID), CaptureDevice::DeviceType::Screen, makeString("Screen 0"));
+        displayDevice.setEnabled(true);
+        displays.append(WTFMove(displayDevice));
+        return;
+    }
+
     uint32_t displayCount = 0;
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
     if (err) {
