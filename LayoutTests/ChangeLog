@@ -1,5 +1,45 @@
 2019-05-12  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r245191. rdar://problem/48027412
+
+    [iOS] baidu.com: Synthetic bold renders too far apart, appears doubled.
+    https://bugs.webkit.org/show_bug.cgi?id=197781
+    <rdar://problem/48027412>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Synthetic bold is essentially two regular glyphs painted with an offset. While on macOS this offset is always 1px (CSS), on iOS larger font produces higher offset value. At paint time, this offset value (in CSS px unit) get converted
+    to a device pixel value taking context scale into account. This conversion ensures that the gap between the 2 regular glyphs won't get wider (in device pixels) as the user pinch zooms in.
+    This works as long as the scale on the context is >= 1. This patch ensures that a scaled down context won't blow up this gap.
+    
+    Test: fast/text/large-synthetic-bold-with-scale-transform.html
+    
+    * platform/graphics/cocoa/FontCascadeCocoa.mm:
+    (WebCore::FontCascade::drawGlyphs):
+    
+    LayoutTests:
+    
+    * fast/text/large-synthetic-bold-with-scale-transform-expected.html: Added.
+    * fast/text/large-synthetic-bold-with-scale-transform.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245191 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-10  Zalan Bujtas  <zalan@apple.com>
+
+            [iOS] baidu.com: Synthetic bold renders too far apart, appears doubled.
+            https://bugs.webkit.org/show_bug.cgi?id=197781
+            <rdar://problem/48027412>
+
+            Reviewed by Simon Fraser.
+
+            * fast/text/large-synthetic-bold-with-scale-transform-expected.html: Added.
+            * fast/text/large-synthetic-bold-with-scale-transform.html: Added.
+
+2019-05-12  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r245144. rdar://problem/47902054
 
     [iOS] Unable to commit search on MSN.com, qq.com, or sina.com.cn using enter key (hardware or software keyboard)
