@@ -1,3 +1,15 @@
+2019-05-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Crash when trying to QuickLook
+        https://bugs.webkit.org/show_bug.cgi?id=197853
+        <rdar://problem/49795964>
+
+        Reviewed by Brent Fulgham.
+
+        This is caused by a syscall sandbox violation.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-05-13  Brent Fulgham  <bfulgham@apple.com>
 
         Correct the sandbox to allow loading libraries from /Library/Apple 
