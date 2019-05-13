@@ -1,3 +1,28 @@
+2019-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Alter Conic Gradient tests to be less subject to noise
+        https://bugs.webkit.org/show_bug.cgi?id=197806
+        <rdar://problem/47272067>
+
+        Reviewed by Wenson Hsieh.
+
+        There is a currently a bug where there's a lot of detectable noise in
+        the green gradients. Replace them with the less noisy magenta or blue.
+        <rdar://problem/50682535>
+
+        * fast/gradients/conic-extended-stops-expected.html:
+        * fast/gradients/conic-extended-stops.html:
+        * fast/gradients/conic-from-angle-expected.html:
+        * fast/gradients/conic-from-angle.html:
+        * fast/gradients/conic-gradient-expected.html:
+        * fast/gradients/conic-gradient-extended-stops-expected.html:
+        * fast/gradients/conic-gradient-extended-stops.html:
+        * fast/gradients/conic-gradient.html:
+        * fast/gradients/conic-off-center-expected.html:
+        * fast/gradients/conic-off-center.html:
+        * fast/gradients/conic-two-hints-expected.html:
+        * fast/gradients/conic-two-hints.html:
+
 2019-05-13  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r245208): compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html asserts
