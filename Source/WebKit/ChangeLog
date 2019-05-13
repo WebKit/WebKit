@@ -1,3 +1,14 @@
+2019-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Need an entitlement for WebContent to send accessibility notifications
+        https://bugs.webkit.org/show_bug.cgi?id=197832
+
+        Reviewed by Brent Fulgham.
+
+        In order to send accessibility notifications on iOS, we need to be able to look up this port.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-05-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix unused variable warnings in release builds
