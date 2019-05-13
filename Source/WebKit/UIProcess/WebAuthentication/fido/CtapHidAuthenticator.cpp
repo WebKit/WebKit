@@ -62,7 +62,11 @@ void CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<ui
 {
     auto response = readCTAPMakeCredentialResponse(data);
     if (!response) {
-        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", data.size() == 1 ? data[0] : -1) });
+        auto error = getResponseCode(data);
+        if (error == CtapDeviceResponseCode::kCtap2ErrCredentialExcluded)
+            receiveRespond(ExceptionData { InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
+        else
+            receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
     receiveRespond(WTFMove(*response));

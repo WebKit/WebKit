@@ -97,6 +97,7 @@ const testU2fCredentialIdBase64 =
 const testU2fSignResponse =
     "AQAAADswRAIge94KUqwfTIsn4AOjcM1mpMcRjdItVEeDX0W5nGhCP/cCIDxRe0eH" +
     "f4V4LeEAhqeD0effTjY553H19q+jWq1Tc4WOkAA=";
+const testCtapErrCredentialExcludedOnlyResponseBase64 = "GQ==";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 

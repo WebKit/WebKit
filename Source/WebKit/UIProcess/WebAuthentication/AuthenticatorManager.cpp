@@ -194,9 +194,12 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     ASSERT(RunLoop::isMain());
     if (!m_requestTimeOutTimer.isActive())
         return;
-
     ASSERT(m_pendingCompletionHandler);
-    if (WTF::holds_alternative<PublicKeyCredentialData>(respond)) {
+
+    auto shouldComplete = WTF::holds_alternative<PublicKeyCredentialData>(respond);
+    if (!shouldComplete)
+        shouldComplete = WTF::get<ExceptionData>(respond).code == InvalidStateError;
+    if (shouldComplete) {
         m_pendingCompletionHandler(WTFMove(respond));
         clearStateAsync();
         m_requestTimeOutTimer.stop();
