@@ -286,6 +286,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     _websitePolicies->setAllowSiteSpecificQuirksToOverrideCompatibilityMode(value);
 }
 
+- (NSString *)_applicationNameForUserAgentWithModernCompatibility
+{
+    return _websitePolicies->applicationNameForUserAgentWithModernCompatibility();
+}
+
+- (void)_setApplicationNameForUserAgentWithModernCompatibility:(NSString *)applicationName
+{
+    _websitePolicies->setApplicationNameForUserAgentWithModernCompatibility(applicationName);
+}
+
 - (API::Object&)_apiObject
 {
     return *_websitePolicies;

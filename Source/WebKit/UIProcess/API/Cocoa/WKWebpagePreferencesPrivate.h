@@ -69,4 +69,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy)
 @property (nonatomic, setter=_setDeviceOrientationAndMotionAccessPolicy:) _WKWebsiteDeviceOrientationAndMotionAccessPolicy _deviceOrientationAndMotionAccessPolicy;
 @property (nonatomic, setter=_setAllowSiteSpecificQuirksToOverrideCompatibilityMode:) BOOL _allowSiteSpecificQuirksToOverrideCompatibilityMode;
 
+@property (nonatomic, copy, setter=_setApplicationNameForUserAgentWithModernCompatibility:) NSString *_applicationNameForUserAgentWithModernCompatibility;
+
 @end

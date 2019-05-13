@@ -104,6 +104,9 @@ public:
     bool allowSiteSpecificQuirksToOverrideCompatibilityMode() const { return m_allowSiteSpecificQuirksToOverrideCompatibilityMode; }
     void setAllowSiteSpecificQuirksToOverrideCompatibilityMode(bool value) { m_allowSiteSpecificQuirksToOverrideCompatibilityMode = value; }
 
+    WTF::String applicationNameForUserAgentWithModernCompatibility() const { return m_applicationNameForUserAgentWithModernCompatibility; }
+    void setApplicationNameForUserAgentWithModernCompatibility(const WTF::String& applicationName) { m_applicationNameForUserAgentWithModernCompatibility = applicationName; }
+
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
@@ -124,6 +127,7 @@ private:
     WebKit::WebsiteMediaSourcePolicy m_mediaSourcePolicy { WebKit::WebsiteMediaSourcePolicy::Default };
     WebKit::WebsiteSimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Default };
     bool m_allowSiteSpecificQuirksToOverrideCompatibilityMode { false };
+    WTF::String m_applicationNameForUserAgentWithModernCompatibility;
 };
 
 } // namespace API
