@@ -1,3 +1,33 @@
+2019-05-13  Saam Barati  <sbarati@apple.com>
+
+        macro assembler code-pointer tagging has its arguments backwards
+        https://bugs.webkit.org/show_bug.cgi?id=197677
+
+        Reviewed by Michael Saboff.
+
+        We had the destination as the leftmost instead of the rightmost argument,
+        which goes against the convention of how we order arguments in macro assembler
+        methods.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::tagReturnAddress):
+        (JSC::MacroAssemblerARM64E::untagReturnAddress):
+        (JSC::MacroAssemblerARM64E::tagPtr):
+        (JSC::MacroAssemblerARM64E::untagPtr):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::emitPointerValidation):
+        (JSC::arityFixupGenerator):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-05-13  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSObject::getOwnPropertyDescriptor is missing an exception check

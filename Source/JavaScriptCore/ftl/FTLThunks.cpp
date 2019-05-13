@@ -116,7 +116,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     restoreAllRegisters(jit, buffer);
 
 #if CPU(ARM64E)
-    jit.untagPtr(AssemblyHelpers::linkRegister, resultTag);
+    jit.untagPtr(resultTag, AssemblyHelpers::linkRegister);
     jit.tagReturnAddress();
 #else
     UNUSED_PARAM(resultTag);

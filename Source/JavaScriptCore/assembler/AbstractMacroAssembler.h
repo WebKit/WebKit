@@ -977,9 +977,9 @@ public:
     ALWAYS_INLINE void tagReturnAddress() { }
     ALWAYS_INLINE void untagReturnAddress() { }
 
-    ALWAYS_INLINE void tagPtr(RegisterID, PtrTag) { }
+    ALWAYS_INLINE void tagPtr(PtrTag, RegisterID) { }
     ALWAYS_INLINE void tagPtr(RegisterID, RegisterID) { }
-    ALWAYS_INLINE void untagPtr(RegisterID, PtrTag) { }
+    ALWAYS_INLINE void untagPtr(PtrTag, RegisterID) { }
     ALWAYS_INLINE void untagPtr(RegisterID, RegisterID) { }
     ALWAYS_INLINE void removePtrTag(RegisterID) { }
 

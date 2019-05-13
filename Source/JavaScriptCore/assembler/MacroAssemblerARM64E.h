@@ -41,22 +41,22 @@ class MacroAssemblerARM64E : public MacroAssemblerARM64 {
 public:
     ALWAYS_INLINE void tagReturnAddress()
     {
-        tagPtr(ARM64Registers::lr, ARM64Registers::sp);
+        tagPtr(ARM64Registers::sp, ARM64Registers::lr);
     }
 
     ALWAYS_INLINE void untagReturnAddress()
     {
-        untagPtr(ARM64Registers::lr, ARM64Registers::sp);
+        untagPtr(ARM64Registers::sp, ARM64Registers::lr);
     }
 
-    ALWAYS_INLINE void tagPtr(RegisterID target, PtrTag tag)
+    ALWAYS_INLINE void tagPtr(PtrTag tag, RegisterID target)
     {
         auto tagGPR = getCachedDataTempRegisterIDAndInvalidate();
         move(TrustedImm64(tag), tagGPR);
         m_assembler.pacib(target, tagGPR);
     }
 
-    ALWAYS_INLINE void tagPtr(RegisterID target, RegisterID tag)
+    ALWAYS_INLINE void tagPtr(RegisterID tag, RegisterID target)
     {
         if (target == ARM64Registers::lr && tag == ARM64Registers::sp) {
             m_assembler.pacibsp();
@@ -65,14 +65,14 @@ public:
         m_assembler.pacib(target, tag);
     }
 
-    ALWAYS_INLINE void untagPtr(RegisterID target, PtrTag tag)
+    ALWAYS_INLINE void untagPtr(PtrTag tag, RegisterID target)
     {
         auto tagGPR = getCachedDataTempRegisterIDAndInvalidate();
         move(TrustedImm64(tag), tagGPR);
         m_assembler.autib(target, tagGPR);
     }
 
-    ALWAYS_INLINE void untagPtr(RegisterID target, RegisterID tag)
+    ALWAYS_INLINE void untagPtr(RegisterID tag, RegisterID target)
     {
         m_assembler.autib(target, tag);
     }

@@ -807,7 +807,7 @@ public:
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
 #if CPU(ARM64E)
         addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::framePointerRegister, tempGPR);
-        untagPtr(linkRegister, tempGPR);
+        untagPtr(tempGPR, linkRegister);
 #endif
 #elif CPU(MIPS)
         loadPtr(Address(framePointerRegister, sizeof(void*)), returnAddressRegister);

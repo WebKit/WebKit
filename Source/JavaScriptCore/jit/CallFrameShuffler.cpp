@@ -456,7 +456,7 @@ void CallFrameShuffler::prepareForTailCall()
         MacroAssembler::linkRegister);
 #if CPU(ARM64E)
     m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::framePointerRegister);
-    m_jit.untagPtr(MacroAssembler::linkRegister, MacroAssembler::framePointerRegister);
+    m_jit.untagPtr(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
     m_jit.subPtr(MacroAssembler::TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::framePointerRegister);
 #endif
 

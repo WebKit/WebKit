@@ -480,7 +480,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     jit.move(CCallHelpers::TrustedImmPtr(this), GPRInfo::regT0);
     jit.emitFunctionEpilogue();
 #if CPU(ARM64E)
-    jit.untagPtr(MacroAssembler::linkRegister, MacroAssembler::stackPointerRegister);
+    jit.untagReturnAddress();
 #endif
     auto jumpToHostCallThunk = jit.jump();
 

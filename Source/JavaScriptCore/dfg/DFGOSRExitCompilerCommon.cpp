@@ -157,9 +157,9 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
 #if CPU(ARM64E)
             jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, GPRInfo::regT2);
-            jit.untagPtr(GPRInfo::regT3, GPRInfo::regT2);
+            jit.untagPtr(GPRInfo::regT2, GPRInfo::regT3);
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
-            jit.tagPtr(GPRInfo::regT3, GPRInfo::regT2);
+            jit.tagPtr(GPRInfo::regT2, GPRInfo::regT3);
 #endif
             jit.storePtr(GPRInfo::regT3, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
             jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), GPRInfo::regT3);
@@ -209,7 +209,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 #if CPU(ARM64E)
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
             jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::nonArgGPR0);
-            jit.tagPtr(GPRInfo::nonArgGPR0, GPRInfo::regT2);
+            jit.tagPtr(GPRInfo::regT2, GPRInfo::nonArgGPR0);
             jit.storePtr(GPRInfo::nonArgGPR0, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
 #else
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
