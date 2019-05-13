@@ -32,12 +32,12 @@
 #import <pal/spi/mac/QTKitSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(QTKit)
+SOFT_LINK_FRAMEWORK_OPTIONAL(QTKit)
 
-SOFT_LINK_CLASS(QTKit, QTHUDBackgroundView)
-SOFT_LINK_CLASS(QTKit, QTHUDButton)
-SOFT_LINK_CLASS(QTKit, QTHUDSlider)
-SOFT_LINK_CLASS(QTKit, QTHUDTimeline)
+SOFT_LINK_CLASS_OPTIONAL(QTKit, QTHUDBackgroundView)
+SOFT_LINK_CLASS_OPTIONAL(QTKit, QTHUDButton)
+SOFT_LINK_CLASS_OPTIONAL(QTKit, QTHUDSlider)
+SOFT_LINK_CLASS_OPTIONAL(QTKit, QTHUDTimeline)
 
 #define QTHUDBackgroundView getQTHUDBackgroundViewClass()
 #define QTHUDButton getQTHUDButtonClass()
@@ -401,6 +401,13 @@ static NSView *createMediaUIBackgroundView()
     static const CGFloat timeTextFieldWidth = 54;
     static const CGFloat timeTextFieldHeight = 13;
     static const CGFloat timeTextFieldHorizontalMargin = 7;
+
+    if (!QTKitLibrary()
+        || !getQTHUDBackgroundViewClass()
+        || !getQTHUDButtonClass()
+        || !getQTHUDSliderClass()
+        || !getQTHUDTimelineClass())
+        return;
 
     NSWindow *window = [self window];
     ASSERT(window);
