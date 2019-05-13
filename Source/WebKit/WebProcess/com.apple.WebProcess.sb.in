@@ -40,6 +40,7 @@
 (allow file-read*
     (require-all (file-mode #o0004)
     (require-any (subpath "/Library/Filesystems/NetFSPlugins")
+    (subpath "/Library/Apple/System")
     (subpath "/Library/Preferences/Logging")      ; Logging Rethink
     (subpath "/System")
     (subpath "/private/var/db/dyld")
@@ -52,6 +53,15 @@
     (require-all (file-mode #o0004)
     (subpath "/AppleInternal/Library/Preferences/Logging")
     (system-attribute apple-internal)))
+
+;;; Allow mapping of system frameworks + dylibs
+(allow file-map-executable
+    (subpath "/Library/Apple/System/Library/Frameworks")
+    (subpath "/Library/Apple/System/Library/PrivateFrameworks")
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/PrivateFrameworks")
+    (subpath "/usr/lib")
+    (literal "/usr/local/lib/sanitizers"))
 
 (allow file-read-metadata
     (literal "/etc")
