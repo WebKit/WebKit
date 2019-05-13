@@ -73,27 +73,37 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
 
     throwSecurityError(state, scope, message);
     slot.setUndefined();
-    return true;
+    return false;
 }
 
 bool JSLocation::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSLocation*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (getOwnPropertySlotCommon(*thisObject, *state, propertyName, slot))
+    bool result = getOwnPropertySlotCommon(*thisObject, *state, propertyName, slot);
+    EXCEPTION_ASSERT(!scope.exception() || !result);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (result)
         return true;
-    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
+    RELEASE_AND_RETURN(scope, JSObject::getOwnPropertySlot(object, state, propertyName, slot));
 }
 
 bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSLocation*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (getOwnPropertySlotCommon(*thisObject, *state, Identifier::from(state, index), slot))
+    bool result = getOwnPropertySlotCommon(*thisObject, *state, Identifier::from(state, index), slot);
+    EXCEPTION_ASSERT(!scope.exception() || !result);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (result)
         return true;
-    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);
+    RELEASE_AND_RETURN(scope, JSObject::getOwnPropertySlotByIndex(object, state, index, slot));
 }
 
 static bool putCommon(JSLocation& thisObject, ExecState& state, PropertyName propertyName)

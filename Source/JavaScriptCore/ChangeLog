@@ -1,3 +1,17 @@
+2019-05-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JSObject::getOwnPropertyDescriptor is missing an exception check
+        https://bugs.webkit.org/show_bug.cgi?id=197693
+        <rdar://problem/50441784>
+
+        Reviewed by Saam Barati.
+
+        The method table call to getOwnPropertySlot might throw, and JSObject::getOwnPropertyDescriptor
+        must handle the exception before calling PropertySlot::getValue, which can also throw.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+
 2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Compress miscelaneous JIT related data structures with Packed<>
