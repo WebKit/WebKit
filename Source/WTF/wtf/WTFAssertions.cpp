@@ -26,8 +26,13 @@
 #include "config.h"
 
 #include <wtf/Bag.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
+
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
 
 namespace WTF {
 
@@ -42,6 +47,10 @@ static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
 static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefCountedArray<DummyStruct>) == sizeof(void*), "");
+
+#if OS(DARWIN)
+static_assert(MACH_VM_MAX_ADDRESS <= ((1ULL << WTF_CPU_EFFECTIVE_ADDRESS_WIDTH) - 1));
+#endif
     
 } // namespace WTF
 
