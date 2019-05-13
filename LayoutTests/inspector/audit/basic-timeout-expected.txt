@@ -1,0 +1,8 @@
+Testing the basic functionality of audits.
+
+
+== Running test suite: Audit.Basic
+-- Running test case: Audit.Basic.Timeout.Pass
+Testing value `new Promise((resolve, reject) => setTimeout(resolve, 0, "pass"))`...
+PASS: Result should be "pass".
+

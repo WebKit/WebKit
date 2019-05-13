@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    InspectorTest.debug();
+
+    let suite = InspectorTest.Audit.createSuite("Audit.Basic");
+
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Timeout.Pass", `setTimeout(resolve, 0, "${WI.AuditTestCaseResult.Level.Pass}")`, WI.AuditTestCaseResult.Level.Pass);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the basic functionality of audits.</p>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    InspectorTest.debug();
+
+    let suite = InspectorTest.Audit.createSuite("Audit.Basic");
+
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Pass", {level: WI.AuditTestCaseResult.Level.Pass}, WI.AuditTestCaseResult.Level.Pass);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Warn", {level: WI.AuditTestCaseResult.Level.Warn}, WI.AuditTestCaseResult.Level.Warn);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Fail", {level: WI.AuditTestCaseResult.Level.Fail}, WI.AuditTestCaseResult.Level.Fail);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Error", {level: WI.AuditTestCaseResult.Level.Error}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Unsupported", {level: WI.AuditTestCaseResult.Level.Unsupported}, WI.AuditTestCaseResult.Level.Unsupported);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the basic functionality of audits.</p>
+</body>
+</html>

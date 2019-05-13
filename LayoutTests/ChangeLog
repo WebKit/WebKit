@@ -1,5 +1,38 @@
 2019-05-13  Devin Rousso  <drousso@apple.com>
 
+        [ Mac Debug ] Layout Test inspector/audit/basic.html is a flaky timeout on bots
+        https://bugs.webkit.org/show_bug.cgi?id=196448
+        <rdar://problem/49485452>
+
+        Reviewed by Alex Christensen.
+
+        Split inspector/audit/basic.html into separate tests so each part can run without timing out.
+
+        * inspector/audit/basic-async.html: Added.
+        * inspector/audit/basic-async-expected.txt: Added.
+        * inspector/audit/basic-boolean.html: Added.
+        * inspector/audit/basic-boolean-expected.txt: Added.
+        * inspector/audit/basic-debugger.html: Added.
+        * inspector/audit/basic-debugger-expected.txt: Added.
+        * inspector/audit/basic-error.html: Added.
+        * inspector/audit/basic-error-expected.txt: Added.
+        * inspector/audit/basic-object.html: Added.
+        * inspector/audit/basic-object-expected.txt: Added.
+        * inspector/audit/basic-promise.html: Added.
+        * inspector/audit/basic-promise-expected.txt: Added.
+        * inspector/audit/basic-string.html: Added.
+        * inspector/audit/basic-string-expected.txt: Added.
+        * inspector/audit/basic-timeout.html: Added.
+        * inspector/audit/basic-timeout-expected.txt: Added.
+
+        * inspector/audit/basic.html: Removed.
+        * inspector/audit/basic-expected.txt: Removed.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2019-05-13  Devin Rousso  <drousso@apple.com>
+
         [ Mac WK2 ] Layout Test js/dom/unhandled-promise-rejection-bindings-type-error.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=195969
         <rdar://problem/49039441>

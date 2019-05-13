@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    InspectorTest.debug();
+
+    let suite = InspectorTest.Audit.createSuite("Audit.Basic");
+
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Undefined", undefined, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Null", null, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Number", 42, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addStringTest("Audit.Basic.Error.String", "foo", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Error.Object", {}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Variable", "INVALID", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Error.Promise.Resolved", `setTimeout(resolve, 0)`, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Error.Promise.Rejected", `setTimeout(reject, 0, "rejected")`, WI.AuditTestCaseResult.Level.Error);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the basic functionality of audits.</p>
+</body>
+</html>

@@ -1,0 +1,52 @@
+Testing the basic functionality of audits.
+
+
+== Running test suite: Audit.Basic
+-- Running test case: Audit.Basic.Error.Undefined
+Testing value `undefined`...
+PASS: Result should be "error".
+  errors:
+   - Return value is not an object, string, or boolean
+
+-- Running test case: Audit.Basic.Error.Null
+Testing value `null`...
+PASS: Result should be "error".
+  errors:
+   - Return value is not an object, string, or boolean
+
+-- Running test case: Audit.Basic.Error.Number
+Testing value `42`...
+PASS: Result should be "error".
+  errors:
+   - Return value is not an object, string, or boolean
+
+-- Running test case: Audit.Basic.Error.String
+Testing value `"foo"`...
+PASS: Result should be "error".
+  errors:
+   - Return string must be one of ["pass","warn","fail","error","unsupported"]
+
+-- Running test case: Audit.Basic.Error.Object
+Testing value `{}`...
+PASS: Result should be "error".
+  errors:
+   - Missing result level
+
+-- Running test case: Audit.Basic.Error.Variable
+Testing value `INVALID`...
+PASS: Result should be "error".
+  errors:
+   - ReferenceError: Can't find variable: INVALID
+
+-- Running test case: Audit.Basic.Error.Promise.Resolved
+Testing value `new Promise((resolve, reject) => setTimeout(resolve, 0))`...
+PASS: Result should be "error".
+  errors:
+   - Return value is not an object, string, or boolean
+
+-- Running test case: Audit.Basic.Error.Promise.Rejected
+Testing value `new Promise((resolve, reject) => setTimeout(reject, 0, "rejected"))`...
+PASS: Result should be "error".
+  errors:
+   - rejected
+

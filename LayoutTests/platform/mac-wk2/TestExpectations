@@ -929,8 +929,6 @@ webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
 
-webkit.org/b/196448 [ Debug ] inspector/audit/basic.html [ Pass Timeout ]
-
 webkit.org/b/194164 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass Timeout ]
 
 webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
