@@ -1,3 +1,24 @@
+2019-05-13  Alex Christensen  <achristensen@webkit.org>
+
+        Build more ANGLE files
+        https://bugs.webkit.org/show_bug.cgi?id=197787
+
+        Reviewed by Simon Fraser.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/gpu_info_util/SystemInfo.cpp:
+        (angle::ParseMacMachineModel):
+        * src/gpu_info_util/SystemInfo_mac.mm:
+        (angle::GetSystemInfo):
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+        * src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.mm:
+        (rx::IOSurfaceSurfaceCGL::IOSurfaceSurfaceCGL):
+        (rx::IOSurfaceSurfaceCGL::validateAttributes):
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h:
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+        (rx::WindowSurfaceCGL::initialize):
+        (-[SwapLayer initWithSharedState:withContext:withFunctions:]): Deleted.
+
 2019-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix a bunch of compiler warnings

@@ -17,7 +17,7 @@ typedef _CGLContextObject *CGLContextObj;
 struct __IOSurface;
 typedef __IOSurface *IOSurfaceRef;
 
-@class SwapLayer;
+@class WebSwapLayer;
 
 namespace rx
 {
@@ -87,7 +87,7 @@ class WindowSurfaceCGL : public SurfaceGL
                                               const gl::FramebufferState &state) override;
 
   private:
-    SwapLayer *mSwapLayer;
+    WebSwapLayer *mSwapLayer;
     SharedSwapState mSwapState;
     uint64_t mCurrentSwapId;
 

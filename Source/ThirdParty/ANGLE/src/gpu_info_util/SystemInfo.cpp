@@ -206,13 +206,13 @@ bool ParseMacMachineModel(const std::string &identifier,
     const char *commaPtr  = &identifier[commaLoc + 1];
     char *endPtr          = nullptr;
 
-    int32_t majorTmp = std::strtol(numberPtr, &endPtr, 10);
+    int32_t majorTmp = static_cast<int32_t>(std::strtol(numberPtr, &endPtr, 10));
     if (endPtr == numberPtr)
     {
         return false;
     }
 
-    int32_t minorTmp = std::strtol(commaPtr, &endPtr, 10);
+    int32_t minorTmp = static_cast<int32_t>(std::strtol(commaPtr, &endPtr, 10));
     if (endPtr == commaPtr)
     {
         return false;

@@ -6,6 +6,9 @@
 
 // DisplayCGL.mm: CGL implementation of egl::Display
 
+
+#if __has_include(<Cocoa/Cocoa.h>)
+
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
 #import <Cocoa/Cocoa.h>
@@ -20,6 +23,9 @@
 #include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
 #include "libANGLE/renderer/gl/cgl/RendererCGL.h"
 #include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 namespace
 {
@@ -427,3 +433,7 @@ void DisplayCGL::unreferenceDiscreteGPU()
     }
 }
 }
+
+#pragma clang diagnostic pop
+
+#endif // __has_include(<Cocoa/Cocoa.h>)

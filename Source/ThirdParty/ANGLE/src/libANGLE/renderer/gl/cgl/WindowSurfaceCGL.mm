@@ -6,6 +6,8 @@
 
 // WindowSurfaceCGL.cpp: CGL implementation of egl::Surface for windows
 
+#if __has_include(<Cocoa/Cocoa.h>)
+
 #include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
 #import <Cocoa/Cocoa.h>
@@ -19,7 +21,10 @@
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-@interface SwapLayer : CAOpenGLLayer
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+@interface WebSwapLayer : CAOpenGLLayer
 {
     CGLContextObj mDisplayContext;
 
@@ -34,7 +39,7 @@
             withFunctions:(const rx::FunctionsGL *)functions;
 @end
 
-@implementation SwapLayer
+@implementation WebSwapLayer
 - (id)initWithSharedState:(rx::SharedSwapState *)swapState
               withContext:(CGLContextObj)displayContext
             withFunctions:(const rx::FunctionsGL *)functions
@@ -205,7 +210,7 @@ egl::Error WindowSurfaceCGL::initialize(const egl::Display *display)
     mSwapState.lastRendered   = &mSwapState.textures[1];
     mSwapState.beingPresented = &mSwapState.textures[2];
 
-    mSwapLayer = [[SwapLayer alloc] initWithSharedState:&mSwapState
+    mSwapLayer = [[WebSwapLayer alloc] initWithSharedState:&mSwapState
                                             withContext:mContext
                                           withFunctions:mFunctions];
     [mLayer addSublayer:mSwapLayer];
@@ -335,3 +340,7 @@ FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::Context *c
 }
 
 }  // namespace rx
+
+#pragma clang diagnostic pop
+
+#endif // __has_include(<Cocoa/Cocoa.h>)

@@ -7,6 +7,8 @@
 // PBufferSurfaceCGL.cpp: an implementation of PBuffers created from IOSurfaces using
 //                        EGL_ANGLE_iosurface_client_buffer
 
+#if __has_include(<OpenGL/CGLIOSurface.h>)
+
 #include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
 
 #include <IOSurface/IOSurface.h>
@@ -82,13 +84,13 @@ IOSurfaceSurfaceCGL::IOSurfaceSurfaceCGL(const egl::SurfaceState &state,
     CFRetain(mIOSurface);
 
     // Extract attribs useful for the call to CGLTexImageIOSurface2D
-    mWidth  = attribs.get(EGL_WIDTH);
-    mHeight = attribs.get(EGL_HEIGHT);
-    mPlane  = attribs.get(EGL_IOSURFACE_PLANE_ANGLE);
+    mWidth  = static_cast<int>(attribs.get(EGL_WIDTH));
+    mHeight = static_cast<int>(attribs.get(EGL_HEIGHT));
+    mPlane  = static_cast<int>(attribs.get(EGL_IOSURFACE_PLANE_ANGLE));
 
     EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
     EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
-    mFormatIndex             = FindIOSurfaceFormatIndex(internalFormat, type);
+    mFormatIndex             = static_cast<int>(FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type)));
     ASSERT(mFormatIndex >= 0);
 }
 
@@ -227,7 +229,7 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
     EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
     EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
 
-    int formatIndex = FindIOSurfaceFormatIndex(internalFormat, type);
+    int formatIndex = FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
 
     if (formatIndex < 0)
     {
@@ -291,3 +293,5 @@ FramebufferImpl *IOSurfaceSurfaceCGL::createDefaultFramebuffer(const gl::Context
 }
 
 }  // namespace rx
+
+#endif // __has_include(<OpenGL/CGLIOSurface.h>)

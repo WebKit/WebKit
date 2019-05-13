@@ -6,6 +6,8 @@
 
 // SystemInfo_mac.cpp: implementation of the Mac-specific parts of SystemInfo.h
 
+#if __has_include(<Cocoa/Cocoa.h>)
+
 #include "gpu_info_util/SystemInfo_internal.h"
 
 #import <Cocoa/Cocoa.h>
@@ -156,7 +158,7 @@ bool GetSystemInfo(SystemInfo *info)
         {
             if (info->gpus[i].vendorId == activeVendor && info->gpus[i].deviceId == activeDevice)
             {
-                info->activeGPUIndex = i;
+                info->activeGPUIndex = static_cast<int>(i);
                 break;
             }
         }
@@ -181,3 +183,5 @@ bool GetSystemInfo(SystemInfo *info)
 }
 
 }  // namespace angle
+
+#endif // __has_include(<Cocoa/Cocoa.h>)
