@@ -35,7 +35,7 @@ namespace DFG {
 inline MinifiedID::MinifiedID(Node* node)
     : m_index(node->index())
 {
-    RELEASE_ASSERT(m_index != invalidIndex() && m_index != otherInvalidIndex());
+    RELEASE_ASSERT(m_index.get() != invalidIndex() && m_index.get() != otherInvalidIndex());
 }
 
 } } // namespace JSC::DFG

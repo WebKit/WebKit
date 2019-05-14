@@ -1,5 +1,64 @@
 2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Compress JIT related data more by using Packed<>
+        https://bugs.webkit.org/show_bug.cgi?id=197866
+
+        Reviewed by Saam Barati.
+
+        This patch leverages Packed<> more to reduce JIT related data size. When we measure memory usage on Gmail, we found that a lot of memory is
+        consumed in DFG data. This patch attempts to reduce that size by using Packed<> to make various data structure's alignment 1.
+
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::shrinkToFit): Add more shrinkToFit.
+        * dfg/DFGMinifiedID.h: Make alignment = 1.
+        (JSC::DFG::MinifiedID::operator! const):
+        (JSC::DFG::MinifiedID::operator== const):
+        (JSC::DFG::MinifiedID::operator!= const):
+        (JSC::DFG::MinifiedID::operator< const):
+        (JSC::DFG::MinifiedID::operator> const):
+        (JSC::DFG::MinifiedID::operator<= const):
+        (JSC::DFG::MinifiedID::operator>= const):
+        (JSC::DFG::MinifiedID::hash const):
+        (JSC::DFG::MinifiedID::dump const):
+        (JSC::DFG::MinifiedID::isHashTableDeletedValue const):
+        (JSC::DFG::MinifiedID::bits const):
+        * dfg/DFGMinifiedIDInlines.h:
+        (JSC::DFG::MinifiedID::MinifiedID):
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode): Make sizeof(MinifiedNode) from 16 to 13 with alignment = 1.
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::MinifiedNode::id const):
+        (JSC::DFG::MinifiedNode::hasConstant const):
+        (JSC::DFG::MinifiedNode::constant const):
+        (JSC::DFG::MinifiedNode::isPhantomDirectArguments const):
+        (JSC::DFG::MinifiedNode::isPhantomClonedArguments const):
+        (JSC::DFG::MinifiedNode::hasInlineCallFrame const):
+        (JSC::DFG::MinifiedNode::inlineCallFrame const):
+        (JSC::DFG::MinifiedNode::op const): Deleted.
+        (JSC::DFG::MinifiedNode::hasInlineCallFrame): Deleted.
+        * dfg/DFGVariableEvent.h: Make sizeof(VariableEvent) from 12 to 10 with alignment = 1.
+        (JSC::DFG::VariableEvent::fillGPR):
+        (JSC::DFG::VariableEvent::fillPair):
+        (JSC::DFG::VariableEvent::fillFPR):
+        (JSC::DFG::VariableEvent::birth):
+        (JSC::DFG::VariableEvent::spill):
+        (JSC::DFG::VariableEvent::death):
+        (JSC::DFG::VariableEvent::setLocal):
+        (JSC::DFG::VariableEvent::movHint):
+        (JSC::DFG::VariableEvent::id const):
+        (JSC::DFG::VariableEvent::gpr const):
+        (JSC::DFG::VariableEvent::tagGPR const):
+        (JSC::DFG::VariableEvent::payloadGPR const):
+        (JSC::DFG::VariableEvent::fpr const):
+        (JSC::DFG::VariableEvent::spillRegister const):
+        (JSC::DFG::VariableEvent::bytecodeRegister const):
+        (JSC::DFG::VariableEvent::machineRegister const):
+        (JSC::DFG::VariableEvent::variableRepresentation const):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::tryToSetConstantRecovery):
+
+2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WTF] Simplify GCThread and CompilationThread flags by adding them to WTF::Thread
         https://bugs.webkit.org/show_bug.cgi?id=197146
 

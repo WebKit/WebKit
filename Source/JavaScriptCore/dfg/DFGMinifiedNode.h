@@ -57,20 +57,21 @@ public:
     static MinifiedNode fromNode(Node*);
     
     MinifiedID id() const { return m_id; }
-    NodeType op() const { return m_op; }
     
-    bool hasConstant() const { return hasConstant(m_op); }
+    bool hasConstant() const { return m_hasConstant; }
     
     JSValue constant() const
     {
-        return JSValue::decode(bitwise_cast<EncodedJSValue>(m_info));
+        return JSValue::decode(bitwise_cast<EncodedJSValue>(m_info.get()));
     }
     
-    bool hasInlineCallFrame() const { return hasInlineCallFrame(m_op); }
+    bool isPhantomDirectArguments() const { return m_isPhantomDirectArguments; }
+    bool isPhantomClonedArguments() const { return m_isPhantomClonedArguments; }
+    bool hasInlineCallFrame() const { return m_isPhantomDirectArguments || m_isPhantomClonedArguments; }
     
     InlineCallFrame* inlineCallFrame() const
     {
-        return bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(m_info));
+        return bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(m_info.get()));
     }
     
     static MinifiedID getID(MinifiedNode* node) { return node->id(); }
@@ -85,14 +86,11 @@ private:
         return type == JSConstant || type == Int52Constant || type == DoubleConstant;
     }
     
-    static bool hasInlineCallFrame(NodeType type)
-    {
-        return type == PhantomDirectArguments || type == PhantomClonedArguments;
-    }
-    
-    uint64_t m_info;
+    Packed<uint64_t> m_info;
     MinifiedID m_id;
-    NodeType m_op;
+    bool m_hasConstant : 1;
+    bool m_isPhantomDirectArguments : 1;
+    bool m_isPhantomClonedArguments : 1;
 };
 
 } } // namespace JSC::DFG

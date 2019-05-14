@@ -42,20 +42,20 @@ public:
     MinifiedID(WTF::HashTableDeletedValueType) : m_index(otherInvalidIndex()) { }
     explicit MinifiedID(Node* node);
     
-    bool operator!() const { return m_index == invalidIndex(); }
+    bool operator!() const { return m_index.get() == invalidIndex(); }
     
-    bool operator==(const MinifiedID& other) const { return m_index == other.m_index; }
-    bool operator!=(const MinifiedID& other) const { return m_index != other.m_index; }
-    bool operator<(const MinifiedID& other) const { return m_index < other.m_index; }
-    bool operator>(const MinifiedID& other) const { return m_index > other.m_index; }
-    bool operator<=(const MinifiedID& other) const { return m_index <= other.m_index; }
-    bool operator>=(const MinifiedID& other) const { return m_index >= other.m_index; }
+    bool operator==(const MinifiedID& other) const { return m_index.get() == other.m_index.get(); }
+    bool operator!=(const MinifiedID& other) const { return m_index.get() != other.m_index.get(); }
+    bool operator<(const MinifiedID& other) const { return m_index.get() < other.m_index.get(); }
+    bool operator>(const MinifiedID& other) const { return m_index.get() > other.m_index.get(); }
+    bool operator<=(const MinifiedID& other) const { return m_index.get() <= other.m_index.get(); }
+    bool operator>=(const MinifiedID& other) const { return m_index.get() >= other.m_index.get(); }
     
-    unsigned hash() const { return WTF::IntHash<unsigned>::hash(m_index); }
+    unsigned hash() const { return WTF::IntHash<unsigned>::hash(m_index.get()); }
     
-    void dump(PrintStream& out) const { out.print(m_index); }
+    void dump(PrintStream& out) const { out.print(m_index.get()); }
     
-    bool isHashTableDeletedValue() const { return m_index == otherInvalidIndex(); }
+    bool isHashTableDeletedValue() const { return m_index.get() == otherInvalidIndex(); }
     
     static MinifiedID fromBits(unsigned value)
     {
@@ -64,7 +64,7 @@ public:
         return result;
     }
     
-    unsigned bits() const { return m_index; }
+    unsigned bits() const { return m_index.get(); }
 
 private:
     friend class MinifiedNode;
@@ -72,7 +72,7 @@ private:
     static constexpr unsigned invalidIndex() { return static_cast<unsigned>(-1); }
     static constexpr unsigned otherInvalidIndex() { return static_cast<unsigned>(-2); }
     
-    unsigned m_index { invalidIndex() };
+    Packed<unsigned> m_index { invalidIndex() };
 };
 
 struct MinifiedIDHash {

@@ -101,12 +101,12 @@ static bool tryToSetConstantRecovery(ValueRecovery& recovery, MinifiedNode* node
         return true;
     }
     
-    if (node->op() == PhantomDirectArguments) {
+    if (node->isPhantomDirectArguments()) {
         recovery = ValueRecovery::directArgumentsThatWereNotCreated(node->id());
         return true;
     }
     
-    if (node->op() == PhantomClonedArguments) {
+    if (node->isPhantomClonedArguments()) {
         recovery = ValueRecovery::clonedArgumentsThatWereNotCreated(node->id());
         return true;
     }

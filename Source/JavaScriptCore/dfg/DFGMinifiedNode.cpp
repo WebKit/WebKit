@@ -39,7 +39,9 @@ MinifiedNode MinifiedNode::fromNode(Node* node)
     ASSERT(belongsInMinifiedGraph(node->op()));
     MinifiedNode result;
     result.m_id = MinifiedID(node);
-    result.m_op = node->op();
+    result.m_hasConstant = hasConstant(node->op());
+    result.m_isPhantomDirectArguments = node->op() == PhantomDirectArguments;
+    result.m_isPhantomClonedArguments = node->op() == PhantomClonedArguments;
     if (hasConstant(node->op()))
         result.m_info = JSValue::encode(node->asJSValue());
     else {
