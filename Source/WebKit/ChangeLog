@@ -1,3 +1,30 @@
+2019-05-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r245237. rdar://problem/50495880
+
+    AX: Need an entitlement for WebContent to send accessibility notifications
+    https://bugs.webkit.org/show_bug.cgi?id=197832
+    
+    Reviewed by Brent Fulgham.
+    
+    In order to send accessibility notifications on iOS, we need to be able to look up this port.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245237 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Need an entitlement for WebContent to send accessibility notifications
+            https://bugs.webkit.org/show_bug.cgi?id=197832
+
+            Reviewed by Brent Fulgham.
+
+            In order to send accessibility notifications on iOS, we need to be able to look up this port.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-05-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r245246. rdar://problem/50727815
