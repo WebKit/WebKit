@@ -195,41 +195,28 @@ TEST(WebKit, WKNavigationResponsePDFType)
 
 @end
 
-static void readRequest(int socket)
-{
-    char readBuffer[1000];
-    auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
-    EXPECT_GT(bytesRead, 0);
-    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
-}
-
-static void writeResponse(int socket, NSString *response)
-{
-    const char* bytes = response.UTF8String;
-    auto bytesWritten = ::write(socket, bytes, strlen(bytes));
-    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(bytes));
-}
-
 TEST(WebKit, WKNavigationResponseDownloadAttribute)
 {
     auto getDownloadResponse = [] (RetainPtr<NSString> body) -> RetainPtr<WKNavigationResponse> {
-        TestWebKitAPI::TCPServer server([body](int socket) {
-            readRequest(socket);
+        using namespace TestWebKitAPI;
+        TCPServer server([body](int socket) {
             unsigned bodyLength = [body length];
-            writeResponse(socket, [NSString stringWithFormat:
+            NSString *firstResponse = [NSString stringWithFormat:
                 @"HTTP/1.1 200 OK\r\n"
                 "Content-Length: %d\r\n\r\n"
                 "%@",
                 bodyLength,
                 body.get()
-            ]);
-            readRequest(socket);
-            writeResponse(socket,
-                @"HTTP/1.1 200 OK\r\n"
+            ];
+            NSString *secondResponse = @"HTTP/1.1 200 OK\r\n"
                 "Content-Length: 6\r\n"
                 "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
-                "Hello!"
-            );
+                "Hello!";
+
+            TCPServer::read(socket);
+            TCPServer::write(socket, firstResponse.UTF8String, firstResponse.length);
+            TCPServer::read(socket);
+            TCPServer::write(socket, secondResponse.UTF8String, secondResponse.length);
         });
         auto delegate = adoptNS([NavigationResponseTestDelegate new]);
         auto webView = adoptNS([WKWebView new]);

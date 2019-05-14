@@ -27,7 +27,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#include <Security/SecAccessControlPriv.h>
 #include <Security/SecCertificatePriv.h>
+#include <Security/SecIdentityPriv.h>
+#include <Security/SecKeyPriv.h>
 #include <Security/SecTask.h>
 #include <Security/SecTrustPriv.h>
 
@@ -67,7 +70,11 @@ WTF_EXTERN_C_BEGIN
 
 SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
 SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
-CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
+CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef*);
+SecIdentityRef SecIdentityCreate(CFAllocatorRef, SecCertificateRef, SecKeyRef);
+OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyRef* lookedUpData);
+SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef, CFDataRef, CFErrorRef*);
+CFDataRef SecAccessControlCopyData(SecAccessControlRef);
 
 #if PLATFORM(MAC)
 #include <Security/SecAsn1Types.h>

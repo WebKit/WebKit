@@ -1,3 +1,13 @@
+2019-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add a unit test for client certificate authentication
+        https://bugs.webkit.org/show_bug.cgi?id=197800
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/spi/cocoa/SecuritySPI.h:
+        Move declarations from ArgumentCodersCF.cpp so they can be shared.
+
 2019-05-13  Robin Morisset  <rmorisset@apple.com>
 
         IndexSet::isEmpty should use BitVector::isEmpty() instead of size()
