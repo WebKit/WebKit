@@ -1,5 +1,20 @@
 2019-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Crash under WebKit::WebProcessProxy::didBecomeUnresponsive()
+        https://bugs.webkit.org/show_bug.cgi?id=197883
+        <rdar://problem/50665984>
+
+        Reviewed by Alex Christensen.
+
+        Protect |this| in didBecomeUnresponsive() and didExceedCPULimit() since we call client
+        delegates and those may cause |this| to get destroyed.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didExceedCPULimit):
+
+2019-05-14  Chris Dumez  <cdumez@apple.com>
+
         The network process tries to take a process assertion when NetworkProcess::processWillSuspendImminently() is called
         https://bugs.webkit.org/show_bug.cgi?id=197888
 
