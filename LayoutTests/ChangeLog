@@ -1,3 +1,11 @@
+2019-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed: fix test failures after r245280.
+
+        * platform/mac-wk2/TestExpectations:
+        Animating HEICS images is supported only on post macOS Mojave. So these
+        tests should be skipped in WebKit for now.
+
 2019-05-14  Youenn Fablet  <youenn@apple.com>
 
         Video frame resizing should be using Trim

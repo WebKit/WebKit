@@ -83,9 +83,6 @@ fast/events/inactive-window-no-mouse-event.html [ Pass ]
 
 fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
 
-[ Mojave+ ] fast/images/animated-heics-draw.html [ Pass ]
-[ Mojave+ ] fast/images/animated-heics-verify.html [ Pass ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
