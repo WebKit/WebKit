@@ -34,5 +34,5 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering WK_API_AVAILABLE(macos(10.11), ios(9.0)) = 1 << 5,
     _WKRenderingProgressEventFirstPaint WK_API_AVAILABLE(macos(10.11), ios(9.0)) = 1 << 6,
     _WKRenderingProgressEventDidRenderSignificantAmountOfText WK_API_AVAILABLE(macos(10.14), ios(12.0)) = 1 << 7,
-    _WKRenderingProgressEventFirstMeaningfulPaint WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 8,
+    _WKRenderingProgressEventFirstMeaningfulPaint WK_API_AVAILABLE(macos(10.14.4), ios(12.2)) = 1 << 8,
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));

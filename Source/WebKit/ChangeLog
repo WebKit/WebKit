@@ -1,3 +1,48 @@
+2019-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Update TBA macros for API / SPI that has already shipped
+        https://bugs.webkit.org/show_bug.cgi?id=197841
+        <rdar://problem/50698499>
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/WebKit.xcconfig:
+        Disable header postprocessing when building for macOS Mojave
+
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItemPrivate.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextHistoryDelegate.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextPolicyDelegate.h:
+        * UIProcess/API/Cocoa/WKConnection.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKTypeRefWrapper.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKView.h:
+        (WK_CLASS_DEPRECATED_WITH_REPLACEMENT):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInspector.h:
+        * UIProcess/API/Cocoa/_WKInternalDebugFeature.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * WebProcess/API/Cocoa/WKWebProcess.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h:
+
 2019-05-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r245281.
