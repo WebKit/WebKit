@@ -29,7 +29,11 @@
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
+extern "C" {
 struct SSL;
+int SSL_read(SSL*, void*, int);
+int SSL_write(SSL*, const void*, int);
+}
 
 namespace TestWebKitAPI {
 
@@ -40,24 +44,13 @@ public:
     static constexpr Port InvalidPort = 0;
     
     TCPServer(Function<void(Socket)>&&, size_t connections = 1);
-    enum class Protocol : uint8_t {
-        HTTPS,
-        HTTPSProxy,
-        HTTPSWithClientCertificateRequest,
+    enum class Protocol : bool {
+        HTTPS, HTTPSProxy
     };
     TCPServer(Protocol, Function<void(SSL*)>&&);
     ~TCPServer();
     
     Port port() const { return m_port; }
-    
-    static void respondWithOK(SSL*);
-    static void respondWithChallengeThenOK(Socket);
-
-    template<typename T> static Vector<uint8_t> read(T);
-    template<typename T> static void write(T, const void*, size_t);
-
-    static Vector<uint8_t> testPrivateKey();
-    static Vector<uint8_t> testCertificate();
     
 private:
     Optional<Socket> socketBindListen(size_t connections);

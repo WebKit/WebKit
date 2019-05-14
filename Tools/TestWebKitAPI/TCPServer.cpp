@@ -30,7 +30,6 @@
 #include <thread>
 #include <unistd.h>
 #include <wtf/Optional.h>
-#include <wtf/text/Base64.h>
 
 extern "C" {
 
@@ -39,10 +38,6 @@ struct X509;
 struct SSL_CTX;
 struct EVP_PKEY;
 struct SSL_METHOD;
-struct X509_STORE_CTX {
-    void* unused;
-    X509* cert;
-};
 struct pem_password_cb;
 int BIO_free(BIO*);
 int SSL_free(SSL*);
@@ -61,15 +56,6 @@ int SSL_CTX_use_PrivateKey(SSL_CTX*, EVP_PKEY*);
 SSL* SSL_new(SSL_CTX*);
 int SSL_accept(SSL*);
 int SSL_set_fd(SSL*, int);
-void SSL_CTX_set_verify(SSL_CTX*, int, int (*)(int, X509_STORE_CTX*));
-void SSL_CTX_set_cert_verify_callback(SSL_CTX*, int (*)(X509_STORE_CTX*, void*), void*);
-int SSL_get_error(const SSL*, int);
-int SSL_read(SSL*, void*, int);
-int SSL_write(SSL*, const void*, int);
-int i2d_X509(X509*, unsigned char**);
-void OPENSSL_free(void*);
-#define SSL_VERIFY_PEER 0x01
-#define SSL_VERIFY_FAIL_IF_NO_PEER_CERT 0x02
 
 } // extern "C"
 
@@ -106,12 +92,6 @@ template<> struct deleter<EVP_PKEY> {
         EVP_PKEY_free(key);
     }
 };
-template<> struct deleter<uint8_t[]> {
-    void operator()(uint8_t* buffer)
-    {
-        OPENSSL_free(buffer);
-    }
-};
 
 TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connections)
     : m_connectionHandler(WTFMove(connectionHandler))
@@ -121,7 +101,7 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
 
 TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler)
 {
-    auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler), protocol] (Socket socket) {
+    auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler)] (Socket socket) {
         SSL_library_init();
 
         std::unique_ptr<SSL_CTX, deleter<SSL_CTX>> ctx(SSL_CTX_new(SSLv23_server_method()));
@@ -148,20 +128,6 @@ TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionH
         std::unique_ptr<X509, deleter<X509>> certX509(PEM_read_bio_X509(certBIO.get(), nullptr, nullptr, nullptr));
         ASSERT(certX509);
         SSL_CTX_use_certificate(ctx.get(), certX509.get());
-
-        if (protocol == Protocol::HTTPSWithClientCertificateRequest) {
-            SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, nullptr);
-            SSL_CTX_set_cert_verify_callback(ctx.get(), [] (X509_STORE_CTX* store_ctx, void*) -> int {
-                uint8_t* bufferPointer = nullptr;
-                auto length = i2d_X509(store_ctx->cert, &bufferPointer);
-                std::unique_ptr<uint8_t[], deleter<uint8_t[]>> buffer(bufferPointer);
-                auto expectedCert = testCertificate();
-                EXPECT_EQ(static_cast<int>(expectedCert.size()), length);
-                for (int i = 0; i < length; ++i)
-                    EXPECT_EQ(buffer.get()[i], expectedCert[i]);
-                return 1;
-            }, nullptr);
-        }
 
         // This is a test key from BoringSSL.
         char kKeyPEM[] =
@@ -198,7 +164,6 @@ TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionH
 
     switch (protocol) {
     case Protocol::HTTPS:
-    case Protocol::HTTPSWithClientCertificateRequest:
         m_connectionHandler = WTFMove(startSecureConnection);
         break;
     case Protocol::HTTPSProxy:
@@ -274,182 +239,4 @@ auto TCPServer::socketBindListen(size_t connections) -> Optional<Socket>
     return WTF::nullopt;
 }
 
-template<> Vector<uint8_t> TCPServer::read(Socket socket)
-{
-    uint8_t buffer[1000];
-    auto bytesRead = ::read(socket, buffer, sizeof(buffer));
-    ASSERT_UNUSED(bytesRead, bytesRead > 0);
-    ASSERT(static_cast<size_t>(bytesRead) < sizeof(buffer));
-
-    Vector<uint8_t> vector;
-    vector.append(buffer, bytesRead);
-    return vector;
-}
-
-template<> void TCPServer::write(Socket socket, const void* response, size_t length)
-{
-    auto bytesWritten = ::write(socket, response, length);
-    EXPECT_EQ(static_cast<size_t>(bytesWritten), length);
-}
-
-template<> Vector<uint8_t> TCPServer::read(SSL* ssl)
-{
-    uint8_t buffer[1000];
-    auto bytesRead = SSL_read(ssl, buffer, sizeof(buffer));
-    ASSERT_UNUSED(bytesRead, bytesRead > 0);
-    ASSERT(static_cast<size_t>(bytesRead) < sizeof(buffer));
-
-    Vector<uint8_t> vector;
-    vector.append(buffer, bytesRead);
-    return vector;
-}
-
-template<> void TCPServer::write(SSL* ssl, const void* response, size_t length)
-{
-    auto bytesWritten = SSL_write(ssl, response, length);
-    EXPECT_EQ(static_cast<size_t>(bytesWritten), length);
-}
-
-void TCPServer::respondWithChallengeThenOK(Socket socket)
-{
-    read(socket);
-    
-    const char* challengeHeader =
-    "HTTP/1.1 401 Unauthorized\r\n"
-    "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
-    "Content-Length: 0\r\n"
-    "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
-    write(socket, challengeHeader, strlen(challengeHeader));
-    
-    read(socket);
-    
-    const char* responseHeader =
-    "HTTP/1.1 200 OK\r\n"
-    "Content-Length: 13\r\n\r\n"
-    "Hello, World!";
-    write(socket, responseHeader, strlen(responseHeader));
-}
-
-void TCPServer::respondWithOK(SSL* ssl)
-{
-    read(ssl);
-    
-    const char* reply = ""
-    "HTTP/1.1 200 OK\r\n"
-    "Content-Length: 34\r\n\r\n"
-    "<script>alert('success!')</script>";
-    write(ssl, reply, strlen(reply));
-}
-
-Vector<uint8_t> TCPServer::testCertificate()
-{
-    // Certificate and private key were generated by running this command:
-    // openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
-    // and entering this information:
-    /*
-     Country Name (2 letter code) []:US
-     State or Province Name (full name) []:New Mexico
-     Locality Name (eg, city) []:Santa Fe
-     Organization Name (eg, company) []:Self
-     Organizational Unit Name (eg, section) []:Myself
-     Common Name (eg, fully qualified host name) []:Me
-     Email Address []:me@example.com
-     */
-    
-    String pemEncodedCertificate(""
-    "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"
-    "3vjZD3y9kZk7mre9XHwkI8MdK5s=");
-    
-    Vector<uint8_t> vector;
-    base64Decode(pemEncodedCertificate, vector, WTF::Base64DecodeOptions::Base64Default);
-    return vector;
-}
-
-Vector<uint8_t> TCPServer::testPrivateKey()
-{
-    String pemEncodedPrivateKey(""
-    "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"
-    "qJfU8bbdbu2pi47Y4FdJK0HLffl5Rw==");
-
-    Vector<uint8_t> vector;
-    base64Decode(pemEncodedPrivateKey, vector, WTF::Base64DecodeOptions::Base64Default);
-    return vector;
-}
-    
 } // namespace TestWebKitAPI
