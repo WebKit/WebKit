@@ -122,6 +122,10 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 
 void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
+    if (m_clientLayers.isEmpty())
+        return;
+    if ((*m_clientLayers.begin())->renderer().renderTreeBeingDestroyed())
+        return;
     for (auto* clientLayer : m_clientLayers)
         clientLayer->filterNeedsRepaint();
 }

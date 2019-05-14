@@ -1,3 +1,15 @@
+2019-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Do not try to issue repaint while the render tree is being destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=197461
+        <rdar://problem/50368992>
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/svg/crash-on-reload-with-filter-expected.txt: Added.
+        * http/tests/svg/crash-on-reload-with-filter.html: Added.
+        * http/tests/svg/resources/finishTest.html: Added.
+
 2019-05-14  Youenn Fablet  <youenn@apple.com>
 
         A service worker process should app nap when all its clients app nap
