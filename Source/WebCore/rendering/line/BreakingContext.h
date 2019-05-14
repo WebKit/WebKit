@@ -713,7 +713,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     // which is only possible if the word is the first thing on the line.
     bool breakWords = m_currentStyle->breakWords() && ((m_autoWrap && (!m_width.committedWidth() && !m_width.hasCommittedReplaced())) || m_currWS == WhiteSpace::Pre);
     bool midWordBreak = false;
-    bool breakAll = m_currentStyle->wordBreak() == WordBreak::BreakAll && m_autoWrap;
+    bool breakAnywhere = m_currentStyle->lineBreak() == LineBreak::Anywhere && m_autoWrap;
+    bool breakAll = (m_currentStyle->wordBreak() == WordBreak::BreakAll || breakAnywhere) && m_autoWrap;
     bool keepAllWords = m_currentStyle->wordBreak() == WordBreak::KeepAll;
     float hyphenWidth = 0;
     auto iteratorMode = mapLineBreakToIteratorMode(m_blockStyle.lineBreak());
@@ -755,7 +756,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         // A single preserved leading white-space doesn't fulfill the 'betweenWords' condition, however it's indeed a
         // soft-breaking opportunty so we may want to avoid breaking in the middle of the word.
         if (m_atStart && m_currentCharacterIsSpace && !previousCharacterIsSpace) {
-            m_hasFormerOpportunity = true;
+            m_hasFormerOpportunity = !breakAnywhere;
             breakWords = false;
             canBreakMidWord = breakAll;
         }
@@ -790,7 +791,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         }
 
         Optional<unsigned> nextBreakablePosition = m_current.nextBreakablePosition();
-        bool betweenWords = c == '\n' || (m_currWS != WhiteSpace::Pre && !m_atStart && isBreakable(m_renderTextInfo.lineBreakIterator, m_current.offset(), nextBreakablePosition, breakNBSP, canUseLineBreakShortcut, keepAllWords)
+        bool betweenWords = c == '\n' || (m_currWS != WhiteSpace::Pre && !m_atStart && isBreakable(m_renderTextInfo.lineBreakIterator, m_current.offset(), nextBreakablePosition, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere)
             && (style.hyphens() != Hyphens::None || (m_current.previousInSameNode() != softHyphen)));
         m_current.setNextBreakablePosition(nextBreakablePosition);
         
@@ -953,7 +954,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 wrapW = wrapWidthOffset;
                 // Auto-wrapping text should not wrap in the middle of a word once it has had an
                 // opportunity to break after a word.
-                m_hasFormerOpportunity = true;
+                m_hasFormerOpportunity = !breakAnywhere;
                 breakWords = false;
                 canBreakMidWord = breakAll;
             }

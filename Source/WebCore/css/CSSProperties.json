@@ -5547,7 +5547,8 @@
                     "value": "after-white-space",
                     "status": "non-standard",
                     "comment": "Added in https://trac.webkit.org/changeset/7763"
-                }
+                },
+                "anywhere"
             ],
             "specification": {
                 "category": "css-text",

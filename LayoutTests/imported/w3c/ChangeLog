@@ -1,3 +1,54 @@
+2019-05-14  Javier Fernandez  <jfernandez@igalia.com>
+
+        Implement "line-break: anywhere"
+        https://bugs.webkit.org/show_bug.cgi?id=181169
+        <rdar://problem/48507088>
+
+        Reviewed by Myles C. Maxfield.
+
+        New tests to verify the new line-break: anywhere feature and how
+        it behaves different to 'word-break: break-all'.
+
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-002.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-003-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-003.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-004-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-004.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-005-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-005.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-006-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-006.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-007-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-007.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-008-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-008.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-009-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-009.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-010-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-010.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-011-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-011.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-012-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-012.html: Added.
+        * web-platform-tests/css/css-text/parsing/line-break-valid-expected.txt:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-016-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-016.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-017-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-017.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-018-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-018.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-019-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-019.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-021-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-021.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-022-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-022.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-023-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-023.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-024-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-024.html: Added.
+
 2019-05-07  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] isPrimary property of pointercancel events should match previous events for that pointer

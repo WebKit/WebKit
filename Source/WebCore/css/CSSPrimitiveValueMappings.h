@@ -1644,6 +1644,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineBreak e)
     case LineBreak::AfterWhiteSpace:
         m_value.valueID = CSSValueAfterWhiteSpace;
         break;
+    case LineBreak::Anywhere:
+        m_value.valueID = CSSValueAnywhere;
+        break;
     }
 }
 
@@ -1685,6 +1688,8 @@ template<> inline CSSPrimitiveValue::operator LineBreak() const
         return LineBreak::Strict;
     case CSSValueAfterWhiteSpace:
         return LineBreak::AfterWhiteSpace;
+    case CSSValueAnywhere:
+        return LineBreak::Anywhere;
     default:
         break;
     }

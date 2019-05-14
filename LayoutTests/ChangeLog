@@ -1,3 +1,22 @@
+2019-05-14  Javier Fernandez  <jfernandez@igalia.com>
+
+        Implement "line-break: anywhere"
+        https://bugs.webkit.org/show_bug.cgi?id=181169
+        <rdar://problem/48507088>
+
+        Reviewed by Myles C. Maxfield.
+
+        Some of the new tests added to verify the new 'line-break:
+        anywhere' feature and its different behavior to what 'word-break:
+        break-all' may provide, fail due to several bugs present in
+        current WebKit's trunk.
+
+        * TestExpectations:
+          - webkit.org/b/197409
+          - webkit.org/b/197411
+          - webkit.org/b/197411
+          - webkit.org/b/197430
+ 
 2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] When running layout tests that tap in the same location, subsequent tests fail to fire click handlers

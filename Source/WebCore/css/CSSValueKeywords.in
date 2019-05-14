@@ -789,6 +789,7 @@ loose
 // normal
 strict
 after-white-space
+anywhere
 
 // -webkit-appearance
 // The order here must match the order in the ControlPart enum in ThemeTypes.h.
