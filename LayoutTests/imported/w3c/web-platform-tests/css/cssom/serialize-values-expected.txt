@@ -571,20 +571,20 @@ PASS padding-left: .1em
 PASS padding-left: 5% 
 PASS padding-left: .5% 
 PASS padding-left: inherit 
-FAIL page-break-after: auto assert_equals: page-break-after raw inline style declaration expected "auto" but got ""
-FAIL page-break-after: always assert_equals: page-break-after raw inline style declaration expected "always" but got ""
-FAIL page-break-after: avoid assert_equals: page-break-after raw inline style declaration expected "avoid" but got ""
-FAIL page-break-after: left assert_equals: page-break-after raw inline style declaration expected "left" but got ""
-FAIL page-break-after: right assert_equals: page-break-after raw inline style declaration expected "right" but got ""
+PASS page-break-after: auto 
+PASS page-break-after: always 
+PASS page-break-after: avoid 
+PASS page-break-after: left 
+PASS page-break-after: right 
 PASS page-break-after: inherit 
-FAIL page-break-before: auto assert_equals: page-break-before raw inline style declaration expected "auto" but got ""
-FAIL page-break-before: always assert_equals: page-break-before raw inline style declaration expected "always" but got ""
-FAIL page-break-before: avoid assert_equals: page-break-before raw inline style declaration expected "avoid" but got ""
-FAIL page-break-before: left assert_equals: page-break-before raw inline style declaration expected "left" but got ""
-FAIL page-break-before: right assert_equals: page-break-before raw inline style declaration expected "right" but got ""
+PASS page-break-before: auto 
+PASS page-break-before: always 
+PASS page-break-before: avoid 
+PASS page-break-before: left 
+PASS page-break-before: right 
 PASS page-break-before: inherit 
-FAIL page-break-inside: avoid assert_equals: page-break-inside raw inline style declaration expected "avoid" but got ""
-FAIL page-break-inside: auto assert_equals: page-break-inside raw inline style declaration expected "auto" but got ""
+PASS page-break-inside: avoid 
+PASS page-break-inside: auto 
 PASS page-break-inside: inherit 
 PASS position: static 
 PASS position: relative 

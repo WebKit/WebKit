@@ -1566,42 +1566,6 @@ inline FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&,
 
     return result;
 }
-
-inline BreakBetween StyleBuilderConverter::convertPageBreakBetween(StyleResolver&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAlways)
-        return BreakBetween::Page;
-    if (primitiveValue.valueID() == CSSValueAvoid)
-        return BreakBetween::AvoidPage;
-    return primitiveValue;
-}
-
-inline BreakInside StyleBuilderConverter::convertPageBreakInside(StyleResolver&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAvoid)
-        return BreakInside::AvoidPage;
-    return primitiveValue;
-}
-
-inline BreakBetween StyleBuilderConverter::convertColumnBreakBetween(StyleResolver&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAlways)
-        return BreakBetween::Column;
-    if (primitiveValue.valueID() == CSSValueAvoid)
-        return BreakBetween::AvoidColumn;
-    return primitiveValue;
-}
-
-inline BreakInside StyleBuilderConverter::convertColumnBreakInside(StyleResolver&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAvoid)
-        return BreakInside::AvoidColumn;
-    return primitiveValue;
-}
     
 inline OptionSet<SpeakAs> StyleBuilderConverter::convertSpeakAs(StyleResolver&, const CSSValue& value)
 {

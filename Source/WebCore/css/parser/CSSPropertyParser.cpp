@@ -314,22 +314,6 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
     parser.collectParsedCustomPropertyValueDependencies(syntax, isRoot, dependencies);
 }
 
-static bool isLegacyBreakProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyPageBreakAfter:
-    case CSSPropertyPageBreakBefore:
-    case CSSPropertyPageBreakInside:
-    case CSSPropertyWebkitColumnBreakAfter:
-    case CSSPropertyWebkitColumnBreakBefore:
-    case CSSPropertyWebkitColumnBreakInside:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-
 bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important)
 {
     if (consumeCSSWideKeyword(propertyID, important))
@@ -341,11 +325,6 @@ bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important
     if (isShorthand) {
         // Variable references will fail to parse here and will fall out to the variable ref parser below.
         if (parseShorthand(propertyID, important))
-            return true;
-    } else if (isLegacyBreakProperty(propertyID)) {
-        // FIXME-NEWPARSER: Can turn this into a shorthand once old parser is gone, and then
-        // we don't need the special case.
-        if (consumeLegacyBreakProperty(propertyID, important))
             return true;
     } else {
         RefPtr<CSSValue> parsedValue = parseSingleValue(propertyID);
@@ -5139,10 +5118,8 @@ static inline CSSValueID mapFromPageBreakBetween(CSSValueID value)
 {
     if (value == CSSValueAlways)
         return CSSValuePage;
-    if (value == CSSValueAuto || value == CSSValueLeft || value == CSSValueRight)
+    if (value == CSSValueAuto || value == CSSValueAvoid || value == CSSValueLeft || value == CSSValueRight)
         return value;
-    if (value == CSSValueAvoid)
-        return CSSValueAvoidPage;
     return CSSValueInvalid;
 }
 
@@ -5887,6 +5864,13 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     }
     case CSSPropertyBorderImage:
         return consumeBorderImage(property, important);
+    case CSSPropertyPageBreakAfter:
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyPageBreakInside:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitColumnBreakInside:
+        return consumeLegacyBreakProperty(property, important);
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyBackgroundPosition: {
         RefPtr<CSSValue> resultX;

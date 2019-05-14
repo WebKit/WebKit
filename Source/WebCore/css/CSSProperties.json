@@ -3414,17 +3414,10 @@
             }
         },
         "page-break-after": {
-            "values": [
-                "auto",
-                "always",
-                "avoid",
-                "left",
-                "right"
-            ],
             "codegen-properties": {
-                "initial": "initialBreakBetween",
-                "name-for-methods": "BreakAfter",
-                "converter": "PageBreakBetween"
+                "longhands": [
+                    "break-after"
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -3432,17 +3425,10 @@
             }
         },
         "page-break-before": {
-            "values": [
-                "auto",
-                "always",
-                "avoid",
-                "left",
-                "right"
-            ],
             "codegen-properties": {
-                "initial": "initialBreakBetween",
-                "name-for-methods": "BreakBefore",
-                "converter": "PageBreakBetween"
+                "longhands": [
+                    "break-before"
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -3450,14 +3436,10 @@
             }
         },
         "page-break-inside": {
-            "values": [
-                "auto",
-                "avoid"
-            ],
             "codegen-properties": {
-                "initial": "initialBreakInside",
-                "name-for-methods": "BreakInside",
-                "converter": "PageBreakInside"
+                "longhands": [
+                    "break-inside"
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -4690,17 +4672,10 @@
             }
         },
         "-webkit-column-break-after": {
-            "values": [
-                "auto",
-                "always",
-                "avoid",
-                "left",
-                "right"
-            ],
             "codegen-properties": {
-                "initial": "initialBreakBetween",
-                "name-for-methods": "BreakAfter",
-                "converter": "ColumnBreakBetween"
+                "longhands": [
+                    "break-after"
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -4711,17 +4686,10 @@
             }
         },
         "-webkit-column-break-before": {
-            "values": [
-                "auto",
-                "always",
-                "avoid",
-                "left",
-                "right"
-            ],
             "codegen-properties": {
-                "initial": "initialBreakBetween",
-                "name-for-methods": "BreakBefore",
-                "converter": "ColumnBreakBetween"
+                "longhands": [
+                    "break-before"
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -4732,14 +4700,10 @@
             }
         },
         "-webkit-column-break-inside": {
-            "values": [
-                "auto",
-                "avoid"
-            ],
             "codegen-properties": {
-                "initial": "initialBreakInside",
-                "name-for-methods": "BreakInside",
-                "converter": "ColumnBreakInside"
+                "longhands": [
+                    "break-inside"
+                ]
             },
             "status": {
                 "status": "experimental"

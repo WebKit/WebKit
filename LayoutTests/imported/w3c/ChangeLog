@@ -1,3 +1,19 @@
+2019-05-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Implement page-break-* and -webkit-column-break-* as legacy-shorthands.
+        https://bugs.webkit.org/show_bug.cgi?id=197656
+
+        Reviewed by Darin Adler.
+
+        According to https://drafts.csswg.org/css-cascade-4/#legacy-shorthand,
+        implement page-break-* and -webkit-column-break-* as legacy-shorthands for break-*.
+
+        This change also serialize page-break-* properties
+        to CSSStyleDeclaration,
+        per https://drafts.csswg.org/css-break/#page-break-properties.
+
+        * web-platform-tests/css/cssom/serialize-values-expected.txt:
+
 2019-05-14  Javier Fernandez  <jfernandez@igalia.com>
 
         Implement "line-break: anywhere"

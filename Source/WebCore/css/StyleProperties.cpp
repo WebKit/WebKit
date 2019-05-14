@@ -133,6 +133,11 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[0]);
         if (!value || value->isPendingSubstitutionValue())
             return String();
+    // FIXME: If all longhands are the same css-generic keyword(e.g. initial or inherit),
+    // then the shorthand should be serialized to that keyword.
+    // It seems to be needed to handle this in a single function commonly for all the shorthands,
+    // not in each of the shorthand serialization function.
+    // We could call that function here.
     }
 
     // Shorthand and 4-values properties
@@ -209,6 +214,12 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
         return getShorthandValue(gridRowShorthand());
+    case CSSPropertyPageBreakAfter:
+        return pageBreakPropertyValue(pageBreakAfterShorthand());
+    case CSSPropertyPageBreakBefore:
+        return pageBreakPropertyValue(pageBreakBeforeShorthand());
+    case CSSPropertyPageBreakInside:
+        return pageBreakPropertyValue(pageBreakInsideShorthand());
     case CSSPropertyPlaceContent:
         return getAlignmentShorthandValue(placeContentShorthand());
     case CSSPropertyPlaceItems:
@@ -711,6 +722,26 @@ String StyleProperties::borderPropertyValue(const StylePropertyShorthand& width,
     if (isInitialOrInherit(commonValue))
         return commonValue;
     return result.toString();
+}
+
+String StyleProperties::pageBreakPropertyValue(const StylePropertyShorthand& shorthand) const
+{
+    RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[0]);
+    // FIXME: Remove this isGlobalKeyword check after we do this consistently for all shorthands in getPropertyValue.
+    if (value->isGlobalKeyword())
+        return value->cssText();
+    CSSValueID valueId = downcast<CSSPrimitiveValue>(*value).valueID();
+    switch (valueId) {
+    case CSSValuePage:
+        return "always"_s;
+    case CSSValueAuto:
+    case CSSValueAvoid:
+    case CSSValueLeft:
+    case CSSValueRight:
+        return value->cssText();
+    default:
+        return String();
+    }
 }
 
 RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
