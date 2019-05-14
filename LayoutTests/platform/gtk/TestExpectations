@@ -3709,7 +3709,7 @@ webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
 webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
-webkit.org/b/192888 fast/mediastream/resize-letterbox.html [ Failure ]
+webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
 
 webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
 

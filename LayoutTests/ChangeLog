@@ -1,3 +1,15 @@
+2019-05-14  Youenn Fablet  <youenn@apple.com>
+
+        Video frame resizing should be using Trim
+        https://bugs.webkit.org/show_bug.cgi?id=197722
+        <rdar://problem/50602188>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/resize-trim-expected.txt: Renamed from LayoutTests/fast/mediastream/resize-letterbox-expected.txt.
+        * fast/mediastream/resize-trim.html: Renamed from LayoutTests/fast/mediastream/resize-letterbox.html.
+        * platform/gtk/TestExpectations:
+
 2019-05-14  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] The pointerenter and pointerleave events target the wrong element on iOS
