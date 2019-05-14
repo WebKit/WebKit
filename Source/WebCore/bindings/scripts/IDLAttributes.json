@@ -192,6 +192,9 @@
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
             "values": ["*"]
         },
+        "EnabledForContext": {
+            "contextsAllowed": ["attribute", "interface"]
+        },
         "EnabledForWorld": {
             "contextsAllowed": ["attribute", "operation"],
             "values": ["*"]

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -70,6 +71,15 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
     }
 
     return { };
+}
+
+bool PaymentSession::enabledForContext(ScriptExecutionContext& context)
+{
+    auto& document = downcast<Document>(context);
+    if (auto page = document.page())
+        return page->paymentCoordinator().shouldEnableApplePayAPIs(document);
+
+    return false;
 }
 
 } // namespace WebCore

@@ -1,3 +1,20 @@
+2019-05-14  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Payment APIs should be completely disabled in web views into which clients have injected user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=197751
+        <rdar://problem/50631563>
+
+        Reviewed by Alex Christensen.
+
+        Added new API tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplePay.mm:
+        (-[TestApplePayScriptMessageHandler initWithAPIsAvailableExpectation:canMakePaymentsExpectation:]):
+        (-[TestApplePayScriptMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        (-[TestApplePayScriptMessageHandler initWithExpectation:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/apple-pay-availability.html:
+
 2019-05-14  Youenn Fablet  <youenn@apple.com>
 
         A service worker process should app nap when all its clients app nap

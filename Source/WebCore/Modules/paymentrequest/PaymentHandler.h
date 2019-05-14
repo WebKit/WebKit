@@ -46,6 +46,7 @@ class PaymentHandler : public virtual PaymentSessionBase {
 public:
     static RefPtr<PaymentHandler> create(Document&, PaymentRequest&, const PaymentRequest::MethodIdentifier&);
     static ExceptionOr<void> canCreateSession(Document&);
+    static bool enabledForContext(ScriptExecutionContext&);
     static bool hasActiveSession(Document&);
 
     virtual ExceptionOr<void> convertData(JSC::JSValue&&) = 0;

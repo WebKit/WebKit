@@ -26,27 +26,41 @@
         };
     };
 
-    window.addEventListener('load', async () => {
+    const eventListener = async () => {
         internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
+
+        const applePaySessionAvailable = !!window.ApplePaySession;
+        const paymentRequestAvailable = !!window.PaymentRequest;
+        if (!applePaySessionAvailable || !paymentRequestAvailable) {
+            window.webkit.messageHandlers.testApplePay.postMessage({ applePaySessionAvailable, paymentRequestAvailable });
+            return;
+        }
 
         const supportsVersion = ApplePaySession.supportsVersion(1);
         const canMakePayments = ApplePaySession.canMakePayments();
         const canMakePaymentsWithActiveCard = await ApplePaySession.canMakePaymentsWithActiveCard('');
 
-        const paymentRequest = new PaymentRequest([applePayMethod()], {
-            total: {
-                label: 'total',
-                amount: { currency: 'USD', value: '0.00' },
-            },
-        });
+        if (!window.wkPaymentRequest) {
+            wkPaymentRequest = new PaymentRequest([applePayMethod()], {
+                total: {
+                    label: 'total',
+                    amount: { currency: 'USD', value: '0.00' },
+                },
+            });
+        }
 
-        const canMakePayment = await paymentRequest.canMakePayment();
+        const canMakePayment = await wkPaymentRequest.canMakePayment();
 
         window.webkit.messageHandlers.testApplePay.postMessage({
+            applePaySessionAvailable,
+            paymentRequestAvailable,
             supportsVersion,
             canMakePayments,
             canMakePaymentsWithActiveCard,
             canMakePayment,
         });
-    });
+    };
+
+    window.addEventListener('load', eventListener);
+    window.addEventListener('hashchange', eventListener);
 </script>

@@ -30,6 +30,7 @@
     ConstructorCallWith=Document,
     ConstructorMayThrowException,
     EnabledBySetting=PaymentRequest,
+    EnabledForContext,
     SecureContext,
 ] interface PaymentRequest : EventTarget {
     [CallWith=Document] Promise<PaymentResponse> show(optional Promise<PaymentDetailsUpdate> detailsPromise);

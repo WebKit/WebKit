@@ -39,6 +39,7 @@
 #include "JSTestDOMJIT.h"
 #include "JSTestDomainSecurity.h"
 #include "JSTestEnabledBySetting.h"
+#include "JSTestEnabledForContext.h"
 #include "JSTestEventConstructor.h"
 #include "JSTestEventTarget.h"
 #include "JSTestException.h"
@@ -172,6 +173,8 @@ JSC::EncodedJSValue jsTestGlobalObjectTestDomainSecurityConstructor(JSC::ExecSta
 bool setJSTestGlobalObjectTestDomainSecurityConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestEnabledBySettingConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestEnabledBySettingConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestGlobalObjectTestEnabledForContextConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectTestEnabledForContextConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestEventTargetConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -702,6 +705,8 @@ void JSTestGlobalObject::finishCreation(VM& vm)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
         putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().enabledAtRuntimeAttributePublicName(), CustomGetterSetter::create(vm, jsTestGlobalObjectEnabledAtRuntimeAttribute, setJSTestGlobalObjectEnabledAtRuntimeAttribute), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
 #endif
+    if ((jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsTestGlobalObjectTestEnabledForContextConstructor, setJSTestGlobalObjectTestEnabledForContextConstructor), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
     putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateAttributePrivateName(), CustomGetterSetter::create(vm, jsTestGlobalObjectPublicAndPrivateAttribute, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
 #if ENABLE(TEST_FEATURE)
     putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateConditionalAttributePrivateName(), CustomGetterSetter::create(vm, jsTestGlobalObjectPublicAndPrivateConditionalAttribute, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
@@ -1114,6 +1119,30 @@ static inline bool setJSTestGlobalObjectTestEnabledBySettingConstructorSetter(Ex
 bool setJSTestGlobalObjectTestEnabledBySettingConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestEnabledBySettingConstructorSetter>(*state, thisValue, encodedValue, "TestEnabledBySetting");
+}
+
+static inline JSValue jsTestGlobalObjectTestEnabledForContextConstructorGetter(ExecState& state, JSTestGlobalObject& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    return JSTestEnabledForContext::getConstructor(state.vm(), thisObject.globalObject());
+}
+
+EncodedJSValue jsTestGlobalObjectTestEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectTestEnabledForContextConstructorGetter>(*state, thisValue, "TestEnabledForContext");
+}
+
+static inline bool setJSTestGlobalObjectTestEnabledForContextConstructorSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestEnabledForContext"), strlen("TestEnabledForContext")), value);
+}
+
+bool setJSTestGlobalObjectTestEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestEnabledForContextConstructorSetter>(*state, thisValue, encodedValue, "TestEnabledForContext");
 }
 
 static inline JSValue jsTestGlobalObjectTestEventConstructorConstructorGetter(ExecState& state, JSTestGlobalObject& thisObject, ThrowScope& throwScope)

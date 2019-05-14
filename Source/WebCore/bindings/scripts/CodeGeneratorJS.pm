@@ -1705,6 +1705,7 @@ sub NeedsRuntimeCheck
     }
 
     return $context->extendedAttributes->{EnabledAtRuntime}
+        || $context->extendedAttributes->{EnabledForContext}
         || $context->extendedAttributes->{EnabledForWorld}
         || $context->extendedAttributes->{EnabledBySetting}
         || $context->extendedAttributes->{DisabledByQuirk}
@@ -3786,6 +3787,15 @@ sub GenerateRuntimeEnableConditionalString
                 push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()");
             }
         }
+    }
+
+    if ($context->extendedAttributes->{EnabledForContext}) {
+        assert("Must not specify value for EnabledForContext.") unless $context->extendedAttributes->{EnabledForContext} eq "VALUE_IS_MISSING";
+        assert("EnabledForContext must be an interface or constructor attribute.") unless $codeGenerator->IsConstructorType($context->type);
+
+        my $contextRef = "*jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()";
+        my $name = $context->name;
+        push(@conjuncts,  "${name}::enabledForContext(" . $contextRef . ")");
     }
 
     my $result = join(" && ", @conjuncts);

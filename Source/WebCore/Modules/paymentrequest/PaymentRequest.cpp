@@ -34,7 +34,9 @@
 #include "JSDOMPromise.h"
 #include "JSPaymentDetailsUpdate.h"
 #include "JSPaymentResponse.h"
+#include "Page.h"
 #include "PaymentAddress.h"
+#include "PaymentCoordinator.h"
 #include "PaymentCurrencyAmount.h"
 #include "PaymentDetailsInit.h"
 #include "PaymentHandler.h"
@@ -349,6 +351,11 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
 
     auto shippingOptionAndModifierData = detailsResult.releaseReturnValue();
     return adoptRef(*new PaymentRequest(document, WTFMove(options), WTFMove(details), WTFMove(std::get<1>(shippingOptionAndModifierData)), WTFMove(serializedMethodData), WTFMove(std::get<0>(shippingOptionAndModifierData))));
+}
+
+bool PaymentRequest::enabledForContext(ScriptExecutionContext& context)
+{
+    return PaymentHandler::enabledForContext(context);
 }
 
 PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption)

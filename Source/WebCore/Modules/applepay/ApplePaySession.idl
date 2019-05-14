@@ -30,6 +30,7 @@
     ConstructorCallWith=Document,
     ConstructorMayThrowException,
     EnabledBySetting=ApplePay,
+    EnabledForContext,
 ] interface ApplePaySession : EventTarget {
     const unsigned short STATUS_SUCCESS = 0;
     const unsigned short STATUS_FAILURE = 1;

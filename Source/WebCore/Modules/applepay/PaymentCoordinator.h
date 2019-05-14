@@ -78,6 +78,7 @@ public:
 
     Optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
 
+    bool shouldEnableApplePayAPIs(Document&) const;
     WEBCORE_EXPORT bool shouldAllowApplePay(Document&) const;
     WEBCORE_EXPORT bool shouldAllowUserAgentScripts(Document&) const;
 

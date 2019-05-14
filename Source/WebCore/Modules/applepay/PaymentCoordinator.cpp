@@ -31,9 +31,11 @@
 #include "Document.h"
 #include "LinkIconCollector.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
+#include "UserContentProvider.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 
@@ -249,6 +251,22 @@ Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document& document,
         return WTF::nullopt;
 
     return m_client.validatedPaymentNetwork(paymentNetwork);
+}
+
+bool PaymentCoordinator::shouldEnableApplePayAPIs(Document& document) const
+{
+    if (m_client.supportsUnrestrictedApplePay()) {
+        RELEASE_LOG_IF_ALLOWED("shouldEnableApplePayAPIs() -> true (unrestricted client)");
+        return true;
+    }
+
+    bool shouldEnableAPIs = true;
+    document.page()->userContentProvider().forEachUserScript([&](DOMWrapperWorld&, const UserScript&) {
+        shouldEnableAPIs = false;
+    });
+
+    RELEASE_LOG_IF_ALLOWED("shouldEnableApplePayAPIs() -> %d", shouldEnableAPIs);
+    return shouldEnableAPIs;
 }
 
 bool PaymentCoordinator::shouldAllowApplePay(Document& document) const
