@@ -1,3 +1,11 @@
+2019-05-14  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Update expectations for tests that are no longer flaky
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-05-14  Truitt Savell  <tsavell@apple.com>
 
         Rebaseline inspector/model/remote-object.html after r245288
