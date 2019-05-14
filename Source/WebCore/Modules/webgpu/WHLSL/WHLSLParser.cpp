@@ -1803,12 +1803,6 @@ auto Parser::parseEffectfulAssignment() -> Expected<UniqueRef<AST::Expression>, 
     if (assignment)
         return assignment;
 
-    assignment = backtrackingScope<Expected<UniqueRef<AST::Expression>, Error>>([&]() {
-        return parseCallExpression();
-    });
-    if (assignment)
-        return assignment;
-
     return Unexpected<Error>(assignment.error());
 }
 
