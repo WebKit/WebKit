@@ -1,3 +1,15 @@
+2019-05-14  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Update grid when changing auto repeat type
+        https://bugs.webkit.org/show_bug.cgi?id=197849
+
+        Reviewed by Javier Fernandez.
+
+        Remove the test which has been upstreamed to WPT.
+
+        * fast/css-grid-layout/grid-change-auto-repeat-tracks-expected.txt: Removed.
+        * fast/css-grid-layout/grid-change-auto-repeat-tracks.html: Removed.
+
 2019-05-14  Antti Koivisto  <antti@apple.com>
 
         Event region computation should respect transforms

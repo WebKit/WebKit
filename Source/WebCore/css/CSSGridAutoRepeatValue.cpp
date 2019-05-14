@@ -46,4 +46,9 @@ String CSSGridAutoRepeatValue::customCSSText() const
     return result.toString();
 }
 
+bool CSSGridAutoRepeatValue::equals(const CSSGridAutoRepeatValue& other) const
+{
+    return m_autoRepeatID == other.m_autoRepeatID && CSSValueList::equals(other);
+}
+
 } // namespace WebCore

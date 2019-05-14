@@ -1,0 +1,20 @@
+
+Harness Error (FAIL), message = 2 duplicate test names: ".grid 1", ".grid 2"
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 1 
+PASS .grid 2 
+

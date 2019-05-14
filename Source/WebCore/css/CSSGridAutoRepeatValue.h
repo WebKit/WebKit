@@ -54,6 +54,8 @@ public:
     }
 
     String customCSSText() const;
+    bool equals(const CSSGridAutoRepeatValue&) const;
+
     CSSValueID autoRepeatID() const { return m_autoRepeatID; }
 
 private:
