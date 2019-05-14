@@ -1,3 +1,12 @@
+2019-05-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win10] Some tests are failing only on specific machines
+        https://bugs.webkit.org/show_bug.cgi?id=197509
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2019-05-14  Javier Fernandez  <jfernandez@igalia.com>
 
         Implement "line-break: anywhere"
