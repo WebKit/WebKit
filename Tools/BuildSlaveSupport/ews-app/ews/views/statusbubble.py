@@ -71,7 +71,10 @@ class StatusBubble(View):
         builder_full_name = build.builder_name.replace('-', ' ')
 
         if build.result is None:  # In-progress build
-            bubble['state'] = 'started'
+            if self._does_build_contains_any_failed_step(build):
+                bubble['state'] = 'provisional-fail'
+            else:
+                bubble['state'] = 'started'
             bubble['details_message'] = 'Build is in-progress. Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
@@ -149,6 +152,12 @@ class StatusBubble(View):
 
     def _should_display_step(self, step):
         return not filter(lambda step_to_hide: re.search(step_to_hide, step.state_string), StatusBubble.STEPS_TO_HIDE)
+
+    def _does_build_contains_any_failed_step(self, build):
+        for step in build.step_set.all():
+            if step.result and step.result != Buildbot.SUCCESS:
+                return True
+        return False
 
     def _most_recent_step_message(self, build):
         recent_step = build.step_set.last()

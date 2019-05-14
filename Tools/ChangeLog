@@ -1,3 +1,14 @@
+2019-05-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble should turn orange when any build step fails
+        https://bugs.webkit.org/show_bug.cgi?id=197812
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Turn status-bubble orange if there is any failed step in the on-going build.
+        (StatusBubble._does_build_contains_any_failed_step): Method to check if build contains any failed step.
+
 2019-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Add a unit test for client certificate authentication
