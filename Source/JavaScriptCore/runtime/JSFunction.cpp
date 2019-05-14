@@ -227,7 +227,7 @@ const String JSFunction::calculatedDisplayName(VM& vm)
     if (!actualName.isEmpty() || isHostOrBuiltinFunction())
         return actualName;
 
-    return jsExecutable()->inferredName().string();
+    return jsExecutable()->ecmaName().string();
 }
 
 const SourceCode* JSFunction::sourceCode() const
@@ -651,7 +651,7 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
         if (!actualName.isEmpty() || function->isHostOrBuiltinFunction())
             return actualName;
 
-        return function->jsExecutable()->inferredName().string();
+        return function->jsExecutable()->ecmaName().string();
     }
     if (auto* function = jsDynamicCast<InternalFunction*>(vm, object))
         return function->name();

@@ -1,3 +1,55 @@
+2019-05-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink sizeof(UnlinkedFunctionExecutable) more
+        https://bugs.webkit.org/show_bug.cgi?id=197833
+
+        Reviewed by Darin Adler.
+
+        It turns out that Gmail creates so many JSFunctions, FunctionExecutables, and UnlinkedFunctionExecutables.
+        So we should shrink size of them to save memory. As a first step, this patch reduces the sizeof(UnlinkedFunctionExecutable) more by 16 bytes.
+
+        1. We reorder some fields to get 8 bytes. And we use 31 bits for xxx offset things since their maximum size should be within 31 bits due to
+           String's length & int32_t representation in our parser.
+
+        2. We drop m_inferredName and prefer m_ecmaName. The inferred name is used to offer better function name when the function expression lacks
+           the name, but now ECMAScript has a specified semantics to name those functions with intuitive names. We should use ecmaName consistently,
+           and should not eat 8 bytes for inferred names in UnlinkedFunctionExecutable.
+
+        We also fix generator ecma name.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::inferredName const):
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::inferredName const):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createGeneratorFunctionBody):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::tryInferNameInPatternWithIdentifier):
+        (JSC::ASTBuilder::makeAssignNode):
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::operator== const):
+        (JSC::FunctionMetadataNode::dump const):
+        * parser/Nodes.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedFunctionExecutable::ecmaName const):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::CachedFunctionExecutable::inferredName const): Deleted.
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionExecutableDump.cpp:
+        (JSC::FunctionExecutableDump::dump const):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::calculatedDisplayName):
+        (JSC::getCalculatedDisplayName):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+
 2019-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Compress JIT related data more by using Packed<>

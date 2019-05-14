@@ -370,7 +370,6 @@ public:
         if (rhs->isBaseFuncExprNode()) {
             auto metadata = static_cast<BaseFuncExprNode*>(rhs)->metadata();
             metadata->setEcmaName(ident);
-            metadata->setInferredName(ident);
         } else if (rhs->isClassExprNode())
             static_cast<ClassExprNode*>(rhs)->setEcmaName(ident);
         AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, ident, rhs, assignmentContext);
@@ -417,7 +416,7 @@ public:
     {
         FuncExprNode* result = static_cast<FuncExprNode*>(createFunctionExpr(location, functionInfo));
         if (!name.isNull())
-            result->metadata()->setInferredName(name);
+            result->metadata()->setEcmaName(name);
         return result;
     }
 
@@ -475,7 +474,6 @@ public:
         ASSERT(name);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         functionInfo.body->setEcmaName(*name);
-        functionInfo.body->setInferredName(*name);
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, m_vm->propertyNames->nullIdentifier, functionInfo.body, source);
         return new (m_parserArena) PropertyNode(*name, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, tag);
@@ -507,7 +505,6 @@ public:
             if (node->isBaseFuncExprNode()) {
                 auto metadata = static_cast<BaseFuncExprNode*>(node)->metadata();
                 metadata->setEcmaName(*propertyName);
-                metadata->setInferredName(*propertyName);
             } else if (node->isClassExprNode())
                 static_cast<ClassExprNode*>(node)->setEcmaName(*propertyName);
         }
@@ -1115,7 +1112,6 @@ private:
         if (defaultValue->isBaseFuncExprNode()) {
             auto metadata = static_cast<BaseFuncExprNode*>(defaultValue)->metadata();
             metadata->setEcmaName(ident);
-            metadata->setInferredName(ident);
         } else if (defaultValue->isClassExprNode())
             static_cast<ClassExprNode*>(defaultValue)->setEcmaName(ident);
     }
@@ -1480,7 +1476,6 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
             if (expr->isBaseFuncExprNode()) {
                 auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
                 metadata->setEcmaName(resolve->identifier());
-                metadata->setInferredName(resolve->identifier());
             } else if (expr->isClassExprNode())
                 static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
             AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, resolve->identifier(), expr, AssignmentContext::AssignmentExpression);
@@ -1499,14 +1494,8 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     }
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
-    if (op == OpEqual) {
-        if (expr->isBaseFuncExprNode()) {
-            // We don't also set the ecma name here because ES6 specifies that the
-            // function should not pick up the name of the dot->identifier().
-            static_cast<BaseFuncExprNode*>(expr)->metadata()->setInferredName(dot->identifier());
-        }
+    if (op == OpEqual)
         return new (m_parserArena) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), start, end);
-    }
 
     ReadModifyDotNode* node = new (m_parserArena) ReadModifyDotNode(location, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, start, end);
     node->setSubexpressionInfo(dot->divot(), dot->divotEnd().offset);

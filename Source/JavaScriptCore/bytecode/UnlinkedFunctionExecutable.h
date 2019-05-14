@@ -81,7 +81,6 @@ public:
     const Identifier& name() const { return m_name; }
     const Identifier& ecmaName() const { return m_ecmaName; }
     void setEcmaName(const Identifier& name) { m_ecmaName = name; }
-    const Identifier& inferredName() const { return m_inferredName; }
     unsigned parameterCount() const { return m_parameterCount; }; // Excluding 'this'!
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
 
@@ -205,30 +204,30 @@ private:
 
     void decodeCachedCodeBlocks();
 
-    unsigned m_firstLineOffset;
-    unsigned m_lineCount;
-    unsigned m_unlinkedFunctionNameStart;
-    unsigned m_unlinkedBodyStartColumn;
-    unsigned m_unlinkedBodyEndColumn;
-    unsigned m_startOffset;
-    unsigned m_sourceLength;
-    unsigned m_parametersStartOffset;
+    unsigned m_firstLineOffset : 31;
+    unsigned m_isInStrictContext : 1;
+    unsigned m_lineCount : 31;
+    unsigned m_hasCapturedVariables : 1;
+    unsigned m_unlinkedFunctionNameStart : 31;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_unlinkedBodyStartColumn : 31;
+    unsigned m_isBuiltinDefaultClassConstructor : 1;
+    unsigned m_unlinkedBodyEndColumn : 31;
+    unsigned m_constructAbility: 1;
+    unsigned m_startOffset : 31;
+    unsigned m_scriptMode: 1; // JSParserScriptMode
+    unsigned m_sourceLength : 31;
+    unsigned m_superBinding : 1;
+    unsigned m_parametersStartOffset : 31;
+    unsigned m_isCached : 1;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount;
     CodeFeatures m_features;
     SourceParseMode m_sourceParseMode;
-    unsigned m_isInStrictContext : 1;
-    unsigned m_hasCapturedVariables : 1;
-    unsigned m_isBuiltinFunction : 1;
-    unsigned m_isBuiltinDefaultClassConstructor : 1;
-    unsigned m_constructAbility: 1;
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 2; // FunctionMode
-    unsigned m_scriptMode: 1; // JSParserScriptMode
-    unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
-    bool m_isCached : 1;
 
     union {
         WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
@@ -245,7 +244,6 @@ private:
 
     Identifier m_name;
     Identifier m_ecmaName;
-    Identifier m_inferredName;
 
     RareData& ensureRareData()
     {

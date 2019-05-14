@@ -1641,7 +1641,6 @@ public:
 
     Identifier name(Decoder& decoder) const { return m_name.decode(decoder); }
     Identifier ecmaName(Decoder& decoder) const { return m_ecmaName.decode(decoder); }
-    Identifier inferredName(Decoder& decoder) const { return m_inferredName.decode(decoder); }
 
     UnlinkedFunctionExecutable::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
@@ -1651,33 +1650,32 @@ public:
 private:
     CachedFunctionExecutableMetadata m_mutableMetadata;
 
-    unsigned m_firstLineOffset;
-    unsigned m_lineCount;
-    unsigned m_unlinkedFunctionNameStart;
-    unsigned m_unlinkedBodyStartColumn;
-    unsigned m_unlinkedBodyEndColumn;
-    unsigned m_startOffset;
-    unsigned m_sourceLength;
-    unsigned m_parametersStartOffset;
+    unsigned m_firstLineOffset : 31;
+    unsigned m_isInStrictContext : 1;
+    unsigned m_lineCount : 31;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_unlinkedFunctionNameStart : 31;
+    unsigned m_isBuiltinDefaultClassConstructor : 1;
+    unsigned m_unlinkedBodyStartColumn : 31;
+    unsigned m_constructAbility: 1;
+    unsigned m_unlinkedBodyEndColumn : 31;
+    unsigned m_startOffset : 31;
+    unsigned m_scriptMode: 1; // JSParserScriptMode
+    unsigned m_sourceLength : 31;
+    unsigned m_superBinding : 1;
+    unsigned m_parametersStartOffset : 31;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount;
     SourceParseMode m_sourceParseMode;
-    unsigned m_isInStrictContext : 1;
-    unsigned m_isBuiltinFunction : 1;
-    unsigned m_isBuiltinDefaultClassConstructor : 1;
-    unsigned m_constructAbility: 1;
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 2; // FunctionMode
-    unsigned m_scriptMode: 1; // JSParserScriptMode
-    unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
 
     CachedPtr<CachedFunctionExecutableRareData> m_rareData;
 
     CachedIdentifier m_name;
     CachedIdentifier m_ecmaName;
-    CachedIdentifier m_inferredName;
 
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
@@ -2044,7 +2042,6 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
     m_name.encode(encoder, executable.name());
     m_ecmaName.encode(encoder, executable.ecmaName());
-    m_inferredName.encode(encoder, executable.inferredName());
 
     m_unlinkedCodeBlockForCall.encode(encoder, executable.m_unlinkedCodeBlockForCall);
     m_unlinkedCodeBlockForConstruct.encode(encoder, executable.m_unlinkedCodeBlockForConstruct);
@@ -2063,35 +2060,34 @@ ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decod
 ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& decoder, const CachedFunctionExecutable& cachedExecutable)
     : Base(decoder.vm(), decoder.vm().unlinkedFunctionExecutableStructure.get())
     , m_firstLineOffset(cachedExecutable.firstLineOffset())
+    , m_isInStrictContext(cachedExecutable.isInStrictContext())
     , m_lineCount(cachedExecutable.lineCount())
+    , m_hasCapturedVariables(cachedExecutable.hasCapturedVariables())
     , m_unlinkedFunctionNameStart(cachedExecutable.unlinkedFunctionNameStart())
+    , m_isBuiltinFunction(cachedExecutable.isBuiltinFunction())
     , m_unlinkedBodyStartColumn(cachedExecutable.unlinkedBodyStartColumn())
+    , m_isBuiltinDefaultClassConstructor(cachedExecutable.isBuiltinDefaultClassConstructor())
     , m_unlinkedBodyEndColumn(cachedExecutable.unlinkedBodyEndColumn())
+    , m_constructAbility(cachedExecutable.constructAbility())
     , m_startOffset(cachedExecutable.startOffset())
+    , m_scriptMode(cachedExecutable.scriptMode())
     , m_sourceLength(cachedExecutable.sourceLength())
+    , m_superBinding(cachedExecutable.superBinding())
     , m_parametersStartOffset(cachedExecutable.parametersStartOffset())
+    , m_isCached(false)
     , m_typeProfilingStartOffset(cachedExecutable.typeProfilingStartOffset())
     , m_typeProfilingEndOffset(cachedExecutable.typeProfilingEndOffset())
     , m_parameterCount(cachedExecutable.parameterCount())
     , m_features(cachedExecutable.features())
     , m_sourceParseMode(cachedExecutable.sourceParseMode())
-    , m_isInStrictContext(cachedExecutable.isInStrictContext())
-    , m_hasCapturedVariables(cachedExecutable.hasCapturedVariables())
-    , m_isBuiltinFunction(cachedExecutable.isBuiltinFunction())
-    , m_isBuiltinDefaultClassConstructor(cachedExecutable.isBuiltinDefaultClassConstructor())
-    , m_constructAbility(cachedExecutable.constructAbility())
     , m_constructorKind(cachedExecutable.constructorKind())
     , m_functionMode(cachedExecutable.functionMode())
-    , m_scriptMode(cachedExecutable.scriptMode())
-    , m_superBinding(cachedExecutable.superBinding())
     , m_derivedContextType(cachedExecutable.derivedContextType())
-    , m_isCached(false)
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
 
     , m_name(cachedExecutable.name(decoder))
     , m_ecmaName(cachedExecutable.ecmaName(decoder))
-    , m_inferredName(cachedExecutable.inferredName(decoder))
 
     , m_rareData(cachedExecutable.rareData(decoder))
 {

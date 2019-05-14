@@ -122,7 +122,7 @@ CString CodeBlock::inferredName() const
     case EvalCode:
         return "<eval>";
     case FunctionCode:
-        return jsCast<FunctionExecutable*>(ownerExecutable())->inferredName().utf8();
+        return jsCast<FunctionExecutable*>(ownerExecutable())->ecmaName().utf8();
     case ModuleCode:
         return "<module>";
     default:

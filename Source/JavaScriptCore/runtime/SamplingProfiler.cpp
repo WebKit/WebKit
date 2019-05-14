@@ -779,7 +779,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         return static_cast<NativeExecutable*>(executable)->name();
 
     if (executable->isFunctionExecutable())
-        return static_cast<FunctionExecutable*>(executable)->inferredName().string();
+        return static_cast<FunctionExecutable*>(executable)->ecmaName().string();
     if (executable->isProgramExecutable() || executable->isEvalExecutable())
         return "(program)"_s;
     if (executable->isModuleProgramExecutable())
@@ -806,7 +806,7 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
         return static_cast<NativeExecutable*>(executable)->name();
 
     if (executable->isFunctionExecutable()) {
-        String result = static_cast<FunctionExecutable*>(executable)->inferredName().string();
+        String result = static_cast<FunctionExecutable*>(executable)->ecmaName().string();
         if (result.isEmpty())
             return "(anonymous function)"_s;
         return result;

@@ -161,7 +161,6 @@ public:
     bool isClassConstructorFunction() const { return m_unlinkedExecutable->isClassConstructorFunction(); }
     const Identifier& name() { return m_unlinkedExecutable->name(); }
     const Identifier& ecmaName() { return m_unlinkedExecutable->ecmaName(); }
-    const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
     unsigned parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
     SourceParseMode parseMode() const { return m_unlinkedExecutable->parseMode(); }
     JSParserScriptMode scriptMode() const { return m_unlinkedExecutable->scriptMode(); }

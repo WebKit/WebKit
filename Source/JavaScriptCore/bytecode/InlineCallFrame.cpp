@@ -56,7 +56,7 @@ CString InlineCallFrame::hashAsStringIfPossible() const
 
 CString InlineCallFrame::inferredName() const
 {
-    return jsCast<FunctionExecutable*>(baselineCodeBlock->ownerExecutable())->inferredName().utf8();
+    return jsCast<FunctionExecutable*>(baselineCodeBlock->ownerExecutable())->ecmaName().utf8();
 }
 
 void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
