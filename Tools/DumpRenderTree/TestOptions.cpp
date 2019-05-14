@@ -105,6 +105,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableColorFilter = parseBooleanTestHeaderValue(value);
         else if (key == "jscOptions")
             jscOptions = value;
+        else if (key == "additionalSupportedImageTypes")
+            additionalSupportedImageTypes = value;
         else if (key == "experimental:WebGPUEnabled")
             enableWebGPU = parseBooleanTestHeaderValue(value);
         else if (key == "internal:CSSLogicalEnabled")

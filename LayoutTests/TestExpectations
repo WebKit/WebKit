@@ -1335,6 +1335,10 @@ webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure 
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure ]
 fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 
+# HEIF images are only supported on macOS and iOS post Mojave
+fast/images/animated-heics-draw.html [ Skip ]
+fast/images/animated-heics-verify.html [ Skip ]
+
 webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [ Pass Failure ]
 
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)

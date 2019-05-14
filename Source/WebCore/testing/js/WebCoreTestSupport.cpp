@@ -46,6 +46,10 @@
 #include <JavaScriptCore/JSValueRef.h>
 #include <wtf/URLParser.h>
 
+#if PLATFORM(COCOA)
+#include "UTIRegistry.h"
+#endif
+
 namespace WebCoreTestSupport {
 using namespace JSC;
 using namespace WebCore;
@@ -204,5 +208,12 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
     UNUSED_PARAM(serviceWorkerIdentifier);
 #endif
 }
+
+#if PLATFORM(COCOA)
+void setAdditionalSupportedImageTypesForTesting(const WTF::String& imageTypes)
+{
+    WebCore::setAdditionalSupportedImageTypesForTesting(imageTypes);
+}
+#endif
 
 }

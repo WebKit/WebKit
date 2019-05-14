@@ -1,0 +1,14 @@
+Verify HEICS image can animate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Image was loaded successfully.
+Image frame: 0 was displayed.
+Image frame: 1 was displayed.
+Image frame: 2 was displayed.
+The HEICS Image was loaded and three frames of it were displayed successfully.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

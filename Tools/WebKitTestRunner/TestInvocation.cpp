@@ -146,7 +146,11 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     WKRetainPtr<WKStringRef> dumpJSConsoleLogInStdErrKey = adoptWK(WKStringCreateWithUTF8CString("DumpJSConsoleLogInStdErr"));
     WKRetainPtr<WKBooleanRef> dumpJSConsoleLogInStdErrValue = adoptWK(WKBooleanCreate(m_dumpJSConsoleLogInStdErr));
     WKDictionarySetItem(beginTestMessageBody.get(), dumpJSConsoleLogInStdErrKey.get(), dumpJSConsoleLogInStdErrValue.get());
-    
+
+    WKRetainPtr<WKStringRef> additionalSupportedImageTypesKey = adoptWK(WKStringCreateWithUTF8CString("additionalSupportedImageTypes"));
+    WKRetainPtr<WKStringRef> additionalSupportedImageTypesValue = adoptWK(WKStringCreateWithUTF8CString(options().additionalSupportedImageTypes.c_str()));
+    WKDictionarySetItem(beginTestMessageBody.get(), additionalSupportedImageTypesKey.get(), additionalSupportedImageTypesValue.get());
+
     return beginTestMessageBody;
 }
 

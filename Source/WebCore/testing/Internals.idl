@@ -346,6 +346,8 @@ enum CompositingPolicy {
     [MayThrowException] boolean isPageBoxVisible(long pageNumber);
 
     unsigned long imageFrameIndex(HTMLImageElement element);
+    unsigned long imageFrameCount(HTMLImageElement element);
+    float imageFrameDurationAtIndex(HTMLImageElement element, unsigned long index);
     void setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
     void resetImageAnimation(HTMLImageElement element);
     boolean isImageAnimating(HTMLImageElement element);

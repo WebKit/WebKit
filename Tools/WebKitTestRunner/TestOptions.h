@@ -98,6 +98,7 @@ struct TestOptions {
     float deviceScaleFactor { 1 };
     std::string applicationManifest;
     std::string jscOptions;
+    std::string additionalSupportedImageTypes;
     HashMap<String, bool> experimentalFeatures;
     HashMap<String, bool> internalDebugFeatures;
 
@@ -132,6 +133,7 @@ struct TestOptions {
             || enableColorFilter != options.enableColorFilter
             || punchOutWhiteBackgroundsInDarkMode != options.punchOutWhiteBackgroundsInDarkMode
             || jscOptions != options.jscOptions
+            || additionalSupportedImageTypes != options.additionalSupportedImageTypes
             || runSingly != options.runSingly
             || checkForWorldLeaks != options.checkForWorldLeaks
             || shouldShowSpellCheckingDots != options.shouldShowSpellCheckingDots

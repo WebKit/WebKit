@@ -170,6 +170,7 @@ private:
     void beginTesting(WKDictionaryRef initialSettings, BegingTestingMode);
 
     bool booleanForKey(WKDictionaryRef, const char* key);
+    String stringForKey(WKDictionaryRef, const char* key);
 
     WKBundleRef m_bundle { nullptr };
     WKBundlePageGroupRef m_pageGroup { nullptr };

@@ -464,6 +464,17 @@ bool InjectedBundle::booleanForKey(WKDictionaryRef dictionary, const char* key)
     return WKBooleanGetValue(static_cast<WKBooleanRef>(value));
 }
 
+String InjectedBundle::stringForKey(WKDictionaryRef dictionary, const char* key)
+{
+    WKRetainPtr<WKStringRef> wkKey = adoptWK(WKStringCreateWithUTF8CString(key));
+    WKStringRef value = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionary, wkKey.get()));
+    if (!value) {
+        outputText(makeString("String value for key", key, " not found in dictionary\n"));
+        return emptyString();
+    }
+    return toWTFString(value);
+}
+
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     m_state = Testing;
@@ -494,6 +505,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
 #if PLATFORM(IOS_FAMILY)
     WKBundlePageSetUseTestingViewportConfiguration(page()->page(), !booleanForKey(settings, "UseFlexibleViewport"));
+#endif
+
+#if PLATFORM(COCOA)
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(stringForKey(settings, "additionalSupportedImageTypes"));
 #endif
 
     m_testRunner->setPluginsEnabled(true);

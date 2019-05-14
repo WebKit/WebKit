@@ -1,3 +1,34 @@
+2019-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adding support for HEIF-sequence ('public.heics') images
+        https://bugs.webkit.org/show_bug.cgi?id=197384
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        Parse the new webkit-test-runner paramter: additionalSupportedImageTypes.
+        Make DRT call setAdditionalSupportedImageTypesForTesting() before starting
+        the test.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::stringForKey):
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::createTestSettingsDictionary):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        Parse the new webkit-test-runner paramter: additionalSupportedImageTypes.
+        Make WTR call setAdditionalSupportedImageTypesForTesting() before starting
+        the test.
+
 2019-05-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Compress Watchpoint size by using enum type and Packed<> data structure

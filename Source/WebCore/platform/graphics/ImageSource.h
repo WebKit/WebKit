@@ -88,7 +88,7 @@ public:
     // from the NativeImage if this class was created for a memory image.
     EncodedDataStatus encodedDataStatus();
     bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
-    size_t frameCount();
+    WEBCORE_EXPORT size_t frameCount();
     RepetitionCount repetitionCount();
     String uti();
     String filenameExtension();
@@ -112,7 +112,7 @@ public:
     // ImageFrame metadata which forces caching or re-caching the ImageFrame.
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
-    Seconds frameDurationAtIndex(size_t);
+    WEBCORE_EXPORT Seconds frameDurationAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
 
 #if USE(DIRECT2D)

@@ -1918,6 +1918,8 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
     setJSCOptions(options);
 
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes.c_str());
+
     [mainFrame _clearOpener];
 
 #if PLATFORM(MAC)

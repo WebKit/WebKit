@@ -1,3 +1,22 @@
+2019-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adding support for HEIF-sequence ('public.heics') images
+        https://bugs.webkit.org/show_bug.cgi?id=197384
+
+        Reviewed by Simon Fraser.
+
+        Disable the tests for all ports and enable it only for [ Mojave+ WK2]
+        because of <rdar://problem/42625657>.
+
+        * TestExpectations:
+        * fast/images/animated-heics-draw-expected.txt: Added.
+        * fast/images/animated-heics-draw.html: Added.
+        * fast/images/animated-heics-verify-expected.txt: Added.
+        * fast/images/animated-heics-verify.html: Added.
+        * fast/images/resources/sea_animation.heics: Added.
+        * fast/images/resources/sticker.heics: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2019-05-14  Per Arne Vollan  <pvollan@apple.com>
 
         [Win10] Some tests are failing only on specific machines

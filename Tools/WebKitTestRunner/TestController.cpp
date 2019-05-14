@@ -923,6 +923,10 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
         WKDictionarySetItem(resetMessageBody.get(), jscOptionsKey.get(), jscOptionsValue.get());
     }
 
+#if PLATFORM(COCOA)
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes.c_str());
+#endif
+
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), resetMessageBody.get());
 
     WKContextSetShouldUseFontSmoothing(TestController::singleton().context(), false);
@@ -1369,6 +1373,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.punchOutWhiteBackgroundsInDarkMode = parseBooleanTestHeaderValue(value);
         else if (key == "jscOptions")
             testOptions.jscOptions = value;
+        else if (key == "additionalSupportedImageTypes")
+            testOptions.additionalSupportedImageTypes = value;
         else if (key == "runSingly")
             testOptions.runSingly = parseBooleanTestHeaderValue(value);
         else if (key == "shouldIgnoreMetaViewport")

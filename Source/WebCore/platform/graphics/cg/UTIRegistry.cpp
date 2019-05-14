@@ -89,6 +89,11 @@ void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
     }
 }
 
+void setAdditionalSupportedImageTypesForTesting(const String& imageTypes)
+{
+    setAdditionalSupportedImageTypes(imageTypes.split(';'));
+}
+
 bool isSupportedImageType(const String& imageType)
 {
     if (imageType.isEmpty())
