@@ -1,3 +1,10 @@
+2019-05-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restoration of non-unified build.
+
+        * dfg/DFGMinifiedID.h:
+        * runtime/ObjectToStringAdaptiveStructureWatchpoint.cpp:
+
 2019-05-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink sizeof(UnlinkedFunctionExecutable) more

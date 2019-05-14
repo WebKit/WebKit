@@ -30,6 +30,7 @@
 #include "DocumentLoader.h"
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
+#include "LayoutUnit.h"
 #include "Settings.h"
 
 namespace WebCore {

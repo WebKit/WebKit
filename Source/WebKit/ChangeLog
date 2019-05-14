@@ -1,3 +1,12 @@
+2019-05-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restoration of non-unified build.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+
 2019-05-14  Youenn Fablet  <youenn@apple.com>
 
         A service worker process should app nap when all its clients app nap

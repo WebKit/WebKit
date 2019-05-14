@@ -31,6 +31,7 @@ namespace WebCore {
 
 class Document;
 class HTMLElement;
+class LayoutUnit;
 
 class Quirks {
     WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;

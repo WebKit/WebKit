@@ -36,6 +36,8 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#else
+#include <windows.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)

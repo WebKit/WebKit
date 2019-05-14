@@ -32,6 +32,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "Timer.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

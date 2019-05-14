@@ -33,8 +33,8 @@
 #include "JSFetchResponse.h"
 #include "ReadableStreamChunk.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
-
 
 namespace WebCore {
 using namespace WebCore::DOMCacheEngine;

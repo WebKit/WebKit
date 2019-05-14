@@ -21,6 +21,7 @@
 
 #include "JSEventListener.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

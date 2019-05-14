@@ -27,6 +27,7 @@
 
 #include "DFGCommon.h"
 #include <wtf/HashMap.h>
+#include <wtf/Packed.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace DFG {

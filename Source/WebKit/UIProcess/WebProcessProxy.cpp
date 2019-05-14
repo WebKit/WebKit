@@ -58,6 +58,7 @@
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SuddenTermination.h>
 #include <stdio.h>
+#include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>

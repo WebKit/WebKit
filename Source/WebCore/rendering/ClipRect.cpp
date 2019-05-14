@@ -27,6 +27,7 @@
 #include "ClipRect.h"
 
 #include "HitTestLocation.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
