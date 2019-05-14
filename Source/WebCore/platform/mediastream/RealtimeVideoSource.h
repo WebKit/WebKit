@@ -51,7 +51,7 @@ protected:
 
     virtual void generatePresets() = 0;
     virtual bool prefersPreset(VideoPreset&) { return true; }
-    virtual void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset>) { };
+    virtual void setFrameRateWithPreset(double, RefPtr<VideoPreset>) { };
     virtual bool canResizeVideoFrames() const { return false; }
     bool shouldUsePreset(VideoPreset& current, VideoPreset& candidate);
 

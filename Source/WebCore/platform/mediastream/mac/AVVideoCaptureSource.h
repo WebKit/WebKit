@@ -91,11 +91,12 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
 
-    void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset>) final;
+    void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
     bool prefersPreset(VideoPreset&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
 
+    void setSessionSizeAndFrameRate();
     bool setPreset(NSString*);
     void computeSampleRotation();
     AVFrameRateRange* frameDurationForFrameRate(double);
@@ -127,12 +128,11 @@ private:
     RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
-    RefPtr<VideoPreset> m_pendingPreset;
 
     Lock m_presetMutex;
     RefPtr<AVVideoPreset> m_currentPreset;
-    IntSize m_pendingSize;
-    double m_pendingFrameRate;
+    IntSize m_currentSize;
+    double m_currentFrameRate;
     InterruptionReason m_interruption { InterruptionReason::None };
     int m_framesToDropAtStartup { 0 };
     bool m_isRunning { false };

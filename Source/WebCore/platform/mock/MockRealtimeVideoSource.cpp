@@ -181,9 +181,9 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     return m_currentSettings.value();
 }
 
-void MockRealtimeVideoSource::setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset> preset)
+void MockRealtimeVideoSource::setFrameRateWithPreset(double, RefPtr<VideoPreset> preset)
 {
-    m_preset = preset;
+    m_preset = WTFMove(preset);
     if (preset)
         setIntrinsicSize(preset->size);
 }

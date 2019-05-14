@@ -366,7 +366,7 @@ void RealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<int>
     if (!match)
         return;
 
-    setSizeAndFrameRateWithPreset(match->requestedSize, match->requestedFrameRate, match->encodingPreset);
+    setFrameRateWithPreset(match->requestedFrameRate, match->encodingPreset);
 
     if (!match->requestedSize.isEmpty())
         setSize(match->requestedSize);

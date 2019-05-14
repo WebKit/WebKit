@@ -283,22 +283,23 @@ bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
     return true;
 }
 
-void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, double requestedFrameRate, RefPtr<VideoPreset> preset)
+void AVVideoCaptureSource::setFrameRateWithPreset(double requestedFrameRate, RefPtr<VideoPreset> preset)
 {
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { requestedSize.width(), requestedSize.height(), requestedFrameRate });
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { preset->size.width(), preset->size.height(), requestedFrameRate });
 
     auto* avPreset = preset ? downcast<AVVideoPreset>(preset.get()) : nullptr;
+    m_currentPreset = avPreset;
+    m_currentFrameRate = requestedFrameRate;
 
-    if (!m_session) {
-        m_pendingPreset = avPreset;
-        m_pendingSize = requestedSize;
-        m_pendingFrameRate = requestedFrameRate;
+    setSessionSizeAndFrameRate();
+}
+
+void AVVideoCaptureSource::setSessionSizeAndFrameRate()
+{
+    if (!m_session)
         return;
-    }
 
-    m_pendingPreset = nullptr;
-    m_pendingFrameRate = 0;
-
+    auto* avPreset = m_currentPreset.get();
     if (!avPreset)
         return;
 
@@ -308,29 +309,29 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
     [m_session beginConfiguration];
     @try {
         if ([device() lockForConfiguration:&error]) {
-            if (!m_currentPreset || ![m_currentPreset->format.get() isEqual:avPreset->format.get()]) {
-                [device() setActiveFormat:avPreset->format.get()];
+            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting preset to ", m_currentSize);
+            [device() setActiveFormat:avPreset->format.get()];
 
 #if PLATFORM(MAC)
-                auto settingsDictionary = @{
-                    (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
-                    (__bridge NSString *)kCVPixelBufferWidthKey: @(avPreset->size.width()),
-                    (__bridge NSString *)kCVPixelBufferHeightKey: @(avPreset->size.height()),
-                    (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
-                };
-                [m_videoOutput setVideoSettings:settingsDictionary];
+            auto settingsDictionary = @{
+                (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
+                (__bridge NSString *)kCVPixelBufferWidthKey: @(avPreset->size.width()),
+                (__bridge NSString *)kCVPixelBufferHeightKey: @(avPreset->size.height()),
+                (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
+            };
+            [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
-            }
-            auto* frameRateRange = frameDurationForFrameRate(requestedFrameRate);
+
+            auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
             ASSERT(frameRateRange);
             if (!frameRateRange)
                 return;
 
-            requestedFrameRate = clampTo(requestedFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
+            m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
-            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", requestedFrameRate);
-            [device() setActiveVideoMinFrameDuration: CMTimeMake(1, requestedFrameRate)];
-            [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, requestedFrameRate)];
+            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", m_currentFrameRate);
+            [device() setActiveVideoMinFrameDuration: CMTimeMake(1, m_currentFrameRate)];
+            [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, m_currentFrameRate)];
 
             [device() unlockForConfiguration];
         }
@@ -339,8 +340,6 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
         return;
     }
     [m_session commitConfiguration];
-
-    m_currentPreset = avPreset;
 
     ERROR_LOG_IF(error && loggerPtr(), LOGIDENTIFIER, [[error localizedDescription] UTF8String]);
 }
@@ -448,8 +447,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     }
     [session() addOutput:m_videoOutput.get()];
 
-    if (m_pendingPreset || m_pendingFrameRate)
-        setSizeAndFrameRateWithPreset(m_pendingSize, m_pendingFrameRate, m_pendingPreset);
+    setSessionSizeAndFrameRate();
 
     m_sensorOrientation = sensorOrientationFromVideoOutput(m_videoOutput.get());
     computeSampleRotation();
