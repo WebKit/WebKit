@@ -24,9 +24,10 @@
 
 #pragma once
 
-#import <wtf/Assertions.h>
 #import <dlfcn.h>
 #import <objc/runtime.h>
+#import <wtf/Assertions.h>
+#import <wtf/FileSystem.h>
 
 #pragma mark - Soft-link macros for use within a single source file
 
@@ -63,10 +64,16 @@
         return frameworkLibrary; \
     }
 
+#if USE(REALPATH_FOR_DLOPEN_PREFLIGHT)
+#define DLOPEN_PREFLIGHT(path) dlopen_preflight(FileSystem::realPath(path##_s).utf8().data())
+#else
+#define DLOPEN_PREFLIGHT(path) dlopen_preflight(path)
+#endif
+
 #define SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(framework) \
     static bool framework##LibraryIsAvailable() \
     { \
-        static bool frameworkLibraryIsAvailable = dlopen_preflight("/System/Library/Frameworks/" #framework ".framework/" #framework); \
+        static bool frameworkLibraryIsAvailable = DLOPEN_PREFLIGHT("/System/Library/Frameworks/" #framework ".framework/" #framework); \
         return frameworkLibraryIsAvailable; \
     }
 
