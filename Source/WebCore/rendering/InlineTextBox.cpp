@@ -505,7 +505,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
         if (visibleToHitTesting())
-            paintInfo.eventRegion->unite(enclosingIntRect(boxRect), renderer().style());
+            paintInfo.eventRegionContext->unite(enclosingIntRect(boxRect), renderer().style());
         return;
     }
 

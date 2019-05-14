@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AffineTransform.h"
 #include "Region.h"
 #include "TouchAction.h"
 #include <wtf/OptionSet.h>
@@ -32,11 +33,29 @@
 
 namespace WebCore {
 
+class EventRegion;
 class RenderStyle;
+
+class EventRegionContext {
+public:
+    explicit EventRegionContext(EventRegion&);
+
+    void pushTransform(const AffineTransform&);
+    void popTransform();
+
+    void unite(const Region&, const RenderStyle&);
+    bool contains(const IntRect&) const;
+
+private:
+    EventRegion& m_eventRegion;
+    Vector<AffineTransform> m_transformStack;
+};
 
 class EventRegion {
 public:
     WEBCORE_EXPORT EventRegion();
+
+    EventRegionContext makeContext() { return EventRegionContext(*this); }
 
     bool isEmpty() const { return m_region.isEmpty(); }
 

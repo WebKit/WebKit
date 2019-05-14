@@ -1246,11 +1246,11 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
         if (visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegion->unite(borderRegion, style());
+            paintInfo.eventRegionContext->unite(borderRegion, style());
         }
 
         // No need to check descendants if we don't have overflow and the area is already covered.
-        bool needsTraverseDescendants = hasVisualOverflow() || !paintInfo.eventRegion->contains(enclosingIntRect(borderRect));
+        bool needsTraverseDescendants = hasVisualOverflow() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect));
 #if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
         needsTraverseDescendants = needsTraverseDescendants || document().touchActionElements();
 #endif

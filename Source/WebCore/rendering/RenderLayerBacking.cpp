@@ -1484,7 +1484,8 @@ void RenderLayerBacking::updateEventRegion()
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, compositedBounds(), { }, LayoutSize());
 
     EventRegion eventRegion;
-    paintingInfo.eventRegion = &eventRegion;
+    auto eventRegionContext = eventRegion.makeContext();
+    paintingInfo.eventRegionContext = &eventRegionContext;
 
     auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags() | RenderLayer::PaintLayerCollectingEventRegion;
     m_owningLayer.paintLayerContents(nullContext, paintingInfo, paintFlags);

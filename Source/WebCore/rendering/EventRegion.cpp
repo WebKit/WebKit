@@ -30,6 +30,40 @@
 
 namespace WebCore {
 
+EventRegionContext::EventRegionContext(EventRegion& eventRegion)
+    : m_eventRegion(eventRegion)
+{
+}
+
+void EventRegionContext::pushTransform(const AffineTransform& transform)
+{
+    if (m_transformStack.isEmpty())
+        m_transformStack.append(transform);
+    else
+        m_transformStack.append(m_transformStack.last() * transform);
+}
+
+void EventRegionContext::popTransform()
+{
+    m_transformStack.removeLast();
+}
+
+void EventRegionContext::unite(const Region& region, const RenderStyle& style)
+{
+    if (m_transformStack.isEmpty())
+        m_eventRegion.unite(region, style);
+    else
+        m_eventRegion.unite(m_transformStack.last().mapRegion(region), style);
+}
+
+bool EventRegionContext::contains(const IntRect& rect) const
+{
+    if (m_transformStack.isEmpty())
+        return m_eventRegion.contains(rect);
+
+    return m_eventRegion.contains(m_transformStack.last().mapRect(rect));
+}
+
 EventRegion::EventRegion() = default;
 
 bool EventRegion::operator==(const EventRegion& other) const

@@ -4600,8 +4600,12 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
     transform.translateRight(devicePixelSnappedOffsetForThisLayer.width(), devicePixelSnappedOffsetForThisLayer.height());
     // Apply the transform.
-    AffineTransform oldTransfrom = context.getCTM();
-    context.concatCTM(transform.toAffineTransform());
+    auto oldTransform = context.getCTM();
+    auto affineTransform = transform.toAffineTransform();
+    context.concatCTM(affineTransform);
+
+    if (paintingInfo.eventRegionContext)
+        paintingInfo.eventRegionContext->pushTransform(affineTransform);
 
     // Now do a paint with the root layer shifted to be us.
     LayoutSize adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(devicePixelSnappedOffsetForThisLayer);
@@ -4610,7 +4614,11 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(transform.inverse().valueOr(AffineTransform()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
-    context.setCTM(oldTransfrom);
+
+    if (paintingInfo.eventRegionContext)
+        paintingInfo.eventRegionContext->popTransform();
+
+    context.setCTM(oldTransform);
 }
 
 void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
@@ -4998,11 +5006,11 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
 
 void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo)
 {
-    ASSERT(localPaintingInfo.eventRegion);
+    ASSERT(localPaintingInfo.eventRegionContext);
 
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, { });
-        paintInfo.eventRegion = localPaintingInfo.eventRegion;
+        paintInfo.eventRegionContext = localPaintingInfo.eventRegionContext;
         renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelOffset));
     }
 }

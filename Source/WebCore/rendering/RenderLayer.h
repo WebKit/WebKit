@@ -63,7 +63,7 @@ namespace WebCore {
 class CSSFilter;
 class ClipRects;
 class ClipRectsCache;
-class EventRegion;
+class EventRegionContext;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
@@ -941,7 +941,7 @@ private:
         OptionSet<PaintBehavior> paintBehavior;
         bool requireSecurityOriginAccessForWidgets;
         bool clipToDirtyRect { true };
-        EventRegion* eventRegion { nullptr };
+        EventRegionContext* eventRegionContext { nullptr };
     };
 
     // Compute, cache and return clip rects computed with the given layer as the root.

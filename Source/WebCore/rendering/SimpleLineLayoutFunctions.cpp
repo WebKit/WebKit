@@ -84,7 +84,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         paintRect.moveBy(-paintOffset);
         for (auto run : layout.runResolver().rangeForRect(paintRect)) {
             FloatRect visualOverflowRect = computeOverflow(flow, run.rect());
-            paintInfo.eventRegion->unite(enclosingIntRect(visualOverflowRect), flow.style());
+            paintInfo.eventRegionContext->unite(enclosingIntRect(visualOverflowRect), flow.style());
         }
         return;
     }

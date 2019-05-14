@@ -1,3 +1,14 @@
+2019-05-14  Antti Koivisto  <antti@apple.com>
+
+        Event region computation should respect transforms
+        https://bugs.webkit.org/show_bug.cgi?id=197836
+        <rdar://problem/50762971>
+
+        Reviewed by Darin Adler.
+
+        * fast/scrolling/ios/event-region-scale-transform-shared-expected.txt:
+        * fast/scrolling/ios/event-region-translate-transform-shared-expected.txt:
+
 2019-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed: fix test failures after r245280.

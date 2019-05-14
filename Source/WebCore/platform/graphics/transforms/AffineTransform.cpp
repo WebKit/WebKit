@@ -31,6 +31,7 @@
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "Region.h"
 #include "TransformationMatrix.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Optional.h>
@@ -332,6 +333,21 @@ FloatQuad AffineTransform::mapQuad(const FloatQuad& q) const
     result.setP3(mapPoint(q.p3()));
     result.setP4(mapPoint(q.p4()));
     return result;
+}
+
+Region AffineTransform::mapRegion(const Region& region) const
+{
+    if (isIdentityOrTranslation()) {
+        Region mappedRegion(region);
+        mappedRegion.translate(roundedIntSize(FloatSize(narrowPrecisionToFloat(m_transform[4]), narrowPrecisionToFloat(m_transform[5]))));
+        return mappedRegion;
+    }
+
+    Region mappedRegion;
+    for (auto& rect : region.rects())
+        mappedRegion.unite(mapRect(rect));
+
+    return mappedRegion;
 }
 
 void AffineTransform::blend(const AffineTransform& from, double progress)
