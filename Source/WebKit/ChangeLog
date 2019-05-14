@@ -1,5 +1,22 @@
 2019-05-14  Chris Dumez  <cdumez@apple.com>
 
+        The network process tries to take a process assertion when NetworkProcess::processWillSuspendImminently() is called
+        https://bugs.webkit.org/show_bug.cgi?id=197888
+
+        Reviewed by Geoffrey Garen.
+
+        When actualPrepareToSuspend() in the Network process is called set the 'IsSuspended' flag on the SQLite database tracker and unset
+        the flag when the process resume. This is consistent with what we already do in the WebProcess and makes sure that
+        the network process does not try and take on a new assertion due to locked files when getting notified it is about to get
+        suspended.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::NetworkProcess::processWillSuspendImminently):
+        (WebKit::NetworkProcess::resume):
+
+2019-05-14  Chris Dumez  <cdumez@apple.com>
+
         Update TBA macros for API / SPI that has already shipped
         https://bugs.webkit.org/show_bug.cgi?id=197841
         <rdar://problem/50698499>

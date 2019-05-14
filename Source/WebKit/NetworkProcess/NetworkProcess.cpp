@@ -1922,6 +1922,10 @@ private:
 
 void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
+#if PLATFORM(IOS_FAMILY)
+    m_webSQLiteDatabaseTracker.setIsSuspended(true);
+#endif
+
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<TaskCounter> delayedTaskCounter;
@@ -1947,6 +1951,7 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
 
 void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently()", this);
 #if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
     for (auto& server : m_idbServers.values())
         server->tryStop(IDBServer::ShouldForceStop::Yes);
@@ -1994,6 +1999,10 @@ void NetworkProcess::processDidResume()
 
 void NetworkProcess::resume()
 {
+#if PLATFORM(IOS_FAMILY)
+    m_webSQLiteDatabaseTracker.setIsSuspended(false);
+#endif
+
     platformProcessDidResume();
     for (auto& connection : m_webProcessConnections)
         connection->endSuspension();
