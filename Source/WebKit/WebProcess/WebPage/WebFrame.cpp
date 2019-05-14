@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -233,6 +233,7 @@ uint64_t WebFrame::setUpWillSubmitFormListener(CompletionHandler<void()>&& compl
 
 void WebFrame::continueWillSubmitForm(uint64_t listenerID)
 {
+    Ref<WebFrame> protectedThis(*this);
     if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
         completionHandler();
     invalidatePolicyListener();

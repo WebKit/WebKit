@@ -1,3 +1,18 @@
+2019-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Protect current WebFrame during form submission
+        https://bugs.webkit.org/show_bug.cgi?id=197459
+        <rdar://problem/50368618>
+
+        Reviewed by Alex Christensen.
+
+        The 'continueWillSubmitForm' method calls a completion handler that
+        might affect the state of the current frame. Ensure the frame is valid
+        for the scope of the function.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::continueWillSubmitForm):
+
 2019-05-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cannot tab or shift + tab out of address bar on google.com
