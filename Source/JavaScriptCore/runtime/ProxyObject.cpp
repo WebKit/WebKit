@@ -167,7 +167,9 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     RETURN_IF_EXCEPTION(scope, { });
 
     PropertyDescriptor descriptor;
-    if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
+    bool result = target->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    EXCEPTION_ASSERT(!scope.exception() || !result);
+    if (result) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
             if (!sameValue(exec, descriptor.value(), trapResult))
                 return throwTypeError(exec, scope, "Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"_s);
@@ -650,7 +652,9 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
         return false;
 
     PropertyDescriptor descriptor;
-    if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
+    bool result = target->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    EXCEPTION_ASSERT(!scope.exception() || !result);
+    if (result) {
         if (!descriptor.configurable()) {
             throwVMTypeError(exec, scope, "Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable"_s);
             return false;
