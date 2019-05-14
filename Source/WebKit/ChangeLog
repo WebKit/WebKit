@@ -1,3 +1,23 @@
+2019-05-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Cannot scroll to beginning of document after scrolling to end of document and vice versa via key commands
+        https://bugs.webkit.org/show_bug.cgi?id=197848
+        <rdar://problem/49523065>
+
+        Reviewed by Brent Fulgham.
+
+        Following the fix for <rdar://problem/49523065>, UIKit no longer emits a keyup event for a Command-
+        modified key. This breaks WebKit's own implementation of key command handling for scrolling to the
+        beginning or end of the document (triggered using Command + Arrow Up and Command + Arrow Down,
+        respectively) because it watches for keyup events to reset state after initiating a scroll. If state
+        is not reset then the scroll key command logic becomes confused and may not perform a subsequent scroll.
+        It seems like we can actually get away with supporting these key commands and future Command modified
+        commands by preemptively reseting state on keydown if the Command modifier is held down. If this does
+        not work out then we can do something more complicated.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator handleKeyEvent:]):
+
 2019-05-14  Brent Fulgham  <bfulgham@apple.com>
 
         Protect current WebFrame during form submission

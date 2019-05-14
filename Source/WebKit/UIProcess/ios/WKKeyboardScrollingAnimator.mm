@@ -346,7 +346,11 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
         return;
 
     auto scroll = [self keyboardScrollForEvent:event];
-    if (!scroll || event.type == WebEventKeyUp) {
+
+    // UIKit does not emit a keyup event when the Command key is down. See <rdar://problem/49523065>.
+    // For recognized key commands that include the Command key (e.g. Command + Arrow Up) we reset our
+    // state on keydown.
+    if (!scroll || event.type == WebEventKeyUp || (event.modifierFlags & WebEventFlagMaskCommandKey)) {
         [self stopAnimatedScroll];
         _scrollTriggeringKeyIsPressed = NO;
     }

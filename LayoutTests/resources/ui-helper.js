@@ -884,4 +884,26 @@ window.UIHelper = class UIHelper {
         if (menuRect)
             await this.activateAt(menuRect.left + menuRect.width / 2, menuRect.top + menuRect.height / 2);
     }
+
+    static callFunctionAndWaitForScrollToFinish(functionToCall, ...theArguments)
+    {
+        return new Promise((resolved) => {
+            function scrollDidFinish() {
+                window.removeEventListener("scroll", handleScroll, true);
+                resolved();
+            }
+
+            let lastScrollTimerId = 0; // When the timer with this id fires then the page has finished scrolling.
+            function handleScroll() {
+                if (lastScrollTimerId) {
+                    window.clearTimeout(lastScrollTimerId);
+                    lastScrollTimerId = 0;
+                }
+                lastScrollTimerId = window.setTimeout(scrollDidFinish, 300); // Over 250ms to give some room for error.
+            }
+            window.addEventListener("scroll", handleScroll, true);
+
+            functionToCall.apply(this, theArguments);
+        });
+    }
 }

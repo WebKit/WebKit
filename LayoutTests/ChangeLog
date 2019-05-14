@@ -1,3 +1,25 @@
+2019-05-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Cannot scroll to beginning of document after scrolling to end of document and vice versa via key commands
+        https://bugs.webkit.org/show_bug.cgi?id=197848
+        <rdar://problem/49523065>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test to ensure that key commands can be used to scroll to the end of the page and then
+        to the beginning of the page.
+
+        * fast/scrolling/ios/scroll-to-beginning-and-end-of-document-expected.txt: Added.
+        * fast/scrolling/ios/scroll-to-beginning-and-end-of-document.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.callFunctionAndWaitForScrollToFinish): Added. Convenience function that invokes the
+        specified function and returns a Promise that is resolved once the page has finished scrolling. To know
+        if the page has finished scrolling we listen for DOM scroll events and repeatedly reset a 300ms timer.
+        The delay of 300ms was chosen to be > 250ms (to give some margin of error), which is the upper bound
+        delay between scroll event firings, last I recall. When the timer expires we assume that page has
+        finished scrolling.
+        (window.UIHelper):
+
 2019-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Adding support for HEIF-sequence ('public.heics') images
