@@ -161,7 +161,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self setAllowsMultipleSelection:_allowsMultipleSelection];
-    [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]]];
+    [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation]];
     [self reloadAllComponents];
 
     if (!_allowsMultipleSelection) {

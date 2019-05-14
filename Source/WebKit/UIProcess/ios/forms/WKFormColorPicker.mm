@@ -179,7 +179,7 @@ using namespace WebKit;
     if (currentUserInterfaceIdiomIsPad())
         colorPickerSize = CGSizeMake(pickerWidthForPopover, pickerWidthForPopover);
     else {
-        CGSize keyboardSize = [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
+        auto keyboardSize = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
         colorPickerSize = CGSizeMake(keyboardSize.width, keyboardSize.height + additionalKeyboardAffordance);
     }
 

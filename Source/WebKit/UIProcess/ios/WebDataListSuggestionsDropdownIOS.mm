@@ -211,12 +211,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     [_pickerView setDataSource:self];
     [_pickerView setDelegate:self];
     [_pickerView setControl:self];
-#if HAVE(UISCENE)
-    auto interfaceOrientation = view.window.windowScene.interfaceOrientation;
-#else
-    auto interfaceOrientation = UIApp.interfaceOrientation;
-#endif
-    [_pickerView setSize:[UIKeyboard defaultSizeForInterfaceOrientation:interfaceOrientation]];
+    [_pickerView setSize:[UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation]];
 
     return self;
 }

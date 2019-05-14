@@ -1,5 +1,31 @@
 2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Followup to r245267: fix some more deprecated uses of -[UIApplication interfaceOrientation]
+        https://bugs.webkit.org/show_bug.cgi?id=197867
+        <rdar://problem/50743963>
+
+        Reviewed by Simon Fraser.
+
+        Add a helper method on WKContentView that asks the view's window's scene for an interface orientation; then,
+        use this helper from various places in WebKit instead of invoking -[UIApplication interfaceOrientation]
+        directly. No change in behavior.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView interfaceOrientation]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsPicker initWithInformation:inView:]):
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorPicker initWithView:]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]):
+
+2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] When running layout tests that tap in the same location, subsequent tests fail to fire click handlers
         https://bugs.webkit.org/show_bug.cgi?id=197821
         <rdar://problem/50700512>

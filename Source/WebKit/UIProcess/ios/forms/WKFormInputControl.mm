@@ -106,7 +106,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         break;
    }
 
-    CGSize size = currentUserInterfaceIdiomIsPad() ? [UIPickerView defaultSizeForCurrentOrientation] : [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
+    auto size = currentUserInterfaceIdiomIsPad() ? [UIPickerView defaultSizeForCurrentOrientation] : [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
 
     _datePicker = adoptNS([[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)]);
     _datePicker.get().datePickerMode = mode;

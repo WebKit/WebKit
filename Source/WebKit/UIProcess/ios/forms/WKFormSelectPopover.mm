@@ -395,7 +395,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
     CGRect frame;
     frame.origin = CGPointZero;
-    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
+    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
 
     _tableViewController = adoptNS([[WKSelectTableViewController alloc] initWithView:view hasGroups:hasGroups]);
     [_tableViewController setPopover:self];
