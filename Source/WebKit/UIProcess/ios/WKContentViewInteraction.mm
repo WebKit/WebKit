@@ -3794,12 +3794,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
 {
-    auto completionHandlerCopy = Block_copy(completionHandler);
-    RetainPtr<WKContentView> view = self;
-    _page->setInitialFocus(selectingForward, false, WebKit::WebKeyboardEvent(), [view, completionHandlerCopy](WebKit::CallbackBase::Error) {
-        BOOL didBecomeFirstResponder = view->_focusedElementInformation.elementType != WebKit::InputType::None && [view becomeFirstResponder];
-        completionHandlerCopy(didBecomeFirstResponder);
-        Block_release(completionHandlerCopy);
+    constexpr bool isKeyboardEventValid = false;
+    _page->setInitialFocus(selectingForward, isKeyboardEventValid, { }, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (auto) {
+        completionHandler([protectedSelf becomeFirstResponder]);
     });
 }
 

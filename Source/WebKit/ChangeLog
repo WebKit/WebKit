@@ -1,3 +1,18 @@
+2019-05-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Cannot tab or shift + tab out of address bar on google.com
+        https://bugs.webkit.org/show_bug.cgi?id=197859
+        <rdar://problem/46651565>
+
+        Reviewed by Darin Adler.
+
+        Non-editable elements can participate in tab cycling via the HTML tabindex attribute.
+        We should allow setting the initial focus to such an element when transitioning from
+        the chrome (e.g. address bar) to the web page.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+
 2019-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Add a unit test for client certificate authentication
