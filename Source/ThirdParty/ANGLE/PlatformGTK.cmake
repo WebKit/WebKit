@@ -1,0 +1,2 @@
+# Enable GLSL compiler output.
+list(APPEND ANGLE_DEFINITIONS ANGLE_ENABLE_GLSL)

@@ -1,3 +1,14 @@
+2019-05-14  Miguel Gomez  <magomez@igalia.com>
+
+        REGRESSION(r245088): [GTK] Several WebGL tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=197880
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable GLSL compiler output for WebKitGTK.
+
+        * PlatformGTK.cmake: Added.
+
 2019-05-13  Alex Christensen  <achristensen@webkit.org>
 
         Build more ANGLE files
