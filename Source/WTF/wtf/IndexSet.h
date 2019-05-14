@@ -76,7 +76,7 @@ public:
 
     bool isEmpty() const
     {
-        return !size();
+        return m_set.isEmpty();
     }
 
     template<typename CollectionType>

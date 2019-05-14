@@ -1,3 +1,13 @@
+2019-05-13  Robin Morisset  <rmorisset@apple.com>
+
+        IndexSet::isEmpty should use BitVector::isEmpty() instead of size()
+        https://bugs.webkit.org/show_bug.cgi?id=197857
+
+        Reviewed by Darin Adler.
+
+        * wtf/IndexSet.h:
+        (WTF::IndexSet::isEmpty const):
+
 2019-05-13  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Use realpath for dlopen_preflight
