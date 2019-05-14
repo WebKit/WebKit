@@ -3915,6 +3915,7 @@ private:
         // FIXME: This needs caging.
         // https://bugs.webkit.org/show_bug.cgi?id=175515
         LValue dataPtr = m_out.loadPtr(arrayBufferPtr, m_heaps.ArrayBuffer_data);
+        dataPtr = removeArrayPtrTag(dataPtr);
 
         ValueFromBlock wastefulOut = m_out.anchor(m_out.sub(vectorPtr, dataPtr));
 
@@ -14103,8 +14104,7 @@ private:
 
     LValue untagArrayPtr(LValue ptr, LValue size)
     {
-
-#if !GIGACAGE_ENABLED && CPU(ARM64E)
+#if CPU(ARM64E)
         PatchpointValue* authenticate = m_out.patchpoint(pointerType());
         authenticate->appendSomeRegister(ptr);
         authenticate->append(size, B3::ValueRep(B3::ValueRep::SomeLateRegister));
@@ -14117,6 +14117,20 @@ private:
         UNUSED_PARAM(size);
         return ptr;
 #endif
+    }
+
+    LValue removeArrayPtrTag(LValue ptr)
+    {
+#if CPU(ARM64E)
+        PatchpointValue* authenticate = m_out.patchpoint(pointerType());
+        authenticate->appendSomeRegister(ptr);
+        authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.move(params[1].gpr(), params[0].gpr());
+            jit.removeArrayPtrTag(params[0].gpr());
+        });
+        return authenticate;
+#endif
+        return ptr;
     }
 
     LValue caged(Gigacage::Kind kind, LValue ptr, LValue base)
@@ -16574,16 +16588,9 @@ private:
 
         LBasicBlock lastNext = m_out.appendTo(isWasteful, continuation);
         LValue vector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_vector);
-#if !GIGACAGE_ENABLED && CPU(ARM64E)
-        // FIXME: We could probably make this a mask. https://bugs.webkit.org/show_bug.cgi?id=197701
-        PatchpointValue* authenticate = m_out.patchpoint(pointerType());
-        authenticate->appendSomeRegister(vector);
-        authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.move(params[1].gpr(), params[0].gpr());
-            jit.removeArrayPtrTag(params[0].gpr());
-        });
-        vector = authenticate;
-#endif
+        // FIXME: We could probably make this a mask.
+        // https://bugs.webkit.org/show_bug.cgi?id=197701
+        vector = removeArrayPtrTag(vector);
         speculate(Uncountable, jsValueValue(vector), m_node, m_out.isZero64(vector));
         m_out.jump(continuation);
 

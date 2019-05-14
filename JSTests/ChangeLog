@@ -1,3 +1,15 @@
+2019-05-14  Keith Miller  <keith_miller@apple.com>
+
+        Fix issue with byteOffset on ARM64E
+        https://bugs.webkit.org/show_bug.cgi?id=197884
+
+        Reviewed by Saam Barati.
+
+        We didn't have any tests that run with non-byte/non-zero offset
+        typed arrays.
+
+        * stress/ftl-gettypedarrayoffset-wasteful.js:
+
 2019-05-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink sizeof(UnlinkedFunctionExecutable) more

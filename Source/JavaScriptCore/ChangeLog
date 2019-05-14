@@ -1,3 +1,25 @@
+2019-05-14  Keith Miller  <keith_miller@apple.com>
+
+        Fix issue with byteOffset on ARM64E
+        https://bugs.webkit.org/show_bug.cgi?id=197884
+
+        Reviewed by Saam Barati.
+
+        We forgot to remove the tag from the ArrayBuffer's data
+        pointer. This corrupted data when computing the offset.  We didn't
+        catch this because we didn't run any with a non-zero byteOffset in
+        the JITs.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::untagArrayPtr):
+        (JSC::FTL::DFG::LowerDFGToB3::removeArrayPtrTag):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+
 2019-05-14  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION (r245249): ASSERTION FAILED: !m_needExceptionCheck seen with stress/proxy-delete.js and stress/proxy-property-descriptor.js
