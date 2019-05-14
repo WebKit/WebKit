@@ -1,3 +1,13 @@
+2019-05-14  Shawn Roberts  <sroberts@apple.com>
+
+        storage/indexeddb/modern/deletedatabase-2-private.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196445
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Not flaky on iOS
+        * platform/mac-wk2/TestExpectations: Updating expectations for Mac
+
 2019-05-14  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Update expectations for tests that are no longer flaky

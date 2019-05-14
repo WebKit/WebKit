@@ -87,8 +87,6 @@ webkit.org/b/196376 [ Debug ] storage/domstorage/localstorage/private-browsing-a
 
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
 
-webkit.org/b/196445 [ Debug ] storage/indexeddb/modern/deletedatabase-2-private.html [ Pass Failure ]
-
 webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Pass Failure ]
 
 webkit.org/b/195341 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Pass Failure ]
