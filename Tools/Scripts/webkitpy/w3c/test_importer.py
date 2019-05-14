@@ -360,17 +360,49 @@ class TestImporter(object):
             return True
         return self.options.convert_test_harness_links
 
-    def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
+    def _webkit_test_runner_options(self, path):
+        if not(self.filesystem.isfile(path)):
+            return ''
+
+        options_prefix = '<!-- webkit-test-runner'
+        contents = self.filesystem.read_text_file(path).split('\n')
+        if not len(contents):
+            return ''
+        first_line = contents[0]
+
+        return first_line[first_line.index(options_prefix):] if options_prefix in first_line else ''
+
+    def _add_webkit_test_runner_options_to_content(self, content, webkit_test_runner_options):
+        lines = content.split('\n')
+        if not len(lines):
+            return ''
+        lines[0] = lines[0] + webkit_test_runner_options
+        return '\n'.join(lines)
+
+    def _copy_html_file(self, source_filepath, new_filepath):
+        webkit_test_runner_options = self._webkit_test_runner_options(new_filepath)
+        if not webkit_test_runner_options:
+            self.filesystem.copyfile(source_filepath, new_filepath)
+            return
+
+        source_content = self.filesystem.read_text_file(source_filepath)
+        self.filesystem.write_text_file(new_filepath, self._add_webkit_test_runner_options_to_content(source_content, webkit_test_runner_options))
+
+    def _write_html_template(self, new_filepath):
+        webkit_test_runner_options = self._webkit_test_runner_options(new_filepath)
         content = '<!-- This file is required for WebKit test infrastructure to run the templated test -->'
+        self.filesystem.write_text_file(new_filepath, content + webkit_test_runner_options)
+
+    def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
         if (orig_filepath.endswith('.window.js')):
-            self.filesystem.write_text_file(new_filepath.replace('.window.js', '.window.html'), content)
+            self._write_html_template(new_filepath.replace('.window.js', '.window.html'))
             return
         if (orig_filepath.endswith('.worker.js')):
-            self.filesystem.write_text_file(new_filepath.replace('.worker.js', '.worker.html'), content)
+            self._write_html_template(new_filepath.replace('.worker.js', '.worker.html'))
             return
         if (orig_filepath.endswith('.any.js')):
-            self.filesystem.write_text_file(new_filepath.replace('.any.js', '.any.html'), content)
-            self.filesystem.write_text_file(new_filepath.replace('.any.js', '.any.worker.html'), content)
+            self._write_html_template(new_filepath.replace('.any.js', '.any.html'))
+            self._write_html_template(new_filepath.replace('.any.js', '.any.worker.html'))
             return
 
     def import_tests(self):
@@ -449,7 +481,7 @@ class TestImporter(object):
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if should_rewrite_files and ('html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0])):
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, convert_test_harness_links=self.should_convert_test_harness_links(subpath))
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, convert_test_harness_links=self.should_convert_test_harness_links(subpath), webkit_test_runner_options=self._webkit_test_runner_options(new_filepath))
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)
@@ -474,6 +506,8 @@ class TestImporter(object):
                 elif orig_filepath.endswith('__init__.py') and not self.filesystem.getsize(orig_filepath):
                     # Some bots dislike empty __init__.py.
                     self.write_init_py(new_filepath)
+                elif 'html' in str(mimetype[0]):
+                    self._copy_html_file(orig_filepath, new_filepath)
                 else:
                     self.filesystem.copyfile(orig_filepath, new_filepath)
 

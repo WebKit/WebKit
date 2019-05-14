@@ -1,3 +1,40 @@
+2019-05-14  Youenn Fablet  <youenn@apple.com>
+
+        Add support for webkit-test-runner options to WPT importer
+        https://bugs.webkit.org/show_bug.cgi?id=197826
+
+        Reviewed by Alex Christensen.
+
+        In case of overwriting an existing test, check if the existing test
+        contains a <!-- webkit-test-runner --> comment and insert it back if
+        needed in the new test.
+
+        For exporter, forbid creating a WPT PR if there are changes containing
+        the webkit-test-runner string.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (convert_for_webkit):
+        (_W3CTestConverter.__init__):
+        (_W3CTestConverter.add_webkit_test_runner_options_if_needed):
+        (_W3CTestConverter.handle_starttag):
+        (_W3CTestConverter.handle_comment):
+        (_W3CTestConverter.handle_decl):
+        (_W3CTestConverter.handle_pi):
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter.write_git_patch_file):
+        (WebPlatformTestExporter.make_pull_request):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.webkit_test_runner_options):
+        (TestImporter):
+        (TestImporter.add_webkit_test_runner_options_to_content):
+        (TestImporter.copy_html_file):
+        (TestImporter.write_html_template):
+        (TestImporter.write_html_files_for_templated_js_tests):
+        (TestImporter.import_tests):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (test_manual_slow_test):
+        (test_webkit_test_runner_options):
+
 2019-05-14  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Status bubble should turn orange when any build step fails

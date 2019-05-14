@@ -182,6 +182,13 @@ class WebPlatformTestExporter(object):
             return ''
         # FIXME: We can probably try to use --relative git parameter to not do that replacement.
         patch_data = patch_data.replace(WEBKIT_WPT_DIR + '/', '')
+
+        # FIXME: Support stripping of <!-- webkit-test-runner --> comments.
+        self.has_webkit_test_runner_specific_changes = 'webkit-test-runner' in patch_data
+        if self.has_webkit_test_runner_specific_changes:
+            _log.warning("Patch contains webkit-test-runner specific changes, please remove them before creating a PR")
+            return ''
+
         self._filesystem.write_text_file(patch_file, patch_data)
         return patch_file
 
@@ -306,6 +313,10 @@ class WebPlatformTestExporter(object):
         return True
 
     def make_pull_request(self):
+        if self.has_webkit_test_runner_specific_changes:
+            _log.error('Cannot create a WPT PR since it contains webkit test runner specific changes')
+            return
+
         if not self._github:
             _log.info('Skipping pull request because OAuth token was not provided. You can open the pull request manually using the branch ' + self._wpt_fork_branch_github_url)
             return

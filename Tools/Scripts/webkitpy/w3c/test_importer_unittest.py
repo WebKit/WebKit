@@ -304,3 +304,28 @@ class TestImporterTest(unittest.TestCase):
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/new-manual.html'))
         self.assertEquals(tests_options, fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
+
+    def test_webkit_test_runner_options(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/test.html': '<!doctype html>\n<script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html': '<!-- doctype html --><!-- webkit-test-runner [ dummy ] -->',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html': '<!-- doctype html --><!-- webkit-test-runner [ dummy ] -->',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.any.js': 'test(() => {}, "empty")',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html': '<!-- This file is required for WebKit test infrastructure to run the templated test --><!-- webkit-test-runner [ dummy ] -->',
+            '/mock-checkout/Source/WebCore/css/CSSProperties.json': '',
+            '/mock-checkout/Source/WebCore/css/CSSValueKeywords.in': '',
+        }
+        FAKE_FILES.update(FAKE_REPOSITORY)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.worker.html'))
+        self.assertTrue('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html').split('\n')[0])
+        self.assertTrue('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html').split('\n')[0])
+        self.assertTrue('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html').split('\n')[0])
+        self.assertFalse('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.worker.html').split('\n')[0])

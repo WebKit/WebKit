@@ -38,12 +38,12 @@ from HTMLParser import HTMLParser
 _log = logging.getLogger(__name__)
 
 
-def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True):
+def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True, webkit_test_runner_options=''):
     """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
 
     Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
     contents = host.filesystem.read_binary_file(filename)
-    converter = _W3CTestConverter(new_path, filename, reference_support_info, host, convert_test_harness_links)
+    converter = _W3CTestConverter(new_path, filename, reference_support_info, host, convert_test_harness_links, webkit_test_runner_options)
     if filename.endswith('.css'):
         return converter.add_webkit_prefix_to_unprefixed_properties_and_values(contents)
     else:
@@ -53,7 +53,7 @@ def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), 
 
 
 class _W3CTestConverter(HTMLParser):
-    def __init__(self, new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True):
+    def __init__(self, new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True, webkit_test_runner_options=''):
         HTMLParser.__init__(self)
 
         self._host = host
@@ -67,6 +67,8 @@ class _W3CTestConverter(HTMLParser):
         self.style_data = []
         self.filename = filename
         self.reference_support_info = reference_support_info
+        self.webkit_test_runner_options = webkit_test_runner_options
+        self.has_started = False
 
         resources_path = self.path_from_webkit_root('LayoutTests', 'resources')
         resources_relpath = self._filesystem.relpath(resources_path, new_path)
@@ -215,10 +217,18 @@ class _W3CTestConverter(HTMLParser):
 
         self.converted_data.append(converted)
 
+    def add_webkit_test_runner_options_if_needed(self):
+        if self.has_started:
+            return
+        self.has_started = True
+        if self.webkit_test_runner_options:
+            self.converted_data[-1] = self.converted_data[-1] + self.webkit_test_runner_options
+
     def handle_starttag(self, tag, attrs):
         if tag == 'style':
             self.in_style_tag = True
         self.convert_attributes_if_needed(tag, attrs)
+        self.add_webkit_test_runner_options_if_needed()
 
     def handle_endtag(self, tag):
         if tag == 'style':
@@ -244,9 +254,12 @@ class _W3CTestConverter(HTMLParser):
 
     def handle_comment(self, data):
         self.converted_data.extend(['<!-- ', data, ' -->'])
+        self.add_webkit_test_runner_options_if_needed()
 
     def handle_decl(self, decl):
         self.converted_data.extend(['<!', decl, '>'])
+        self.add_webkit_test_runner_options_if_needed()
 
     def handle_pi(self, data):
         self.converted_data.extend(['<?', data, '>'])
+        self.add_webkit_test_runner_options_if_needed()
