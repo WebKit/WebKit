@@ -41,15 +41,7 @@
 
         clickTarget.addEventListener("click", event => {
             event.preventDefault();
-
-            setTimeout(async function () {
-                // The test is done, but we need to tap again to ensure we don't
-                // hang the next test with a double tap.
-                document.removeEventListener("selectionchange", didChangeSelection);
-                await UIHelper.tapAt(10, 500);
-
-                testRunner.notifyDone();
-            }, 0);
+            setTimeout(() => testRunner.notifyDone(), 0);
         });
 
         var target = document.getElementById("target");        

@@ -738,7 +738,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _doubleTapGestureRecognizerForDoubleClick = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognizedForDoubleClick:)]);
     [_doubleTapGestureRecognizerForDoubleClick setNumberOfTapsRequired:2];
     [_doubleTapGestureRecognizerForDoubleClick setDelegate:self];
-    [_doubleTapGestureRecognizerForDoubleClick setEnabled:YES];
     [self addGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
 
     [self _createAndConfigureDoubleTapGestureRecognizer];
@@ -3760,6 +3759,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
 {
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
+}
+
+- (void)_didStartProvisionalLoadForMainFrame
+{
+    // Reset the double tap gesture recognizer to prevent any double click that is in the process of being recognized.
+    [_doubleTapGestureRecognizerForDoubleClick setEnabled:NO];
+    [_doubleTapGestureRecognizerForDoubleClick setEnabled:YES];
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)

@@ -215,6 +215,7 @@ void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& 
 void PageClientImpl::didStartProvisionalLoadForMainFrame()
 {
     [m_webView _didStartProvisionalLoadForMainFrame];
+    [m_contentView _didStartProvisionalLoadForMainFrame];
     [m_webView _hidePasswordView];
 }
 
