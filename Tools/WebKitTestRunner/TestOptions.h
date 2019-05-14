@@ -92,6 +92,7 @@ struct TestOptions {
     bool shouldHandleRunOpenPanel { true };
     bool shouldPresentPopovers { true };
     bool shouldUseModernCompatibilityMode { false };
+    bool enableAppNap { false };
 
     double contentInsetTop { 0 };
 
@@ -144,7 +145,8 @@ struct TestOptions {
             || shouldHandleRunOpenPanel != options.shouldHandleRunOpenPanel
             || shouldPresentPopovers != options.shouldPresentPopovers
             || contentInsetTop != options.contentInsetTop
-            || shouldUseModernCompatibilityMode != options.shouldUseModernCompatibilityMode)
+            || shouldUseModernCompatibilityMode != options.shouldUseModernCompatibilityMode
+            || enableAppNap != options.enableAppNap)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

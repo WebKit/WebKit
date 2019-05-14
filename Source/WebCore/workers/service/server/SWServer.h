@@ -87,7 +87,10 @@ public:
         virtual void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, const ServiceWorkerData& newController) = 0;
         virtual void registrationReady(uint64_t registrationReadyRequestIdentifier, ServiceWorkerRegistrationData&&) = 0;
 
+        virtual void serverToContextConnectionCreated(SWServerToContextConnection&) = 0;
+
         SWServer& server() { return m_server; }
+        const SWServer& server() const { return m_server; }
 
     protected:
         WEBCORE_EXPORT explicit Connection(SWServer&);
@@ -152,6 +155,8 @@ public:
     WEBCORE_EXPORT void addConnection(std::unique_ptr<Connection>&&);
     WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
     Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
+
+    const HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>>& connections() const { return m_connections; }
 
     SWOriginStore& originStore() { return m_originStore; }
 

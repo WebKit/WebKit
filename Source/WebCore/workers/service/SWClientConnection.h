@@ -85,6 +85,9 @@ public:
 
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
 
+    virtual bool isThrottleable() const = 0;
+    virtual void updateThrottleState() = 0;
+
 protected:
     WEBCORE_EXPORT SWClientConnection();
 

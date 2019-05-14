@@ -51,6 +51,7 @@
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
+#include <wtf/Algorithms.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {
@@ -278,6 +279,9 @@ void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& top
     auto clientOrigin = ClientOrigin { WTFMove(topOrigin), SecurityOriginData::fromURL(data.url) };
     m_clientOrigins.add(data.identifier, clientOrigin);
     server().registerServiceWorkerClient(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier, WTFMove(userAgent));
+
+    if (!m_isThrottleable)
+        updateThrottleState();
 }
 
 void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerClientIdentifier& clientIdentifier)
@@ -288,6 +292,56 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerCli
 
     server().unregisterServiceWorkerClient(iterator->value, clientIdentifier);
     m_clientOrigins.remove(iterator);
+
+    if (!m_isThrottleable)
+        updateThrottleState();
+}
+
+bool WebSWServerConnection::hasMatchingClient(const RegistrableDomain& domain) const
+{
+    return WTF::anyOf(m_clientOrigins.values(), [&domain](auto& origin) {
+        return domain.matches(origin.clientOrigin);
+    });
+}
+
+bool WebSWServerConnection::computeThrottleState(const RegistrableDomain& domain) const
+{
+    return WTF::allOf(server().connections().values(), [&domain](auto& serverConnection) {
+        auto& connection = static_cast<WebSWServerConnection&>(*serverConnection);
+        return connection.isThrottleable() || !connection.hasMatchingClient(domain);
+    });
+}
+
+void WebSWServerConnection::setThrottleState(bool isThrottleable)
+{
+    m_isThrottleable = isThrottleable;
+    updateThrottleState();
+}
+
+void WebSWServerConnection::updateThrottleState()
+{
+    HashSet<SecurityOriginData> origins;
+    for (auto& origin : m_clientOrigins.values())
+        origins.add(origin.clientOrigin);
+
+    for (auto& origin : origins) {
+        if (auto* contextConnection = SWServerToContextConnection::connectionForRegistrableDomain(RegistrableDomain { origin })) {
+            auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
+
+            if (connection.isThrottleable() == m_isThrottleable)
+                continue;
+            bool newThrottleState = computeThrottleState(connection.registrableDomain());
+            if (connection.isThrottleable() == newThrottleState)
+                continue;
+            connection.setThrottleState(newThrottleState);
+        }
+    }
+}
+
+void WebSWServerConnection::serverToContextConnectionCreated(WebCore::SWServerToContextConnection& contextConnection)
+{
+    auto& connection =  static_cast<WebSWServerToContextConnection&>(contextConnection);
+    connection.setThrottleState(computeThrottleState(connection.registrableDomain()));
 }
 
 void WebSWServerConnection::syncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier&& identifier, CompletionHandler<void()>&& completionHandler)

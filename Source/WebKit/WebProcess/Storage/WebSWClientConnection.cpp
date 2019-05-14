@@ -60,6 +60,7 @@ WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, Sessio
     bool result = sendSync(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection(sessionID), Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection::Reply(m_identifier));
 
     ASSERT_UNUSED(result, result);
+    updateThrottleState();
 }
 
 WebSWClientConnection::~WebSWClientConnection()
@@ -229,6 +230,12 @@ void WebSWClientConnection::connectionToServerLost()
 void WebSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
 {
     sendSync(Messages::WebSWServerConnection::SyncTerminateWorkerFromClient(identifier), Messages::WebSWServerConnection::SyncTerminateWorkerFromClient::Reply());
+}
+
+void WebSWClientConnection::updateThrottleState()
+{
+    m_isThrottleable = WebProcess::singleton().areAllPagesThrottleable();
+    send(Messages::WebSWServerConnection::SetThrottleState { m_isThrottleable });
 }
 
 } // namespace WebKit

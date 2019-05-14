@@ -1,0 +1,63 @@
+<!doctype html><!-- webkit-test-runner [ enableAppNap=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "/WebKit/service-workers/mac/throttleable.https.html";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope === scope)
+        await registration.unregister();
+
+    var registration = await navigator.serviceWorker.register("throttleable-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+    });
+
+    activeWorker.postMessage("checkThrottleable");
+
+    assert_false(await promise);
+}, "Service worker should not be throttleable");
+
+promise_test(async (test) => {
+    if (window.testRunner) {
+        testRunner.setWindowIsKey(false);
+        testRunner.setPageVisibility("hidden");
+    }
+
+    let throttleable = false;
+    for (let cptr = 0; cptr < 1000 && !throttleable; ++cptr) {
+        throttleable = await new Promise((resolve, reject) => {
+            navigator.serviceWorker.addEventListener("message", (event) => {
+                resolve(event.data);
+            });
+            activeWorker.postMessage("checkThrottleable");
+        });
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert_true(throttleable);
+}, "Service worker should be throttleable");
+
+</script>
+</body>
+</html>

@@ -71,6 +71,9 @@ public:
 
     void didReceiveFetchTaskMessage(IPC::Connection&, IPC::Decoder&);
 
+    void setThrottleState(bool isThrottleable);
+    bool isThrottleable() const { return m_isThrottleable; }
+
 private:
     WebSWServerToContextConnection(NetworkProcess&, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
     ~WebSWServerToContextConnection();
@@ -97,6 +100,7 @@ private:
     
     HashMap<ServiceWorkerFetchTask::Identifier, WebCore::FetchIdentifier> m_ongoingFetchIdentifiers;
     HashMap<WebCore::FetchIdentifier, Ref<ServiceWorkerFetchTask>> m_ongoingFetches;
+    bool m_isThrottleable { true };
 }; // class WebSWServerToContextConnection
 
 } // namespace WebKit

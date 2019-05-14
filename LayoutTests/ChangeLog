@@ -1,3 +1,16 @@
+2019-05-14  Youenn Fablet  <youenn@apple.com>
+
+        A service worker process should app nap when all its clients app nap
+        https://bugs.webkit.org/show_bug.cgi?id=185626
+        <rdar://problem/46785908>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/service-workers/mac/throttleable-worker.js: Added.
+        * http/wpt/service-workers/mac/throttleable.https-expected.txt: Added.
+        * http/wpt/service-workers/mac/throttleable.https.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2019-05-14  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Update grid when changing auto repeat type

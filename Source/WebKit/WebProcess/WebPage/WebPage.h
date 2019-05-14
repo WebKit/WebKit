@@ -1191,6 +1191,7 @@ public:
 
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
     void scheduleFullEditorStateUpdate();
+    bool isThrottleable() const;
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);

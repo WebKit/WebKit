@@ -213,6 +213,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/SWClientConnection.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -765,17 +766,29 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
 void WebPage::updateThrottleState()
 {
-    bool isActive = m_activityState.containsAny({ ActivityState::IsLoading, ActivityState::IsAudible, ActivityState::IsCapturingMedia, ActivityState::WindowIsActive });
-    bool isVisuallyIdle = m_activityState.contains(ActivityState::IsVisuallyIdle);
-
-    bool shouldAllowAppNap = m_isAppNapEnabled && !isActive && isVisuallyIdle;
+    bool isThrottleable = this->isThrottleable();
 
     // The UserActivity prevents App Nap. So if we want to allow App Nap of the page, stop the activity.
     // If the page should not be app nap'd, start it.
-    if (shouldAllowAppNap)
+    if (isThrottleable)
         m_userActivity.stop();
     else
         m_userActivity.start();
+
+#if ENABLE(SERVICE_WORKER)
+    if (auto* connection = ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(sessionID())) {
+        if (isThrottleable != connection->isThrottleable())
+            connection->updateThrottleState();
+    }
+#endif
+}
+
+bool WebPage::isThrottleable() const
+{
+    bool isActive = m_activityState.containsAny({ ActivityState::IsLoading, ActivityState::IsAudible, ActivityState::IsCapturingMedia, ActivityState::WindowIsActive });
+    bool isVisuallyIdle = m_activityState.contains(ActivityState::IsVisuallyIdle);
+
+    return m_isAppNapEnabled && !isActive && isVisuallyIdle;
 }
 
 WebPage::~WebPage()

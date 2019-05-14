@@ -51,6 +51,8 @@ public:
 
     String processName() const;
 
+    bool isThrottleable() const;
+
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 

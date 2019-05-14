@@ -784,7 +784,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
 
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions.shouldEnableProcessSwapOnNavigation());
-    WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, false);
+    WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, options.enableAppNap);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(preferences, false);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
@@ -1397,6 +1397,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.contextOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
         else if (key == "shouldUseModernCompatibilityMode")
             testOptions.shouldUseModernCompatibilityMode = parseBooleanTestHeaderValue(value);
+        else if (key == "enableAppNap")
+            testOptions.enableAppNap = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

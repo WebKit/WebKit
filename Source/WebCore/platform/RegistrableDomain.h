@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PublicSuffix.h"
+#include "SecurityOriginData.h"
 #include <wtf/HashTraits.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
@@ -36,18 +37,15 @@ class RegistrableDomain {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RegistrableDomain() = default;
+
     explicit RegistrableDomain(const URL& url)
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-        : m_registrableDomain { topPrivatelyControlledDomain(url.host().toString()) }
-#else
-        : m_registrableDomain { url.host().toString() }
-#endif
+        : RegistrableDomain(registrableDomainFromHost(url.host().toString()))
     {
-        auto hostString = url.host().toString();
-        if (hostString.isEmpty())
-            m_registrableDomain = "nullOrigin"_s;
-        else if (m_registrableDomain.isEmpty())
-            m_registrableDomain = hostString;
+    }
+
+    explicit RegistrableDomain(const SecurityOriginData& origin)
+        : RegistrableDomain(registrableDomainFromHost(origin.host))
+    {
     }
 
     bool isEmpty() const { return m_registrableDomain.isEmpty() || m_registrableDomain == "nullOrigin"_s; }
@@ -58,14 +56,12 @@ public:
 
     bool matches(const URL& url) const
     {
-        auto host = url.host();
-        if (host.isEmpty() && m_registrableDomain == "nullOrigin"_s)
-            return true;
-        if (!host.endsWith(m_registrableDomain))
-            return false;
-        if (host.length() == m_registrableDomain.length())
-            return true;
-        return host[host.length() - m_registrableDomain.length() - 1] == '.';
+        return matches(url.host());
+    }
+
+    bool matches(const SecurityOriginData& origin) const
+    {
+        return matches(origin.host);
     }
 
     RegistrableDomain isolatedCopy() const { return RegistrableDomain { m_registrableDomain.isolatedCopy() }; }
@@ -107,6 +103,31 @@ private:
     explicit RegistrableDomain(const String& domain)
         : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : domain }
     {
+    }
+
+    bool matches(StringView host) const
+    {
+        if (host.isEmpty() && m_registrableDomain == "nullOrigin"_s)
+            return true;
+        if (!host.endsWith(m_registrableDomain))
+            return false;
+        if (host.length() == m_registrableDomain.length())
+            return true;
+        return host[host.length() - m_registrableDomain.length() - 1] == '.';
+    }
+
+    static inline String registrableDomainFromHost(const String& host)
+    {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+        auto domain = topPrivatelyControlledDomain(host);
+#else
+        auto domain = host;
+#endif
+        if (host.isEmpty())
+            domain = "nullOrigin"_s;
+        else if (domain.isEmpty())
+            domain = host;
+        return domain;
     }
 
     String m_registrableDomain;

@@ -73,6 +73,7 @@ private:
     void claim(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
     void skipWaiting(WebCore::ServiceWorkerIdentifier, Function<void()>&&) final;
     void setScriptResource(WebCore::ServiceWorkerIdentifier, const URL&, const WebCore::ServiceWorkerContextData::ImportedScript&) final;
+    bool isThrottleable() const final;
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(Optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
@@ -91,6 +92,7 @@ private:
     void didFinishSkipWaiting(uint64_t callbackID);
     void setUserAgent(String&& userAgent);
     NO_RETURN void terminateProcess();
+    void setThrottleState(bool isThrottleable);
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;
     uint64_t m_pageGroupID;
@@ -106,6 +108,7 @@ private:
     HashMap<uint64_t, WTF::Function<void()>> m_skipWaitingRequests;
     uint64_t m_previousRequestIdentifier { 0 };
     String m_userAgent;
+    bool m_isThrottleable { true };
 };
 
 } // namespace WebKit

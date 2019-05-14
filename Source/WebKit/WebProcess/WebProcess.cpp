@@ -117,6 +117,7 @@
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <wtf/Algorithms.h>
 #include <wtf/Language.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
@@ -1906,5 +1907,12 @@ void WebProcess::unblockAccessibilityServer(const SandboxExtension::Handle& hand
     ASSERT_UNUSED(ok, ok);
 }
 #endif
+
+bool WebProcess::areAllPagesThrottleable() const
+{
+    return WTF::allOf(m_pageMap.values(), [](auto& page) {
+        return page->isThrottleable();
+    });
+}
 
 } // namespace WebKit

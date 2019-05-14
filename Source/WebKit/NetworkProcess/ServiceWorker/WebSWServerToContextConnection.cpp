@@ -115,6 +115,12 @@ void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
     m_networkProcess->swContextConnectionMayNoLongerBeNeeded(*this);
 }
 
+void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)
+{
+    m_isThrottleable = isThrottleable;
+    send(Messages::WebSWContextManagerConnection::SetThrottleState { isThrottleable });
+}
+
 void WebSWServerToContextConnection::terminate()
 {
     send(Messages::WebSWContextManagerConnection::TerminateProcess());

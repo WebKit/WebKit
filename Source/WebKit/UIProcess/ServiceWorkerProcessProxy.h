@@ -54,9 +54,6 @@ private:
     // AuxiliaryProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) final;
 
-    // ProcessLauncher::Client
-    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) final;
-
     bool isServiceWorkerProcess() const final { return true; }
 
     ServiceWorkerProcessProxy(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&);

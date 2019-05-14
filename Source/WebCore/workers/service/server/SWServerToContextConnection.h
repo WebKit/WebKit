@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType);
 
-    static SWServerToContextConnection* connectionForRegistrableDomain(const RegistrableDomain&);
+    WEBCORE_EXPORT static SWServerToContextConnection* connectionForRegistrableDomain(const RegistrableDomain&);
 
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 

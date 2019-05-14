@@ -39,6 +39,7 @@ messages -> WebSWContextManagerConnection {
     SetUserAgent(String userAgent)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     TerminateProcess()
+    SetThrottleState(bool isThrottleable)
 }
 
 #endif

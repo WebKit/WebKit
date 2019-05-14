@@ -96,6 +96,12 @@ String ServiceWorkerInternals::processName() const
 }
 #endif
 
+bool ServiceWorkerInternals::isThrottleable() const
+{
+    auto* connection = SWContextManager::singleton().connection();
+    return connection ? connection->isThrottleable() : true;
+}
+
 } // namespace WebCore
 
 #endif

@@ -367,6 +367,8 @@ http/tests/security/video-cross-origin-readback.html
 http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
+http/wpt/service-workers/mac/ [ Skip ]
+
 # HTTP tests that are flaky:
 http/tests/navigation/forward-and-cancel.html [ Failure Pass ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure Pass ]

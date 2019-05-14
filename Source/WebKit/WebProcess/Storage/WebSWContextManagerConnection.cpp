@@ -364,6 +364,18 @@ void WebSWContextManagerConnection::terminateProcess()
     _exit(EXIT_SUCCESS);
 }
 
+void WebSWContextManagerConnection::setThrottleState(bool isThrottleable)
+{
+    RELEASE_LOG(ServiceWorker, "Service worker throttleable state is set to %d", isThrottleable);
+    m_isThrottleable = isThrottleable;
+    WebProcess::singleton().setProcessSuppressionEnabled(isThrottleable);
+}
+
+bool WebSWContextManagerConnection::isThrottleable() const
+{
+    return m_isThrottleable;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

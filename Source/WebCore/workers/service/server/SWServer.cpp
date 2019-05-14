@@ -544,6 +544,9 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
 
 void SWServer::serverToContextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
+    for (auto& connection : m_connections.values())
+        connection->serverToContextConnectionCreated(contextConnection);
+
     auto pendingContextDatas = m_pendingContextDatas.take(contextConnection.registrableDomain());
     for (auto& data : pendingContextDatas)
         installContextData(data);

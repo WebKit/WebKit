@@ -44,6 +44,8 @@ messages -> WebSWServerConnection {
     UnregisterServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier identifier)
 
     SyncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Synchronous
+
+    SetThrottleState(bool isThrottleable)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

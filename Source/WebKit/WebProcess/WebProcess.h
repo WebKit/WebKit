@@ -269,6 +269,8 @@ public:
     void setMediaMIMETypes(const Vector<String>);
 #endif
 
+    bool areAllPagesThrottleable() const;
+
 private:
     WebProcess();
     ~WebProcess();

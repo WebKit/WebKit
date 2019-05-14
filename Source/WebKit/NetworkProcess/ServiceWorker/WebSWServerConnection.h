@@ -94,6 +94,14 @@ private:
     void unregisterServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier&);
     void syncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier&&, CompletionHandler<void()>&&);
 
+    void serverToContextConnectionCreated(WebCore::SWServerToContextConnection&) final;
+
+    bool isThrottleable() const { return m_isThrottleable; }
+    bool hasMatchingClient(const WebCore::RegistrableDomain&) const;
+    bool computeThrottleState(const WebCore::RegistrableDomain&) const;
+    void setThrottleState(bool isThrottleable);
+    void updateThrottleState();
+
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() const final { return identifier().toUInt64(); }
     
@@ -103,6 +111,7 @@ private:
     Ref<IPC::Connection> m_contentConnection;
     Ref<NetworkProcess> m_networkProcess;
     HashMap<WebCore::ServiceWorkerClientIdentifier, WebCore::ClientOrigin> m_clientOrigins;
+    bool m_isThrottleable { true };
 };
 
 } // namespace WebKit
