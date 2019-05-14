@@ -1,3 +1,24 @@
+2019-05-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Use max size to compute auto repeat tracks
+        https://bugs.webkit.org/show_bug.cgi?id=197854
+
+        Reviewed by Javier Fernandez.
+
+        Imported WPT tests for this bug.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-max-size-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-max-size-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+
 2019-05-14  Joonghun Park  <jh718.park@samsung.com>
 
         Implement page-break-* and -webkit-column-break-* as legacy-shorthands.

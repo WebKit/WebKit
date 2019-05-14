@@ -456,24 +456,33 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
     if (!autoRepeatTrackListLength)
         return 0;
 
-    if (!isRowAxis && !availableSize) {
-        const Length& maxLength = style().logicalMaxHeight();
-        if (!maxLength.isUndefined()) {
-            availableSize = computeContentLogicalHeight(MaxSize, maxLength, WTF::nullopt);
-            if (availableSize)
-                availableSize = constrainContentBoxLogicalHeightByMinMax(availableSize.value(), WTF::nullopt);
-        }
-    }
-
     bool needsToFulfillMinimumSize = false;
     if (!availableSize) {
+        const Length& maxSize = isRowAxis ? style().logicalMaxWidth() : style().logicalMaxHeight();
+        Optional<LayoutUnit> containingBlockAvailableSize;
+        Optional<LayoutUnit> availableMaxSize;
+        if (maxSize.isSpecified()) {
+            if (maxSize.isPercentOrCalculated())
+                containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+            LayoutUnit maxSizeValue = valueForLength(maxSize, containingBlockAvailableSize.valueOr(LayoutUnit()));
+            availableMaxSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(maxSizeValue) : adjustContentBoxLogicalHeightForBoxSizing(maxSizeValue);
+        }
+
         const Length& minSize = isRowAxis ? style().logicalMinWidth() : style().logicalMinHeight();
-        if (!minSize.isSpecified())
+        if (!availableMaxSize && !minSize.isSpecified())
             return autoRepeatTrackListLength;
 
-        LayoutUnit containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
-        availableSize = valueForLength(minSize, containingBlockAvailableSize);
-        needsToFulfillMinimumSize = true;
+        Optional<LayoutUnit> availableMinSize;
+        if (minSize.isSpecified()) {
+            if (!containingBlockAvailableSize && minSize.isPercentOrCalculated())
+                containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+            LayoutUnit minSizeValue = valueForLength(minSize, containingBlockAvailableSize.valueOr(LayoutUnit()));
+            availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
+            if (!maxSize.isSpecified())
+                needsToFulfillMinimumSize = true;
+        }
+
+        availableSize = std::max(availableMinSize.valueOr(LayoutUnit()), availableMaxSize.valueOr(LayoutUnit()));
     }
 
     LayoutUnit autoRepeatTracksSize;
