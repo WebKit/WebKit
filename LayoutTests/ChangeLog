@@ -1,3 +1,17 @@
+2019-05-14  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] The pointerenter and pointerleave events target the wrong element on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197881
+        <rdar://problem/50187657>
+
+        Reviewed by Dean Jackson.
+
+        Add a test where we tap an element that is the child of another element where the parent is the element with the "pointerenter"
+        and "pointerleave" events registered. The test shows that we correctly set the target to the parent element and not the child.
+
+        * pointerevents/ios/enter-leave-target-expected.txt: Added.
+        * pointerevents/ios/enter-leave-target.html: Added.
+
 2019-05-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cannot scroll to beginning of document after scrolling to end of document and vice versa via key commands

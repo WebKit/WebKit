@@ -164,6 +164,26 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         target.dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view));
     };
 
+    auto dispatchEnterOrLeaveEvent = [&](const String& type) {
+        if (!is<Element>(&target))
+            return;
+
+        auto* targetElement = &downcast<Element>(target);
+
+        bool hasCapturingListenerInHierarchy = false;
+        for (ContainerNode* curr = targetElement; curr; curr = curr->parentInComposedTree()) {
+            if (curr->hasCapturingEventListeners(type)) {
+                hasCapturingListenerInHierarchy = true;
+                break;
+            }
+        }
+
+        for (Element* element = &downcast<Element>(target); element; element = element->parentElementInComposedTree()) {
+            if (hasCapturingListenerInHierarchy || element->hasEventListeners(type))
+                element->dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view));
+        }
+    };
+
     auto pointerEvent = PointerEvent::create(platformTouchEvent, index, isPrimary, view);
 
     if (pointerEvent->type() == eventNames().pointerdownEvent) {
@@ -171,7 +191,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerover followed by a pointer event named
         // pointerenter prior to dispatching the pointerdown event.
         dispatchEvent(eventNames().pointeroverEvent);
-        dispatchEvent(eventNames().pointerenterEvent);
+        dispatchEnterOrLeaveEvent(eventNames().pointerenterEvent);
     }
 
     pointerEventWillBeDispatched(pointerEvent, &target);
@@ -183,7 +203,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerout followed by a
         // pointer event named pointerleave after dispatching the pointerup event.
         dispatchEvent(eventNames().pointeroutEvent);
-        dispatchEvent(eventNames().pointerleaveEvent);
+        dispatchEnterOrLeaveEvent(eventNames().pointerleaveEvent);
     }
 }
 #endif
