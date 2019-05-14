@@ -35,7 +35,7 @@
 @class WKProcessGroup;
 @class WKViewData;
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, 10.14.4), ios(8.0, 12.2))
 @interface WKView : NSView <NSTextInputClient> {
 @private
     WKViewData *_data;

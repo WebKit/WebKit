@@ -36,7 +36,7 @@
 
 @end
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("_WKRemoteObjectRegistry", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("_WKRemoteObjectRegistry", macos(10.10, 10.14.4), ios(8.0, 12.2))
 @interface WKConnection : NSObject
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
