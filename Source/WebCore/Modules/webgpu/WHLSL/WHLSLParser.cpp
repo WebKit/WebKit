@@ -1810,7 +1810,7 @@ auto Parser::parseEffectfulPrefix() -> Expected<UniqueRef<AST::Expression>, Erro
 {
     auto prefix = consumeTypes({ Lexer::Token::Type::PlusPlus, Lexer::Token::Type::MinusMinus });
     if (!prefix)
-        return Unexpected<Error>(prefix.error());
+        return parseEffectfulSuffix();
 
     auto previous = parsePossiblePrefix();
     if (!previous)
