@@ -1,3 +1,59 @@
+2019-05-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r245238. rdar://problem/49382250
+
+    [macOS] Font formatting options don't work when composing a message in Yahoo mail
+    https://bugs.webkit.org/show_bug.cgi?id=197813
+    <rdar://problem/49382250>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    The bug happens because on mousedown, the "Aa Font" menu item's event handler hides itself before changing the
+    font at the text selection. This causes us to clear the selection in FocusController::setFocusedElement.
+    
+    There is existing logic in clearSelectionIfNeeded that would normally prevent us from clearing the selection due
+    to the mousePressNode not being able to start a selection. However, since the clickable element in this case is
+    hidden during mousedown, it is missing a renderer, and we bail from the `mousePressNode->renderer() &&
+    !mousePressNode->canStartSelection()` check as a result.
+    
+    This check was orginally added in https://trac.webkit.org/r24334 to avoid clearing the selection when clicking
+    a button; the intention appears to have been making it so that clicking on something that could not start a
+    selection (back then, synonymous with -webkit-user-select: ignore;) would not clear the current selection; to
+    this end, it seems odd to additionally require that the thing being clicked should still have a renderer, so
+    it seems safe to remove this requirement.
+    
+    Test: editing/selection/preserve-selection-when-clicking-button.html
+    
+    * page/FocusController.cpp:
+    (WebCore::clearSelectionIfNeeded):
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that DOM selection is preserved after clicking a button that hides itself
+    upon mousedown.
+    
+    * editing/selection/preserve-selection-when-clicking-button-expected.txt: Added.
+    * editing/selection/preserve-selection-when-clicking-button.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245238 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macOS] Font formatting options don't work when composing a message in Yahoo mail
+            https://bugs.webkit.org/show_bug.cgi?id=197813
+            <rdar://problem/49382250>
+
+            Reviewed by Darin Adler.
+
+            Add a new layout test to verify that DOM selection is preserved after clicking a button that hides itself
+            upon mousedown.
+
+            * editing/selection/preserve-selection-when-clicking-button-expected.txt: Added.
+            * editing/selection/preserve-selection-when-clicking-button.html: Added.
+
 2019-05-12  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r245191. rdar://problem/48027412
