@@ -1,3 +1,10 @@
+2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix some deprecation warnings when using a recent SDK
+
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsPicker initWithInformation:inView:]):
+
 2019-05-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] InvalidStateError should be reported to sites
