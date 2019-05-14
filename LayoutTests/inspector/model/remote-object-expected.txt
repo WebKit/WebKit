@@ -1464,10 +1464,10 @@ EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Fo
 {
   "_type": "object",
   "_objectId": "<filtered>",
-  "_description": "Foo3",
+  "_description": "Object",
   "_preview": {
     "_type": "object",
-    "_description": "Foo3",
+    "_description": "Object",
     "_lossless": false,
     "_overflow": false,
     "_properties": [],

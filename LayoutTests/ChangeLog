@@ -1,3 +1,12 @@
+2019-05-14  Truitt Savell  <tsavell@apple.com>
+
+        Rebaseline inspector/model/remote-object.html after r245288
+        https://bugs.webkit.org/show_bug.cgi?id=197833
+
+        Unreviewed test gardening.
+
+        * inspector/model/remote-object-expected.txt:
+
 2019-05-14  Zalan Bujtas  <zalan@apple.com>
 
         Do not try to issue repaint while the render tree is being destroyed.
