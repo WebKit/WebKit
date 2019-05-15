@@ -1908,7 +1908,7 @@ private:
 
     Ref<CSSFontSelector> m_fontSelector;
 
-    HashSet<MediaProducer*> m_audioProducers;
+    HashMap<MediaProducer*, WeakPtr<MediaProducer>> m_audioProducers;
 
     HashSet<ShadowRoot*> m_inDocumentShadowRoots;
 

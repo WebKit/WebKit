@@ -126,11 +126,10 @@ class HTMLMediaElement
     : public HTMLElement
     , public ActiveDOMObject
     , public MediaControllerInterface
-    , public CanMakeWeakPtr<HTMLMediaElement>
     , public PlatformMediaSessionClient
     , private MediaCanStartListener
     , private MediaPlayerClient
-    , private MediaProducer
+    , public MediaProducer
     , private VisibilityChangeClient
     , private ApplicationStateChangeListener
 #if ENABLE(VIDEO_TRACK)
