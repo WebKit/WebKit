@@ -1,3 +1,20 @@
+2019-05-15  Saam Barati  <sbarati@apple.com>
+
+        Bound liveness of SetArgumentMaybe nodes when maximal flush insertion phase is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=197855
+        <rdar://problem/50236506>
+
+        Reviewed by Michael Saboff.
+
+        * stress/set-argument-maybe-maximal-flush-should-not-extend-liveness-2.js: Added.
+        (f0):
+        (bar):
+        (foo):
+        * stress/set-argument-maybe-maximal-flush-should-not-extend-liveness.js: Added.
+        (f1):
+        (f2):
+        (foo):
+
 2019-05-14  Keith Miller  <keith_miller@apple.com>
 
         Fix issue with byteOffset on ARM64E

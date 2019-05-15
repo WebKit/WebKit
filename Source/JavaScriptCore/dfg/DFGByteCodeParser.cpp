@@ -1863,6 +1863,8 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
     registerOffset -= maxNumArguments; // includes "this"
     registerOffset -= CallFrame::headerSizeInRegisters;
     registerOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -registerOffset);
+
+    Vector<VirtualRegister> setArgumentMaybes;
     
     auto insertChecks = [&] (CodeBlock* codeBlock) {
         emitFunctionChecks(callVariant, callTargetNode, thisArgument);
@@ -1928,6 +1930,8 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
             }
             
             Node* setArgument = addToGraph(numSetArguments >= mandatoryMinimum ? SetArgumentMaybe : SetArgumentDefinitely, OpInfo(variable));
+            if (numSetArguments >= mandatoryMinimum && Options::useMaximalFlushInsertionPhase())
+                setArgumentMaybes.append(variable->local());
             m_currentBlock->variablesAtTail.setOperand(variable->local(), setArgument);
             ++numSetArguments;
         }
@@ -1941,6 +1945,9 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
     // exit to: LoadVarargs is effectful and it's part of the op_call_varargs, so we can't exit without
     // calling LoadVarargs twice.
     inlineCall(callTargetNode, result, callVariant, registerOffset, maxNumArguments, kind, nullptr, insertChecks);
+
+    for (VirtualRegister reg : setArgumentMaybes)
+        setDirect(reg, jsConstant(jsUndefined()), ImmediateNakedSet);
 
     VERBOSE_LOG("Successful inlining (varargs, monomorphic).\nStack: ", currentCodeOrigin(), "\n");
     return true;
