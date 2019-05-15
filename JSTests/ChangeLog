@@ -1,5 +1,41 @@
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r244314. rdar://problem/50753930
+
+    SafeToExecute for GetByOffset/GetGetterByOffset/PutByOffset is using the wrong child for the base
+    https://bugs.webkit.org/show_bug.cgi?id=196945
+    <rdar://problem/49802750>
+    
+    Reviewed by Filip Pizlo.
+    
+    JSTests:
+    
+    * stress/get-by-offset-should-use-correct-child.js: Added.
+    (foo.bar):
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    * dfg/DFGSafeToExecute.h:
+    (JSC::DFG::safeToExecute):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244314 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-15  Saam barati  <sbarati@apple.com>
+
+            SafeToExecute for GetByOffset/GetGetterByOffset/PutByOffset is using the wrong child for the base
+            https://bugs.webkit.org/show_bug.cgi?id=196945
+            <rdar://problem/49802750>
+
+            Reviewed by Filip Pizlo.
+
+            * stress/get-by-offset-should-use-correct-child.js: Added.
+            (foo.bar):
+            (foo):
+
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r243948. rdar://problem/50753934
 
     SIGSEGV in JSC::BytecodeGenerator::addStringConstant
