@@ -1,5 +1,4 @@
-abs
-abs
+absabs
 
 (Frame scrolling node
   (scrollable area size 800 600)
@@ -17,7 +16,7 @@ abs
   (children 1
     (Overflow scrolling node
       (scrollable area size 285 285)
-      (contents size 285 530)
+      (contents size 285 500)
       (parent relative scrollable rect at (30,22) size 285x285)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)

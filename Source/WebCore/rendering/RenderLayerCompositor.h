@@ -369,7 +369,6 @@ public:
 private:
     class OverlapMap;
     struct CompositingState;
-    struct BackingSharingState;
     struct OverlapExtent;
 
     // Returns true if the policy changed.
@@ -411,8 +410,8 @@ private:
 
     void updateCompositingLayersTimerFired();
 
-    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
-    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, bool& descendantHas3DTransform);
+    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, bool& descendantHas3DTransform);
 
     enum class UpdateLevel {
         AllDescendants          = 1 << 0,
@@ -477,7 +476,7 @@ private:
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForEditableImage(RenderLayerModelObject&) const;
-    bool requiresCompositingForIndirectReason(const RenderLayer&, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, RenderLayer::IndirectCompositingReason&) const;
+    bool requiresCompositingForIndirectReason(RenderLayerModelObject&, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
     static bool layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer&, const RenderLayer& compositedAncestor);
 
