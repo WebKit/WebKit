@@ -39,9 +39,9 @@ Interpolate = properties.Interpolate
 
 
 class ConfigureBuild(buildstep.BuildStep):
-    name = "configure-build"
-    description = ["configuring build"]
-    descriptionDone = ["Configured build"]
+    name = 'configure-build'
+    description = ['configuring build']
+    descriptionDone = ['Configured build']
 
     def __init__(self, platform, configuration, architectures, buildOnly, triggers, additionalArguments):
         super(ConfigureBuild, self).__init__()
@@ -50,7 +50,7 @@ class ConfigureBuild(buildstep.BuildStep):
             self.platform = platform.split('-', 1)[0]
         self.fullPlatform = platform
         self.configuration = configuration
-        self.architecture = " ".join(architectures) if architectures else None
+        self.architecture = ' '.join(architectures) if architectures else None
         self.buildOnly = buildOnly
         self.triggers = triggers
         self.additionalArguments = additionalArguments
@@ -65,11 +65,11 @@ class ConfigureBuild(buildstep.BuildStep):
         if self.architecture:
             self.setProperty('architecture', self.architecture, 'config.json')
         if self.buildOnly:
-            self.setProperty("buildOnly", self.buildOnly, 'config.json')
+            self.setProperty('buildOnly', self.buildOnly, 'config.json')
         if self.triggers:
             self.setProperty('triggers', self.triggers, 'config.json')
         if self.additionalArguments:
-            self.setProperty("additionalArguments", self.additionalArguments, 'config.json')
+            self.setProperty('additionalArguments', self.additionalArguments, 'config.json')
 
         self.add_patch_id_url()
         self.finished(SUCCESS)
@@ -153,34 +153,34 @@ class CheckPatchRelevance(buildstep.BuildStep):
     haltOnFailure = True
 
     bindings_paths = [
-        "Source/WebCore",
-        "Tools",
+        'Source/WebCore',
+        'Tools',
     ]
 
     jsc_paths = [
-        "JSTests/",
-        "Source/JavaScriptCore/",
-        "Source/WTF/",
-        "Source/bmalloc/",
-        "Makefile",
-        "Makefile.shared",
-        "Source/Makefile",
-        "Source/Makefile.shared",
-        "Tools/Scripts/build-webkit",
-        "Tools/Scripts/build-jsc",
-        "Tools/Scripts/jsc-stress-test-helpers/",
-        "Tools/Scripts/run-jsc",
-        "Tools/Scripts/run-jsc-benchmarks",
-        "Tools/Scripts/run-jsc-stress-tests",
-        "Tools/Scripts/run-javascriptcore-tests",
-        "Tools/Scripts/run-layout-jsc",
-        "Tools/Scripts/update-javascriptcore-test-results",
-        "Tools/Scripts/webkitdirs.pm",
+        'JSTests/',
+        'Source/JavaScriptCore/',
+        'Source/WTF/',
+        'Source/bmalloc/',
+        'Makefile',
+        'Makefile.shared',
+        'Source/Makefile',
+        'Source/Makefile.shared',
+        'Tools/Scripts/build-webkit',
+        'Tools/Scripts/build-jsc',
+        'Tools/Scripts/jsc-stress-test-helpers/',
+        'Tools/Scripts/run-jsc',
+        'Tools/Scripts/run-jsc-benchmarks',
+        'Tools/Scripts/run-jsc-stress-tests',
+        'Tools/Scripts/run-javascriptcore-tests',
+        'Tools/Scripts/run-layout-jsc',
+        'Tools/Scripts/update-javascriptcore-test-results',
+        'Tools/Scripts/webkitdirs.pm',
     ]
 
     webkitpy_paths = [
-        "Tools/Scripts/webkitpy/",
-        "Tools/QueueStatusServer/",
+        'Tools/Scripts/webkitpy/',
+        'Tools/QueueStatusServer/',
     ]
 
     group_to_paths_mapping = {
@@ -242,8 +242,8 @@ class ValidatePatch(buildstep.BuildStep):
     descriptionDone = ['Validated patch']
     flunkOnFailure = True
     haltOnFailure = True
-    bug_open_statuses = ["UNCONFIRMED", "NEW", "ASSIGNED", "REOPENED"]
-    bug_closed_statuses = ["RESOLVED", "VERIFIED", "CLOSED"]
+    bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
+    bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -404,7 +404,7 @@ class Trigger(trigger.Trigger):
 
 
 class TestWithFailureCount(shell.Test):
-    failedTestsFormatString = "%d test%s failed"
+    failedTestsFormatString = '%d test%s failed'
     failedTestCount = 0
 
     def start(self):
@@ -418,7 +418,7 @@ class TestWithFailureCount(shell.Test):
     def commandComplete(self, cmd):
         shell.Test.commandComplete(self, cmd)
         self.failedTestCount = self.countFailures(cmd)
-        self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
+        self.failedTestPluralSuffix = '' if self.failedTestCount == 1 else 's'
 
     def evaluateCommand(self, cmd):
         if self.failedTestCount:
@@ -579,13 +579,13 @@ def appendCustomBuildFlags(step, platform, fullPlatform):
 
 
 class CompileWebKit(shell.Compile):
-    name = "compile-webkit"
-    description = ["compiling"]
-    descriptionDone = ["Compiled WebKit"]
+    name = 'compile-webkit'
+    description = ['compiling']
+    descriptionDone = ['Compiled WebKit']
     env = {'MFLAGS': ''}
-    warningPattern = ".*arning: .*"
+    warningPattern = '.*arning: .*'
     haltOnFailure = False
-    command = ["perl", "Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
+    command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
 
     def start(self):
         platform = self.getProperty('platform')
@@ -635,9 +635,9 @@ class CompileWebKitToT(CompileWebKit):
 
 
 class CompileJSCOnly(CompileWebKit):
-    name = "build-jsc"
-    descriptionDone = ["Compiled JSC"]
-    command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
+    name = 'build-jsc'
+    descriptionDone = ['Compiled JSC']
+    command = ['perl', 'Tools/Scripts/build-jsc', WithProperties('--%(configuration)s')]
 
 
 class CompileJSCOnlyToT(CompileJSCOnly):
@@ -656,7 +656,7 @@ class RunJavaScriptCoreTests(shell.Test):
     descriptionDone = ['jscore-tests']
     flunkOnFailure = True
     jsonFileName = 'jsc_results.json'
-    logfiles = {"json": jsonFileName}
+    logfiles = {'json': jsonFileName}
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
 
     def start(self):
@@ -697,17 +697,17 @@ class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
 
 
 class CleanBuild(shell.Compile):
-    name = "delete-WebKitBuild-directory"
-    description = ["deleting WebKitBuild directory"]
-    descriptionDone = ["Deleted WebKitBuild directory"]
-    command = ["python", "Tools/BuildSlaveSupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    name = 'delete-WebKitBuild-directory'
+    description = ['deleting WebKitBuild directory']
+    descriptionDone = ['Deleted WebKitBuild directory']
+    command = ['python', 'Tools/BuildSlaveSupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
 
 
 class KillOldProcesses(shell.Compile):
-    name = "kill-old-processes"
-    description = ["killing old processes"]
-    descriptionDone = ["Killed old processes"]
-    command = ["python", "Tools/BuildSlaveSupport/kill-old-processes", "buildbot"]
+    name = 'kill-old-processes'
+    description = ['killing old processes']
+    descriptionDone = ['Killed old processes']
+    command = ['python', 'Tools/BuildSlaveSupport/kill-old-processes', 'buildbot']
 
     def __init__(self, **kwargs):
         super(KillOldProcesses, self).__init__(timeout=60, **kwargs)
