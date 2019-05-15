@@ -1,3 +1,14 @@
+2019-05-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed test gardening for WinCairo
+
+        * platform/wincairo-wk1/TestExpectations: Moved accessibility
+        expectations to this file.
+        * platform/wincairo/TestExpectations: Skip accessibility because
+        WinCairo WK2 doesn't support it yet. Skip
+        http/tests/resourceLoadStatistics for WK2 because all tests are
+        timing out.
+
 2019-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Missing cursor/caret showing in search field on google.com
