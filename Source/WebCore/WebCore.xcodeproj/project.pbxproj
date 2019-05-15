@@ -5700,6 +5700,8 @@
 		0F60F32A1DFBB10400416D6C /* CommonVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonVM.h; sourceTree = "<group>"; };
 		0F6383DB18615B29003E5DB5 /* ThreadedScrollingTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadedScrollingTree.cpp; sourceTree = "<group>"; };
 		0F6383DC18615B29003E5DB5 /* ThreadedScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadedScrollingTree.h; sourceTree = "<group>"; };
+		0F69F2B6228B98FF008D3565 /* LayerOverlapMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerOverlapMap.h; sourceTree = "<group>"; };
+		0F69F2B7228B98FF008D3565 /* LayerOverlapMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayerOverlapMap.cpp; sourceTree = "<group>"; };
 		0F6A12BB1A00923700C6DE72 /* DebugPageOverlays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugPageOverlays.cpp; sourceTree = "<group>"; };
 		0F6A12BC1A00923700C6DE72 /* DebugPageOverlays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugPageOverlays.h; sourceTree = "<group>"; };
 		0F70495D211B524200369968 /* ActivityState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityState.cpp; sourceTree = "<group>"; };
@@ -26863,6 +26865,8 @@
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
 				580371631A66F1D300BAF519 /* LayerFragment.h */,
+				0F69F2B7228B98FF008D3565 /* LayerOverlapMap.cpp */,
+				0F69F2B6228B98FF008D3565 /* LayerOverlapMap.h */,
 				9BD1F6811F046310001C9CDD /* LayoutDisallowedScope.cpp */,
 				9BD1F6801F0462B8001C9CDD /* LayoutDisallowedScope.h */,
 				A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */,

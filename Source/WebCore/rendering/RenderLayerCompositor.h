@@ -37,6 +37,7 @@ namespace WebCore {
 class FixedPositionViewportConstraints;
 class GraphicsLayer;
 class GraphicsLayerUpdater;
+class LayerOverlapMap;
 class RenderEmbeddedObject;
 class RenderVideo;
 class RenderWidget;
@@ -368,7 +369,6 @@ public:
 
 private:
     class BackingSharingState;
-    class OverlapMap;
     struct CompositingState;
     struct OverlapExtent;
 
@@ -405,14 +405,14 @@ private:
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
 
-    void computeExtent(const OverlapMap&, const RenderLayer&, OverlapExtent&) const;
-    void addToOverlapMap(OverlapMap&, const RenderLayer&, OverlapExtent&);
-    void addToOverlapMapRecursive(OverlapMap&, const RenderLayer&, const RenderLayer* ancestorLayer = nullptr);
+    void computeExtent(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
+    void addToOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&);
+    void addToOverlapMapRecursive(LayerOverlapMap&, const RenderLayer&, const RenderLayer* ancestorLayer = nullptr);
 
     void updateCompositingLayersTimerFired();
 
-    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
-    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
+    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
 
     enum class UpdateLevel {
         AllDescendants          = 1 << 0,
