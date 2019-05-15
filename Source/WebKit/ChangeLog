@@ -1,5 +1,39 @@
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245196. rdar://problem/50753938
+
+    Streamline test-and-clear operation for ContextMenu
+    https://bugs.webkit.org/show_bug.cgi?id=197795
+    <rdar://problem/50473746>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Rather than performing a check when entering the function, doing work,
+    then clearing the member variable, perform the check and clear in
+    a single operation. Only perform the selection if the menu exists.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::didSelectItemFromActiveContextMenu):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245196 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+            Streamline test-and-clear operation for ContextMenu
+            https://bugs.webkit.org/show_bug.cgi?id=197795
+            <rdar://problem/50473746>
+
+            Reviewed by Wenson Hsieh.
+
+            Rather than performing a check when entering the function, doing work,
+            then clearing the member variable, perform the check and clear in
+            a single operation. Only perform the selection if the menu exists.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didSelectItemFromActiveContextMenu):
+
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239742. rdar://problem/50753925
 
     Prevent cross-site top-level navigations from third-party iframes
