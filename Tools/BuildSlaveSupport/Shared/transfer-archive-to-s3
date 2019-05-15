@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+import argparse
+import boto3
+import os
+import sys
+
+S3_DEFAULT_BUCKET = 'archives.webkit.org'
+S3_EWS_BUCKET = 'ews-archives.webkit.org'
+S3_MINIFIED_BUCKET = 'minified-archives.webkit.org'
+S3_REGION_PREFIX = 'https://s3-us-west-2.amazonaws.com'
+
+def uploadToS3(archive_path, bucket, identifier, revision):
+    print 'Transferring {} to S3...'.format(archive_path)
+    key = '/'.join([identifier, revision + '.zip'])
+    print '\tS3 Bucket: {}\n\tS3 Key: {}'.format(bucket, key)
+    s3 = boto3.client('s3')
+    s3.upload_file(archive_path, bucket, key)
+    print('\tS3 URL: {}/{}/{}'.format(S3_REGION_PREFIX, bucket, key))
+
+def archiveExists(archive):
+    if archive:
+        if os.path.exists(archive):
+            return True
+        else:
+            print 'WARNING: Archive does not exist: {}'.format(archive)
+            return False
+
+def main():
+    parser = argparse.ArgumentParser(add_help=True)
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--revision', action="store", help='Revision number or patch_id for the built archive')
+    group.add_argument('--patch_id', action="store", help='patch_id of the patch')
+
+    parser.add_argument('--identifier', action="store", required=True, help='S3 destination identifier, in the form of fullPlatform-architecture-configuration. [mac-mojave-x86_64-release]')
+    parser.add_argument('--archive', action="store", required=True, help='Path to the full size archive. [path/to/123456.zip]')
+    args = parser.parse_args()
+
+    parentdir, filename = os.path.split(str(args.archive))
+    minifiedArchive = os.path.join(parentdir, 'minified-' + filename)
+
+    s3_bucket = S3_DEFAULT_BUCKET
+    if args.patch_id:
+        s3_bucket = S3_EWS_BUCKET
+
+    if archiveExists(args.archive):
+        uploadToS3(args.archive, s3_bucket, args.identifier, args.revision or args.patch_id)
+    if not args.patch_id and archiveExists(minifiedArchive):
+        uploadToS3(minifiedArchive, S3_MINIFIED_BUCKET, args.identifier, args.revision)
+
+if __name__ == "__main__":
+    main()

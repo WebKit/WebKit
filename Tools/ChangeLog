@@ -1,3 +1,18 @@
+2019-05-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Enabling uploading EWS archives to S3
+        https://bugs.webkit.org/show_bug.cgi?id=197914
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/Shared: Added.
+        * BuildSlaveSupport/Shared/transfer-archive-to-s3: Moved from Tools/BuildSlaveSupport/build.webkit.org-config/transfer-archive-to-s3.
+        (archiveExists): Replace tab with space.
+        (main): Added main method.
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (TransferToS3): Updated path to the script.
+        * BuildSlaveSupport/build.webkit.org-config/transfer-archive-to-s3: Moved to Shared folder.
+
 2019-05-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         inputmode="numeric" should show a number pad with digits 0-9, instead of the numeric keyplane

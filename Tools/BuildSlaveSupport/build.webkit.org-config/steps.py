@@ -874,7 +874,7 @@ class TransferToS3(master.MasterShellCommand):
     minifiedArchive = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(got_revision)s.zip")
     identifier = WithProperties("%(fullPlatform)s-%(architecture)s-%(configuration)s")
     revision = WithProperties("%(got_revision)s")
-    command = ["python", "./transfer-archive-to-s3", "--revision", revision, "--identifier", identifier, "--archive", archive]
+    command = ["python", "../Shared/transfer-archive-to-s3", "--revision", revision, "--identifier", identifier, "--archive", archive]
     haltOnFailure = True
 
     def __init__(self, **kwargs):
