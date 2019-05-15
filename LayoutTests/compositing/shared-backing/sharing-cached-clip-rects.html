@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scrollable {
+            overflow: scroll;
+            height: 300px;
+            width: 300px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+
+        .nested {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid gray;
+        }
+
+        .nested > .nested > .layer {
+            margin-left: 100px;
+            background-color: silver;
+            opacity: 0.5;
+        }
+        
+        .relative {
+            position: relative;
+            margin-top: 300px;
+            border: 2px solid orange;
+        }
+    
+        .spacer {
+            height: 500px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <p>This test should not assert in debug builds.</p>
+    <div class="scrollable">
+        <div class="nested one">
+        </div>
+        <div class="nested two">
+            <div class="nested three">
+                <div class="layer two">
+                    <div class="relative third">relative</div>
+                </div>
+            </div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that "has painted content" is triggered by sharing</title>
+    <style>
+        .scroller {
+            overflow: scroll;
+            width: 300px;
+            height: 300px;
+            border: 2px solid black;
+        }
+        
+        .relative {
+            position: relative;
+            margin: 20px;
+            padding: 10px;
+            height: 100px;
+            border: 2px solid orange;
+            background-color: silver;
+        }
+        
+        .spacer {
+            height: 200px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="relative">
+            Relative foreground
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

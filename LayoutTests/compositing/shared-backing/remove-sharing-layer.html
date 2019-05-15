@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests that there is no crash when a sharing layer is removed.</title>
+    <style>
+    .trigger {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100px;
+        width: 100px;
+        background-color: silver;
+        transform: translateZ(0);
+    }
+
+    .absolute {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 200px;
+        height: 200px;
+        background: gray;
+    }
+    
+    .inner {
+        filter: drop-shadow(black 0 0 5px);
+        margin: 10px;
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+    }
+
+    .inner.changed {
+        filter: none;
+    }
+
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            setTimeout(() => {
+                document.getElementById('target').classList.add('changed');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <p>This test should not crash or assert.</p>
+    <div class="trigger"></div>
+    <div class="absolute">
+        <div id="target" class="inner"></div>
+    </div>
+</body>
+</html>

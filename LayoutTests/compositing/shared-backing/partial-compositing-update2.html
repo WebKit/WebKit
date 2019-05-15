@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+        
+        .container {
+            position: relative;
+            margin: 20px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+        
+        .relative {
+            position: relative;
+            top: -20px;
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid orange;
+        }
+        
+        .clipping {
+            overflow: hidden;
+            height: 200px;
+        }
+        
+        .trigger {
+            margin: 10px;
+            height: 50px;
+            background-color: silver;
+        }
+        
+        .composited.relative {
+            height: 200px;
+        }
+        
+        .absolute {
+            position: absolute;
+            margin: 10px;
+            height: 10px;
+            width: 100px;
+            background-color: silver;
+        }
+        
+        body.changed .changing {
+            width: 120px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.add('changed');
+                if (window.internals)
+                    document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="composited container">
+        <div class="composited trigger"></div>
+        <div class="relative clipping">
+            <div class="relative changing"></div>
+            <div class="absolute" style="top: 10px;"></div>
+            <div class="absolute" style="top: 30px;"></div>
+            <div class="absolute" style="top: 50px;"></div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
