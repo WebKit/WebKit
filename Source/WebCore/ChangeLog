@@ -1,5 +1,60 @@
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245158. rdar://problem/50753914
+
+    Do not mix inline and block level boxes.
+    https://bugs.webkit.org/show_bug.cgi?id=197462
+    <rdar://problem/50369362>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    This patch tightens the remove-anonymous-wrappers logic by checking if the removal would
+    produce an inline-block sibling mix.
+    When a block level box is removed from the tree, we check if after the removal the anonymous sibling block
+    boxes are still needed or whether we can removed them as well (and have only inline level child boxes).
+    In addition to checking if the container is anonymous and is part of a continuation, we also need to check
+    if collapsing it (and by that moving its children one level up) would cause a inline-block box mix.
+    
+    Test: fast/ruby/continuation-and-column-spanner-crash.html
+    
+    * rendering/updating/RenderTreeBuilder.cpp:
+    (WebCore::RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded):
+    * rendering/updating/RenderTreeBuilderContinuation.cpp:
+    (WebCore::RenderTreeBuilder::Continuation::cleanupOnDestroy):
+    
+    LayoutTests:
+    
+    * fast/ruby/continuation-and-column-spanner-crash-expected.txt: Added.
+    * fast/ruby/continuation-and-column-spanner-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245158 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-09  Zalan Bujtas  <zalan@apple.com>
+
+            Do not mix inline and block level boxes.
+            https://bugs.webkit.org/show_bug.cgi?id=197462
+            <rdar://problem/50369362>
+
+            Reviewed by Antti Koivisto.
+
+            This patch tightens the remove-anonymous-wrappers logic by checking if the removal would
+            produce an inline-block sibling mix.
+            When a block level box is removed from the tree, we check if after the removal the anonymous sibling block
+            boxes are still needed or whether we can removed them as well (and have only inline level child boxes).
+            In addition to checking if the container is anonymous and is part of a continuation, we also need to check
+            if collapsing it (and by that moving its children one level up) would cause a inline-block box mix.
+
+            Test: fast/ruby/continuation-and-column-spanner-crash.html
+
+            * rendering/updating/RenderTreeBuilder.cpp:
+            (WebCore::RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded):
+            * rendering/updating/RenderTreeBuilderContinuation.cpp:
+            (WebCore::RenderTreeBuilder::Continuation::cleanupOnDestroy):
+
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r243820. rdar://problem/50753921
 
     Crash in HTMLCanvasElement::createContext2d after the element got adopted to a new document

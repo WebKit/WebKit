@@ -37,8 +37,11 @@ RenderTreeBuilder::Continuation::Continuation(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::Continuation::cleanupOnDestroy(RenderBoxModelObject& renderer)
 {
-    if (!renderer.continuation() || renderer.isContinuation())
+    if (!renderer.continuation() || renderer.isContinuation()) {
+        if (renderer.hasContinuationChainNode())
+            renderer.removeFromContinuationChain();
         return;
+    }
 
     ASSERT(renderer.hasContinuationChainNode());
     ASSERT(renderer.continuationChainNode());
