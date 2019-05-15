@@ -32,6 +32,8 @@
 #include "config.h"
 #include "PageRuntimeAgent.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorPageAgent.h"
@@ -161,9 +163,24 @@ void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::ExecStat
 
 void PageRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
 {
-    Optional<ProcessingUserGestureState> userGestureState = (emulateUserGesture && *emulateUserGesture) ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt;
+    auto& pageChromeClient = m_inspectedPage.chrome().client();
+
+    auto shouldEmulateUserGesture = emulateUserGesture && *emulateUserGesture;
+
+    Optional<ProcessingUserGestureState> userGestureState = shouldEmulateUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt;
     UserGestureIndicator gestureIndicator(userGestureState);
+
+    bool userWasInteracting = false;
+    if (shouldEmulateUserGesture) {
+        userWasInteracting = pageChromeClient.userIsInteracting();
+        if (!userWasInteracting)
+            pageChromeClient.setUserIsInteracting(true);
+    }
+
     InspectorRuntimeAgent::evaluate(errorString, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, executionContextId, returnByValue, generatePreview, saveResult, emulateUserGesture, result, wasThrown, savedResultIndex);
+
+    if (shouldEmulateUserGesture && !userWasInteracting && pageChromeClient.userIsInteracting())
+        pageChromeClient.setUserIsInteracting(false);
 }
 
 } // namespace WebCore

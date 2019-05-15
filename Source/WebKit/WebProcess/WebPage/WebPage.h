@@ -1193,6 +1193,9 @@ public:
     void scheduleFullEditorStateUpdate();
     bool isThrottleable() const;
 
+    bool userIsInteracting() const { return m_userIsInteracting; }
+    void setUserIsInteracting(bool userIsInteracting) { m_userIsInteracting = userIsInteracting; }
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 

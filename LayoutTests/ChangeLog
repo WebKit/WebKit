@@ -1,5 +1,19 @@
 2019-05-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: user gesture toggle should also force user interaction flag
+        https://bugs.webkit.org/show_bug.cgi?id=197269
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/runtime/evaluate-userGestureEmulation-userIsInteracting.html: Added.
+        * inspector/runtime/evaluate-userGestureEmulation-userIsInteracting-expected.txt: Added.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+        Only enable the above test on WK2, as the user interaction state is only supported by WK2.
+
+2019-05-15  Devin Rousso  <drousso@apple.com>
+
         REGRESSION (r240644): Layout Test inspector/page/overrideSetting-ICECandidateFilteringEnabled.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=194437
         <rdar://problem/48008005>

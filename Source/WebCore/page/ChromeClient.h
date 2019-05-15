@@ -507,6 +507,9 @@ public:
 
     virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
 
+    virtual bool userIsInteracting() const { return false; }
+    virtual void setUserIsInteracting(bool) { }
+
 protected:
     virtual ~ChromeClient() = default;
 };

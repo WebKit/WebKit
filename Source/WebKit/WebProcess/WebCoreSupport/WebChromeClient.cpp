@@ -1340,4 +1340,14 @@ void WebChromeClient::configureLoggingChannel(const String& channelName, WTFLogC
     m_page.configureLoggingChannel(channelName, state, level);
 }
 
+bool WebChromeClient::userIsInteracting() const
+{
+    return m_page.userIsInteracting();
+}
+
+void WebChromeClient::setUserIsInteracting(bool userIsInteracting)
+{
+    m_page.setUserIsInteracting(userIsInteracting);
+}
+
 } // namespace WebKit

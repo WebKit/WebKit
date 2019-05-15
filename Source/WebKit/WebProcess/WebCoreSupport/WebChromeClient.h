@@ -379,6 +379,9 @@ private:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) final;
 
+    bool userIsInteracting() const final;
+    void setUserIsInteracting(bool) final;
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

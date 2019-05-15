@@ -638,6 +638,8 @@ enum CompositingPolicy {
 
     void withUserGesture(VoidCallback callback);
 
+    boolean userIsInteracting();
+
     GCObservation? observeGC(any observed);
 
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
