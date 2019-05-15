@@ -250,7 +250,8 @@ WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
 WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
-WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp @no-unify
+WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
+
 WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp
 WebProcess/WebPage/wpe/WebPageWPE.cpp
 

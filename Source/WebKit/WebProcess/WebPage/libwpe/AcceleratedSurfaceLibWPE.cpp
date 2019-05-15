@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AcceleratedSurfaceWPE.h"
+#include "AcceleratedSurfaceLibWPE.h"
 
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayLibWPE.h>
@@ -33,29 +33,29 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<AcceleratedSurfaceWPE> AcceleratedSurfaceWPE::create(WebPage& webPage, Client& client)
+std::unique_ptr<AcceleratedSurfaceLibWPE> AcceleratedSurfaceLibWPE::create(WebPage& webPage, Client& client)
 {
-    return std::unique_ptr<AcceleratedSurfaceWPE>(new AcceleratedSurfaceWPE(webPage, client));
+    return std::unique_ptr<AcceleratedSurfaceLibWPE>(new AcceleratedSurfaceLibWPE(webPage, client));
 }
 
-AcceleratedSurfaceWPE::AcceleratedSurfaceWPE(WebPage& webPage, Client& client)
+AcceleratedSurfaceLibWPE::AcceleratedSurfaceLibWPE(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
 {
 }
 
-AcceleratedSurfaceWPE::~AcceleratedSurfaceWPE()
+AcceleratedSurfaceLibWPE::~AcceleratedSurfaceLibWPE()
 {
     ASSERT(!m_backend);
 }
 
-void AcceleratedSurfaceWPE::initialize()
+void AcceleratedSurfaceLibWPE::initialize()
 {
     m_backend = wpe_renderer_backend_egl_target_create(m_webPage.releaseHostFileDescriptor());
     static struct wpe_renderer_backend_egl_target_client s_client = {
         // frame_complete
         [](void* data)
         {
-            auto& surface = *reinterpret_cast<AcceleratedSurfaceWPE*>(data);
+            auto& surface = *reinterpret_cast<AcceleratedSurfaceLibWPE*>(data);
             surface.m_client.frameComplete();
         },
         // padding
@@ -69,13 +69,13 @@ void AcceleratedSurfaceWPE::initialize()
         std::max(1, m_size.width()), std::max(1, m_size.height()));
 }
 
-void AcceleratedSurfaceWPE::finalize()
+void AcceleratedSurfaceLibWPE::finalize()
 {
     wpe_renderer_backend_egl_target_destroy(m_backend);
     m_backend = nullptr;
 }
 
-uint64_t AcceleratedSurfaceWPE::window() const
+uint64_t AcceleratedSurfaceLibWPE::window() const
 {
     ASSERT(m_backend);
     // EGLNativeWindowType changes depending on the EGL implementation: reinterpret_cast works
@@ -86,24 +86,24 @@ uint64_t AcceleratedSurfaceWPE::window() const
     return (uint64_t) wpe_renderer_backend_egl_target_get_native_window(m_backend);
 }
 
-uint64_t AcceleratedSurfaceWPE::surfaceID() const
+uint64_t AcceleratedSurfaceLibWPE::surfaceID() const
 {
     return m_webPage.pageID();
 }
 
-void AcceleratedSurfaceWPE::clientResize(const IntSize& size)
+void AcceleratedSurfaceLibWPE::clientResize(const IntSize& size)
 {
     ASSERT(m_backend);
     wpe_renderer_backend_egl_target_resize(m_backend, std::max(1, m_size.width()), std::max(1, m_size.height()));
 }
 
-void AcceleratedSurfaceWPE::willRenderFrame()
+void AcceleratedSurfaceLibWPE::willRenderFrame()
 {
     ASSERT(m_backend);
     wpe_renderer_backend_egl_target_frame_will_render(m_backend);
 }
 
-void AcceleratedSurfaceWPE::didRenderFrame()
+void AcceleratedSurfaceLibWPE::didRenderFrame()
 {
     ASSERT(m_backend);
     wpe_renderer_backend_egl_target_frame_rendered(m_backend);

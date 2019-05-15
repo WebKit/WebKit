@@ -35,11 +35,11 @@ namespace WebKit {
 
 class WebPage;
 
-class AcceleratedSurfaceWPE final : public AcceleratedSurface {
-    WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceWPE); WTF_MAKE_FAST_ALLOCATED;
+class AcceleratedSurfaceLibWPE final : public AcceleratedSurface {
+    WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceLibWPE); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<AcceleratedSurfaceWPE> create(WebPage&, Client&);
-    ~AcceleratedSurfaceWPE();
+    static std::unique_ptr<AcceleratedSurfaceLibWPE> create(WebPage&, Client&);
+    ~AcceleratedSurfaceLibWPE();
 
     uint64_t window() const override;
     uint64_t surfaceID() const override;
@@ -52,7 +52,7 @@ public:
     void didRenderFrame() override;
 
 private:
-    AcceleratedSurfaceWPE(WebPage&, Client&);
+    AcceleratedSurfaceLibWPE(WebPage&, Client&);
 
     struct wpe_renderer_backend_egl_target* m_backend { nullptr };
 };

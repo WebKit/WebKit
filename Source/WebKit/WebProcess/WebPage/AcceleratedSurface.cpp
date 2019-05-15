@@ -37,8 +37,8 @@
 #include "AcceleratedSurfaceX11.h"
 #endif
 
-#if PLATFORM(WPE)
-#include "AcceleratedSurfaceWPE.h"
+#if USE(LIBWPE)
+#include "AcceleratedSurfaceLibWPE.h"
 #endif
 
 namespace WebKit {
@@ -54,9 +54,9 @@ std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage,
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
         return AcceleratedSurfaceX11::create(webPage, client);
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::WPE)
-        return AcceleratedSurfaceWPE::create(webPage, client);
+        return AcceleratedSurfaceLibWPE::create(webPage, client);
 #endif
     return nullptr;
 }
