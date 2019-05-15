@@ -1857,11 +1857,30 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
     }
 }
 
+static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& extensionIDs)
+{
+#if !ASSERT_DISABLED
+    bool isCapturingAudio = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
+        return document->mediaState() & MediaProducer::AudioCaptureMask;
+    });
+    bool isCapturingVideo = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
+        return document->mediaState() & MediaProducer::VideoCaptureMask;
+    });
+
+    if (isCapturingAudio)
+        ASSERT(extensionIDs.findMatching([](auto& id) { return id.contains("microphone"); }) == notFound);
+    if (isCapturingVideo)
+        ASSERT(extensionIDs.findMatching([](auto& id) { return id.contains("camera"); }) == notFound);
+#endif
+}
+
 void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
 {
+    checkDocumentsCaptureStateConsistency(extensionIDs);
+
     for (const auto& extensionID : extensionIDs) {
         auto extension = m_mediaCaptureSandboxExtensions.take(extensionID);
-        ASSERT(extension);
+        ASSERT(extension || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled());
         if (extension) {
             extension->revoke();
             RELEASE_LOG(WebRTC, "UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions - revoked extension %s", extensionID.utf8().data());

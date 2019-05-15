@@ -38,7 +38,7 @@ public:
     bool willCreateMediaStream(UserMediaPermissionRequestManagerProxy&, bool withAudio, bool withVideo);
     void muteCaptureMediaStreamsExceptIn(WebPageProxy&);
 
-    void endedCaptureSession(UserMediaPermissionRequestManagerProxy&);
+    void revokeSandboxExtensionsIfNeeded(WebProcessProxy&);
 
     void setCaptureEnabled(bool);
     bool captureEnabled() const { return m_captureEnabled; }

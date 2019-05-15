@@ -83,7 +83,7 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
 {
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().endedCaptureSession(*this);
+    UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
     proxies().remove(this);
 #endif
     invalidatePendingRequests();
@@ -295,7 +295,12 @@ bool UserMediaPermissionRequestManagerProxy::grantAccess(const UserMediaPermissi
         return false;
     }
 
-    m_page.process().send(Messages::WebPage::UserMediaAccessWasGranted(request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt()), m_page.pageID());
+    ++m_hasPendingCapture;
+    m_page.process().connection()->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt() }, [this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+        --m_hasPendingCapture;
+    }, m_page.pageID());
     return true;
 }
 #endif
@@ -632,13 +637,8 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    bool wasCapturingAudio = oldState & MediaProducer::AudioCaptureMask;
-    bool wasCapturingVideo = oldState & MediaProducer::VideoCaptureMask;
-    bool isCapturingAudio = newState & MediaProducer::AudioCaptureMask;
-    bool isCapturingVideo = newState & MediaProducer::VideoCaptureMask;
-
-    if ((wasCapturingAudio && !isCapturingAudio) || (wasCapturingVideo && !isCapturingVideo))
-        UserMediaProcessManager::singleton().endedCaptureSession(*this);
+    if (!m_hasPendingCapture)
+        UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
 
     if (m_captureState == (newState & activeCaptureMask))
         return;

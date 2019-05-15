@@ -72,26 +72,26 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     }
     
 #if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
-    if (!proxy.page().preferences().mockCaptureDevicesEnabled()) {
-        auto& process = proxy.page().process();
-        size_t extensionCount = 0;
+    auto& process = proxy.page().process();
+    size_t extensionCount = 0;
 
-        if (withAudio && !process.hasAudioCaptureExtension())
-            extensionCount++;
-        else
-            withAudio = false;
+    if (withAudio && !process.hasAudioCaptureExtension())
+        extensionCount++;
+    else
+        withAudio = false;
 
-        if (withVideo && !process.hasVideoCaptureExtension())
-            extensionCount++;
-        else
-            withVideo = false;
+    if (withVideo && !process.hasVideoCaptureExtension())
+        extensionCount++;
+    else
+        withVideo = false;
 
-        if (extensionCount) {
-            SandboxExtension::HandleArray handles;
+    if (extensionCount) {
+        SandboxExtension::HandleArray handles;
+        Vector<String> ids;
+
+        if (!proxy.page().preferences().mockCaptureDevicesEnabled()) {
             handles.allocate(extensionCount);
-
-            Vector<String> ids;
-            ids.reserveCapacity(extensionCount);
+            ids.reserveInitialCapacity(extensionCount);
 
             if (withAudio && SandboxExtension::createHandleForGenericExtension(audioExtensionPath, handles[--extensionCount]))
                 ids.append(audioExtensionPath);
@@ -103,16 +103,16 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 WTFLogAlways("Could not create a required sandbox extension, capture will fail!");
                 return false;
             }
-
-            for (const auto& id : ids)
-                RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8().data());
-
-            if (withAudio)
-                process.grantAudioCaptureExtension();
-            if (withVideo)
-                process.grantVideoCaptureExtension();
-            process.send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), proxy.page().pageID());
         }
+
+        for (const auto& id : ids)
+            RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8().data());
+
+        if (withAudio)
+            process.grantAudioCaptureExtension();
+        if (withVideo)
+            process.grantVideoCaptureExtension();
+        process.send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), 0);
     }
 #else
     UNUSED_PARAM(proxy);
@@ -125,20 +125,17 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     return true;
 }
 
-void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestManagerProxy& proxy)
+void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& process)
 {
 #if ENABLE(SANDBOX_EXTENSIONS)
     bool hasAudioCapture = false;
     bool hasVideoCapture = false;
 
-    auto& process = proxy.page().process();
-    UserMediaPermissionRequestManagerProxy::forEach([&hasAudioCapture, &hasVideoCapture, &proxy, &process](auto& managerProxy) {
-        if (&proxy == &managerProxy || &process != &managerProxy.page().process())
+    UserMediaPermissionRequestManagerProxy::forEach([&hasAudioCapture, &hasVideoCapture, &process](auto& managerProxy) {
+        if (&process != &managerProxy.page().process())
             return;
-        if (managerProxy.page().hasActiveAudioStream())
-            hasAudioCapture = true;
-        if (managerProxy.page().hasActiveVideoStream())
-            hasVideoCapture = true;
+        hasAudioCapture |= managerProxy.page().isCapturingAudio();
+        hasVideoCapture |= managerProxy.page().isCapturingVideo();
     });
 
     if (hasAudioCapture && hasVideoCapture)
@@ -160,7 +157,7 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
     for (const auto& id : params)
         RELEASE_LOG(WebRTC, "UserMediaProcessManager::endedCaptureSession - revoking extension %s", id.utf8().data());
 
-    process.send(Messages::WebProcess::RevokeUserMediaDeviceSandboxExtensions(params), proxy.page().pageID());
+    process.send(Messages::WebProcess::RevokeUserMediaDeviceSandboxExtensions(params), 0);
 #endif
 }
 

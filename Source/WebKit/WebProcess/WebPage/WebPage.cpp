@@ -4153,9 +4153,9 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 
 #if ENABLE(MEDIA_STREAM)
 
-void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& mediaDeviceIdentifierHashSalt)
+void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& mediaDeviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
-    m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(mediaDeviceIdentifierHashSalt));
+    m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(mediaDeviceIdentifierHashSalt), WTFMove(completionHandler));
 }
 
 void WebPage::userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String&& invalidConstraint)

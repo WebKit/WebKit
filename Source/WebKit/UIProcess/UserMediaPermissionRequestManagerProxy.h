@@ -144,6 +144,7 @@ private:
     const void* m_logIdentifier;
 #endif
     bool m_hasFilteredDeviceList { false };
+    uint64_t m_hasPendingCapture { 0 };
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);

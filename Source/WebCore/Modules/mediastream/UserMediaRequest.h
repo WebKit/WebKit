@@ -40,6 +40,7 @@
 #include "MediaConstraints.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamRequest.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ public:
     void start();
 
     WEBCORE_EXPORT void setAllowedMediaDeviceUIDs(const String& audioDeviceUID, const String& videoDeviceUID);
-    WEBCORE_EXPORT void allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt);
+    WEBCORE_EXPORT void allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&&);
 
     enum MediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, InvalidAccess, IllegalConstraint, OtherFailure };
     WEBCORE_EXPORT void deny(MediaAccessDenialReason, const String& errorMessage = emptyString());
@@ -83,20 +84,21 @@ private:
 
     class PendingActivationMediaStream : public RefCounted<PendingActivationMediaStream>, private MediaStreamPrivate::Observer {
     public:
-        static Ref<PendingActivationMediaStream> create(Ref<PendingActivity<UserMediaRequest>>&& protectingUserMediaRequest, UserMediaRequest& userMediaRequest, Ref<MediaStream>&& stream)
+        static Ref<PendingActivationMediaStream> create(Ref<PendingActivity<UserMediaRequest>>&& protectingUserMediaRequest, UserMediaRequest& userMediaRequest, Ref<MediaStream>&& stream, CompletionHandler<void()>&& completionHandler)
         {
-            return adoptRef(*new PendingActivationMediaStream { WTFMove(protectingUserMediaRequest), userMediaRequest, WTFMove(stream) });
+            return adoptRef(*new PendingActivationMediaStream { WTFMove(protectingUserMediaRequest), userMediaRequest, WTFMove(stream), WTFMove(completionHandler) });
         }
         ~PendingActivationMediaStream();
 
     private:
-        PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&&, UserMediaRequest&, Ref<MediaStream>&&);
+        PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&&, UserMediaRequest&, Ref<MediaStream>&&, CompletionHandler<void()>&&);
 
         void characteristicsChanged() final;
 
         Ref<PendingActivity<UserMediaRequest>> m_protectingUserMediaRequest;
         UserMediaRequest& m_userMediaRequest;
         Ref<MediaStream> m_mediaStream;
+        CompletionHandler<void()> m_completionHandler;
     };
 
     Vector<String> m_videoDeviceUIDs;
