@@ -19,11 +19,11 @@
         await UIHelper.setHardwareKeyboardAttached(false);
         await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
         
-        var programaticScroll = 500;
-        document.scrollingElement.scrollTop = programaticScroll;
+        var programmaticScroll = 500;
+        document.scrollingElement.scrollTop = programmaticScroll;
         await UIHelper.enterText("Test");
-
-        if (window.pageYOffset < programaticScroll)
+        await UIHelper.ensurePresentationUpdate();
+        if (window.pageYOffset < programmaticScroll)
             output += 'PASS: page has scrolled back to the top to show the element that has text being entered into it.';
         else
             output += 'FAIL: page has failed to scroll when entering text into a form that is offscreen.';

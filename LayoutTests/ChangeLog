@@ -1,3 +1,17 @@
+2019-05-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix flakey test fast/events/autoscroll-when-input-is-offscreen.html
+        https://bugs.webkit.org/show_bug.cgi?id=197897
+        <rdar://problem/50306931>
+
+        Reviewed by Wenson Hsieh.
+
+        Programmatic scrolls are included in the transaction and we want to 
+        ensure that they've been applied. Then we can be sure that the page 
+        has finished scrolling and it's appropriate to test the page offset. 
+
+        * fast/events/autoscroll-when-input-is-offscreen.html:
+
 2019-05-14  Shawn Roberts  <sroberts@apple.com>
 
         storage/indexeddb/modern/deletedatabase-2-private.html is a flaky failure
