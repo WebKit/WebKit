@@ -145,7 +145,7 @@ public:
     Navigator& clientInformation() { return navigator(); }
 
     Location& location();
-    void setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& location, SetLocationLocking = LockHistoryBasedOnGestureState);
+    void setLocation(DOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = LockHistoryBasedOnGestureState);
 
     DOMSelection* getSelection();
 

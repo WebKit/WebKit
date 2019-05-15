@@ -1,0 +1,10 @@
+<html>
+<body>
+Failure! The navigation should not have been blocked
+<script>
+window.addEventListener("load", e => {
+    top.location = "http://127.0.0.1:8000/security/resources/should-have-loaded.html";
+});
+</script>
+</body>
+</html>

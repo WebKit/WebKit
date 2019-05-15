@@ -41,6 +41,13 @@ HTTPSUpgradeEnabled:
    humanReadableName: "Automatic HTTPS upgrade"
    humanReadableDescription: "Automatic HTTPS upgrade for known supported sites"
 
+ThirdPartyIframeRedirectBlockingEnabled:
+   type: bool
+   defaultValue: true
+   humanReadableName: "Block top-level redirects by third-party iframes"
+   humanReadableDescription: "Block top-level redirects by third-party iframes"
+   category: experimental
+
 JavaEnabled:
   type: bool
   defaultValue: false

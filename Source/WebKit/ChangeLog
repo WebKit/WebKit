@@ -1,3 +1,83 @@
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r239742. rdar://problem/50753925
+
+    Prevent cross-site top-level navigations from third-party iframes
+    https://bugs.webkit.org/show_bug.cgi?id=193076
+    <rdar://problem/36074736>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    Prevent cross-site top-level navigations from third-party iframes if the following conditions are met:
+    1. Its tries to navigate the top-level page cross-site (different eTDL+1)
+    2. The user has never interacted with the third-party iframe or any of its subframes
+    
+    This experiment's intent is to block suspicious main-frame navigations by third-party content. The feature
+    is behind a runtime experimental feature flag, on by default.
+    
+    Tests: http/tests/security/allow-top-level-navigations-by-third-party-iframes-to-same-origin.html
+           http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-previous-user-activation.html
+           http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-user-activation.html
+           http/tests/security/block-top-level-navigations-by-third-party-iframes.html
+    
+    * dom/Document.cpp:
+    (WebCore::printNavigationErrorMessage):
+    (WebCore::Document::canNavigate):
+    (WebCore::Document::canNavigateInternal):
+    (WebCore::Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking):
+    * dom/Document.h:
+    * dom/UserGestureIndicator.cpp:
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::setLocation):
+    * page/DOMWindow.h:
+    * page/Frame.h:
+    * page/Location.cpp:
+    (WebCore::Location::replace):
+    (WebCore::Location::setLocation):
+    * page/Settings.yaml:
+    
+    Source/WebKit:
+    
+    Add experimental feature flag, on by default.
+    
+    * Shared/WebPreferences.yaml:
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/tests/security/allow-top-level-navigations-by-third-party-iframes-to-same-origin-expected.txt: Added.
+    * http/tests/security/allow-top-level-navigations-by-third-party-iframes-to-same-origin.html: Added.
+    * http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-previous-user-activation-expected.txt: Added.
+    * http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-previous-user-activation.html: Added.
+    * http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-user-activation-expected.txt: Added.
+    * http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-user-activation.html: Added.
+    * http/tests/security/block-top-level-navigations-by-third-party-iframes-expected.txt: Added.
+    * http/tests/security/block-top-level-navigations-by-third-party-iframes.html: Added.
+    * http/tests/security/resources/navigate-top-level-frame-to-failure-page.html: Added.
+    * http/tests/security/resources/navigate-top-level-frame-to-success-page-same-origin.html: Added.
+    * http/tests/security/resources/navigate-top-level-frame-to-success-page-with-previous-user-gesture.html: Added.
+    * http/tests/security/resources/navigate-top-level-frame-to-success-page-with-user-gesture.html: Added.
+    * http/tests/security/resources/should-have-loaded.html: Added.
+    * http/tests/security/resources/should-not-have-loaded.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239742 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-08  Chris Dumez  <cdumez@apple.com>
+
+            Prevent cross-site top-level navigations from third-party iframes
+            https://bugs.webkit.org/show_bug.cgi?id=193076
+            <rdar://problem/36074736>
+
+            Reviewed by Alex Christensen.
+
+            Add experimental feature flag, on by default.
+
+            * Shared/WebPreferences.yaml:
+
 2019-04-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r244326. rdar://problem/50352719

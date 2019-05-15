@@ -11,7 +11,9 @@
 
         function performTest()
         {
-            parent.location = "http://localhost:8000/security/frameNavigation/resources/navigation-changed-iframe.html";
+            internals.withUserGesture(() => {
+                parent.location = "http://localhost:8000/security/frameNavigation/resources/navigation-changed-iframe.html";
+            });
         }
     </script>
 </head>

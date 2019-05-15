@@ -13,6 +13,10 @@ if (window.testRunner)
         $targetAttribute = 'target="' . $_GET["target"] . '"';
 ?>
 <a href="<?php echo $_GET['href']; ?>" <?php echo $targetAttribute; ?>>Click</a>
-<script>document.querySelector("a").click()</script>
+<script>
+internals.withUserGesture(() => {
+    document.querySelector("a").click();
+});
+</script>
 </body>
 </html>

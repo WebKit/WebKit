@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test blocking of suspicious top-level navigations by a third-party iframe");
+jsTestIsAsync = true;
+onload = () => {
+    setTimeout(() => {
+        document.getElementById('testFrame').src = "http://localhost:8000/security/resources/navigate-top-level-frame-to-failure-page.html";
+        setTimeout(() => {
+            testPassed("All navigations by subframes have been blocked");
+            finishJSTest();
+        }, 100);
+    }, 10);
+}
+</script>
+<iframe src="http://localhost:8000/security/resources/navigate-top-level-frame-to-failure-page.html"></iframe>
+<iframe id="testFrame"></iframe>
+</body>
+</html>

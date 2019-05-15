@@ -332,6 +332,9 @@ requestAnimationFrameEnabled:
 HTTPSUpgradeEnabled:
   initial: false
 
+thirdPartyIframeRedirectBlockingEnabled:
+  initial: true
+
 cookieEnabled:
   initial: true
 mediaEnabled:

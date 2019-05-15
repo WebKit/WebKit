@@ -707,7 +707,7 @@ public:
 #endif
     SocketProvider* socketProvider() final;
 
-    bool canNavigate(Frame* targetFrame);
+    bool canNavigate(Frame* targetFrame, const URL& destinationURL = URL());
 
     bool usesStyleBasedEditability() const;
     void setHasElementUsingStyleBasedEditability();
@@ -1642,6 +1642,9 @@ private:
 
     void checkViewportDependentPictures();
     void checkAppearanceDependentPictures();
+
+    bool canNavigateInternal(Frame& targetFrame);
+    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void notifyIntersectionObserversTimerFired();
