@@ -1,3 +1,13 @@
+2019-05-15  Youenn Fablet  <youenn@apple.com>
+
+        Constant crashes under WebPage::isThrottleable() after r245299
+        https://bugs.webkit.org/show_bug.cgi?id=197902
+        <rdar://problem/50793796>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-05-15  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][jhbuild] misc cleanups and bumps

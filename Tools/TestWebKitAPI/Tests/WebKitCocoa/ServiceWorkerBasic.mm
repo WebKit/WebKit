@@ -27,6 +27,8 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
@@ -52,6 +54,7 @@ struct ResourceInfo {
 };
 
 static bool done;
+static bool didFinishNavigation;
 
 static String expectedMessage;
 static String retrievedString;
@@ -1617,6 +1620,74 @@ TEST(ServiceWorkers, ProcessPerSite)
     [webView3 loadRequest:aboutBlankRequest];
     waitUntilServiceWorkerProcessCount(processPool, 0);
     EXPECT_EQ(0U, processPool._serviceWorkerProcessCount);
+}
+
+TEST(ServiceWorkers, ThrottleCrash)
+{
+    ASSERT(mainBytes);
+    ASSERT(scriptBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+
+    auto handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw1://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler->resources.set("sw1://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+#if PLATFORM(MAC)
+    [[configuration preferences] _setAppNapEnabled:YES];
+#endif
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"sw1"];
+
+    auto *processPool = configuration.get().processPool;
+    [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow: YES]);
+    [webView1 setNavigationDelegate:navigationDelegate.get()];
+
+    // Let's make it so that webView1 be app nappable after loading is completed.
+    [webView1.get().window resignKeyWindow];
+#if PLATFORM(MAC)
+    [webView1.get().window orderOut:nil];
+#endif
+
+    auto *request1 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw1://host/main.html"]];
+    [webView1 loadRequest:request1];
+
+    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+#if PLATFORM(MAC)
+    [[webView2Configuration preferences] _setAppNapEnabled:NO];
+#endif
+    [webView2Configuration setProcessPool:processPool];
+    [[webView2Configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"sw1"];
+    webView2Configuration.get()._relatedWebView = webView1.get();
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
+    [webView2 setNavigationDelegate:navigationDelegate.get()];
+
+    [webView2 loadRequest:request1];
+
+    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigation);
 }
 
 TEST(ServiceWorkers, LoadData)

@@ -1265,6 +1265,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->aggressiveTileRetentionEnabled();
 }
 
+- (void)_setAppNapEnabled:(BOOL)enabled
+{
+    _preferences->setPageVisibilityBasedProcessSuppressionEnabled(enabled);
+}
+
+- (BOOL)_appNapEnabled
+{
+    return _preferences->pageVisibilityBasedProcessSuppressionEnabled();
+}
+
 #endif // PLATFORM(MAC)
 
 - (BOOL)_javaScriptCanAccessClipboard
