@@ -3510,8 +3510,8 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    int timeout = 10;
-    while ([processPool _webProcessCount] > (maxSuspendedPageCount + 2) && timeout > 0) {
+    int timeout = 100;
+    while (([processPool _webProcessCount] > (maxSuspendedPageCount + 2) &&  [processPool _webProcessCountIgnoringPrewarmedAndCached] > (maxSuspendedPageCount + 1)) && timeout > 0) {
         TestWebKitAPI::Util::sleep(0.1);
         --timeout;
     }
@@ -3526,7 +3526,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
-    timeout = 10;
+    timeout = 100;
     while ([processPool _webProcessCount] > 1 && timeout > 0) {
         TestWebKitAPI::Util::sleep(0.1);
         --timeout;
