@@ -1,5 +1,41 @@
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r244865. rdar://problem/50753937
+
+    Baseline JIT should do argument value profiling after checking for stack overflow
+    https://bugs.webkit.org/show_bug.cgi?id=197052
+    <rdar://problem/50009602>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/check-stack-overflow-before-value-profiling-arguments.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Otherwise, we may do value profiling without running a write barrier, which
+    is against the rules of how we do value profiling.
+    
+    * jit/JIT.cpp:
+    (JSC::JIT::compileWithoutLinking):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244865 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-01  Saam barati  <sbarati@apple.com>
+
+            Baseline JIT should do argument value profiling after checking for stack overflow
+            https://bugs.webkit.org/show_bug.cgi?id=197052
+            <rdar://problem/50009602>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/check-stack-overflow-before-value-profiling-arguments.js: Added.
+
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r244314. rdar://problem/50753930
 
     SafeToExecute for GetByOffset/GetGetterByOffset/PutByOffset is using the wrong child for the base
