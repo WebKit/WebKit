@@ -4380,7 +4380,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
         break;
     case WebCore::InputMode::Numeric:
-        [_traits setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
+        [_traits setKeyboardType:UIKeyboardTypeNumberPad];
         break;
     case WebCore::InputMode::Decimal:
         [_traits setKeyboardType:UIKeyboardTypeDecimalPad];

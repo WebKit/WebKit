@@ -359,7 +359,7 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponder)
     [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
 }
 
-TEST(KeyboardInputTests, DISABLED_KeyboardTypeForInput)
+TEST(KeyboardInputTests, KeyboardTypeForInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
@@ -369,11 +369,11 @@ TEST(KeyboardInputTests, DISABLED_KeyboardTypeForInput)
     }];
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadHTMLString:@"<input id='input'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"input.focus()"];
 
     auto runTest = ^(NSString *inputType, NSString *inputMode, NSString *pattern, UIKeyboardType expectedKeyboardType) {
-        [webView stringByEvaluatingJavaScript:@"input.blur()"];
-        [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"input.type = '%@'; input.inputMode = '%@'; input.pattern = '%@'", inputType, inputMode, pattern]];
-        [webView stringByEvaluatingJavaScript:@"input.focus()"];
+        [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"input.blur()"];
+        [webView evaluateJavaScriptAndWaitForInputSessionToChange:[NSString stringWithFormat:@"input.type = '%@'; input.inputMode = '%@'; input.pattern = '%@'; input.focus()", inputType, inputMode, pattern]];
 
         UIView<UITextInputPrivate> *textInput = (UIView<UITextInputPrivate> *)[webView textInputContentView];
         UIKeyboardType keyboardType = [textInput textInputTraits].keyboardType;
@@ -401,7 +401,7 @@ TEST(KeyboardInputTests, DISABLED_KeyboardTypeForInput)
         @"tel": @(UIKeyboardTypePhonePad),
         @"url": @(UIKeyboardTypeURL),
         @"email": @(UIKeyboardTypeEmailAddress),
-        @"numeric": @(UIKeyboardTypeNumbersAndPunctuation),
+        @"numeric": @(UIKeyboardTypeNumberPad),
         @"decimal": @(UIKeyboardTypeDecimalPad),
         @"search": @(UIKeyboardTypeWebSearch)
     };
@@ -412,21 +412,17 @@ TEST(KeyboardInputTests, DISABLED_KeyboardTypeForInput)
         @"[0-9]*": @(UIKeyboardTypeNumberPad)
     };
 
-    for (NSString *inputType in [expectedKeyboardTypeForInputType allKeys]) {
-        for (NSString *inputMode in [expectedKeyboardTypeForInputMode allKeys]) {
-            for (NSString *pattern in [expectedKeyboardTypeForPattern allKeys]) {
+    for (NSString *inputType in expectedKeyboardTypeForInputType) {
+        BOOL isNumberOrTextInput = [inputType isEqual:@"text"] || [inputType isEqual:@"number"];
+        for (NSString *inputMode in expectedKeyboardTypeForInputMode) {
+            for (NSString *pattern in expectedKeyboardTypeForPattern) {
                 NSNumber *keyboardType;
                 if (inputMode.length) {
                     // inputmode has the highest priority.
                     keyboardType = expectedKeyboardTypeForInputMode[inputMode];
                 } else {
-                    if (pattern.length && ([inputType isEqual: @"text"] || [inputType isEqual: @"number"])) {
-                        // Special case for text and number inputs that have a numeric pattern.
-                        keyboardType = expectedKeyboardTypeForPattern[pattern];
-                    } else {
-                        // Otherwise, the input type determines the keyboard type.
-                        keyboardType = expectedKeyboardTypeForInputType[inputType];
-                    }
+                    // Special case for text and number inputs that have a numeric pattern. Otherwise, the input type determines the keyboard type.
+                    keyboardType = pattern.length && isNumberOrTextInput ? expectedKeyboardTypeForPattern[pattern] : expectedKeyboardTypeForInputType[inputType];
                 }
 
                 EXPECT_TRUE(runTest(inputType, inputMode, pattern, (UIKeyboardType)keyboardType.intValue));
