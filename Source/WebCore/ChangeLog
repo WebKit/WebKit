@@ -1,5 +1,47 @@
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245190. rdar://problem/50753948
+
+    Gracefully handle inaccessible font face data
+    https://bugs.webkit.org/show_bug.cgi?id=197762
+    <rdar://problem/50433861>
+    
+    Reviewed by Per Arne Vollan.
+    
+    Make sure CSS Font Face handling gracefully recovers from
+    missing font data.
+    
+    Test: fast/text/missing-font-crash.html
+    
+    * css/CSSFontFace.cpp:
+    (WebCore::CSSFontFace::fontLoadEventOccurred):
+    (WebCore::CSSFontFace::timeoutFired):
+    (WebCore::CSSFontFace::fontLoaded):
+    (WebCore::CSSFontFace::font):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245190 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+            Gracefully handle inaccessible font face data
+            https://bugs.webkit.org/show_bug.cgi?id=197762
+            <rdar://problem/50433861>
+
+            Reviewed by Per Arne Vollan.
+
+            Make sure CSS Font Face handling gracefully recovers from
+            missing font data.
+
+            Test: fast/text/missing-font-crash.html
+
+            * css/CSSFontFace.cpp:
+            (WebCore::CSSFontFace::fontLoadEventOccurred):
+            (WebCore::CSSFontFace::timeoutFired):
+            (WebCore::CSSFontFace::fontLoaded):
+            (WebCore::CSSFontFace::font):
+
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245158. rdar://problem/50753914
 
     Do not mix inline and block level boxes.
