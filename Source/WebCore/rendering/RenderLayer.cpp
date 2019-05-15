@@ -6801,17 +6801,28 @@ bool RenderLayer::isTransparentOrFullyClippedRespectingParentFrames() const
             return true;
     }
 
-    RenderLayer* enclosingClipLayer = nullptr;
-    for (auto* layer = this; layer; layer = enclosingClipLayer ? enclosingClipLayer->parent() : enclosingFrameRenderLayer(*layer)) {
-        enclosingClipLayer = layer->enclosingOverflowClipLayer(IncludeSelfOrNot::IncludeSelf);
-        if (!enclosingClipLayer)
-            continue;
+    auto hasEmptyClipRect = [] (const RenderLayer& layer) -> bool {
+        auto* frameView = layer.renderer().document().view();
+        if (!frameView)
+            return false;
+
+        auto* renderView = frameView->renderView();
+        if (!renderView)
+            return false;
+
+        auto* renderViewLayer = renderView->layer();
+        if (!renderViewLayer)
+            return false;
 
         LayoutRect layerBounds;
         ClipRect backgroundRect;
         ClipRect foregroundRect;
-        layer->calculateRects({ enclosingClipLayer, TemporaryClipRects }, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, layer->offsetFromAncestor(enclosingClipLayer));
-        if (backgroundRect.isEmpty())
+        layer.calculateRects({ renderViewLayer, TemporaryClipRects }, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, layer.offsetFromAncestor(renderViewLayer));
+        return backgroundRect.isEmpty();
+    };
+
+    for (auto* layer = this; layer; layer = enclosingFrameRenderLayer(*layer)) {
+        if (hasEmptyClipRect(*layer))
             return true;
     }
 

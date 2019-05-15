@@ -1,3 +1,15 @@
+2019-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Missing cursor/caret showing in search field on google.com
+        https://bugs.webkit.org/show_bug.cgi?id=197862
+        <rdar://problem/50291989>
+
+        Reviewed by Simon Fraser.
+
+        Add a new layout test that represents a reduced test case version of google.com's search field.
+
+        * editing/selection/ios/do-not-hide-selection-in-visible-field.html: Added.
+
 2019-05-14  Megan Gardner  <megan_gardner@apple.com>
 
         Fix flakey test fast/events/autoscroll-when-input-is-offscreen.html
