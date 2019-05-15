@@ -69,6 +69,7 @@ enum {
 typedef uint32_t BKSProcessAssertionFlags;
 
 enum {
+    BKSProcessAssertionReasonMediaPlayback = 1,
     BKSProcessAssertionReasonFinishTask = 4,
     BKSProcessAssertionReasonExtension = 13,
     BKSProcessAssertionReasonFinishTaskUnbounded = 10004,

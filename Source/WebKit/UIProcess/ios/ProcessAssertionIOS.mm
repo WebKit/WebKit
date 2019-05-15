@@ -181,6 +181,8 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(AssertionReason rea
         return BKSProcessAssertionReasonFinishTask;
     case AssertionReason::FinishTaskUnbounded:
         return BKSProcessAssertionReasonFinishTaskUnbounded;
+    case AssertionReason::MediaPlayback:
+        return BKSProcessAssertionReasonMediaPlayback;
     }
 }
 

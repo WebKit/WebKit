@@ -1038,6 +1038,7 @@ void WebPageProxy::close()
 #endif
 
     stopAllURLSchemeTasks();
+    updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
 }
 
 bool WebPageProxy::tryClose()
@@ -7053,6 +7054,8 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
         m_pageLoadState.reset(transaction);
     }
 
+    updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
+
     // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.
     m_process->processTerminated();
 }
@@ -8074,7 +8077,8 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
     ASSERT(focusManager);
     focusManager->updatePlaybackAttributesFromMediaState(this, sourceElementID, newState);
 #endif
-    updatePlayingMediaDidChange(newState);
+    if (!m_isClosed)
+        updatePlayingMediaDidChange(newState);
 }
 
 void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState)
@@ -8112,6 +8116,8 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 
     if ((oldState & MediaProducer::HasAudioOrVideo) != (m_mediaState & MediaProducer::HasAudioOrVideo))
         videoControlsManagerDidChange();
+
+    m_process->webPageMediaStateDidChange(*this);
 }
 
 void WebPageProxy::videoControlsManagerDidChange()
