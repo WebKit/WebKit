@@ -4393,6 +4393,15 @@ void Internals::setResourceLoadStatisticsEnabled(bool enable)
     DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enable);
 }
 
+void Internals::setUserGrantsStorageAccess(bool value)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+
+    document->setUserGrantsStorageAccessOverride(value);
+}
+
 String Internals::composedTreeAsText(Node& node)
 {
     if (!is<ContainerNode>(node))

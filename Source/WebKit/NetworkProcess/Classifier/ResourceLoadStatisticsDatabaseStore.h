@@ -39,8 +39,6 @@
 namespace WebCore {
 class SQLiteDatabase;
 class SQLiteStatement;
-enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
 struct ResourceLoadStatistics;
 }
 
@@ -93,7 +91,7 @@ public:
 
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&) override;
     void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, CompletionHandler<void(StorageAccessStatus)>&&) override;
-    void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) override;
+    void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&) override;
 
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame) override;
     void logUserInteraction(const TopFrameDomain&) override;
@@ -130,7 +128,7 @@ private:
     Vector<unsigned> findExpiredUserInteractions() const;
     void clearExpiredUserInteractions();
     void clearGrandfathering(Vector<unsigned>&&);
-    WebCore::StorageAccessPromptWasShown hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&) const;
+    bool hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&) const;
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
 
     void reclassifyResources();
@@ -152,7 +150,7 @@ private:
     void setPrevalentResource(const RegistrableDomain&, ResourceLoadPrevalence);
     unsigned recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(unsigned primaryDomainID, StdSet<unsigned>& nonPrevalentRedirectionSources, unsigned numberOfRecursiveCalls);
     void setDomainsAsPrevalent(StdSet<unsigned>&&);
-    void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, Optional<FrameID>, PageID, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
+    void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, Optional<FrameID>, PageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
     void markAsPrevalentIfHasRedirectedToPrevalent();
     Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() override;
     void removeDataRecords(CompletionHandler<void()>&&);

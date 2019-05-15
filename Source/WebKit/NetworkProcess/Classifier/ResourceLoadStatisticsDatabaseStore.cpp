@@ -37,7 +37,6 @@
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"
-#include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
@@ -454,7 +453,7 @@ unsigned ResourceLoadStatisticsDatabaseStore::domainID(const RegistrableDomain& 
     return domainID;
 }
 
-void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const ResourceLoadStatistics& loadStatistics)
+void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const WebCore::ResourceLoadStatistics& loadStatistics)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -769,7 +768,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
     };
 
     auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain);
-    if (userWasPromptedEarlier == StorageAccessPromptWasShown::No) {
+    if (!userWasPromptedEarlier) {
 #if !RELEASE_LOG_DISABLED
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ResourceLoadStatisticsDebug, "About to ask the user whether they want to grant storage access to %{public}s under %{public}s or not.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
 #endif
@@ -778,7 +777,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
     }
 
 #if !RELEASE_LOG_DISABLED
-    if (userWasPromptedEarlier == StorageAccessPromptWasShown::Yes)
+    if (userWasPromptedEarlier)
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ResourceLoadStatisticsDebug, "Storage access was granted to %{public}s under %{public}s.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
 #endif
 
@@ -789,8 +788,8 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
         ASSERT_NOT_REACHED();
     }
     
-    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedEarlier, [completionHandler = WTFMove(completionHandler)] (StorageAccessWasGranted wasGranted) mutable {
-        completionHandler(wasGranted == StorageAccessWasGranted::Yes ? StorageAccessStatus::HasAccess : StorageAccessStatus::CannotRequestAccess);
+    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedEarlier, [completionHandler = WTFMove(completionHandler)] (bool wasGrantedAccess) mutable {
+        completionHandler(wasGrantedAccess ? StorageAccessStatus::HasAccess : StorageAccessStatus::CannotRequestAccess);
     });
 }
 
@@ -810,46 +809,46 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener(Domain
 #if !RELEASE_LOG_DISABLED
     RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ResourceLoadStatisticsDebug, "[Temporary combatibility fix] Storage access was granted for %{public}s under opener page from %{public}s, with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8().data(), openerDomain.string().utf8().data());
 #endif
-    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID, StorageAccessPromptWasShown::No, [](StorageAccessWasGranted) { });
+    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID, false, [](bool) { });
 }
 
-void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, uint64_t frameID, uint64_t pageID, StorageAccessPromptWasShown promptWasShown, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (promptWasShown == StorageAccessPromptWasShown::Yes) {
+    if (userWasPromptedNow) {
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatus.first == AddedRecord::No);
         ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
         insertDomainRelationship(m_storageAccessUnderTopFrameDomainsStatement, subFrameStatus.second, topFrameDomain);
     }
 
-    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, WTFMove(completionHandler));
+    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedNow, WTFMove(completionHandler));
 }
 
-void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, Optional<FrameID> frameID, PageID pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, Optional<FrameID> frameID, PageID pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&& callback)
 {
     ASSERT(!RunLoop::isMain());
 
     if (subFrameDomain == topFrameDomain) {
-        completionHandler(StorageAccessWasGranted::Yes);
+        callback(true);
         return;
     }
 
-    if (promptWasShownNowOrEarlier == StorageAccessPromptWasShown::Yes) {
+    if (userWasPromptedNowOrEarlier) {
 #ifndef NDEBUG
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatus.first == AddedRecord::No);
         ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
-        ASSERT(hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
+        ASSERT(hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain));
 #endif
         setUserInteraction(subFrameDomain, true, WallTime::now());
     }
 
-    RunLoop::main().dispatch([subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, store = makeRef(store()), completionHandler = WTFMove(completionHandler)]() mutable {
-        store->callGrantStorageAccessHandler(subFrameDomain, topFrameDomain, frameID, pageID, [completionHandler = WTFMove(completionHandler), store = store.copyRef()](StorageAccessWasGranted wasGranted) mutable {
-            store->statisticsQueue().dispatch([wasGranted, completionHandler = WTFMove(completionHandler)] () mutable {
-                completionHandler(wasGranted);
+    RunLoop::main().dispatch([subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, store = makeRef(store()), callback = WTFMove(callback)]() mutable {
+        store->callGrantStorageAccessHandler(subFrameDomain, topFrameDomain, frameID, pageID, [callback = WTFMove(callback), store = store.copyRef()](bool value) mutable {
+            store->statisticsQueue().dispatch([callback = WTFMove(callback), value] () mutable {
+                callback(value);
             });
         });
     });
@@ -1350,7 +1349,7 @@ ResourceLoadStatisticsDatabaseStore::CookieTreatmentResult ResourceLoadStatistic
     return hadUserInteraction ? CookieTreatmentResult::BlockAndKeep : CookieTreatmentResult::BlockAndPurge;
 }
     
-StorageAccessPromptWasShown ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt(unsigned requestingDomainID, const RegistrableDomain& firstPartyDomain) const
+bool ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt(unsigned requestingDomainID, const RegistrableDomain& firstPartyDomain) const
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1359,9 +1358,9 @@ StorageAccessPromptWasShown ResourceLoadStatisticsDatabaseStore::hasUserGrantedS
     SQLiteStatement statement(m_database, makeString("SELECT COUNT(*) FROM StorageAccessUnderTopFrameDomains WHERE domainID = ", String::number(requestingDomainID), " AND topLevelDomainID = ", String::number(firstPartyPrimaryDomainID)));
     if (statement.prepare() != SQLITE_OK
         || statement.step() != SQLITE_ROW)
-        return StorageAccessPromptWasShown::No;
+        return false;
 
-    return !statement.getColumnInt(0) ? StorageAccessPromptWasShown::Yes : StorageAccessPromptWasShown::No;
+    return !statement.getColumnInt(0);
 }
 
 Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::domainsToBlock() const

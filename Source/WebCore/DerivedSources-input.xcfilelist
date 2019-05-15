@@ -562,7 +562,6 @@ $(PROJECT_DIR)/dom/DocumentAndElementEventHandlers.idl
 $(PROJECT_DIR)/dom/DocumentFragment.idl
 $(PROJECT_DIR)/dom/DocumentFullscreen.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
-$(PROJECT_DIR)/dom/DocumentStorageAccess.idl
 $(PROJECT_DIR)/dom/DocumentTouch.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
 $(PROJECT_DIR)/dom/Element.idl
