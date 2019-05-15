@@ -912,6 +912,9 @@ webkit.org/b/196307 http/tests/resourceLoadStatistics/website-data-removal-for-s
 
 webkit.org/b/196376 storage/domstorage/localstorage/private-browsing-affects-storage.html [ Pass Failure ]
 
+webkit.org/b/197917 [ Debug ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
+webkit.org/b/197917 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Skip ]
+
 webkit.org/b/194780 http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Pass Failure ]
 webkit.org/b/196377 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Pass Failure ]
 
