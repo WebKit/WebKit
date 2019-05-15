@@ -4047,8 +4047,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
-    if (frame->isMainFrame() && navigationID) {
-        navigation = navigationState().navigation(navigationID);
+    if (frame->isMainFrame() && navigationID && (navigation = navigationState().navigation(navigationID))) {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         auto requesterOrigin = navigation->lastNavigationAction().requesterOrigin;
         auto currentURL = navigation->currentRequest().url();

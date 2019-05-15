@@ -1,5 +1,24 @@
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Apply patch. rdar://problem/50753918
+
+    2019-05-14  Chris Dumez  <cdumez@apple.com>
+
+            MobileSafari crash at WebKit: WebKit::WebPageProxy::didCommitLoadForFrame
+            <rdar://problem/49908163>
+
+            Reviewed by Alex Christensen.
+
+            Partial cherry-pick of r243767 to fix the crash on the branch. The rest of
+            r243767 introduced a regression which got fixed later in r244493 so I think
+            this partial cherry-pick is the safest way to resolve the crash while
+            avoiding any potential regressions.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+
+2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245196. rdar://problem/50753938
 
     Streamline test-and-clear operation for ContextMenu
