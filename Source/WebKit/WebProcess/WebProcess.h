@@ -216,7 +216,7 @@ public:
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 
-    void processWillSuspendImminently(CompletionHandler<void(bool)>&&);
+    void processWillSuspendImminently();
     void prepareToSuspend();
     void cancelPrepareToSuspend();
     void processDidResume();
@@ -420,7 +420,6 @@ private:
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(MAC)
     void setScreenProperties(const WebCore::ScreenProperties&);

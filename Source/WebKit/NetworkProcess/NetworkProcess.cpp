@@ -1949,15 +1949,15 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
 #endif
 }
 
-void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
+void NetworkProcess::processWillSuspendImminently()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently() BEGIN", this);
 #if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
     for (auto& server : m_idbServers.values())
         server->tryStop(IDBServer::ShouldForceStop::Yes);
 #endif
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
-    completionHandler(true);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently() END", this);
 }
 
 void NetworkProcess::prepareToSuspend()

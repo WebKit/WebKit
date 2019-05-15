@@ -732,8 +732,6 @@ void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder
 {
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
-
-    didReceiveSyncWebProcessMessage(connection, decoder, replyEncoder);
 }
 
 void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -1490,19 +1488,11 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     });
 }
 
-void WebProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
+void WebProcess::processWillSuspendImminently()
 {
-    if (parentProcessConnection()->inSendSync()) {
-        // Avoid reentrency bugs such as rdar://problem/21605505 by just bailing
-        // if we get an incoming ProcessWillSuspendImminently message when waiting for a
-        // reply to a sync message.
-        // FIXME: ProcessWillSuspendImminently should not be a sync message.
-        return completionHandler(false);
-    }
-
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently() BEGIN", this);
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
-    completionHandler(true);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently() END", this);
 }
 
 void WebProcess::prepareToSuspend()

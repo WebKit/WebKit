@@ -1,3 +1,43 @@
+2019-05-15  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] UIProcess may get killed because it is taking too long to release its background task after expiration
+        https://bugs.webkit.org/show_bug.cgi?id=197893
+        <rdar://problem/50234105>
+
+        Reviewed by Alex Christensen.
+
+        The UIProcess may get killed because it is taking too long to release its background task after its expiration handler
+        was called. The reason is that the background task's expiration handler was sequentially sending a ProcessWillSuspendImminently
+        synchronous IPC to each of its child processes and only then ends the background task. By the time we receive the response from
+        all child processes, it may be too late and we get killed.
+
+        To address the issue, we now:
+        1. Send the ProcessWillSuspendImminently asynchronously so that all processes can do their processing in parallel
+        2. After 2 seconds, the UIProcess releases the background task (We get killed after ~5 seconds)
+
+        Also, to make sure that the UIProcess supends promptly, we now make sure we never start a new background task *after*
+        the app has been backgrounded. The intention of our background task is too finish critical work (like releasing locked
+        files) after the app gets backgrounded, not to start new work and delay process suspension.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processWillSuspendImminently):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspendImminently):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendProcessWillSuspendImminently):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _scheduleReleaseTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _cancelPendingReleaseTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        (WebKit::WebProcess::processWillSuspendImminently):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-05-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Make WebAuthN default on

@@ -957,11 +957,8 @@ void NetworkProcessProxy::deleteWebsiteDataInUIProcessForRegistrableDomains(PAL:
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()
 {
-    if (!canSendMessage())
-        return;
-
-    bool handled = false;
-    sendSync(Messages::NetworkProcess::ProcessWillSuspendImminently(), Messages::NetworkProcess::ProcessWillSuspendImminently::Reply(handled), 0, 1_s);
+    if (canSendMessage())
+        send(Messages::NetworkProcess::ProcessWillSuspendImminently(), 0);
 }
     
 void NetworkProcessProxy::sendPrepareToSuspend()

@@ -77,7 +77,7 @@ messages -> NetworkProcess LegacyReceiver {
     ProcessDidTransitionToBackground()
     ProcessDidTransitionToForeground()
 
-    ProcessWillSuspendImminently() -> (bool handled) Synchronous
+    ProcessWillSuspendImminently()
     PrepareToSuspend()
     CancelPrepareToSuspend()
     ProcessDidResume()
