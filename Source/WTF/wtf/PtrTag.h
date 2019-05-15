@@ -123,7 +123,7 @@ constexpr bool enablePtrTagDebugAssert = true;
 
 
 template<typename T>
-inline T* tagArrayPtr(nullptr_t ptr, size_t length)
+inline T* tagArrayPtr(std::nullptr_t ptr, size_t length)
 {
     ASSERT(!length);
     return ptrauth_sign_unauthenticated(static_cast<T*>(ptr), ptrauth_key_process_dependent_data, length);
@@ -428,7 +428,7 @@ inline void registerPtrTagLookup(PtrTagLookup*) { }
 inline void reportBadTag(const void*, PtrTag) { }
 
 template<typename T>
-inline T* tagArrayPtr(nullptr_t, size_t size)
+inline T* tagArrayPtr(std::nullptr_t, size_t size)
 {
     ASSERT_UNUSED(size, !size);
     return nullptr;
