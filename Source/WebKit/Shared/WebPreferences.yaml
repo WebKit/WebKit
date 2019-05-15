@@ -749,7 +749,7 @@ InputEventsEnabled:
 
 WebAuthenticationEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Web Authentication"
   humanReadableDescription: "Enable Web Authentication support"
   webcoreBinding: RuntimeEnabledFeatures
