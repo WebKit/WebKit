@@ -1,3 +1,16 @@
+2019-05-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise sandbox to allow IOKit properties needed by Metal and LaunchServices
+        https://bugs.webkit.org/show_bug.cgi?id=197924
+        <rdar://problem/50823976>
+
+        Reviewed by Per Arne Vollan.
+
+        Update sandbox to allow access to some IOKit properties to avoid sandbox violations that could
+        lower performance or increase launch times:
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-05-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix assertion introduced in r245339.

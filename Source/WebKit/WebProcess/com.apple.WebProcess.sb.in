@@ -211,6 +211,8 @@
     (iokit-property-regex #"Apple(GVAKeyDoesNotExist|IntelMEVABundleName)")
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
     (iokit-property-regex #"^ATY,(cbits|fb_(linebytes|offset|size)|intrev)")
+    (iokit-property "ATY,DeviceName") ;; Needed by Metal compilers
+    (iokit-property "ATY,FamilyName") ;; Ditto
     (iokit-property "AVCSupported")
     (iokit-property "BacklightHandle")
     (iokit-property "BlockSize")
@@ -353,16 +355,19 @@
     (iokit-property "device_type")
     (iokit-property "dpm")
     (iokit-property "errordb") ;; Needed for OpenGL on older hardware
+    (iokit-property "filevault-image") ;; Needed by LaunchServices
     (iokit-property "graphic-options")
     (iokit-property "hda-gfx")
     (iokit-property-regex #"^id(Product|Vendor)")
     (iokit-property "iofb_version")
     (iokit-property "image-encrypted")
+    (iokit-property "image-path") ;; Needed by LaunchServices
     (iokit-property "locationID") ;; Needed for Audio support on older hardware
     (iokit-property "model")
     (iokit-property "mt-device-id")
     (iokit-property "name")
     (iokit-property "nv-stats")
+    (iokit-property "od-server-name") ;; Needed by LaunchServices
     (iokit-property-regex #"^parser-(options|type)")
     (iokit-property-regex #"^pci(-aspm-default|debug)")
     (iokit-property "port-number")
