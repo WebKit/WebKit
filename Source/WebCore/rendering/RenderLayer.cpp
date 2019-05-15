@@ -280,10 +280,6 @@ static TextStream& operator<<(TextStream& ts, const ClipRects& clipRects)
     return ts;
 }
 
-static bool clipRectsLogEnabled()
-{
-    return LogClipRects.state == WTFLogChannelState::On;
-}
 #endif
 
 RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
@@ -5629,10 +5625,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         }
     }
 
-#if !LOG_DISABLED
-    if (clipRectsLogEnabled())
-        LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " calculateClipRects " << clipRects);
-#endif
+    LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " calculateClipRects " << clipRects);
 }
 
 Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext) const
@@ -5678,10 +5671,7 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
     if (parentRects->fixed() && &clipRectsContext.rootLayer->renderer() == &view && !backgroundClipRect.isInfinite())
         backgroundClipRect.moveBy(view.frameView().scrollPositionForFixedPosition());
 
-#if !LOG_DISABLED
-    if (clipRectsLogEnabled())
-        LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " backgroundClipRect with context " << clipRectsContext << " returning " << backgroundClipRect);
-#endif
+    LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " backgroundClipRect with context " << clipRectsContext << " returning " << backgroundClipRect);
     return backgroundClipRect;
 }
 
