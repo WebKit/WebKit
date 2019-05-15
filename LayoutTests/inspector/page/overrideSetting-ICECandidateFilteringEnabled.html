@@ -43,8 +43,6 @@ function createDataChannel() {
 
 function test()
 {
-    InspectorTest.debug();
-
     let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
 
     suite.addTestCase({
@@ -59,15 +57,6 @@ function test()
                 InspectorTest.evaluateInPage(`createDataChannel()`),
             ])
             InspectorTest.expectThat(overriddenResult.data.success, "Should be able to establish a connection when filtering ice candidates.");
-
-            InspectorTest.log("Removing ICECandidateFilteringEnabled override...");
-            await PageAgent.overrideSetting(PageAgent.Setting.ICECandidateFilteringEnabled);
-
-            let [originalResult] = await Promise.all([
-                InspectorTest.awaitEvent("DataChannel"),
-                InspectorTest.evaluateInPage(`createDataChannel()`),
-            ])
-            InspectorTest.expectFalse(originalResult.data.success, "Should not be able to establish a connection when filtering ice candidates.");
         },
     });
 
