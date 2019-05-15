@@ -441,6 +441,11 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     return elements;
 }
 
+Vector<RefPtr<Element>> TreeScope::elementsFromPoint(const FloatPoint& p)
+{
+    return elementsFromPoint(p.x(), p.y());
+}
+
 Element* TreeScope::findAnchor(const String& name)
 {
     if (name.isEmpty())

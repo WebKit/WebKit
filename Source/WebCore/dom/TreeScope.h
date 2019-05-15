@@ -37,6 +37,7 @@ namespace WebCore {
 class ContainerNode;
 class Document;
 class Element;
+class FloatPoint;
 class HTMLImageElement;
 class HTMLLabelElement;
 class HTMLMapElement;
@@ -95,6 +96,7 @@ public:
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY);
     WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY);
+    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(const FloatPoint&);
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks

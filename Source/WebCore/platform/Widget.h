@@ -150,10 +150,14 @@ public:
     WEBCORE_EXPORT IntRect convertToRootView(const IntRect&) const;
     IntRect convertFromRootView(const IntRect&) const;
 
+    FloatRect convertToRootView(const FloatRect&) const;
     FloatRect convertFromRootView(const FloatRect&) const;
 
     IntPoint convertToRootView(const IntPoint&) const;
     IntPoint convertFromRootView(const IntPoint&) const;
+
+    FloatPoint convertToRootView(const FloatPoint&) const;
+    FloatPoint convertFromRootView(const FloatPoint&) const;
 
     // It is important for cross-platform code to realize that Mac has flipped coordinates.  Therefore any code
     // that tries to convert the location of a rect using the point-based convertFromContainingWindow will end
@@ -186,9 +190,12 @@ public:
     // Virtual methods to convert points to/from the containing ScrollView
     WEBCORE_EXPORT virtual IntRect convertToContainingView(const IntRect&) const;
     WEBCORE_EXPORT virtual IntRect convertFromContainingView(const IntRect&) const;
+    WEBCORE_EXPORT virtual FloatRect convertToContainingView(const FloatRect&) const;
     WEBCORE_EXPORT virtual FloatRect convertFromContainingView(const FloatRect&) const;
     WEBCORE_EXPORT virtual IntPoint convertToContainingView(const IntPoint&) const;
     WEBCORE_EXPORT virtual IntPoint convertFromContainingView(const IntPoint&) const;
+    WEBCORE_EXPORT virtual FloatPoint convertToContainingView(const FloatPoint&) const;
+    WEBCORE_EXPORT virtual FloatPoint convertFromContainingView(const FloatPoint&) const;
 
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.

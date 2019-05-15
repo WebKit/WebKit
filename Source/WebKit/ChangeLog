@@ -1,3 +1,59 @@
+2019-05-15  Devin Rousso  <drousso@apple.com>
+
+        Web Automation: elements larger than the viewport have incorrect in-view center point
+        https://bugs.webkit.org/show_bug.cgi?id=195696
+        <rdar://problem/48737122>
+
+        Reviewed by Simon Fraser.
+
+        Original patch by Brian Burg <bburg@apple.com>.
+
+        This seems to be an omission in the specification. While it does mention that the in-view
+        center point (IVCP) must be within the viewport, the algorithm never intersects the element
+        bounding box with the viewport rect.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        This code is incorrect. For `CoordinateSystem::LayoutViewport`, coordinates should be in
+        root view coordinates so that it can be later converted to screen and synthesized as a HID
+        event in screen coordinates. Intersect the element rect and the viewport rect before finding
+        the center point of the part of the element that's visible in the viewport.
+
+        (WebKit::convertRectFromFrameClientToRootView): Added.
+        (WebKit::convertPointFromFrameClientToRootView): Added.
+        Added helpers to properly account for scroll contents position on iOS.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::viewportInViewCenterPointOfElement):
+        Now that we determine whether the element is inside the viewport much earlier, if the
+        element has no `inViewCenterPoint`, we can return a `TargetOutOfBounds` instead of a more
+        "generic" `ElementNotInteractable`.
+
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        Rename `locationInView` -> `locationInViewport`.
+
+        (WebKit::WebAutomationSession::simulateTouchInteraction):
+        This code is incorrect. The `unobscuredContentRect` is in screen coordinates, but
+        we are trying to see if (x, y) is outside the size of the viewport assumed to be at (0, 0).
+        Grab the visual viewport rect and see if the location exceeds the viewport size.
+
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::operator<<):
+        Add logging helper for `TouchInteraction` enum.
+
+        (WebKit::WebAutomationSession::platformSimulateTouchInteraction):
+        Move local variable.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        Fix a typo in logging.
+
+        * UIProcess/Automation/Automation.json:
+        Simplify enum name.
+
+        * Platform/Logging.h:
+        Add logging channel to dump fully resolved interaction details.
+
 2019-05-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed restoration of non-unified build.

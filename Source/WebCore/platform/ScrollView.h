@@ -230,7 +230,7 @@ public:
     int scrollY() const { return scrollPosition().y(); }
 
     // Scroll position used by web-exposed features (has legacy iOS behavior).
-    IntPoint contentsScrollPosition() const;
+    WEBCORE_EXPORT IntPoint contentsScrollPosition() const;
     void setContentsScrollPosition(const IntPoint&);
 
 #if PLATFORM(IOS_FAMILY)
@@ -279,12 +279,17 @@ public:
 
     WEBCORE_EXPORT IntPoint rootViewToContents(const IntPoint&) const;
     WEBCORE_EXPORT IntPoint contentsToRootView(const IntPoint&) const;
+    WEBCORE_EXPORT FloatPoint contentsToRootView(const FloatPoint&) const;
     WEBCORE_EXPORT IntRect rootViewToContents(const IntRect&) const;
     WEBCORE_EXPORT IntRect contentsToRootView(const IntRect&) const;
     WEBCORE_EXPORT FloatRect rootViewToContents(const FloatRect&) const;
+    WEBCORE_EXPORT FloatRect contentsToRootView(const FloatRect&) const;
 
     IntPoint viewToContents(const IntPoint&) const;
     IntPoint contentsToView(const IntPoint&) const;
+
+    FloatPoint viewToContents(const FloatPoint&) const;
+    FloatPoint contentsToView(const FloatPoint&) const;
 
     IntRect viewToContents(IntRect) const;
     IntRect contentsToView(IntRect) const;
