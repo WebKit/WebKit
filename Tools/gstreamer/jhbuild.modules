@@ -111,10 +111,10 @@
     </dependencies>
   </meson>
 
-  <autotools id="libva" autogenargs="--enable-va-messaging=no">
-    <branch module="intel/libva/releases/download/${version}/libva-${version}.tar.bz2" version="2.4.0"
-            hash="sha256:99263056c21593a26f2ece812aee6fe60142b49e6cd46cb33c8dddf18fc19391"
+  <meson id="libva" mesonargs="-Denable_va_messaging=false">
+    <branch module="intel/libva/archive/${version}.tar.gz" version="2.4.1"
+            hash="sha256:68ca8d071dcb84ac82e3c6d7f02a55937d9f690fcb215853f4aa1de8d459812f"
            checkoutdir="libva-${version}" repo="github-tarball"/>
-  </autotools>
+  </meson>
 
 </moduleset>

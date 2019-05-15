@@ -1,3 +1,13 @@
+2019-05-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][jhbuild] misc cleanups and bumps
+        https://bugs.webkit.org/show_bug.cgi?id=197913
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gstreamer/jhbuild.modules: Bump to libva 2.4.1 and switch to Meson.
+        * gtk/jhbuild.modules: Bump to Brotli 1.0.5 and Wayland 1.16.
+
 2019-05-15  Chris Dumez  <cdumez@apple.com>
 
         Flaky API Test: TestWebKitAPI.ProcessSwap.NumberOfCachedProcesses

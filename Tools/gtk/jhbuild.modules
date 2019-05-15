@@ -83,7 +83,7 @@
       href="https://www.gnupg.org/ftp/gcrypt/"/>
 
   <cmake id="brotli">
-    <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
+    <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.5"/>
   </cmake>
 
   <cmake id="woff2">
@@ -149,9 +149,9 @@
       <dep package="freetype6"/>
       <dep package="fontconfig"/>
     </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-2.2.0.tar.bz2"
+    <branch module="software/harfbuzz/release/harfbuzz-${version}.tar.bz2"
             version="2.2.0"
-            checkoutdir="harfbuzz-2.2.0"
+            checkoutdir="harfbuzz-${version}"
             repo="freedesktop.org"
             hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
   </autotools>
@@ -334,17 +334,17 @@
              autogenargs="--disable-documentation">
     <pkg-config>wayland-server.pc</pkg-config>
     <branch module="releases/wayland-${version}.tar.xz"
-            version="1.14.0"
+            version="1.16.0"
             repo="wayland.freedesktop.org"
-            hash="sha256:ed80cabc0961a759a42092e2c39aabfc1ec9a13c86c98bbe2b812f008da27ab8"/>
+            hash="sha256:4e72c2b56109ccfb6610d776e465f4ca0af2280c9c2f7d5cc23f0ed2548752f5"/>
   </autotools>
 
   <autotools id="wayland-protocols"
              autogen-sh="configure">
     <branch module="releases/wayland-protocols-${version}.tar.xz"
-            version="1.12"
+            version="1.16"
 	    repo="wayland.freedesktop.org"
-	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
+	    hash="sha256:6b1485951fdcd36a960c870c46f28b03a3e5121fb46246916333ed07f78c98c5"/>
   </autotools>
 
   <autotools id="weston"
