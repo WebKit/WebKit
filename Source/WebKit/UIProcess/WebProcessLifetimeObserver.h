@@ -48,6 +48,8 @@ public:
 
     WTF::IteratorRange<HashCountedSet<WebProcessProxy*>::const_iterator::Keys> processes() const;
 
+    bool hasProcess(WebProcessProxy* process) const { return m_processes.contains(process); }
+
 private:
     friend class WebProcessLifetimeTracker;
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessLifetimeObserver.h"
 
+#include "Logging.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
@@ -42,9 +43,13 @@ WebProcessLifetimeObserver::~WebProcessLifetimeObserver()
 void WebProcessLifetimeObserver::addWebPage(WebPageProxy& webPageProxy, WebProcessProxy& process)
 {
     ASSERT(process.state() == WebProcessProxy::State::Running);
+    RELEASE_ASSERT(!process.isInProcessCache());
+    RELEASE_ASSERT(!process.isPrewarmed());
 
-    if (m_processes.add(&process).isNewEntry)
+    if (m_processes.add(&process).isNewEntry) {
+        RELEASE_LOG(Loading, "%p - WebProcessLifetimeObserver::addWebPage: webPID = %i, pageID = %" PRIu64, this, process.processIdentifier(), webPageProxy.pageID());
         webProcessWillOpenConnection(process, *process.connection());
+    }
 
     webPageWillOpenConnection(webPageProxy, *process.connection());
 }
@@ -57,8 +62,10 @@ void WebProcessLifetimeObserver::removeWebPage(WebPageProxy& webPageProxy, WebPr
 
     webPageDidCloseConnection(webPageProxy, *process.connection());
 
-    if (m_processes.remove(&process))
+    if (m_processes.remove(&process)) {
+        RELEASE_LOG(Loading, "%p - WebProcessLifetimeObserver::removeWebPage: webPID = %i, pageID = %" PRIu64, this, process.processIdentifier(), webPageProxy.pageID());
         webProcessDidCloseConnection(process, *process.connection());
+    }
 }
 
 WTF::IteratorRange<HashCountedSet<WebProcessProxy*>::const_iterator::Keys> WebProcessLifetimeObserver::processes() const
