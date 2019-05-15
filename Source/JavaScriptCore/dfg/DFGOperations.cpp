@@ -2272,8 +2272,12 @@ Symbol* JIT_OPERATION operationNewSymbolWithDescription(ExecState* exec, JSStrin
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    return Symbol::create(exec, description);
+    String string = description->value(exec);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    return Symbol::createWithDescription(vm, string);
 }
 
 JSCell* JIT_OPERATION operationNewStringObject(ExecState* exec, JSString* string, Structure* structure)
