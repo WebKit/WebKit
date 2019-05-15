@@ -1,3 +1,10 @@
+2019-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix assertion introduced in r245339.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+
 2019-05-15  Sihui Liu  <sihui_liu@apple.com>
 
         Add assertions to help diagnose crash at WebProcessProxy::processPool()
