@@ -1,3 +1,175 @@
+2019-05-15  Keith Rollin  <krollin@apple.com>
+
+        Rewrite generate-xcfilelists in Python
+        https://bugs.webkit.org/show_bug.cgi?id=197622
+        <rdar://problem/50508222>
+
+        Reviewed by Jonathan Bedard, Alex Christensen.
+
+        For a number of reasons, rewrite generate-xcfilelists in Python:
+
+        - The previous bash script was large and unmaintainable.
+        - We have more internal expertise with Python than with bash.
+        - The bash script used temporary files in /tmp that got stranded and
+          were owned by root, making them awkward to clear out.
+          <rdar://problem/49490262>
+        - We needed to complete support for engineers that built with Xcode
+          rather than the command line.
+        - There are some bugs leading to mildly corrupted .xcfilelist files.
+          It's not apparent the source of the bugs, but one general reason
+          might be due to approaches born of using bash. Rewriting in Python
+          may clear these up.
+
+        * Scripts/generate-xcfilelists:
+        * Scripts/webkitpy/common/attribute_saver.py: Added.
+        (AttributeSaver):
+        (AttributeSaver.__init__):
+        (AttributeSaver.__enter__):
+        (AttributeSaver.__exit__):
+        * Scripts/webkitpy/common/attribute_saver_unittest.py: Added.
+        (AttributeSaverTest):
+        (AttributeSaverTest.SimpleTestClass):
+        (AttributeSaverTest.SimpleTestClass.__init__):
+        (AttributeSaverTest.test_class):
+        (AttributeSaverTest.test_normal_default):
+        (AttributeSaverTest.test_normal_value):
+        (AttributeSaverTest.test_normal_value_on_exception):
+        (AttributeSaverTest.test_normal_value_on_normal_exit):
+        (AttributeSaverTest.test_normal_value_with_finally_on_exception):
+        (AttributeSaverTest.test_normal_value_with_finally_on_normal_exit):
+        (AttributeSaverTest.test_normal_value_with_else_on_exception):
+        (AttributeSaverTest.test_normal_value_with_else_on_normal_exit):
+        * Scripts/webkitpy/generate_xcfilelists_lib/__init__.py: Added.
+        * Scripts/webkitpy/generate_xcfilelists_lib/application.py: Added.
+        (Application):
+        (Application.__init__):
+        (Application.run):
+        (Application._initialize):
+        (Application._initialize.collect_attributes):
+        (Application._create_parser):
+        (_validate_args):
+        (_cmd_generate):
+        (_cmd_check):
+        (_cmd_subgenerate):
+        (_cmd_help):
+        (_do_generate):
+        (_do_merge):
+        (_report_results):
+        (_report_merge_results):
+        (_report_remediation_steps):
+        (_report_remediation_steps.add_to_message):
+        (_any_have_errors):
+        (_any_have_actions):
+        (_log_progress):
+        (_log_results):
+        (get_generate_xcfilelists_script_path):
+        (_get_root_dir):
+        (get_opensource_dir):
+        (get_build_scripts_dir):
+        (get_extract_dependencies_from_makefile_script):
+        (get_xcode_built_products_dir):
+        (_getenv):
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py: Added.
+        (BaseGenerator):
+        (BaseGenerator.__init__):
+        (BaseGenerator.__str__):
+        (BaseGenerator.generate):
+        (BaseGenerator._sublaunch_under_xcode):
+        (BaseGenerator.subgenerate):
+        (BaseGenerator.merge):
+        (BaseGenerator.pickle_to_file):
+        (BaseGenerator.has_action):
+        (BaseGenerator.has_error):
+        (BaseGenerator.is_valid):
+        (BaseGenerator.report_error):
+        (BaseGenerator._generate_derived):
+        (BaseGenerator._merge_derived):
+        (BaseGenerator._generate_unified):
+        (BaseGenerator._merge_unified):
+        (BaseGenerator._replace):
+        (BaseGenerator._unexpand):
+        (BaseGenerator._find_added_lines):
+        (BaseGenerator._merge_added_lines):
+        (BaseGenerator._get_file_lines):
+        (BaseGenerator._getenv):
+        (BaseGenerator._get_project_file_path):
+        (BaseGenerator._get_project_dir):
+        (BaseGenerator._get_project_file_name):
+        (BaseGenerator._get_project_name):
+        (BaseGenerator._get_sym_root):
+        (BaseGenerator._get_obj_root):
+        (BaseGenerator._get_shared_precomps_dir):
+        (BaseGenerator._get_build_dirs):
+        (BaseGenerator._get_build_dirs.define_xcode_build_dirs):
+        (BaseGenerator._get_build_dirs.define_xcode_build_dirs.read_xcode_user_default):
+        (BaseGenerator._get_build_dirs.define_command_line_build_dirs):
+        (BaseGenerator._get_derived_sources_dir):
+        (BaseGenerator._get_xcfilelist_dir):
+        (BaseGenerator._get_input_derived_xcfilelist_project_path):
+        (BaseGenerator._get_output_derived_xcfilelist_project_path):
+        (BaseGenerator._get_input_unified_xcfilelist_project_path):
+        (BaseGenerator._get_output_unified_xcfilelist_project_path):
+        (BaseGenerator._get_generate_derived_sources_script):
+        (BaseGenerator._get_generate_unified_sources_script):
+        (JavaScriptCoreGenerator):
+        (JavaScriptCoreGenerator._get_project_file_path):
+        (JavaScriptCoreGenerator._get_generate_derived_sources_script):
+        (JavaScriptCoreGenerator._get_generate_unified_sources_script):
+        (WebCoreGenerator):
+        (WebCoreGenerator._get_project_file_path):
+        (WebCoreGenerator._get_generate_derived_sources_script):
+        (WebCoreGenerator._get_generate_unified_sources_script):
+        (WebKitGenerator):
+        (WebKitGenerator._get_project_file_path):
+        (WebKitGenerator._get_derived_sources_dir):
+        (WebKitGenerator._get_generate_derived_sources_script):
+        (WebKitGenerator._get_generate_unified_sources_script):
+        (DumpRenderTreeGenerator):
+        (DumpRenderTreeGenerator._get_project_file_path):
+        (DumpRenderTreeGenerator._get_generate_derived_sources_script):
+        (WebKitTestRunnerGenerator):
+        (WebKitTestRunnerGenerator._get_project_file_path):
+        (WebKitTestRunnerGenerator._get_generate_derived_sources_script):
+        * Scripts/webkitpy/generate_xcfilelists_lib/util.py: Added.
+        (debug_log):
+        (LogEntryHelper):
+        (LogEntryHelper.__init__):
+        (LogEntryHelper.log_entry):
+        (LogEntryHelper.log_result):
+        (LogEntryHelper.log_exception):
+        (LogEntryHelper._print):
+        (LogEntryExit):
+        (LogEntryExit._show_debug_logging):
+        (LogEntryExitClass):
+        (LogEntryExitClass._show_debug_logging):
+        (LogEntryExitGlobal):
+        (LogEntryExitGlobal._show_debug_logging):
+        (subprocess_run):
+        (is_running_under_xcode):
+        (CheckValidItemAction):
+        (CheckValidItemAction.__init__):
+        (CheckValidItemAction.__call__):
+        (CheckValidItemAction.validate_item):
+        (CheckCommandAction):
+        (CheckCommandAction.__call__):
+        (InvalidCommandError):
+        (InvalidArgumentError):
+        (InvalidConfigurationError):
+        (CalledProcessError):
+        (CalledProcessError.__str__):
+        * Scripts/webkitpy/xcode/__init__.py:
+        (xcode_hash_for_path):
+        (xcode_hash_for_path.convert_to_string):
+        * Scripts/webkitpy/xcode/sdk.py: Added.
+        (SDK):
+        (SDK.__init__):
+        (SDK.__repr__):
+        (SDK.as_xcode_specification):
+        (SDK.get_preferred_sdk_for_platform):
+        (SDK._parse_sdk):
+        * Scripts/webkitpy/xcode/sdk_unittest.py: Added.
+        (SDKTest):
+
 2019-05-15  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Enabling uploading EWS archives to S3
