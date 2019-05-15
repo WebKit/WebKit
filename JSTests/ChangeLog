@@ -1,5 +1,54 @@
 2019-05-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r245047. rdar://problem/50754976
+
+    JSC: A bug in BytecodeGenerator::emitEqualityOpImpl
+    https://bugs.webkit.org/show_bug.cgi?id=197479
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/do-not-perform-bytecode-peephole-optimization-in-jump-target.js: Added.
+    (shouldBe):
+    
+    Source/JavaScriptCore:
+    
+    Our peephole optimization in BytecodeGenerator is (1) rewinding the previous instruction and (2) emit optimized instruction instead.
+    If we have jump target between the previous instruction and the subsequent instruction, this peephole optimization breaks the jump target.
+    To prevent it, we had a mechanism disabling peephole optimization, setting m_lastOpcodeID = op_end and checking m_lastOpcodeID when performing
+    peephole optimization. However, BytecodeGenerator::emitEqualityOpImpl checks `m_lastInstruction->is<OpTypeof>` instead of `m_lastOpcodeID == op_typeof`,
+    and miss `op_end` case.
+    
+    This patch makes the following changes.
+    
+    1. Add canDoPeepholeOptimization method to clarify the intent of `m_lastInstruction = op_end`.
+    2. Check canDoPeepholeOptimization status before performing peephole optimization in emitJumpIfTrue, emitJumpIfFalse, and emitEqualityOpImpl.
+    3. Add `ASSERT(canDoPeepholeOptimization())` in fuseCompareAndJump and fuseTestAndJmp to ensure that peephole optimization is allowed.
+    
+    * bytecompiler/BytecodeGenerator.cpp:
+    (JSC::BytecodeGenerator::fuseCompareAndJump):
+    (JSC::BytecodeGenerator::fuseTestAndJmp):
+    (JSC::BytecodeGenerator::emitJumpIfTrue):
+    (JSC::BytecodeGenerator::emitJumpIfFalse):
+    (JSC::BytecodeGenerator::emitEqualityOpImpl):
+    * bytecompiler/BytecodeGenerator.h:
+    (JSC::BytecodeGenerator::canDoPeepholeOptimization const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245047 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            JSC: A bug in BytecodeGenerator::emitEqualityOpImpl
+            https://bugs.webkit.org/show_bug.cgi?id=197479
+
+            Reviewed by Saam Barati.
+
+            * stress/do-not-perform-bytecode-peephole-optimization-in-jump-target.js: Added.
+            (shouldBe):
+
+2019-05-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r244996. rdar://problem/50754980
 
     [JSC] We should check OOM for description string of Symbol
