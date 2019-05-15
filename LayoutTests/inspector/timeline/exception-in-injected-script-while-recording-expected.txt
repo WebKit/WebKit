@@ -1,9 +1,0 @@
-Testing that an injected script, run while the debugger is paused and the timeline profiler is enabled, should not loop forever if it has an exception thrown.
-
-Added a breakpoint inside hook().
-Debugger paused;
-An exception was thrown from the injected script.
-Debugger resumed; stopping timeline capture.
-Timeline capturing stopped. Inspecting the active recording....
-TimerFired timeline record has profile attached: TRUE
-

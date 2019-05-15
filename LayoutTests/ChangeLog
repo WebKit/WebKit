@@ -1,3 +1,21 @@
+2019-05-15  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r242741) [Mac WK1 Debug] Layout Test inspector/timeline/exception-in-injected-script-while-recording.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=197442
+        <rdar://problem/50354090>
+
+        Reviewed by Joseph Pecoraro.
+
+        Ever since r198774, we don't allow a timeline recording to be active at the same time as the
+        debugger being paused. As such, these tests are unnecessary.
+
+        * inspector/timeline/debugger-paused-while-recording.html: Removed.
+        * inspector/timeline/debugger-paused-while-recording-expected.txt: Removed.
+        * inspector/timeline/exception-in-injected-script-while-recording.html: Removed.
+        * inspector/timeline/exception-in-injected-script-while-recording-expected.txt: Removed.
+        * inspector/timeline/resources/timeline-helper.js: Removed.
+        * TestExpectations:
+
 2019-05-15  Zalan Bujtas  <zalan@apple.com>
 
         Do not create a shape object outside of the layout context

@@ -1,8 +1,0 @@
-Testing that profiling data is correctly generated and attached to Timeline records when the debugger pauses and resumes while capturing timelines.
-
-Added a breakpoint inside hook().
-Debugger paused; resuming...
-Debugger resumed; stopping timeline capture.
-Timeline capturing stopped. Inspecting the active recording....
-TimerFired timeline record has profile attached: TRUE
-

@@ -534,9 +534,6 @@ webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 webkit.org/b/128736 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]
 
-webkit.org/b/142208 inspector/timeline/debugger-paused-while-recording.html [ Skip ]
-webkit.org/b/142208 inspector/timeline/exception-in-injected-script-while-recording.html [ Skip ]
-
 # This test is fast enough in release but quite slow in debug builds.
 [ Debug ] inspector/debugger/debugger-stack-overflow.html [ Skip ]
 [ Debug ] inspector/canvas/recording-2d.html [ Slow ]
