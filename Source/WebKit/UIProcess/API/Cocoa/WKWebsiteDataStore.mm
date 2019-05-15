@@ -43,7 +43,7 @@
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
 
-class WebsiteDataStoreClient : public WebKit::WebsiteDataStoreClient {
+class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
 public:
     explicit WebsiteDataStoreClient(id <_WKWebsiteDataStoreDelegate> delegate)
         : m_delegate(delegate)

@@ -264,76 +264,43 @@ using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
 
-class ExceededDatabaseQuotaRecords {
-    WTF_MAKE_NONCOPYABLE(ExceededDatabaseQuotaRecords); WTF_MAKE_FAST_ALLOCATED;
-    friend NeverDestroyed<ExceededDatabaseQuotaRecords>;
+class StorageRequests {
+    WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
+    friend NeverDestroyed<StorageRequests>;
 public:
-    struct Record {
-        uint64_t frameID;
-        String originIdentifier;
-        String databaseName;
-        String displayName;
-        uint64_t currentQuota;
-        uint64_t currentOriginUsage;
-        uint64_t currentDatabaseUsage;
-        uint64_t expectedUsage;
-        Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply reply;
-    };
+    static StorageRequests& singleton();
 
-    static ExceededDatabaseQuotaRecords& singleton();
+    void processOrAppend(CompletionHandler<void()>&& completionHandler)
+    {
+        if (m_requestsAreBeingProcessed) {
+            m_requests.append(WTFMove(completionHandler));
+            return;
+        }
+        m_requestsAreBeingProcessed = true;
+        completionHandler();
+    }
 
-    std::unique_ptr<Record> createRecord(uint64_t frameID, String originIdentifier,
-        String databaseName, String displayName, uint64_t currentQuota,
-        uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, 
-        Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
-
-    void add(std::unique_ptr<Record>);
-    bool areBeingProcessed() const { return !!m_currentRecord; }
-    Record* next();
+    void processNextIfAny()
+    {
+        if (m_requests.isEmpty()) {
+            m_requestsAreBeingProcessed = false;
+            return;
+        }
+        m_requests.takeFirst()();
+    }
 
 private:
-    ExceededDatabaseQuotaRecords() { }
-    ~ExceededDatabaseQuotaRecords() { }
+    StorageRequests() { }
+    ~StorageRequests() { }
 
-    Deque<std::unique_ptr<Record>> m_records;
-    std::unique_ptr<Record> m_currentRecord;
+    Deque<CompletionHandler<void()>> m_requests;
+    bool m_requestsAreBeingProcessed { false };
 };
 
-ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::singleton()
+StorageRequests& StorageRequests::singleton()
 {
-    static NeverDestroyed<ExceededDatabaseQuotaRecords> records;
-    return records;
-}
-
-std::unique_ptr<ExceededDatabaseQuotaRecords::Record> ExceededDatabaseQuotaRecords::createRecord(
-    uint64_t frameID, String originIdentifier, String databaseName, String displayName,
-    uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage,
-    uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
-{
-    auto record = std::make_unique<Record>();
-    record->frameID = frameID;
-    record->originIdentifier = originIdentifier;
-    record->databaseName = databaseName;
-    record->displayName = displayName;
-    record->currentQuota = currentQuota;
-    record->currentOriginUsage = currentOriginUsage;
-    record->currentDatabaseUsage = currentDatabaseUsage;
-    record->expectedUsage = expectedUsage;
-    record->reply = WTFMove(reply);
-    return record;
-}
-
-void ExceededDatabaseQuotaRecords::add(std::unique_ptr<ExceededDatabaseQuotaRecords::Record> record)
-{
-    m_records.append(WTFMove(record));
-}
-
-ExceededDatabaseQuotaRecords::Record* ExceededDatabaseQuotaRecords::next()
-{
-    m_currentRecord = nullptr;
-    if (!m_records.isEmpty())
-        m_currentRecord = m_records.takeFirst();
-    return m_currentRecord.get();
+    static NeverDestroyed<StorageRequests> requests;
+    return requests;
 }
 
 #if !LOG_DISABLED
@@ -394,6 +361,25 @@ public:
 private:
     WeakPtr<PageClient> m_pageClient;
 };
+
+void WebPageProxy::forMostVisibleWebPageIfAny(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
+{
+    // FIXME: If not finding right away a visible page, we might want to try again for a given period of time when there is a change of visibility.
+    WebPageProxy* selectedPage = nullptr;
+    WebProcessProxy::forWebPagesWithOrigin(sessionID, origin, [&](auto& page) {
+        if (!page.mainFrame())
+            return;
+        if (page.isViewVisible() && (!selectedPage || !selectedPage->isViewVisible())) {
+            selectedPage = &page;
+            return;
+        }
+        if (page.isViewFocused() && (!selectedPage || !selectedPage->isViewFocused())) {
+            selectedPage = &page;
+            return;
+        }
+    });
+    completionHandler(selectedPage);
+}
 
 Ref<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, uint64_t pageID, Ref<API::PageConfiguration>&& configuration)
 {
@@ -4415,6 +4401,7 @@ void WebPageProxy::didChangeMainDocument(uint64_t frameID)
 #else
     UNUSED_PARAM(frameID);
 #endif
+    m_isQuotaIncreaseDenied = false;
 }
 
 void WebPageProxy::viewIsBecomingVisible()
@@ -7263,24 +7250,41 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t, Ref<Authenti
 
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
 {
-    ExceededDatabaseQuotaRecords& records = ExceededDatabaseQuotaRecords::singleton();
-    std::unique_ptr<ExceededDatabaseQuotaRecords::Record> newRecord = records.createRecord(frameID,
-        originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage,
-        currentDatabaseUsage, expectedUsage, WTFMove(reply));
-    records.add(WTFMove(newRecord));
+    requestStorageSpace(frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, [reply = WTFMove(reply)](auto quota) mutable {
+        reply(quota);
+    });
+}
 
-    if (records.areBeingProcessed())
+void WebPageProxy::requestStorageSpace(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    StorageRequests::singleton().processOrAppend([this, protectedThis = makeRef(*this), pageURL = currentURL(), frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, completionHandler = WTFMove(completionHandler)]() mutable {
+        this->makeStorageSpaceRequest(frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, [this, protectedThis = WTFMove(protectedThis), pageURL = WTFMove(pageURL), completionHandler = WTFMove(completionHandler), currentQuota](auto quota) mutable {
+            if (quota <= currentQuota && this->currentURL() == pageURL)
+                m_isQuotaIncreaseDenied =  true;
+            completionHandler(quota);
+            StorageRequests::singleton().processNextIfAny();
+        });
+    });
+}
+
+void WebPageProxy::makeStorageSpaceRequest(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    if (m_isQuotaIncreaseDenied) {
+        completionHandler(currentQuota);
         return;
-
-    ExceededDatabaseQuotaRecords::Record* record = records.next();
-    while (record) {
-        WebFrameProxy* frame = m_process->webFrame(record->frameID);
-        MESSAGE_CHECK(m_process, frame);
-
-        auto origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(record->originIdentifier)->securityOrigin());
-        m_uiClient->exceededDatabaseQuota(this, frame, origin.ptr(), record->databaseName, record->displayName, record->currentQuota, record->currentOriginUsage, record->currentDatabaseUsage, record->expectedUsage, WTFMove(record->reply));
-        record = records.next();
     }
+
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(m_process, frame);
+
+    auto originData = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
+    if (originData != SecurityOriginData::fromURL(URL { { }, currentURL() })) {
+        completionHandler(currentQuota);
+        return;
+    }
+
+    auto origin = API::SecurityOrigin::create(originData->securityOrigin());
+    m_uiClient->exceededDatabaseQuota(this, frame, origin.ptr(), databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, WTFMove(completionHandler));
 }
 
 void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&& reply)

@@ -385,6 +385,8 @@ public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
 
+    static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
+
     const API::PageConfiguration& configuration() const;
 
     uint64_t pageID() const { return m_pageID; }
@@ -1542,6 +1544,8 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_1
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
+    void requestStorageSpace(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, WTF::CompletionHandler<void(uint64_t)>&&);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2076,6 +2080,8 @@ private:
     static bool isInHardwareKeyboardMode();
 #endif
 
+    void makeStorageSpaceRequest(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
+
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
@@ -2505,6 +2511,7 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
     };
     Optional<SpeechSynthesisData> m_speechSynthesisData;
 #endif
+    bool m_isQuotaIncreaseDenied { false };
 };
 
 } // namespace WebKit

@@ -110,6 +110,8 @@ public:
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     ~WebProcessProxy();
 
+    static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, const Function<void(WebPageProxy&)>&);
+
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
     unsigned suspendedPageCount() const { return m_suspendedPageCount; }

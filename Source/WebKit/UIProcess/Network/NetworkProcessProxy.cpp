@@ -1141,7 +1141,7 @@ void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcessForExp
 }
 #endif
 
-void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&& completionHandler)
+void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&& completionHandler)
 {
     auto* store = websiteDataStoreFromSessionID(sessionID);
 
@@ -1150,7 +1150,28 @@ void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const We
         return;
     }
 
-    store->client().requestStorageSpace(origin.topOrigin, origin.clientOrigin, quota, currentSize, spaceRequired, WTFMove(completionHandler));
+    store->client().requestStorageSpace(origin.topOrigin, origin.clientOrigin, currentQuota, currentSize, spaceRequired, [sessionID, origin, currentQuota, currentSize, spaceRequired, completionHandler = WTFMove(completionHandler)](auto quota) mutable {
+        if (quota) {
+            completionHandler(quota);
+            return;
+        }
+
+        if (origin.topOrigin != origin.clientOrigin) {
+            completionHandler({ });
+            return;
+        }
+
+        WebPageProxy::forMostVisibleWebPageIfAny(sessionID, origin.topOrigin, [completionHandler = WTFMove(completionHandler), origin, currentQuota, currentSize, spaceRequired](auto* page) mutable {
+            if (!page) {
+                completionHandler({ });
+                return;
+            }
+            String name = makeString(FileSystem::encodeForFileName(origin.topOrigin.host), " content");
+            page->requestStorageSpace(page->mainFrame()->frameID(), origin.topOrigin.databaseIdentifier(), name, name, currentQuota, currentSize, currentSize, spaceRequired, [completionHandler = WTFMove(completionHandler)](auto quota) mutable {
+                completionHandler(quota);
+            });
+        });
+    });
 }
 
 void NetworkProcessProxy::takeUploadAssertion()

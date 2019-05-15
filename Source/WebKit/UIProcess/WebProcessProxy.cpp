@@ -123,6 +123,15 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
+void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, const Function<void(WebPageProxy&)>& callback)
+{
+    for (auto* page : globalPageMap().values()) {
+        if (page->sessionID() != sessionID || SecurityOriginData::fromURL(URL { { }, page->currentURL() }) != origin)
+            continue;
+        callback(*page);
+    }
+}
+
 Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, ShouldLaunchProcess shouldLaunchProcess)
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed));

@@ -180,6 +180,7 @@
 		3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */; };
 		4135FB842011FAA700332139 /* InjectInternals_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */; };
 		4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */; };
+		414AD6862285D1C000777F2D /* StorageQuota.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414AD6852285D1B000777F2D /* StorageQuota.mm */; };
 		41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41882F0221010A70002FF288 /* ProcessPreWarming.mm */; };
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
 		44817A2F1F0486BF00003810 /* WKRequestActivatedElementInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */; };
@@ -1579,6 +1580,7 @@
 		3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PictureInPictureDelegate.html; sourceTree = "<group>"; };
 		4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InjectInternals_Bundle.cpp; path = Tests/InjectInternals_Bundle.cpp; sourceTree = SOURCE_ROOT; };
 		4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		414AD6852285D1B000777F2D /* StorageQuota.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = StorageQuota.mm; sourceTree = "<group>"; };
 		41882F0221010A70002FF288 /* ProcessPreWarming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessPreWarming.mm; sourceTree = "<group>"; };
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
@@ -2688,6 +2690,7 @@
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
 				2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */,
 				CDC0932D21C993440030C4B0 /* StopSuspendResumeAllMedia.mm */,
+				414AD6852285D1B000777F2D /* StorageQuota.mm */,
 				515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */,
 				1C734B5220788C4800F430EA /* SystemColors.mm */,
 				2D70059521EDA0C6003463CB /* TabOutOfWebView.mm */,
@@ -4369,6 +4372,7 @@
 				7CCE7ECE1A411A7E00447C4C /* StopLoadingFromDidFinishLoading.mm in Sources */,
 				7CCE7ECF1A411A7E00447C4C /* StopLoadingFromDidReceiveResponse.mm in Sources */,
 				CDC0932E21C993440030C4B0 /* StopSuspendResumeAllMedia.mm in Sources */,
+				414AD6862285D1C000777F2D /* StorageQuota.mm in Sources */,
 				515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */,
 				7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
 				7CCE7ED11A411A7E00447C4C /* StringTruncator.mm in Sources */,
