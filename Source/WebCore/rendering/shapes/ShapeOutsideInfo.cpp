@@ -38,6 +38,7 @@
 #include "RenderBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderImage.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -320,6 +321,10 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
 
 ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const RenderBlockFlow& containingBlock, const FloatingObject& floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
 {
+    // If we never constructed this shape during layout, we propably don't need to know about it outside of layout in the context of "containing block line".
+    if (!m_shape && !containingBlock.view().frameView().layoutContext().isInLayout())
+        return { };
+
     ASSERT(lineHeight >= 0);
     LayoutUnit borderBoxTop = containingBlock.logicalTopForFloat(floatingObject) + containingBlock.marginBeforeForChild(m_renderer);
     LayoutUnit borderBoxLineTop = lineTop - borderBoxTop;
