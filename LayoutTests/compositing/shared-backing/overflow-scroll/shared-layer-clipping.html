@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 30px;
+            border: 3px solid black;
+            overflow: hidden;
+        }
+
+        .compositing-trigger {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+            transform: translateZ(0);
+            padding: 20px;
+            background-color: gray;
+        }
+        
+        .relative {
+            position: relative;
+            top: 150px;
+            left: 150px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="compositing-trigger"></div>
+    <div class="container">
+        <div class="relative"></div>
+    </div>
+</body>
+</html>
