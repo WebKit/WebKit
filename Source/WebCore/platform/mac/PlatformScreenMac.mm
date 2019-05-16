@@ -112,6 +112,7 @@ ScreenProperties collectScreenProperties()
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     ScreenProperties screenProperties;
+    bool screenHasInvertedColors = [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldInvertColors];
 
     for (NSScreen *screen in [NSScreen screens]) {
         auto displayID = WebCore::displayID(screen);
@@ -124,7 +125,6 @@ ScreenProperties collectScreenProperties()
         int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
         bool screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
-        bool screenHasInvertedColors = CGDisplayUsesInvertedPolarity();
         bool screenIsMonochrome = CGDisplayUsesForceToGray();
         uint32_t displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
         IORegistryGPUID gpuID = 0;
@@ -256,7 +256,7 @@ bool screenHasInvertedColors()
 
     // This is a system-wide accessibility setting, same on all screens.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return CGDisplayUsesInvertedPolarity();
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldInvertColors];
 }
 
 int screenDepth(Widget* widget)
