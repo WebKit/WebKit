@@ -149,7 +149,7 @@ public:
 #if CPU(LITTLE_ENDIAN)
         memcpy(m_storage.data(), &value, storageSize);
 #else
-        memcpy(m_storage.data(), bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize));
+        memcpy(m_storage.data(), bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), storageSize);
 #endif
     }
 
