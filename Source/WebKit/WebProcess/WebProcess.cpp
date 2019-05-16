@@ -731,6 +731,8 @@ void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder
 {
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
+
+    didReceiveSyncWebProcessMessage(connection, decoder, replyEncoder);
 }
 
 void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
