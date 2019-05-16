@@ -92,6 +92,7 @@ private:
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     bool interrupted() const final;
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Microphone; }
 
     void initializeToStartProducingData();
 
