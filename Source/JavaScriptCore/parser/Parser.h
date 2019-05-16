@@ -1665,6 +1665,8 @@ private:
 
     template <class TreeBuilder> NEVER_INLINE const char* metaPropertyName(TreeBuilder&, TreeExpression);
 
+    template <class TreeBuilder> ALWAYS_INLINE bool isSimpleAssignmentTarget(TreeBuilder&, TreeExpression);
+
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
     

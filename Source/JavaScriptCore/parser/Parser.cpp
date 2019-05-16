@@ -3631,6 +3631,14 @@ template <typename TreeBuilder> NEVER_INLINE const char* Parser<LexerType>::meta
     RELEASE_ASSERT_NOT_REACHED();
     return "error";
 }
+
+template <typename LexerType>
+template <typename TreeBuilder> bool Parser<LexerType>::isSimpleAssignmentTarget(TreeBuilder& context, TreeExpression expr)
+{
+    // Web compatibility concerns prevent us from handling a function call LHS as an early error in sloppy mode.
+    // This behavior is currently unspecified, but see: https://github.com/tc39/ecma262/issues/257#issuecomment-195106880
+    return context.isLocation(expr) || (!strictMode() && context.isFunctionCall(expr));
+}
     
 template <typename LexerType>
 template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context, ExpressionErrorClassifier& classifier)
@@ -3737,8 +3745,8 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         }
         m_parserState.nonTrivialExpressionCount++;
         hadAssignment = true;
-        if (UNLIKELY(context.isMetaProperty(lhs)))
-            internalFailWithMessage(false, metaPropertyName(context, lhs), " can't be the left hand side of an assignment expression");
+        semanticFailIfTrue(context.isMetaProperty(lhs), metaPropertyName(context, lhs), " can't be the left hand side of an assignment expression");
+        semanticFailIfFalse(isSimpleAssignmentTarget(context, lhs), "Left side of assignment is not a reference");
         context.assignmentStackAppend(assignmentStack, lhs, start, tokenStartPosition(), m_parserState.assignmentCount, op);
         start = tokenStartPosition();
         m_parserState.assignmentCount++;
@@ -4929,8 +4937,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     typename TreeBuilder::UnaryExprContext unaryExprContext(context);
     AllowInOverride allowInOverride(this);
     int tokenStackDepth = 0;
-    bool modifiesExpr = false;
-    bool requiresLExpr = false;
+    bool hasPrefixUpdateOp = false;
     unsigned lastOperator = 0;
 
     if (UNLIKELY(match(AWAIT) && currentFunctionScope()->isAsyncFunctionBoundary()))
@@ -4939,20 +4946,17 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     JSTokenLocation location(tokenLocation());
 
     while (isUnaryOp(m_token.m_type)) {
-        if (strictMode()) {
-            switch (m_token.m_type) {
-            case PLUSPLUS:
-            case MINUSMINUS:
-            case AUTOPLUSPLUS:
-            case AUTOMINUSMINUS:
-                semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
-                modifiesExpr = true;
-                requiresLExpr = true;
-                break;
-            default:
-                semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
-                break;
-            }
+        switch (m_token.m_type) {
+        case PLUSPLUS:
+        case MINUSMINUS:
+        case AUTOPLUSPLUS:
+        case AUTOMINUSMINUS:
+            semanticFailIfTrue(hasPrefixUpdateOp, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
+            hasPrefixUpdateOp = true;
+            break;
+        default:
+            semanticFailIfTrue(hasPrefixUpdateOp, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
+            break;
         }
         lastOperator = m_token.m_type;
         m_parserState.nonLHSCount++;
@@ -4968,37 +4972,37 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             failWithMessage("Cannot parse subexpression of ", operatorString(true, lastOperator), "operator");
         failWithMessage("Cannot parse member expression");
     }
-    if (UNLIKELY(isUpdateOp(static_cast<JSTokenType>(lastOperator)) && context.isMetaProperty(expr)))
-        internalFailWithMessage(false, metaPropertyName(context, expr), " can't come after a prefix operator");
+    if (isUpdateOp(static_cast<JSTokenType>(lastOperator))) {
+        semanticFailIfTrue(context.isMetaProperty(expr), metaPropertyName(context, expr), " can't come after a prefix operator");
+        semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Prefix ", lastOperator == PLUSPLUS ? "++" : "--", " operator applied to value that is not a reference");
+    }
     bool isEvalOrArguments = false;
     if (strictMode()) {
         if (context.isResolve(expr))
             isEvalOrArguments = *m_parserState.lastIdentifier == m_vm->propertyNames->eval || *m_parserState.lastIdentifier == m_vm->propertyNames->arguments;
     }
-    failIfTrueIfStrict(isEvalOrArguments && modifiesExpr, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
+    failIfTrueIfStrict(isEvalOrArguments && hasPrefixUpdateOp, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
     switch (m_token.m_type) {
     case PLUSPLUS:
-        if (UNLIKELY(context.isMetaProperty(expr)))
-            internalFailWithMessage(false, metaPropertyName(context, expr), " can't come before a postfix operator");
+        semanticFailIfTrue(context.isMetaProperty(expr), metaPropertyName(context, expr), " can't come before a postfix operator");
+        semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Postfix ++ operator applied to value that is not a reference");
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpPlusPlus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
         m_parserState.assignmentCount++;
         failIfTrueIfStrict(isEvalOrArguments, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
-        semanticFailIfTrue(requiresLExpr, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
-        lastOperator = PLUSPLUS;
+        semanticFailIfTrue(hasPrefixUpdateOp, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
         next();
         break;
     case MINUSMINUS:
-        if (UNLIKELY(context.isMetaProperty(expr)))
-            internalFailWithMessage(false, metaPropertyName(context, expr), " can't come before a postfix operator");
+        semanticFailIfTrue(context.isMetaProperty(expr), metaPropertyName(context, expr), " can't come before a postfix operator");
+        semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Postfix -- operator applied to value that is not a reference");
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpMinusMinus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
         m_parserState.assignmentCount++;
         failIfTrueIfStrict(isEvalOrArguments, "'", m_parserState.lastIdentifier->impl(), "' cannot be modified in strict mode");
-        semanticFailIfTrue(requiresLExpr, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
-        lastOperator = PLUSPLUS;
+        semanticFailIfTrue(hasPrefixUpdateOp, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
         next();
         break;
     default:
@@ -5006,10 +5010,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     }
     
     JSTextPosition end = lastTokenEndPosition();
-
-    if (!TreeBuilder::CreatesAST && (!strictMode()))
-        return expr;
-
     while (tokenStackDepth) {
         switch (context.unaryTokenStackLastType(tokenStackDepth)) {
         case EXCLAMATION:

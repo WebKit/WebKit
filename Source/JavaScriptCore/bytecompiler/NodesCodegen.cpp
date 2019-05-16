@@ -1666,6 +1666,7 @@ RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     if (m_expr->isDotAccessorNode())
         return emitDot(generator, dst);
 
+    ASSERT(m_expr->isFunctionCall());
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
         ? "Postfix ++ operator applied to value that is not a reference."_s
         : "Postfix -- operator applied to value that is not a reference."_s);
@@ -1879,6 +1880,7 @@ RegisterID* PrefixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
     if (m_expr->isDotAccessorNode())
         return emitDot(generator, dst);
 
+    ASSERT(m_expr->isFunctionCall());
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
         ? "Prefix ++ operator applied to value that is not a reference."_s
         : "Prefix -- operator applied to value that is not a reference."_s);

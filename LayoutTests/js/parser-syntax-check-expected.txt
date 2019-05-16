@@ -24,32 +24,32 @@ PASS Invalid: "new -a". Produced the following syntax error: "SyntaxError: Unexp
 PASS Invalid: "function f() { new -a }". Produced the following syntax error: "SyntaxError: Unexpected token '-'"
 PASS Valid:   "new (-1)" with TypeError
 PASS Valid:   "function f() { new (-1) }"
-PASS Valid:   "a: b: c: new f(x++)++" with ReferenceError
-PASS Valid:   "function f() { a: b: c: new f(x++)++ }"
+PASS Invalid: "a: b: c: new f(x++)++". Produced the following syntax error: "SyntaxError: Postfix ++ operator applied to value that is not a reference."
+PASS Invalid: "function f() { a: b: c: new f(x++)++ }". Produced the following syntax error: "SyntaxError: Postfix ++ operator applied to value that is not a reference."
 PASS Valid:   "(a)++" with ReferenceError
 PASS Valid:   "function f() { (a)++ }"
-PASS Valid:   "(1--).x" with ReferenceError
-PASS Valid:   "function f() { (1--).x }"
+PASS Invalid: "(1--).x". Produced the following syntax error: "SyntaxError: Postfix -- operator applied to value that is not a reference."
+PASS Invalid: "function f() { (1--).x }". Produced the following syntax error: "SyntaxError: Postfix -- operator applied to value that is not a reference."
 PASS Invalid: "a-- ++". Produced the following syntax error: "SyntaxError: Unexpected token '++'"
 PASS Invalid: "function f() { a-- ++ }". Produced the following syntax error: "SyntaxError: Unexpected token '++'"
 PASS Invalid: "(a:) --b". Produced the following syntax error: "SyntaxError: Unexpected token ':'. Expected ')' to end a compound expression."
 PASS Invalid: "function f() { (a:) --b }". Produced the following syntax error: "SyntaxError: Unexpected token ':'. Expected ')' to end a compound expression."
-PASS Valid:   "++ -- ++ a" with ReferenceError
-PASS Valid:   "function f() { ++ -- ++ a }"
-PASS Valid:   "++ new new a ++" with ReferenceError
-PASS Valid:   "function f() { ++ new new a ++ }"
+PASS Invalid: "++ -- ++ a". Produced the following syntax error: "SyntaxError: The prefix-increment operator requires a reference expression."
+PASS Invalid: "function f() { ++ -- ++ a }". Produced the following syntax error: "SyntaxError: The prefix-increment operator requires a reference expression."
+PASS Invalid: "++ new new a ++". Produced the following syntax error: "SyntaxError: Prefix ++ operator applied to value that is not a reference."
+PASS Invalid: "function f() { ++ new new a ++ }". Produced the following syntax error: "SyntaxError: Prefix ++ operator applied to value that is not a reference."
 PASS Valid:   "delete void 0"
 PASS Valid:   "function f() { delete void 0 }"
 PASS Invalid: "delete the void". Produced the following syntax error: "SyntaxError: Unexpected keyword 'void'. Parse error."
 PASS Invalid: "function f() { delete the void }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'void'. Parse error."
 PASS Invalid: "(a++". Produced the following syntax error: "SyntaxError: Unexpected end of script"
 PASS Invalid: "function f() { (a++ }". Produced the following syntax error: "SyntaxError: Unexpected token '}'. Expected ')' to end a compound expression."
-PASS Valid:   "++a--" with ReferenceError
-PASS Valid:   "function f() { ++a-- }"
-PASS Valid:   "++((a))--" with ReferenceError
-PASS Valid:   "function f() { ++((a))-- }"
-PASS Valid:   "(a.x++)++" with ReferenceError
-PASS Valid:   "function f() { (a.x++)++ }"
+PASS Invalid: "++a--". Produced the following syntax error: "SyntaxError: The increment operator requires a reference expression."
+PASS Invalid: "function f() { ++a-- }". Produced the following syntax error: "SyntaxError: The increment operator requires a reference expression."
+PASS Invalid: "++((a))--". Produced the following syntax error: "SyntaxError: The increment operator requires a reference expression."
+PASS Invalid: "function f() { ++((a))-- }". Produced the following syntax error: "SyntaxError: The increment operator requires a reference expression."
+PASS Invalid: "(a.x++)++". Produced the following syntax error: "SyntaxError: Postfix ++ operator applied to value that is not a reference."
+PASS Invalid: "function f() { (a.x++)++ }". Produced the following syntax error: "SyntaxError: Postfix ++ operator applied to value that is not a reference."
 PASS Invalid: "1: null". Produced the following syntax error: "SyntaxError: Unexpected token ':'. Parse error."
 PASS Invalid: "function f() { 1: null }". Produced the following syntax error: "SyntaxError: Unexpected token ':'. Parse error."
 PASS Invalid: "+-!~". Produced the following syntax error: "SyntaxError: Unexpected end of script"
@@ -110,16 +110,16 @@ PASS Valid:   "- - true % 5"
 PASS Valid:   "function f() { - - true % 5 }"
 PASS Invalid: "- false = 3". Produced the following syntax error: "SyntaxError: Left hand side of operator '=' must be a reference."
 PASS Invalid: "function f() { - false = 3 }". Produced the following syntax error: "SyntaxError: Left hand side of operator '=' must be a reference."
-PASS Valid:   "a: b: c: (1 + null) = 3" with ReferenceError
-PASS Valid:   "function f() { a: b: c: (1 + null) = 3 }"
+PASS Invalid: "a: b: c: (1 + null) = 3". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { a: b: c: (1 + null) = 3 }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Valid:   "a[2] = b.l += c /= 4 * 7 ^ !6" with ReferenceError
 PASS Valid:   "function f() { a[2] = b.l += c /= 4 * 7 ^ !6 }"
 PASS Invalid: "a + typeof b += c in d". Produced the following syntax error: "SyntaxError: Left hand side of operator '+=' must be a reference."
 PASS Invalid: "function f() { a + typeof b += c in d }". Produced the following syntax error: "SyntaxError: Left hand side of operator '+=' must be a reference."
 PASS Invalid: "typeof a &= typeof b". Produced the following syntax error: "SyntaxError: Left hand side of operator '&=' must be a reference."
 PASS Invalid: "function f() { typeof a &= typeof b }". Produced the following syntax error: "SyntaxError: Left hand side of operator '&=' must be a reference."
-PASS Valid:   "a: ((typeof (a))) >>>= a || b.l && c" with ReferenceError
-PASS Valid:   "function f() { a: ((typeof (a))) >>>= a || b.l && c }"
+PASS Invalid: "a: ((typeof (a))) >>>= a || b.l && c". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { a: ((typeof (a))) >>>= a || b.l && c }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Valid:   "a: b: c[a /= f[a %= b]].l[c[x] = 7] -= a ? b <<= f : g" with ReferenceError
 PASS Valid:   "function f() { a: b: c[a /= f[a %= b]].l[c[x] = 7] -= a ? b <<= f : g }"
 PASS Valid:   "-void+x['y'].l == x.l != 5 - f[7]" with ReferenceError
@@ -127,8 +127,8 @@ PASS Valid:   "function f() { -void+x['y'].l == x.l != 5 - f[7] }"
 Function calls (and new with arguments)
 PASS Valid:   "a()()()" with ReferenceError
 PASS Valid:   "function f() { a()()() }"
-PASS Valid:   "s: l: a[2](4 == 6, 5 = 6)(f[4], 6)" with ReferenceError
-PASS Valid:   "function f() { s: l: a[2](4 == 6, 5 = 6)(f[4], 6) }"
+PASS Invalid: "s: l: a[2](4 == 6, 5 = 6)(f[4], 6)". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { s: l: a[2](4 == 6, 5 = 6)(f[4], 6) }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Valid:   "s: eval(a.apply(), b.call(c[5] - f[7]))" with ReferenceError
 PASS Valid:   "function f() { s: eval(a.apply(), b.call(c[5] - f[7])) }"
 PASS Invalid: "a(". Produced the following syntax error: "SyntaxError: Unexpected end of script"
@@ -357,8 +357,8 @@ PASS Valid:   "const  a = void 7 - typeof 8, b = 8"
 PASS Valid:   "function f() { const  a = void 7 - typeof 8, b = 8 }"
 PASS Invalid: "const a, a, a = void 7 - typeof 8, a = 8". Produced the following syntax error: "SyntaxError: Unexpected token ','. const declared variable 'a' must have an initializer."
 PASS Invalid: "function f() { const a, a, a = void 7 - typeof 8, a = 8 }". Produced the following syntax error: "SyntaxError: Unexpected token ','. const declared variable 'a' must have an initializer."
-PASS Valid:   "const x_x = 6 /= 7 ? e : f" with ReferenceError
-PASS Valid:   "function f() { const x_x = 6 /= 7 ? e : f }"
+PASS Invalid: "const x_x = 6 /= 7 ? e : f". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { const x_x = 6 /= 7 ? e : f }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "var a = ?". Produced the following syntax error: "SyntaxError: Unexpected token '?'"
 PASS Invalid: "function f() { var a = ? }". Produced the following syntax error: "SyntaxError: Unexpected token '?'"
 PASS Invalid: "const a = *7". Produced the following syntax error: "SyntaxError: Unexpected token '*'"
@@ -504,8 +504,8 @@ PASS Valid:   "for ((a ? b : c) in c) break" with ReferenceError
 PASS Valid:   "function f() { for ((a ? b : c) in c) break }"
 PASS Valid:   "for (var a in b in c) break" with ReferenceError
 PASS Valid:   "function f() { for (var a in b in c) break }"
-PASS Valid:   "for (var a = 5 += 6 in b) break" with ReferenceError
-PASS Valid:   "function f() { for (var a = 5 += 6 in b) break }"
+PASS Invalid: "for (var a = 5 += 6 in b) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for (var a = 5 += 6 in b) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Valid:   "for (var a = foo('should be hit') in b) break" with ReferenceError
 PASS Valid:   "function f() { for (var a = foo('should be hit') in b) break }"
 PASS Invalid: "for (var a += 5 in b) break". Produced the following syntax error: "SyntaxError: Unexpected token '+='. Expected either 'in' or 'of' in enumeration syntax."
@@ -524,8 +524,8 @@ PASS Invalid: "for (var a = (b in c in d) break". Produced the following syntax 
 PASS Invalid: "function f() { for (var a = (b in c in d) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'break'. Expected either 'in' or 'of' in enumeration syntax."
 PASS Invalid: "for (var (a) in b) { }". Produced the following syntax error: "SyntaxError: Unexpected token '('. Expected a parameter pattern or a ')' in parameter list."
 PASS Invalid: "function f() { for (var (a) in b) { } }". Produced the following syntax error: "SyntaxError: Unexpected token '('. Expected a parameter pattern or a ')' in parameter list."
-PASS Valid:   "for (var a = 7, b = c < d >= d ; f()[6]++ ; --i()[1]++ ) {}" with ReferenceError
-PASS Valid:   "function f() { for (var a = 7, b = c < d >= d ; f()[6]++ ; --i()[1]++ ) {} }"
+PASS Invalid: "for (var a = 7, b = c < d >= d ; f()[6]++ ; --i()[1]++ ) {}". Produced the following syntax error: "SyntaxError: The decrement operator requires a reference expression."
+PASS Invalid: "function f() { for (var a = 7, b = c < d >= d ; f()[6]++ ; --i()[1]++ ) {} }". Produced the following syntax error: "SyntaxError: The decrement operator requires a reference expression."
 PASS Invalid: "for (var {a} = 20 in b) { }". Produced the following syntax error: "SyntaxError: Cannot assign to the loop variable inside a for-in loop header."
 PASS Invalid: "function f() { for (var {a} = 20 in b) { } }". Produced the following syntax error: "SyntaxError: Cannot assign to the loop variable inside a for-in loop header."
 PASS Invalid: "for (var {a} = 20 of b) { }". Produced the following syntax error: "SyntaxError: Cannot assign to the loop variable inside a for-of loop header."
@@ -878,8 +878,8 @@ PASS Valid:   "if (0) obj.foo\u03bb; "
 PASS Valid:   "function f() { if (0) obj.foo\u03bb;  }"
 PASS Valid:   "if (0) new a(b+c).d = 5"
 PASS Valid:   "function f() { if (0) new a(b+c).d = 5 }"
-PASS Valid:   "if (0) new a(b+c) = 5"
-PASS Valid:   "function f() { if (0) new a(b+c) = 5 }"
+PASS Invalid: "if (0) new a(b+c) = 5". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { if (0) new a(b+c) = 5 }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Valid:   "([1 || 1].a = 1)"
 PASS Valid:   "function f() { ([1 || 1].a = 1) }"
 PASS Valid:   "({a: 1 || 1}.a = 1)"
@@ -1043,14 +1043,14 @@ PASS Valid:   "({a}=1)()" with TypeError
 PASS Valid:   "function f() { ({a}=1)() }"
 PASS Valid:   "({a:a}=1)()" with TypeError
 PASS Valid:   "function f() { ({a:a}=1)() }"
-PASS Valid:   "({a}=1)=1" with ReferenceError
-PASS Valid:   "function f() { ({a}=1)=1 }"
-PASS Valid:   "({a:a}=1)=1" with ReferenceError
-PASS Valid:   "function f() { ({a:a}=1)=1 }"
-PASS Valid:   "({a}=1=1)" with ReferenceError
-PASS Valid:   "function f() { ({a}=1=1) }"
-PASS Valid:   "({a:a}=1=1)" with ReferenceError
-PASS Valid:   "function f() { ({a:a}=1=1) }"
+PASS Invalid: "({a}=1)=1". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { ({a}=1)=1 }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "({a:a}=1)=1". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { ({a:a}=1)=1 }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "({a}=1=1)". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { ({a}=1=1) }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "({a:a}=1=1)". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { ({a:a}=1=1) }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "var {x}". Produced the following syntax error: "SyntaxError: Unexpected end of script"
 PASS Invalid: "function f() { var {x} }". Produced the following syntax error: "SyntaxError: Unexpected token '}'. Expected an initializer in destructuring variable declaration."
 PASS Invalid: "var {x, y}". Produced the following syntax error: "SyntaxError: Unexpected end of script"

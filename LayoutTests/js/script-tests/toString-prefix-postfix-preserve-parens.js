@@ -1,60 +1,6 @@
 description(
-"This test checks that toString() round-trip on a function that has prefix, postfix and typeof operators applied to group expression will not remove the grouping. Also checks that evaluation of such a expression produces run-time exception"
+"This test checks that toString() round-trip on a function that has a typeof operator applied to a group expression will not remove the grouping."
 );
-
-function postfix_should_preserve_parens(x, y, z) {
-    (x, y)++;
-    return y;
-}
-
-function prefix_should_preserve_parens(x, y, z) {
-    ++(x, y);
-    return x;
-
-}
-
-function both_should_preserve_parens(x, y, z) {
-    ++(x, y)--;
-    return x;
-
-}
-
-function postfix_should_preserve_parens_multi(x, y, z) {
-    (((x, y)))--;
-    return x;
-}
-
-function prefix_should_preserve_parens_multi(x, y, z) {
-    --(((x, y)));
-    return x;
-}
-
-function both_should_preserve_parens_multi(x, y, z) {
-    ++(((x, y)))--;
-    return x;
-}
-
-function postfix_should_preserve_parens_multi1(x, y, z) {
-    (((x)), y)--;
-    return x;
-}
-
-function prefix_should_preserve_parens_multi1(x, y, z) {
-    --(((x)), y);
-    return x;
-}
-
-function prefix_should_preserve_parens_multi2(x, y, z) {
-    var z = 0;
-    --(((x), y), z);
-    return x;
-}
-
-function postfix_should_preserve_parens_multi2(x, y, z) {
-    var z = 0;
-    (((x), y) ,z)++;
-    return x;
-}
 
 // if these return a variable (such as y) instead of
 // the result of typeof, this means that the parenthesis
@@ -91,17 +37,6 @@ function testToString(fn) {
 
 }
 
-function testToStringAndRTFailure(fn)
-{
-    testToString(fn);
-
-    // check that function call produces run-time exception
-    shouldThrow(""+fn+ "(1, 2, 3);");
-
-    // check that function call produces run-time exception after eval(unevalf)
-    shouldThrow("eval(unevalf("+fn+ "))(1, 2, 3);");
-}
-
 function testToStringAndReturn(fn, p1, p2, retval)
 {
 
@@ -113,17 +48,6 @@ function testToStringAndReturn(fn, p1, p2, retval)
     // check that function call produces correct result after eval(unevalf)
     shouldBe("eval(unevalf("+fn+ "))" + "(" + p1 + ", " + p2 +");", retval);
 }
-
-
-testToStringAndRTFailure("prefix_should_preserve_parens");
-testToStringAndRTFailure("postfix_should_preserve_parens");
-testToStringAndRTFailure("both_should_preserve_parens");
-testToStringAndRTFailure("prefix_should_preserve_parens_multi");
-testToStringAndRTFailure("postfix_should_preserve_parens_multi");
-testToStringAndRTFailure("prefix_should_preserve_parens_multi1");
-testToStringAndRTFailure("postfix_should_preserve_parens_multi1");
-testToStringAndRTFailure("prefix_should_preserve_parens_multi2");
-testToStringAndRTFailure("postfix_should_preserve_parens_multi2");
 
 testToStringAndReturn("typeof_should_preserve_parens", "'a'", 1, "'number'");
 testToStringAndReturn("typeof_should_preserve_parens1", "'a'", 1, "'number'");

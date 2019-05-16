@@ -202,11 +202,12 @@ try {
 <script>testId++;</script>
 <script>
 try {
-    function toFuzz21() {
-        if (PriorityQueue.prototype.doSort() instanceof (this ^= function() {
-        })) return 2; 
-    }
-    toFuzz21();
+    eval(
+        "function toFuzz21() {\n" +
+        "    if (PriorityQueue.prototype.doSort() instanceof (this ^= function () {})) return 2;\n" +
+        "}\n" +
+        "toFuzz21();"
+    );
 } catch(e) {
     printStack(e.stack);
 }

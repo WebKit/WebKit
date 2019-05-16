@@ -393,9 +393,14 @@ public:
         return pattern == BindingDestructuring;
     }
 
-    bool isAssignmentLocation(ExpressionType type)
+    bool isLocation(ExpressionType type)
     {
         return type == ResolveExpr || type == DotExpr || type == BracketExpr;
+    }
+
+    bool isAssignmentLocation(ExpressionType type)
+    {
+        return isLocation(type) || type == DestructuringAssignment;
     }
 
     bool isObjectLiteral(ExpressionType type)
@@ -411,6 +416,11 @@ public:
     bool isObjectOrArrayLiteral(ExpressionType type)
     {
         return isObjectLiteral(type) || isArrayLiteral(type);
+    }
+
+    bool isFunctionCall(ExpressionType type)
+    {
+        return type == CallExpr;
     }
 
     bool shouldSkipPauseLocation(int) const { return true; }

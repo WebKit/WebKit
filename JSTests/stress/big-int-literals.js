@@ -104,10 +104,4 @@ assertThrowSyntaxError("0xfnn");
 assertThrowSyntaxError("100nn");
 assertThrowSyntaxError("1a0nn");
 assertThrowSyntaxError("10E20n");
-
-try {
-    eval("--10n");
-    assert(false);
-} catch(e) {
-    assert(e instanceof ReferenceError);
-}
+assertThrowSyntaxError("--10n");

@@ -16,4 +16,4 @@ Inner foobaz 2
 	Finally bar 2
 Except foobaz 2 thrown
 english (passed)
-ReferenceError: Postfix ++ operator applied to value that is not a reference.
+SyntaxError: Postfix ++ operator applied to value that is not a reference.

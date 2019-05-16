@@ -13,9 +13,9 @@ PASS (y, ++x) is 7
 PASS ++((x)) is 8
 PASS ++((window.x)) is 9
 PASS ++((window["x"])) is 10
-PASS ++(y, x) threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..
-PASS ++(true ? x : y) threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..
-PASS ++++x threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..
+PASS ++(y, x) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
+PASS ++(true ? x : y) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
+PASS ++++x threw exception SyntaxError: The prefix-increment operator requires a reference expression..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,23 @@
+2019-05-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Invalid AssignmentTargetType should be an early error.
+        https://bugs.webkit.org/show_bug.cgi?id=197603
+
+        Reviewed by Keith Miller.
+
+        * test262/expectations.yaml:
+        Update expectations to reflect new SyntaxErrors.
+        (Ideally, these should all be viewed as passing in the near future.)
+
+        * stress/async-await-basic.js:
+        * stress/big-int-literals.js:
+        Update tests to reflect new SyntaxErrors.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/EH/try6.baseline-jsc:
+        * ChakraCore/test/Error/variousErrors3.baseline-jsc: Added.
+        Update baselines to reflect new SyntaxErrors.
+
 2019-05-15  Saam Barati  <sbarati@apple.com>
 
         Bound liveness of SetArgumentMaybe nodes when maximal flush insertion phase is enabled

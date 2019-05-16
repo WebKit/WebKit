@@ -137,11 +137,12 @@ try {
 // Case 21: Regression test from https://bugs.webkit.org/show_bug.cgi?id=118662
 testId++;
 try {
-    function toFuzz21b() {
-        if (PriorityQueue.prototype.doSort() instanceof (this ^= function() {
-        })) return 2; 
-    }
-    toFuzz21b();
+    eval(
+        "function toFuzz21() {\n" +
+        "    if (PriorityQueue.prototype.doSort() instanceof (this ^= function () {})) return 2;\n" +
+        "}\n" +
+        "toFuzz21();"
+    );
 } catch(e) {
     printStack(e.stack);
 }

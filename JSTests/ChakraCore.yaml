@@ -551,7 +551,7 @@
 - path: ChakraCore/test/Error/CallNonFunction.js
   cmd: runChakra :baseline, "NoException", "CallNonFunction_3.baseline-jsc", []
 - path: ChakraCore/test/Error/variousErrors.js
-  cmd: runChakra :baseline, "NoException", "variousErrors3.baseline", []
+  cmd: runChakra :baseline, "NoException", "variousErrors3.baseline-jsc", []
 - path: ChakraCore/test/Error/bug560940.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/Error/inlineSameFunc.js

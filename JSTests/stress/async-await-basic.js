@@ -270,28 +270,15 @@ var awaitEpression = async (value) => {
     var t3 = !!!!!await Promise.resolve(true);
     log.push('step 5 ' + t3);
 
-    try {
-        var t4 = ++await 1;
-    } catch(e) {
-        if (e instanceof ReferenceError) {
-            log.push('step 6 ');
-        } 
-    }
-
-    try {
-        var t5 = --await 1;
-    } catch(e) {
-        if (e instanceof ReferenceError) {
-            log.push('step 7');
-        } 
-    }
+    shouldThrowSyntaxError("var t4 = ++await 1;");
+    shouldThrowSyntaxError("var t5 = --await 1;");
 
     return void await 'test';
 };
 log = [];
 
 shouldBeAsync(undefined, () => awaitEpression(5));
-shouldBe("start:5 step 1 step 2 -2 step 3 12345 step 4 -54321 step 5 false step 6  step 7", log.join(" "));
+shouldBe("start:5 step 1 step 2 -2 step 3 12345 step 4 -54321 step 5 false", log.join(" "));
 
 // MethoodDefinition SyntaxErrors
 shouldThrowSyntaxError("var obj = { async foo : true };", "Unexpected token ':'. Expected a parenthesis for argument list.");

@@ -1,3 +1,50 @@
+2019-05-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Invalid AssignmentTargetType should be an early error.
+        https://bugs.webkit.org/show_bug.cgi?id=197603
+
+        Reviewed by Keith Miller.
+
+        Since ES6, expressions like 0++, ++0, 0 = 0, and 0 += 0 are all specified as early errors:
+          https://tc39.github.io/ecma262/#sec-update-expressions-static-semantics-early-errors
+          https://tc39.github.io/ecma262/#sec-assignment-operators-static-semantics-early-errors
+
+        We currently throw late ReferenceErrors for these -- let's turn them into early SyntaxErrors.
+        (This is based on the expectation that https://github.com/tc39/ecma262/pull/1527 will be accepted;
+        if that doesn't come to pass, we can subsequently introduce early ReferenceError and revise these.)
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitBytecode): Add an assert for "function call LHS" case.
+        (JSC::PrefixNode::emitBytecode): Add an assert for "function call LHS" case.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::isLocation): Added.
+        (JSC::ASTBuilder::isAssignmentLocation): Fix misleading parameter name.
+        (JSC::ASTBuilder::isFunctionCall): Added.
+        (JSC::ASTBuilder::makeAssignNode): Add an assert for "function call LHS" case.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::isLocation): Added.
+        (JSC::SyntaxChecker::isAssignmentLocation): Fix incorrect definition and align with ASTBuilder.
+        (JSC::SyntaxChecker::isFunctionCall): Added.
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isFunctionCall const): Added.
+        Ensure that the parser can check whether an expression node is a function call.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isSimpleAssignmentTarget): Added.
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression): See below.
+        * parser/Parser.h:
+        Throw SyntaxError whenever an assignment or update expression's target is invalid.
+        Unfortunately, it seems that web compatibility obliges us to exempt the "function call LHS" case in sloppy mode.
+        (https://github.com/tc39/ecma262/issues/257#issuecomment-195106880)
+
+        Additional cleanup items:
+          - Make use of `semanticFailIfTrue` for `isMetaProperty` checks, as it's equivalent.
+          - Rename `requiresLExpr` to `hasPrefixUpdateOp` since it's now confusing,
+            and get rid of `modifiesExpr` since it refers to the exact same condition.
+          - Stop setting `lastOperator` near the end -- one case was incorrect and regardless neither is used.
+
 2019-05-15  Saam Barati  <sbarati@apple.com>
 
         Bound liveness of SetArgumentMaybe nodes when maximal flush insertion phase is enabled

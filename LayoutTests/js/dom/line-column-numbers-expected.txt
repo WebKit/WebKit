@@ -138,12 +138,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     19   g at line-column-numbers.html:190:30
 
 --> Case 21 Stack Trace:
-    0   toFuzz21 at line-column-numbers.html:206:26
-    1   global code at line-column-numbers.html:209:13
+    0   eval at [native code]
+    1   global code at line-column-numbers.html:205:9
 
 --> Case 22 Stack Trace:
-    0   toFuzz22 at line-column-numbers.html:220:36
-    1   global code at line-column-numbers.html:224:13
+    0   toFuzz22 at line-column-numbers.html:221:36
+    1   global code at line-column-numbers.html:225:13
 
 --> Case 1 Stack Trace:
     0   global code at line-column-numbers.js:3:26
@@ -280,12 +280,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     19   g at line-column-numbers.js:127:30
 
 --> Case 21 Stack Trace:
-    0   toFuzz21b at line-column-numbers.js:141:26
-    1   global code at line-column-numbers.js:144:14
+    0   eval at [native code]
+    1   global code at line-column-numbers.js:140:9
 
 --> Case 22 Stack Trace:
-    0   toFuzz22b at line-column-numbers.js:153:36
-    1   global code at line-column-numbers.js:157:14
+    0   toFuzz22b at line-column-numbers.js:154:36
+    1   global code at line-column-numbers.js:158:14
 
 PASS successfullyParsed is true
 

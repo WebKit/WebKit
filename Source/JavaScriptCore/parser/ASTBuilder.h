@@ -627,9 +627,14 @@ public:
         return pattern->isBindingNode();
     }
 
-    bool isAssignmentLocation(const Expression& pattern)
+    bool isLocation(const Expression& node)
     {
-        return pattern->isAssignmentLocation();
+        return node->isLocation();
+    }
+
+    bool isAssignmentLocation(const Expression& node)
+    {
+        return node->isAssignmentLocation();
     }
 
     bool isObjectLiteral(const Expression& node)
@@ -645,6 +650,11 @@ public:
     bool isObjectOrArrayLiteral(const Expression& node)
     {
         return isObjectLiteral(node) || isArrayLiteral(node);
+    }
+
+    bool isFunctionCall(const Expression& node)
+    {
+        return node->isFunctionCall();
     }
 
     bool shouldSkipPauseLocation(StatementNode* statement) const
@@ -1467,8 +1477,10 @@ ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int 
 
 ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
-    if (!loc->isLocation())
+    if (!loc->isLocation()) {
+        ASSERT(loc->isFunctionCall());
         return new (m_parserArena) AssignErrorNode(location, divot, start, end);
+    }
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
