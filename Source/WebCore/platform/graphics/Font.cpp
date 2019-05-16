@@ -33,6 +33,7 @@
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/CoreTextSPI.h>
 #endif
+#include "CharacterProperties.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "OpenTypeMathData.h"
@@ -641,9 +642,9 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
     }
 }
 
-bool Font::platformSupportsCodePoint(UChar32 character) const
+bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const
 {
-    return glyphForCharacter(character);
+    return variation ? false : glyphForCharacter(character);
 }
 #endif
 
@@ -671,7 +672,23 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
 {
     ASSERT(isMainThread());
 
-    for (UChar32 codePoint : StringView(characters, length).codePoints()) {
+    auto codePoints = StringView(characters, length).codePoints();
+    auto it = codePoints.begin();
+    auto end = codePoints.end();
+    while (it != end) {
+        auto codePoint = *it;
+        ++it;
+
+        if (it != end && isVariationSelector(*it)) {
+            if (!platformSupportsCodePoint(codePoint, *it)) {
+                // Try the characters individually.
+                if (!supportsCodePoint(codePoint) || !supportsCodePoint(*it))
+                    return false;
+            }
+            ++it;
+            continue;
+        }
+
         if (!supportsCodePoint(codePoint))
             return false;
     }

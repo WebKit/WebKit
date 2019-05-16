@@ -175,7 +175,7 @@ public:
     GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
     bool supportsCodePoint(UChar32) const;
-    bool platformSupportsCodePoint(UChar32) const;
+    bool platformSupportsCodePoint(UChar32, Optional<UChar32> variation = WTF::nullopt) const;
 
     RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont) const;
 

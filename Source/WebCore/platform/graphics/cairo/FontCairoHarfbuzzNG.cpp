@@ -115,11 +115,18 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* original
         return nullptr;
 
     bool isEmoji = characterSequenceIsEmoji(iterator, character, clusterLength);
+    bool preferColoredFont = isEmoji;
+    // U+FE0E forces text style.
+    // U+FE0F forces emoji style.
+    if (characters[length - 1] == 0xFE0E)
+        preferColoredFont = false;
+    else if (characters[length - 1] == 0xFE0F)
+        preferColoredFont = true;
 
     const Font* baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
     if (baseFont
         && (clusterLength == length || baseFont->canRenderCombiningCharacterSequence(characters, length))
-        && (!isEmoji || baseFont->platformData().isColorBitmapFont()))
+        && (!preferColoredFont || baseFont->platformData().isColorBitmapFont()))
         return baseFont;
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
@@ -127,12 +134,16 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* original
         if (!fallbackFont || fallbackFont == baseFont)
             continue;
 
-        if (fallbackFont->canRenderCombiningCharacterSequence(characters, length) && (!isEmoji || fallbackFont->platformData().isColorBitmapFont()))
+        if (fallbackFont->canRenderCombiningCharacterSequence(characters, length) && (!preferColoredFont || fallbackFont->platformData().isColorBitmapFont()))
             return fallbackFont;
     }
 
-    if (auto systemFallback = FontCache::singleton().systemFallbackForCharacters(m_fontDescription, baseFont, IsForPlatformFont::No, isEmoji ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, characters, length)) {
-        if (systemFallback->canRenderCombiningCharacterSequence(characters, length) && (!isEmoji || systemFallback->platformData().isColorBitmapFont()))
+    if (auto systemFallback = FontCache::singleton().systemFallbackForCharacters(m_fontDescription, baseFont, IsForPlatformFont::No, preferColoredFont ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, characters, length)) {
+        if (systemFallback->canRenderCombiningCharacterSequence(characters, length) && (!preferColoredFont || systemFallback->platformData().isColorBitmapFont()))
+            return systemFallback.get();
+
+        // In case of emoji, if fallback font is colored try again without the variation selector character.
+        if (isEmoji && characters[length - 1] == 0xFE0F && systemFallback->platformData().isColorBitmapFont() && systemFallback->canRenderCombiningCharacterSequence(characters, length - 1))
             return systemFallback.get();
     }
 
