@@ -1,3 +1,86 @@
+2019-05-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r243948. rdar://problem/50754972
+
+    SIGSEGV in JSC::BytecodeGenerator::addStringConstant
+    https://bugs.webkit.org/show_bug.cgi?id=196486
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/arrow-function-and-use-strict-directive.js: Added.
+    * stress/arrow-function-syntax.js: Added. Checking EOF token handling.
+    (checkSyntax):
+    (checkSyntaxError): Currently not using it. But it is useful for testing more things related to arrow function syntax.
+    
+    Source/JavaScriptCore:
+    
+    When parsing a FunctionExpression / FunctionDeclaration etc., we use SyntaxChecker for the body of the function because we do not have any interest on the nodes of the body at that time.
+    The nodes will be parsed with the ASTBuilder when the function itself is parsed for code generation. This works well previously because all the function ends with "}" previously.
+    SyntaxChecker lexes this "}" token, and parser restores the context back to ASTBuilder and continues parsing.
+    
+    But now, we have ArrowFunctionExpression without braces `arrow => expr`. Let's consider the following code.
+    
+            arrow => expr
+            "string!"
+    
+    We parse arrow function's body with SyntaxChecker. At that time, we lex "string!" token under the SyntaxChecker context. But this means that we may not build string content for this token
+    since SyntaxChecker may not have interest on string content itself in certain case. After the parser is back to ASTBuilder, we parse "string!" as ExpressionStatement with string constant,
+    generate StringNode with non-built identifier (nullptr), and we accidentally create StringNode with nullptr.
+    
+    This patch fixes this problem. The root cause of this problem is that the last token lexed in the previous context is used. We add lexCurrentTokenAgainUnderCurrentContext which will re-lex
+    the current token under the current context (may be ASTBuilder). This should be done only when the caller's context is different from SyntaxChecker, which avoids unnecessary lexing.
+    We leverage existing SavePoint mechanism to implement lexCurrentTokenAgainUnderCurrentContext cleanly.
+    
+    And we also fix the bug in the existing SavePoint mechanism, which is shown in the attached test script. When we save LexerState, we do not save line terminator status. This patch also introduces
+    lexWithoutClearingLineTerminator, which lex the token without clearing line terminator status.
+    
+    * parser/ASTBuilder.h:
+    (JSC::ASTBuilder::createString):
+    * parser/Lexer.cpp:
+    (JSC::Lexer<T>::parseMultilineComment):
+    (JSC::Lexer<T>::lexWithoutClearingLineTerminator): EOF token also should record offset information. This offset information is correctly handled in Lexer::setOffset too.
+    (JSC::Lexer<T>::lex): Deleted.
+    * parser/Lexer.h:
+    (JSC::Lexer::hasLineTerminatorBeforeToken const):
+    (JSC::Lexer::setHasLineTerminatorBeforeToken):
+    (JSC::Lexer<T>::lex):
+    (JSC::Lexer::prevTerminator const): Deleted.
+    (JSC::Lexer::setTerminator): Deleted.
+    * parser/Parser.cpp:
+    (JSC::Parser<LexerType>::allowAutomaticSemicolon):
+    (JSC::Parser<LexerType>::parseSingleFunction):
+    (JSC::Parser<LexerType>::parseStatementListItem):
+    (JSC::Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement):
+    (JSC::Parser<LexerType>::parseFunctionInfo):
+    (JSC::Parser<LexerType>::parseClass):
+    (JSC::Parser<LexerType>::parseExportDeclaration):
+    (JSC::Parser<LexerType>::parseAssignmentExpression):
+    (JSC::Parser<LexerType>::parseYieldExpression):
+    (JSC::Parser<LexerType>::parseProperty):
+    (JSC::Parser<LexerType>::parsePrimaryExpression):
+    (JSC::Parser<LexerType>::parseMemberExpression):
+    * parser/Parser.h:
+    (JSC::Parser::nextWithoutClearingLineTerminator):
+    (JSC::Parser::lexCurrentTokenAgainUnderCurrentContext):
+    (JSC::Parser::internalSaveLexerState):
+    (JSC::Parser::restoreLexerState):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243948 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            SIGSEGV in JSC::BytecodeGenerator::addStringConstant
+            https://bugs.webkit.org/show_bug.cgi?id=196486
+
+            Reviewed by Saam Barati.
+
+            * stress/arrow-function-and-use-strict-directive.js: Added.
+            * stress/arrow-function-syntax.js: Added. Checking EOF token handling.
+            (checkSyntax):
+            (checkSyntaxError): Currently not using it. But it is useful for testing more things related to arrow function syntax.
+
 2019-02-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241634. rdar://problem/48243442
