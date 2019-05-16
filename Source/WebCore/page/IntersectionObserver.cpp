@@ -158,6 +158,7 @@ void IntersectionObserver::observe(Element& target)
     auto* document = trackingDocument();
     if (!hadObservationTargets)
         document->addIntersectionObserver(*this);
+    document->scheduleRenderingUpdate();
 }
 
 void IntersectionObserver::unobserve(Element& target)
