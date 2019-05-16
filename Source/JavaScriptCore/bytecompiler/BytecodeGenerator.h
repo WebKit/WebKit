@@ -1047,8 +1047,6 @@ namespace JSC {
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
-        bool canDoPeepholeOptimization() const { return m_lastOpcodeID != op_end; }
-
     public:
         bool isSuperUsedInInnerArrowFunction();
         bool isSuperCallUsedInInnerArrowFunction();
