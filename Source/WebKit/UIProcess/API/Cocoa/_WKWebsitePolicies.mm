@@ -97,12 +97,24 @@
 
 - (NSDictionary<NSString *, NSString *> *)customHeaderFields
 {
-    return [_webpagePreferences _customHeaderFields];
+    auto& fields = static_cast<API::WebsitePolicies&>([_webpagePreferences _apiObject]).legacyCustomHeaderFields();
+    auto dictionary = [NSMutableDictionary dictionaryWithCapacity:fields.size()];
+    for (const auto& field : fields)
+        [dictionary setObject:field.value() forKey:field.name()];
+    return dictionary;
 }
 
 - (void)setCustomHeaderFields:(NSDictionary<NSString *, NSString *> *)fields
 {
-    [_webpagePreferences _setCustomHeaderFields:fields];
+    auto websitePolicies = static_cast<API::WebsitePolicies&>([_webpagePreferences _apiObject]);
+    Vector<WebCore::HTTPHeaderField> parsedFields;
+    parsedFields.reserveInitialCapacity(fields.count);
+    for (NSString *name in fields) {
+        auto field = WebCore::HTTPHeaderField::create(name, [fields objectForKey:name]);
+        if (field && startsWithLettersIgnoringASCIICase(field->name(), "x-"))
+            parsedFields.uncheckedAppend(WTFMove(*field));
+    }
+    websitePolicies.setLegacyCustomHeaderFields(WTFMove(parsedFields));
 }
 
 - (WKWebsiteDataStore *)websiteDataStore

@@ -38,6 +38,7 @@
 #include "CachedResourceLoader.h"
 #include "ContentExtensionError.h"
 #include "ContentSecurityPolicy.h"
+#include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentParser.h"
@@ -53,7 +54,6 @@
 #include "FrameTree.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HTTPHeaderField.h"
 #include "HTTPHeaderNames.h"
 #include "HistoryItem.h"
 #include "HistoryController.h"
@@ -1321,11 +1321,6 @@ void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackI
     m_frame->loader().client().finishedLoadingApplicationManifest(callbackIdentifier, manifest);
 }
 #endif
-
-void DocumentLoader::setCustomHeaderFields(Vector<HTTPHeaderField>&& fields)
-{
-    m_customHeaderFields = WTFMove(fields);
-}
 
 bool DocumentLoader::isLoadingInAPISense() const
 {

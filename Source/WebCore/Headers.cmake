@@ -654,6 +654,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/CookieJar.h
     loader/CrossOriginAccessControl.h
     loader/CrossOriginPreflightResultCache.h
+    loader/CustomHeaderFields.h
     loader/DocumentLoader.h
     loader/DocumentWriter.h
     loader/EmptyClients.h

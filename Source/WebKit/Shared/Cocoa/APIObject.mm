@@ -70,6 +70,7 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
+#import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
@@ -310,6 +311,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::ContentRuleListStore:
         wrapper = [WKContentRuleListStore alloc];
+        break;
+
+    case Type::CustomHeaderFields:
+        wrapper = [_WKCustomHeaderFields alloc];
         break;
 
     case Type::UserContentWorld:
