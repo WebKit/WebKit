@@ -116,11 +116,9 @@ Symbol* Symbol::create(VM& vm)
     return symbol;
 }
 
-Symbol* Symbol::create(ExecState* exec, JSString* description)
+Symbol* Symbol::createWithDescription(VM& vm, const String& description)
 {
-    VM& vm = exec->vm();
-    String desc = description->value(exec);
-    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, desc);
+    Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, description);
     symbol->finishCreation(vm);
     return symbol;
 }
