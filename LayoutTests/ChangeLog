@@ -1,5 +1,56 @@
 2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245317. rdar://problem/50291989
+
+    Missing cursor/caret showing in search field on google.com
+    https://bugs.webkit.org/show_bug.cgi?id=197862
+    <rdar://problem/50291989>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    In this bug, the search field is inside of a fixed position container, which is inside of an empty "overflow:
+    hidden" form element (the new layout test demonstrates a simple version of this). The layer of the fixed
+    position container's renderer has an overflow clipping layer of itself, and its clipping rect is non-empty, so
+    the heuristic initially identifies the layer as not fully clipped. However, as the heuristic ascends the
+    RenderLayer tree, it then finds the layer for the "overflow: hidden" form element's renderer; this layer is
+    completely clipped, which causes the heuristic to incorrectly believe that the editable element is completely
+    clipped.
+    
+    To fix the bug, this patch reworks the clipping portion of the heuristic, such that we no longer need to ascend
+    the layer tree. Instead of computing the clip rect relative to the nearest ancestor that has an overflow clip
+    and then walking up the layer tree repeating this process, simply compute the clip rect relative to RenderView's
+    layer, and then walk up to the parent frame and repeat if necessary.
+    
+    Test: editing/selection/ios/do-not-hide-selection-in-visible-field.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::isTransparentOrFullyClippedRespectingParentFrames const):
+    
+    LayoutTests:
+    
+    Add a new layout test that represents a reduced test case version of google.com's search field.
+    
+    * editing/selection/ios/do-not-hide-selection-in-visible-field.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245317 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Missing cursor/caret showing in search field on google.com
+            https://bugs.webkit.org/show_bug.cgi?id=197862
+            <rdar://problem/50291989>
+
+            Reviewed by Simon Fraser.
+
+            Add a new layout test that represents a reduced test case version of google.com's search field.
+
+            * editing/selection/ios/do-not-hide-selection-in-visible-field.html: Added.
+
+2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245286. rdar://problem/50187657
 
     [Pointer Events] The pointerenter and pointerleave events target the wrong element on iOS
