@@ -1141,11 +1141,8 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
 
 void WebProcessProxy::sendProcessWillSuspendImminently()
 {
-    if (!canSendMessage())
-        return;
-
-    bool handled = false;
-    sendSync(Messages::WebProcess::ProcessWillSuspendImminently(), Messages::WebProcess::ProcessWillSuspendImminently::Reply(handled), 0, 1_s);
+    if (canSendMessage())
+        send(Messages::WebProcess::ProcessWillSuspendImminently(), 0);
 }
 
 void WebProcessProxy::sendPrepareToSuspend()

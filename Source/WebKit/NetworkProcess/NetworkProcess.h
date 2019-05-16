@@ -179,7 +179,7 @@ public:
 
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
-    void processWillSuspendImminently(CompletionHandler<void(bool)>&&);
+    void processWillSuspendImminently();
     void prepareToSuspend();
     void cancelPrepareToSuspend();
     void processDidResume();

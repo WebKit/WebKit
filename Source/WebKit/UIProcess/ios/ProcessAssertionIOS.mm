@@ -37,6 +37,11 @@
 
 using WebKit::ProcessAndUIAssertion;
 
+// This gives some time to our child processes to process the ProcessWillSuspendImminently IPC but makes sure we release
+// the background task before the UIKit timeout (We get killed if we do not release the background task within 5 seconds
+// on the expiration handler getting called).
+static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
+
 @interface WKProcessAssertionBackgroundTaskManager : NSObject
 
 + (WKProcessAssertionBackgroundTaskManager *)shared;
@@ -50,7 +55,8 @@ using WebKit::ProcessAndUIAssertion;
 {
     UIBackgroundTaskIdentifier _backgroundTask;
     HashSet<ProcessAndUIAssertion*> _assertionsNeedingBackgroundTask;
-    BOOL _assertionHasExpiredInTheBackground;
+    BOOL _applicationIsBackgrounded;
+    dispatch_block_t _pendingTaskReleaseTask;
 }
 
 + (WKProcessAssertionBackgroundTaskManager *)shared
@@ -68,8 +74,13 @@ using WebKit::ProcessAndUIAssertion;
     _backgroundTask = UIBackgroundTaskInvalid;
 
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
-        _assertionHasExpiredInTheBackground = NO;
+        _applicationIsBackgrounded = NO;
+        [self _cancelPendingReleaseTask];
         [self _updateBackgroundTask];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
+        _applicationIsBackgrounded = YES;
     }];
 
     return self;
@@ -101,12 +112,40 @@ using WebKit::ProcessAndUIAssertion;
         assertion->uiAssertionWillExpireImminently();
 }
 
+
+- (void)_scheduleReleaseTask
+{
+    ASSERT(!_pendingTaskReleaseTask);
+    if (_pendingTaskReleaseTask)
+        return;
+
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _scheduleReleaseTask because the expiration handler has been called", self);
+    _pendingTaskReleaseTask = dispatch_block_create((dispatch_block_flags_t)0, ^{
+        _pendingTaskReleaseTask = nil;
+        [self _releaseBackgroundTask];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, releaseBackgroundTaskAfterExpirationDelay.value() * NSEC_PER_SEC), dispatch_get_main_queue(), _pendingTaskReleaseTask);
+#if !__has_feature(objc_arc)
+    // dispatch_async() does a Block_copy() / Block_release() on behalf of the caller.
+    Block_release(_pendingTaskReleaseTask);
+#endif
+}
+
+- (void)_cancelPendingReleaseTask
+{
+    if (!_pendingTaskReleaseTask)
+        return;
+
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _cancelPendingReleaseTask because the application is foreground again", self);
+    dispatch_block_cancel(_pendingTaskReleaseTask);
+    _pendingTaskReleaseTask = nil;
+}
+
 - (void)_updateBackgroundTask
 {
     if (!_assertionsNeedingBackgroundTask.isEmpty() && _backgroundTask == UIBackgroundTaskInvalid) {
-        if (_assertionHasExpiredInTheBackground) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a background task because we're still in the background and the previous task expired", self);
-            // Our invalidation handler would not get called if we tried to re-take a new background assertion at this point, and the UIProcess would get killed (rdar://problem/50001505).
+        if (_applicationIsBackgrounded) {
+            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because the application is already in the background", self);
             return;
         }
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - beginBackgroundTaskWithName", self);
@@ -121,9 +160,7 @@ using WebKit::ProcessAndUIAssertion;
                 });
             }
 
-            // Remember that the assertion has expired in the background so we do not try to re-take it until the application becomes foreground again.
-            _assertionHasExpiredInTheBackground = YES;
-            [self _releaseBackgroundTask];
+            [self _scheduleReleaseTask];
         }];
     } else if (_assertionsNeedingBackgroundTask.isEmpty())
         [self _releaseBackgroundTask];
