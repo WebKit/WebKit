@@ -6894,10 +6894,9 @@ float Document::deviceScaleFactor() const
 
 bool Document::useSystemAppearance() const
 {
-    bool useSystemAppearance = false;
-    if (Page* documentPage = page())
-        useSystemAppearance = documentPage->useSystemAppearance();
-    return useSystemAppearance;
+    if (auto* documentPage = page())
+        return documentPage->useSystemAppearance();
+    return false;
 }
 
 bool Document::useDarkAppearance(const RenderStyle* style) const
@@ -6938,6 +6937,13 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
     return false;
 }
 
+bool Document::useInactiveAppearance() const
+{
+    if (auto* documentPage = page())
+        return documentPage->useInactiveAppearance();
+    return false;
+}
+
 OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* style) const
 {
     OptionSet<StyleColor::Options> options;
@@ -6945,6 +6951,8 @@ OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* st
         options.add(StyleColor::Options::UseSystemAppearance);
     if (useDarkAppearance(style))
         options.add(StyleColor::Options::UseDarkAppearance);
+    if (useInactiveAppearance())
+        options.add(StyleColor::Options::UseInactiveAppearance);
     return options;
 }
 
