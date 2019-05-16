@@ -284,21 +284,84 @@ struct RenderLayerCompositor::CompositingState {
 #endif
 };
 
-struct RenderLayerCompositor::BackingSharingState {
-    RenderLayer* backingProviderCandidate { nullptr };
-    RenderLayer* backingProviderStackingContext { nullptr };
-    Vector<WeakPtr<RenderLayer>> backingSharingLayers;
+class RenderLayerCompositor::BackingSharingState {
+    WTF_MAKE_NONCOPYABLE(BackingSharingState);
+public:
+    BackingSharingState() = default;
 
-    void resetBackingProviderCandidate(RenderLayer* candidateLayer = nullptr, RenderLayer* candidateStackingContext = nullptr)
+    RenderLayer* backingProviderCandidate() const { return m_backingProviderCandidate; };
+    
+    void appendSharingLayer(RenderLayer& layer)
     {
-        if (!backingSharingLayers.isEmpty()) {
-            ASSERT(backingProviderCandidate);
-            backingProviderCandidate->backing()->setBackingSharingLayers(WTFMove(backingSharingLayers));
-        }
-        backingProviderCandidate = candidateLayer;
-        backingProviderStackingContext = candidateLayer ? candidateStackingContext : nullptr;
+        LOG_WITH_STREAM(Compositing, stream << &layer << " appendSharingLayer " << &layer << " for backing provider " << m_backingProviderCandidate);
+        m_backingSharingLayers.append(makeWeakPtr(layer));
     }
+
+    void updateBeforeDescendantTraversal(RenderLayer&, bool willBeComposited);
+    void updateAfterDescendantTraversal(RenderLayer&, RenderLayer* stackingContextAncestor);
+
+private:
+    void layerWillBeComposited(RenderLayer&);
+
+    void startBackingSharingSequence(RenderLayer& candidateLayer, RenderLayer* candidateStackingContext);
+    void endBackingSharingSequence();
+
+    RenderLayer* m_backingProviderCandidate { nullptr };
+    RenderLayer* m_backingProviderStackingContext { nullptr };
+    Vector<WeakPtr<RenderLayer>> m_backingSharingLayers;
 };
+
+void RenderLayerCompositor::BackingSharingState::startBackingSharingSequence(RenderLayer& candidateLayer, RenderLayer* candidateStackingContext)
+{
+    ASSERT(!m_backingProviderCandidate);
+    ASSERT(m_backingSharingLayers.isEmpty());
+
+    m_backingProviderCandidate = &candidateLayer;
+    m_backingProviderStackingContext = candidateStackingContext;
+}
+
+void RenderLayerCompositor::BackingSharingState::endBackingSharingSequence()
+{
+    if (m_backingProviderCandidate) {
+        m_backingProviderCandidate->backing()->setBackingSharingLayers(WTFMove(m_backingSharingLayers));
+        m_backingSharingLayers.clear();
+    }
+    
+    m_backingProviderCandidate = nullptr;
+}
+
+void RenderLayerCompositor::BackingSharingState::updateBeforeDescendantTraversal(RenderLayer& layer, bool willBeComposited)
+{
+    layer.setBackingProviderLayer(nullptr);
+
+    // A layer that composites resets backing-sharing, since subsequent layers need to composite to overlap it.
+    if (willBeComposited) {
+        m_backingSharingLayers.removeAll(&layer);
+        LOG_WITH_STREAM(Compositing, stream << "Pre-descendant compositing of " << &layer << ", ending sharing sequence for " << m_backingProviderCandidate << " with " << m_backingSharingLayers.size() << " sharing layers");
+        endBackingSharingSequence();
+    }
+}
+
+void RenderLayerCompositor::BackingSharingState::updateAfterDescendantTraversal(RenderLayer& layer, RenderLayer* stackingContextAncestor)
+{
+    if (layer.isComposited()) {
+        // If this layer is being composited, clean up sharing-related state.
+        layer.disconnectFromBackingProviderLayer();
+        m_backingSharingLayers.removeAll(&layer);
+    }
+
+    if (m_backingProviderCandidate && &layer == m_backingProviderStackingContext) {
+        LOG_WITH_STREAM(Compositing, stream << "End of stacking context for backing provider " << m_backingProviderCandidate << ", ending sharing sequence with " << m_backingSharingLayers.size() << " sharing layers");
+        endBackingSharingSequence();
+    } else if (!m_backingProviderCandidate && layer.isComposited()) {
+        LOG_WITH_STREAM(Compositing, stream << "Post-descendant compositing of " << &layer << ", ending sharing sequence for " << m_backingProviderCandidate << " with " << m_backingSharingLayers.size() << " sharing layers");
+        endBackingSharingSequence();
+        startBackingSharingSequence(layer, stackingContextAncestor);
+    }
+    
+    if (&layer != m_backingProviderCandidate && layer.isComposited())
+        layer.backing()->clearBackingSharingLayers();
+}
 
 struct RenderLayerCompositor::OverlapExtent {
     LayoutRect bounds;
@@ -880,7 +943,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     }
 
 #if ENABLE(TREE_DEBUGGING)
-    LOG(Compositing, "%*p %s computeCompositingRequirements (backing provider candidate %p)", 12 + compositingState.depth * 2, &layer, layer.isNormalFlowOnly() ? "n" : "s", backingSharingState.backingProviderCandidate);
+    LOG(Compositing, "%*p %s computeCompositingRequirements (backing provider candidate %p)", 12 + compositingState.depth * 2, &layer, layer.isNormalFlowOnly() ? "n" : "s", backingSharingState.backingProviderCandidate());
 #endif
 
     // FIXME: maybe we can avoid updating all remaining layers in paint order.
@@ -891,7 +954,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     layer.updateLayerListsIfNeeded();
 
     layer.setHasCompositingDescendant(false);
-    layer.setBackingProviderLayer(nullptr);
 
     // We updated compositing for direct reasons in layerStyleChanged(). Here, check for compositing that can only be evaluated after layout.
     RequiresCompositingData queryData;
@@ -921,9 +983,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
         if (overlapMap.overlapsLayers(layerExtent.bounds)) {
-            if (backingSharingState.backingProviderCandidate && canBeComposited(layer) && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate, layer)) {
-                backingSharingState.backingSharingLayers.append(makeWeakPtr(layer));
-                LOG(Compositing, " layer %p can share with %p", &layer, backingSharingState.backingProviderCandidate);
+            if (backingSharingState.backingProviderCandidate() && canBeComposited(layer) && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer)) {
+                backingSharingState.appendSharingLayer(layer);
+                LOG(Compositing, " layer %p can share with %p", &layer, backingSharingState.backingProviderCandidate());
                 compositingReason = RenderLayer::IndirectCompositingReason::None;
                 layerPaintsIntoProvidedBacking = true;
             } else
@@ -967,10 +1029,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // animation running behind this layer, meaning they can rely on the overlap map testing again.
         childState.testingOverlap = true;
         willBeComposited = true;
-
         layerPaintsIntoProvidedBacking = false;
-        layer.disconnectFromBackingProviderLayer();
-        backingSharingState.backingSharingLayers.removeAll(&layer);
     };
 
     if (willBeComposited) {
@@ -983,14 +1042,12 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         childState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
         // Too hard to compute animated bounds if both us and some ancestor is animating transform.
         layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;
-
-        // Compositing for any reason disables backing sharing.
-        LOG_WITH_STREAM(Compositing, stream << &layer << " is compositing - flushing sharing to " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
-        backingSharingState.resetBackingProviderCandidate();
     } else if (layerPaintsIntoProvidedBacking) {
         childState.backingSharingAncestor = &layer;
         overlapMap.pushCompositingContainer();
     }
+
+    backingSharingState.updateBeforeDescendantTraversal(layer, willBeComposited);
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
@@ -1100,17 +1157,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         layer.setChildrenNeedCompositingGeometryUpdate();
         // The composited bounds of enclosing layers depends on which descendants are composited, so they need a geometry update.
         layer.setNeedsCompositingGeometryUpdateOnAncestors();
-    } else if (layer.isComposited())
-        layer.backing()->clearBackingSharingLayers();
-
-    if (backingSharingState.backingProviderCandidate && &layer == backingSharingState.backingProviderStackingContext) {
-        LOG_WITH_STREAM(Compositing, stream << &layer << " popping stacking context " << backingSharingState.backingProviderStackingContext << ", flushing candidate " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
-        backingSharingState.resetBackingProviderCandidate();
-    } else if (!backingSharingState.backingProviderCandidate && layer.isComposited()) {
-        LOG_WITH_STREAM(Compositing, stream << &layer << " compositing - sharing candidate " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
-        // Flush out any earlier candidate in this stacking context. This layer becomes a candidate.
-        backingSharingState.resetBackingProviderCandidate(&layer, compositingState.stackingContextAncestor);
     }
+
+    backingSharingState.updateAfterDescendantTraversal(layer, compositingState.stackingContextAncestor);
 
     if (layer.reflectionLayer() && updateLayerCompositingState(*layer.reflectionLayer(), queryData, CompositingChangeRepaintNow))
         layer.setNeedsCompositingLayerConnection();
@@ -1124,7 +1173,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     }
 
 #if ENABLE(TREE_DEBUGGING)
-    LOG(Compositing, "%*p computeCompositingRequirements - willBeComposited %d (backing provider candidate %p)", 12 + compositingState.depth * 2, &layer, willBeComposited, backingSharingState.backingProviderCandidate);
+    LOG(Compositing, "%*p computeCompositingRequirements - willBeComposited %d (backing provider candidate %p)", 12 + compositingState.depth * 2, &layer, willBeComposited, backingSharingState.backingProviderCandidate());
 #endif
 
     layer.clearCompositingRequirementsTraversalState();
@@ -1160,9 +1209,9 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         computeExtent(overlapMap, layer, layerExtent);
 
     if (layer.paintsIntoProvidedBacking()) {
-        ASSERT(backingSharingState.backingProviderCandidate);
-        ASSERT(backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate, layer));
-        backingSharingState.backingSharingLayers.append(makeWeakPtr(layer));
+        ASSERT(backingSharingState.backingProviderCandidate());
+        ASSERT(backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer));
+        backingSharingState.appendSharingLayer(layer);
     }
 
     CompositingState childState = compositingState.stateForPaintOrderChildren(layer);
@@ -1182,11 +1231,9 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         childState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
         // Too hard to compute animated bounds if both us and some ancestor is animating transform.
         layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;
-
-        // Compositing for any reason disables backing sharing.
-        LOG_WITH_STREAM(Compositing, stream << "tus: " << &layer << " is compositing - flushing sharing to " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
-        backingSharingState.resetBackingProviderCandidate();
     }
+
+    backingSharingState.updateBeforeDescendantTraversal(layer, layerIsComposited);
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
@@ -1240,17 +1287,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     if ((childState.compositingAncestor == &layer && !layer.isRenderViewLayer()) || childState.backingSharingAncestor == &layer)
         overlapMap.popCompositingContainer();
 
-    if (layer.isComposited())
-        layer.backing()->clearBackingSharingLayers();
-
-    if (backingSharingState.backingProviderCandidate && &layer == backingSharingState.backingProviderStackingContext) {
-        LOG_WITH_STREAM(Compositing, stream << &layer << " tus: popping stacking context " << backingSharingState.backingProviderStackingContext << ", flushing candidate " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
-        backingSharingState.resetBackingProviderCandidate();
-    } else if (!backingSharingState.backingProviderCandidate && layer.isComposited()) {
-        LOG_WITH_STREAM(Compositing, stream << &layer << " tus: compositing - sharing candidate " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
-        // Flush out any earlier candidate in this stacking context. This layer becomes a candidate.
-        backingSharingState.resetBackingProviderCandidate(&layer, compositingState.stackingContextAncestor);
-    }
+    backingSharingState.updateAfterDescendantTraversal(layer, compositingState.stackingContextAncestor);
 
     descendantHas3DTransform |= anyDescendantHas3DTransform || layer.has3DTransform();
 

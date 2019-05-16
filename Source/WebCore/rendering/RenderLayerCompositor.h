@@ -367,9 +367,9 @@ public:
     unsigned compositingUpdateCount() const { return m_compositingUpdateCount; }
 
 private:
+    class BackingSharingState;
     class OverlapMap;
     struct CompositingState;
-    struct BackingSharingState;
     struct OverlapExtent;
 
     // Returns true if the policy changed.

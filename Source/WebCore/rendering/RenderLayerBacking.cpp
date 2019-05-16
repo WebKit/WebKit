@@ -260,8 +260,6 @@ void RenderLayerBacking::willBeDestroyed()
     ASSERT(m_owningLayer.backing() == this);
     compositor().removeFromScrollCoordinatedLayers(m_owningLayer);
 
-    LOG(Compositing, "RenderLayer(backing) %p willBeDestroyed", &m_owningLayer);
-
     clearBackingSharingLayers();
 }
 
@@ -282,29 +280,21 @@ static void clearBackingSharingLayerProviders(Vector<WeakPtr<RenderLayer>>& shar
 
 void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& sharingLayers)
 {
-    if (m_backingSharingLayers == sharingLayers) {
-        sharingLayers.clear();
-        return;
-    }
-
     clearBackingSharingLayerProviders(m_backingSharingLayers);
     m_backingSharingLayers = WTFMove(sharingLayers);
+
     for (auto& layerWeakPtr : m_backingSharingLayers)
         layerWeakPtr->setBackingProviderLayer(&m_owningLayer);
 }
 
 void RenderLayerBacking::removeBackingSharingLayer(RenderLayer& layer)
 {
-    LOG(Compositing, "RenderLayer %p removeBackingSharingLayer %p", &m_owningLayer, &layer);
-
     layer.setBackingProviderLayer(nullptr);
     m_backingSharingLayers.removeAll(&layer);
 }
 
 void RenderLayerBacking::clearBackingSharingLayers()
 {
-    LOG(Compositing, "RenderLayer %p clearBackingSharingLayers", &m_owningLayer);
-
     clearBackingSharingLayerProviders(m_backingSharingLayers);
     m_backingSharingLayers.clear();
 }
