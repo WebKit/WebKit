@@ -28,6 +28,10 @@
 #include "LayoutRect.h"
 #include "RenderGeometryMap.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class OverlapMapContainer;
@@ -48,10 +52,14 @@ public:
     const RenderGeometryMap& geometryMap() const { return m_geometryMap; }
     RenderGeometryMap& geometryMap() { return m_geometryMap; }
 
+    const Vector<std::unique_ptr<OverlapMapContainer>>& overlapStack() const { return m_overlapStack; }
+
 private:
     Vector<std::unique_ptr<OverlapMapContainer>> m_overlapStack;
     RenderGeometryMap m_geometryMap;
     bool m_isEmpty { true };
 };
+
+TextStream& operator<<(TextStream&, const LayerOverlapMap&);
 
 } // namespace WebCore
