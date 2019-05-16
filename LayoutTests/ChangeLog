@@ -1,5 +1,50 @@
 2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245286. rdar://problem/50187657
+
+    [Pointer Events] The pointerenter and pointerleave events target the wrong element on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=197881
+    <rdar://problem/50187657>
+    
+    Patch by Antoine Quint <graouts@apple.com> on 2019-05-14
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Test: pointerevents/ios/enter-leave-target.html
+    
+    The "pointerenter" and "pointerleave" should target the element on which the event listener was added and not
+    the element that would otherwise hit test. This matches the behavior of "mouseenter" and "mouseleave" on macOS.
+    
+    * page/PointerCaptureController.cpp:
+    (WebCore::PointerCaptureController::dispatchEventForTouchAtIndex):
+    
+    LayoutTests:
+    
+    Add a test where we tap an element that is the child of another element where the parent is the element with the "pointerenter"
+    and "pointerleave" events registered. The test shows that we correctly set the target to the parent element and not the child.
+    
+    * pointerevents/ios/enter-leave-target-expected.txt: Added.
+    * pointerevents/ios/enter-leave-target.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245286 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-14  Antoine Quint  <graouts@apple.com>
+
+            [Pointer Events] The pointerenter and pointerleave events target the wrong element on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=197881
+            <rdar://problem/50187657>
+
+            Reviewed by Dean Jackson.
+
+            Add a test where we tap an element that is the child of another element where the parent is the element with the "pointerenter"
+            and "pointerleave" events registered. The test shows that we correctly set the target to the parent element and not the child.
+
+            * pointerevents/ios/enter-leave-target-expected.txt: Added.
+            * pointerevents/ios/enter-leave-target.html: Added.
+
+2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245175. rdar://problem/50584991
 
     Event region generation needs to know about backing-sharing
