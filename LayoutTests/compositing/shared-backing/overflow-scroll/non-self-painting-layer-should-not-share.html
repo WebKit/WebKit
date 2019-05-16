@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that a non-self-painting layer doesn't get into the sharing list</title>
+    <style>
+        .scroller {
+            margin: 20px;
+            width: 300px;
+            height: 300px;
+            overflow: auto;
+            border: 2px solid black;
+            padding: 10px;
+        }
+
+        .clipping {
+            overflow: hidden;
+            top: 50px;
+            left: 200px;
+            height: 200px;
+            width: 200px;
+            border: 2px solid orange;
+        }
+        
+        .relative {
+            position: relative;
+        }
+
+        .spacer {
+            height: 150px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <p>Test passes if it does not assert in debug.</p>
+    <div class="scroller">
+        <div class="clipping">this is clipped</div>
+        <div class="relative">
+            <div class="clipping">this is clipped</div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>
+

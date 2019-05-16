@@ -915,7 +915,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
         if (overlapMap.overlapsLayers(layerExtent.bounds)) {
-            if (backingSharingState.backingProviderCandidate && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate, layer)) {
+            if (backingSharingState.backingProviderCandidate && canBeComposited(layer) && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate, layer)) {
                 backingSharingState.backingSharingLayers.append(makeWeakPtr(layer));
                 LOG(Compositing, " layer %p can share with %p", &layer, backingSharingState.backingProviderCandidate);
                 compositingReason = RenderLayer::IndirectCompositingReason::None;
