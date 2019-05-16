@@ -477,37 +477,6 @@ void WebAutomationSessionProxy::focusFrame(uint64_t pageID, uint64_t frameID)
     coreDOMWindow->focus(true);
 }
 
-static Optional<WebCore::FloatPoint> elementInViewClientCenterPoint(WebCore::Element& element, bool& isObscured)
-{
-    // §11.1 Element Interactability.
-    // https://www.w3.org/TR/webdriver/#dfn-in-view-center-point
-    auto* clientRect = element.getClientRects()->item(0);
-    if (!clientRect)
-        return WTF::nullopt;
-
-    auto clientCenterPoint = WebCore::FloatPoint::narrowPrecision(0.5 * (clientRect->left() + clientRect->right()), 0.5 * (clientRect->top() + clientRect->bottom()));
-    auto elementList = element.treeScope().elementsFromPoint(clientCenterPoint.x(), clientCenterPoint.y());
-    if (elementList.isEmpty()) {
-        // An element is obscured if the pointer-interactable paint tree at its center point is empty,
-        // or the first element in this tree is not an inclusive descendant of itself.
-        // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-obscured
-        isObscured = true;
-        return clientCenterPoint;
-    }
-
-    auto index = elementList.findMatching([&element] (auto& item) { return item.get() == &element; });
-    if (index == notFound)
-        return WTF::nullopt;
-
-    if (index) {
-        // Element is not the first one in the list.
-        auto firstElement = elementList[0];
-        isObscured = !firstElement->isDescendantOf(element);
-    }
-
-    return clientCenterPoint;
-}
-
 static WebCore::Element* containerElementForElement(WebCore::Element& element)
 {
     // §13. Element State.
@@ -534,6 +503,30 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     return &element;
 }
 
+static WebCore::FloatRect convertRectFromFrameClientToRootView(FrameView* frameView, WebCore::FloatRect clientRect)
+{
+    if (!frameView->delegatesScrolling())
+        return frameView->contentsToRootView(frameView->clientToDocumentRect(clientRect));
+
+    // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
+    auto& frame = frameView->frame();
+    clientRect.scale(frame.pageZoomFactor() * frame.frameScaleFactor());
+    clientRect.moveBy(frameView->contentsScrollPosition());
+    return clientRect;
+}
+
+static WebCore::FloatPoint convertPointFromFrameClientToRootView(FrameView* frameView, WebCore::FloatPoint clientPoint)
+{
+    if (!frameView->delegatesScrolling())
+        return frameView->contentsToRootView(frameView->clientToDocumentPoint(clientPoint));
+
+    // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
+    auto& frame = frameView->frame();
+    clientPoint.scale(frame.pageZoomFactor() * frame.frameScaleFactor());
+    clientPoint.moveBy(frameView->contentsScrollPosition());
+    return clientPoint;
+}
+
 void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&& completionHandler)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
@@ -543,18 +536,16 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
         return;
     }
 
-    String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
-    String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-    String notImplementedErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NotImplemented);
-
     WebFrame* frame = frameID ? WebProcess::singleton().webFrame(frameID) : page->mainWebFrame();
     if (!frame || !frame->coreFrame() || !frame->coreFrame()->view()) {
+        String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
         completionHandler(frameNotFoundErrorType, { }, WTF::nullopt, false);
         return;
     }
 
     WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
     if (!coreElement) {
+        String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType, { }, WTF::nullopt, false);
         return;
     }
@@ -569,35 +560,76 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
 
     WebCore::FrameView* frameView = frame->coreFrame()->view();
     WebCore::FrameView* mainView = frame->coreFrame()->mainFrame().view();
-    WebCore::IntRect frameElementBounds = roundedIntRect(coreElement->boundingClientRect());
-    WebCore::IntRect rootElementBounds = mainView->rootViewToContents(frameView->contentsToRootView(frameElementBounds));
+
     WebCore::IntRect resultElementBounds;
+    Optional<WebCore::IntPoint> resultInViewCenterPoint;
+    bool isObscured = false;
+
+    auto elementBoundsInRootCoordinates = convertRectFromFrameClientToRootView(frameView, coreElement->boundingClientRect());
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
-        resultElementBounds = WebCore::IntRect(mainView->clientToDocumentRect(WebCore::FloatRect(rootElementBounds)));
+        resultElementBounds = enclosingIntRect(mainView->absoluteToDocumentRect(mainView->rootViewToContents(elementBoundsInRootCoordinates)));
         break;
     case CoordinateSystem::LayoutViewport:
-        // The element bounds are already in client coordinates.
-        resultElementBounds = WebCore::IntRect(mainView->clientToLayoutViewportRect(WebCore::FloatRect(rootElementBounds)));
+        resultElementBounds = enclosingIntRect(mainView->absoluteToLayoutViewportRect(elementBoundsInRootCoordinates));
         break;
     }
 
-    Optional<WebCore::IntPoint> resultInViewCenterPoint;
-    bool isObscured = false;
-    if (containerElement) {
-        Optional<WebCore::FloatPoint> frameInViewCenterPoint = elementInViewClientCenterPoint(*containerElement, isObscured);
-        if (frameInViewCenterPoint.hasValue()) {
-            WebCore::IntPoint rootInViewCenterPoint = mainView->rootViewToContents(frameView->contentsToRootView(WebCore::IntPoint(frameInViewCenterPoint.value())));
-            switch (coordinateSystem) {
-            case CoordinateSystem::Page:
-                resultInViewCenterPoint = WebCore::IntPoint(mainView->clientToDocumentPoint(rootInViewCenterPoint));
-                break;
-            case CoordinateSystem::LayoutViewport:
-                // The point is already in client coordinates.
-                resultInViewCenterPoint = WebCore::IntPoint(mainView->clientToLayoutViewportPoint(rootInViewCenterPoint));
-                break;
-            }
-        }
+    // If an <option> or <optgroup> does not have an associated <select> or <datalist> element, then give up.
+    if (!containerElement) {
+        String elementNotInteractableErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
+        completionHandler(elementNotInteractableErrorType, resultElementBounds, resultInViewCenterPoint, isObscured);
+        return;
+    }
+
+    // §12.1 Element Interactability.
+    // https://www.w3.org/TR/webdriver/#dfn-in-view-center-point
+    auto* firstElementRect = containerElement->getClientRects()->item(0);
+    if (!firstElementRect) {
+        String elementNotInteractableErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
+        completionHandler(elementNotInteractableErrorType, resultElementBounds, resultInViewCenterPoint, isObscured);
+        return;
+    }
+
+    // The W3C WebDriver specification does not explicitly intersect the element with the visual viewport.
+    // Do that here so that the IVCP for an element larger than the viewport is within the viewport.
+    // See spec bug here: https://github.com/w3c/webdriver/issues/1402
+    auto viewportRect = frameView->documentToClientRect(frameView->visualViewportRect());
+    auto elementRect = FloatRect(firstElementRect->x(), firstElementRect->y(), firstElementRect->width(), firstElementRect->height());
+    auto visiblePortionOfElementRect = intersection(viewportRect, elementRect);
+
+    // If the element is entirely outside the viewport, still calculate it's bounds.
+    if (visiblePortionOfElementRect.isEmpty()) {
+        completionHandler(WTF::nullopt, resultElementBounds, resultInViewCenterPoint, isObscured);
+        return;
+    }
+
+    auto elementInViewCenterPoint = visiblePortionOfElementRect.center();
+    auto elementList = containerElement->treeScope().elementsFromPoint(elementInViewCenterPoint);
+    auto index = elementList.findMatching([containerElement] (auto& item) { return item.get() == containerElement; });
+    if (elementList.isEmpty() || index == notFound) {
+        // We hit this case if the element is visibility:hidden or opacity:0, in which case it will not hit test
+        // at the calculated IVCP. An element is technically not "in view" if it is not within its own paint/hit test tree,
+        // so it cannot have an in-view center point either. And without an IVCP, the definition of 'obscured' makes no sense.
+        // See <https://w3c.github.io/webdriver/webdriver-spec.html#dfn-in-view>.
+        String elementNotInteractableErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
+        completionHandler(elementNotInteractableErrorType, resultElementBounds, resultInViewCenterPoint, isObscured);
+        return;
+    }
+
+    // Check the case where a non-descendant element hit tests before the target element. For example, a child <option>
+    // of a <select> does not obscure the <select>, but two sibling <div> that overlap at the IVCP will obscure each other.
+    // Node::isDescendantOf() is not self-inclusive, so that is explicitly checked here.
+    isObscured = elementList[0] != containerElement && !elementList[0]->isDescendantOf(containerElement);
+
+    auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView, elementInViewCenterPoint);
+    switch (coordinateSystem) {
+    case CoordinateSystem::Page:
+        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToDocumentPoint(inViewCenterPointInRootCoordinates));
+        break;
+    case CoordinateSystem::LayoutViewport:
+        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToLayoutViewportPoint(inViewCenterPointInRootCoordinates));
+        break;
     }
 
     completionHandler(WTF::nullopt, resultElementBounds, resultInViewCenterPoint, isObscured);

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "WebAutomationSessionMacros.h"
 #import "WebPageProxy.h"
@@ -175,15 +176,34 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, TouchInteraction interaction)
+{
+    switch (interaction) {
+    case TouchInteraction::TouchDown:
+        ts << "TouchDown";
+        break;
+    case TouchInteraction::MoveTo:
+        ts << "MoveTo";
+        break;
+    case TouchInteraction::LiftUp:
+        ts << "LiftUp";
+        break;
+    }
+    return ts;
+}
+#endif // !LOG_DISABLED
+
 void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy& page, TouchInteraction interaction, const WebCore::IntPoint& locationInViewport, Optional<Seconds> duration, AutomationCompletionHandler&& completionHandler)
 {
     WebCore::IntPoint locationOnScreen = page.syncRootViewToScreen(IntRect(locationInViewport, IntSize())).location();
-    _WKTouchEventGenerator *generator = [_WKTouchEventGenerator sharedTouchEventGenerator];
+    LOG_WITH_STREAM(AutomationInteractions, stream << "platformSimulateTouchInteraction: interaction=" << interaction << ", locationInViewport=" << locationInViewport << ", locationOnScreen=" << locationOnScreen << ", duration=" << duration.valueOr(0_s).seconds());
 
     auto interactionFinished = makeBlockPtr([completionHandler = WTFMove(completionHandler)] () mutable {
         completionHandler(WTF::nullopt);
     });
-    
+
+    _WKTouchEventGenerator *generator = [_WKTouchEventGenerator sharedTouchEventGenerator];
     switch (interaction) {
     case TouchInteraction::TouchDown:
         [generator touchDown:locationOnScreen completionBlock:interactionFinished.get()];
