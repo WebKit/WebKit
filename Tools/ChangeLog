@@ -1,5 +1,44 @@
 2019-05-16  Alex Christensen  <achristensen@webkit.org>
 
+        Add a unit test for client certificate authentication
+        https://bugs.webkit.org/show_bug.cgi?id=197800
+
+        Reviewed by Youenn Fablet.
+
+        Make better abstractions for reading and writing from/to TCPServer.
+        Add a unit test that causes a client certificate authentication challenge to happen.
+
+        * TestWebKitAPI/TCPServer.cpp:
+        (TestWebKitAPI::TCPServer::TCPServer):
+        (TestWebKitAPI::TCPServer::read):
+        (TestWebKitAPI::TCPServer::write):
+        (TestWebKitAPI::TCPServer::respondWithChallengeThenOK):
+        (TestWebKitAPI::TCPServer::respondWithOK):
+        * TestWebKitAPI/TCPServer.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (credentialWithIdentity):
+        (-[ChallengeDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (TEST):
+        (-[ClientCertificateDelegate webView:didFinishNavigation:]):
+        (-[ClientCertificateDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[ClientCertificateDelegate challengeCount]):
+        (TestWebKitAPI::TEST):
+        (respondWithChallengeThenOK): Deleted.
+        (credentialWithIdentityAndKeychainPath): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFLinkReferrer.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNavigationResponse.mm:
+        (TEST):
+        (readRequest): Deleted.
+        (writeResponse): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::respondWithChallengeThenOK): Deleted.
+
+2019-05-16  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI to set a list of hosts to which to send custom header fields cross-origin
         https://bugs.webkit.org/show_bug.cgi?id=197397
 
