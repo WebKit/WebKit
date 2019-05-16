@@ -6468,14 +6468,17 @@ private:
                 m_heaps.typedArrayProperties);
 
 #if !GIGACAGE_ENABLED && CPU(ARM64E)
-            PatchpointValue* authenticate = m_out.patchpoint(pointerType());
-            authenticate->appendSomeRegister(storage);
-            authenticate->append(size, B3::ValueRep(B3::ValueRep::SomeLateRegister));
-            authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                jit.move(params[1].gpr(), params[0].gpr());
-                jit.tagArrayPtr(params[2].gpr(), params[0].gpr());
-            });
-            storage = authenticate;
+            {
+                LValue sizePtr = m_out.zeroExtPtr(size);
+                PatchpointValue* authenticate = m_out.patchpoint(pointerType());
+                authenticate->appendSomeRegister(storage);
+                authenticate->append(sizePtr, B3::ValueRep(B3::ValueRep::SomeLateRegister));
+                authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    jit.move(params[1].gpr(), params[0].gpr());
+                    jit.tagArrayPtr(params[2].gpr(), params[0].gpr());
+                });
+                storage = authenticate;
+            }
 #endif
 
             ValueFromBlock haveStorage = m_out.anchor(storage);

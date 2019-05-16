@@ -1,3 +1,46 @@
+2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r245168. rdar://problem/50629257
+
+    Fix crashes related to pointer authentication for primitive gigacage
+    https://bugs.webkit.org/show_bug.cgi?id=197763
+    <rdar://problem/50629257>
+    
+    Reviewed by Saam Barati.
+    
+    This fixes two bugs related to PAC for caging. The first is that
+    we didn't clear the high bits of the size register going into the
+    patchpoint to tag the new buffer for NewArrayBuffer. The second is
+    that the GC needs to strip all stack pointers when considering
+    them as a conservative root.
+    
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+    * heap/ConservativeRoots.cpp:
+    (JSC::ConservativeRoots::genericAddPointer):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245168 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-09  Keith Miller  <keith_miller@apple.com>
+
+            Fix crashes related to pointer authentication for primitive gigacage
+            https://bugs.webkit.org/show_bug.cgi?id=197763
+            <rdar://problem/50629257>
+
+            Reviewed by Saam Barati.
+
+            This fixes two bugs related to PAC for caging. The first is that
+            we didn't clear the high bits of the size register going into the
+            patchpoint to tag the new buffer for NewArrayBuffer. The second is
+            that the GC needs to strip all stack pointers when considering
+            them as a conservative root.
+
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+            * heap/ConservativeRoots.cpp:
+            (JSC::ConservativeRoots::genericAddPointer):
+
 2019-05-09  Xan López  <xan@igalia.com>
 
         [CMake] Detect SSE2 at compile time
