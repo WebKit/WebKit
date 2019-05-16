@@ -1,8 +1,8 @@
 2019-05-16  Daniel Bates  <dabates@apple.com>
 
-        [iOS] Select all with existing range selection replaces range instead of selecting all text
-        https://bugs.webkit.org/show_bug.cgi?id=197950
-        <rdar://problem/50245131>
+        [iOS] Unable to commit search on MSN.com, qq.com, or sina.com.cn using enter key (hardware or software keyboard)
+        https://bugs.webkit.org/show_bug.cgi?id=197632
+        <rdar://problem/47902054>
 
         Add missing file that was inadvertently omitted from the patch.
 
