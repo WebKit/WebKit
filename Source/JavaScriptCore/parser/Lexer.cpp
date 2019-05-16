@@ -1705,7 +1705,7 @@ ALWAYS_INLINE bool Lexer<T>::parseMultilineComment()
 
         if (isLineTerminator(m_current)) {
             shiftLineTerminator();
-            m_hasLineTerminatorBeforeToken = true;
+            m_terminator = true;
         } else
             shift();
     }
@@ -1784,7 +1784,7 @@ void Lexer<T>::fillTokenInfo(JSToken* tokenRecord, JSTokenType token, int lineNu
 }
 
 template <typename T>
-JSTokenType Lexer<T>::lexWithoutClearingLineTerminator(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
+JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     JSTokenLocation* tokenLocation = &tokenRecord->m_location;
@@ -1795,18 +1795,17 @@ JSTokenType Lexer<T>::lexWithoutClearingLineTerminator(JSToken* tokenRecord, uns
     ASSERT(m_buffer16.isEmpty());
 
     JSTokenType token = ERRORTOK;
+    m_terminator = false;
 
 start:
     skipWhitespace();
 
+    if (atEnd())
+        return EOFTOK;
+    
     tokenLocation->startOffset = currentOffset();
     ASSERT(currentOffset() >= currentLineStartOffset());
     tokenRecord->m_startPosition = currentPosition();
-
-    if (atEnd()) {
-        token = EOFTOK;
-        goto returnToken;
-    }
 
     CharacterType type;
     if (LIKELY(isLatin1(m_current)))
@@ -1917,7 +1916,7 @@ start:
         shift();
         if (m_current == '+') {
             shift();
-            token = (!m_hasLineTerminatorBeforeToken) ? PLUSPLUS : AUTOPLUSPLUS;
+            token = (!m_terminator) ? PLUSPLUS : AUTOPLUSPLUS;
             break;
         }
         if (m_current == '=') {
@@ -1931,13 +1930,13 @@ start:
         shift();
         if (m_current == '-') {
             shift();
-            if ((m_atLineStart || m_hasLineTerminatorBeforeToken) && m_current == '>') {
+            if ((m_atLineStart || m_terminator) && m_current == '>') {
                 if (m_scriptMode == JSParserScriptMode::Classic) {
                     shift();
                     goto inSingleLineComment;
                 }
             }
-            token = (!m_hasLineTerminatorBeforeToken) ? MINUSMINUS : AUTOMINUSMINUS;
+            token = (!m_terminator) ? MINUSMINUS : AUTOMINUSMINUS;
             break;
         }
         if (m_current == '=') {
@@ -2308,7 +2307,7 @@ start:
         ASSERT(isLineTerminator(m_current));
         shiftLineTerminator();
         m_atLineStart = true;
-        m_hasLineTerminatorBeforeToken = true;
+        m_terminator = true;
         m_lineStart = m_code;
         goto start;
     case CharacterPrivateIdentifierStart:
@@ -2348,16 +2347,13 @@ inSingleLineComment:
         auto endPosition = currentPosition();
 
         while (!isLineTerminator(m_current)) {
-            if (atEnd()) {
-                token = EOFTOK;
-                fillTokenInfo(tokenRecord, token, lineNumber, endOffset, lineStartOffset, endPosition);
-                return token;
-            }
+            if (atEnd())
+                return EOFTOK;
             shift();
         }
         shiftLineTerminator();
         m_atLineStart = true;
-        m_hasLineTerminatorBeforeToken = true;
+        m_terminator = true;
         m_lineStart = m_code;
         if (!lastTokenWasRestrKeyword())
             goto start;
