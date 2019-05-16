@@ -1,3 +1,15 @@
+2019-05-16  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Call completion handlers in NetworkConnectionToWebProcess::hasStorageAccess() and NetworkConnectionToWebProcess::requestStorageAccess() when feature is off
+        https://bugs.webkit.org/show_bug.cgi?id=197967
+        <rdar://problem/50753129>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/storageAccess/has-storage-access-true-if-feature-off.html:
+        * platform/mac-wk2/TestExpectations:
+            Test case marked as [ Pass ].
+
 2019-05-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Invalid AssignmentTargetType should be an early error.
