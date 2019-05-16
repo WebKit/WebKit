@@ -1,3 +1,14 @@
+2019-05-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PlayStation] WTFCrash should preserve register state.
+        https://bugs.webkit.org/show_bug.cgi?id=197932
+
+        Reviewed by Don Olmstead.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        Let r196397 apply to PlayStation port as well.
+
 2019-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         Make LOG_WITH_STREAM more efficient
