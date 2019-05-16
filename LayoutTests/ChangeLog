@@ -1,3 +1,12 @@
+2019-05-16  Shawn Roberts  <sroberts@apple.com>
+
+        quicklook/numbers.html is an ImageOnlyFailure
+        https://bugs.webkit.org/show_bug.cgi?id=191711
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating expectations for branch
+
 2019-05-14  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245158. rdar://problem/50753914
