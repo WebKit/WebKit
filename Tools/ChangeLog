@@ -1,3 +1,15 @@
+2019-05-16  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r84160): Leak of OpaqueJSString under WTR::JSTestRunner::pathToLocalResource (32 bytes) in com.apple.WebKit.WebContent running layout tests
+        <https://webkit.org/b/197965>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::pathToLocalResource): Don't call
+        JSStringRetain() here because the JSRetainPtr<JSStringRef>
+        return type will increment the retain count for us.
+
 2019-05-16  Alex Christensen  <achristensen@webkit.org>
 
         Add a unit test for client certificate authentication

@@ -38,7 +38,7 @@ void TestRunner::platformInitialize()
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
-    return JSStringRetain(url); // Do nothing on mac.
+    return url; // Do nothing on Cocoa.
 }
 
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
