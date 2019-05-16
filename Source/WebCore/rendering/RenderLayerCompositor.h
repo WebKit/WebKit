@@ -203,7 +203,7 @@ public:
     // Whether layer's backing needs a graphics layer to do clipping by an ancestor (non-stacking-context parent with overflow).
     bool clippedByAncestor(RenderLayer&) const;
     // Whether layer's backing needs a graphics layer to clip z-order children of the given layer.
-    bool clipsCompositingDescendants(const RenderLayer&) const;
+    static bool clipsCompositingDescendants(const RenderLayer&);
 
     // Whether the given layer needs an extra 'contents' layer.
     bool needsContentsCompositingLayer(const RenderLayer&) const;
