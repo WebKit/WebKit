@@ -1708,7 +1708,8 @@ RegisterID* BytecodeGenerator::emitDec(RegisterID* srcDst)
     return srcDst;
 }
 
-bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, RegisterID* src2)
+template<typename EqOp>
+RegisterID* BytecodeGenerator::emitEqualityOp(RegisterID* dst, RegisterID* src1, RegisterID* src2)
 {
     if (!canDoPeepholeOptimization())
         return false;
@@ -1723,47 +1724,48 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             if (value == "undefined") {
                 rewind();
                 OpIsUndefined::emit(this, dst, op.m_value);
-                return true;
+                return dst;
             }
             if (value == "boolean") {
                 rewind();
                 OpIsBoolean::emit(this, dst, op.m_value);
-                return true;
+                return dst;
             }
             if (value == "number") {
                 rewind();
                 OpIsNumber::emit(this, dst, op.m_value);
-                return true;
+                return dst;
             }
             if (value == "string") {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, StringType);
-                return true;
+                return dst;
             }
             if (value == "symbol") {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, SymbolType);
-                return true;
+                return dst;
             }
             if (Options::useBigInt() && value == "bigint") {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, BigIntType);
-                return true;
+                return dst;
             }
             if (value == "object") {
                 rewind();
                 OpIsObjectOrNull::emit(this, dst, op.m_value);
-                return true;
+                return dst;
             }
             if (value == "function") {
                 rewind();
                 OpIsFunction::emit(this, dst, op.m_value);
-                return true;
+                return dst;
             }
         }
     }
 
-    return false;
+    EqOp::emit(this, dst, src1, src2);
+    return dst;
 }
 
 void BytecodeGenerator::emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot)
