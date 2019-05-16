@@ -1,3 +1,13 @@
+2019-05-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Select all with existing range selection replaces range instead of selecting all text
+        https://bugs.webkit.org/show_bug.cgi?id=197950
+        <rdar://problem/50245131>
+
+        Add missing file that was inadvertently omitted from the patch.
+
+        * fast/events/ios/resources/submit-form-target-blank-using-return-key.html: Added.
+
 2019-05-16  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Regression: No initial observation when nothing else triggers rendering
