@@ -69,15 +69,6 @@ public:
 
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
-    // Included layers are non-z-order descendant layers that are painted into this backing.
-    const Vector<WeakPtr<RenderLayer>>& backingSharingLayers() const { return m_backingSharingLayers; }
-    void setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&&);
-
-    bool hasBackingSharingLayers() const { return !m_backingSharingLayers.isEmpty(); }
-
-    void removeBackingSharingLayer(RenderLayer&);
-    void clearBackingSharingLayers();
-
     void updateConfigurationAfterStyleChange();
 
     // Returns true if layer configuration changed.
@@ -395,9 +386,6 @@ private:
     LayoutRect computePrimaryGraphicsLayerRect(const LayoutRect& parentGraphicsLayerRect) const;
 
     RenderLayer& m_owningLayer;
-
-    // A list other layers that paint into this backing store, later than m_owningLayer in paint order.
-    Vector<WeakPtr<RenderLayer>> m_backingSharingLayers;
 
     RefPtr<GraphicsLayer> m_ancestorClippingLayer; // Only used if we are clipped by an ancestor which is not a stacking context.
     RefPtr<GraphicsLayer> m_contentsContainmentLayer; // Only used if we have a background layer; takes the transform.
