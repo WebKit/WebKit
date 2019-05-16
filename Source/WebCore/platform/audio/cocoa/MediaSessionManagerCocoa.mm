@@ -111,10 +111,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         category = AudioSession::PlayAndRecord;
     else if (hasAudibleAudioOrVideoMediaType) {
         category = AudioSession::MediaPlayback;
-        if (videoCount || videoAudioCount)
-            policy = RouteSharingPolicy::LongFormVideo;
-        else
-            policy = RouteSharingPolicy::LongFormAudio;
+        policy = RouteSharingPolicy::LongFormAudio;
     } else if (webAudioCount)
         category = AudioSession::AmbientSound;
 
