@@ -241,7 +241,6 @@ struct RenderLayerCompositor::CompositingState {
         else
             childState.stackingContextAncestor = stackingContextAncestor;
 
-        childState.backingSharingAncestor = backingSharingAncestor;
         childState.subtreeIsCompositing = false;
         childState.testingOverlap = testingOverlap;
         childState.fullPaintOrderTraversalRequired = fullPaintOrderTraversalRequired;
@@ -269,7 +268,6 @@ struct RenderLayerCompositor::CompositingState {
     }
 
     RenderLayer* compositingAncestor;
-    RenderLayer* backingSharingAncestor { nullptr };
     RenderLayer* stackingContextAncestor { nullptr };
     bool subtreeIsCompositing { false };
     bool testingOverlap { true };
@@ -862,10 +860,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
 static bool backingProviderLayerCanIncludeLayer(const RenderLayer& sharedLayer, const RenderLayer& layer)
 {
-    // Disable sharing when painting shared layers doesn't work correctly.
-    if (layer.hasReflection())
-        return false;
-
     return layer.ancestorLayerIsInContainingBlockChain(sharedLayer);
 }
 
@@ -987,9 +981,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // Compositing for any reason disables backing sharing.
         LOG_WITH_STREAM(Compositing, stream << &layer << " is compositing - flushing sharing to " << backingSharingState.backingProviderCandidate << " with " << backingSharingState.backingSharingLayers.size() << " sharing layers");
         backingSharingState.resetBackingProviderCandidate();
-    } else if (layerPaintsIntoProvidedBacking) {
-        childState.backingSharingAncestor = &layer;
-        overlapMap.pushCompositingContainer();
     }
 
 #if !ASSERT_DISABLED
@@ -1073,7 +1064,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         compositingState.hasNotIsolatedCompositedBlendingDescendants = true;
 #endif
 
-    if ((childState.compositingAncestor == &layer && !layer.isRenderViewLayer()) || childState.backingSharingAncestor == &layer)
+    if (childState.compositingAncestor == &layer && !layer.isRenderViewLayer())
         overlapMap.popCompositingContainer();
 
     // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
@@ -1237,7 +1228,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         compositingState.hasNotIsolatedCompositedBlendingDescendants = true;
 #endif
 
-    if ((childState.compositingAncestor == &layer && !layer.isRenderViewLayer()) || childState.backingSharingAncestor == &layer)
+    if (childState.compositingAncestor == &layer && !layer.isRenderViewLayer())
         overlapMap.popCompositingContainer();
 
     if (layer.isComposited())
