@@ -100,9 +100,19 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 flags.add(WebCore::ActivityState::IsInWindow);
             view.setViewState(flags);
         },
-        // padding
+        // get_accessible
         nullptr,
+#if WPE_CHECK_VERSION(1, 3, 0)
+        // set_device_scale_factor
+        [](void* data, float scale)
+        {
+            auto& view = *reinterpret_cast<View*>(data);
+            view.page().setIntrinsicDeviceScaleFactor(scale);
+        },
+#else
         nullptr,
+#endif // WPE_CHECK_VERSION(1, 3, 0)
+        // padding,
         nullptr
     };
     wpe_view_backend_set_backend_client(m_backend, &s_backendClient, this);

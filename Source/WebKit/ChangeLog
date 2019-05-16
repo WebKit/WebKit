@@ -1,3 +1,18 @@
+2019-05-16  Ryan Walklin  <ryan@testtoast.com>
+
+        [WPE] Rendering on a HiDPI display looks scaled up instead of rendered at 2x
+        https://bugs.webkit.org/show_bug.cgi?id=185764
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a function to the wpe_view_backend_client struct which accepts a device scale factor
+        configured through wpe_view_backend_dispatch_set_device_scale_factor() and calls
+        setIntrinsicDeviceScaleFactor for the the current View.Page object. The
+        function definition has been added in libwpe 1.3.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend): Add set_device_scale_factor implementation declared by libwpe.
+
 2019-05-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: user gesture toggle should also force user interaction flag
