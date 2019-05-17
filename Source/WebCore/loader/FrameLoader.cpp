@@ -2867,8 +2867,9 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
 
     // Don't set the cookie policy URL if it's already been set.
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
+    bool isMainFrameMainResource = isMainResource && m_frame.isMainFrame();
     if (request.firstPartyForCookies().isEmpty()) {
-        if (isMainResource && m_frame.isMainFrame())
+        if (isMainFrameMainResource)
             request.setFirstPartyForCookies(request.url());
         else if (Document* document = m_frame.document())
             request.setFirstPartyForCookies(document->firstPartyForCookies());
@@ -2885,8 +2886,8 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
             ASSERT(ownerFrame || m_frame.isMainFrame());
         }
         addSameSiteInfoToRequestIfNeeded(request, initiator);
-        request.setIsTopSite(isMainResource && m_frame.isMainFrame());
     }
+    request.setIsTopSite(isMainFrameMainResource);
 
     Page* page = frame().page();
     bool hasSpecificCachePolicy = request.cachePolicy() != ResourceRequestCachePolicy::UseProtocolCachePolicy;
