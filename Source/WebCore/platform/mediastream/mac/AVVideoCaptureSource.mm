@@ -324,20 +324,21 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
 
             auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
             ASSERT(frameRateRange);
-            if (!frameRateRange)
-                return;
+            if (frameRateRange) {
+                m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
-            m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
-
-            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", m_currentFrameRate);
-            [device() setActiveVideoMinFrameDuration: CMTimeMake(1, m_currentFrameRate)];
-            [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, m_currentFrameRate)];
+                ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate to ", m_currentFrameRate);
+                [device() setActiveVideoMinFrameDuration: CMTimeMake(1, m_currentFrameRate)];
+                [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, m_currentFrameRate)];
+            } else
+                ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "cannot find proper frame rate range for the selected preset\n");
 
             [device() unlockForConfiguration];
         }
     } @catch(NSException *exception) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
-        return;
+        [device() unlockForConfiguration];
+        ASSERT_NOT_REACHED();
     }
     [m_session commitConfiguration];
 
