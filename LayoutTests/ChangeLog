@@ -1,3 +1,16 @@
+2019-05-17  Rob Buis  <rbuis@igalia.com>
+
+        Implement imagesrcset and imagesizes attributes on link rel=preload
+        https://bugs.webkit.org/show_bug.cgi?id=192950
+
+        Reviewed by Youenn Fablet.
+
+        Write special expectation for link-header-preload-imagesrcset.html because test runner
+        uses different dimensions on iOS.
+
+        * platform/ios-simulator-12-wk2/imported/w3c/web-platform-tests/preload/dynamic-adding-preload-imagesrcset-expected.txt: Added.
+        * platform/ios-simulator-12-wk2/imported/w3c/web-platform-tests/preload/link-header-preload-imagesrcset-expected.txt: Added.
+
 2019-05-17  Shawn Roberts  <sroberts@apple.com>
 
         media/controls-after-reload.html failing on iOS after unskip

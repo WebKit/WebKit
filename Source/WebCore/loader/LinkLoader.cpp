@@ -44,16 +44,19 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HTMLSrcsetParser.h"
 #include "LinkHeader.h"
 #include "LinkPreloadResourceClients.h"
 #include "LinkRelAttribute.h"
 #include "LoaderStrategy.h"
 #include "MIMETypeRegistry.h"
+#include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "PlatformStrategies.h"
 #include "ResourceError.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "SizesAttributeParser.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -97,8 +100,8 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     for (auto& header : headerSet) {
         if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
             continue;
-        if ((mediaAttributeCheck == MediaAttributeCheck::MediaAttributeNotEmpty && header.media().isEmpty())
-            || (mediaAttributeCheck == MediaAttributeCheck::MediaAttributeEmpty && !header.media().isEmpty())) {
+        if ((mediaAttributeCheck == MediaAttributeCheck::MediaAttributeNotEmpty && !header.isViewportDependent())
+            || (mediaAttributeCheck == MediaAttributeCheck::MediaAttributeEmpty && header.isViewportDependent())) {
                 continue;
         }
 
@@ -108,7 +111,7 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
         if (equalIgnoringFragmentIdentifier(url, baseURL))
             continue;
         preconnectIfNeeded(relAttribute, url, document, header.crossOrigin());
-        preloadIfNeeded(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), nullptr);
+        preloadIfNeeded(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), nullptr);
     }
 }
 
@@ -227,19 +230,30 @@ void LinkLoader::preconnectIfNeeded(const LinkRelAttribute& relAttribute, const 
     });
 }
 
-std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, LinkLoader* loader)
+std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, const String& imageSrcSet, const String& imageSizes, LinkLoader* loader)
 {
     if (!document.loader() || !relAttribute.isLinkPreload)
         return nullptr;
 
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled());
-    if (!href.isValid()) {
-        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `href` value"_s);
-        return nullptr;
-    }
     auto type = LinkLoader::resourceTypeFromAsAttribute(as);
     if (!type) {
         document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> must have a valid `as` value"_s);
+        return nullptr;
+    }
+    URL url;
+    if (type == CachedResource::Type::ImageResource && !imageSrcSet.isEmpty()) {
+        auto sourceSize = SizesAttributeParser(imageSizes, document).length();
+        auto candidate = bestFitSourceForImageAttributes(document.deviceScaleFactor(), href.string(), imageSrcSet, sourceSize);
+        url = document.completeURL(URL({ }, candidate.string.toString()));
+    } else
+        url = document.completeURL(href);
+
+    if (!url.isValid()) {
+        if (imageSrcSet.isEmpty())
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `href` value"_s);
+        else
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `imagesrcset` value"_s);
         return nullptr;
     }
     if (!MediaQueryEvaluator::mediaAttributeMatches(document, media))
@@ -248,7 +262,7 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
         return nullptr;
 
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
-    auto linkRequest = createPotentialAccessControlRequest(document.completeURL(href), document, crossOriginMode, WTFMove(options));
+    auto linkRequest = createPotentialAccessControlRequest(url, document, crossOriginMode, WTFMove(options));
     linkRequest.setPriority(CachedResource::defaultPriorityForResourceType(type.value()));
     linkRequest.setInitiator("link");
     linkRequest.setIgnoreForRequestCount(true);
@@ -299,7 +313,7 @@ void LinkLoader::cancelLoad()
         m_preloadResourceClient->clear();
 }
 
-bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& media, const String& mimeType, const String& crossOrigin, Document& document)
+bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& media, const String& mimeType, const String& crossOrigin, const String& imageSrcSet, const String& imageSizes, Document& document)
 {
     if (relAttribute.isDNSPrefetch) {
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
@@ -311,7 +325,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
     preconnectIfNeeded(relAttribute, href, document, crossOrigin);
 
     if (m_client.shouldLoadLink()) {
-        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, this);
+        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, imageSrcSet, imageSizes, this);
         if (m_preloadResourceClient)
             m_preloadResourceClient->clear();
         if (resourceClient)

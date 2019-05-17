@@ -1,3 +1,52 @@
+2019-05-17  Rob Buis  <rbuis@igalia.com>
+
+        Implement imagesrcset and imagesizes attributes on link rel=preload
+        https://bugs.webkit.org/show_bug.cgi?id=192950
+
+        Reviewed by Youenn Fablet.
+
+        Import relevant tests for this feature.
+
+        * web-platform-tests/preload/dynamic-adding-preload-imagesrcset-expected.txt: Added.
+        * web-platform-tests/preload/dynamic-adding-preload-imagesrcset.html: Added.
+        * web-platform-tests/preload/link-header-preload-delay-onload-expected.txt: Added.
+        * web-platform-tests/preload/link-header-preload-delay-onload.html: Added.
+        * web-platform-tests/preload/link-header-preload-delay-onload.html.headers: Added.
+        * web-platform-tests/preload/link-header-preload-expected.txt: Added.
+        * web-platform-tests/preload/link-header-preload-imagesrcset-expected.txt: Added.
+        * web-platform-tests/preload/link-header-preload-imagesrcset.html: Added.
+        * web-platform-tests/preload/link-header-preload-imagesrcset.html.headers: Added.
+        * web-platform-tests/preload/link-header-preload-nonce-expected.txt: Added.
+        * web-platform-tests/preload/link-header-preload-nonce.html: Added.
+        * web-platform-tests/preload/link-header-preload-nonce.html.headers: Added.
+        * web-platform-tests/preload/link-header-preload.html: Added.
+        * web-platform-tests/preload/link-header-preload.html.headers: Added.
+        * web-platform-tests/preload/onload-event-expected.txt: Added.
+        * web-platform-tests/preload/onload-event.html: Added.
+        * web-platform-tests/preload/preload-csp.sub-expected.txt:
+        * web-platform-tests/preload/preload-csp.sub.html:
+        * web-platform-tests/preload/preload-default-csp.sub-expected.txt:
+        * web-platform-tests/preload/preload-default-csp.sub.html:
+        * web-platform-tests/preload/preload-with-type-expected.txt: Added.
+        * web-platform-tests/preload/preload-with-type.html: Added.
+        * web-platform-tests/preload/resources/A4.ogv: Added.
+        * web-platform-tests/preload/resources/A4.ogv.sub.headers: Added.
+        * web-platform-tests/preload/resources/cross-origin-module.py: Added.
+        (main):
+        * web-platform-tests/preload/resources/dummy-preloads-subresource.css: Added.
+        * web-platform-tests/preload/resources/dummy-preloads-subresource.css.sub.headers: Added.
+        * web-platform-tests/preload/resources/empty.html: Added.
+        * web-platform-tests/preload/resources/empty.html.sub.headers: Added.
+        * web-platform-tests/preload/resources/foo.vtt.sub.headers: Added.
+        * web-platform-tests/preload/resources/module1.js: Added.
+        * web-platform-tests/preload/resources/module2.js: Added.
+        * web-platform-tests/preload/resources/preload_helper.js:
+        (verifyNumberOfResourceTimingEntries):
+        (numberOfResourceTimingEntries):
+        (verifyLoadedAndNoDoubleDownload):
+        * web-platform-tests/preload/single-download-preload-expected.txt:
+        * web-platform-tests/preload/single-download-preload.html:
+
 2019-05-14  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Update grid when changing auto repeat type

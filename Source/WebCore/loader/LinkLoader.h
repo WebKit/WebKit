@@ -50,7 +50,7 @@ public:
     explicit LinkLoader(LinkLoaderClient&);
     virtual ~LinkLoader();
 
-    bool loadLink(const LinkRelAttribute&, const URL&, const String& as, const String& media, const String& type, const String& crossOrigin, Document&);
+    bool loadLink(const LinkRelAttribute&, const URL&, const String& as, const String& media, const String& type, const String& crossOrigin, const String& imageSrcSet, const String& imageSizes, Document&);
     static Optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
@@ -63,7 +63,7 @@ public:
 private:
     void notifyFinished(CachedResource&) override;
     static void preconnectIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& crossOrigin);
-    static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& as, const String& media, const String& type, const String& crossOriginMode, LinkLoader*);
+    static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& as, const String& media, const String& type, const String& crossOriginMode, const String&, const String&, LinkLoader*);
     void prefetchIfNeeded(const LinkRelAttribute&, const URL& href, Document&);
 
     LinkLoaderClient& m_client;
