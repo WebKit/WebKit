@@ -1,3 +1,11 @@
+2019-05-17  Shawn Roberts  <sroberts@apple.com>
+
+        media/controls-after-reload.html failing on iOS after unskip
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Skipping in iOS
+
 2019-05-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r245170): gmail.com header flickers when hovering over the animating buttons

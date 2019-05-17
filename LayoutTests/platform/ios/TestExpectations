@@ -3266,3 +3266,6 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 fast/events/ios/submit-form-target-blank-using-return-key.html
 
 webkit.org/b/197778 [ Debug ] webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
+
+# Was unskipped, but now has missing results in iOS . Skipping on iOS only.
+media/controls-after-reload.html [ Skip ]
