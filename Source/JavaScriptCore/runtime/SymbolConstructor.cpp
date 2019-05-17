@@ -79,10 +79,16 @@ void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 
 static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue description = exec->argument(0);
     if (description.isUndefined())
-        return JSValue::encode(Symbol::create(exec->vm()));
-    return JSValue::encode(Symbol::create(exec, description.toString(exec)));
+        return JSValue::encode(Symbol::create(vm));
+
+    String string = description.toWTFString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSValue::encode(Symbol::createWithDescription(vm, string));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)
