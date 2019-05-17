@@ -1,3 +1,16 @@
+2019-05-16  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should cage the memory base pointers in structs
+        https://bugs.webkit.org/show_bug.cgi?id=197620
+
+        Reviewed by Saam Barati.
+
+        Rename reauthenticate to recage.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::recage):
+        (WTF::CagedPtr::reauthenticate): Deleted.
+
 2019-05-16  Alex Christensen  <achristensen@webkit.org>
 
         Add a unit test for client certificate authentication

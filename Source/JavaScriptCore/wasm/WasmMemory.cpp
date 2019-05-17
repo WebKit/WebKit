@@ -423,7 +423,7 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
         memcpy(newMemory, memory(), m_size);
         if (m_memory)
             Gigacage::freeVirtualPages(Gigacage::Primitive, memory(), m_size);
-        m_memory = TaggedArrayStoragePtr<void>(newMemory, desiredSize);
+        m_memory = CagedMemory(newMemory, desiredSize);
         m_mappedCapacity = desiredSize;
         m_size = desiredSize;
         ASSERT(memory() == newMemory);
@@ -439,7 +439,7 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
             dataLog("mprotect failed: ", strerror(errno), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
-        m_memory.resize(m_size, desiredSize);
+        m_memory.recage(m_size, desiredSize);
         m_size = desiredSize;
         return success();
     }

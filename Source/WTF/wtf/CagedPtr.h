@@ -78,7 +78,7 @@ public:
     typename std::enable_if<!std::is_same<void, U>::value, T>::type&
     /* T& */ at(unsigned index, unsigned size) const { return get(size)[index]; }
 
-    void reauthenticate(unsigned oldSize, unsigned newSize)
+    void recage(unsigned oldSize, unsigned newSize)
     {
         auto ptr = get(oldSize);
         ASSERT(ptr == getUnsafe());

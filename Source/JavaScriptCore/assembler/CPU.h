@@ -56,6 +56,15 @@ constexpr bool isARM64()
 #endif
 }
 
+constexpr bool isARM64E()
+{
+#if CPU(ARM64E)
+    return true;
+#else
+    return false;
+#endif
+}
+
 constexpr bool isX86()
 {
 #if CPU(X86_64) || CPU(X86)

@@ -226,7 +226,7 @@ BINLINE size_t size(Kind) { BCRASH(); return 0; }
 BINLINE void ensureGigacage() { }
 BINLINE bool wasEnabled() { return false; }
 BINLINE bool isCaged(Kind, const void*) { return true; }
-BINLINE bool isEnabled() { return false; }
+BINLINE bool isEnabled(Kind) { return false; }
 template<typename T> BINLINE T* caged(Kind, T* ptr) { return ptr; }
 template<typename T> BINLINE T* cagedMayBeNull(Kind, T* ptr) { return ptr; }
 BINLINE void disableDisablingPrimitiveGigacageIfShouldBeEnabled() { }

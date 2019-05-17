@@ -395,22 +395,20 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     if (!!moduleInformation.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+        GPRReg scratchOrSize = scratch2GPR;
+        auto mode = instance()->memoryMode();
 
-        if (instance()->memoryMode() != Wasm::MemoryMode::Signaling) {
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-#if CPU(ARM64E)
-            jit.untagArrayPtr(pinnedRegs.sizeRegister, baseMemory);
-#endif
+        if (isARM64E()) {
+            if (mode != Wasm::MemoryMode::Signaling)
+                scratchOrSize = pinnedRegs.sizeRegister;
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), scratchOrSize);
         } else {
-#if CPU(ARM64E)
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), scratch2GPR);
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-            jit.untagArrayPtr(scratch2GPR, baseMemory);
-#else
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-#endif
+            if (mode != Wasm::MemoryMode::Signaling)
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
         }
+
+        jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
     }
 
     // We use this callee to indicate how to unwind past these types of frames:

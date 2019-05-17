@@ -1,3 +1,15 @@
+2019-05-16  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should cage the memory base pointers in structs
+        https://bugs.webkit.org/show_bug.cgi?id=197620
+
+        Reviewed by Saam Barati.
+
+        Fix signature to take Gigacage::Kind, which matches GIGACAGE_ENABLED build.
+
+        * bmalloc/Gigacage.h:
+        (Gigacage::isEnabled):
+
 2019-05-08  Keith Miller  <keith_miller@apple.com>
 
         Remove Gigacage from arm64 and use PAC for arm64e instead
