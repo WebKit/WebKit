@@ -228,6 +228,7 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
                     auto result = IDBResultData::error(m_currentOpenDBRequest->requestData().requestIdentifier(), IDBError { QuotaExceededError, quotaErrorMessageName("openDatabase") });
                     m_currentOpenDBRequest->connection().didOpenDatabase(result);
                     m_currentOpenDBRequest = nullptr;
+                    m_isOpeningBackingStore = false;
                     break;
                 }
                 case StorageQuotaManager::Decision::Grant:
@@ -460,7 +461,7 @@ void UniqueIDBDatabase::handleDatabaseOperations()
     LOG(IndexedDB, "(main) UniqueIDBDatabase::handleDatabaseOperations - There are %u pending", m_pendingOpenDBRequests.size());
     ASSERT(!m_hardClosedForUserDelete);
 
-    if (m_deleteBackingStoreInProgress)
+    if (m_deleteBackingStoreInProgress || m_isOpeningBackingStore)
         return;
 
     clearStalePendingOpenDBRequests();
