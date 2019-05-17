@@ -1,3 +1,23 @@
+2019-05-17  Antoine Quint  <graouts@apple.com>
+
+        Add a website policy to disable the legacy -webkit-overflow-scrolling:touch behavior
+        https://bugs.webkit.org/show_bug.cgi?id=197943
+        <rdar://problem/49078202>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebsiteLegacyOverflowScrollingTouchPolicy.h: Added.
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to set a list of hosts to which to send custom header fields cross-origin

@@ -1,3 +1,17 @@
+2019-05-17  Antoine Quint  <graouts@apple.com>
+
+        Add a website policy to disable the legacy -webkit-overflow-scrolling:touch behavior
+        https://bugs.webkit.org/show_bug.cgi?id=197943
+        <rdar://problem/49078202>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode-expected.html: Added.
+        * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html: Added.
+        * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode-expected.txt: Added.
+        * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html: Added.
+        * platform/ios/TestExpectations: Skip the new tests since they depend on code in WebKitAdditions.
+
 2019-05-17  Rob Buis  <rbuis@igalia.com>
 
         Implement imagesrcset and imagesizes attributes on link rel=preload

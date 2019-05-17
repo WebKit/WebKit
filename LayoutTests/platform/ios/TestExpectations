@@ -3265,6 +3265,10 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 # FIXME: Unskip the following test once we have the fix for <rdar://problem/50596032>.
 fast/events/ios/submit-form-target-blank-using-return-key.html
 
+# These tests depend on the implementation of "modern compatibility mode" in WebKitAdditions.
+platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html [ Skip ]
+fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html [ Skip ]
+
 webkit.org/b/197778 [ Debug ] webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
 # Was unskipped, but now has missing results in iOS . Skipping on iOS only.

@@ -27,6 +27,7 @@
 #include "CSSParserContext.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -60,6 +61,12 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #endif
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     legacyOverflowScrollingTouchEnabled = document.settings().legacyOverflowScrollingTouchEnabled();
+    // The legacy -webkit-overflow-scrolling: touch behavior may have been disabled through the website policy,
+    // in that case we want to disable the legacy behavior regardless of what the setting says.
+    if (auto* loader = document.loader()) {
+        if (loader->legacyOverflowScrollingTouchPolicy() == LegacyOverflowScrollingTouchPolicy::Disable)
+            legacyOverflowScrollingTouchEnabled = false;
+    }
 #endif
     springTimingFunctionEnabled = document.settings().springTimingFunctionEnabled();
     constantPropertiesEnabled = document.settings().constantPropertiesEnabled();
