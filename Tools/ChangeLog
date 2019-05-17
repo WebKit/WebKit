@@ -1,3 +1,15 @@
+2019-05-16  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Download archives from S3
+        https://bugs.webkit.org/show_bug.cgi?id=197949
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (DownloadBuiltProduct): Updated to use S3 URL.
+        (DownloadBuiltProduct.getResultSummary): Method to display custom failure string.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2019-05-16  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r15133): Fix leak of JSStringRef in minidom

@@ -33,7 +33,7 @@ import re
 import requests
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
-EWS_URL = 'https://ews-build.webkit.org/'
+S3URL = 'https://s3-us-west-2.amazonaws.com/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 
@@ -785,13 +785,18 @@ class UploadBuiltProduct(transfer.FileUpload):
 
 class DownloadBuiltProduct(shell.ShellCommand):
     command = ['python', 'Tools/BuildSlaveSupport/download-built-product',
-        WithProperties('--platform=%(platform)s'), WithProperties('--%(configuration)s'),
-        WithProperties(EWS_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
+        WithProperties('--%(configuration)s'),
+        WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
     haltOnFailure = True
     flunkOnFailure = True
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to download built product from S3'}
+        return super(DownloadBuiltProduct, self).getResultSummary()
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
