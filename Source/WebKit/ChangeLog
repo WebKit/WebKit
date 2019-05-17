@@ -1,3 +1,9 @@
+2019-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.24.2 release
+
+        * gtk/NEWS: Add release notes for 2.24.2.
+
 2019-05-14  Brent Fulgham  <bfulgham@apple.com>
 
         Protect current WebFrame during form submission
