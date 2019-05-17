@@ -126,10 +126,11 @@ class HTMLMediaElement
     : public HTMLElement
     , public ActiveDOMObject
     , public MediaControllerInterface
+    , public CanMakeWeakPtr<HTMLMediaElement>
     , public PlatformMediaSessionClient
     , private MediaCanStartListener
     , private MediaPlayerClient
-    , public MediaProducer
+    , private MediaProducer
     , private VisibilityChangeClient
     , private ApplicationStateChangeListener
 #if ENABLE(VIDEO_TRACK)
@@ -186,6 +187,8 @@ public:
     void setVideoFullscreenGravity(MediaPlayerEnums::VideoGravity);
     MediaPlayerEnums::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
+
+    using CanMakeWeakPtr<HTMLMediaElement>::weakPtrFactory;
 
     void scheduleCheckPlaybackTargetCompatability();
     void checkPlaybackTargetCompatablity();
