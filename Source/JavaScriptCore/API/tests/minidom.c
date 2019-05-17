@@ -91,6 +91,7 @@ static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef th
         char stringUTF8[numChars];
         JSStringGetUTF8CString(string, stringUTF8, numChars);
         printf("%s\n", stringUTF8);
+        JSStringRelease(string);
     }
     
     return JSValueMakeUndefined(context);

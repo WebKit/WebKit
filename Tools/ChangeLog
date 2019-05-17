@@ -1,5 +1,17 @@
 2019-05-16  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r15133): Fix leak of JSStringRef in minidom
+        <https://webkit.org/b/197968>
+        <rdar://problem/50872430>
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestWebKitAPI/Tests/WebKitObjC/UserContentTest.mm:
+        (expectScriptValueIsString): Drive-by fix to use adopt() instead
+        of JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(...)).
+
+2019-05-16  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r84160): Leak of OpaqueJSString under WTR::JSTestRunner::pathToLocalResource (32 bytes) in com.apple.WebKit.WebContent running layout tests
         <https://webkit.org/b/197965>
 

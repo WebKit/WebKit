@@ -77,7 +77,7 @@ static void expectScriptValueIsString(WKSerializedScriptValueRef serializedScrip
     JSValueRef scriptValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
     EXPECT_TRUE(JSValueIsString(scriptContext, scriptValue));
     
-    JSRetainPtr<JSStringRef> scriptString(Adopt, JSValueToStringCopy(scriptContext, scriptValue, 0));
+    auto scriptString = adopt(JSValueToStringCopy(scriptContext, scriptValue, 0));
     EXPECT_TRUE(JSStringIsEqualToUTF8CString(scriptString.get(), expectedValue));
     
     JSGlobalContextRelease(scriptContext);
