@@ -38,6 +38,7 @@
 #include "CachedResourceLoader.h"
 #include "ContentExtensionError.h"
 #include "ContentSecurityPolicy.h"
+#include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentParser.h"
@@ -53,7 +54,6 @@
 #include "FrameTree.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HTTPHeaderField.h"
 #include "HTTPHeaderNames.h"
 #include "HistoryItem.h"
 #include "HistoryController.h"
@@ -1322,11 +1322,6 @@ void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackI
 }
 #endif
 
-void DocumentLoader::setCustomHeaderFields(Vector<HTTPHeaderField>&& fields)
-{
-    m_customHeaderFields = WTFMove(fields);
-}
-
 bool DocumentLoader::isLoadingInAPISense() const
 {
     // Once a frame has loaded, we no longer need to consider subresources,
@@ -1573,6 +1568,11 @@ void DocumentLoader::stopRecordingResponses()
 {
     m_stopRecordingResponses = true;
     m_responses.shrinkToFit();
+}
+
+void DocumentLoader::setCustomHeaderFields(Vector<CustomHeaderFields>&& fields)
+{
+    m_customHeaderFields = WTFMove(fields);
 }
 
 void DocumentLoader::setTitle(const StringWithDirection& title)

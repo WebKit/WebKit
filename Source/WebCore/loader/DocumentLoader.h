@@ -76,10 +76,10 @@ class ArchiveResourceCollection;
 class CachedRawResource;
 class CachedResourceLoader;
 class ContentFilter;
+struct CustomHeaderFields;
 class FormState;
 class Frame;
 class FrameLoader;
-class HTTPHeaderField;
 class IconLoader;
 class Page;
 class PreviewConverter;
@@ -371,8 +371,8 @@ public:
     void finishedLoadingApplicationManifest(ApplicationManifestLoader&);
 #endif
 
-    WEBCORE_EXPORT void setCustomHeaderFields(Vector<HTTPHeaderField>&& fields);
-    const Vector<HTTPHeaderField>& customHeaderFields() { return m_customHeaderFields; }
+    WEBCORE_EXPORT void setCustomHeaderFields(Vector<CustomHeaderFields>&&);
+    const Vector<CustomHeaderFields>& customHeaderFields() const { return m_customHeaderFields; }
 
     void setAllowsWebArchiveForMainFrame(bool allowsWebArchiveForMainFrame) { m_allowsWebArchiveForMainFrame = allowsWebArchiveForMainFrame; }
     bool allowsWebArchiveForMainFrame() const { return m_allowsWebArchiveForMainFrame; }
@@ -564,7 +564,7 @@ private:
     HashMap<std::unique_ptr<ApplicationManifestLoader>, uint64_t> m_applicationManifestLoaders;
 #endif
 
-    Vector<HTTPHeaderField> m_customHeaderFields;
+    Vector<CustomHeaderFields> m_customHeaderFields;
     
     bool m_subresourceLoadersArePageCacheAcceptable { false };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
