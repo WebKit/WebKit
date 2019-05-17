@@ -50,7 +50,6 @@
 #include <ft2build.h>
 #include FT_TRUETYPE_TABLES_H
 #include FT_TRUETYPE_TAGS_H
-#include <unicode/normlzr.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

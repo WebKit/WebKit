@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,7 @@
 #include "TextControlInnerElements.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
+#include <unicode/unorm2.h>
 #include <wtf/Function.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -71,10 +72,9 @@
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 #endif
 
-
 namespace WebCore {
-using namespace WTF::Unicode;
 
+using namespace WTF::Unicode;
 using namespace HTMLNames;
 
 // Buffer that knows how to compare with a search target.
@@ -2014,31 +2014,26 @@ static inline bool containsKanaLetters(const String& pattern)
     return false;
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-// NOTE: ICU's unorm_normalize function is deprecated.
-
 static void normalizeCharacters(const UChar* characters, unsigned length, Vector<UChar>& buffer)
 {
-    ASSERT(length);
+    UErrorCode status = U_ZERO_ERROR;
+    const UNormalizer2* normalizer = unorm2_getNFCInstance(&status);
+    ASSERT(U_SUCCESS(status));
 
     buffer.resize(length);
 
-    UErrorCode status = U_ZERO_ERROR;
-    size_t bufferSize = unorm_normalize(characters, length, UNORM_NFC, 0, buffer.data(), length, &status);
-    ASSERT(status == U_ZERO_ERROR || status == U_STRING_NOT_TERMINATED_WARNING || status == U_BUFFER_OVERFLOW_ERROR);
-    ASSERT(bufferSize);
+    auto normalizedLength = unorm2_normalize(normalizer, characters, length, buffer.data(), length, &status);
+    ASSERT(U_SUCCESS(status) || status == U_BUFFER_OVERFLOW_ERROR);
 
-    buffer.resize(bufferSize);
+    buffer.resize(normalizedLength);
 
-    if (status == U_ZERO_ERROR || status == U_STRING_NOT_TERMINATED_WARNING)
+    if (U_SUCCESS(status))
         return;
 
     status = U_ZERO_ERROR;
-    unorm_normalize(characters, length, UNORM_NFC, 0, buffer.data(), bufferSize, &status);
-    ASSERT(status == U_STRING_NOT_TERMINATED_WARNING);
+    unorm2_normalize(normalizer, characters, length, buffer.data(), length, &status);
+    ASSERT(U_SUCCESS(status));
 }
-
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 static bool isNonLatin1Separator(UChar32 character)
 {

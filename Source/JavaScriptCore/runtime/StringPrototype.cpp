@@ -49,7 +49,7 @@
 #include "SuperSampler.h"
 #include <algorithm>
 #include <unicode/uconfig.h>
-#include <unicode/unorm.h>
+#include <unicode/unorm2.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
@@ -1805,58 +1805,84 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
     return JSValue::encode(JSStringIterator::create(exec, exec->jsCallee()->globalObject(vm)->stringIteratorStructure(), string));
 }
 
-enum class NormalizationForm {
-    CanonicalComposition,
-    CanonicalDecomposition,
-    CompatibilityComposition,
-    CompatibilityDecomposition
-};
+enum class NormalizationForm { NFC, NFD, NFKC, NFKD };
 
-static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLength, NormalizationForm form)
+static constexpr bool normalizationAffects8Bit(NormalizationForm form)
+{
+    switch (form) {
+    case NormalizationForm::NFC:
+        return false;
+    case NormalizationForm::NFD:
+        return true;
+    case NormalizationForm::NFKC:
+        return false;
+    case NormalizationForm::NFKD:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+static const UNormalizer2* normalizer(NormalizationForm form)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    const UNormalizer2* normalizer = nullptr;
+    switch (form) {
+    case NormalizationForm::NFC:
+        normalizer = unorm2_getNFCInstance(&status);
+        break;
+    case NormalizationForm::NFD:
+        normalizer = unorm2_getNFDInstance(&status);
+        break;
+    case NormalizationForm::NFKC:
+        normalizer = unorm2_getNFKCInstance(&status);
+        break;
+    case NormalizationForm::NFKD:
+        normalizer = unorm2_getNFKDInstance(&status);
+        break;
+    }
+    ASSERT(normalizer);
+    ASSERT(U_SUCCESS(status));
+    return normalizer;
+}
+
+static JSValue normalize(ExecState* exec, JSString* string, NormalizationForm form)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto viewWithString = string->viewWithUnderlyingString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    StringView view = viewWithString.view;
+    if (view.is8Bit() && (!normalizationAffects8Bit(form) || charactersAreAllASCII(view.characters8(), view.length())))
+        RELEASE_AND_RETURN(scope, string);
+
+    const UNormalizer2* normalizer = JSC::normalizer(form);
+
+    // Since ICU does not offer functions that can perform normalization or check for
+    // normalization with input that is Latin-1, we need to upconvert to UTF-16 at this point.
+    auto characters = view.upconvertedCharacters();
+
     UErrorCode status = U_ZERO_ERROR;
-    // unorm2_get*Instance() documentation says: "Returns an unmodifiable singleton instance. Do not delete it."
-    const UNormalizer2* normalizer = nullptr;
-    switch (form) {
-    case NormalizationForm::CanonicalComposition:
-        normalizer = unorm2_getNFCInstance(&status);
-        break;
-    case NormalizationForm::CanonicalDecomposition:
-        normalizer = unorm2_getNFDInstance(&status);
-        break;
-    case NormalizationForm::CompatibilityComposition:
-        normalizer = unorm2_getNFKCInstance(&status);
-        break;
-    case NormalizationForm::CompatibilityDecomposition:
-        normalizer = unorm2_getNFKDInstance(&status);
-        break;
-    }
+    UBool isNormalized = unorm2_isNormalized(normalizer, characters, view.length(), &status);
+    ASSERT(U_SUCCESS(status));
+    if (isNormalized)
+        RELEASE_AND_RETURN(scope, string);
 
-    if (!normalizer || U_FAILURE(status))
-        return throwTypeError(exec, scope);
+    int32_t normalizedStringLength = unorm2_normalize(normalizer, characters, view.length(), nullptr, 0, &status);
+    ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
 
-    int32_t normalizedStringLength = unorm2_normalize(normalizer, source, sourceLength, nullptr, 0, &status);
-
-    if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR) {
-        // The behavior is not specified when normalize fails.
-        // Now we throw a type error since it seems that the contents of the string are invalid.
-        return throwTypeError(exec, scope);
-    }
-
-    UChar* buffer = nullptr;
-    auto impl = StringImpl::tryCreateUninitialized(normalizedStringLength, buffer);
-    if (!impl)
+    UChar* buffer;
+    auto result = StringImpl::tryCreateUninitialized(normalizedStringLength, buffer);
+    if (!result)
         return throwOutOfMemoryError(exec, scope);
 
     status = U_ZERO_ERROR;
-    unorm2_normalize(normalizer, source, sourceLength, buffer, normalizedStringLength, &status);
-    if (U_FAILURE(status))
-        return throwTypeError(exec, scope);
+    unorm2_normalize(normalizer, characters, view.length(), buffer, normalizedStringLength, &status);
+    ASSERT(U_SUCCESS(status));
 
-    RELEASE_AND_RETURN(scope, jsString(exec, WTFMove(impl)));
+    RELEASE_AND_RETURN(scope, jsString(&vm, WTFMove(result)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
@@ -1867,29 +1893,28 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    auto viewWithString = thisValue.toString(exec)->viewWithUnderlyingString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    StringView view = viewWithString.view;
+    JSString* string = thisValue.toString(exec);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    NormalizationForm form = NormalizationForm::CanonicalComposition;
-    // Verify that the argument is provided and is not undefined.
-    if (!exec->argument(0).isUndefined()) {
-        String formString = exec->uncheckedArgument(0).toWTFString(exec);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto form = NormalizationForm::NFC;
+    JSValue formValue = exec->argument(0);
+    if (!formValue.isUndefined()) {
+        String formString = formValue.toWTFString(exec);
+        RETURN_IF_EXCEPTION(scope, { });
 
         if (formString == "NFC")
-            form = NormalizationForm::CanonicalComposition;
+            form = NormalizationForm::NFC;
         else if (formString == "NFD")
-            form = NormalizationForm::CanonicalDecomposition;
+            form = NormalizationForm::NFD;
         else if (formString == "NFKC")
-            form = NormalizationForm::CompatibilityComposition;
+            form = NormalizationForm::NFKC;
         else if (formString == "NFKD")
-            form = NormalizationForm::CompatibilityDecomposition;
+            form = NormalizationForm::NFKD;
         else
-            return throwVMError(exec, scope, createRangeError(exec, "argument does not match any normalization form"_s));
+            return throwVMRangeError(exec, scope, "argument does not match any normalization form"_s);
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(normalize(exec, view.upconvertedCharacters(), view.length(), form)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(normalize(exec, string, form)));
 }
 
 } // namespace JSC
