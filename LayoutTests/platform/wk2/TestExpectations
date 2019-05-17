@@ -414,7 +414,6 @@ http/tests/cache/subresource-expiration-2.html
 fast/frames/sandboxed-iframe-plugins.html
 fast/frames/sandboxed-iframe-storage.html
 fast/overflow/overflow_hidden.html
-media/controls-after-reload.html
 media/controls-styling.html
 platform/mac/fast/loader/non-html-load-event.html
 plugins/embed-attributes-style.html
@@ -445,9 +444,6 @@ plugins/set-status.html
 
 # Causes subsequent plugin tests to fail, time out or crash
 plugins/destroy-on-setwindow.html
-
-# Sporadically fails in WebKit2 for unknown reasons.
-fast/forms/input-align.html
 
 # New history tests added in r76205 fail on WebKit2 (perhaps the change
 # as coded doesn't affect both processes for WebKit2)
