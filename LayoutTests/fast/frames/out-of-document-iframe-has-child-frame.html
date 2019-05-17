@@ -1,12 +1,13 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <div id="main"/>
 <script>
 description("This tests that several ways of making an iframe that isn't inserted into a document tree"
     + " but has a child frame will fail.");
+jsTestIsAsync = true;
 
 main = document.getElementById("main");
 
@@ -44,9 +45,11 @@ try {
     helperFrame.src = "javascript:top.container.removeChild(top.targetFrame3)";
     document.body.appendChild(container);
 } catch (e) { }
-shouldBeTrue("targetFrame3.contentWindow == undefined");
 
-isSuccessfullyParsed();
+setTimeout(() => {
+    shouldBeTrue("targetFrame3.contentWindow == undefined");
+    finishJSTest();
+}, 0);
 </script>
 </body>
 </html>
