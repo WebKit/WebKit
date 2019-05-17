@@ -42,7 +42,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
         columns.value = {title: WI.UIString("Value"), sortable: true};
 
         this._dataGrid = new WI.DataGrid(columns, {
-            editingCallback: this._editingCallback.bind(this),
+            editCallback: this._editingCallback.bind(this),
             copyCallback: this._dataGridCopy.bind(this),
             deleteCallback: this._deleteCallback.bind(this),
         });

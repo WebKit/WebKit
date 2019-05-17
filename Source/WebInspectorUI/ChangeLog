@@ -1,3 +1,14 @@
+2019-05-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r244350): Web Inspector: Storage tab data grids aren't editable.
+        https://bugs.webkit.org/show_bug.cgi?id=198003
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView):
+        Fix typo.
+
 2019-05-17  Jamal Nasser  <jamaln@mail.com>
 
         Web Inspector: Dark Mode: Fix colors in network table waterfall container
