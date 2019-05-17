@@ -1,3 +1,24 @@
+2019-05-16  Greg Doolittle  <gr3g@apple.com>
+
+        AX: Unship some ARIA string reflectors that are to-be-replaced by element reflection
+        https://bugs.webkit.org/show_bug.cgi?id=197764
+        <rdar://problem/50649689>
+
+        Reviewed by Chris Fleizach.
+
+        Specifically these:
+        - ariaActiveDescendant
+        - ariaControls
+        - ariaDescribedBy
+        - ariaDetails
+        - ariaErrorMessage
+        - ariaFlowTo
+        - ariaLabelledBy
+        - ariaOwns
+
+        * accessibility/ARIA-reflection-expected.txt: Updated.
+        * accessibility/ARIA-reflection.html: Updated.
+
 2019-05-16  John Wilander  <wilander@apple.com>
 
         Storage Access API: Call completion handlers in NetworkConnectionToWebProcess::hasStorageAccess() and NetworkConnectionToWebProcess::requestStorageAccess() when feature is off

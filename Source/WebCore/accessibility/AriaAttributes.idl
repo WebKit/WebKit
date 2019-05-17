@@ -27,7 +27,6 @@
     EnabledAtRuntime=AriaReflection,
     NoInterfaceObject,
 ] interface AriaAttributes {
-    [Reflect=aria_activedescendant] attribute DOMString? ariaActiveDescendant;
     [Reflect=aria_atomic]           attribute DOMString? ariaAtomic;
     [Reflect=aria_autocomplete]     attribute DOMString? ariaAutoComplete;
     [Reflect=aria_busy]             attribute DOMString? ariaBusy;
@@ -35,27 +34,20 @@
     [Reflect=aria_colcount]         attribute DOMString? ariaColCount;
     [Reflect=aria_colindex]         attribute DOMString? ariaColIndex;
     [Reflect=aria_colspan]          attribute DOMString? ariaColSpan;
-    [Reflect=aria_controls]         attribute DOMString? ariaControls;
     [Reflect=aria_current]          attribute DOMString? ariaCurrent;
-    [Reflect=aria_describedby]      attribute DOMString? ariaDescribedBy;
-    [Reflect=aria_details]          attribute DOMString? ariaDetails;
     [Reflect=aria_disabled]         attribute DOMString? ariaDisabled;
-    [Reflect=aria_errormessage]     attribute DOMString? ariaErrorMessage;
     [Reflect=aria_expanded]         attribute DOMString? ariaExpanded;
-    [Reflect=aria_flowto]           attribute DOMString? ariaFlowTo;
     [Reflect=aria_haspopup]         attribute DOMString? ariaHasPopup;
     [Reflect=aria_hidden]           attribute DOMString? ariaHidden;
     [Reflect=aria_invalid]          attribute DOMString? ariaInvalid;
     [Reflect=aria_keyshortcuts]     attribute DOMString? ariaKeyShortcuts;
     [Reflect=aria_label]            attribute DOMString? ariaLabel;
-    [Reflect=aria_labelledby]       attribute DOMString? ariaLabelledBy;
     [Reflect=aria_level]            attribute DOMString? ariaLevel;
     [Reflect=aria_live]             attribute DOMString? ariaLive;
     [Reflect=aria_modal]            attribute DOMString? ariaModal;
     [Reflect=aria_multiline]        attribute DOMString? ariaMultiLine;
     [Reflect=aria_multiselectable]  attribute DOMString? ariaMultiSelectable;
     [Reflect=aria_orientation]      attribute DOMString? ariaOrientation;
-    [Reflect=aria_owns]             attribute DOMString? ariaOwns;
     [Reflect=aria_placeholder]      attribute DOMString? ariaPlaceholder;
     [Reflect=aria_posinset]         attribute DOMString? ariaPosInSet;
     [Reflect=aria_pressed]          attribute DOMString? ariaPressed;
