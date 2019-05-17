@@ -72,24 +72,26 @@ static RetainPtr<NSData> createPDFWithLinkToURL(NSURL *url)
 
 TEST(WebKit, PDFLinkReferrer)
 {
-    using namespace TestWebKitAPI;
-    TCPServer server([] (int socket) {
+    TestWebKitAPI::TCPServer server([] (int socket) {
+        char readBuffer[1000];
+        memset(readBuffer, 0, 1000);
+
         // This assumes all the data from the HTTP request is available to be read at once,
         // which is probably an okay assumption.
-        auto requestBytes = TCPServer::read(socket);
+        ::read(socket, readBuffer, 999);
 
         // Look for a referer header.
-        const auto* currentLine = reinterpret_cast<const char*>(requestBytes.data());
+        char* currentLine = readBuffer;
         while (currentLine) {
             EXPECT_NE(strncasecmp(currentLine, "referer:", 8), 0);
-            const char* nextLine = strchr(currentLine, '\n');
+            char* nextLine = strchr(currentLine, '\n');
             currentLine = nextLine ? nextLine + 1 : 0;
         }
 
         const char* responseHeader =
         "HTTP/1.1 200 OK\r\n"
         "Content-Length: 0\r\n\r\n";
-        TCPServer::write(socket, responseHeader, strlen(responseHeader));
+        ::write(socket, responseHeader, strlen(responseHeader));
     });
 
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
