@@ -1,3 +1,32 @@
+2019-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Some character sequences with a variation selector are not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=197838
+
+        Reviewed by Michael Catanzaro.
+
+        We get the invalid glyph instead. See http://mts.io/2015/04/21/unicode-symbol-render-text-emoji/. In the table at
+        the end the Emoji and Text columns are not correctly rendered. It happens also when copying an emoji from
+        GtkEmojiChooser and pasting in WebKit text field, because GTK appends U+FE0F to all emojis to force the emoji
+        style. We need to take into account the variation selector when checking if a font can render a combining
+        sequence, using FT_Face_GetCharVariantIndex to get the right glyph in case of variation character present.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::platformSupportsCodePoint const): Add optional variation parameter.
+        (WebCore::Font::canRenderCombiningCharacterSequence const): Take into account variation selector characters
+        * platform/graphics/Font.h:
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const): Check variation selectors 0xFE0E and 0xFE0F to
+        decide whether to use the emoji or text style.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformSupportsCodePoint const): Return false when a variation character is passed so that
+        characters are checked individually.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformSupportsCodePoint const): Use FT_Face_GetCharVariantIndex when a variation character is
+        passed.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::harfBuzzFontFunctions): Do not return true when FT_Face_GetCharVariantIndex returns 0.
+
 2019-03-16  Darin Adler  <darin@apple.com>
 
         Improve normalization code, including moving from unorm.h to unorm2.h

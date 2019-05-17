@@ -78,7 +78,7 @@ static hb_font_funcs_t* harfBuzzFontFunctions()
             CairoFtFaceLocker cairoFtFaceLocker(scaledFont);
             if (FT_Face ftFace = cairoFtFaceLocker.ftFace()) {
                 *glyph = FT_Face_GetCharVariantIndex(ftFace, unicode, variation);
-                return true;
+                return !!*glyph;
             }
             return false;
             }, nullptr, nullptr);

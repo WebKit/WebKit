@@ -613,8 +613,11 @@ Path Font::platformPathForGlyph(Glyph glyph) const
     return adoptCF(CGPathCreateMutableCopy(result.get()));
 }
 
-bool Font::platformSupportsCodePoint(UChar32 character) const
+bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const
 {
+    if (variation)
+        return false;
+
     UniChar codeUnits[2];
     CGGlyph glyphs[2];
     CFIndex count = 0;
