@@ -910,8 +910,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         layer.setIndirectCompositingReason(compositingReason);
 
     // Check if the computed indirect reason will force the layer to become composited.
-    if (!willBeComposited && layer.mustCompositeForIndirectReasons() && canBeComposited(layer))
+    if (!willBeComposited && layer.mustCompositeForIndirectReasons() && canBeComposited(layer)) {
         willBeComposited = true;
+        layerPaintsIntoProvidedBacking = false;
+    }
 
     // The children of this layer don't need to composite, unless there is
     // a compositing layer among them, so start by inheriting the compositing
@@ -924,8 +926,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         currentState.testingOverlap = true;
         // This layer now acts as the ancestor for kids.
         currentState.compositingAncestor = &layer;
-        overlapMap.pushCompositingContainer();
-        LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " will composite, pushed container " << overlapMap);
+        
+        if (!layerPaintsIntoProvidedBacking) {
+            overlapMap.pushCompositingContainer();
+            LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " will composite, pushed container " << overlapMap);
+        }
 
         willBeComposited = true;
         layerPaintsIntoProvidedBacking = false;
