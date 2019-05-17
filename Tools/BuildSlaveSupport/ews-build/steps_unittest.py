@@ -40,8 +40,8 @@ from steps import (AnalyzeAPITestsResults, ApplyPatch, ArchiveBuiltProduct, Arch
                    DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, KillOldProcesses,
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
-                   RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, UnApplyPatchIfRequired, UploadBuiltProduct,
-                   UploadTestResults, ValidatePatch)
+                   RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
+                   UploadBuiltProduct, UploadTestResults, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -1070,6 +1070,51 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Extracted built product (failure)')
+        return self.runStep()
+
+
+class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(TransferToS3())
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '1234')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['python',
+                                              '../Shared/transfer-archive-to-s3',
+                                              '--patch_id', '1234',
+                                              '--identifier', 'mac-highsierra-x86_64-release',
+                                              '--archive', 'public_html/archives/mac-highsierra-x86_64-release/1234.zip',
+                                             ])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(TransferToS3())
+        self.setProperty('fullPlatform', 'ios-simulator-12')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '1234')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['python',
+                                              '../Shared/transfer-archive-to-s3',
+                                              '--patch_id', '1234',
+                                              '--identifier', 'ios-simulator-12-x86_64-debug',
+                                              '--archive', 'public_html/archives/ios-simulator-12-x86_64-debug/1234.zip',
+                                             ])
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
         return self.runStep()
 
 

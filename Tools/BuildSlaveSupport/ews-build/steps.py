@@ -615,7 +615,7 @@ class CompileWebKit(shell.Compile):
             self.setProperty('patchFailedToBuild', True)
             self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT()])
         else:
-            self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct()])
+            self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()])
 
         return super(CompileWebKit, self).evaluateCommand(cmd)
 
@@ -769,18 +769,39 @@ class UploadBuiltProduct(transfer.FileUpload):
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
 
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to upload built product'}
+        return super(UploadBuiltProduct, self).getResultSummary()
+
+
+class TransferToS3(master.MasterShellCommand):
+    name = 'transfer-to-s3'
+    description = ['transferring to s3']
+    descriptionDone = ['Transferred archive to S3']
+    archive = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
+    identifier = WithProperties('%(fullPlatform)s-%(architecture)s-%(configuration)s')
+    patch_id = WithProperties('%(patch_id)s')
+    command = ['python', '../Shared/transfer-archive-to-s3', '--patch_id', patch_id, '--identifier', identifier, '--archive', archive]
+    haltOnFailure = True
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        kwargs['command'] = self.command
+        master.MasterShellCommand.__init__(self, logEnviron=False, **kwargs)
+
     def finished(self, results):
         if results == SUCCESS:
             triggers = self.getProperty('triggers', None)
             if triggers:
                 self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggers)])
 
-        return super(UploadBuiltProduct, self).finished(results)
+        return super(TransferToS3, self).finished(results)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to upload built product'}
-        return super(UploadBuiltProduct, self).getResultSummary()
+            return {u'step': u'Failed to transfer archive to S3'}
+        return super(TransferToS3, self).getResultSummary()
 
 
 class DownloadBuiltProduct(shell.ShellCommand):

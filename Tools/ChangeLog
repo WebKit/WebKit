@@ -1,3 +1,17 @@
+2019-05-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to Transfer archive to S3
+        https://bugs.webkit.org/show_bug.cgi?id=197922
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (TransferToS3):
+        (TransferToS3.finished): Invoke triggers after transfer is successful.
+        (TransferToS3.getResultSummary): Create more readable failure string.
+        (UploadBuiltProduct.finished): Deleted. Moved the trigger invocation after TransferToS3.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2019-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Need WebKitContextMenuItemType to open emoji picker
