@@ -402,6 +402,7 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DELETE, Visible);
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_INSERT_EMOJI, Visible | Enabled);
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
             break;

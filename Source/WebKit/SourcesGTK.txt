@@ -189,6 +189,7 @@ UIProcess/API/gtk/PageClientImpl.cpp @no-unify
 UIProcess/API/gtk/WebKitAuthenticationDialog.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooser.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooserRequest.cpp @no-unify
+UIProcess/API/gtk/WebKitEmojiChooser.cpp @no-unify
 UIProcess/API/gtk/WebKitOptionMenu.cpp @no-unify
 UIProcess/API/gtk/WebKitOptionMenuItem.cpp @no-unify
 UIProcess/API/gtk/WebKitPopupMenu.cpp @no-unify

@@ -1774,6 +1774,7 @@ private:
 #if PLATFORM(GTK)
     void getEditorCommandsForKeyEvent(const AtomicString&, Vector<String>&);
     void bindAccessibilityTree(const String&);
+    void showEmojiPicker(const WebCore::IntRect&, CompletionHandler<void(String)>&&);
 #endif
 
     // Popup Menu.

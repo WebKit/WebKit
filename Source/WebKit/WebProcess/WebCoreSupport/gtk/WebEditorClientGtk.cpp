@@ -28,25 +28,48 @@
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/markup.h>
+#include <wtf/Variant.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
+bool WebEditorClient::handleGtkEditorCommand(Frame& frame, const String& command, bool allowTextInsertion)
 {
-    Vector<Editor::Command> commands;
-    for (auto& commandString : pendingEditorCommands) {
-        Editor::Command command = frame->editor().command(commandString);
-        if (command.isTextInsertion() && !allowTextInsertion)
+    if (command == "GtkInsertEmoji"_s) {
+        if (!allowTextInsertion)
             return false;
-
-        commands.append(WTFMove(command));
+        m_page->showEmojiPicker(frame);
+        return true;
     }
 
-    for (auto& command : commands) {
-        if (!command.execute())
-            return false;
+    return false;
+}
+
+bool WebEditorClient::executePendingEditorCommands(Frame& frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
+{
+    Vector<Variant<Editor::Command, String>> commands;
+    for (auto& commandString : pendingEditorCommands) {
+        if (commandString.startsWith("Gtk"))
+            commands.append(commandString);
+        else {
+            Editor::Command command = frame.editor().command(commandString);
+            if (command.isTextInsertion() && !allowTextInsertion)
+                return false;
+
+            commands.append(WTFMove(command));
+        }
+    }
+
+    for (auto& commandVariant : commands) {
+        if (WTF::holds_alternative<String>(commandVariant)) {
+            if (!handleGtkEditorCommand(frame, WTF::get<String>(commandVariant), allowTextInsertion))
+                return false;
+        } else {
+            auto& command = WTF::get<Editor::Command>(commandVariant);
+            if (!command.execute())
+                return false;
+        }
     }
 
     return true;
@@ -73,14 +96,14 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
         // the insertion until the keypress event. We want keydown to bubble up
         // through the DOM first.
         if (platformEvent->type() == PlatformEvent::RawKeyDown) {
-            if (executePendingEditorCommands(frame, pendingEditorCommands, false))
+            if (executePendingEditorCommands(*frame, pendingEditorCommands, false))
                 event.setDefaultHandled();
 
             return;
         }
 
         // Only allow text insertion commands if the current node is editable.
-        if (executePendingEditorCommands(frame, pendingEditorCommands, frame->editor().canEdit())) {
+        if (executePendingEditorCommands(*frame, pendingEditorCommands, frame->editor().canEdit())) {
             event.setDefaultHandled();
             return;
         }

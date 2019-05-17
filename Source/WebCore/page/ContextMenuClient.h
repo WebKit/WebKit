@@ -49,6 +49,10 @@ public:
     virtual void searchWithSpotlight() = 0;
 #endif
 
+#if PLATFORM(GTK)
+    virtual void insertEmoji(Frame&) = 0;
+#endif
+
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
     virtual void showContextMenu() = 0;
 #endif

@@ -98,6 +98,11 @@ String contextMenuItemTagSelectAll()
     return String::fromUTF8(_("Select _All"));
 }
 
+String contextMenuItemTagInsertEmoji()
+{
+    return String::fromUTF8(_("Insert _Emoji"));
+}
+
 String contextMenuItemTagUnicode()
 {
     return String::fromUTF8(_("_Insert Unicode Control Character"));

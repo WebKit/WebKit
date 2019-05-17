@@ -763,6 +763,7 @@ public:
     void cancelComposition();
 
     void collapseSelectionInFrame(uint64_t frameID);
+    void showEmojiPicker(WebCore::Frame&);
 #endif
 
 #if PLATFORM (GTK) && HAVE(GTK_GESTURES)

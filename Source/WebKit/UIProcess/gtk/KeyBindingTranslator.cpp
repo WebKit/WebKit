@@ -60,6 +60,14 @@ static void toggleOverwriteCallback(GtkWidget* widget, KeyBindingTranslator* tra
     translator->addPendingEditorCommand("OverWrite");
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void insertEmojiCallback(GtkWidget* widget, KeyBindingTranslator* translator)
+{
+    g_signal_stop_emission_by_name(widget, "insert-emoji");
+    translator->addPendingEditorCommand("GtkInsertEmoji");
+}
+#endif
+
 // GTK+ will still send these signals to the web view. So we can safely stop signal
 // emission without breaking accessibility.
 static void popupMenuCallback(GtkWidget* widget, KeyBindingTranslator*)
@@ -173,6 +181,9 @@ KeyBindingTranslator::KeyBindingTranslator()
     g_signal_connect(m_nativeWidget.get(), "toggle-overwrite", G_CALLBACK(toggleOverwriteCallback), this);
     g_signal_connect(m_nativeWidget.get(), "popup-menu", G_CALLBACK(popupMenuCallback), this);
     g_signal_connect(m_nativeWidget.get(), "show-help", G_CALLBACK(showHelpCallback), this);
+#if GTK_CHECK_VERSION(3, 24, 0)
+    g_signal_connect(m_nativeWidget.get(), "insert-emoji", G_CALLBACK(insertEmojiCallback), this);
+#endif
 }
 
 struct KeyCombinationEntry {

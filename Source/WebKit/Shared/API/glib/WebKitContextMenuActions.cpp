@@ -83,6 +83,8 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagDelete;
     case WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL:
         return ContextMenuItemTagSelectAll;
+    case WEBKIT_CONTEXT_MENU_ACTION_INSERT_EMOJI:
+        return ContextMenuItemTagInsertEmoji;
     case WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS:
         return ContextMenuItemTagInputMethods;
     case WEBKIT_CONTEXT_MENU_ACTION_UNICODE:
@@ -183,6 +185,8 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
         return WEBKIT_CONTEXT_MENU_ACTION_DELETE;
     case ContextMenuItemTagSelectAll:
         return WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL;
+    case ContextMenuItemTagInsertEmoji:
+        return WEBKIT_CONTEXT_MENU_ACTION_INSERT_EMOJI;
     case ContextMenuItemTagInputMethods:
         return WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS;
     case ContextMenuItemTagUnicode:
@@ -281,6 +285,8 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagDelete();
     case WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL:
         return contextMenuItemTagSelectAll();
+    case WEBKIT_CONTEXT_MENU_ACTION_INSERT_EMOJI:
+        return contextMenuItemTagInsertEmoji();
     case WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS:
         return contextMenuItemTagInputMethods();
     case WEBKIT_CONTEXT_MENU_ACTION_UNICODE:

@@ -83,9 +83,8 @@ namespace WebCore {
     String contextMenuItemTagUnicodeInsertZWSMark();
     String contextMenuItemTagUnicodeInsertZWJMark();
     String contextMenuItemTagUnicodeInsertZWNJMark();
-#endif
-#if PLATFORM(GTK)
     String contextMenuItemTagSelectAll();
+    String contextMenuItemTagInsertEmoji();
 #endif
     String contextMenuItemTagNoGuessesFound();
     String contextMenuItemTagIgnoreSpelling();

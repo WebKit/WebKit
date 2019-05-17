@@ -93,3 +93,5 @@ void webkitWebViewBaseDidFinishLoadForMainFrame(WebKitWebViewBase*);
 void webkitWebViewBaseDidFailLoadForMainFrame(WebKitWebViewBase*);
 void webkitWebViewBaseDidSameDocumentNavigationForMainFrame(WebKitWebViewBase*, WebKit::SameDocumentNavigationType);
 void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase*);
+
+void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase*, const WebCore::IntRect&, CompletionHandler<void(String)>&&);

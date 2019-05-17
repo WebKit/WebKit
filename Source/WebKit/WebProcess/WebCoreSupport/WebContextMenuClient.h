@@ -55,6 +55,10 @@ private:
     void searchWithSpotlight() override;
 #endif
 
+#if PLATFORM(GTK)
+    void insertEmoji(WebCore::Frame&) override;
+#endif
+
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
     void showContextMenu() override;
 #endif

@@ -42,6 +42,7 @@
 #include "WebEventFactory.h"
 #include "WebInspectorProxy.h"
 #include "WebKit2Initialize.h"
+#include "WebKitEmojiChooser.h"
 #include "WebKitWebViewBaseAccessible.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
@@ -67,6 +68,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -147,7 +149,13 @@ typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
         : updateActivityStateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::updateActivityStateTimerFired)
+#if GTK_CHECK_VERSION(3, 24, 0)
+        , releaseEmojiChooserTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired)
+#endif
     {
+#if GTK_CHECK_VERSION(3, 24, 0)
+        releaseEmojiChooserTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+#endif
     }
 
     void updateActivityStateTimerFired()
@@ -157,6 +165,16 @@ struct _WebKitWebViewBasePrivate {
         pageProxy->activityStateDidChange(activityStateFlagsToUpdate);
         activityStateFlagsToUpdate = { };
     }
+
+#if GTK_CHECK_VERSION(3, 24, 0)
+    void releaseEmojiChooserTimerFired()
+    {
+        if (emojiChooser) {
+            gtk_widget_destroy(emojiChooser);
+            emojiChooser = nullptr;
+        }
+    }
+#endif
 
     WebKitWebViewChildrenMap children;
     std::unique_ptr<PageClientImpl> pageClient;
@@ -207,6 +225,12 @@ struct _WebKitWebViewBasePrivate {
 #endif
     std::unique_ptr<ViewGestureController> viewGestureController;
     bool isBackForwardNavigationGestureEnabled { false };
+
+#if GTK_CHECK_VERSION(3, 24, 0)
+    GtkWidget* emojiChooser;
+    CompletionHandler<void(String)> emojiChooserCompletionHandler;
+    RunLoop::Timer<WebKitWebViewBasePrivate> releaseEmojiChooserTimer;
+#endif
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -525,10 +549,21 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* chi
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webView));
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webView, const String& text)
+{
+    if (auto completionHandler = std::exchange(webView->priv->emojiChooserCompletionHandler, nullptr))
+        completionHandler(text);
+}
+#endif
+
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
+#if GTK_CHECK_VERSION(3, 24, 0)
+    webkitWebViewBaseCompleteEmojiChooserRequest(webView, emptyString());
+#endif
     webView->priv->pageProxy->close();
     webView->priv->acceleratedBackingStore = nullptr;
     webView->priv->sleepDisabler = nullptr;
@@ -1753,4 +1788,42 @@ void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase* webkitWebViewB
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webkitWebViewBase);
     if (controller && controller->isSwipeGestureEnabled())
         webkitWebViewBase->priv->viewGestureController->didRestoreScrollPosition();
+}
+
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void emojiChooserEmojiPicked(WebKitWebViewBase* webkitWebViewBase, const char* text)
+{
+    webkitWebViewBaseCompleteEmojiChooserRequest(webkitWebViewBase, String::fromUTF8(text));
+}
+
+static void emojiChooserClosed(WebKitWebViewBase* webkitWebViewBase)
+{
+    webkitWebViewBaseCompleteEmojiChooserRequest(webkitWebViewBase, emptyString());
+    webkitWebViewBase->priv->releaseEmojiChooserTimer.startOneShot(2_min);
+}
+#endif
+
+void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, const IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
+{
+#if GTK_CHECK_VERSION(3, 24, 0)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    priv->releaseEmojiChooserTimer.stop();
+
+    if (!priv->emojiChooser) {
+        priv->emojiChooser = webkitEmojiChooserNew();
+        g_signal_connect_swapped(priv->emojiChooser, "emoji-picked", G_CALLBACK(emojiChooserEmojiPicked), webkitWebViewBase);
+        g_signal_connect_swapped(priv->emojiChooser, "closed", G_CALLBACK(emojiChooserClosed), webkitWebViewBase);
+        gtk_popover_set_relative_to(GTK_POPOVER(priv->emojiChooser), GTK_WIDGET(webkitWebViewBase));
+    }
+
+    priv->emojiChooserCompletionHandler = WTFMove(completionHandler);
+
+    GdkRectangle gdkCaretRect = caretRect;
+    gtk_popover_set_pointing_to(GTK_POPOVER(priv->emojiChooser), &gdkCaretRect);
+    gtk_popover_popup(GTK_POPOVER(priv->emojiChooser));
+#else
+    UNUSED_PARAM(webkitWebViewBase);
+    UNUSED_PARAM(caretRect);
+    completionHandler(emptyString());
+#endif
 }

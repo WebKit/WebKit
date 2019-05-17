@@ -29,6 +29,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "WebPage.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -53,6 +54,11 @@ void WebContextMenuClient::speak(const String&)
 void WebContextMenuClient::stopSpeaking()
 {
     notImplemented();
+}
+
+void WebContextMenuClient::insertEmoji(Frame& frame)
+{
+    m_page->showEmojiPicker(frame);
 }
 
 } // namespace WebKit

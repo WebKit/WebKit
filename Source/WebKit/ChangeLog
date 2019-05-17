@@ -1,3 +1,73 @@
+2019-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Need WebKitContextMenuItemType to open emoji picker
+        https://bugs.webkit.org/show_bug.cgi?id=176760
+
+        Reviewed by Michael Catanzaro.
+
+        Add a default implementation to show the emoji chooser when requested by the application, either using the
+        context menu or keyboard shortcuts. GtkEmojiChooser is private in GTK, so we include our own copy, adapted to
+        the WebKit coding style. The emoji chooser is always shown by default when using GTK >= 3.24 for any editable
+        content. I'm going to add public API in a follow up patch to be able to use your own chooser, or even prevent
+        the default chooser from being shown, similar to what we do for other UI elements like file chooser, color
+        chooser, print dialog, etc.
+
+        * Shared/API/glib/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetActionTag): Handle insert emoji action.
+        (webkitContextMenuActionGetForContextMenuItem): Ditto.
+        (webkitContextMenuActionGetLabel): Ditto.
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/WebKitContextMenuActions.h:
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp: Added.
+        (webkitEmojiChooserAddEmoji):
+        (webkitEmojiChooserAddRecentItem):
+        (emojiActivated):
+        (emojiDataHasVariations):
+        (webkitEmojiChooserShowVariations):
+        (emojiLongPressed):
+        (emojiPressed):
+        (emojiPopupMenu):
+        (verticalAdjustmentChanged):
+        (webkitEmojiChooserSetupSectionBox):
+        (scrollToSection):
+        (webkitEmojiChooserSetupSectionButton):
+        (webkitEmojiChooserSetupRecent):
+        (webkitEmojiChooserEnsureEmptyResult):
+        (webkitEmojiChooserSearchChanged):
+        (webkitEmojiChooserSetupFilters):
+        (webkitEmojiChooserInitializeEmojiMaxWidth):
+        (webkitEmojiChooserConstructed):
+        (webkitEmojiChooserShow):
+        (webkit_emoji_chooser_class_init):
+        (webkitEmojiChooserNew):
+        * UIProcess/API/gtk/WebKitEmojiChooser.h: Added.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate): Add a timer to release the emoji chooser if not used
+        after 2 minutes.
+        (_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired): Destroy the emoji chooser.
+        (emojiChooserEmojiPicked): Complete the operation using the given emoji text.
+        (emojiChooserClosed): Complete the operation if needed using an empty string.
+        (webkitWebViewBaseShowEmojiChooser): Create the emoji chooser if needed and show it.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/WebPageProxy.h: Add showEmojiPicker().
+        * UIProcess/WebPageProxy.messages.in: Add ShowEmojiPicker message.
+        * UIProcess/gtk/KeyBindingTranslator.cpp:
+        (WebKit::insertEmojiCallback): Add GtkInsertEmoji command.
+        (WebKit::KeyBindingTranslator::KeyBindingTranslator): Connect to insert-emoji signal.
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::showEmojiPicker): Call webkitWebViewBaseShowEmojiChooser().
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h: Override insertEmoji() for GTK port.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Add insertEmoji() for GTK port.
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp:
+        (WebKit::WebContextMenuClient::insertEmoji): Call WebPage::showEmojiPicker().
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::handleGtkEditorCommand): Call WebPage::showEmojiPicker() if command is GtkInsertEmoji.
+        (WebKit::WebEditorClient::executePendingEditorCommands): Handle Gtk specific commands.
+        (WebKit::WebEditorClient::handleKeyboardEvent): Use a reference instead of a pointer for Frame.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::showEmojiPicker): Send ShowEmojiPicker message to the UI process.
+
 2019-05-16  John Wilander  <wilander@apple.com>
 
         Storage Access API: Call completion handlers in NetworkConnectionToWebProcess::hasStorageAccess() and NetworkConnectionToWebProcess::requestStorageAccess() when feature is off

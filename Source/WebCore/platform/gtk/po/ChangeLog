@@ -1,3 +1,12 @@
+2019-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Need WebKitContextMenuItemType to open emoji picker
+        https://bugs.webkit.org/show_bug.cgi?id=176760
+
+        Reviewed by Michael Catanzaro.
+
+        * POTFILES.in: Add WebKitEmojiChooser.cpp.
+
 2019-04-30  Álvaro Torralba  <donfrutosgomez@gmail.com>
 
         Update Spanish Translation

@@ -109,6 +109,10 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     void searchWithSpotlight() final { }
 #endif
 
+#if PLATFORM(GTK)
+    void insertEmoji(Frame&) final { }
+#endif
+
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
     void showContextMenu() final { }
 #endif

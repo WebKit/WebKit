@@ -195,6 +195,15 @@ void WebPage::collapseSelectionInFrame(uint64_t frameID)
     frame->coreFrame()->selection().setBase(selection.extent(), selection.affinity());
 }
 
+void WebPage::showEmojiPicker(Frame& frame)
+{
+    CompletionHandler<void(String)> completionHandler = [frame = makeRef(frame)](String result) {
+        if (!result.isEmpty())
+            frame->editor().insertText(result, nullptr);
+    };
+    sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.selection().absoluteCaretBounds()), WTFMove(completionHandler));
+}
+
 void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance)
 {
     if (auto* settings = gtk_settings_get_default())
