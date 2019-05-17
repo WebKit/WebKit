@@ -1,3 +1,33 @@
+2019-05-17  Brady Eidson  <beidson@apple.com>
+
+        Avoid races in taking networking assertions for downloads by having both Networking and UIProcess do it.
+        <rdar://problem/50564630> and https://bugs.webkit.org/show_bug.cgi?id=197995
+
+        Reviewed by Chris Dumez.
+
+        There's a fairly indeterminant time gap between when the UIProcess decides a load becomes a download
+        and when the NetworkProcess Download object is created, and therefore the download assertion to be taken.
+
+        The time gap can be long enough for the Networking process to suspend before the download actually starts.
+
+        There's the reverse race when the UIProcess tells a download to stop, as well.
+
+        By having both the UIProcess and NetworkProcess take an assertion on behalf of the NetworkProcess we
+        avoid the race.
+
+        * NetworkProcess/Downloads/DownloadMap.cpp:
+        (WebKit::DownloadMap::add):
+        (WebKit::DownloadMap::remove):
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::convertToDownload):
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        (WebKit::DownloadProxyMap::downloadFinished):
+        (WebKit::DownloadProxyMap::invalidate):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+
 2019-05-17  Keith Rollin  <krollin@apple.com>
 
         Re-enable generate-xcfilelists

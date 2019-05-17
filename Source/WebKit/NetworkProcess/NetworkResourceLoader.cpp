@@ -322,6 +322,8 @@ void NetworkResourceLoader::cleanup(LoadResult result)
 
 void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
+    RELEASE_LOG(Loading, "Converting NetworkResourceLoader %p to download %" PRIu64 " (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", this, downloadID.downloadID(), m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+    
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
         m_connection->networkProcess().downloadManager().startDownload(m_parameters.sessionID, downloadID, request);
