@@ -790,7 +790,18 @@ class TransferToS3(master.MasterShellCommand):
         kwargs['command'] = self.command
         master.MasterShellCommand.__init__(self, logEnviron=False, **kwargs)
 
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return super(TransferToS3, self).start()
+
     def finished(self, results):
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
+        # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
+        if match:
+            self.addURL('uploaded archive', match.group('url'))
+
         if results == SUCCESS:
             triggers = self.getProperty('triggers', None)
             if triggers:
