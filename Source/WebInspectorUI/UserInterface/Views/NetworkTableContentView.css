@@ -184,14 +184,14 @@ body[dir=rtl] .network-table .cell.name > .status {
     top: calc(50% - (var(--node-waterfall-dom-event-size) / 2));
     min-width: var(--node-waterfall-dom-event-size);
     height: var(--node-waterfall-dom-event-size);
-    background-color: var(--selected-background-color);
+    background-color: var(--selected-background-color-active);
     border-radius: calc(var(--node-waterfall-dom-event-size) / 2);
 }
 
 .network-table :not(.header) .cell.waterfall .waterfall-container > .dom-activity {
     position: absolute;
     top: calc(50% - 0.5px);
-    border-top: 1px dashed var(--selected-background-color);
+    border-top: 1px dashed var(--selected-background-color-active);
 }
 
 .network-table :not(.header) .cell.waterfall .waterfall-container > .dom-activity.playing {
@@ -208,7 +208,7 @@ body[dir=rtl] .network-table .cell.name > .status {
 }
 
 .network-table :not(.header) .cell.waterfall .waterfall-container > .area.dom-fullscreen {
-    background-color: hsla(0, 0%, 75%, 0.75);
+    background-color: hsl(0, 0%, 40%);
 }
 
 .network-table :not(.header) .cell.waterfall .waterfall-container > .area.power-efficient-playback {
