@@ -224,7 +224,7 @@ static void webkitEmojiChooserShowVariations(WebKitEmojiChooser* chooser, GtkWid
 
     webkitEmojiChooserAddEmoji(chooser, GTK_FLOW_BOX(box), emojiData);
     for (gunichar modifier = 0x1F3FB; modifier <= 0x1F3FF; ++modifier)
-        webkitEmojiChooserAddEmoji(chooser, GTK_FLOW_BOX(box), emojiData, modifier);
+        webkitEmojiChooserAddEmoji(chooser, GTK_FLOW_BOX(box), emojiData, false, modifier);
 
     gtk_popover_popup(GTK_POPOVER(popover));
 }

@@ -1,3 +1,13 @@
+2019-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix variations shown in GTK emoji chooser after r245460.
+
+        We are tno showing the variations in the sub-popover because of a missing parameter in
+        webkitEmojiChooserAddEmoji() call.
+
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp:
+        (webkitEmojiChooserShowVariations): Pass prepend parameter to webkitEmojiChooserAddEmoji().
+
 2019-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Need WebKitContextMenuItemType to open emoji picker
