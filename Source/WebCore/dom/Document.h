@@ -1221,6 +1221,7 @@ public:
     bool hasHadUserInteraction() const { return static_cast<bool>(m_lastHandledUserGestureTimestamp); }
     void updateLastHandledUserGestureTimestamp(MonotonicTime);
     bool processingUserGestureForMedia() const;
+    void userActivatedMediaFinishedPlaying() { m_userActivatedMediaFinishedPlayingTimestamp = MonotonicTime::now(); }
 
     void setUserDidInteractWithPage(bool userDidInteractWithPage) { ASSERT(&topDocument() == this); m_userDidInteractWithPage = userDidInteractWithPage; }
     bool userDidInteractWithPage() const { ASSERT(&topDocument() == this); return m_userDidInteractWithPage; }
@@ -1835,6 +1836,7 @@ private:
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
     MonotonicTime m_lastHandledUserGestureTimestamp;
+    MonotonicTime m_userActivatedMediaFinishedPlayingTimestamp;
 
     void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;

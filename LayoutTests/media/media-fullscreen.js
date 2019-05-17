@@ -14,7 +14,10 @@ function buttonClickHandler()
     else {
         if (movie.type == 'video')
             testDOMException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
-        openNextMovie();
+
+        // A user gesture will transfer across setTimeout for 1 second, so pause to let that 
+        // expire before opening the next movie.
+        setTimeout(openNextMovie, 1010);
     }
 }
 
@@ -62,7 +65,6 @@ function canplaythrough()
     var movie = movieInfo.movies[movieInfo.current];
 
     consoleWrite("* event handler NOT triggered by a user gesture");
-
     if (movie.type == 'video') {
         testExpected("mediaElement.webkitSupportsFullscreen", movie.supportsFS);
         if (mediaElement.webkitSupportsPresentationMode)
@@ -80,10 +82,7 @@ function canplaythrough()
         testDOMException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
 
     // Click on the button
-    if (window.testRunner)
-        setTimeout(clickEnterFullscreenButton, 10);
-    else
-        openNextMovie();
+    runWithKeyDown(clickEnterFullscreenButton);
 }
 
 function openNextMovie()

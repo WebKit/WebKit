@@ -242,7 +242,7 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     if (!(m_restrictions & restriction))
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "removing ", restrictionNames(m_restrictions & restriction));
+    INFO_LOG(LOGIDENTIFIER, "removed ", restrictionNames(m_restrictions & restriction));
     m_restrictions &= ~restriction;
 }
 

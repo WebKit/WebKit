@@ -328,6 +328,7 @@ using namespace WTF::Unicode;
 
 static const unsigned cMaxWriteRecursionDepth = 21;
 bool Document::hasEverCreatedAnAXObjectCache = false;
+static const Seconds maxIntervalForUserGestureForwardingAfterMediaFinishesPlaying { 1_s };
 
 // DOM Level 2 says (letters added):
 //
@@ -6574,6 +6575,9 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 bool Document::processingUserGestureForMedia() const
 {
     if (UserGestureIndicator::processingUserGestureForMedia())
+        return true;
+
+    if (m_userActivatedMediaFinishedPlayingTimestamp + maxIntervalForUserGestureForwardingAfterMediaFinishesPlaying >= MonotonicTime::now())
         return true;
 
     if (settings().mediaUserGestureInheritsFromDocument())

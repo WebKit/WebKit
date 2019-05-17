@@ -318,7 +318,7 @@ NativeImagePtr HTMLVideoElement::nativeImageForCurrentTime()
 
 ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
 {
-    LOG(Media, "HTMLVideoElement::webkitEnterFullscreen(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (isFullscreen())
         return { };
 
@@ -333,7 +333,7 @@ ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
 
 void HTMLVideoElement::webkitExitFullscreen()
 {
-    LOG(Media, "HTMLVideoElement::webkitExitFullscreen(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (isFullscreen())
         exitFullscreen();
 }
@@ -443,7 +443,7 @@ static inline HTMLMediaElementEnums::VideoFullscreenMode toFullscreenMode(HTMLVi
 
 void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 {
-    LOG(Media, "HTMLVideoElement::webkitSetPresentationMode(%p) - %d", this, mode);
+    ALWAYS_LOG(LOGIDENTIFIER, mode);
     setFullscreenMode(toFullscreenMode(mode));
 }
 
@@ -483,7 +483,7 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
 {
     if (mode != fullscreenMode()) {
-        LOG(Media, "HTMLVideoElement::fullscreenModeChanged(%p) - mode changed from %i to %i", this, fullscreenMode(), mode);
+        ALWAYS_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
         scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
     }
 
