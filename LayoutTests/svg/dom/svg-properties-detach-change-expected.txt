@@ -1,0 +1,38 @@
+This test verifying changing the values of detached properties - utilizing the properties of SVGRectElement and SVGTextElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check the SVGLength properties
+PASS x.value is 10
+PASS y.value is 20
+PASS width.value is 100
+PASS height.value is 200
+
+Check the items of the SVGLengthList properties
+PASS xList.getItem(0).value is 10
+PASS yList.getItem(0).value is 20
+PASS dxList.getItem(0).value is 100
+PASS dyList.getItem(0).value is 200
+
+Check the items of the SVGLengthList properties of the SVGTextElement
+PASS text.x.baseVal.getItem(0).value is 100
+PASS text.y.baseVal.getItem(0).value is 200
+PASS text.dx.baseVal.getItem(0).value is 1000
+PASS text.dy.baseVal.getItem(0).value is 2000
+
+Check the SVGLength properties after removing the SVGTextElement
+PASS x.value is 100
+PASS y.value is 200
+PASS width.value is 1000
+PASS height.value is 2000
+
+Check the SVGLength properties after resetting their values
+PASS x.value is 10
+PASS y.value is 20
+PASS width.value is 100
+PASS height.value is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

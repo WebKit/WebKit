@@ -128,6 +128,7 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGElement>;
     virtual const SVGPropertyRegistry& propertyRegistry() const { return m_propertyRegistry; }
+    void detachAllProperties() { propertyRegistry().detachAllProperties(); }
 
     bool isAnimatedPropertyAttribute(const QualifiedName&) const;
     bool isAnimatedAttribute(const QualifiedName&) const;

@@ -62,6 +62,7 @@
 #include "RenderBox.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
 #include "StorageEvent.h"
@@ -2508,6 +2509,12 @@ void Node::removedLastRef()
         downcast<Document>(*this).removedLastRef();
         return;
     }
+
+    // Now it is time to detach the SVGElement from all its properties. These properties
+    // may outlive the SVGElement. The only difference after the detach is no commit will
+    // be carried out unless these properties are attached to another owner.
+    if (is<SVGElement>(*this))
+        downcast<SVGElement>(*this).detachAllProperties();
 
 #ifndef NDEBUG
     m_deletionHasBegun = true;
