@@ -1364,7 +1364,6 @@ loader/CookieJar.cpp
 loader/CrossOriginAccessControl.cpp
 loader/CrossOriginPreflightChecker.cpp
 loader/CrossOriginPreflightResultCache.cpp
-loader/CustomHeaderFields.cpp @no-unify
 loader/DocumentLoader.cpp
 loader/DocumentThreadableLoader.cpp
 loader/DocumentWriter.cpp

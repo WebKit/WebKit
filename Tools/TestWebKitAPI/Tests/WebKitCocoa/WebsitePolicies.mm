@@ -28,19 +28,16 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import <WebKit/WKMutableDictionary.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
-#import <WebKit/WKString.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsitePolicies.h>
-#import <WebKit/_WKCustomHeaderFields.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
@@ -910,9 +907,9 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
 
 TEST(WebKit, InvalidCustomHeaders)
 {
-    auto customHeaderFields = adoptNS([[_WKCustomHeaderFields alloc] init]);
-    [customHeaderFields setFields:@{@"invalidheader" : @"", @"noncustom" : @"header", @"    x-Custom ":@"  Needs Canonicalization\t ", @"x-other" : @"other value"}];
-    NSDictionary<NSString *, NSString *> *canonicalized = [customHeaderFields fields];
+    auto websitePolicies = adoptNS([[_WKWebsitePolicies alloc] init]);
+    [websitePolicies setCustomHeaderFields:@{@"invalidheader" : @"", @"noncustom" : @"header", @"    x-Custom ":@"  Needs Canonicalization\t ", @"x-other" : @"other value"}];
+    NSDictionary<NSString *, NSString *> *canonicalized = [websitePolicies customHeaderFields];
     EXPECT_EQ(canonicalized.count, 2u);
     EXPECT_STREQ([canonicalized objectForKey:@"x-Custom"].UTF8String, "Needs Canonicalization");
     EXPECT_STREQ([canonicalized objectForKey:@"x-other"].UTF8String, "other value");
@@ -922,9 +919,8 @@ static bool firstTestDone;
 static bool secondTestDone;
 static bool thirdTestDone;
 static bool fourthTestDone;
-static bool fifthTestDone;
 
-static void expectLegacyHeaders(id <WKURLSchemeTask> task, bool expected)
+static void expectHeaders(id <WKURLSchemeTask> task, bool expected)
 {
     NSURLRequest *request = task.request;
     if (expected) {
@@ -933,18 +929,6 @@ static void expectLegacyHeaders(id <WKURLSchemeTask> task, bool expected)
     } else {
         EXPECT_TRUE([request valueForHTTPHeaderField:@"X-key1"] == nil);
         EXPECT_TRUE([request valueForHTTPHeaderField:@"X-key2"] == nil);
-    }
-}
-
-static void expectHeaders(id <WKURLSchemeTask> task, bool expected)
-{
-    NSURLRequest *request = task.request;
-    if (expected) {
-        EXPECT_STREQ([[request valueForHTTPHeaderField:@"X-key3"] UTF8String], "value3");
-        EXPECT_STREQ([[request valueForHTTPHeaderField:@"X-key4"] UTF8String], "value4");
-    } else {
-        EXPECT_TRUE([request valueForHTTPHeaderField:@"X-key3"] == nil);
-        EXPECT_TRUE([request valueForHTTPHeaderField:@"X-key4"] == nil);
     }
 }
 
@@ -960,92 +944,61 @@ static void respond(id <WKURLSchemeTask>task, NSString *html = nil)
 
 @implementation CustomHeaderFieldsDelegate
 
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+IGNORE_WARNINGS_END
 {
-    auto legacyHeaderFieldDictionary = adoptWK(WKMutableDictionaryCreate());
-    WKDictionarySetItem(legacyHeaderFieldDictionary.get(), adoptWK(WKStringCreateWithUTF8CString("X-key1")).get(), adoptWK(WKStringCreateWithUTF8CString("value1")).get());
-    WKDictionarySetItem(legacyHeaderFieldDictionary.get(), adoptWK(WKStringCreateWithUTF8CString("X-key2")).get(), adoptWK(WKStringCreateWithUTF8CString("value2")).get());
-    WKWebsitePoliciesSetCustomHeaderFields((WKWebsitePoliciesRef)preferences, legacyHeaderFieldDictionary.get());
-
-    _WKCustomHeaderFields *headerFields = [[[_WKCustomHeaderFields alloc] init] autorelease];
-    [headerFields setFields:@{@"X-key3": @"value3", @"X-key4": @"value4"}];
-    [headerFields setThirdPartyDomains:@[
-        @"*.hostwithasterisk.com",
-        @"hostwithoutasterisk.com",
-        @"*.com" // should be ignored.
-    ]];
-    
-    [preferences _setCustomHeaderFields:@[headerFields]];
-    
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    [websitePolicies setCustomHeaderFields:@{@"X-key1": @"value1", @"X-key2": @"value2"}];
     if ([navigationAction.request.URL.path isEqualToString:@"/mainresource"]) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            decisionHandler(WKNavigationActionPolicyAllow, preferences);
+            decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
         });
     } else
-        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+        decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
     NSString *path = urlSchemeTask.request.URL.path;
     if ([path isEqualToString:@"/mainresource"]) {
-        expectLegacyHeaders(urlSchemeTask, true);
+        expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask, @"<script>fetch('subresource').then(function(response){fetch('test://differentsecurityorigin/crossoriginsubresource',{mode:'no-cors'})})</script>");
     } else if ([path isEqualToString:@"/subresource"]) {
-        expectLegacyHeaders(urlSchemeTask, true);
+        expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask);
     } else if ([path isEqualToString:@"/crossoriginsubresource"]) {
-        expectLegacyHeaders(urlSchemeTask, false);
+        expectHeaders(urlSchemeTask, false);
         respond(urlSchemeTask);
         firstTestDone = true;
     } else if ([path isEqualToString:@"/mainresourcewithiframe"]) {
-        expectLegacyHeaders(urlSchemeTask, true);
+        expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask, @"<iframe src='test://iframeorigin/iframemainresource'></iframe>");
     } else if ([path isEqualToString:@"/iframemainresource"]) {
-        expectLegacyHeaders(urlSchemeTask, false);
+        expectHeaders(urlSchemeTask, false);
         respond(urlSchemeTask, @"<script>fetch('iframesubresource').then(function(response){fetch('test://mainframeorigin/originaloriginsubresource',{mode:'no-cors'})})</script>");
     } else if ([path isEqualToString:@"/iframesubresource"]) {
-        expectLegacyHeaders(urlSchemeTask, false);
+        expectHeaders(urlSchemeTask, false);
         respond(urlSchemeTask);
     } else if ([path isEqualToString:@"/originaloriginsubresource"]) {
-        expectLegacyHeaders(urlSchemeTask, false);
+        expectHeaders(urlSchemeTask, false);
         respond(urlSchemeTask);
         secondTestDone = true;
     } else if ([path isEqualToString:@"/nestedtop"]) {
-        expectLegacyHeaders(urlSchemeTask, true);
+        expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask, @"<iframe src='test://otherorigin/nestedmid'></iframe>");
     } else if ([path isEqualToString:@"/nestedmid"]) {
-        expectLegacyHeaders(urlSchemeTask, false);
+        expectHeaders(urlSchemeTask, false);
         respond(urlSchemeTask, @"<iframe src='test://toporigin/nestedbottom'></iframe>");
     } else if ([path isEqualToString:@"/nestedbottom"]) {
-        expectLegacyHeaders(urlSchemeTask, true);
+        expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask);
         thirdTestDone = true;
     } else if ([path isEqualToString:@"/requestfromaboutblank"]) {
-        expectLegacyHeaders(urlSchemeTask, true);
+        expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask);
         fourthTestDone = true;
-    } else if ([path isEqualToString:@"/testcustomheaderfieldhosts"]) {
-        expectHeaders(urlSchemeTask, true);
-        NSString *html = @"<script>fetch('test://a.b.c.sub.hostwithasterisk.com/hosttest1',{mode:'no-cors'})"
-            ".then(function(response){fetch('test://subhostwithasterisk.com/hosttest2',{mode:'no-cors'})})"
-            ".then(function(response){fetch('test://hostwithoutasterisk.com/hosttest3',{mode:'no-cors'})})"
-            ".then(function(response){fetch('test://a.b.c.sub.hostwithoutasterisk.com/hosttest4',{mode:'no-cors'})})</script>";
-        respond(urlSchemeTask, html);
-    } else if ([path isEqualToString:@"/hosttest1"]) {
-        expectHeaders(urlSchemeTask, true);
-        respond(urlSchemeTask);
-    } else if ([path isEqualToString:@"/hosttest2"]) {
-        expectHeaders(urlSchemeTask, false);
-        respond(urlSchemeTask);
-    } else if ([path isEqualToString:@"/hosttest3"]) {
-        expectHeaders(urlSchemeTask, true);
-        respond(urlSchemeTask);
-    } else if ([path isEqualToString:@"/hosttest4"]) {
-        expectHeaders(urlSchemeTask, false);
-        respond(urlSchemeTask);
-        fifthTestDone = true;
-    } else if ([path isEqualToString:@"/testcustomheaderfieldhosts"])
+    } else
         EXPECT_TRUE(false);
 }
 
@@ -1070,9 +1023,6 @@ TEST(WebKit, CustomHeaderFields)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://toporigin/nestedtop"]]];
     TestWebKitAPI::Util::run(&thirdTestDone);
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host/testcustomheaderfieldhosts"]]];
-    TestWebKitAPI::Util::run(&fifthTestDone);
 }
 
 static unsigned loadCount;

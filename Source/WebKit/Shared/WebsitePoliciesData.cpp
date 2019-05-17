@@ -28,7 +28,6 @@
 
 #include "ArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/CustomHeaderFields.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
@@ -78,7 +77,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!allowedAutoplayQuirks)
         return WTF::nullopt;
     
-    Optional<Vector<WebCore::CustomHeaderFields>> customHeaderFields;
+    Optional<Vector<WebCore::HTTPHeaderField>> customHeaderFields;
     decoder >> customHeaderFields;
     if (!customHeaderFields)
         return WTF::nullopt;
