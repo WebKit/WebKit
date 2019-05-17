@@ -1,3 +1,22 @@
+2019-05-17  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Respect scrolling="no" on composited frames
+        https://bugs.webkit.org/show_bug.cgi?id=197972
+        <rdar://problem/50252398>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
+        Disallow scrolling based on canHaveScrollbars, similar to main frame.
+
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollView const):
+
+        Factor into a function.
+
 2019-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix variations shown in GTK emoji chooser after r245460.

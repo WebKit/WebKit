@@ -1,3 +1,19 @@
+2019-05-17  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Respect scrolling="no" on composited frames
+        https://bugs.webkit.org/show_bug.cgi?id=197972
+        <rdar://problem/50252398>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/body-overflow-hidden-frame-expected.html:
+        * fast/scrolling/ios/body-overflow-hidden-frame.html:
+
+        Also fix overflow:hidden test so that the frame content forces composition.
+
+        * fast/scrolling/ios/frame-scrolling-no-expected.html: Added.
+        * fast/scrolling/ios/frame-scrolling-no.html: Added.
+
 2019-05-16  Greg Doolittle  <gr3g@apple.com>
 
         AX: Unship some ARIA string reflectors that are to-be-replaced by element reflection
