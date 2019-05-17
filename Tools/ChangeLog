@@ -1,3 +1,20 @@
+2019-05-17  Keith Rollin  <krollin@apple.com>
+
+        Re-enable generate-xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=197933
+        <rdar://problem/50831677>
+
+        Reviewed by Jonathan Bedard.
+
+        The following two tasks have been completed, and we can re-enable
+        generate-xcfilelists:
+
+        Bug 197619 <rdar://problem/50507392> Temporarily disable generate-xcfilelists (197619)
+        Bug 197622 <rdar://problem/50508222> Rewrite generate-xcfilelists in Python (197622)
+
+        * DumpRenderTree/Scripts/check-xcfilelists.sh:
+        * WebKitTestRunner/Scripts/check-xcfilelists.sh:
+
 2019-05-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r245401.
