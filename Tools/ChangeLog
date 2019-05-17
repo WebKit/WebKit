@@ -1,3 +1,13 @@
+2019-05-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble should not turn orange when any build step has warnings
+        https://bugs.webkit.org/show_bug.cgi?id=198000
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._does_build_contains_any_failed_step):
+
 2019-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to set a list of hosts to which to send custom header fields cross-origin

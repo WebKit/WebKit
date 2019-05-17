@@ -155,7 +155,7 @@ class StatusBubble(View):
 
     def _does_build_contains_any_failed_step(self, build):
         for step in build.step_set.all():
-            if step.result and step.result != Buildbot.SUCCESS:
+            if step.result and step.result != Buildbot.SUCCESS and step.result != Buildbot.WARNINGS:
                 return True
         return False
 
