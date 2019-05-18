@@ -207,6 +207,20 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         contextMenu.appendSeparator();
     }
 
+    if (WI.cssManager.canForcePseudoClasses() && domNode.attached) {
+        contextMenu.appendSeparator();
+
+        let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes"));
+
+        let enabledPseudoClasses = domNode.enabledPseudoClasses;
+        WI.CSSManager.ForceablePseudoClasses.forEach((pseudoClass) => {
+            let enabled = enabledPseudoClasses.includes(pseudoClass);
+            pseudoSubMenu.appendCheckboxItem(pseudoClass.capitalize(), () => {
+                domNode.setPseudoClassEnabled(pseudoClass, !enabled);
+            }, enabled);
+        });
+    }
+
     if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && attached) {
         contextMenu.appendSeparator();
 
