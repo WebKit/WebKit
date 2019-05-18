@@ -51,7 +51,6 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
 
 set(WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
-    ${ICU_INCLUDE_DIRS}
 )
 
 set(WebKitTestRunnerInjectedBundle_SOURCES

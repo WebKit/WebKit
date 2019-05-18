@@ -1,3 +1,14 @@
+2019-05-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use builtin FindICU
+        https://bugs.webkit.org/show_bug.cgi?id=197934
+
+        Reviewed by Michael Catanzaro.
+
+        Remove uses of ICU_INCLUDE_DIRS and ICU_LIBRARIES.
+
+        * PlatformWPE.cmake:
+
 2019-04-14  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] JavaScriptCore derived sources should only be referenced inside JavaScriptCore

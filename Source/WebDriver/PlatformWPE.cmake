@@ -2,7 +2,6 @@ set(WebDriver_Process_OUTPUT_NAME WPEWebDriver)
 
 list(APPEND WebDriver_SYSTEM_INCLUDE_DIRECTORIES
     "${GLIB_INCLUDE_DIRS}"
-    "${ICU_INCLUDE_DIRS}"
     "${LIBSOUP_INCLUDE_DIRS}"
 )
 

@@ -78,8 +78,6 @@ else ()
         WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
         libdispatch${DEBUG_SUFFIX}
         libexslt${DEBUG_SUFFIX}
-        libicuin${DEBUG_SUFFIX}
-        libicuuc${DEBUG_SUFFIX}
     )
 endif ()
 

@@ -27,7 +27,6 @@ endif ()
 
 if (NOT WTF_PLATFORM_WIN_CAIRO)
     list(APPEND JavaScriptCore_LIBRARIES
-        ${ICU_LIBRARIES}
         winmm
     )
 endif ()

@@ -24,8 +24,6 @@ else ()
         PRIVATE CoreText${DEBUG_SUFFIX}
         PRIVATE QuartzCore${DEBUG_SUFFIX}
         PRIVATE libdispatch${DEBUG_SUFFIX}
-        PRIVATE libicuin${DEBUG_SUFFIX}
-        PRIVATE libicuuc${DEBUG_SUFFIX}
         PRIVATE ${LIBXML2_LIBRARIES}
         PRIVATE ${LIBXSLT_LIBRARIES}
         PRIVATE ${SQLITE_LIBRARIES}

@@ -1,3 +1,27 @@
+2019-05-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use builtin FindICU
+        https://bugs.webkit.org/show_bug.cgi?id=197934
+
+        Reviewed by Michael Catanzaro.
+
+        Update CMake minimum required to 3.7. 3.7 has a FindICU module so the WebKit one
+        is removed. For non-Apple ports this just requires adding individual components of
+        ICU to find_package(ICU). For Apple ports the module does not work so the targets
+        created in FindICU are mirrored in target/icu.cmake.
+
+        * CMakeLists.txt:
+        * Source/cmake/FindICU.cmake: Removed.
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+        * Source/cmake/target/icu.cmake: Added.
+
 2019-05-09  Xan López  <xan@igalia.com>
 
         [CMake] Detect SSE2 at compile time

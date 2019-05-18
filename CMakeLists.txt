@@ -2,13 +2,13 @@
 # Determine CMake version and build type.
 # -----------------------------------------------------------------------------
 #
-# NOTE: cmake_minimum_required() and project() *MUST* be the two fist commands
+# NOTE: cmake_minimum_required() and project() *MUST* be the two first commands
 # used, see https://cmake.org/cmake/help/v3.3/command/project.html -- the
 # latter in particular handles loading a bunch of shared CMake definitions
 # and loading the cross-compilation settings from CMAKE_TOOLCHAIN_FILE.
 #
 
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.7)
 
 project(WebKit)
 
