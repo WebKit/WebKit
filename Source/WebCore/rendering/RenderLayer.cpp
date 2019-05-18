@@ -6887,6 +6887,22 @@ TextStream& operator<<(TextStream& ts, const RenderLayer::ClipRectsContext& cont
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
+{
+    switch (reason) {
+    case IndirectCompositingReason::None: ts << "none"; break;
+    case IndirectCompositingReason::Stacking: ts << "stacking"; break;
+    case IndirectCompositingReason::OverflowScrollPositioning: ts << "overflow positioning"; break;
+    case IndirectCompositingReason::Overlap: ts << "overlap"; break;
+    case IndirectCompositingReason::BackgroundLayer: ts << "background layer"; break;
+    case IndirectCompositingReason::GraphicalEffect: ts << "graphical effect"; break;
+    case IndirectCompositingReason::Perspective: ts << "perspective"; break;
+    case IndirectCompositingReason::Preserve3D: ts << "preserve-3d"; break;
+    }
+
+    return ts;
+}
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
@@ -6921,7 +6937,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (P)rovides backing/uses (p)rovided backing, (c)omposited descendant, (s)scrolling ancestor\n"
+    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
@@ -6947,7 +6963,24 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.hasFilter() ? "F" : "-");
     stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
     stream << (layer.isComposited() ? "C" : "-");
-    stream << ((layer.isComposited() && layer.backing()->hasBackingSharingLayers()) ? "P" : (layer.paintsIntoProvidedBacking() ? "p" : "-"));
+    
+    auto compositedPaintingDestinationString = [&layer]() {
+        if (layer.paintsIntoProvidedBacking())
+            return "p";
+
+        if (!layer.isComposited())
+            return "-";
+
+        if (layer.backing()->hasBackingSharingLayers())
+            return "P";
+        
+        if (layer.backing()->paintsIntoCompositedAncestor())
+            return "a";
+
+        return "-";
+    };
+
+    stream << compositedPaintingDestinationString();
     stream << (layer.hasCompositingDescendant() ? "c" : "-");
     stream << (layer.hasCompositedScrollingAncestor() ? "s" : "-");
 
@@ -6986,6 +7019,9 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
         stream << " (layerID " << backing.graphicsLayer()->primaryLayerID() << ")";
+        
+        if (layer.indirectCompositingReason() != WebCore::IndirectCompositingReason::None)
+            stream << " " << layer.indirectCompositingReason();
 
         auto scrollingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Scrolling);
         auto frameHostingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::FrameHosting);

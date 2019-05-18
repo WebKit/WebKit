@@ -862,7 +862,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     bool becameCompositedAfterDescendantTraversal = false;
 
     if (layer.needsPostLayoutCompositingUpdate() || compositingState.fullPaintOrderTraversalRequired || compositingState.descendantsRequireCompositingUpdate) {
-        layer.setIndirectCompositingReason(RenderLayer::IndirectCompositingReason::None);
+        layer.setIndirectCompositingReason(IndirectCompositingReason::None);
         willBeComposited = needsToBeComposited(layer, queryData);
     }
 
@@ -877,7 +877,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     bool respectTransforms = !layerExtent.hasTransformAnimation;
     overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer, respectTransforms);
 
-    RenderLayer::IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None;
+    IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? IndirectCompositingReason::Stacking : IndirectCompositingReason::None;
     bool layerPaintsIntoProvidedBacking = false;
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
@@ -889,12 +889,12 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             if (backingSharingState.backingProviderCandidate() && canBeComposited(layer) && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer)) {
                 backingSharingState.appendSharingLayer(layer);
                 LOG(Compositing, " layer %p can share with %p", &layer, backingSharingState.backingProviderCandidate());
-                compositingReason = RenderLayer::IndirectCompositingReason::None;
+                compositingReason = IndirectCompositingReason::None;
                 layerPaintsIntoProvidedBacking = true;
             } else
-                compositingReason = RenderLayer::IndirectCompositingReason::Overlap;
+                compositingReason = IndirectCompositingReason::Overlap;
         } else
-            compositingReason = RenderLayer::IndirectCompositingReason::None;
+            compositingReason = IndirectCompositingReason::None;
     }
 
 #if ENABLE(VIDEO)
@@ -903,14 +903,15 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // into. These children (the controls) always need to be promoted into their
     // own layers to draw on top of the accelerated video.
     if (compositingState.compositingAncestor && compositingState.compositingAncestor->renderer().isVideo())
-        compositingReason = RenderLayer::IndirectCompositingReason::Overlap;
+        compositingReason = IndirectCompositingReason::Overlap;
 #endif
 
-    if (compositingReason != RenderLayer::IndirectCompositingReason::None)
+    if (compositingReason != IndirectCompositingReason::None)
         layer.setIndirectCompositingReason(compositingReason);
 
     // Check if the computed indirect reason will force the layer to become composited.
     if (!willBeComposited && layer.mustCompositeForIndirectReasons() && canBeComposited(layer)) {
+        LOG_WITH_STREAM(Compositing, stream << "layer " << &layer << " compositing for indirect reason " << layer.indirectCompositingReason() << " (was sharing: " << layerPaintsIntoProvidedBacking << ")");
         willBeComposited = true;
         layerPaintsIntoProvidedBacking = false;
     }
@@ -927,13 +928,18 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // This layer now acts as the ancestor for kids.
         currentState.compositingAncestor = &layer;
         
-        if (!layerPaintsIntoProvidedBacking) {
+        if (layerPaintsIntoProvidedBacking) {
+            layerPaintsIntoProvidedBacking = false;
+            // layerPaintsIntoProvidedBacking was only true for layers that would otherwise composite because of overlap. If we can
+            // no longer share, put this this indirect reason back on the layer so that requiresOwnBackingStore() sees it.
+            layer.setIndirectCompositingReason(IndirectCompositingReason::Overlap);
+            LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " was sharing now will composite");
+        } else {
             overlapMap.pushCompositingContainer();
             LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " will composite, pushed container " << overlapMap);
         }
 
         willBeComposited = true;
-        layerPaintsIntoProvidedBacking = false;
     };
 
     auto layerWillCompositePostDescendants = [&] {
@@ -971,7 +977,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // (since we need to ensure that the -ve z-order child renders underneath our contents).
         if (!willBeComposited && currentState.subtreeIsCompositing) {
             // make layer compositing
-            layer.setIndirectCompositingReason(RenderLayer::IndirectCompositingReason::BackgroundLayer);
+            layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
             layerWillComposite();
         }
     }
@@ -999,7 +1005,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     ASSERT(!layer.hasNotIsolatedCompositedBlendingDescendants() || layer.hasNotIsolatedBlendingDescendants());
 #endif
     // Now check for reasons to become composited that depend on the state of descendant layers.
-    RenderLayer::IndirectCompositingReason indirectCompositingReason;
+    IndirectCompositingReason indirectCompositingReason;
     if (!willBeComposited && canBeComposited(layer)
         && requiresCompositingForIndirectReason(layer, compositingState.compositingAncestor, currentState.subtreeIsCompositing, anyDescendantHas3DTransform, layerPaintsIntoProvidedBacking, indirectCompositingReason)) {
         layer.setIndirectCompositingReason(indirectCompositingReason);
@@ -1008,7 +1014,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     
     if (layer.reflectionLayer()) {
         // FIXME: Shouldn't we call computeCompositingRequirements to handle a reflection overlapping with another renderer?
-        layer.reflectionLayer()->setIndirectCompositingReason(willBeComposited ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None);
+        layer.reflectionLayer()->setIndirectCompositingReason(willBeComposited ? IndirectCompositingReason::Stacking : IndirectCompositingReason::None);
     }
 
     // Set the flag to say that this layer has compositing children.
@@ -1583,7 +1589,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
         if (!layer.backing()) {
             // If we need to repaint, do so before making backing
             if (shouldRepaint == CompositingChangeRepaintNow)
-                repaintOnCompositingChange(layer);
+                repaintOnCompositingChange(layer); // wrong backing
 
             layer.ensureBacking();
 
@@ -2282,13 +2288,13 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         return true;
 
     if (layer.mustCompositeForIndirectReasons()) {
-        RenderLayer::IndirectCompositingReason reason = layer.indirectCompositingReason();
-        return reason == RenderLayer::IndirectCompositingReason::Overlap
-            || reason == RenderLayer::IndirectCompositingReason::OverflowScrollPositioning
-            || reason == RenderLayer::IndirectCompositingReason::Stacking
-            || reason == RenderLayer::IndirectCompositingReason::BackgroundLayer
-            || reason == RenderLayer::IndirectCompositingReason::GraphicalEffect
-            || reason == RenderLayer::IndirectCompositingReason::Preserve3D; // preserve-3d has to create backing store to ensure that 3d-transformed elements intersect.
+        IndirectCompositingReason reason = layer.indirectCompositingReason();
+        return reason == IndirectCompositingReason::Overlap
+            || reason == IndirectCompositingReason::OverflowScrollPositioning
+            || reason == IndirectCompositingReason::Stacking
+            || reason == IndirectCompositingReason::BackgroundLayer
+            || reason == IndirectCompositingReason::GraphicalEffect
+            || reason == IndirectCompositingReason::Preserve3D; // preserve-3d has to create backing store to ensure that 3d-transformed elements intersect.
     }
 
     if (!ancestorCompositedBounds.contains(layerCompositedBoundsInAncestor))
@@ -2347,21 +2353,21 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         reasons.add(CompositingReason::OverflowScrolling);
 
     switch (renderer.layer()->indirectCompositingReason()) {
-    case RenderLayer::IndirectCompositingReason::None:
+    case IndirectCompositingReason::None:
         break;
-    case RenderLayer::IndirectCompositingReason::Stacking:
+    case IndirectCompositingReason::Stacking:
         reasons.add(CompositingReason::Stacking);
         break;
-    case RenderLayer::IndirectCompositingReason::OverflowScrollPositioning:
+    case IndirectCompositingReason::OverflowScrollPositioning:
         reasons.add(CompositingReason::OverflowScrollPositioning);
         break;
-    case RenderLayer::IndirectCompositingReason::Overlap:
+    case IndirectCompositingReason::Overlap:
         reasons.add(CompositingReason::Overlap);
         break;
-    case RenderLayer::IndirectCompositingReason::BackgroundLayer:
+    case IndirectCompositingReason::BackgroundLayer:
         reasons.add(CompositingReason::NegativeZIndexChildren);
         break;
-    case RenderLayer::IndirectCompositingReason::GraphicalEffect:
+    case IndirectCompositingReason::GraphicalEffect:
         if (renderer.hasTransform())
             reasons.add(CompositingReason::TransformWithCompositedDescendants);
 
@@ -2385,10 +2391,10 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
             reasons.add(CompositingReason::BlendingWithCompositedDescendants);
 #endif
         break;
-    case RenderLayer::IndirectCompositingReason::Perspective:
+    case IndirectCompositingReason::Perspective:
         reasons.add(CompositingReason::Perspective);
         break;
-    case RenderLayer::IndirectCompositingReason::Preserve3D:
+    case IndirectCompositingReason::Preserve3D:
         reasons.add(CompositingReason::Preserve3D);
         break;
     }
@@ -2829,13 +2835,13 @@ bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const Render
 }
 
 // FIXME: why doesn't this handle the clipping cases?
-bool RenderLayerCompositor::requiresCompositingForIndirectReason(const RenderLayer& layer, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, RenderLayer::IndirectCompositingReason& reason) const
+bool RenderLayerCompositor::requiresCompositingForIndirectReason(const RenderLayer& layer, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, IndirectCompositingReason& reason) const
 {
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
     auto& renderer = layer.renderer();
     if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection())) {
-        reason = RenderLayer::IndirectCompositingReason::GraphicalEffect;
+        reason = IndirectCompositingReason::GraphicalEffect;
         return true;
     }
 
@@ -2843,24 +2849,24 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(const RenderLay
     // will be affected by the preserve-3d or perspective.
     if (has3DTransformedDescendants) {
         if (renderer.style().transformStyle3D() == TransformStyle3D::Preserve3D) {
-            reason = RenderLayer::IndirectCompositingReason::Preserve3D;
+            reason = IndirectCompositingReason::Preserve3D;
             return true;
         }
     
         if (renderer.style().hasPerspective()) {
-            reason = RenderLayer::IndirectCompositingReason::Perspective;
+            reason = IndirectCompositingReason::Perspective;
             return true;
         }
     }
 
     if (!paintsIntoProvidedBacking && renderer.isAbsolutelyPositioned() && compositingAncestor && layer.hasCompositedScrollingAncestor()) {
         if (layerContainingBlockCrossesCoordinatedScrollingBoundary(layer, *compositingAncestor)) {
-            reason = RenderLayer::IndirectCompositingReason::OverflowScrollPositioning;
+            reason = IndirectCompositingReason::OverflowScrollPositioning;
             return true;
         }
     }
 
-    reason = RenderLayer::IndirectCompositingReason::None;
+    reason = IndirectCompositingReason::None;
     return false;
 }
 

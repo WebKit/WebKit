@@ -35,6 +35,17 @@
 
 2019-05-17  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r245170): gmail.com inbox table header flickers
+        https://bugs.webkit.org/show_bug.cgi?id=198005
+        <rdar://problem/50907718>
+
+        Reviewed by Antti Koivisto.
+
+        * compositing/shared-backing/overlap-after-end-sharing-expected.html: Added.
+        * compositing/shared-backing/overlap-after-end-sharing.html: Added.
+
+2019-05-17  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r245170): gmail.com header flickers when hovering over the animating buttons
         https://bugs.webkit.org/show_bug.cgi?id=197975
         <rdar://problem/50865946>
