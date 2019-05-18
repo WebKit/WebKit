@@ -41,6 +41,7 @@
 #include "B3ProcedureInlines.h"
 #include "BinarySwitch.h"
 #include "DisallowMacroScratchRegisterUsage.h"
+#include "JSCInlines.h"
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
@@ -230,6 +231,8 @@ public:
     ExpressionType addConstant(Type, uint64_t);
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
 
+    PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
@@ -360,6 +363,7 @@ private:
         case Type::I32:
             return g32();
         case Type::I64:
+        case Type::Anyref:
             return g64();
         case Type::F32:
             return f32();
@@ -786,6 +790,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             append(Move32, arg, m_locals[i]);
             break;
         case Type::I64:
+        case Type::Anyref:
             append(Move, arg, m_locals[i]);
             break;
         case Type::F32:
@@ -902,6 +907,7 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
     switch (type) {
     case Type::I32:
     case Type::I64:
+    case Type::Anyref:
         append(block, Move, Arg::bigImm(value), result);
         break;
     case Type::F32:
@@ -922,6 +928,18 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
 auto AirIRGenerator::addArguments(const Signature& signature) -> PartialResult
 {
     RELEASE_ASSERT(m_locals.size() == signature.argumentCount()); // We handle arguments in the prologue
+    return { };
+}
+
+auto AirIRGenerator::addRefIsNull(ExpressionType& value, ExpressionType& result) -> PartialResult
+{
+    ASSERT(value.tmp());
+    result = tmpForType(Type::I32);
+    auto tmp = g64();
+
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmp);
+    append(Compare64, Arg::relCond(MacroAssembler::Equal), value, tmp, result);
+
     return { };
 }
 
@@ -1509,6 +1527,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const ExpressionList& re
             append(Ret32, returnValueGPR);
             break;
         case Type::I64:
+        case Type::Anyref:
             append(Move, returnValues[0], returnValueGPR);
             append(Ret64, returnValueGPR);
             break;

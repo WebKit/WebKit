@@ -84,6 +84,8 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
+        case Wasm::Anyref:
+            break;
         case Wasm::I64:
             arg = JSValue();
             break;
@@ -225,6 +227,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         case Wasm::I64:
             argumentsIncludeI64 = true;
             break;
+        case Wasm::Anyref:
         case Wasm::I32:
             if (numGPRs >= Wasm::wasmCallingConvention().m_gprArgs.size())
                 totalFrameSize += sizeof(CPURegister);
@@ -300,6 +303,18 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                     ++numGPRs;
                 }
                 break;
+            case Wasm::Anyref: {
+                jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchGPR);
+
+                if (numGPRs >= Wasm::wasmCallingConvention().m_gprArgs.size()) {
+                    jit.store64(scratchGPR, calleeFrame.withOffset(wasmOffset));
+                    wasmOffset += sizeof(CPURegister);
+                } else {
+                    jit.move(scratchGPR, Wasm::wasmCallingConvention().m_gprArgs[numGPRs].gpr());
+                    ++numGPRs;
+                }
+                break;
+            }
             case Wasm::F32:
             case Wasm::F64:
                 if (numFPRs >= Wasm::wasmCallingConvention().m_fprArgs.size()) {
@@ -449,6 +464,10 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         auto isNaN = jit.branchIfNaN(FPRInfo::returnValueFPR);
         jit.boxDouble(FPRInfo::returnValueFPR, JSValueRegs { GPRInfo::returnValueGPR });
         isNaN.link(&jit);
+        break;
+    }
+    case Wasm::Anyref: {
+        // FIXME: We need to box wasm Funcrefs once they are supported here.
         break;
     }
     case Wasm::I64:

@@ -190,6 +190,7 @@ function instance(bytes, imports = registry, valid = true) {
     if (valid) {
         uniqueTest(() => {
             let instantiated = err === null;
+            if (!instantiated) print(err);
             assert_true(instantiated, err);
         }, "module successfully instantiated");
     }

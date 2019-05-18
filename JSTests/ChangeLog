@@ -1,3 +1,26 @@
+2019-05-17  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for Anyref in parameters and return types, Ref.null and Ref.is_null for Anyref values.
+        https://bugs.webkit.org/show_bug.cgi?id=197969
+
+        Reviewed by Keith Miller.
+
+        Support the anyref type in Builder.js, plus add some extra error logging.
+        Add new folder for wasm references tests.
+
+        * wasm.yaml:
+        * wasm/Builder.js:
+        (const._isValidValue):
+        * wasm/references/anyref_modules.js: Added.
+        (Call.3.RefIsNull.End.End.WebAssembly.js.ident):
+        (Call.3.RefIsNull.End.End.WebAssembly.js.make_null):
+        (Call.3.RefIsNull.End.End.WebAssembly):
+        (undefined):
+        * wasm/references/is_null.js: Added.
+        * wasm/references/is_null_error.js: Added.
+        * wasm/spec-harness/index.js:
+        * wasm/wasm.json:
+
 2019-05-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Invalid AssignmentTargetType should be an early error.

@@ -62,6 +62,8 @@ inline bool isValueType(Type type)
     case F32:
     case F64:
         return true;
+    case Anyref:
+        return Options::useWebAssemblyReferences();
     default:
         break;
     }

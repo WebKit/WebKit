@@ -105,7 +105,7 @@ FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functio
     , m_info(info)
 {
     if (verbose)
-        dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
+        dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength, " with signature: ", signature);
     m_context.setParser(this);
 }
 
@@ -278,6 +278,21 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         int64_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt64(constant), "can't parse 64-bit constant");
         m_expressionStack.append(m_context.addConstant(I64, constant));
+        return { };
+    }
+
+    case RefNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        m_expressionStack.append(m_context.addConstant(Anyref, JSValue::encode(jsNull())));
+        return { };
+    }
+
+    case RefIsNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        ExpressionType result, value;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "ref.is_null");
+        WASM_TRY_ADD_TO_CONTEXT(addRefIsNull(value, result));
+        m_expressionStack.append(result);
         return { };
     }
 
@@ -636,6 +651,16 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case I64Const: {
         int64_t unused;
         WASM_PARSER_FAIL_IF(!parseVarInt64(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        return { };
+    }
+
+    case RefNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        return { };
+    }
+
+    case RefIsNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         return { };
     }
 

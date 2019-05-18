@@ -82,6 +82,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
             argumentsIncludeI64 = true;
             FALLTHROUGH;
         case Wasm::I32:
+        case Wasm::Anyref:
             if (numGPRs >= wasmCallingConvention().m_gprArgs.size())
                 totalFrameSize += sizeof(void*);
             ++numGPRs;
@@ -164,6 +165,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
             switch (signature.argument(i)) {
             case Wasm::I32:
             case Wasm::I64:
+            case Wasm::Anyref:
                 if (numGPRs >= wasmCallingConvention().m_gprArgs.size()) {
                     if (signature.argument(i) == Wasm::I32) {
                         jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
@@ -246,6 +248,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
     switch (signature.returnType()) {
     case Wasm::Void:
         jit.moveTrustedValue(jsUndefined(), JSValueRegs { GPRInfo::returnValueGPR });
+        break;
+    case Wasm::Anyref:
+        // FIXME: We need to box wasm Funcrefs once they are supported here.
         break;
     case Wasm::I32:
         jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);

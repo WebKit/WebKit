@@ -95,7 +95,7 @@ def ceilDiv(a, b):
 
 def bitSet():
     v = ""
-    for i in range(ceilDiv(maxOpValue, 8)):
+    for i in range(ceilDiv(maxOpValue + 1, 8)):
         entry = 0
         for j in range(8):
             if i * 8 + j in opValueSet:

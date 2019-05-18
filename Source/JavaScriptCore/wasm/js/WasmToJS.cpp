@@ -165,6 +165,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             case Anyfunc:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED();
+            case Anyref:
             case I32: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.m_gprArgs.size())
@@ -175,7 +176,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     jit.load64(JIT::Address(GPRInfo::callFrameRegister, frOffset), gprReg);
                     frOffset += sizeof(Register);
                 }
-                jit.zeroExtend32ToPtr(gprReg, gprReg);
+                if (argType == I32)
+                    jit.zeroExtend32ToPtr(gprReg, gprReg);
                 jit.store64(gprReg, buffer + bufferOffset);
                 ++marshalledGPRs;
                 break;
@@ -241,6 +243,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     case I32:
                         arg = jsNumber(static_cast<int32_t>(buffer[argNum]));
                         break;
+                    case Anyref:
+                        // FIXME: We need to box wasm Funcrefs once they are supported here.
+                        arg = JSValue::decode(buffer[argNum]);
+                        break;
                     case F32:
                     case F64:
                         arg = jsNumber(purifyNaN(bitwise_cast<double>(buffer[argNum])));
@@ -270,6 +276,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     break;
                 case I32: {
                     realResult = static_cast<uint64_t>(static_cast<uint32_t>(result.toInt32(exec)));
+                    break;
+                }
+                case Anyref: {
+                    realResult = JSValue::encode(result);
                     break;
                 }
                 case F64:
@@ -364,6 +374,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             case Anyfunc:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
+            case Anyref:
             case I32: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.m_gprArgs.size())
@@ -375,8 +386,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                     frOffset += sizeof(Register);
                 }
                 ++marshalledGPRs;
-                jit.zeroExtend32ToPtr(gprReg, gprReg); // Clear non-int32 and non-tag bits.
-                jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
+                if (argType == I32) {
+                    jit.zeroExtend32ToPtr(gprReg, gprReg); // Clear non-int32 and non-tag bits.
+                    jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
+                }
+                // FIXME: We need to box wasm Funcrefs once they are supported here.
                 jit.store64(gprReg, calleeFrame.withOffset(calleeFrameOffset));
                 calleeFrameOffset += sizeof(Register);
                 break;
@@ -430,6 +444,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
             case Anyfunc:
             case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
+            case Anyref:
             case I32:
                 // Skipped: handled above.
                 if (marshalledGPRs >= wasmCC.m_gprArgs.size())
@@ -538,6 +553,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         done.link(&jit);
         break;
     }
+    case Anyref:
+        break;
     case F32: {
         CCallHelpers::JumpList done;
 

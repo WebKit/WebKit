@@ -184,6 +184,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
 
+    PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
@@ -547,6 +549,12 @@ auto B3IRGenerator::addArguments(const Signature& signature) -> PartialResult
             m_locals[i] = argumentVariable;
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), argumentVariable, argument);
         });
+    return { };
+}
+
+auto B3IRGenerator::addRefIsNull(ExpressionType& value, ExpressionType& result) -> PartialResult
+{
+    result = m_currentBlock->appendNew<Value>(m_proc, B3::Equal, origin(), value, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull())));
     return { };
 }
 

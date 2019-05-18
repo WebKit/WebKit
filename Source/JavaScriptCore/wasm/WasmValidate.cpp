@@ -100,6 +100,8 @@ public:
     Result WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type type, uint64_t) { return type; }
 
+    Result WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+
     // Locals
     Result WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     Result WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
@@ -166,6 +168,14 @@ auto Validate::addArguments(const Signature& signature) -> Result
 {
     for (size_t i = 0; i < signature.argumentCount(); ++i)
         WASM_FAIL_IF_HELPER_FAILS(addLocal(signature.argument(i), 1));
+    return { };
+}
+
+auto Validate::addRefIsNull(ExpressionType& value, ExpressionType& result) -> Result
+{
+    result = Type::I32;
+    WASM_VALIDATOR_FAIL_IF(Type::Anyref != value, "ref.is_null to type ", value, " expected ", Type::Anyref);
+
     return { };
 }
 

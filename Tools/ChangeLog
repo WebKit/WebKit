@@ -1,3 +1,14 @@
+2019-05-17  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for Anyref in parameters and return types, Ref.null and Ref.is_null for Anyref values.
+        https://bugs.webkit.org/show_bug.cgi?id=197969
+
+        Run wasm tests additionally with wasmBBQUsesAir=0.
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-05-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin FindICU

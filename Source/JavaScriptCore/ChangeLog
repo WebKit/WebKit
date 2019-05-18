@@ -1,3 +1,47 @@
+2019-05-17  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Add support for Anyref in parameters and return types, Ref.null and Ref.is_null for Anyref values.
+        https://bugs.webkit.org/show_bug.cgi?id=197969
+
+        Reviewed by Keith Miller.
+
+        Add a new runtime option for wasm references.
+        Add support for Anyref as a value type.
+        Add support for Anyref in parameters and return types of Wasm functions. JSValues are marshalled into/out of wasm Anyrefs
+                as a black box, except null which becomes a Nullref value. Nullref is not expressible in the bytecode or in the js API.
+        Add Ref.null and Ref.is_null for Anyref values. Support for these functions with funcrefs is out of scope.
+
+        * runtime/Options.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefIsNull):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addRefIsNull):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConventionAir::marshallArgument const):
+        (JSC::Wasm::CallingConventionAir::setupCall const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addRefIsNull):
+        * wasm/generateWasmOpsHeader.py:
+        (bitSet):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/wasm.json:
+
 2019-05-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin FindICU

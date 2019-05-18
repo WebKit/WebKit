@@ -1080,6 +1080,7 @@ def runWebAssembly
         run("wasm-no-call-ic", "-m", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
         run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
+        run("wasm-no-air", "-m", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
     end
 end
 
@@ -1096,6 +1097,7 @@ def runWebAssemblySuite
         run("wasm-no-call-ic", "-m", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
         run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
+        run("wasm-no-air", "-m", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
     end
 end
 
@@ -1114,6 +1116,7 @@ def runWebAssemblyEmscripten(mode)
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
         run("wasm-no-call-ic", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
         run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+        run("wasm-no-air", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
     end
 end
 
@@ -1138,6 +1141,7 @@ def runWebAssemblySpecTest(mode)
       runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
       runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
       runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-no-air", noisyOutputHandler, "../spec-harness.js", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
     end
 end
 

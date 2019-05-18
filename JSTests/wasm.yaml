@@ -29,6 +29,8 @@
   cmd: runNoJIT unless parseRunCommands
 - path: wasm/function-tests
   cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/references
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/fuzz
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/stress
