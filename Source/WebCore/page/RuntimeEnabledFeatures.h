@@ -507,7 +507,7 @@ private:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    bool m_legacyEncryptedMediaAPIEnabled { false };
+    bool m_legacyEncryptedMediaAPIEnabled { true };
 #endif
 
 #if ENABLE(INTERSECTION_OBSERVER)

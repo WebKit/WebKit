@@ -200,13 +200,12 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
     _ignoresViewportScaleLimits = NO;
-    _legacyEncryptedMediaAPIEnabled = NO;
 #else
     _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     _mediaDataLoadsAutomatically = YES;
     _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
-    _legacyEncryptedMediaAPIEnabled = YES;
 #endif
+    _legacyEncryptedMediaAPIEnabled = YES;
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
     _attachmentElementEnabled = NO;

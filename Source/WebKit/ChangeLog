@@ -1,3 +1,14 @@
+2019-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Enable legacy EME for iOS WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=197964
+        <rdar://problem/50625666>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
 2019-05-17  Antoine Quint  <graouts@apple.com>
 
         Add a website policy to disable the legacy -webkit-overflow-scrolling:touch behavior

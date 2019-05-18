@@ -1,3 +1,14 @@
+2019-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Enable legacy EME for iOS WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=197964
+        <rdar://problem/50625666>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+        (TEST):
+
 2019-05-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add clickable url in UI for uploaded S3 archive

@@ -81,3 +81,17 @@ TEST(WebKit, ConfigurationGroupIdentifierIsCopied)
     auto configuationCopy = adoptNS([configuration copy]);
     EXPECT_STREQ([configuration _groupIdentifier].UTF8String, [configuationCopy _groupIdentifier].UTF8String);
 }
+
+TEST(WebKit, DefaultConfigurationEME)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _legacyEncryptedMediaAPIEnabled]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView loadHTMLString:@"<html>hi</html>" baseURL:nil];
+    __block bool done = false;
+    [webView evaluateJavaScript:@"window.WebKitMediaKeys ? 'ENABLED' : 'DISABLED'" completionHandler:^(id result, NSError *){
+        EXPECT_TRUE([result isEqualToString:@"ENABLED"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
