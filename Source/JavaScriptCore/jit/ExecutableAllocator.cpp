@@ -33,8 +33,11 @@
 #include "JSCInlines.h"
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
+#include <wtf/SystemTracing.h>
+#include <wtf/WorkQueue.h>
 
 #if OS(DARWIN)
+#include <mach/mach_time.h>
 #include <sys/mman.h>
 #endif
 
@@ -559,39 +562,61 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     static uint8_t* buffer;
     static constexpr size_t bufferSize = fixedExecutableMemoryPoolSize;
     static size_t offset = 0;
-    static auto flush = [] {
+    static Lock dumpJITMemoryLock;
+    static bool needsToFlush = false;
+    static auto flush = [](const AbstractLocker&) {
         if (fd == -1) {
             fd = open(Options::dumpJITMemoryPath(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
             RELEASE_ASSERT(fd != -1);
         }
         write(fd, buffer, offset);
         offset = 0;
+        needsToFlush = false;
     };
 
-    static Lock dumpJITMemoryLock;
     static std::once_flag once;
+    static LazyNeverDestroyed<Ref<WorkQueue>> flushQueue;
     std::call_once(once, [] {
         buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
+        flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Background));
         std::atexit([] {
             LockHolder locker(dumpJITMemoryLock);
-            flush();
+            flush(locker);
             close(fd);
+            fd = -1;
         });
     });
 
-    static auto write = [](const void* src, size_t size) {
+    static auto enqueueFlush = [](const AbstractLocker&) {
+        if (needsToFlush)
+            return;
+
+        needsToFlush = true;
+        flushQueue.get()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
+            LockHolder locker(dumpJITMemoryLock);
+            if (!needsToFlush)
+                return;
+            flush(locker);
+        });
+    };
+
+    static auto write = [](const AbstractLocker& locker, const void* src, size_t size) {
         if (UNLIKELY(offset + size > bufferSize))
-            flush();
+            flush(locker);
         memcpy(buffer + offset, src, size);
         offset += size;
+        enqueueFlush(locker);
     };
 
     LockHolder locker(dumpJITMemoryLock);
+    uint64_t time = mach_absolute_time();
     uint64_t dst64 = bitwise_cast<uintptr_t>(dst);
-    write(&dst64, sizeof(dst64));
     uint64_t size64 = size;
-    write(&size64, sizeof(size64));
-    write(src, size);
+    TraceScope(DumpJITMemoryStart, DumpJITMemoryStop, time, dst64, size64);
+    write(locker, &time, sizeof(time));
+    write(locker, &dst64, sizeof(dst64));
+    write(locker, &size64, sizeof(size64));
+    write(locker, src, size);
 #else
     UNUSED_PARAM(dst);
     UNUSED_PARAM(src);

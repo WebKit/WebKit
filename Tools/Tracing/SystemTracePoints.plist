@@ -45,6 +45,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Dump JIT Memory</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>2507</string>
+                 <key>CodeEnd</key>
+                 <string>2508</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Main Resource Load</string>
                  <key>Type</key>
                  <string>Interval</string>

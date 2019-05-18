@@ -47,6 +47,8 @@ enum TracePointCode {
     WebAssemblyCompileEnd,
     WebAssemblyExecuteStart,
     WebAssemblyExecuteEnd,
+    DumpJITMemoryStart,
+    DumpJITMemoryStop,
 
     WebCoreRange = 5000,
     MainResourceLoadDidStartProvisional,
