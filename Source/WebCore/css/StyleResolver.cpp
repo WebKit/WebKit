@@ -696,6 +696,7 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Docume
     case DisplayType::Flex:
     case DisplayType::WebKitFlex:
     case DisplayType::Grid:
+    case DisplayType::FlowRoot:
         return display;
 
     case DisplayType::ListItem:

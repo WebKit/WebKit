@@ -876,6 +876,7 @@ enum class DisplayType : uint8_t {
     Contents,
     Grid,
     InlineGrid,
+    FlowRoot,
     None
 };
 

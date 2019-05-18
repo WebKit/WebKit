@@ -2006,7 +2006,6 @@ webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word
 ### START OF display: contents failures
 
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display/display-contents-dynamic-table-001-inline.html [ ImageOnlyFailure ]
-webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display/display-flow-root-001.html [ ImageOnlyFailure ]
 
 ### END OF display: contents failures
 ########################################

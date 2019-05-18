@@ -577,7 +577,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none
         // flex | inline-flex | -webkit-flex | -webkit-inline-flex | grid | inline-grid
         return (valueID >= CSSValueInline && valueID <= CSSValueContents) || valueID == CSSValueNone
-            || valueID == CSSValueGrid || valueID == CSSValueInlineGrid;
+            || valueID == CSSValueGrid || valueID == CSSValueInlineGrid || valueID == CSSValueFlowRoot;
     case CSSPropertyDominantBaseline:
         // auto | use-script | no-change | reset-size | ideographic |
         // alphabetic | hanging | mathematical | central | middle |

@@ -454,6 +454,7 @@ inline-flex
 contents
 grid
 inline-grid
+flow-root
 //none
 //
 // CSS_PROP_CURSOR:

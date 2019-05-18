@@ -1,3 +1,17 @@
+2019-05-17  Joonghun Park  <pjh0718@gmail.com>
+
+        Implement CSS `display: flow-root` (modern clearfix)
+        https://bugs.webkit.org/show_bug.cgi?id=165603
+
+        Reviewed by Zalan Bujtas.
+
+        This change follows https://drafts.csswg.org/css-display-3/#valdef-display-flow-root as below.
+
+        'display: flow-root' generates a block container box, and lays out its contents using flow layout.
+        It always establishes a new block formatting context for its contents.
+
+        * UserInterface/External/CodeMirror/css.js:
+
 2019-05-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r244350): Web Inspector: Storage tab data grids aren't editable.

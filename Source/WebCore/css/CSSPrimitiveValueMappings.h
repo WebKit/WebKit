@@ -1409,6 +1409,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(DisplayType e)
     case DisplayType::Contents:
         m_value.valueID = CSSValueContents;
         break;
+    case DisplayType::FlowRoot:
+        m_value.valueID = CSSValueFlowRoot;
+        break;
     }
 }
 

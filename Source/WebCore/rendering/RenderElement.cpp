@@ -158,6 +158,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
             return createRenderer<RenderInline>(element, WTFMove(style));
         FALLTHROUGH; // Fieldsets should make a block flow if display:inline is set.
     case DisplayType::Block:
+    case DisplayType::FlowRoot:
     case DisplayType::InlineBlock:
     case DisplayType::Compact:
         return createRenderer<RenderBlockFlow>(element, WTFMove(style));
