@@ -445,9 +445,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let discontinuities = this._recording.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);
         let originalDiscontinuities = discontinuities.slice();
 
-        // Don't include the record before the graph start if the graph start is within a gap.
-        let includeRecordBeforeStart = !discontinuities.length || discontinuities[0].startTime > graphStartTime;
-        let visibleRecords = this.representedObject.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
+        let visibleRecords = this.representedObject.recordsInTimeRange(graphStartTime, visibleEndTime, {
+            includeRecordBeforeStart: !discontinuities.length || discontinuities[0].startTime > graphStartTime,
+            includeRecordAfterEnd: true,
+        });
         if (!visibleRecords.length || (visibleRecords.length === 1 && visibleRecords[0].endTime < graphStartTime)) {
             this.clear();
             return;
@@ -1161,8 +1162,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         // with the data available to the frontend and is quite accurate for most
         // Main Thread activity.
 
-        const includeRecordBeforeStart = true;
-
         function incrementTypeCount(map, key) {
             let entry = map.get(key);
             if (entry)
@@ -1183,7 +1182,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let possibleRepeatingTimers = new Set;
 
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-        let scriptRecords = scriptTimeline ? scriptTimeline.recordsInTimeRange(startTime, endTime, includeRecordBeforeStart) : [];
+        let scriptRecords = scriptTimeline ? scriptTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
         scriptRecords = scriptRecords.filter((record) => {
             // Return true for event types that define script entries/exits.
             // Return false for events with no time ranges or if they are contained in other events.
@@ -1249,7 +1248,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         });
 
         let layoutTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Layout);
-        let layoutRecords = layoutTimeline ? layoutTimeline.recordsInTimeRange(startTime, endTime, includeRecordBeforeStart) : [];
+        let layoutRecords = layoutTimeline ? layoutTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
         layoutRecords = layoutRecords.filter((record) => {
             switch (record.eventType) {
             case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
@@ -1573,7 +1572,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     _attemptSelectIndicatatorTimelineRecord(startTime, endTime)
     {
         let layoutTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Layout);
-        let layoutRecords = layoutTimeline ? layoutTimeline.recordsOverlappingTimeRange(startTime, endTime) : [];
+        let layoutRecords = layoutTimeline ? layoutTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
         layoutRecords = layoutRecords.filter((record) => {
             switch (record.eventType) {
             case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
@@ -1597,7 +1596,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         }
 
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-        let scriptRecords = scriptTimeline ? scriptTimeline.recordsOverlappingTimeRange(startTime, endTime) : [];
+        let scriptRecords = scriptTimeline ? scriptTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
         scriptRecords = scriptRecords.filter((record) => {
             switch (record.eventType) {
             case WI.ScriptTimelineRecord.EventType.ScriptEvaluated:

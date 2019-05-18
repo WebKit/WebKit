@@ -197,11 +197,10 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         let discontinuities = this._recording.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);
 
-        // Don't include the record before the graph start if the graph start is within a gap.
-        let includeRecordBeforeStart = !discontinuities.length || discontinuities[0].startTime > graphStartTime;
-
-        // FIXME: <https://webkit.org/b/153759> Web Inspector: Memory Timelines should better extend to future data
-        let visibleRecords = this.representedObject.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
+        let visibleRecords = this.representedObject.recordsInTimeRange(graphStartTime, visibleEndTime, {
+            includeRecordBeforeStart: !discontinuities.length || discontinuities[0].startTime > graphStartTime,
+            includeRecordAfterEnd: true,
+        });
         if (!visibleRecords.length || (visibleRecords.length === 1 && visibleRecords[0].endTime < graphStartTime)) {
             this.clear();
             return;

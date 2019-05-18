@@ -27,7 +27,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
 {
     constructor(timestamp, categories)
     {
-        super(WI.TimelineRecord.Type.Memory, timestamp, timestamp);
+        super(WI.TimelineRecord.Type.Memory, timestamp - MemoryTimelineRecord.samplingRatePerSecond, timestamp);
 
         console.assert(typeof timestamp === "number");
         console.assert(categories instanceof Array);
@@ -42,6 +42,12 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
     }
 
     // Static
+
+    static get samplingRatePerSecond()
+    {
+        // 500ms. This matches the ResourceUsageThread sampling frequency in the backend.
+        return 0.5;
+    }
 
     static memoryCategoriesFromProtocol(categories)
     {
@@ -102,4 +108,11 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
     get timestamp() { return this._timestamp; }
     get categories() { return this._categories; }
     get totalSize() { return this._totalSize; }
+
+    adjustStartTimeToLastRecord(lastRecord)
+    {
+        console.assert(lastRecord instanceof MemoryTimelineRecord);
+        console.assert(this._startTime >= lastRecord.endTime);
+        this._startTime = lastRecord.endTime;
+    }
 };

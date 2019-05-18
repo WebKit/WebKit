@@ -56,14 +56,6 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
             this._processRecord(record);
     }
 
-    // Static
-
-    static get samplingRatePerSecond()
-    {
-        // 500ms. This matches the ResourceUsageThread sampling frequency in the backend.
-        return 0.5;
-    }
-
     // Protected
 
     get height()
@@ -115,22 +107,18 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
             return (size / maxCapacity) * height;
         }
 
-        const includeRecordBeforeStart = true;
-        let visibleRecords = this._cpuTimeline.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
+        let visibleRecords = this._cpuTimeline.recordsInTimeRange(graphStartTime, visibleEndTime, {
+            includeRecordBeforeStart: true,
+        });
         if (!visibleRecords.length)
             return;
 
-        function yScaleForRecord(record) {
-            return yScale(record.usage);
-        }
-
-        let intervalWidth = CPUTimelineOverviewGraph.samplingRatePerSecond / secondsPerPixel;
         const minimumDisplayHeight = 4;
 
         for (let record of visibleRecords) {
             let additionalClass = record === this.selectedRecord ? "selected" : undefined;
-            let w = intervalWidth;
-            let x = xScale(record.startTime - CPUTimelineOverviewGraph.samplingRatePerSecond);
+            let w = (record.endTime - record.startTime) / secondsPerPixel;
+            let x = xScale(record.startTime);
             let h1 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage));
             let h2 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage + record.workerThreadUsage));
             let h3 = Math.max(minimumDisplayHeight, yScale(record.usage));
@@ -199,7 +187,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         let graphStartTime = this.startTime;
 
         let clickTime = graphStartTime + graphClickTime;
-        let record = this._cpuTimeline.closestRecordTo(clickTime + (CPUTimelineOverviewGraph.samplingRatePerSecond / 2));
+        let record = this._cpuTimeline.closestRecordTo(clickTime);
         if (!record)
             return;
 

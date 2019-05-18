@@ -1,5 +1,59 @@
 2019-05-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: CPU/memory timeline bars sometimes don't draw correctly and jump around on scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=197440
+        <rdar://problem/46886315>
+
+        Reviewed by Joseph Pecoraro.
+
+        When drawing the Memory/CPU graphs, we need to know about the record immediately before/after
+        what's overlapping the visible range so that the graph correctly slopes off the screen.
+
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.prototype.recordsInTimeRange):
+        (WI.Timeline.prototype.recordsOverlappingTimeRange): Deleted.
+        Merge `recordsOverlappingTimeRange` into `recordsInTimeRange` by accepting an options object
+        that determines whether to include the record before/after the first/last record that are
+        at all overlapping the range.
+
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord):
+        (WI.CPUTimelineRecord.get samplingRatePerSecond): Added.
+        (WI.CPUTimelineRecord.prototype.adjustStartTimeToLastRecord): Added.
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        (WI.MemoryTimelineRecord):
+        (WI.MemoryTimelineRecord.get samplingRatePerSecond): Added.
+        (WI.MemoryTimelineRecord.prototype.adjustStartTimeToLastRecord): Added.
+        Adjust the `startTime` of the record by the sampling rate (which is 500ms).
+
+        * UserInterface/Models/CPUTimeline.js: Added.
+        (WI.CPUTimeline.prototype.addRecord):
+        * UserInterface/Models/MemoryTimeline.js:
+        (WI.MemoryTimeline.prototype.addRecord): Added.
+        Adjust the `startTime` of the new record to be equal to the `endTime` of the last record.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype._recordSelected):
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype._computeStatisticsData):
+        (WI.CPUTimelineView.prototype._attemptSelectIndicatatorTimelineRecord):
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        (WI.CPUTimelineOverviewGraph.prototype._handleChartClick):
+        (WI.CPUTimelineOverviewGraph.prototype.get samplingRatePerSecond): Deleted.
+        (WI.CPUTimelineOverviewGraph.prototype.layout.yScaleForRecord): Deleted.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.prototype.layout):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WI.MemoryTimelineOverviewGraph.prototype.layout):
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+2019-05-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: make it easier to jump to any returned DOM node in the Elements tab
         https://bugs.webkit.org/show_bug.cgi?id=197470
         <rdar://problem/50466774>

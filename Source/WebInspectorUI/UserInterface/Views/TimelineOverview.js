@@ -784,12 +784,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
             let startTime = firstRecord instanceof WI.RenderingFrameTimelineRecord ? firstRecord.frameIndex : firstRecord.startTime;
             let endTime = lastRecord instanceof WI.RenderingFrameTimelineRecord ? lastRecord.frameIndex : lastRecord.endTime;
-
-            if (firstRecord instanceof WI.CPUTimelineRecord) {
-                let selectionPadding = WI.CPUTimelineOverviewGraph.samplingRatePerSecond * 2.25;
-                this.selectionStartTime = startTime - selectionPadding - (WI.CPUTimelineOverviewGraph.samplingRatePerSecond / 2);
-                this.selectionDuration = endTime - startTime + (selectionPadding * 2);
-            } else if (startTime < this.selectionStartTime || endTime > this.selectionStartTime + this.selectionDuration) {
+            if (startTime < this.selectionStartTime || (endTime > this.selectionStartTime + this.selectionDuration) || firstRecord instanceof WI.CPUTimelineRecord) {
                 let selectionPadding = this.secondsPerPixel * 10;
                 this.selectionStartTime = startTime - selectionPadding;
                 this.selectionDuration = endTime - startTime + (selectionPadding * 2);

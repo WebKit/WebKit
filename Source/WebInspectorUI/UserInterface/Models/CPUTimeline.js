@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryTimeline = class MemoryTimeline extends WI.Timeline
+WI.CPUTimeline = class CPUTimeline extends WI.Timeline
 {
     // Public
-
-    get memoryPressureEvents() { return this._pressureEvents; }
-
-    addMemoryPressureEvent(memoryPressureEvent)
-    {
-        console.assert(memoryPressureEvent instanceof WI.MemoryPressureEvent);
-
-        this._pressureEvents.push(memoryPressureEvent);
-
-        this.dispatchEventToListeners(WI.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent});
-    }
-
-    // Protected
-
-    reset(suppressEvents)
-    {
-        super.reset(suppressEvents);
-
-        this._pressureEvents = [];
-    }
 
     addRecord(record)
     {
@@ -55,8 +35,4 @@ WI.MemoryTimeline = class MemoryTimeline extends WI.Timeline
 
         super.addRecord(record);
     }
-};
-
-WI.MemoryTimeline.Event = {
-    MemoryPressureEventAdded: "memory-timeline-memory-pressure-event-added",
 };

@@ -27,7 +27,7 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
 {
     constructor({timestamp, usage, threads})
     {
-        super(WI.TimelineRecord.Type.CPU, timestamp, timestamp);
+        super(WI.TimelineRecord.Type.CPU, timestamp - CPUTimelineRecord.samplingRatePerSecond, timestamp);
 
         console.assert(typeof timestamp === "number");
         console.assert(typeof usage === "number");
@@ -68,6 +68,14 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
         }
     }
 
+    // Static
+
+    static get samplingRatePerSecond()
+    {
+        // 500ms. This matches the ResourceUsageThread sampling frequency in the backend.
+        return 0.5;
+    }
+
     // Import / Export
 
     static fromJSON(json)
@@ -95,4 +103,11 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
     get workerThreadUsage() { return this._workerThreadUsage; }
     get unknownThreadUsage() { return this._unknownThreadUsage; }
     get workersData() { return this._workersData; }
+
+    adjustStartTimeToLastRecord(lastRecord)
+    {
+        console.assert(lastRecord instanceof CPUTimelineRecord);
+        console.assert(this._startTime >= lastRecord.endTime);
+        this._startTime = lastRecord.endTime;
+    }
 };

@@ -41,6 +41,9 @@ WI.Timeline = class Timeline extends WI.Object
         if (type === WI.TimelineRecord.Type.Network)
             return new WI.NetworkTimeline(type);
 
+        if (type === WI.TimelineRecord.Type.CPU)
+            return new WI.CPUTimeline(type);
+
         if (type === WI.TimelineRecord.Type.Memory)
             return new WI.MemoryTimeline(type);
 
@@ -111,20 +114,9 @@ WI.Timeline = class Timeline extends WI.Object
         return (before < after) ? recordBefore : recordAfter;
     }
 
-    recordsOverlappingTimeRange(startTime, endTime)
+    recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart, includeRecordAfterEnd} = {})
     {
         let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.endTime);
-        let upperIndex = this._records.upperBound(endTime, (time, record) => time - record.startTime);
-
-        return this._records.slice(lowerIndex, upperIndex);
-    }
-
-    recordsInTimeRange(startTime, endTime, includeRecordBeforeStart)
-    {
-        let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.startTime);
-        let upperIndex = this._records.upperBound(endTime, (time, record) => time - record.startTime);
-
-        // Include the record right before the start time.
         if (includeRecordBeforeStart && lowerIndex > 0) {
             lowerIndex--;
 
@@ -136,6 +128,10 @@ WI.Timeline = class Timeline extends WI.Object
                     lowerIndex--;
             }
         }
+
+        let upperIndex = this._records.upperBound(endTime, (time, record) => time - record.startTime);
+        if (includeRecordAfterEnd && upperIndex < this._records.length)
+            ++upperIndex;
 
         return this._records.slice(lowerIndex, upperIndex);
     }
