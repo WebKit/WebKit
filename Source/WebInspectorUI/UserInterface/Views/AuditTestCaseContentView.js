@@ -153,11 +153,12 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
                 let dataElement = rowElement.appendChild(document.createElement("td"));
 
                 if (domNode instanceof WI.DOMNode) {
-                    let treeOutline = new WI.DOMTreeOutline;
+                    let treeOutline = new WI.DOMTreeOutline({selectable: false});
                     treeOutline.setVisible(true);
                     treeOutline.rootDOMNode = domNode;
 
                     let rootTreeElement = treeOutline.children[0];
+                    rootTreeElement.showGoToArrow = true;
                     if (!rootTreeElement.hasChildren)
                         treeOutline.element.classList.add("single-node");
 

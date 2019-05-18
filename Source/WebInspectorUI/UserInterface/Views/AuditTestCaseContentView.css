@@ -101,6 +101,7 @@
 }
 
 .content-view.audit-test-case > section table {
+    width: 100%;
     border-collapse: collapse;
 }
 

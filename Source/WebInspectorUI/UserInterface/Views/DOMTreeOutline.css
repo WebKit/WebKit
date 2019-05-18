@@ -62,11 +62,11 @@
     border-top: 2px solid var(--selected-background-color);
 }
 
-.tree-outline.dom:focus li:matches(.selected, .hovered) .selection-area {
+.tree-outline.dom:not(.non-selectable):focus li:matches(.selected, .hovered) .selection-area {
     background-color: var(--selected-background-color);
 }
 
-.tree-outline.dom li.hovered:not(.selected) .selection-area {
+.tree-outline.dom:not(.non-selectable) li.hovered:not(.selected) .selection-area {
     opacity: 0.3;
 }
 
@@ -173,6 +173,15 @@ body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::befor
 
 .tree-outline.dom li .html-tag.close {
     -webkit-margin-start: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
+}
+
+.tree-outline.dom li .html-tag ~ .go-to-arrow {
+    height: 13px;
+    vertical-align: -3px;
+}
+
+.tree-outline.dom li:not(.hovered) .html-tag ~ .go-to-arrow {
+    visibility: hidden;
 }
 
 .tree-outline.dom li.parent::before {

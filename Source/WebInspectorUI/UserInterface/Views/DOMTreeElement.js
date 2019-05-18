@@ -47,6 +47,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._boundHighlightAnimationEnd = this._highlightAnimationEnd.bind(this);
         this._subtreeBreakpointCount = 0;
 
+        this._showGoToArrow = false;
         this._highlightedAttributes = new Set;
         this._recentlyModifiedAttributes = new Map;
         this._closeTagTreeElement = null;
@@ -269,6 +270,16 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (count && this.children[count - 1].expandAllButton)
             count--;
         return count;
+    }
+
+    set showGoToArrow(x)
+    {
+        if (this._showGoToArrow === x)
+            return;
+
+        this._showGoToArrow = x;
+
+        this.updateTitle();
     }
 
     attributeDidChange(name)
@@ -1353,7 +1364,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             attrSpanElement.classList.add("highlight");
     }
 
-    _buildTagDOM(parentElement, tagName, isClosingTag, isDistinctTreeElement)
+    _buildTagDOM({parentElement, tagName, isClosingTag, isDistinctTreeElement, willRenderCloseTagInline})
     {
         var node = this.representedObject;
         var classes = ["html-tag"];
@@ -1373,6 +1384,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }
         tagElement.append(">");
         parentElement.append("\u200B");
+
+        if (this._showGoToArrow && node.nodeType() === Node.ELEMENT_NODE && willRenderCloseTagInline === isClosingTag) {
+            let goToArrowElement = parentElement.appendChild(WI.createGoToArrowButton());
+            goToArrowElement.title = WI.UIString("Reveal in Elements Tab");
+            goToArrowElement.addEventListener("click", (event) => {
+                WI.domManager.inspectElement(this.representedObject.id);
+            });
+        }
     }
 
     _nodeTitleInfo()
@@ -1418,23 +1437,42 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
                 var tagName = node.nodeNameInCorrectCase();
                 if (this._elementCloseTag) {
-                    this._buildTagDOM(info.titleDOM, tagName, true, true);
+                    this._buildTagDOM({
+                        parentElement: info.titleDOM,
+                        tagName,
+                        isClosingTag: true,
+                        isDistinctTreeElement: true,
+                        willRenderCloseTagInline: false,
+                    });
                     info.hasChildren = false;
                     break;
                 }
 
-                this._buildTagDOM(info.titleDOM, tagName, false, false);
-
                 var textChild = this._singleTextChild(node);
                 var showInlineText = textChild && textChild.nodeValue().length < WI.DOMTreeElement.MaximumInlineTextChildLength;
+                var showInlineEllipsis = !this.expanded && !showInlineText && (this.treeOutline.isXMLMimeType || !WI.DOMTreeElement.ForbiddenClosingTagElements.has(tagName));
 
-                if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WI.DOMTreeElement.ForbiddenClosingTagElements.has(tagName)))) {
+                this._buildTagDOM({
+                    parentElement: info.titleDOM,
+                    tagName,
+                    isClosingTag: false,
+                    isDistinctTreeElement: false,
+                    willRenderCloseTagInline: showInlineText || showInlineEllipsis,
+                });
+
+                if (showInlineEllipsis) {
                     if (this.hasChildren) {
                         var textNodeElement = info.titleDOM.createChild("span", "html-text-node");
                         textNodeElement.textContent = ellipsis;
                         info.titleDOM.append("\u200B");
                     }
-                    this._buildTagDOM(info.titleDOM, tagName, true, false);
+                    this._buildTagDOM({
+                        parentElement: info.titleDOM,
+                        tagName,
+                        isClosingTag: true,
+                        isDistinctTreeElement: false,
+                        willRenderCloseTagInline: true,
+                    });
                 }
 
                 // If this element only has a single child that is a text node,
@@ -1453,7 +1491,13 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
                     info.titleDOM.append("\u200B");
 
-                    this._buildTagDOM(info.titleDOM, tagName, true, false);
+                    this._buildTagDOM({
+                        parentElement: info.titleDOM,
+                        tagName,
+                        isClosingTag: true,
+                        isDistinctTreeElement: false,
+                        willRenderCloseTagInline: true,
+                    });
                     info.hasChildren = false;
                 }
                 break;

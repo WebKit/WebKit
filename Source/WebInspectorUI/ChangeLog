@@ -1,5 +1,44 @@
 2019-05-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: make it easier to jump to any returned DOM node in the Elements tab
+        https://bugs.webkit.org/show_bug.cgi?id=197470
+        <rdar://problem/50466774>
+
+        Reviewed by Joseph Pecoraro.
+
+        Right now, the only way to jump to the Elements tab for any DOM nodes returned by an audit
+        is to context menu and "Reveal in DOM Tree". Providing a more visible/discoverable way to
+        jump to the Elements tab will help developers diagnose issues easier.
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.layout):
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view.audit-test-case > section table):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.set showGoToArrow): Added.
+        (WI.DOMTreeElement.prototype._buildTagDOM):
+        (WI.DOMTreeElement.prototype._nodeTitleInfo):
+        Provide a way to insert a go-to arrow right after the:
+         - open tag, if the close tag is rendered on a separate line
+         - close tag, if the close tag is rendered on the same line
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline):
+        Allow `DOMTreeOutline` to be non-selectable.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom:not(.non-selectable):focus li:matches(.selected, .hovered) .selection-area): Added.
+        (.tree-outline.dom:not(.non-selectable) li.hovered:not(.selected) .selection-area): Added.
+        (.tree-outline.dom li .html-tag ~ .go-to-arrow): Added.
+        (.tree-outline.dom li:not(.hovered) .html-tag ~ .go-to-arrow): Added.
+        (.tree-outline.dom:focus li:matches(.selected, .hovered) .selection-area): Deleted.
+        (.tree-outline.dom li.hovered:not(.selected) .selection-area): Deleted.
+        Ensure that hovering a non-selectable node doesn't change the background color.
+
+2019-05-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: context menu items in DOM tree should work when not clicking directly on the node representation
         https://bugs.webkit.org/show_bug.cgi?id=197541
 
