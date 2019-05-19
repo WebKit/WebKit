@@ -1,3 +1,13 @@
+2019-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Layers painting into shared backing need to contribute to overlap
+        https://bugs.webkit.org/show_bug.cgi?id=198021
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/shared-backing/sharing-child-contributes-to-overlap-expected.html: Added.
+        * compositing/shared-backing/sharing-child-contributes-to-overlap.html: Added.
+
 2019-05-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Allow authenticators that support both CTAP and U2F to try U2F if CTAP fails in authenticatorGetAssertion

@@ -879,6 +879,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? IndirectCompositingReason::Stacking : IndirectCompositingReason::None;
     bool layerPaintsIntoProvidedBacking = false;
+    bool didPushOverlapContainer = false;
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
     if (!willBeComposited && !overlapMap.isEmpty() && compositingState.testingOverlap) {
@@ -927,15 +928,18 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         currentState.testingOverlap = true;
         // This layer now acts as the ancestor for kids.
         currentState.compositingAncestor = &layer;
-        
+        // Compositing turns off backing sharing.
+        currentState.backingSharingAncestor = nullptr;
+
         if (layerPaintsIntoProvidedBacking) {
             layerPaintsIntoProvidedBacking = false;
             // layerPaintsIntoProvidedBacking was only true for layers that would otherwise composite because of overlap. If we can
             // no longer share, put this this indirect reason back on the layer so that requiresOwnBackingStore() sees it.
             layer.setIndirectCompositingReason(IndirectCompositingReason::Overlap);
-            LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " was sharing now will composite");
+            LOG_WITH_STREAM(Compositing, stream << "layer " << &layer << " was sharing now will composite");
         } else {
             overlapMap.pushCompositingContainer();
+            didPushOverlapContainer = true;
             LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " will composite, pushed container " << overlapMap);
         }
 
@@ -958,6 +962,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     } else if (layerPaintsIntoProvidedBacking) {
         currentState.backingSharingAncestor = &layer;
         overlapMap.pushCompositingContainer();
+        didPushOverlapContainer = true;
         LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " will share, pushed container " << overlapMap);
     }
 
@@ -1064,17 +1069,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Compute state passed to the caller.
     descendantHas3DTransform |= anyDescendantHas3DTransform || layer.has3DTransform();
     compositingState.updateWithDescendantStateAndLayer(currentState, layer, layerExtent);
-
-    bool layerContributesToOverlap = currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer();
-    updateOverlapMap(overlapMap, layer, layerExtent, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
-
-    // Pop backing/overlap sharing state.
-    if ((willBeComposited && !layer.isRenderViewLayer()) || currentState.backingSharingAncestor == &layer) {
-        overlapMap.popCompositingContainer();
-        LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " is composited, popped container " << overlapMap);
-    }
-
     backingSharingState.updateAfterDescendantTraversal(layer, compositingState.stackingContextAncestor);
+
+    bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
+    updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
+
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 
     LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(compositingState.depth * 2, ' ') << &layer << " computeCompositingRequirements - willBeComposited " << willBeComposited << " (backing provider candidate " << backingSharingState.backingProviderCandidate() << ")");
@@ -1093,6 +1092,8 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     layer.updateLayerListsIfNeeded();
 
     bool layerIsComposited = layer.isComposited();
+    bool layerPaintsIntoProvidedBacking = false;
+    bool didPushOverlapContainer = false;
 
     OverlapExtent layerExtent;
     if (layerIsComposited && !layer.isRenderViewLayer())
@@ -1109,6 +1110,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         ASSERT(backingSharingState.backingProviderCandidate());
         ASSERT(backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer));
         backingSharingState.appendSharingLayer(layer);
+        layerPaintsIntoProvidedBacking = true;
     }
 
     CompositingState currentState = compositingState.stateForPaintOrderChildren(layer);
@@ -1119,13 +1121,20 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         currentState.testingOverlap = true;
         // This layer now acts as the ancestor for kids.
         currentState.compositingAncestor = &layer;
+        currentState.backingSharingAncestor = nullptr;
         overlapMap.pushCompositingContainer();
+        didPushOverlapContainer = true;
         LOG_WITH_STREAM(CompositingOverlap, stream << "unchangedSubtree: layer " << &layer << " will composite, pushed container " << overlapMap);
 
         computeExtent(overlapMap, layer, layerExtent);
         currentState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
         // Too hard to compute animated bounds if both us and some ancestor is animating transform.
         layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;
+    } else if (layerPaintsIntoProvidedBacking) {
+        overlapMap.pushCompositingContainer();
+        currentState.backingSharingAncestor = &layer;
+        didPushOverlapContainer = true;
+        LOG_WITH_STREAM(CompositingOverlap, stream << "unchangedSubtree: layer " << &layer << " will share, pushed container " << overlapMap);
     }
 
     backingSharingState.updateBeforeDescendantTraversal(layer, layerIsComposited);
@@ -1156,16 +1165,11 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
 
     ASSERT(!currentState.fullPaintOrderTraversalRequired);
     compositingState.updateWithDescendantStateAndLayer(currentState, layer, layerExtent, true);
-
-    bool layerContributesToOverlap = currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer();
-    updateOverlapMap(overlapMap, layer, layerExtent, layerContributesToOverlap);
-
-    if ((layerIsComposited && !layer.isRenderViewLayer()) || currentState.backingSharingAncestor == &layer) {
-        overlapMap.popCompositingContainer();
-        LOG_WITH_STREAM(CompositingOverlap, stream << "unchangedSubtree: layer " << &layer << " is composited, popped container " << overlapMap);
-    }
-
     backingSharingState.updateAfterDescendantTraversal(layer, compositingState.stackingContextAncestor);
+
+    bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
+    updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap);
+
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 
     ASSERT(!layer.needsCompositingRequirementsTraversal());
@@ -1840,16 +1844,9 @@ void RenderLayerCompositor::addDescendantsToOverlapMapRecursive(LayerOverlapMap&
         overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 }
 
-void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& layerExtent, bool layerContributesToOverlap, bool addDescendantsToOverlap) const
+void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& layerExtent, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap) const
 {
-    ASSERT_IMPLIES(addDescendantsToOverlap, layerContributesToOverlap);
-
-    // All layers (even ones that aren't being composited) need to get added to
-    // the overlap map. Layers that do not composite will draw into their
-    // compositing ancestor's backing, and so are still considered for overlap.
-    // FIXME: When layerExtent has taken animation bounds into account, we also know that the bounds
-    // include descendants, so we don't need to add them all to the overlap map.
-    if (layerContributesToOverlap) {
+    if (addLayerToOverlap) {
         addToOverlapMap(overlapMap, layer, layerExtent);
         LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " contributes to overlap, added to map " << overlapMap);
     }
@@ -1858,6 +1855,11 @@ void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const 
         // If this is the first non-root layer to composite, we need to add all the descendants we already traversed to the overlap map.
         addDescendantsToOverlapMapRecursive(overlapMap, layer);
         LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " composited post descendant traversal, added recursive " << overlapMap);
+    }
+
+    if (didPushContainer) {
+        overlapMap.popCompositingContainer();
+        LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " is composited or shared, popped container " << overlapMap);
     }
 }
 
