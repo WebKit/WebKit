@@ -60,6 +60,14 @@
     opacity: 0;
 }
 
+.popover p {
+    margin: 0.2em 0;
+}
+
+.popover p + p {
+    margin-top: 0.5em;
+}
+
 .popover > .container {
     position: absolute;
     left: 5px;
