@@ -78,7 +78,7 @@ public:
             if (builder.length())
                 builder.append(' ');
 
-            builder.appendNumber(number->value());
+            builder.appendFixedPrecisionNumber(number->value());
         }
 
         return builder.toString();

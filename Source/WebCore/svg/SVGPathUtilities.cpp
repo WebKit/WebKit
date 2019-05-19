@@ -60,39 +60,39 @@ String buildStringFromPath(const Path& path)
             switch (element.type) {
             case PathElementMoveToPoint:
                 builder.append('M');
-                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.appendShortestFormNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[0].y());
+                builder.appendShortestFormNumber(element.points[0].y());
                 break;
             case PathElementAddLineToPoint:
                 builder.append('L');
-                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.appendShortestFormNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[0].y());
+                builder.appendShortestFormNumber(element.points[0].y());
                 break;
             case PathElementAddQuadCurveToPoint:
                 builder.append('Q');
-                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.appendShortestFormNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[0].y());
+                builder.appendShortestFormNumber(element.points[0].y());
                 builder.append(',');
-                builder.appendECMAScriptNumber(element.points[1].x());
+                builder.appendShortestFormNumber(element.points[1].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[1].y());
+                builder.appendShortestFormNumber(element.points[1].y());
                 break;
             case PathElementAddCurveToPoint:
                 builder.append('C');
-                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.appendShortestFormNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[0].y());
+                builder.appendShortestFormNumber(element.points[0].y());
                 builder.append(',');
-                builder.appendECMAScriptNumber(element.points[1].x());
+                builder.appendShortestFormNumber(element.points[1].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[1].y());
+                builder.appendShortestFormNumber(element.points[1].y());
                 builder.append(',');
-                builder.appendECMAScriptNumber(element.points[2].x());
+                builder.appendShortestFormNumber(element.points[2].x());
                 builder.append(' ');
-                builder.appendECMAScriptNumber(element.points[2].y());
+                builder.appendShortestFormNumber(element.points[2].y());
                 break;
             case PathElementCloseSubpath:
                 builder.append('Z');

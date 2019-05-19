@@ -229,33 +229,33 @@ public:
     }
 
 private:
-    static void appendNumbers(StringBuilder& builder)
+    static void appendFixedPrecisionNumbers(StringBuilder& builder)
     {
         builder.append(')');
     }
 
     template<typename Number, typename... Numbers>
-    static void appendNumbers(StringBuilder& builder, Number number, Numbers... numbers)
+    static void appendFixedPrecisionNumbers(StringBuilder& builder, Number number, Numbers... numbers)
     {
         if (builder.length() && builder[builder.length() - 1] != '(')
             builder.append(' ');
-        builder.appendNumber(number);
-        appendNumbers(builder, numbers...);
+        builder.appendFixedPrecisionNumber(number);
+        appendFixedPrecisionNumbers(builder, numbers...);
     }
 
     void appendMatrix(StringBuilder& builder) const
     {
-        appendNumbers(builder, m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f());
+        appendFixedPrecisionNumbers(builder, m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f());
     }
 
     void appendTranslate(StringBuilder& builder) const
     {
-        appendNumbers(builder, m_matrix->e(), m_matrix->f());
+        appendFixedPrecisionNumbers(builder, m_matrix->e(), m_matrix->f());
     }
 
     void appendScale(StringBuilder& builder) const
     {
-        appendNumbers(builder, m_matrix->value().xScale(), m_matrix->value().yScale());
+        appendFixedPrecisionNumbers(builder, m_matrix->value().xScale(), m_matrix->value().yScale());
     }
 
     void appendRotate(StringBuilder& builder) const
@@ -268,19 +268,19 @@ private:
         float cy = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix->e() * sinAngle / (1 - cosAngle) + m_matrix->f()) / 2 : 0);
 
         if (cx || cy)
-            appendNumbers(builder, m_angle, cx, cy);
+            appendFixedPrecisionNumbers(builder, m_angle, cx, cy);
         else
-            appendNumbers(builder, m_angle);
+            appendFixedPrecisionNumbers(builder, m_angle);
     }
 
     void appendSkewX(StringBuilder& builder) const
     {
-        appendNumbers(builder, m_angle);
+        appendFixedPrecisionNumbers(builder, m_angle);
     }
 
     void appendSkewY(StringBuilder& builder) const
     {
-        appendNumbers(builder, m_angle);
+        appendFixedPrecisionNumbers(builder, m_angle);
     }
 
     SVGTransformType m_type { SVG_TRANSFORM_UNKNOWN };

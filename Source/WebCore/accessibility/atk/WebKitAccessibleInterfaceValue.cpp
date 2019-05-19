@@ -49,7 +49,7 @@ static bool webkitAccessibleSetNewValue(AtkValue* coreValue, const gdouble newVa
     value = std::max(static_cast<double>(coreObject->minValueForRange()), newValue);
     value = std::min(static_cast<double>(coreObject->maxValueForRange()), newValue);
 
-    coreObject->setValue(String::number(value));
+    coreObject->setValue(String::numberToStringFixedPrecision(value));
     return TRUE;
 }
 

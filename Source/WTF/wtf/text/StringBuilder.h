@@ -222,9 +222,9 @@ public:
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
     WTF_EXPORT_PRIVATE void appendNumber(long long);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
-    // FIXME: Change appendNumber to be appendShortestFormNumber instead of appendFixedPrecisionNumber.
-    void appendNumber(float);
-    void appendNumber(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    // FIXME: Change to call appendShortestFormNumber.
+    void appendNumber(float) = delete;
+    void appendNumber(double) = delete;
 
     WTF_EXPORT_PRIVATE void appendShortestFormNumber(float);
     WTF_EXPORT_PRIVATE void appendShortestFormNumber(double);
@@ -234,7 +234,7 @@ public:
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(double, unsigned decimalPlaces);
 
     // FIXME: Delete in favor of the name appendShortestFormNumber or just appendNumber.
-    void appendECMAScriptNumber(float);
+    void appendECMAScriptNumber(float) = delete;
     void appendECMAScriptNumber(double);
 
     String toString()
@@ -392,23 +392,6 @@ ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
 {
     ASSERT(!m_is8Bit);
     return m_bufferCharacters16;
-}
-
-inline void StringBuilder::appendNumber(float number)
-{
-    appendFixedPrecisionNumber(number);
-}
-
-inline void StringBuilder::appendNumber(double number, unsigned precision, TrailingZerosTruncatingPolicy policy)
-{
-    appendFixedPrecisionNumber(number, precision, policy);
-}
-
-inline void StringBuilder::appendECMAScriptNumber(float number)
-{
-    // FIXME: This preserves existing behavior but is not what we want.
-    // In the future, this should either be a compilation error or call appendShortestFormNumber without converting to double.
-    appendShortestFormNumber(static_cast<double>(number));
 }
 
 inline void StringBuilder::appendECMAScriptNumber(double number)

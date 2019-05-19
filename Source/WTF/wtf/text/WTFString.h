@@ -179,9 +179,9 @@ public:
     WTF_EXPORT_PRIVATE static String number(unsigned long);
     WTF_EXPORT_PRIVATE static String number(long long);
     WTF_EXPORT_PRIVATE static String number(unsigned long long);
-    // FIXME: Change number to be numberToStringShortest instead of numberToStringFixedPrecision.
-    static String number(float);
-    static String number(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    // FIXME: Change to call numberToStringShortest.
+    static String number(float) = delete;
+    static String number(double) = delete;
 
     WTF_EXPORT_PRIVATE static String numberToStringShortest(float);
     WTF_EXPORT_PRIVATE static String numberToStringShortest(double);
@@ -191,7 +191,7 @@ public:
     WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(double, unsigned decimalPlaces);
 
     // FIXME: Delete in favor of the name numberToStringShortest or just number.
-    static String numberToStringECMAScript(float);
+    static String numberToStringECMAScript(float) = delete;
     static String numberToStringECMAScript(double);
 
     // Find a single character or string, also with match function & latin1 forms.
@@ -652,23 +652,6 @@ inline bool equalIgnoringASCIICase(const String& a, const char* b)
 template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])
 {
     return startsWithLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
-}
-
-inline String String::number(float number)
-{
-    return numberToStringFixedPrecision(number);
-}
-
-inline String String::number(double number, unsigned precision, TrailingZerosTruncatingPolicy policy)
-{
-    return numberToStringFixedPrecision(number, precision, policy);
-}
-
-inline String String::numberToStringECMAScript(float number)
-{
-    // FIXME: This preserves existing behavior but is not what we want.
-    // In the future, this should either be a compilation error or call numberToStringShortest without converting to double.
-    return numberToStringShortest(static_cast<double>(number));
 }
 
 inline String String::numberToStringECMAScript(double number)

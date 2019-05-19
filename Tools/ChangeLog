@@ -1,3 +1,16 @@
+2019-05-19  Darin Adler  <darin@apple.com>
+
+        Change String::number to use "shortest" instead of "fixed precision 6 digits"
+        https://bugs.webkit.org/show_bug.cgi?id=178319
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::testStringNumberFixedPrecision): Use String::numberToStringFixedPrecision.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (attributesOfElement): Use appendFixedPrecisionNumber.
+
 2019-05-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Allow authenticators that support both CTAP and U2F to try U2F if CTAP fails in authenticatorGetAssertion

@@ -522,7 +522,7 @@ String buildVariationSettings(FT_Face face, const FontDescription& fontDescripti
         builder.append(variation.key[2]);
         builder.append(variation.key[3]);
         builder.append('=');
-        builder.appendNumber(variation.value);
+        builder.appendFixedPrecisionNumber(variation.value);
     }
     return builder.toString();
 }
