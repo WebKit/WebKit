@@ -67,6 +67,7 @@ class EventTracker
             type: event.type,
             x: event.clientX,
             y: event.clientY,
+            pressure: event.pressure,
             isPrimary: event.isPrimary,
             isTrusted: event.isTrusted
         });
@@ -237,14 +238,14 @@ class Finger
 
     stationary(options)
     {
-        return this._action("stationary", options.x || 0, options.y || 0);
+        return this._action("stationary", options.x || this._lastX, options.y || this._lastY, options.pressure || 0);
     }
 
-    _action(phase, x, y)
+    _action(phase, x, y, pressure = 0)
     {
         this._lastX = x;
         this._lastY = y;
-        return { inputType: "finger", id: this.id, phase, x, y };
+        return { inputType: "finger", id: this.id, phase, x, y, pressure };
     }
 
 }

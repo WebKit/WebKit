@@ -1,5 +1,24 @@
 2019-05-19  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events] The pointerup, pointerout and pointerleave events may be fired twice
+        https://bugs.webkit.org/show_bug.cgi?id=198028
+        <rdar://problem/50769425>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that we're firing a "pointermove" event when the touch pressure
+        changes, even when the touch is stationary, and that a single "pointerup" event is fired
+        as the touch ends and the pressure changes. The relevant code change is done in WebKitAdditions.
+
+        * pointerevents/ios/pressure-change-expected.txt: Added.
+        * pointerevents/ios/pressure-change.html: Added.
+        * pointerevents/utils.js:
+        (prototype._handlePointerEvent):
+        (prototype.stationary):
+        (prototype._action):
+
+2019-05-19  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events] A pointer should be marked as primary for all of its events
         https://bugs.webkit.org/show_bug.cgi?id=197909
         <rdar://problem/50801608>
