@@ -23,9 +23,9 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
             { type: "pointerover", x: 100, y: 100, isPrimary: true },
             { type: "pointerenter", x: 100, y: 100, isPrimary: true },
             { type: "pointerdown", x: 100, y: 100, isPrimary: true },
-            { type: "pointerup", x: 100, y: 100, isPrimary: false },
-            { type: "pointerout", x: 100, y: 100, isPrimary: false },
-            { type: "pointerleave", x: 100, y: 100, isPrimary: false },
+            { type: "pointerup", x: 100, y: 100, isPrimary: true },
+            { type: "pointerout", x: 100, y: 100, isPrimary: true },
+            { type: "pointerleave", x: 100, y: 100, isPrimary: true },
         ]);
         test.done();
     });

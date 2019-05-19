@@ -1,3 +1,20 @@
+2019-05-19  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] A pointer should be marked as primary for all of its events
+        https://bugs.webkit.org/show_bug.cgi?id=197909
+        <rdar://problem/50801608>
+
+        Reviewed by Dean Jackson.
+
+        Update tests to match expectations that only the first touch of a sequence is the primary pointer,
+        which applies to all of its events, even after the even is no longer touching the digitizer.
+
+        * pointerevents/ios/over-enter-out-leave.html:
+        * pointerevents/ios/pointer-event-order.html:
+        * pointerevents/ios/pointer-events-implicit-capture.html:
+        * pointerevents/ios/pointer-events-is-primary-expected.txt:
+        * pointerevents/ios/pointer-events-is-primary.html:
+
 2019-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Layers painting into shared backing need to contribute to overlap
