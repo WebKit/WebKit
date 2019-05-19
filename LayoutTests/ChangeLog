@@ -1,5 +1,25 @@
 2019-05-19  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events] Listening to a "pointerover", "pointerenter", "pointerout" or "pointerleave" event alone does not fire the event on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197882
+        <rdar://problem/50769116>
+
+        Reviewed by Dean Jackson.
+
+        Add new tests that check that adding a "pointerover", "pointerenter", "pointerout" or "pointerleave" event listener alone dispatches the
+        event as expected.
+
+        * pointerevents/ios/pointerenter-alone-expected.txt: Added.
+        * pointerevents/ios/pointerenter-alone.html: Added.
+        * pointerevents/ios/pointerleave-alone-expected.txt: Added.
+        * pointerevents/ios/pointerleave-alone.html: Added.
+        * pointerevents/ios/pointerout-alone-expected.txt: Added.
+        * pointerevents/ios/pointerout-alone.html: Added.
+        * pointerevents/ios/pointerover-alone-expected.txt: Added.
+        * pointerevents/ios/pointerover-alone.html: Added.
+
+2019-05-19  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events] The pointerup, pointerout and pointerleave events may be fired twice
         https://bugs.webkit.org/show_bug.cgi?id=198028
         <rdar://problem/50769425>

@@ -1,3 +1,14 @@
+2019-05-19  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Listening to a "pointerover", "pointerenter", "pointerout" or "pointerleave" event alone does not fire the event on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=197882
+        <rdar://problem/50769116>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateTouchEventTracking):
+
 2019-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Revert r240956

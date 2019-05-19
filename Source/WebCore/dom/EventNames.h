@@ -363,8 +363,8 @@ public:
     bool isGamepadEventType(const AtomicString& eventType) const;
 #endif
 
-    std::array<std::reference_wrapper<const AtomicString>, 9> touchRelatedEventNames() const;
-    std::array<std::reference_wrapper<const AtomicString>, 12> extendedTouchRelatedEventNames() const;
+    std::array<std::reference_wrapper<const AtomicString>, 13> touchRelatedEventNames() const;
+    std::array<std::reference_wrapper<const AtomicString>, 16> extendedTouchRelatedEventNames() const;
     std::array<std::reference_wrapper<const AtomicString>, 3> gestureEventNames() const;
 
 private:
@@ -406,9 +406,13 @@ inline bool EventNames::isTouchRelatedEventType(const Document& document, const 
         || eventType == touchendEvent
         || eventType == touchcancelEvent
         || eventType == touchforcechangeEvent
+        || eventType == pointeroverEvent
+        || eventType == pointerenterEvent
         || eventType == pointerdownEvent
         || eventType == pointermoveEvent
         || eventType == pointerupEvent
+        || eventType == pointeroutEvent
+        || eventType == pointerleaveEvent
         || eventType == pointercancelEvent;
 }
 
@@ -418,14 +422,14 @@ inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
         || eventType == mousewheelEvent;
 }
 
-inline std::array<std::reference_wrapper<const AtomicString>, 9> EventNames::touchRelatedEventNames() const
+inline std::array<std::reference_wrapper<const AtomicString>, 13> EventNames::touchRelatedEventNames() const
 {
-    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent, pointerdownEvent, pointermoveEvent, pointerupEvent, pointercancelEvent } };
+    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent, pointeroverEvent, pointerenterEvent, pointerdownEvent, pointermoveEvent, pointerupEvent, pointeroutEvent, pointerleaveEvent, pointercancelEvent } };
 }
 
-inline std::array<std::reference_wrapper<const AtomicString>, 12> EventNames::extendedTouchRelatedEventNames() const
+inline std::array<std::reference_wrapper<const AtomicString>, 16> EventNames::extendedTouchRelatedEventNames() const
 {
-    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent, pointerdownEvent, pointermoveEvent, pointerupEvent, pointercancelEvent, mousedownEvent, mousemoveEvent, mouseupEvent } };
+    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent, pointeroverEvent, pointerenterEvent, pointerdownEvent, pointermoveEvent, pointerupEvent, pointeroutEvent, pointerleaveEvent, pointercancelEvent, mousedownEvent, mousemoveEvent, mouseupEvent } };
 }
     
 inline std::array<std::reference_wrapper<const AtomicString>, 3> EventNames::gestureEventNames() const
