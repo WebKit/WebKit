@@ -132,6 +132,8 @@ void MockHidConnection::parseRequest()
 
     if (m_stage == Mock::Stage::Request && m_subStage == Mock::SubStage::Msg) {
         // Make sure we issue different msg cmd for CTAP and U2F.
+        if (m_configuration.hid->canDowngrade && !m_configuration.hid->isU2f)
+            m_configuration.hid->isU2f = m_requestMessage->cmd() == FidoHidDeviceCommand::kMsg;
         ASSERT(m_configuration.hid->isU2f ^ (m_requestMessage->cmd() != FidoHidDeviceCommand::kMsg));
 
         // Set options.
@@ -208,7 +210,11 @@ void MockHidConnection::feedReports()
 
     Optional<FidoHidMessage> message;
     if (m_stage == Mock::Stage::Info && m_subStage == Mock::SubStage::Msg) {
-        auto infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u)));
+        Vector<uint8_t> infoData;
+        if (m_configuration.hid->canDowngrade)
+            infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, Vector<uint8_t>(aaguidLength, 0u)));
+        else
+            infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u)));
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
         if (stagesMatch() && m_configuration.hid->error == Mock::Error::WrongChannelId)
             message = FidoHidMessage::create(m_currentChannel - 1, FidoHidDeviceCommand::kCbor, infoData);

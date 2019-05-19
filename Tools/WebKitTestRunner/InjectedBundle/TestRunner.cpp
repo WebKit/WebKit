@@ -2692,6 +2692,16 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
             hidValues.append(adoptWK(WKBooleanCreate(continueAfterErrorData)).get());
         }
 
+        JSRetainPtr<JSStringRef> canDowngradePropertyName(Adopt, JSStringCreateWithUTF8CString("canDowngrade"));
+        JSValueRef canDowngradeValue = JSObjectGetProperty(context, hid, canDowngradePropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, canDowngradeValue) && !JSValueIsNull(context, canDowngradeValue)) {
+            if (!JSValueIsBoolean(context, canDowngradeValue))
+                return;
+            bool canDowngrade = JSValueToBoolean(context, canDowngradeValue);
+            hidKeys.append(adoptWK(WKStringCreateWithUTF8CString("CanDowngrade")));
+            hidValues.append(adoptWK(WKBooleanCreate(canDowngrade)).get());
+        }
+
         Vector<WKStringRef> rawHidKeys;
         Vector<WKTypeRef> rawHidValues;
         rawHidKeys.resize(hidKeys.size());

@@ -69,6 +69,7 @@ struct MockWebAuthenticationConfiguration {
         bool keepAlive { false };
         bool fastDataArrival { false };
         bool continueAfterErrorData { false };
+        bool canDowngrade { false };
     };
 
     bool silentFailure { false };

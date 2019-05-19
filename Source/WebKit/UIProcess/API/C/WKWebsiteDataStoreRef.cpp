@@ -652,6 +652,9 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
         if (auto continueAfterErrorData = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("ContinueAfterErrorData")).get())))
             hid.continueAfterErrorData = WKBooleanGetValue(continueAfterErrorData);
 
+        if (auto canDowngrade = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("CanDowngrade")).get())))
+            hid.canDowngrade = WKBooleanGetValue(canDowngrade);
+
         configuration.hid = WTFMove(hid);
     }
 

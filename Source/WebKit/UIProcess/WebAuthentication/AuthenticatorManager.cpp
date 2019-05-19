@@ -208,6 +208,17 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     respondReceivedInternal(WTFMove(respond));
 }
 
+void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator)
+{
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), id] {
+        if (!weakThis)
+            return;
+        auto removed = weakThis->m_authenticators.remove(id);
+        ASSERT_UNUSED(removed, removed);
+    });
+    authenticatorAdded(WTFMove(downgradedAuthenticator));
+}
+
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);

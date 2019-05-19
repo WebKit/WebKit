@@ -70,6 +70,7 @@ private:
 
     // Authenticator::Observer
     void respondReceived(Respond&&) final;
+    void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) final;
 
     // Overriden by MockAuthenticatorManager.
     virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const;

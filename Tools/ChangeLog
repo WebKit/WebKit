@@ -1,3 +1,16 @@
+2019-05-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Allow authenticators that support both CTAP and U2F to try U2F if CTAP fails in authenticatorGetAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=197974
+        <rdar://problem/50879746>
+
+        Reviewed by Brent Fulgham.
+
+        Add a canDowngrade option for mock hid devices to simulate the situation.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+
 2019-05-18  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add extra information to dumpJITMemory

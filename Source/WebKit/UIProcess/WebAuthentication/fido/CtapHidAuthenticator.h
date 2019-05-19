@@ -47,10 +47,13 @@ private:
     void makeCredential() final;
     void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
     void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&) const;
+    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
+
+    bool tryDowngrade();
 
     std::unique_ptr<CtapHidDriver> m_driver;
     fido::AuthenticatorGetInfoResponse m_info;
+    bool m_isDowngraded { false };
 };
 
 } // namespace WebKit

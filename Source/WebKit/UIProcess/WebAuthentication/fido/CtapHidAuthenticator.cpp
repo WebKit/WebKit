@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
 #include "CtapHidDriver.h"
+#include "U2fHidAuthenticator.h"
 #include <WebCore/DeviceRequestConverter.h>
 #include <WebCore/DeviceResponseConverter.h>
 #include <WebCore/ExceptionData.h>
@@ -49,6 +50,7 @@ CtapHidAuthenticator::CtapHidAuthenticator(std::unique_ptr<CtapHidDriver>&& driv
 
 void CtapHidAuthenticator::makeCredential()
 {
+    ASSERT(!m_isDowngraded);
     auto cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, requestData().creationOptions, m_info.options().userVerificationAvailability());
     m_driver->transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
@@ -74,6 +76,7 @@ void CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<ui
 
 void CtapHidAuthenticator::getAssertion()
 {
+    ASSERT(!m_isDowngraded);
     auto cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, requestData().requestOptions, m_info.options().userVerificationAvailability());
     m_driver->transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
@@ -83,14 +86,30 @@ void CtapHidAuthenticator::getAssertion()
     });
 }
 
-void CtapHidAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t>&& data) const
+void CtapHidAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t>&& data)
 {
     auto response = readCTAPGetAssertionResponse(data);
     if (!response) {
-        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", data.size() == 1 ? data[0] : -1) });
+        auto error = getResponseCode(data);
+        if (error != CtapDeviceResponseCode::kCtap2ErrInvalidCBOR && tryDowngrade())
+            return;
+        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
     receiveRespond(WTFMove(*response));
+}
+
+bool CtapHidAuthenticator::tryDowngrade()
+{
+    if (m_info.versions().find(ProtocolVersion::kU2f) == m_info.versions().end())
+        return false;
+    if (!observer())
+        return false;
+
+    m_isDowngraded = true;
+    m_driver->setProtocol(ProtocolVersion::kU2f);
+    observer()->downgrade(this, U2fHidAuthenticator::create(WTFMove(m_driver)));
+    return true;
 }
 
 } // namespace WebKit

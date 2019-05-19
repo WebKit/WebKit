@@ -44,6 +44,7 @@ public:
     public:
         virtual ~Observer() = default;
         virtual void respondReceived(Respond&&) = 0;
+        virtual void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) = 0;
     };
 
     virtual ~Authenticator() = default;
