@@ -1,3 +1,22 @@
+2019-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r240956
+        https://bugs.webkit.org/show_bug.cgi?id=198007
+        <rdar://problem/49808949>
+
+        Reviewed by Alexey Proskuryakov.
+
+        r240956 made SafariForWebKitDevelopment crash when using WebKit nightly builds.
+        Since it's not needed and the binary reduction wasn't too big, just revert that revision.
+
+        * Shared/API/Cocoa/WKMain.h: Removed.
+        * Shared/API/Cocoa/WKMain.mm: Removed.
+        * Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp: Removed.
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (main):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-05-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Allow authenticators that support both CTAP and U2F to try U2F if CTAP fails in authenticatorGetAssertion
