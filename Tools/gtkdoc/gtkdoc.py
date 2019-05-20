@@ -215,8 +215,11 @@ class GTKDoc(object):
                     sys.stderr.write(stderr)
 
         if process.returncode != 0:
-            raise Exception('%s produced a non-zero return code %i'
-                             % (args[0], process.returncode))
+            raise Exception(('%s produced a non-zero return code %i\n'
+                             'Command:\n  %s\n'
+                             'Error output:\n  %s\n')
+                             % (args[0], process.returncode, " ".join(args),
+                                "\n  ".join(stderr.splitlines())))
 
         if not ignore_warnings and ('warning' in stderr or 'warning' in stdout):
             self.saw_warnings = True
