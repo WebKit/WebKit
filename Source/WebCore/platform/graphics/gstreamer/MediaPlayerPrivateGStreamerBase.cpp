@@ -1000,11 +1000,13 @@ void MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags()
         break;
     }
 
+#if USE(GSTREAMER_GL)
     // When the imxvpudecoder is used, the texture sampling of the
     // directviv-uploaded texture returns an RGB value, so there's no need to
     // convert it.
     if (m_videoDecoderPlatform != WebKitGstVideoDecoderPlatform::ImxVPU)
         m_textureMapperFlags |= TEXTURE_MAPPER_COLOR_CONVERT_FLAG;
+#endif
 }
 #endif
 
