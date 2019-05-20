@@ -545,6 +545,15 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     return _undoManager.get();
 }
 
+- (UIInterfaceOrientation)interfaceOrientation
+{
+#if HAVE(UISCENE)
+    return self.window.windowScene.interfaceOrientation;
+#else
+    return UIApp.interfaceOrientation;
+#endif
+}
+
 #pragma mark Internal
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification
