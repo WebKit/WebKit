@@ -1,3 +1,29 @@
+2019-05-20  Keith Rollin  <krollin@apple.com>
+
+        generate-xcfilelists is stranding temporary files
+        https://bugs.webkit.org/show_bug.cgi?id=198008
+        <rdar://problem/50893659>
+
+        Reviewed by Jonathan Bedard.
+
+        generate-xcfilelists makes use of temporary files on disk. These files
+        are opened with the OS's "temporary" bit set, causing them to get
+        deleted when closed or the process exists. However, these temporary
+        files actually end up persisting after the script exists. This is
+        because `sed` is used to process the files, and is done so in a way
+        that causes the "temporary" bit to get cleared.
+
+        Address this issue by no longer using `sed` and instead performing the
+        equivalent processing the file content in-memory.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (BaseGenerator._generate_derived):
+        (BaseGenerator._generate_unified):
+        (BaseGenerator._replace):
+        (BaseGenerator._unexpand):
+        (BaseGenerator._find_added_lines.get_lines):
+        (BaseGenerator._find_added_lines):
+
 2019-05-20  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [WPE][Qt] Use C++17 instead of C++14

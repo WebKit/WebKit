@@ -57,6 +57,7 @@ from __future__ import print_function
 
 import os
 import pickle
+import re
 import tempfile
 import traceback
 
@@ -272,23 +273,26 @@ class BaseGenerator(object):
             # WebCore, for example, when processing the JavaScriptCore
             # project).
 
-            self._replace(input.name, "^JavaScriptCore/",               "$(PROJECT_DIR)/")
-            self._replace(input.name, "^JavaScriptCorePrivateHeaders/", "$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/")
-            self._replace(input.name, "^WebCore/",                      "$(PROJECT_DIR)/")
-            self._replace(input.name, "^WebKit2PrivateHeaders/",        "$(WEBKIT2_PRIVATE_HEADERS_DIR)/")
+            input_lines = self._get_file_lines(input.name)
+            output_lines = self._get_file_lines(output.name)
 
-            self._unexpand(input.name, "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR")
-            self._unexpand(input.name, "PROJECT_DIR")
-            self._unexpand(input.name, "WEBCORE_PRIVATE_HEADERS_DIR")
-            self._unexpand(input.name, "WEBKIT2_PRIVATE_HEADERS_DIR")
-            self._unexpand(input.name, "WEBKITADDITIONS_HEADERS_FOLDER_PATH")
-            self._unexpand(input.name, "BUILT_PRODUCTS_DIR")    # Do this last, since it's a prefix of some other variables and will "intercept" them if executed earlier than them.
+            input_lines = self._replace(input_lines, "^JavaScriptCore/",               "$(PROJECT_DIR)/")
+            input_lines = self._replace(input_lines, "^JavaScriptCorePrivateHeaders/", "$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/")
+            input_lines = self._replace(input_lines, "^WebCore/",                      "$(PROJECT_DIR)/")
+            input_lines = self._replace(input_lines, "^WebKit2PrivateHeaders/",        "$(WEBKIT2_PRIVATE_HEADERS_DIR)/")
 
-            self._replace(output.name, "^", self._get_derived_sources_dir() + "/")
-            self._unexpand(output.name, "BUILT_PRODUCTS_DIR")
+            input_lines = self._unexpand(input_lines, "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR")
+            input_lines = self._unexpand(input_lines, "PROJECT_DIR")
+            input_lines = self._unexpand(input_lines, "WEBCORE_PRIVATE_HEADERS_DIR")
+            input_lines = self._unexpand(input_lines, "WEBKIT2_PRIVATE_HEADERS_DIR")
+            input_lines = self._unexpand(input_lines, "WEBKITADDITIONS_HEADERS_FOLDER_PATH")
+            input_lines = self._unexpand(input_lines, "BUILT_PRODUCTS_DIR")    # Do this last, since it's a prefix of some other variables and will "intercept" them if executed earlier than them.
 
-            self.added_lines_input_derived = self._find_added_lines(input.name, self._get_input_derived_xcfilelist_project_path())
-            self.added_lines_output_derived = self._find_added_lines(output.name, self._get_output_derived_xcfilelist_project_path())
+            output_lines = self._replace(output_lines, "^", self._get_derived_sources_dir() + "/")
+            output_lines = self._unexpand(output_lines, "BUILT_PRODUCTS_DIR")
+
+            self.added_lines_input_derived = self._find_added_lines(input_lines, self._get_input_derived_xcfilelist_project_path())
+            self.added_lines_output_derived = self._find_added_lines(output_lines, self._get_output_derived_xcfilelist_project_path())
 
     @util.LogEntryExit
     def _merge_derived(self):
@@ -321,10 +325,13 @@ class BaseGenerator(object):
                         "--output-xcfilelist-path", output.name],
                     env=env)
 
-            self._unexpand(output.name, "BUILT_PRODUCTS_DIR")
+            input_lines = None
+            output_lines = self._get_file_lines(output.name)
 
-            self.added_lines_input_unified = self._find_added_lines(None, self._get_input_unified_xcfilelist_project_path())
-            self.added_lines_output_unified = self._find_added_lines(output.name, self._get_output_unified_xcfilelist_project_path())
+            output_lines = self._unexpand(output_lines, "BUILT_PRODUCTS_DIR")
+
+            self.added_lines_input_unified = self._find_added_lines(input_lines, self._get_input_unified_xcfilelist_project_path())
+            self.added_lines_output_unified = self._find_added_lines(output_lines, self._get_output_unified_xcfilelist_project_path())
 
     @util.LogEntryExit
     def _merge_unified(self):
@@ -335,23 +342,19 @@ class BaseGenerator(object):
     # replace text in the file.
 
     @util.LogEntryExit
-    def _replace(self, file_name, to_replace, replace_with):
-        util.subprocess_run([
-            "sed", "-E", "-e",
-            "s|{}|{}|".format(to_replace, replace_with),
-            "-i", "''", file_name])
+    def _replace(self, lines, to_replace, replace_with):
+        return set([re.sub(to_replace, replace_with, line) for line in lines])
 
     # Utility for post-processing the initial .xcfilelist content. Used to
     # replace file path segments with the variables that represent those path
     # segments.
 
     @util.LogEntryExit
-    def _unexpand(self, file_name, variable_name):
+    def _unexpand(self, lines, variable_name):
         to_replace = self._getenv(variable_name)
         if not to_replace:
-            return
-
-        self._replace(file_name, "^{}/".format(to_replace), "$({})/".format(variable_name))
+            return lines
+        return self._replace(lines, "^{}/".format(to_replace), "$({})/".format(variable_name))
 
     # Given a source file with new .xcfilelist content and a dest file that
     # contains the original/previous .xcfilelist content (that is, likely the
@@ -362,8 +365,12 @@ class BaseGenerator(object):
     def _find_added_lines(self, source, dest):
         if not source:
             return set()
-        source_lines = set(source) if isinstance(source, list) else self._get_file_lines(source)
-        dest_lines = set(dest) if isinstance(dest, list) else self._get_file_lines(dest)
+
+        def get_lines(source):
+            return source if isinstance(source, set) else set(source) if isinstance(source, list) else self._get_file_lines(source)
+
+        source_lines = get_lines(source)
+        dest_lines = get_lines(dest)
         delta_lines = source_lines - dest_lines
         return delta_lines
 
