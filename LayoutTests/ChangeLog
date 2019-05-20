@@ -1,3 +1,14 @@
+2019-05-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Wait to get frame until after layout has been run
+        https://bugs.webkit.org/show_bug.cgi?id=197999
+        <rdar://problem/50800345>
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/window-inner-width-crash-expected.txt: Added.
+        * fast/dom/window-inner-width-crash.html: Added.
+
 2019-05-19  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Listening to a "pointerover", "pointerenter", "pointerout" or "pointerleave" event alone does not fire the event on iOS
