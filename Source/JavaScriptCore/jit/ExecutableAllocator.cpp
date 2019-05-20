@@ -31,8 +31,10 @@
 #include "CodeProfiling.h"
 #include "ExecutableAllocationFuzz.h"
 #include "JSCInlines.h"
+#include <wtf/FileSystem.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
+#include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
@@ -566,7 +568,9 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     static bool needsToFlush = false;
     static auto flush = [](const AbstractLocker&) {
         if (fd == -1) {
-            fd = open(Options::dumpJITMemoryPath(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
+            String path = Options::dumpJITMemoryPath();
+            path = path.replace("%pid", String::number(getCurrentProcessID()));
+            fd = open(FileSystem::fileSystemRepresentation(path).data(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
             RELEASE_ASSERT(fd != -1);
         }
         write(fd, buffer, offset);

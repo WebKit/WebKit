@@ -1,3 +1,17 @@
+2019-05-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add support for %pid in dumpJITMemoryPath
+        https://bugs.webkit.org/show_bug.cgi?id=198026
+
+        Reviewed by Saam Barati.
+
+        This is necessary when using dumpJITMemory with Safari. Otherwise, multiple WebContent
+        processes will try to write to the same file at the same time, which will crash since
+        the file is open with exclusive locking.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+
 2019-05-18  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add extra information to dumpJITMemory
