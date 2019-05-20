@@ -1,3 +1,15 @@
+2019-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Repeating timer is not stopped when stop is called from the callback
+        https://bugs.webkit.org/show_bug.cgi?id=197986
+
+        Reviewed by Michael Catanzaro.
+
+        In case of repeating timers we always update the ready time to fire interval after the user callback is called.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::stop): Reset m_fireInterval and m_isRepeating.
+
 2019-05-19  Darin Adler  <darin@apple.com>
 
         Change String::number to use "shortest" instead of "fixed precision 6 digits"

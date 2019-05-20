@@ -216,6 +216,8 @@ void RunLoop::TimerBase::start(Seconds fireInterval, bool repeat)
 void RunLoop::TimerBase::stop()
 {
     g_source_set_ready_time(m_source.get(), -1);
+    m_fireInterval = { };
+    m_isRepeating = false;
 }
 
 bool RunLoop::TimerBase::isActive() const

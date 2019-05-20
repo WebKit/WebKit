@@ -114,6 +114,7 @@ TEST(WTF_RunLoop, RepeatingTimer)
     DerivedRepeatingTimer timer(testFinished);
     timer.startRepeating(10_ms);
     Util::run(&testFinished);
+    ASSERT_FALSE(timer.isActive());
 }
 
 TEST(WTF_RunLoop, ManyTimes)
