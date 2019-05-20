@@ -551,6 +551,7 @@ NS_ASSUME_NONNULL_END
 
     _fullscreenInterface = interface;
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
+    _avPlayerViewController.get().modalPresentationStyle = UIModalPresentationOverFullScreen;
 #if PLATFORM(WATCHOS)
     _avPlayerViewController.get().delegate = self;
 #endif
