@@ -29,6 +29,7 @@
 
 #include <glib/gi18n-lib.h>
 #include <wtf/HashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -46,9 +47,29 @@ struct EmojiSection {
     GtkWidget* box { nullptr };
     GtkWidget* button { nullptr };
     bool isEmpty { false };
+    const char* firstEmojiName { nullptr };
 };
 
 using SectionList = Vector<EmojiSection, 9>;
+
+class CallbackTimer final : public RunLoop::TimerBase {
+public:
+    CallbackTimer(Function<void()>&& callback)
+        : RunLoop::TimerBase(RunLoop::main())
+        , m_callback(WTFMove(callback))
+    {
+    }
+
+    ~CallbackTimer() = default;
+
+private:
+    void fired() override
+    {
+        m_callback();
+    }
+
+    Function<void()> m_callback;
+};
 
 struct _WebKitEmojiChooserPrivate {
     GtkWidget* stack;
@@ -58,6 +79,7 @@ struct _WebKitEmojiChooserPrivate {
     GRefPtr<GSettings> settings;
     HashSet<GRefPtr<GtkGesture>> gestures;
     int emojiMaxWidth;
+    std::unique_ptr<CallbackTimer> populateSectionsTimer;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -273,9 +295,10 @@ static void verticalAdjustmentChanged(GtkAdjustment* adjustment, WebKitEmojiChoo
     }
 }
 
-static GtkWidget* webkitEmojiChooserSetupSectionBox(WebKitEmojiChooser* chooser, GtkBox* parent, const char* title, GtkAdjustment* adjustment, gboolean canHaveVariations = FALSE)
+static GtkWidget* webkitEmojiChooserSetupSectionBox(WebKitEmojiChooser* chooser, GtkBox* parent, const char* firstEmojiName, const char* title, GtkAdjustment* adjustment, gboolean canHaveVariations = FALSE)
 {
     EmojiSection section;
+    section.firstEmojiName = firstEmojiName;
     if (title) {
         GtkWidget* label = gtk_label_new(title);
         section.heading = label;
@@ -333,7 +356,7 @@ static void webkitEmojiChooserSetupSectionButton(WebKitEmojiChooser* chooser, Gt
 
 static void webkitEmojiChooserSetupRecent(WebKitEmojiChooser* chooser, GtkBox* emojiBox, GtkBox* buttonBox, GtkAdjustment* adjustment)
 {
-    GtkWidget* flowBox = webkitEmojiChooserSetupSectionBox(chooser, emojiBox, nullptr, adjustment, true);
+    GtkWidget* flowBox = webkitEmojiChooserSetupSectionBox(chooser, emojiBox, nullptr, nullptr, adjustment, true);
     webkitEmojiChooserSetupSectionButton(chooser, buttonBox, "emoji-recent-symbolic", _("Recent"));
 
     bool isEmpty = true;
@@ -443,6 +466,65 @@ static void webkitEmojiChooserSetupFilters(WebKitEmojiChooser* chooser)
     }
 }
 
+static void webkitEmojiChooserSetupEmojiSections(WebKitEmojiChooser* chooser, GtkBox* emojiBox, GtkBox* buttonBox)
+{
+    static const struct {
+        const char* firstEmojiName;
+        const char* title;
+        const char* iconName;
+        bool canHaveVariations;
+    } sections[] = {
+        { "grinning face", N_("Smileys & People"), "emoji-people-symbolic", true },
+        { "selfie", N_("Body & Clothing"), "emoji-body-symbolic", true },
+        { "monkey", N_("Animals & Nature"), "emoji-nature-symbolic", false },
+        { "grapes", N_("Food & Drink"), "emoji-food-symbolic", false },
+        { "globe showing Europe-Africa", N_("Travel & Places"), "emoji-travel-symbolic", false },
+        { "jack-o-lantern", N_("Activities"), "emoji-activities-symbolic", false },
+        { "uted speaker", _("Objects"), "emoji-objects-symbolic", false },
+        { "ATM sign", N_("Symbols"), "emoji-symbols-symbolic", false },
+        { "chequered flag", _("Flags"), "emoji-flags-symbolic", false }
+    };
+
+    auto* vAdjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(chooser->priv->swindow));
+
+    GtkWidget* flowBox = nullptr;
+    for (unsigned i = 0; i < G_N_ELEMENTS(sections); ++i) {
+        auto* box = webkitEmojiChooserSetupSectionBox(chooser, emojiBox, sections[i].firstEmojiName, sections[i].title, vAdjustment, sections[i].canHaveVariations);
+        webkitEmojiChooserSetupSectionButton(chooser, buttonBox, sections[i].iconName, sections[i].title);
+        if (!i)
+            flowBox = box;
+    }
+
+    GRefPtr<GBytes> bytes = adoptGRef(g_resources_lookup_data("/org/gtk/libgtk/emoji/emoji.data", G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
+    GRefPtr<GVariant> data = g_variant_new_from_bytes(G_VARIANT_TYPE("a(auss)"), bytes.get(), TRUE);
+    GUniquePtr<GVariantIter> iter(g_variant_iter_new(data.get()));
+
+    Function<void()> populateSections = [chooser, iter = WTFMove(iter), flowBox]() mutable {
+        auto start = MonotonicTime::now();
+        while (GRefPtr<GVariant> item = adoptGRef(g_variant_iter_next_value(iter.get()))) {
+            const char* name;
+            g_variant_get_child(item.get(), 1, "&s", &name);
+
+            auto index = chooser->priv->sections.findMatching([&name](const auto& section) {
+                return !g_strcmp0(name, section.firstEmojiName);
+            });
+            flowBox = index == notFound ? flowBox : chooser->priv->sections[index].box;
+            auto* child = webkitEmojiChooserAddEmoji(chooser, GTK_FLOW_BOX(flowBox), item.get());
+            if (child)
+                g_signal_connect(child, "popup-menu", G_CALLBACK(emojiPopupMenu), chooser);
+
+            if (MonotonicTime::now() - start >= 8_ms)
+                return;
+        }
+        chooser->priv->populateSectionsTimer = nullptr;
+    };
+
+    chooser->priv->populateSectionsTimer = std::make_unique<CallbackTimer>(WTFMove(populateSections));
+    chooser->priv->populateSectionsTimer->setPriority(G_PRIORITY_DEFAULT_IDLE);
+    chooser->priv->populateSectionsTimer->setName("[WebKitEmojiChooser] populate sections timer");
+    chooser->priv->populateSectionsTimer->startRepeating({ });
+}
+
 static void webkitEmojiChooserInitializeEmojiMaxWidth(WebKitEmojiChooser* chooser)
 {
     // Get a reasonable maximum width for an emoji. We do this to skip overly wide fallback
@@ -503,56 +585,7 @@ static void webkitEmojiChooserConstructed(GObject* object)
 
     webkitEmojiChooserSetupRecent(chooser, GTK_BOX(emojiBox), GTK_BOX(buttonBox), vAdjustment);
 
-    GRefPtr<GBytes> bytes = adoptGRef(g_resources_lookup_data("/org/gtk/libgtk/emoji/emoji.data", G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
-    GRefPtr<GVariant> data = g_variant_new_from_bytes(G_VARIANT_TYPE("a(auss)"), bytes.get(), TRUE);
-    GVariantIter iter;
-    g_variant_iter_init(&iter, data.get());
-    GtkWidget* flowBox = nullptr;
-    while (GRefPtr<GVariant> item = adoptGRef(g_variant_iter_next_value(&iter))) {
-        const char* name;
-        g_variant_get_child(item.get(), 1, "&s", &name);
-
-        if (!g_strcmp0(name, "grinning face")) {
-            const char* title = _("Smileys & People");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment, true);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-people-symbolic", title);
-        } else if (!g_strcmp0(name, "selfie")) {
-            const char* title = _("Body & Clothing");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment, true);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-body-symbolic", title);
-        } else if (!g_strcmp0(name, "monkey")) {
-            const char* title = _("Animals & Nature");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-nature-symbolic", title);
-        } else if (!g_strcmp0(name, "grapes")) {
-            const char* title = _("Food & Drink");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-food-symbolic", title);
-        } else if (!g_strcmp0(name, "globe showing Europe-Africa")) {
-            const char* title = _("Travel & Places");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-travel-symbolic", title);
-        } else if (!g_strcmp0(name, "jack-o-lantern")) {
-            const char* title = _("Activities");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-activities-symbolic", title);
-        } else if (!g_strcmp0(name, "muted speaker")) {
-            const char* title = _("Objects");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-objects-symbolic", title);
-        } else if (!g_strcmp0(name, "ATM sign")) {
-            const char* title = _("Symbols");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-symbols-symbolic", title);
-        } else if (!g_strcmp0(name, "chequered flag")) {
-            const char* title = _("Flags");
-            flowBox = webkitEmojiChooserSetupSectionBox(chooser, GTK_BOX(emojiBox), title, vAdjustment);
-            webkitEmojiChooserSetupSectionButton(chooser, GTK_BOX(buttonBox), "emoji-flags-symbolic", title);
-        }
-        auto* child = webkitEmojiChooserAddEmoji(chooser, GTK_FLOW_BOX(flowBox), item.get());
-        if (child)
-            g_signal_connect(child, "popup-menu", G_CALLBACK(emojiPopupMenu), chooser);
-    }
+    webkitEmojiChooserSetupEmojiSections(chooser, GTK_BOX(emojiBox), GTK_BOX(buttonBox));
 
     gtk_widget_set_state_flags(chooser->priv->sections.first().button, GTK_STATE_FLAG_CHECKED, FALSE);
 

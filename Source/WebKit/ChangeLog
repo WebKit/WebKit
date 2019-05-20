@@ -1,3 +1,18 @@
+2019-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a repeating timer to populate emoji chooser
+        https://bugs.webkit.org/show_bug.cgi?id=197984
+
+        Reviewed by Michael Catanzaro.
+
+        It ensures the emoji chooser popover is shown as soon as it's requested.
+
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp:
+        (webkitEmojiChooserSetupSectionBox):
+        (webkitEmojiChooserSetupRecent):
+        (webkitEmojiChooserSetupEmojiSections):
+        (webkitEmojiChooserConstructed):
+
 2019-05-19  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Listening to a "pointerover", "pointerenter", "pointerout" or "pointerleave" event alone does not fire the event on iOS
