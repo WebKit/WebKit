@@ -1,3 +1,15 @@
+2019-05-20  Gabe Giosia  <giosia@google.com>
+
+        Range getBoundingClientRect returning zero rect on simple text node with <br> before it
+        https://bugs.webkit.org/show_bug.cgi?id=182181
+
+        Reviewed by Antti Koivisto.
+        
+        Test getBoundingClientRect with a Range that contains a line break.
+
+        * fast/dom/Range/getBoundingClientRect-expected.txt:
+        * fast/dom/Range/getBoundingClientRect.html:
+
 2019-05-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening after r245482.

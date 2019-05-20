@@ -46,6 +46,14 @@ PASS rect.height.toFixed(3) is "0.000"
 PASS rect.right is rect.left + rect.width
 PASS rect.bottom is rect.top + rect.height
 
+Test 7
+PASS rect.left.toFixed(3) is "8.000"
+PASS rect.top.toFixed(3) is "2180.000"
+PASS rect.width.toFixed(3) is "192.000"
+PASS rect.height.toFixed(3) is "96.000"
+PASS rect.right is rect.left + rect.width
+PASS rect.bottom is rect.top + rect.height
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

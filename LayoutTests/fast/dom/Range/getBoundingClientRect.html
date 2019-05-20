@@ -60,6 +60,10 @@ body {
 
 <div class="box" id="test5">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
 
+<br><br>
+
+<div class="box" id="test7">Lorem ipsum <br> dolor sit <br> amet.</div>
+
 </div>
 <script>
     if (window.testRunner)
@@ -111,6 +115,7 @@ body {
         /*4*/  { left: 0, top: 0, width: 0, height: 0 },
         /*5*/  { left: -14.574, top: 1761.947, width: 504.009, height: 535.849 },
         /*6*/  { left: 0, top: 0, width: 0, height: 0 },
+        /*7*/  { left: 8, top: 2180, width: 192, height: 96 },
     ];
 
     // Range over entire element.
@@ -161,6 +166,15 @@ body {
     var range6 = document.createRange();
     rect = range6.getBoundingClientRect()
     testClientRect(rect, expectedResults[6 - 1]);
+    
+    // Range over subset that contains text and line break elements.
+    debug("Test 7")
+    var range7 = document.createRange();
+    range7.setStart(document.getElementById('test7').firstChild, 2);
+    range7.setEnd(document.getElementById('test7').lastChild, 2);
+    show(range7);
+    rect = range7.getBoundingClientRect()
+    testClientRect(rect, expectedResults[7 - 1]);
 
     if (window.testRunner) {
         var area = document.getElementById('testArea');
