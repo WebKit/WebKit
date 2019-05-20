@@ -1,4 +1,17 @@
 =================
+WPE WebKit 2.24.2
+=================
+
+What's new in WPE WebKit 2.24.2?
+
+  - Fix space characters not being rendered with some CJK fonts.
+  - Fix adaptive streaming playback with older GStreamer versions.
+  - Fix build issue due to wrongly included X11 headers.
+  - Fix SSE2 detection at compile time, ensuring the right flags are passed to the compiler.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2019-8595, CVE-2019-8607, CVE-2019-8615.
+
+=================
 WPE WebKit 2.24.1
 =================
 
