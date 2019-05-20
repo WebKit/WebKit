@@ -221,6 +221,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
                 }
                 weakThis->incrementRecordsDeletedCountForDomains(WTFMove(domainsWithDeletedWebsiteData));
                 weakThis->setDataRecordsBeingRemoved(false);
+                weakThis->m_store.tryDumpResourceLoadStatistics();
                 completionHandler();
 #if !RELEASE_LOG_DISABLED
                 RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done removing data records.");

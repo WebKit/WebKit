@@ -615,10 +615,24 @@ void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandle
     ASSERT(RunLoop::isMain());
 
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
-        String result = m_statisticsStore ? m_statisticsStore->dumpResourceLoadStatistics() : emptyString();
-        postTaskReply([result = result.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(result);
-        });
+        ASSERT(!m_dumpResourceLoadStatisticsCompletionHandler);
+        m_dumpResourceLoadStatisticsCompletionHandler = WTFMove(completionHandler);
+        if (m_statisticsStore && m_statisticsStore->dataRecordsBeingRemoved())
+            return;
+        tryDumpResourceLoadStatistics();
+    });
+}
+
+void WebResourceLoadStatisticsStore::tryDumpResourceLoadStatistics()
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (!m_dumpResourceLoadStatisticsCompletionHandler)
+        return;
+
+    String result = m_statisticsStore ? m_statisticsStore->dumpResourceLoadStatistics() : emptyString();
+    postTaskReply([result = result.isolatedCopy(), completionHandler = WTFMove(m_dumpResourceLoadStatisticsCompletionHandler)]() mutable {
+        completionHandler(result);
     });
 }
 

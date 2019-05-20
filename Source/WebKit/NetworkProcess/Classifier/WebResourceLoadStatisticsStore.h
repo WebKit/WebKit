@@ -127,6 +127,7 @@ public:
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(String)>&&);
+    void tryDumpResourceLoadStatistics();
     void isPrevalentResource(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(const SubResourceDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
@@ -205,6 +206,8 @@ private:
     bool m_hasScheduledProcessStats { false };
 
     bool m_firstNetworkProcessCreated { false };
+    
+    CompletionHandler<void(String)> m_dumpResourceLoadStatisticsCompletionHandler;
 };
 
 } // namespace WebKit

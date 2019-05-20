@@ -1,3 +1,22 @@
+2019-05-20  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mac WK2 iOS Sim] Layout Test http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196307
+        <rdar://problem/49345360>
+
+        Reviewed by Alex Christensen.
+
+        Delay dumping statistics if there is data being removed.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::dataRecordsBeingRemoved const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::dumpResourceLoadStatistics):
+        (WebKit::WebResourceLoadStatisticsStore::tryDumpResourceLoadStatistics):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+
 2019-05-20  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [WPE][Qt] Use C++17 instead of C++14

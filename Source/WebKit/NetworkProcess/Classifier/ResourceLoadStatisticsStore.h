@@ -185,6 +185,8 @@ public:
     virtual bool isMemoryStore() const { return false; }
     virtual bool isDatabaseStore()const { return false; }
 
+    bool dataRecordsBeingRemoved() const { return m_dataRecordsBeingRemoved; }
+
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);
     static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates);
