@@ -37,8 +37,6 @@ if (window.testRunner)
     };
 
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
-
         var link = accessibilityController.accessibleElementById("multiline-link");
         shouldBeTrue("clickPointInsideFrame(link)");
         link.press();
@@ -46,11 +44,6 @@ if (window.testRunner)
         link = accessibilityController.accessibleElementById("singleline-link");
         shouldBeTrue("clickPointInsideFrame(link)");
         link.press();
-
-        setTimeout(
-            function() {
-                finishJSTest();
-            }, 10);
     }
 </script>
 

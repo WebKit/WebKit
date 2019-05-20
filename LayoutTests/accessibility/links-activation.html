@@ -6,7 +6,9 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
+var clicked = false;
 function handleClick(event) {
+    clicked = true;
     debug("click event " + event
           + " for element " + event.target.nodeName
           + " with id " + event.target.id);
@@ -35,14 +37,15 @@ function handleClick(event) {
 
         var link = accessibilityController.accessibleElementById("multiline-link");
         link.press();
+        shouldBecomeEqual("clicked", "true", function() {
+            clicked = false;
 
-        link = accessibilityController.accessibleElementById("singleline-link");
-        link.press();
-
-        setTimeout(
-            function() {
+            link = accessibilityController.accessibleElementById("singleline-link");
+            link.press();
+            shouldBecomeEqual("clicked", "true", function() {
                 finishJSTest();
-            }, 10);
+            });
+        });
     }
 </script>
 
