@@ -33,6 +33,7 @@
 #include "InspectorInstrumentation.h"
 
 #include "CachedResource.h"
+#include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"

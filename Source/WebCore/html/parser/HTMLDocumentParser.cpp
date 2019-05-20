@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
+#include "CustomHeaderFields.h"
 #include "CustomElementReactionQueue.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"

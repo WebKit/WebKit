@@ -30,6 +30,7 @@
 #include "LegacyWebArchive.h"
 
 #include "CachedResource.h"
+#include "CustomHeaderFields.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Editor.h"

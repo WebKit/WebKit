@@ -31,6 +31,7 @@
 #import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
+#import "CustomHeaderFields.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "Editing.h"

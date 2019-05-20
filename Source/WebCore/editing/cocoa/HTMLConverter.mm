@@ -35,6 +35,7 @@
 #import "ColorCocoa.h"
 #import "ColorMac.h"
 #import "ComposedTreeIterator.h"
+#import "CustomHeaderFields.h"
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "Editing.h"

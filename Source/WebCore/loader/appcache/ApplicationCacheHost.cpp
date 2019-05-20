@@ -30,6 +30,7 @@
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
 #include "ContentSecurityPolicy.h"
+#include "CustomHeaderFields.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "EventNames.h"

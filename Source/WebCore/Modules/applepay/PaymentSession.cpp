@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "CustomHeaderFields.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Page.h"

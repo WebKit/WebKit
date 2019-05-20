@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageNetworkAgent.h"
 
+#include "CustomHeaderFields.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"

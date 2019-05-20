@@ -39,6 +39,7 @@
 #include "CachedResourceRequestInitiators.h"
 #include "CachedScript.h"
 #include "CertificateInfo.h"
+#include "CustomHeaderFields.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"

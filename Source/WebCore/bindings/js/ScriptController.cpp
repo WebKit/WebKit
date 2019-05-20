@@ -25,6 +25,7 @@
 #include "CachedScriptFetcher.h"
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
+#include "CustomHeaderFields.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "Frame.h"

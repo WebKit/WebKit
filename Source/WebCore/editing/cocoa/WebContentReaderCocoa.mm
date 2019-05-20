@@ -30,6 +30,7 @@
 #import "Blob.h"
 #import "BlobURL.h"
 #import "CachedResourceLoader.h"
+#import "CustomHeaderFields.h"
 #import "DOMURL.h"
 #import "Document.h"
 #import "DocumentFragment.h"

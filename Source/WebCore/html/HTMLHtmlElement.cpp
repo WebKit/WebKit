@@ -25,6 +25,7 @@
 #include "HTMLHtmlElement.h"
 
 #include "ApplicationCacheHost.h"
+#include "CustomHeaderFields.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentParser.h"

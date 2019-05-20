@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PerformanceNavigation.h"
 
+#include "CustomHeaderFields.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"

@@ -34,6 +34,7 @@
 #include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicySource.h"
 #include "ContentSecurityPolicySourceList.h"
+#include "CustomHeaderFields.h"
 #include "DOMStringList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
