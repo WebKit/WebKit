@@ -1,9 +1,9 @@
 app-id: org.webkit.WPEQT
 runtime: org.kde.Platform
-runtime-version: "5.11"
+runtime-version: "5.12"
 # Control the exact version of the Sdk/Runtime that is being used.
-sdk-hash: dd9e5d3b3134c24fc191226f058fc78c6bdf1c25fd7be38bea977fcb15307e95
-runtime-hash: 02ede84d3591a5ea8028204d86059bffaccb778159ec53c859bbc60d9e7025e8
+sdk-hash: d6efa24e27c1c878ad4fde76b73c96a11be32b598ae87aefbe339ee4bb19a8be
+runtime-hash: 101871e091000616ad2b635e06c414eb0e1c4e1c34292a205c5239935ee5ea44
 sdk: org.kde.Sdk
 command: %(COMMAND)s
 finish-args:
