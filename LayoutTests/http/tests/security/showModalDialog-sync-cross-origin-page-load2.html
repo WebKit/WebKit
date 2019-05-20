@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<body>
+<b>This test passes if it does not alert the fail.html's content when clicking the button.</b><br>
+<input id="testButton" type="button" value="Click me"></input>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+
+let counter = 0;
+function run(event) {
+  ++counter;
+  if (counter == 2) {
+    event.target.src = "javascript:alert(document.documentElement.outerHTML)";
+  } else if (counter == 3) {
+    frame = event.target;
+
+    a = frame.contentDocument.createElement("a");
+    a.href = cache_frame.src;
+    a.click();
+
+    showModalDialog(URL.createObjectURL(new Blob([`
+      <script>
+        timeout = 0;
+        let intervalID = setInterval(() => {
+          try {
+            opener.frame.contentWindow.foo;
+            timeout++;
+            if (timeout == 200)
+                throw "";
+          } catch (e) {
+            clearInterval(intervalID);
+
+            window.close();
+            if (window.testRunner)
+              testRunner.abortModal();
+          }
+        }, 10);
+      </scr` + "ipt>"], {type: "text/html"})));
+
+      setTimeout(() => {
+        setTimeout(() => {
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }, 0);
+      }, 0);
+  }
+}
+
+testButton.onclick = _ => {
+  frame = document.body.appendChild(document.createElement("iframe"));
+  frame.contentWindow.location = `javascript:'<b><p><iframe`
+      + ` onload="top.run(event)"></iframe></b></p>'`;
+}
+
+cache_frame = document.body.appendChild(document.createElement("iframe"));
+cache_frame.src = "http://localhost:8000/security/resources/fail.html";
+cache_frame.style.display = "none";
+
+onload = function() {
+    if (!window.internals)
+       return;
+
+    internals.withUserGesture(() => {
+        testButton.click();
+    });
+}
+</script>
+</body>
+</html>

@@ -383,13 +383,15 @@ void ScriptController::disableWebAssembly(const String& errorMessage)
     jsWindowProxy->window()->setWebAssemblyEnabled(false, errorMessage);
 }
 
-bool ScriptController::canAccessFromCurrentOrigin(Frame* frame)
+bool ScriptController::canAccessFromCurrentOrigin(Frame* frame, Document& accessingDocument)
 {
     auto* state = JSExecState::currentState();
 
-    // If the current state is null we're in a call path where the DOM security check doesn't apply (eg. parser).
-    if (!state)
-        return true;
+    // If the current state is null we should use the accessing document for the security check.
+    if (!state) {
+        auto* targetDocument = frame ? frame->document() : nullptr;
+        return targetDocument && accessingDocument.securityOrigin().canAccess(targetDocument->securityOrigin());
+    }
 
     return BindingSecurity::shouldAllowAccessToFrame(state, frame);
 }

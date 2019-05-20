@@ -123,7 +123,7 @@ public:
     void disableEval(const String& errorMessage);
     void disableWebAssembly(const String& errorMessage);
 
-    static bool canAccessFromCurrentOrigin(Frame*);
+    static bool canAccessFromCurrentOrigin(Frame*, Document& accessingDocument);
     WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
 
     void setPaused(bool b) { m_paused = b; }
