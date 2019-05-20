@@ -1,3 +1,13 @@
+2019-05-20  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Allow WebContent mach-lookup AGXCompilerService
+        https://bugs.webkit.org/show_bug.cgi?id=198031
+        <rdar://problem/50552974>
+
+        Reviewed by Per Arne Vollan.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-05-20  Sihui Liu  <sihui_liu@apple.com>
 
         [ Mac WK2 iOS Sim] Layout Test http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html is a flaky failure
