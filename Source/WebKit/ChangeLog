@@ -1,3 +1,14 @@
+2019-05-20  Dean Jackson  <dino@apple.com>
+
+        Cherry-pick r245267.
+
+    2019-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, fix some deprecation warnings when using a recent SDK
+
+            * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+            (-[WKDataListSuggestionsPicker initWithInformation:inView:]):
+
 2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245360. rdar://problem/50823976
