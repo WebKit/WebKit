@@ -392,7 +392,7 @@ if (ENABLE_WPE_QT_API)
     set_target_properties(qtwpe PROPERTIES
         OUTPUT_NAME qtwpe
         AUTOMOC ON
-        CXX_STANDARD 14
+        CXX_STANDARD 17
     )
     target_compile_definitions(qtwpe PUBLIC QT_NO_KEYWORDS=1)
     target_link_libraries(qtwpe ${qtwpe_LIBRARIES})

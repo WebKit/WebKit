@@ -158,7 +158,7 @@ macro(ADD_WPE_QT_TEST test_name)
     set_target_properties(${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEQt
         AUTOMOC ON
-        CXX_STANDARD 14
+        CXX_STANDARD 17
     )
     target_compile_definitions(${test_name} PUBLIC QT_NO_KEYWORDS=1)
     target_link_libraries(${test_name} ${WPEQtAPITest_LIBRARIES})
