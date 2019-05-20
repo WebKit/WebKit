@@ -1,3 +1,10 @@
+2019-05-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening after r245482.
+
+        * platform/mac/TestExpectations: Explicitly mark webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html
+        as slow for High Sierra.
+
 2019-05-20  Andres Gonzalez  <andresg_22@apple.com>
 
         Hitpoint for link which spans two lines in web content is incorrect

@@ -1760,6 +1760,7 @@ webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slo
 webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Slow ]
 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Slow ]
 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
+[ HighSierra ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Slow ]
 
 webkit.org/b/176929 [ Mojave+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
