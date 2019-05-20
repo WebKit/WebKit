@@ -1,3 +1,21 @@
+2019-05-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Implement Remote Web Inspector Client.
+        https://bugs.webkit.org/show_bug.cgi?id=197434
+
+        Reviewed by Don Olmstead.
+
+        * PlatformWin.cmake:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        * UIProcess/RemoteWebInspectorProxy.h:
+        * UIProcess/socket/RemoteInspectorClient.cpp: Added.
+        * UIProcess/socket/RemoteInspectorClient.h: Added.
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp: Added.
+        * UIProcess/socket/RemoteInspectorProtocolHandler.h: Added.
+        * UIProcess/win/RemoteWebInspectorProxyWin.cpp: Added.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+
 2019-05-20  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] STP can't launch any WebContent processes

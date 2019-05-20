@@ -170,7 +170,7 @@ void RemoteWebInspectorProxy::closeFrontendPageAndWindow()
     platformCloseFrontendPageAndWindow();
 }
 
-#if !ENABLE(REMOTE_INSPECTOR) || (!PLATFORM(MAC) && !PLATFORM(GTK))
+#if !ENABLE(REMOTE_INSPECTOR) && !PLATFORM(MAC)
 WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
 {
     notImplemented();

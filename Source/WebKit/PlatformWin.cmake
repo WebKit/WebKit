@@ -182,6 +182,19 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 endif ()
 
+if (ENABLE_REMOTE_INSPECTOR)
+    list(APPEND WebKit_SOURCES
+        UIProcess/socket/RemoteInspectorClient.cpp
+        UIProcess/socket/RemoteInspectorProtocolHandler.cpp
+
+        UIProcess/win/RemoteWebInspectorProxyWin.cpp
+    )
+
+    list(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/UIProcess/socket"
+    )
+endif ()
+
 set(SharedWebKitLibraries
     ${WebKit_LIBRARIES}
 )

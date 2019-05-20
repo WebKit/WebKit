@@ -27,30 +27,40 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteControllableTarget.h"
-#include "RemoteInspectorSocketEndpoint.h"
-#include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
+#include "RemoteInspectorClient.h"
+#include "WebURLSchemeHandler.h"
 
-namespace Inspector {
+namespace WTF {
+class URL;
+}
 
-class RemoteInspectorConnectionClient : public CanMakeWeakPtr<RemoteInspectorConnectionClient> {
+namespace WebKit {
+
+class WebURLSchemeTask;
+
+class RemoteInspectorProtocolHandler final : public RemoteInspectorObserver, public WebURLSchemeHandler {
 public:
-    void didReceiveWebInspectorEvent(ConnectionID, Vector<uint8_t>&&);
-    virtual void didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) { }
-    virtual void didClose(ConnectionID) = 0;
+    static Ref<RemoteInspectorProtocolHandler> create(WebPageProxy& page) { return adoptRef(*new RemoteInspectorProtocolHandler(page)); }
 
-    struct Event {
-        ConnectionID clientID { };
-        Optional<ConnectionID> connectionID;
-        Optional<TargetID> targetID;
-        Optional<String> message;
-    };
+    void inspect(const String&, ConnectionID, TargetID);
 
-    using CallHandler = void (RemoteInspectorConnectionClient::*)(const Event&);
-    virtual HashMap<String, CallHandler>& dispatchMap() = 0;
+private:
+    RemoteInspectorProtocolHandler(WebPageProxy& page)
+        : m_page(page) { }
+
+    // RemoteInspectorObserver
+    void targetListChanged(RemoteInspectorClient&) final;
+    void connectionClosed(RemoteInspectorClient&) final { }
+
+    // WebURLSchemeHandler
+    void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
+    void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final { }
+    void platformTaskCompleted(WebURLSchemeTask&) final { }
+
+    HashMap<String, std::unique_ptr<RemoteInspectorClient>> m_inspectorClients;
+    WebPageProxy& m_page;
 };
 
-} // namespace Inspector
+} // namespace WebKit
 
 #endif // ENABLE(REMOTE_INSPECTOR)

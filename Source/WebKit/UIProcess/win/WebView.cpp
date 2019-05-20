@@ -33,6 +33,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "RemoteInspectorProtocolHandler.h"
 #include "WKAPICast.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
@@ -235,6 +236,10 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
 
     if (m_page->drawingArea())
         m_page->drawingArea()->setSize(IntSize(rect.right - rect.left, rect.bottom - rect.top));
+
+#if ENABLE(REMOTE_INSPECTOR)
+    m_page->setURLSchemeHandlerForScheme(RemoteInspectorProtocolHandler::create(*m_page), "inspector");
+#endif
 
     // FIXME: Initializing the tooltip window here matches WebKit win, but seems like something
     // we could do on demand to save resources.

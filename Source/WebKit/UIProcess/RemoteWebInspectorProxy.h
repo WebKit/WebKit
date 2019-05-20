@@ -48,6 +48,7 @@ class CertificateInfo;
 namespace WebKit {
 
 class WebPageProxy;
+class WebView;
 
 class RemoteWebInspectorProxyClient {
 public:
@@ -86,6 +87,13 @@ public:
 
 #if PLATFORM(GTK)
     void updateWindowTitle(const CString&);
+#endif
+
+#if PLATFORM(WIN_CAIRO)
+    LRESULT sizeChange();
+    LRESULT onClose();
+
+    static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 #endif
 
     void closeFromCrash();
@@ -138,6 +146,10 @@ private:
 #if PLATFORM(GTK)
     GtkWidget* m_webView { nullptr };
     GtkWidget* m_window { nullptr };
+#endif
+#if PLATFORM(WIN_CAIRO)
+    HWND m_frontendHandle;
+    RefPtr<WebView> m_webView;
 #endif
 };
 

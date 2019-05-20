@@ -109,12 +109,12 @@ void RemoteInspectorServer::didClose(ConnectionID id)
 HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorServer::dispatchMap()
 {
     static NeverDestroyed<HashMap<String, CallHandler>> dispatchMap = HashMap<String, CallHandler>({
-        { "SetTargetList"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::setTargetList) },
-        { "SetupInspectorClient"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::setupInspectorClient) },
-        { "Setup"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::setup) },
-        { "FrontendDidClose"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::close) },
-        { "SendMessageToFrontend"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::sendMessageToFrontend) },
-        { "SendMessageToBackend"_s, reinterpret_cast<CallHandler>(&RemoteInspectorServer::sendMessageToBackend) },
+        { "SetTargetList"_s, static_cast<CallHandler>(&RemoteInspectorServer::setTargetList) },
+        { "SetupInspectorClient"_s, static_cast<CallHandler>(&RemoteInspectorServer::setupInspectorClient) },
+        { "Setup"_s, static_cast<CallHandler>(&RemoteInspectorServer::setup) },
+        { "FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspectorServer::close) },
+        { "SendMessageToFrontend"_s, static_cast<CallHandler>(&RemoteInspectorServer::sendMessageToFrontend) },
+        { "SendMessageToBackend"_s, static_cast<CallHandler>(&RemoteInspectorServer::sendMessageToBackend) },
     });
 
     return dispatchMap;
