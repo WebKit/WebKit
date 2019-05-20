@@ -207,7 +207,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     case G_TYPE_BOXED:
     case G_TYPE_OBJECT:
         if (auto* ptr = returnValue.data[0].v_pointer)
-            return toRef(jscClassGetOrCreateJSWrapper(m_class.get(), ptr));
+            return toRef(jscClassGetOrCreateJSWrapper(m_class.get(), context.get(), ptr));
         *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructor returned null"_s));
         break;
     default:

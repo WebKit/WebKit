@@ -602,7 +602,7 @@ JSCValue* jsc_value_new_object(JSCContext* context, gpointer instance, JSCClass*
     g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
     g_return_val_if_fail(!instance || JSC_IS_CLASS(jscClass), nullptr);
 
-    return jscContextGetOrCreateValue(context, instance ? toRef(jscClassGetOrCreateJSWrapper(jscClass, instance)) : JSObjectMake(jscContextGetJSContext(context), nullptr, nullptr)).leakRef();
+    return jscContextGetOrCreateValue(context, instance ? toRef(jscClassGetOrCreateJSWrapper(jscClass, context, instance)) : JSObjectMake(jscContextGetJSContext(context), nullptr, nullptr)).leakRef();
 }
 
 /**

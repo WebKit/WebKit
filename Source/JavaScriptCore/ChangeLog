@@ -1,3 +1,35 @@
+2019-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Crash when instantiating a js object registered with jsc_context_register_class on window object cleared
+        https://bugs.webkit.org/show_bug.cgi?id=198037
+
+        Reviewed by Michael Catanzaro.
+
+        This happens because JSCClass is keeping a pointer to the JSCContext used when the class is registered, and the
+        context can be destroyed before the class. We can't a reference to the context, because we don't really want to
+        keep it alive. The life of the JSCClass is not attached to the JSCContext, but to its wrapped global context, so
+        we can keep a pointer to the JSGlobalContextRef instead and create a new JSCContext wrapping it when
+        needed. This patch is also making the context property of JSCClass non-readable, which was always the intention,
+        that's why there isn't a public getter in the API.
+
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::construct): Pass the context to jscClassGetOrCreateJSWrapper().
+        * API/glib/JSCClass.cpp:
+        (jscClassGetProperty): Remove the getter for context property.
+        (jscClassSetProperty): Get the JSGlobalContextRef from the given JSCContext.
+        (jsc_class_class_init): Make context writable only.
+        (jscClassCreate): Use the passed in context instead of the member.
+        (jscClassGetOrCreateJSWrapper): It receives now the context as parameter.
+        (jscClassCreateContextWithJSWrapper): Ditto.
+        (jscClassCreateConstructor): Get or create a JSCContext for our JSGlobalContextRef.
+        (jscClassAddMethod): Ditto.
+        (jsc_class_add_property): Ditto.
+        * API/glib/JSCClassPrivate.h:
+        * API/glib/JSCContext.cpp:
+        (jsc_context_evaluate_in_object): Pass the context to jscClassCreateContextWithJSWrapper().
+        * API/glib/JSCValue.cpp:
+        (jsc_value_new_object): Pass the context to jscClassGetOrCreateJSWrapper().
+
 2019-05-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add support for %pid in dumpJITMemoryPath
