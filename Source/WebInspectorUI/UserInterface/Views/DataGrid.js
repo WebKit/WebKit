@@ -516,11 +516,13 @@ WI.DataGrid = class DataGrid extends WI.View
     {
         console.assert(node, "Invalid argument: must provide DataGridNode to edit.");
 
+        this.updateLayoutIfNeeded();
+
         this._editing = true;
         this._editingNode = node;
         this._editingNode.select();
 
-        var element = this._editingNode._element.children[columnIndex];
+        var element = this._editingNode.element.children[columnIndex];
         WI.startEditing(element, this._startEditingConfig(element));
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     }
@@ -559,7 +561,9 @@ WI.DataGrid = class DataGrid extends WI.View
         var columnIndex = this.orderedColumns.indexOf(columnIdentifier);
 
         var textBeforeEditing = this._editingNode.data[columnIdentifier] || "";
+
         var currentEditingNode = this._editingNode;
+        currentEditingNode.data[columnIdentifier] = newText.trim();
 
         // Returns an object with the next node and column index to edit, and whether it
         // is an appropriate time to re-sort the table rows. When editing, we want to
@@ -598,8 +602,6 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this._editingCancelled(element);
 
-        // Update table's data model, and delegate to the callback to update other models.
-        currentEditingNode.data[columnIdentifier] = newText.trim();
         this._editCallback(currentEditingNode, columnIdentifier, textBeforeEditing, newText, moveDirection);
 
         var textDidChange = textBeforeEditing.trim() !== newText.trim();
@@ -1399,7 +1401,7 @@ WI.DataGrid = class DataGrid extends WI.View
         } else if (isEnterKey(event)) {
             if (this._editCallback) {
                 handled = true;
-                this._startEditing(this.selectedNode._element.children[0]);
+                this._startEditing(this.selectedNode.element.children[0]);
             }
         }
 
