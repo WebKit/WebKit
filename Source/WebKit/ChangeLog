@@ -1,3 +1,15 @@
+2019-05-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] STP can't launch any WebContent processes
+        https://bugs.webkit.org/show_bug.cgi?id=198045
+        <rdar://problem/50931110>
+
+        Reviewed by Brent Fulgham.
+
+        This is caused by a syscall sandbox violation.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-05-20  Zhifei Fang  <zhifei_fang@apple.com>
 
         Allow WebContent mach-lookup AGXCompilerService
