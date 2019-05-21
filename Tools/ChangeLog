@@ -1,5 +1,15 @@
 2019-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the build with HAVE(ACCESSIBILITY) disabled
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::elementAtPoint):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        (WTR::AccessibilityController::rootElement):
+        (WTR::AccessibilityController::focusedElement):
+
+2019-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Add initial accessibility support using ATK
         https://bugs.webkit.org/show_bug.cgi?id=197413
 

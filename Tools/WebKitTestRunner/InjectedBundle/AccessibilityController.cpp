@@ -90,13 +90,8 @@ Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 
 RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, int y)
 {
-    Ref<AccessibilityUIElement> uiElement = rootElement();
+    auto uiElement = rootElement();
     return uiElement->elementAtPoint(x, y);
 }
-
-#if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
-RefPtr<AccessibilityUIElement> AccessibilityController::rootElement() { return nullptr; }
-RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement() { return nullptr; }
-#endif
 
 } // namespace WTR

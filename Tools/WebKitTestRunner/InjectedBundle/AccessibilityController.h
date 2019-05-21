@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY)
-
 #include "AccessibilityUIElement.h"
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
@@ -52,8 +50,10 @@ public:
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
+#if HAVE(ACCESSIBILITY)
     Ref<AccessibilityUIElement> rootElement();
     Ref<AccessibilityUIElement> focusedElement();
+#endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
 
@@ -68,6 +68,11 @@ public:
 
     void resetToConsistentState();
 
+#if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
+    RefPtr<AccessibilityUIElement> rootElement() { return nullptr; }
+    RefPtr<AccessibilityUIElement> focusedElement() { return nullptr; }
+#endif
+
 private:
     AccessibilityController();
 
@@ -79,5 +84,3 @@ private:
 };
 
 } // namespace WTR
-
-#endif // HAVE(ACCESSIBILITY)
