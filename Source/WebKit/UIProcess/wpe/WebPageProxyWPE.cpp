@@ -30,6 +30,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/UserAgent.h>
+#include <atk/atk.h>
 
 namespace WebKit {
 
@@ -47,6 +48,15 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);
 }
+
+#if USE(ATK)
+void WebPageProxy::bindAccessibilityTree(const String& plugID)
+{
+    auto* accessible = static_cast<PageClientImpl&>(pageClient()).accessible();
+    atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
+    atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
+}
+#endif
 
 void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::RecentSearch>&)
 {

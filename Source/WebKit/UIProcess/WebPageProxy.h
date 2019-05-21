@@ -1773,6 +1773,9 @@ private:
 
 #if PLATFORM(GTK)
     void getEditorCommandsForKeyEvent(const AtomicString&, Vector<String>&);
+#endif
+
+#if USE(ATK)
     void bindAccessibilityTree(const String&);
     void showEmojiPicker(const WebCore::IntRect&, CompletionHandler<void(String)>&&);
 #endif

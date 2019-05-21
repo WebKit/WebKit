@@ -1,3 +1,48 @@
+2019-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial accessibility support using ATK
+        https://bugs.webkit.org/show_bug.cgi?id=197413
+
+        Reviewed by Michael Catanzaro.
+
+        Rename WebKitWebViewBaseAccessible as WebKitWebViewAccessible and move it to glib removing its dependency on
+        GTK. WPEView now implements get_accessible to return its associated WebKitWebViewAccessible.
+
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitWebViewAccessible.cpp: Added.
+        (webkitWebViewAccessibleInitialize):
+        (webkitWebViewAccessibleRefStateSet):
+        (webkitWebViewAccessibleGetIndexInParent):
+        (webkit_web_view_accessible_class_init):
+        (webkitWebViewAccessibleNew):
+        (webkitWebViewAccessibleSetWebView):
+        * UIProcess/API/glib/WebKitWebViewAccessible.h: Added.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseGetAccessible):
+        * UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp: Removed.
+        * UIProcess/API/gtk/WebKitWebViewBaseAccessible.h: Removed.
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::accessible):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        (WKWPE::View::~View):
+        (WKWPE::View::accessible):
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree): Call atk_socket_embed() with the given plug ID.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformInitialize): Create the WebKitWebPageAccessibilityObject and send
+        BindAccessibilityTree message to the UI process.
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+        (WebKit::initializeAccessibility): Implement AtkUtil interface and initialize the atk bridge.
+
 2019-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Revert r245501

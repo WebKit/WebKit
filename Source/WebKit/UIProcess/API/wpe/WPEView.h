@@ -33,6 +33,11 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 
+#if HAVE(ACCESSIBILITY)
+#include "WebKitWebViewAccessible.h"
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 struct wpe_view_backend;
 
@@ -55,6 +60,8 @@ public:
         return new View(backend, configuration);
     }
 
+    ~View();
+
     // Client methods
     void setClient(std::unique_ptr<API::ViewClient>&&);
     void frameDisplayed();
@@ -76,6 +83,10 @@ public:
     void setFullScreen(bool fullScreenState) { m_fullScreenModeActive = fullScreenState; };
 #endif
 
+#if HAVE(ACCESSIBILITY)
+    WebKitWebViewAccessible* accessible() const;
+#endif
+
 private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);
 
@@ -93,6 +104,10 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     bool m_fullScreenModeActive { false };
+#endif
+
+#if HAVE(ACCESSIBILITY)
+    mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
 #endif
 };
 

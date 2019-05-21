@@ -51,9 +51,6 @@ list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
 list(APPEND TestWebKit_SOURCES
     ${test_main_SOURCES}
 
-    ${TOOLS_DIR}/wpe/backends/ViewBackend.cpp
-    ${TOOLS_DIR}/wpe/backends/HeadlessViewBackend.cpp
-
     glib/UtilitiesGLib.cpp
 
     wpe/PlatformUtilitiesWPE.cpp

@@ -100,9 +100,17 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 flags.add(WebCore::ActivityState::IsInWindow);
             view.setViewState(flags);
         },
-        // get_accessible
-        nullptr,
 #if WPE_CHECK_VERSION(1, 3, 0)
+        // get_accessible
+        [](void* data) -> void*
+        {
+#if HAVE(ACCESSIBILITY)
+            auto& view = *reinterpret_cast<View*>(data);
+            return view.accessible();
+#else
+            return nullptr;
+#endif
+        },
         // set_device_scale_factor
         [](void* data, float scale)
         {
@@ -110,9 +118,11 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             view.page().setIntrinsicDeviceScaleFactor(scale);
         },
 #else
+        // padding
+        nullptr,
         nullptr,
 #endif // WPE_CHECK_VERSION(1, 3, 0)
-        // padding,
+        // padding
         nullptr
     };
     wpe_view_backend_set_backend_client(m_backend, &s_backendClient, this);
@@ -163,6 +173,14 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     m_pageProxy->initializeWebPage();
 }
 
+View::~View()
+{
+#if HAVE(ACCESSIBILITY)
+    if (m_accessible)
+        webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
+#endif
+}
+
 void View::setClient(std::unique_ptr<API::ViewClient>&& client)
 {
     if (!client)
@@ -206,5 +224,14 @@ void View::close()
 {
     m_pageProxy->close();
 }
+
+#if HAVE(ACCESSIBILITY)
+WebKitWebViewAccessible* View::accessible() const
+{
+    if (!m_accessible)
+        m_accessible = webkitWebViewAccessibleNew(const_cast<View*>(this));
+    return m_accessible.get();
+}
+#endif
 
 } // namespace WKWPE

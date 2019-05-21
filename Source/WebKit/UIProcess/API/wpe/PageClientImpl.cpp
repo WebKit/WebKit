@@ -37,6 +37,10 @@
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
 
+#if HAVE(ACCESSIBILITY)
+#include <atk/atk.h>
+#endif
+
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKWPE::View& view)
@@ -408,5 +412,12 @@ void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String
 {
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
+
+#if HAVE(ACCESSIBILITY)
+AtkObject* PageClientImpl::accessible()
+{
+    return ATK_OBJECT(m_view.accessible());
+}
+#endif
 
 } // namespace WebKit

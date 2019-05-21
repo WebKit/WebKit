@@ -40,7 +40,7 @@ typedef id PlatformUIElement;
 #else
 typedef struct objc_object* PlatformUIElement;
 #endif
-#elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
+#elif HAVE(ACCESSIBILITY) && USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #include <wtf/glib/GRefPtr.h>
@@ -206,7 +206,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC) || USE(ATK)
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else
@@ -214,7 +214,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
 #endif
 
-#if PLATFORM(GTK)
+#if USE(ATK)
     RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned);
@@ -368,7 +368,7 @@ private:
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 
-#if PLATFORM(GTK)
+#if USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 #endif

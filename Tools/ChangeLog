@@ -1,3 +1,56 @@
+2019-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial accessibility support using ATK
+        https://bugs.webkit.org/show_bug.cgi?id=197413
+
+        Reviewed by Michael Catanzaro.
+
+        Add accessibility support in MiniBrowser and backends used by MiniBrowser and tests.
+
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::setNotificationFunctionCallback):
+        (WTR::AccessibilityNotificationHandler::removeAccessibilityNotificationHandler):
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityControllerWPE.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityUIElementWPE.cpp: Removed.
+        * WebKitTestRunner/PlatformWPE.cmake:
+        * wpe/backends/CMakeLists.txt:
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::addKeyEventListener):
+        (WPEToolingBackends::removeKeyEventListener):
+        (WPEToolingBackends::notifyAccessibilityKeyEventListeners):
+        (WPEToolingBackends::ViewBackend::initialize):
+        (WPEToolingBackends::ViewBackend::initializeAccessibility):
+        (WPEToolingBackends::ViewBackend::updateAccessibilityState):
+        (WPEToolingBackends::ViewBackend::setAccessibleChild):
+        (WPEToolingBackends::ViewBackend::addActivityState):
+        (WPEToolingBackends::ViewBackend::removeActivityState):
+        (WPEToolingBackends::ViewBackend::dispatchInputKeyboardEvent):
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/WebKitAccessibleApplication.cpp: Added.
+        (webkitAccessibleApplicationWindowInterfaceInit):
+        (webkitAccessibleApplicationFinalize):
+        (webkitAccessibleApplicationInitialize):
+        (webkitAccessibleApplicationGetNChildren):
+        (webkitAccessibleApplicationRefChild):
+        (webkitAccessibleApplicationGetName):
+        (webkit_accessible_application_class_init):
+        (webkit_accessible_application_init):
+        (webkitAccessibleApplicationNew):
+        (webkitAccessibleApplicationSetChild):
+        * wpe/backends/WebKitAccessibleApplication.h: Added.
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+        * wpe/jhbuild.modules:
+
 2019-05-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-webkit-tests not gathering crash logs on Cygwin Python and Windows Python

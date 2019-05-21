@@ -1,0 +1,20 @@
+Some text  Some other text   
+aria
+
+labelledby
+
+Some text 
+This tests that the aria-label attribute works on element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS titleUIElement1.isEqual(accessibilityController.accessibleElementById('label1')) is true
+PASS input1.title is 'AXTitle: aria label'
+PASS titleUIElement2.isEqual(accessibilityController.accessibleElementById('label2')) is true
+PASS input3.title is 'AXTitle: hidden aria label'
+PASS input4.title is 'AXTitle: aria labelledby'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

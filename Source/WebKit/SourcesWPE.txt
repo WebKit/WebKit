@@ -164,6 +164,7 @@ UIProcess/API/glib/WebKitVersion.cpp @no-unify
 UIProcess/API/glib/WebKitWebContext.cpp @no-unify
 UIProcess/API/glib/WebKitWebResource.cpp @no-unify
 UIProcess/API/glib/WebKitWebView.cpp @no-unify
+UIProcess/API/glib/WebKitWebViewAccessible.cpp @no-unify
 UIProcess/API/glib/WebKitWebViewSessionState.cpp @no-unify
 UIProcess/API/glib/WebKitWebsiteData.cpp @no-unify
 UIProcess/API/glib/WebKitWebsiteDataManager.cpp @no-unify
@@ -247,6 +248,8 @@ WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+
+WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp
 
 WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 

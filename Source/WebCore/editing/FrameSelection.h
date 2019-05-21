@@ -385,7 +385,7 @@ inline void FrameSelection::clearTypingStyle()
     m_typingStyle = nullptr;
 }
 
-#if !(PLATFORM(COCOA) || PLATFORM(GTK))
+#if !(PLATFORM(COCOA) || USE(ATK))
 #if HAVE(ACCESSIBILITY)
 inline void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent&)
 {

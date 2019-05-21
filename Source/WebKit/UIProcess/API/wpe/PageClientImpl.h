@@ -29,6 +29,7 @@
 #include "WebFullScreenManagerProxy.h"
 
 struct wpe_view_backend;
+typedef struct _AtkObject AtkObject;
 
 namespace WKWPE {
 class View;
@@ -54,6 +55,10 @@ public:
     virtual ~PageClientImpl();
 
     struct wpe_view_backend* viewBackend();
+
+#if HAVE(ACCESSIBILITY)
+    AtkObject* accessible();
+#endif
 
 private:
     // PageClient

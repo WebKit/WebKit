@@ -463,15 +463,15 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
         }
 
         if (isFocused)
-            wpe_view_backend_add_activity_state(window.backend(), wpe_view_activity_state_focused);
+            window.addActivityState(wpe_view_activity_state_focused);
         else
-            wpe_view_backend_remove_activity_state(window.backend(), wpe_view_activity_state_focused);
+            window.removeActivityState(wpe_view_activity_state_focused);
     },
     // close
     [](void* data, struct zxdg_toplevel_v6*)
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
-        wpe_view_backend_remove_activity_state(window.backend(), wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
+        window.removeActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
     },
 };
 
@@ -522,7 +522,7 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
             zxdg_toplevel_v6_add_listener(m_xdgToplevel, &s_xdgToplevelListener, this);
             zxdg_toplevel_v6_set_title(m_xdgToplevel, "WPE");
             wl_surface_commit(m_surface);
-            wpe_view_backend_add_activity_state(backend(), wpe_view_activity_state_visible | wpe_view_activity_state_in_window);
+            addActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_in_window);
         }
     }
 

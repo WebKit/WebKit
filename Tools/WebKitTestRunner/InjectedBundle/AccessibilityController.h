@@ -31,7 +31,7 @@
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <wtf/Platform.h>
-#if PLATFORM(GTK)
+#if USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #endif
 
@@ -73,7 +73,7 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#elif USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 };

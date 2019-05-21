@@ -394,6 +394,8 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     AtkAttributeSet* attributeSet = nullptr;
 #if PLATFORM(GTK)
     attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
+#elif PLATFORM(WPE)
+    attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WPEWebKit");
 #endif
 
     auto* coreObject = accessible->priv->object;

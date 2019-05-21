@@ -32,6 +32,7 @@ typedef void* EGLConfig;
 typedef void* EGLContext;
 typedef void* EGLDisplay;
 typedef void* EGLImageKHR;
+typedef struct _AtkObject AtkObject;
 
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST
@@ -54,6 +55,9 @@ public:
         virtual bool dispatchTouchEvent(struct wpe_input_touch_event*) { return false; }
     };
     void setInputClient(std::unique_ptr<InputClient>&&);
+#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+    void setAccessibleChild(AtkObject*);
+#endif
 
     struct wpe_view_backend* backend() const;
 
@@ -61,6 +65,11 @@ protected:
     ViewBackend(uint32_t width, uint32_t height);
 
     bool initialize();
+    void initializeAccessibility();
+    void updateAccessibilityState(uint32_t);
+
+    void addActivityState(uint32_t);
+    void removeActivityState(uint32_t);
 
     void dispatchInputPointerEvent(struct wpe_input_pointer_event*);
     void dispatchInputAxisEvent(struct wpe_input_axis_event*);

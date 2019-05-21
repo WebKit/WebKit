@@ -1,3 +1,66 @@
+2019-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial accessibility support using ATK
+        https://bugs.webkit.org/show_bug.cgi?id=197413
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip accessibility tests that are passing now and add platform specific results.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/accessibility/add-children-pseudo-element-expected.txt: Added.
+        * platform/wpe/accessibility/aria-fallback-roles-expected.txt: Added.
+        * platform/wpe/accessibility/aria-hidden-negates-no-visibility-expected.txt: Added.
+        * platform/wpe/accessibility/aria-label-on-label-element-expected.txt: Added.
+        * platform/wpe/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Added.
+        * platform/wpe/accessibility/aria-labelledby-overrides-label-expected.txt: Added.
+        * platform/wpe/accessibility/aria-option-role-expected.txt: Added.
+        * platform/wpe/accessibility/aria-roledescription-expected.txt: Added.
+        * platform/wpe/accessibility/aria-switch-sends-notification-expected.txt: Added.
+        * platform/wpe/accessibility/aria-tab-roles-expected.txt: Added.
+        * platform/wpe/accessibility/aria-table-attributes-expected.txt: Added.
+        * platform/wpe/accessibility/aria-table-content-expected.txt: Added.
+        * platform/wpe/accessibility/aria-toggle-button-with-title-expected.txt: Added.
+        * platform/wpe/accessibility/auto-fill-crash-expected.txt: Added.
+        * platform/wpe/accessibility/button-with-aria-haspopup-role-expected.txt: Added.
+        * platform/wpe/accessibility/color-well-expected.txt: Added.
+        * platform/wpe/accessibility/deleting-iframe-destroys-axcache-expected.txt: Added.
+        * platform/wpe/accessibility/dimensions-include-descendants-expected.txt: Added.
+        * platform/wpe/accessibility/double-nested-inline-element-missing-from-tree-expected.txt: Added.
+        * platform/wpe/accessibility/empty-image-with-title-expected.txt: Added.
+        * platform/wpe/accessibility/file-upload-button-stringvalue-expected.txt: Added.
+        * platform/wpe/accessibility/help-text-expected.txt: Added.
+        * platform/wpe/accessibility/image-link-expected.txt: Added.
+        * platform/wpe/accessibility/image-map1-expected.txt: Added.
+        * platform/wpe/accessibility/image-map2-expected.txt: Added.
+        * platform/wpe/accessibility/inline-continuations-expected.txt: Added.
+        * platform/wpe/accessibility/label-with-pseudo-elements-expected.txt: Added.
+        * platform/wpe/accessibility/list-detection-expected.txt: Added.
+        * platform/wpe/accessibility/lists-expected.txt: Added.
+        * platform/wpe/accessibility/math-multiscript-attributes-expected.txt: Added.
+        * platform/wpe/accessibility/media-emits-object-replacement-expected.txt: Added.
+        * platform/wpe/accessibility/menu-list-crash2-expected.txt: Added.
+        * platform/wpe/accessibility/minimal-table-with-aria-is-data-table-expected.txt: Added.
+        * platform/wpe/accessibility/press-targets-center-point-expected.txt: Added.
+        * platform/wpe/accessibility/radio-button-title-label-expected.txt: Added.
+        * platform/wpe/accessibility/render-counter-text-expected.txt: Added.
+        * platform/wpe/accessibility/roles-computedRoleString-expected.txt: Added.
+        * platform/wpe/accessibility/roles-exposed-expected.txt: Added.
+        * platform/wpe/accessibility/set-selected-text-range-contenteditable-expected.txt: Added.
+        * platform/wpe/accessibility/svg-remote-element-expected.txt: Added.
+        * platform/wpe/accessibility/tabindex-elements-are-accessible-expected.txt: Added.
+        * platform/wpe/accessibility/table-attributes-expected.txt: Added.
+        * platform/wpe/accessibility/table-cell-spans-expected.txt: Added.
+        * platform/wpe/accessibility/table-cells-expected.txt: Added.
+        * platform/wpe/accessibility/table-cells-roles-expected.txt: Added.
+        * platform/wpe/accessibility/table-column-headers-with-captions-expected.txt: Added.
+        * platform/wpe/accessibility/table-one-cell-expected.txt: Added.
+        * platform/wpe/accessibility/table-roles-hierarchy-expected.txt: Added.
+        * platform/wpe/accessibility/table-sections-expected.txt: Added.
+        * platform/wpe/accessibility/table-with-rules-expected.txt: Added.
+        * platform/wpe/accessibility/text-alternative-calculation-hidden-nodes-expected.txt: Added.
+        * platform/wpe/accessibility/transformed-element-expected.txt: Added.
+
 2019-05-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Layout viewport size on google.com increases after rotating to landscape and back

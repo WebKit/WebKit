@@ -216,10 +216,12 @@ messages -> WebPageProxy {
     PluginScaleFactorDidChange(double zoomFactor)
     PluginZoomFactorDidChange(double zoomFactor)
 
-#if PLATFORM(GTK)
+#if USE(ATK)
     # Support for connecting the Accessibility worlds of the UI and the Web processes
     BindAccessibilityTree(String plugID)
+#endif
 
+#if PLATFORM(GTK)
     SetInputMethodState(bool enabled);
 #endif
 

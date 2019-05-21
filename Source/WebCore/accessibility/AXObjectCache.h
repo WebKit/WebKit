@@ -40,7 +40,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(GTK)
+#if USE(ATK)
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -485,7 +485,7 @@ private:
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
 
-#if PLATFORM(GTK)
+#if USE(ATK)
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredAttachedWrapperObjectList;
     ListHashSet<GRefPtr<AccessibilityObjectWrapper>> m_deferredDetachedWrapperList;
 #endif

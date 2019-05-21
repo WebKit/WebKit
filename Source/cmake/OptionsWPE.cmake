@@ -61,6 +61,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FE
 # Public options specific to the WPE port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to any other WebKit ports.
+WEBKIT_OPTION_DEFINE(ENABLE_ACCESSIBILITY "Whether to enable support for accessibility" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
@@ -105,6 +106,17 @@ WEBKIT_OPTION_DEPEND(USE_EXTERNAL_HOLEPUNCH ENABLE_VIDEO)
 include(GStreamerDependencies)
 
 WEBKIT_OPTION_END()
+
+if (ENABLE_ACCESSIBILITY)
+    find_package(ATK)
+    if (NOT ATK_FOUND)
+        message(FATAL_ERROR "atk is needed for ENABLE_ACCESSIBILITY")
+    endif ()
+    find_package(ATKBridge)
+    if (NOT ATK_BRIDGE_FOUND)
+        message(FATAL_ERROR "at-spi2-atk is needed for ENABLE_ACCESSIBILITY")
+    endif ()
+endif ()
 
 if (USE_OPENJPEG)
     find_package(OpenJPEG)
@@ -152,6 +164,8 @@ add_definitions(-DBUILDING_WPE__=1)
 add_definitions(-DGETTEXT_PACKAGE="WPE")
 add_definitions(-DJSC_GLIB_API_ENABLED)
 
+SET_AND_EXPOSE_TO_BUILD(HAVE_ACCESSIBILITY ${ENABLE_ACCESSIBILITY})
+SET_AND_EXPOSE_TO_BUILD(USE_ATK ${ENABLE_ACCESSIBILITY})
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_EGL TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)

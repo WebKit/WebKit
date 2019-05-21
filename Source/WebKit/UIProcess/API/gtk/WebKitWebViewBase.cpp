@@ -43,7 +43,7 @@
 #include "WebInspectorProxy.h"
 #include "WebKit2Initialize.h"
 #include "WebKitEmojiChooser.h"
-#include "WebKitWebViewBaseAccessible.h"
+#include "WebKitWebViewAccessible.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -561,6 +561,7 @@ static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
+    webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
 #if GTK_CHECK_VERSION(3, 24, 0)
     webkitWebViewBaseCompleteEmojiChooserRequest(webView, emptyString());
 #endif
@@ -1301,7 +1302,7 @@ static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
     if (!priv->accessible) {
         // Create the accessible object and associate it to the widget.
-        priv->accessible = adoptGRef(ATK_OBJECT(webkitWebViewBaseAccessibleNew(widget)));
+        priv->accessible = adoptGRef(ATK_OBJECT(webkitWebViewAccessibleNew(widget)));
 
         // Set the parent to not break bottom-up navigation.
         if (auto* parentWidget = gtk_widget_get_parent(widget)) {

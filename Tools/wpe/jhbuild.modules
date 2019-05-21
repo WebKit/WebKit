@@ -27,6 +27,8 @@
       <dep package="wayland-protocols"/>
       <dep package="openjpeg"/>
       <dep package="xdg-dbus-proxy"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-atk"/>
     </dependencies>
   </metamodule>
 
@@ -276,5 +278,37 @@
       <dep package="glib"/>
     </dependencies>
   </autotools>
+
+
+  <meson id="atk" mesonargs="-Dintrospection=false">
+    <branch module="pub/GNOME/sources/atk/2.32/atk-2.32.0.tar.xz" version="2.32.0"
+            repo="ftp.gnome.org"
+            hash="sha256:cb41feda7fe4ef0daa024471438ea0219592baf7c291347e5a858bb64e4091cc"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
+
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no">
+    <branch module="pub/GNOME/sources/at-spi2-core/2.32/at-spi2-core-2.32.1.tar.xz" version="2.32.1"
+            repo="ftp.gnome.org"
+            hash="sha256:3c2aa937ebfaca2c86569bce9b16a34fbe20d69ef0c58846313b1c42f53b0d53">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
+
+  <meson id="at-spi2-atk">
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.32/at-spi2-atk-2.32.0.tar.xz" version="2.32.0"
+            repo="ftp.gnome.org"
+            hash="sha256:0b51e6d339fa2bcca3a3e3159ccea574c67b107f1ac8b00047fa60e34ce7a45c">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
+  </meson>
 
 </moduleset>

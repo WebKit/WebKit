@@ -33,6 +33,10 @@
 #include <memory>
 #include <wpe/webkit.h>
 
+#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#include <atk/atk.h>
+#endif
+
 static const char** uriArguments;
 static const char** ignoreHosts;
 static gboolean headlessMode;
@@ -248,6 +252,11 @@ int main(int argc, char *argv[])
     g_object_unref(settings);
 
     backendPtr->setInputClient(std::make_unique<InputClient>(loop, webView));
+#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+    auto* accessible = wpe_view_backend_dispatch_get_accessible(wpeBackend);
+    if (ATK_IS_OBJECT(accessible))
+        backendPtr->setAccessibleChild(ATK_OBJECT(accessible));
+#endif
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
