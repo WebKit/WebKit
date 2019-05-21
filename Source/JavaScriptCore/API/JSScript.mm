@@ -38,8 +38,10 @@
 #import "ParserError.h"
 #import "Symbol.h"
 #include <sys/stat.h>
+#include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Scope.h>
+#include <wtf/spi/darwin/DataVaultSPI.h>
 
 #if JSC_OBJC_API_ENABLED
 
@@ -60,9 +62,52 @@ static JSScript *createError(NSString *message, NSError** error)
     return nil;
 }
 
+static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
+{
+    if (!cachePath)
+        return true;
+
+    URL cachePathURL([cachePath absoluteURL]);
+    if (!cachePathURL.isLocalFile()) {
+        createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSString *>(cachePathURL)], error);
+        return false;
+    }
+
+    String systemPath = cachePathURL.fileSystemPath();
+
+    if (auto metadata = FileSystem::fileMetadata(systemPath)) {
+        if (metadata->type != FileMetadata::Type::File) {
+            createError([NSString stringWithFormat:@"Cache path `%s` already exists and is not a file", systemPath.utf8().data()], error);
+            return false;
+        }
+    }
+
+    String directory = FileSystem::directoryName(systemPath);
+    if (directory.isNull()) {
+        createError([NSString stringWithFormat:@"Cache path `%s` does not contain in a valid directory", systemPath.utf8().data()], error);
+        return false;
+    }
+
+    if (!FileSystem::fileIsDirectory(directory, FileSystem::ShouldFollowSymbolicLinks::No)) {
+        createError([NSString stringWithFormat:@"Cache directory `%s` is not a directory or does not exist", directory.utf8().data()], error);
+        return false;
+    }
+
+#if USE(APPLE_INTERNAL_SDK)
+    if (rootless_check_datavault_flag(FileSystem::fileSystemRepresentation(directory).data(), nullptr)) {
+        createError([NSString stringWithFormat:@"Cache directory `%s` is not a data vault", directory.utf8().data()], error);
+        return false;
+    }
+#endif
+
+    return true;
+}
+
 + (instancetype)scriptOfType:(JSScriptType)type withSource:(NSString *)source andSourceURL:(NSURL *)sourceURL andBytecodeCache:(NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError **)error
 {
-    UNUSED_PARAM(error);
+    if (!validateBytecodeCachePath(cachePath, error))
+        return nil;
+
     JSScript *result = [[[JSScript alloc] init] autorelease];
     result->m_virtualMachine = vm;
     result->m_type = type;
@@ -75,7 +120,9 @@ static JSScript *createError(NSString *message, NSError** error)
 
 + (instancetype)scriptOfType:(JSScriptType)type memoryMappedFromASCIIFile:(NSURL *)filePath withSourceURL:(NSURL *)sourceURL andBytecodeCache:(NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError **)error
 {
-    UNUSED_PARAM(error);
+    if (!validateBytecodeCachePath(cachePath, error))
+        return nil;
+
     URL filePathURL([filePath absoluteURL]);
     if (!filePathURL.isLocalFile())
         return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSString *>(filePathURL)], error);

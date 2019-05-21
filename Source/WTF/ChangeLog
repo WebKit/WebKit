@@ -1,3 +1,15 @@
+2019-05-20  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Only cache bytecode for API clients in data vaults
+        https://bugs.webkit.org/show_bug.cgi?id=197898
+
+        Reviewed by Keith Miller.
+
+        Add SPI to check if a filesystem path is restricted as a data vault.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/darwin/DataVaultSPI.h: Added.
+
 2019-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Repeating timer is not stopped when stop is called from the callback

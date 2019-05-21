@@ -288,6 +288,7 @@
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutodrainedPool.cpp; sourceTree = "<group>"; };
+		14933E21228C22DF00F79E46 /* DataVaultSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataVaultSPI.h; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
 		14E785E71DFB330100209BD1 /* OrdinalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdinalNumber.h; sourceTree = "<group>"; };
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
@@ -1363,6 +1364,7 @@
 		CE73E02319DCB7AB00580D5C /* darwin */ = {
 			isa = PBXGroup;
 			children = (
+				14933E21228C22DF00F79E46 /* DataVaultSPI.h */,
 				E431CC4A21187ADB000C8A07 /* DispatchSPI.h */,
 				93DDE9311CDC052D00FD3491 /* dyldSPI.h */,
 				A5098AFF1C169E0700087797 /* SandboxSPI.h */,

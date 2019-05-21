@@ -40,6 +40,7 @@
 #import "JSWrapperMapTests.h"
 #import "Regress141275.h"
 #import "Regress141809.h"
+#import <wtf/spi/darwin/DataVaultSPI.h>
 
 #if __has_include(<libproc.h>)
 #define HAS_LIBPROC 1
@@ -2076,6 +2077,27 @@ static NSURL *tempFile(NSString *string)
     return [tempDirectory URLByAppendingPathComponent:string];
 }
 
+static NSURL* cacheFileInDataVault(NSString* name)
+{
+#if USE(APPLE_INTERNAL_SDK)
+    static NSURL* dataVaultURL;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        char userDir[PATH_MAX];
+        RELEASE_ASSERT(confstr(_CS_DARWIN_USER_DIR, userDir, sizeof(userDir)));
+
+        NSString *userDirPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:userDir length:strlen(userDir)];
+        dataVaultURL = [NSURL fileURLWithPath:userDirPath isDirectory:YES];
+        dataVaultURL = [dataVaultURL URLByAppendingPathComponent:@"JavaScriptCore" isDirectory:YES];
+        rootless_mkdir_datavault(dataVaultURL.path.UTF8String, 0700, "JavaScriptCore");
+    });
+
+    return [dataVaultURL URLByAppendingPathComponent:name isDirectory:NO];
+#else
+    return tempFile(name);
+#endif
+}
+
 static void testModuleBytecodeCache()
 {
     @autoreleasepool {
@@ -2087,9 +2109,9 @@ static void testModuleBytecodeCache()
         NSURL *barPath = tempFile(@"bar.js");
         NSURL *bazPath = tempFile(@"baz.js");
 
-        NSURL *fooCachePath = tempFile(@"foo.js.cache");
-        NSURL *barCachePath = tempFile(@"bar.js.cache");
-        NSURL *bazCachePath = tempFile(@"baz.js.cache");
+        NSURL *fooCachePath = cacheFileInDataVault(@"foo.js.cache");
+        NSURL *barCachePath = cacheFileInDataVault(@"bar.js.cache");
+        NSURL *bazCachePath = cacheFileInDataVault(@"baz.js.cache");
 
         NSURL *fooFakePath = [NSURL fileURLWithPath:@"/foo.js"];
         NSURL *barFakePath = [NSURL fileURLWithPath:@"/directory/bar.js"];
@@ -2110,7 +2132,8 @@ static void testModuleBytecodeCache()
                 script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:bazPath withSourceURL:bazFakePath andBytecodeCache:bazCachePath inVirtualMachine:context.virtualMachine error:nil];
 
             if (script) {
-                if (![script cacheBytecodeWithError:nil])
+                NSError *error = nil;
+                if (![script cacheBytecodeWithError:&error])
                     CRASH();
                 [resolve callWithArguments:@[script]];
             } else
@@ -2142,7 +2165,7 @@ static void testProgramBytecodeCache()
 {
     @autoreleasepool {
         NSString *fooSource = @"function foo() { return 42; }; function bar() { return 40; }; foo() + bar();";
-        NSURL *fooCachePath = tempFile(@"foo.js.cache");
+        NSURL *fooCachePath = cacheFileInDataVault(@"foo.js.cache");
         JSContext *context = [[JSContext alloc] init];
         JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:fooSource andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
         RELEASE_ASSERT(script);
@@ -2166,7 +2189,7 @@ static void testBytecodeCacheWithSyntaxError(JSScriptType type)
 {
     @autoreleasepool {
         NSString *fooSource = @"this is a syntax error";
-        NSURL *fooCachePath = tempFile(@"foo.js.cache");
+        NSURL *fooCachePath = cacheFileInDataVault(@"foo.js.cache");
         JSContext *context = [[JSContext alloc] init];
         JSScript *script = [JSScript scriptOfType:type withSource:fooSource andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
         RELEASE_ASSERT(script);
@@ -2180,7 +2203,8 @@ static void testBytecodeCacheWithSyntaxError(JSScriptType type)
 
 static void testBytecodeCacheWithSameCacheFileAndDifferentScript(bool forceDiskCache)
 {
-    NSURL *cachePath = tempFile(@"cachePath.cache");
+
+    NSURL *cachePath = cacheFileInDataVault(@"cachePath.cache");
     NSURL *sourceURL = [NSURL URLWithString:@"my-path"];
 
     @autoreleasepool {
@@ -2220,6 +2244,7 @@ static void testBytecodeCacheWithSameCacheFileAndDifferentScript(bool forceDiskC
     NSFileManager* fileManager = [NSFileManager defaultManager];
     BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
     checkResult(@"Removed all temp files created", removedAll);
+
 }
 
 static void testProgramJSScriptException()
@@ -2245,7 +2270,7 @@ static void testProgramJSScriptException()
 
 static void testCacheFileFailsWhenItsAlreadyCached()
 {
-    NSURL* cachePath = tempFile(@"foo.program.cache");
+    NSURL* cachePath = cacheFileInDataVault(@"foo.program.cache");
     NSURL* sourceURL = [NSURL URLWithString:@"my-path"];
     NSString *source = @"function foo() { return 42; } foo();";
 
@@ -2285,7 +2310,7 @@ static void testCanCacheManyFilesWithTheSameVM()
     NSMutableArray *scripts = [[NSMutableArray alloc] init];
 
     for (unsigned i = 0; i < 10000; ++i)
-        [cachePaths addObject:tempFile([NSString stringWithFormat:@"cache-%d.cache", i])];
+        [cachePaths addObject:cacheFileInDataVault([NSString stringWithFormat:@"cache-%d.cache", i])];
 
     JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
     bool cachedAll = true;
@@ -2323,7 +2348,7 @@ static void testCanCacheManyFilesWithTheSameVM()
 
 static void testIsUsingBytecodeCacheAccessor()
 {
-    NSURL* cachePath = tempFile(@"foo.program.cache");
+    NSURL* cachePath = cacheFileInDataVault(@"foo.program.cache");
     NSURL* sourceURL = [NSURL URLWithString:@"my-path"];
     NSString *source = @"function foo() { return 1337; } foo();";
 
@@ -2354,6 +2379,44 @@ static void testIsUsingBytecodeCacheAccessor()
     NSFileManager* fileManager = [NSFileManager defaultManager];
     BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
     checkResult(@"Successfully removed cache file", removedAll);
+}
+
+static void testBytecodeCacheValidation()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        auto testInvalidCacheURL = [&](NSURL* cacheURL, NSString* expectedErrorMessage)
+        {
+            NSError* error;
+            JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:@"" andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:cacheURL inVirtualMachine:context.virtualMachine error:&error];
+            RELEASE_ASSERT(!script);
+            RELEASE_ASSERT(error);
+            NSString* testDesciption = [NSString stringWithFormat:@"Cache path validation for `%@` fails with message `%@`", cacheURL.absoluteString, expectedErrorMessage];
+            checkResult(testDesciption, [error.description containsString:expectedErrorMessage]);
+        };
+
+        testInvalidCacheURL([NSURL URLWithString:@""], @"Cache path `` is not a local file");
+        testInvalidCacheURL([NSURL URLWithString:@"file:///"], @"Cache path `/` already exists and is not a file");
+        testInvalidCacheURL([NSURL URLWithString:@"file:///a/b/c/d/e"], @"Cache directory `/a/b/c/d` is not a directory or does not exist");
+        testInvalidCacheURL([NSURL URLWithString:@"file:///private/tmp/file.cache"], @"Cache directory `/private/tmp` is not a data vault");
+    }
+
+#if USE(APPLE_INTERNAL_SDK)
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        auto testValidCacheURL = [&](NSURL* cacheURL)
+        {
+            NSError* error;
+            JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:@"" andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:cacheURL inVirtualMachine:context.virtualMachine error:&error];
+            NSString* testDesciption = [NSString stringWithFormat:@"Cache path validation for `%@` passed", cacheURL.absoluteString];
+            checkResult(testDesciption, script && !error);
+        };
+
+        testValidCacheURL(cacheFileInDataVault(@"file.cache"));
+    }
+#endif
 }
 
 @interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
@@ -2628,6 +2691,7 @@ void testObjectiveCAPI(const char* filter)
     RUN(testCacheFileFailsWhenItsAlreadyCached());
     RUN(testCanCacheManyFilesWithTheSameVM());
     RUN(testIsUsingBytecodeCacheAccessor());
+    RUN(testBytecodeCacheValidation());
 
     RUN(testLoaderRejectsNilScriptURL());
     RUN(testLoaderRejectsFailedFetch());
