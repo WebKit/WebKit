@@ -6,11 +6,10 @@
 body { overflow: hidden }
 .scroll-content { width: 500px; height: 5000px; border: 2px solid green; }
 </style>
-<body onload="runTest()">
-<iframe srcdoc="
+<body>
+<iframe scrolling="no" srcdoc="
     <html>
     <style>
-    body { overflow: hidden }
     .scroll-content { width: 500px; height: 5000px; border: 2px solid green; transform:translateZ(0) }
     </style>
     <body>
