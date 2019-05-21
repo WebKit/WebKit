@@ -102,22 +102,6 @@ public:
         return (*func)(*this);
     }
 
-    struct Repeat {
-        Repeat(unsigned inWidth, char inCharacter)
-            : width(inWidth), character(inCharacter)
-        { }
-        unsigned width { 0 };
-        char character { ' ' };
-    };
-
-    TextStream& operator<<(const Repeat& repeated)
-    {
-        for (unsigned i = 0; i < repeated.width; ++i)
-            m_text.append(repeated.character);
-
-        return *this;
-    }
-
     class IndentScope {
     public:
         IndentScope(TextStream& ts, int amount = 1)

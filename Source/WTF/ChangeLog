@@ -1,5 +1,9 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Revert r245336. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245336. rdar://problem/50865946
 
     Make LOG_WITH_STREAM more efficient

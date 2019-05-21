@@ -268,20 +268,6 @@ void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 #endif
 }
 
-#if !LOG_DISABLED
-static TextStream& operator<<(TextStream& ts, const ClipRects& clipRects)
-{
-    TextStream::GroupScope scope(ts);
-    ts << indent << "ClipRects\n";
-    ts << indent << "  overflow  : " << clipRects.overflowClipRect() << "\n";
-    ts << indent << "  fixed     : " << clipRects.fixedClipRect() << "\n";
-    ts << indent << "  positioned: " << clipRects.posClipRect() << "\n";
-
-    return ts;
-}
-
-#endif
-
 RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     : m_isRenderViewLayer(rendererLayerModelObject.isRenderView())
     , m_forcedStackingContext(rendererLayerModelObject.isMedia())
@@ -379,12 +365,6 @@ RenderLayer::~RenderLayer()
     clearResizer();
 
     clearLayerFilters();
-
-    if (paintsIntoProvidedBacking()) {
-        auto* backingProviderLayer = this->backingProviderLayer();
-        if (backingProviderLayer->backing())
-            backingProviderLayer->backing()->removeBackingSharingLayer(*this);
-    }
 
     // Child layers will be deleted by their corresponding render objects, so
     // we don't need to delete them ourselves.
@@ -1683,23 +1663,6 @@ static inline bool isContainerForPositioned(RenderLayer& layer, PositionType pos
     }
 }
 
-bool RenderLayer::ancestorLayerIsInContainingBlockChain(const RenderLayer& ancestor, const RenderLayer* checkLimit) const
-{
-    if (&ancestor == this)
-        return true;
-
-    for (const auto* currentBlock = renderer().containingBlock(); currentBlock && !is<RenderView>(*currentBlock); currentBlock = currentBlock->containingBlock()) {
-        auto* currLayer = currentBlock->layer();
-        if (currLayer == &ancestor)
-            return true;
-        
-        if (currLayer && currLayer == checkLimit)
-            return false;
-    }
-    
-    return false;
-}
-
 RenderLayer* RenderLayer::enclosingAncestorForPosition(PositionType position) const
 {
     RenderLayer* curr = parent();
@@ -1783,27 +1746,6 @@ inline bool RenderLayer::shouldRepaintAfterLayout() const
     return !isComposited() || backing()->paintsIntoCompositedAncestor();
 }
 
-void RenderLayer::setBackingProviderLayer(RenderLayer* backingProvider)
-{
-    if (backingProvider == m_backingProviderLayer)
-        return;
-
-    if (!renderer().renderTreeBeingDestroyed())
-        clearClipRectsIncludingDescendants();
-
-    m_backingProviderLayer = makeWeakPtr(backingProvider);
-}
-
-void RenderLayer::disconnectFromBackingProviderLayer()
-{
-    if (!m_backingProviderLayer)
-        return;
-    
-    ASSERT(m_backingProviderLayer->isComposited());
-    if (m_backingProviderLayer->isComposited())
-        m_backingProviderLayer->backing()->removeBackingSharingLayer(*this);
-}
-
 bool compositedWithOwnBackingStore(const RenderLayer& layer)
 {
     return layer.isComposited() && !layer.backing()->paintsIntoCompositedAncestor();
@@ -1824,23 +1766,12 @@ RenderLayer* RenderLayer::enclosingCompositingLayer(IncludeSelfOrNot includeSelf
 
 RenderLayer* RenderLayer::enclosingCompositingLayerForRepaint(IncludeSelfOrNot includeSelf) const
 {
-    auto repaintTargetForLayer = [](const RenderLayer& layer) -> RenderLayer* {
-        if (compositedWithOwnBackingStore(layer))
-            return const_cast<RenderLayer*>(&layer);
-        
-        if (layer.paintsIntoProvidedBacking())
-            return layer.backingProviderLayer();
-        
-        return nullptr;
-    };
-
-    RenderLayer* repaintTarget = nullptr;
-    if (includeSelf == IncludeSelf && (repaintTarget = repaintTargetForLayer(*this)))
-        return repaintTarget;
+    if (includeSelf == IncludeSelf && compositedWithOwnBackingStore(*this))
+        return const_cast<RenderLayer*>(this);
 
     for (const RenderLayer* curr = paintOrderParent(); curr; curr = curr->paintOrderParent()) {
-        if ((repaintTarget = repaintTargetForLayer(*curr)))
-            return repaintTarget;
+        if (compositedWithOwnBackingStore(*curr))
+            return const_cast<RenderLayer*>(curr);
     }
          
     return nullptr;
@@ -1922,9 +1853,6 @@ RenderLayer* RenderLayer::clippingRootForPainting() const
     if (isComposited())
         return const_cast<RenderLayer*>(this);
 
-    if (paintsIntoProvidedBacking())
-        return backingProviderLayer();
-
     const RenderLayer* current = this;
     while (current) {
         if (current->isRenderViewLayer())
@@ -1934,9 +1862,6 @@ RenderLayer* RenderLayer::clippingRootForPainting() const
         ASSERT(current);
         if (current->transform() || compositedWithOwnBackingStore(*current))
             return const_cast<RenderLayer*>(current);
-
-        if (current->paintsIntoProvidedBacking())
-            return current->backingProviderLayer();
     }
 
     ASSERT_NOT_REACHED();
@@ -3723,8 +3648,10 @@ void RenderLayer::updateScrollInfoAfterLayout()
         setNeedsCompositingConfigurationUpdate();
     }
 
+#if PLATFORM(IOS_FAMILY)
     if (canUseCompositedScrolling())
         setNeedsPostLayoutCompositingUpdate();
+#endif
 
     updateScrollSnapState();
 }
@@ -4001,6 +3928,18 @@ void RenderLayer::paintOverlayScrollbars(GraphicsContext& context, const LayoutR
     m_containsDirtyOverlayScrollbars = false;
 }
 
+static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLayer)
+{
+    if (startLayer == endLayer)
+        return true;
+    for (const auto* currentBlock = startLayer->renderer().containingBlock(); currentBlock && !is<RenderView>(*currentBlock); currentBlock = currentBlock->containingBlock()) {
+        if (currentBlock->layer() == endLayer)
+            return true;
+    }
+    
+    return false;
+}
+
 void RenderLayer::clipToRect(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const ClipRect& clipRect, BorderRadiusClippingRule rule)
 {
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
@@ -4019,7 +3958,7 @@ void RenderLayer::clipToRect(GraphicsContext& context, const LayerPaintingInfo& 
         // any layers with overflow. The condition for being able to apply these clips is that the overflow object be in our
         // containing block chain so we check that also.
         for (RenderLayer* layer = rule == IncludeSelfForBorderRadius ? this : parent(); layer; layer = layer->parent()) {
-            if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && ancestorLayerIsInContainingBlockChain(*layer)) {
+            if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && inContainingBlockChain(this, layer)) {
                 LayoutRect adjustedClipRect = LayoutRect(toLayoutPoint(layer->offsetFromAncestor(paintingInfo.rootLayer, AdjustForColumns)), layer->size());
                 adjustedClipRect.move(paintingInfo.subpixelOffset);
                 FloatRoundedRect roundedRect = layer->renderer().style().getRoundedInnerBorderFor(adjustedClipRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
@@ -4081,49 +4020,32 @@ static inline bool paintForFixedRootBackground(const RenderLayer* layer, OptionS
 
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
 {
-    auto shouldContinuePaint = [&] () {
-        return backing()->paintsIntoWindow()
-            || backing()->paintsIntoCompositedAncestor()
-            || shouldDoSoftwarePaint(this, paintFlags.contains(PaintLayerPaintingReflection))
-            || paintForFixedRootBackground(this, paintFlags);
-    };
-
-    auto paintsIntoDifferentCompositedDestination = [&]() {
-        if (paintsIntoProvidedBacking())
-            return true;
-    
-        if (isComposited() && !shouldContinuePaint())
-            return true;
-
-        return false;
-    };
-    
-    if (paintsIntoDifferentCompositedDestination()) {
-        if (!context.performingPaintInvalidation() && !(paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers))
+    if (isComposited()) {
+        // The performingPaintInvalidation() painting pass goes through compositing layers,
+        // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
+        if (context.performingPaintInvalidation() || (paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers))
+            paintFlags.add(PaintLayerTemporaryClipRects);
+        else if (!backing()->paintsIntoWindow()
+            && !backing()->paintsIntoCompositedAncestor()
+            && !shouldDoSoftwarePaint(this, paintFlags.contains(PaintLayerPaintingReflection))
+            && !paintForFixedRootBackground(this, paintFlags)) {
+            // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
-
-        paintFlags.add(PaintLayerTemporaryClipRects);
-    }
-
-    if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView) {
+        }
+    } else if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView) {
         // Don't paint out-of-view viewport constrained layers (when doing prepainting) because they will never be visible
         // unless their position or viewport size is changed.
         ASSERT(renderer().isFixedPositioned());
         return;
     }
 
-    paintLayerWithEffects(context, paintingInfo, paintFlags);
-}
-
-void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
-{
     // Non self-painting leaf layers don't need to be painted as their renderer() should properly paint itself.
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
         return;
 
     if (shouldSuppressPaintingLayer(this))
         return;
-
+    
     // If this layer is totally invisible then there is nothing to paint.
     if (!renderer().opacity())
         return;
@@ -5518,7 +5440,7 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
     // For transformed layers, the root layer was shifted to be us, so there is no need to
     // examine the parent. We want to cache clip rects with us as the root.
     if (auto* parentLayer = (clipRectsContext.rootLayer != this ? parent() : nullptr))
-        parentClipRects = this->parentClipRects(clipRectsContext);
+        parentClipRects = parentLayer->updateClipRects(clipRectsContext);
 
     auto clipRects = ClipRects::create();
     calculateClipRects(clipRectsContext, clipRects);
@@ -5537,12 +5459,6 @@ ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
     if (!m_clipRectsCache)
         return nullptr;
     return m_clipRectsCache->getClipRects(context.clipRectsType, context.respectOverflowClip);
-}
-
-bool RenderLayer::clipCrossesPaintingBoundary() const
-{
-    return parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)
-        || parent()->enclosingCompositingLayerForRepaint() != enclosingCompositingLayerForRepaint();
 }
 
 void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
@@ -5567,10 +5483,6 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         else {
             ClipRectsContext parentContext(clipRectsContext);
             parentContext.overlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize; // FIXME: why?
-            
-            if (clipCrossesPaintingBoundary())
-                parentContext.clipRectsType = TemporaryClipRects;
-
             parentLayer->calculateClipRects(parentContext, clipRects);
         }
     } else
@@ -5616,27 +5528,16 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
         }
     }
-
-    LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " calculateClipRects " << clipRects);
 }
 
 Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext) const
 {
     ASSERT(parent());
 
-    auto temporaryParentClipRects = [&](const ClipRectsContext& clipContext) {
+    if (clipRectsContext.clipRectsType == TemporaryClipRects) {
         auto parentClipRects = ClipRects::create();
-        parent()->calculateClipRects(clipContext, parentClipRects);
+        parent()->calculateClipRects(clipRectsContext, parentClipRects);
         return parentClipRects;
-    };
-
-    if (clipRectsContext.clipRectsType == TemporaryClipRects)
-        return temporaryParentClipRects(clipRectsContext);
-
-    if (clipCrossesPaintingBoundary()) {
-        ClipRectsContext tempClipRectsContext(clipRectsContext);
-        tempClipRectsContext.clipRectsType = TemporaryClipRects;
-        return temporaryParentClipRects(tempClipRectsContext);
     }
 
     return parent()->updateClipRects(clipRectsContext);
@@ -5656,14 +5557,26 @@ static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRect
 ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContext) const
 {
     ASSERT(parent());
-    auto parentRects = parentClipRects(clipRectsContext);
+    auto computeParentRects = [&] {
+        if (clipRectsContext.clipRectsType == TemporaryClipRects)
+            return parentClipRects(clipRectsContext);
+        // If we cross into a different composition/pagination context, then we can't rely on the cache since the root layer differs.
+        bool crossesPaginationBoundary = parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+        bool crossesCompositingBoundary = parent()->enclosingCompositingLayerForRepaint() != enclosingCompositingLayerForRepaint();
+        if (!crossesPaginationBoundary && !crossesCompositingBoundary)
+            return parentClipRects(clipRectsContext);
+
+        ClipRectsContext tempContext(clipRectsContext);
+        tempContext.clipRectsType = TemporaryClipRects;
+        return parentClipRects(tempContext);
+    };
+    
+    auto parentRects = computeParentRects();
     ClipRect backgroundClipRect = backgroundClipRectForPosition(parentRects, renderer().style().position());
     RenderView& view = renderer().view();
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
     if (parentRects->fixed() && &clipRectsContext.rootLayer->renderer() == &view && !backgroundClipRect.isInfinite())
         backgroundClipRect.moveBy(view.frameView().scrollPositionForFixedPosition());
-
-    LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " backgroundClipRect with context " << clipRectsContext << " returning " << backgroundClipRect);
     return backgroundClipRect;
 }
 
@@ -6031,7 +5944,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 #endif
 
     auto computeLayersUnion = [this, &unionBounds, flags, descendantFlags] (const RenderLayer& childLayer) {
-        if (!(flags & IncludeCompositedDescendants) && (childLayer.isComposited() || childLayer.paintsIntoProvidedBacking()))
+        if (!(flags & IncludeCompositedDescendants) && childLayer.isComposited())
             return;
         LayoutRect childBounds = childLayer.calculateLayerBounds(this, childLayer.offsetFromAncestor(this), descendantFlags);
         // Ignore child layer (and behave as if we had overflow: hidden) when it is positioned off the parent layer so much
@@ -6837,21 +6750,6 @@ void RenderLayer::invalidateEventRegion()
 #endif
 }
 
-TextStream& operator<<(WTF::TextStream& ts, ClipRectsType clipRectsType)
-{
-    switch (clipRectsType) {
-    case PaintingClipRects: ts << "painting"; break;
-    case RootRelativeClipRects: ts << "root-relative"; break;
-    case AbsoluteClipRects: ts << "absolute"; break;
-    case TemporaryClipRects: ts << "temporary"; break;
-    case NumCachedClipRectsTypes:
-    case AllClipRectTypes:
-        ts << "?";
-        break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, const RenderLayer& layer)
 {
     ts << "RenderLayer " << &layer << " " << layer.size();
@@ -6867,31 +6765,6 @@ TextStream& operator<<(TextStream& ts, const RenderLayer& layer)
         ts << " isolates blending";
     if (layer.isComposited())
         ts << " " << *layer.backing();
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const RenderLayer::ClipRectsContext& context)
-{
-    ts.dumpProperty("root layer:", context.rootLayer);
-    ts.dumpProperty("type:", context.clipRectsType);
-    ts.dumpProperty("overflow-clip:", context.respectOverflowClip == IgnoreOverflowClip ? "ignore" : "respect");
-    
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
-{
-    switch (reason) {
-    case IndirectCompositingReason::None: ts << "none"; break;
-    case IndirectCompositingReason::Stacking: ts << "stacking"; break;
-    case IndirectCompositingReason::OverflowScrollPositioning: ts << "overflow positioning"; break;
-    case IndirectCompositingReason::Overlap: ts << "overlap"; break;
-    case IndirectCompositingReason::BackgroundLayer: ts << "background layer"; break;
-    case IndirectCompositingReason::GraphicalEffect: ts << "graphical effect"; break;
-    case IndirectCompositingReason::Perspective: ts << "perspective"; break;
-    case IndirectCompositingReason::Preserve3D: ts << "preserve-3d"; break;
-    }
-
     return ts;
 }
 
@@ -6929,7 +6802,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor\n"
+    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant, (s)scrolling ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
@@ -6955,24 +6828,6 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.hasFilter() ? "F" : "-");
     stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
     stream << (layer.isComposited() ? "C" : "-");
-    
-    auto compositedPaintingDestinationString = [&layer]() {
-        if (layer.paintsIntoProvidedBacking())
-            return "p";
-
-        if (!layer.isComposited())
-            return "-";
-
-        if (layer.backing()->hasBackingSharingLayers())
-            return "P";
-        
-        if (layer.backing()->paintsIntoCompositedAncestor())
-            return "a";
-
-        return "-";
-    };
-
-    stream << compositedPaintingDestinationString();
     stream << (layer.hasCompositingDescendant() ? "c" : "-");
     stream << (layer.hasCompositedScrollingAncestor() ? "s" : "-");
 
@@ -7011,9 +6866,6 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
         stream << " (layerID " << backing.graphicsLayer()->primaryLayerID() << ")";
-        
-        if (layer.indirectCompositingReason() != WebCore::IndirectCompositingReason::None)
-            stream << " " << layer.indirectCompositingReason();
 
         auto scrollingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Scrolling);
         auto frameHostingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::FrameHosting);

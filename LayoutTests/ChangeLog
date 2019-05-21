@@ -1,5 +1,53 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Revert r245170. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245175. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245181. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245205. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245207. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245208. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245212. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245220. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245221. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245471. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245490. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245502. rdar://problem/50993950
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245502. rdar://problem/50865946
 
     Layers painting into shared backing need to contribute to overlap
