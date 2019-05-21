@@ -7315,7 +7315,9 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
         if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:(NSURL *)linkURL]);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return [uiDelegate webView:_webView shouldPreviewElement:previewElementInfo.get()];
+ALLOW_DEPRECATED_DECLARATIONS_END
         }
         if (linkURL.isEmpty())
             return NO;
@@ -7464,8 +7466,10 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
                 [previewActions addObject:previewAction];
             }
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (UIViewController *controller = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:previewActions.get()])
                 return controller;
+ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
