@@ -5173,6 +5173,11 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
         frame.editor().confirmComposition(text);
 }
 
+void WebPage::hasMarkedText(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_page->focusController().focusedOrMainFrame().editor().hasComposition());
+}
+
 void WebPage::getMarkedRangeAsync(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

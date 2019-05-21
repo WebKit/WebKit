@@ -769,6 +769,7 @@ public:
 
     void setTextAsync(const String&);
     void insertTextAsync(const String& text, const EditingRange& replacementRange, InsertTextOptions&&);
+    void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(WTF::Function<void (EditingRange, CallbackBase::Error)>&&);
     void getSelectedRangeAsync(WTF::Function<void (EditingRange, CallbackBase::Error)>&&);
     void characterIndexForPointAsync(const WebCore::IntPoint&, WTF::Function<void (uint64_t, CallbackBase::Error)>&&);

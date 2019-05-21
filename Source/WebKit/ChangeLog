@@ -1,3 +1,29 @@
+2019-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The cost of WebViewImpl::hasMarkedTextWithCompletionHandler should not increase with document size
+        https://bugs.webkit.org/show_bug.cgi?id=198075
+        <rdar://problem/37560103>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::hasMarkedTextWithCompletionHandler):
+
+        Refactor hasMarkedTextWithCompletionHandler to use Editor::hasComposition, instead of computing the actual
+        marked text range. The latter is more expensive and unnecessary, since it uses TextIterator from the document
+        root to find editing offsets. This makes the cost of determining whether there is marked text proportional to
+        the document size.
+
+        This matches behavior in legacy WebKit, as well as iOS.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::hasMarkedText):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasMarkedText):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-05-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Make WebAuthN default on only on macOS

@@ -789,6 +789,7 @@ public:
 
     void setTextAsync(const String&);
     void insertTextAsync(const String& text, const EditingRange& replacementRange, InsertTextOptions&&);
+    void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(CallbackID);
     void getSelectedRangeAsync(CallbackID);
     void characterIndexForPointAsync(const WebCore::IntPoint&, CallbackID);
