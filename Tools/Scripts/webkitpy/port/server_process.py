@@ -77,6 +77,7 @@ class ServerProcess(object):
         self._treat_no_data_as_crash = treat_no_data_as_crash
         self._target_host = target_host or port_obj.host
         self._pid = None
+        self._system_pid = None
         self._child_processes = {}
         self._reset()
 
@@ -92,6 +93,9 @@ class ServerProcess(object):
 
     def pid(self):
         return self._pid
+
+    def system_pid(self):
+        return self._system_pid
 
     def _reset(self):
         if getattr(self, '_proc', None):
@@ -130,6 +134,7 @@ class ServerProcess(object):
             env=self._env,
             universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
+        self._system_pid = int(self._port._filesystem.read_text_file('/proc/%d/winpid' % self._pid)) if self._port.host.platform.is_cygwin() else self._pid
         self._child_processes = {}
         if not self._use_win32_apis:
             self._set_file_nonblocking(self._proc.stdout)

@@ -387,7 +387,7 @@ class Driver(object):
             return True
         if self._server_process.has_crashed():
             self._crashed_process_name = self._server_process.process_name()
-            self._crashed_pid = self._server_process.pid()
+            self._crashed_pid = self._server_process.system_pid()
             return True
         return False
 
@@ -535,7 +535,7 @@ class Driver(object):
         crashed_check = error_line.rstrip('\r\n')
         if crashed_check == "#CRASHED":
             self._crashed_process_name = self._server_process.process_name()
-            self._crashed_pid = self._server_process.pid()
+            self._crashed_pid = self._server_process.system_pid()
             return True
         elif error_line.startswith("#CRASHED - "):
             match = re.match('#CRASHED - (\S+)', error_line)
@@ -693,7 +693,7 @@ class Driver(object):
 
         if asan_violation_detected and not self._crashed_process_name:
             self._crashed_process_name = self._server_process.process_name()
-            self._crashed_pid = self._server_process.pid()
+            self._crashed_pid = self._server_process.system_pid()
 
         block.decode_content()
         return block

@@ -37,7 +37,8 @@ _log = logging.getLogger(__name__)
 
 class CrashLogs(object):
 
-    GLOBAL_PID_REGEX = re.compile(r'\s+Global\s+PID:\s+\[(?P<pid>\d+)\]')
+    # Matches a string like '    Global    D1    PID: [14516]'
+    GLOBAL_PID_REGEX = re.compile(r'\s+Global\b.+\bPID:\s+\[(?P<pid>\d+)\]')
     EXIT_PROCESS_PID_REGEX = re.compile(r'Exit process \d+:(?P<pid>\w+), code')
     DARWIN_PROCESS_REGEX = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
 

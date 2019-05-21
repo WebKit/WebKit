@@ -1,3 +1,34 @@
+2019-05-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-tests not gathering crash logs on Cygwin Python and Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=179828
+
+        Reviewed by Jonathan Bedard.
+
+        ServerProcess should store its Windows PID for Cygwin before
+        process crashing because the Windows PID is required to get a
+        correct CrashLog.
+
+        CrashLog format has been changed. CrashLogs.GLOBAL_PID_REGEX
+        should accept the new format.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.GLOBAL_PID_REGEX): Accept any words between 'Global' and 'PID:'.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.has_crashed):
+        (Driver._check_for_driver_crash_or_unresponsiveness):
+        (Driver._read_block):
+        Store server_process.system_pid() to self._crashed_pid instead of server_process.pid().
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__):
+        (ServerProcess.system_pid): Added.
+        (ServerProcess._find_system_pid): Added.
+        (ServerProcess._start): Set self._system_pid.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._get_crash_log): Removed broken old code converting Cygwin pid to Windows pid.
+
 2019-05-20  Aakash Jain  <aakash_jain@apple.com>
 
         Windows 10 test results missing on flakiness dashboard

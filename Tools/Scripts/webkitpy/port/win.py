@@ -425,11 +425,7 @@ class WinPort(ApplePort):
         _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
         deadline = now + 5 * int(self.get_option('child_processes', 1))
         while not crash_log and now <= deadline:
-            # If the system_pid hasn't been determined yet, just try with the passed in pid.  We'll be checking again later
-            system_pid = self._executive.pid_to_system_pid.get(pid)
-            if system_pid == None:
-                break  # We haven't mapped cygwin pid->win pid yet
-            crash_log = crash_logs.find_newest_log(name, system_pid, include_errors=True, newer_than=newer_than)
+            crash_log = crash_logs.find_newest_log(name, pid, include_errors=True, newer_than=newer_than)
             if not wait_for_log:
                 break
             if not crash_log or not [line for line in crash_log.splitlines() if line.startswith('quit:')]:

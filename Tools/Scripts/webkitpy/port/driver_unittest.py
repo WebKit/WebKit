@@ -224,6 +224,9 @@ class DriverTest(unittest.TestCase):
             def pid(self):
                 return 1234
 
+            def system_pid(self):
+                return self.pid()
+
             def process_name(self):
                 return 'FakeServerProcess'
 
