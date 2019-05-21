@@ -1,3 +1,10 @@
+2019-05-21  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed build fix add UNUSED_PARAM.
+
+        * runtime/RegExpInlines.h:
+        (JSC::PatternContextBufferHolder::PatternContextBufferHolder):
+
 2019-05-20  Keith Miller  <keith_miller@apple.com>
 
         Cleanup Yarr regexp code around paren contexts.
