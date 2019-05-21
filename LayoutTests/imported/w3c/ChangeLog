@@ -1,3 +1,22 @@
+2019-05-21  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Do not dispatch pointermove events when the pointer is not down in WPT testdriver
+        https://bugs.webkit.org/show_bug.cgi?id=198071
+
+        Reviewed by Dean Jackson.
+
+        WPT actions sequences may move the pointer prior to pressing it down. In this case, we need to make sure we don't
+        end up queuing a "moved" touch and instead save the pointer position for when the pointer is pressed. It's important
+        to also generate a different touch id for each time we pause or end a touch sequence. This allows a few more WPT
+        touch tests to pass without any source change in our Pointer Events implementation.
+
+        * web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch-expected.txt:
+        * web-platform-tests/resources/testdriver-vendor.js:
+
 2019-05-17  Rob Buis  <rbuis@igalia.com>
 
         Implement imagesrcset and imagesizes attributes on link rel=preload

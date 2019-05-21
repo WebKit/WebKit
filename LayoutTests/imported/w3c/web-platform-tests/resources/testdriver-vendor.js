@@ -54,11 +54,14 @@ function dispatchTouchActions(actions)
     let x = 0;
     let y = 0;
     let timeOffset = 0;
+    let pointerDown = false;
+    let id = 1;
 
-    const events = actions.map(action => {
+    const events = [];
+    for (let action of actions) {
         const touch = {
             inputType : "finger",
-            id : 1,
+            id,
             x : action.x,
             y : action.y,
             pressure : 0
@@ -83,16 +86,25 @@ function dispatchTouchActions(actions)
             }
             break;
         case "pointerDown":
+            pointerDown = true;
             touch.phase = "began";
+            if (action.x === undefined)
+                touch.x = x;
+            if (action.y === undefined)
+                touch.y = y;
             break;
         case "pointerUp":
+            pointerDown = false;
             touch.phase = "ended";
             touch.x = x;
             touch.y = y;
+            id++;
             break;
         case "pause":
             timeOffsetIncrease = action.duration / 1000;
             touch.phase = "stationary";
+            if (!pointerDown)
+                id++;
             break;
         default:
             return Promise.reject(new Error(`Unknown action type "${action.type}".`));
@@ -100,10 +112,14 @@ function dispatchTouchActions(actions)
 
         x = touch.x;
         y = touch.y;
+
+        if (!pointerDown && touch.phase == "moved")
+            continue;
+
         timeOffset += timeOffsetIncrease;
 
-        return command;
-    });
+        events.push(command);
+    }
 
     const stream = JSON.stringify({ events });
     logDebug(() => stream);

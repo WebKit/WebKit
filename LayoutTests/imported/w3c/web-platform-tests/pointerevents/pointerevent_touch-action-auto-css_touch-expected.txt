@@ -1,6 +1,6 @@
 Pointer Events touch-action attribute support
 
-Test Description: Try to scroll text RIGHT.
+Test Description: Test complete
 
 Note: this test is for touch-devices only
 
@@ -73,5 +73,5 @@ touch-action: auto
 The following pointer types were detected: touch.
 
 
-FAIL touch-action attribute test assert_true: x-scroll and y-scroll should be received before the test finishes expected true got false
+PASS touch-action attribute test 
 
