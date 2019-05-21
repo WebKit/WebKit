@@ -614,6 +614,10 @@ private:
     unsigned touchIdentifierForMouseEvents { 0 };
 #endif
 
+#if ENABLE(POINTER_EVENTS) && ENABLE(IOS_TOUCH_EVENTS)
+    unsigned m_touchIdentifierForPrimaryTouch { 0 };
+#endif
+
     double m_maxMouseMovedDuration { 0 };
     bool m_didStartDrag { false };
     bool m_isHandlingWheelEvent { false };
