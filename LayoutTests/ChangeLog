@@ -1,5 +1,56 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245212. rdar://problem/50865946
+
+    Overflow scroll that becomes non-scrollable should stop being composited
+    https://bugs.webkit.org/show_bug.cgi?id=197817
+    <rdar://problem/50697290>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Remove the iOS-specific #ifdef around code that triggers a compositing re-evaluation
+    when scrolling state changes.
+    
+    Test: compositing/scrolling/async-overflow-scrolling/become-non-scrollable.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+    
+    LayoutTests:
+    
+    Put in a compositing/scrolling/async-overflow-scrolling dir so we can enable it only
+    for platforms that have async overflow scrolling.
+    
+    * TestExpectations:
+    * compositing/scrolling/async-overflow-scrolling/become-non-scrollable-expected.txt: Added.
+    * compositing/scrolling/async-overflow-scrolling/become-non-scrollable.html: Added.
+    * platform/ios-wk2/TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245212 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+            Overflow scroll that becomes non-scrollable should stop being composited
+            https://bugs.webkit.org/show_bug.cgi?id=197817
+            <rdar://problem/50697290>
+
+            Reviewed by Antti Koivisto.
+
+            Put in a compositing/scrolling/async-overflow-scrolling dir so we can enable it only
+            for platforms that have async overflow scrolling.
+
+            * TestExpectations:
+            * compositing/scrolling/async-overflow-scrolling/become-non-scrollable-expected.txt: Added.
+            * compositing/scrolling/async-overflow-scrolling/become-non-scrollable.html: Added.
+            * platform/ios-wk2/TestExpectations:
+            * platform/mac-wk2/TestExpectations:
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245208. rdar://problem/50865946
 
     Layer bounds are incorrect for sharing layers that paint with transforms
