@@ -1,3 +1,14 @@
+2019-05-21  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Update initializer for changed port options
+        https://bugs.webkit.org/show_bug.cgi?id=198057
+
+        Reviewed by Ross Kirsling.
+
+        * shell/playstation/Initializer.cpp:
+        (initializer): Remove loading of shared JavaScriptCore
+        library.
+
 2019-05-21  Tadeu Zagallo  <tzagallo@apple.com>
 
         Fix production build after r245564
