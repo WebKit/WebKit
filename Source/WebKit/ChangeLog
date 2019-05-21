@@ -1,3 +1,16 @@
+2019-05-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Sandbox violation is making the WebContent process crash
+        https://bugs.webkit.org/show_bug.cgi?id=198089
+        <rdar://problem/50999499>
+
+        Reviewed by Brent Fulgham.
+
+        A new syscall rule needs to be added to the sandbox on iOS and macOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-05-21  Alex Christensen  <achristensen@webkit.org>
 
         Mark WKUIDelegate webView:shouldPreviewElement: and webView:previewingViewControllerForElement:defaultActions: as deprecated

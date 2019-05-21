@@ -609,5 +609,6 @@
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50266257>
         (syscall-number SYS_fsetxattr) ;; <rdar://problem/49795964>
         (syscall-number SYS_abort_with_payload) ;; <rdar://problem/50967271>
+        (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
     )
 )
