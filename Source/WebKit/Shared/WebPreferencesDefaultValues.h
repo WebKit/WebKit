@@ -272,3 +272,9 @@ bool defaultCustomPasteboardDataEnabled();
 #else
 #define DEFAULT_APPLE_PAY_ENABLED false
 #endif
+
+#if PLATFORM(MAC)
+#define DEFAULT_WEB_AUTHENTICATION_ENABLED true
+#else
+#define DEFAULT_WEB_AUTHENTICATION_ENABLED false
+#endif
