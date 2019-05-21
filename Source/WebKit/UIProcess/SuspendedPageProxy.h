@@ -49,7 +49,7 @@ public:
     WebProcessProxy& process() { return m_process.get(); }
     uint64_t mainFrameID() const { return m_mainFrameID; }
 
-    bool failedToSuspend() const { return m_suspensionState == SuspensionState::FailedToSuspend; }
+    bool pageIsClosedOrClosing() const;
 
     void waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&&);
     void unsuspend();

@@ -1,3 +1,35 @@
+2019-05-21  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Assertion hit when navigating back after a process swap forced by the client
+        https://bugs.webkit.org/show_bug.cgi?id=198006
+
+        Reviewed by Alex Christensen.
+
+        After r245198, we construct a SuspendedPageProxy when a process-swap is forced by the client
+        and we delay to closing of the WebPage in the old WebProcess until it is safe to do so without
+        flashing (by calling SuspendedPageProxy::closeWithoutFlashing()). The issue is that our logic
+        deciding if we should reuse a SuspendedPageProxy's WebPage relied on the SuspendedPageProxy's
+        m_suspensionState not being set to FailedToSuspend. In the case of a process-swap forced by the
+        client with delayed page closing, the suspended state may be suspended but is still not usable
+        because it is about to get closed. We would wrongly believe there is a WebPage to be reused so
+        the ProvisionalPageProxy would construct a proxy for the main frame in its constructor, we would
+        then hit the ASSERT(!m_mainFrame) assertion in ProvisionalPageProxy::didCreateMainFrame() when
+        the WebContent process would unexpectedly create a main frame.
+
+        To address the issue, stop relying on the suspended state to determine if we can reuse a WebPage
+        or not and introduce a new pageIsClosedOrClosing() getter on the SuspendedPageProxy instead
+        which indicates if the WebPage in the WebContent process has been closed or is about to be.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::pageEnteredAcceleratedCompositingMode):
+        (WebKit::SuspendedPageProxy::pageIsClosedOrClosing const):
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2019-05-21  Per Arne Vollan  <pvollan@apple.com>
 
         Sandbox violation is making the WebContent process crash

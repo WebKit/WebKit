@@ -166,10 +166,15 @@ void SuspendedPageProxy::pageEnteredAcceleratedCompositingMode()
 {
     m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No;
 
-    if (m_suspensionState == SuspensionState::FailedToSuspend || m_shouldCloseWhenEnteringAcceleratedCompositingMode) {
+    if (m_shouldCloseWhenEnteringAcceleratedCompositingMode) {
         // We needed the suspended page to stay alive to avoid flashing. Now we can get rid of it.
         close();
     }
+}
+
+bool SuspendedPageProxy::pageIsClosedOrClosing() const
+{
+    return m_isClosed || m_shouldCloseWhenEnteringAcceleratedCompositingMode;
 }
 
 void SuspendedPageProxy::closeWithoutFlashing()
@@ -200,8 +205,8 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
 
-    if (m_suspensionState == SuspensionState::FailedToSuspend && m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No)
-        close();
+    if (m_suspensionState == SuspensionState::FailedToSuspend)
+        closeWithoutFlashing();
 
     if (m_readyToUnsuspendHandler)
         m_readyToUnsuspendHandler(this);
