@@ -379,7 +379,7 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         auto lineTop = firstRun.rect().y();
         auto lineHeight = firstRun.rect().height();
         rootLineBox.setLogicalTop(lineTop);
-        rootLineBox.setLineTopBottomPositions(lineTop, lineTop + lineHeight, lineTop, lineTop + lineHeight);
+        rootLineBox.setLineTopBottomPositions(LayoutUnit(lineTop), LayoutUnit(lineTop + lineHeight), LayoutUnit(lineTop), LayoutUnit(lineTop + lineHeight));
     }
 }
 

@@ -118,7 +118,7 @@ IntRect EllipsisBox::selectionRect()
     const FontCascade& font = lineStyle.fontCascade();
     const RootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    LayoutRect selectionRect = LayoutRect(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock(), 0_lu, rootBox.selectionHeightAdjustedForPrecedingBlock());
+    LayoutRect selectionRect { LayoutUnit(x()), LayoutUnit(y() + rootBox.selectionTopAdjustedForPrecedingBlock()), 0_lu, rootBox.selectionHeightAdjustedForPrecedingBlock() };
     font.adjustSelectionRectForText(RenderBlock::constructTextRun(m_str, lineStyle, AllowTrailingExpansion), selectionRect);
     // FIXME: use directional pixel snapping instead.
     return enclosingIntRect(selectionRect);
@@ -139,7 +139,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     const RootInlineBox& rootBox = root();
     GraphicsContextStateSaver stateSaver(context);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0_lu, rootBox.selectionHeight());
+    LayoutRect selectionRect { LayoutUnit(x() + paintOffset.x()), LayoutUnit(y() + paintOffset.y() + rootBox.selectionTop()), 0_lu, rootBox.selectionHeight() };
     TextRun run = RenderBlock::constructTextRun(m_str, style, AllowTrailingExpansion);
     font.adjustSelectionRectForText(run, selectionRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
@@ -152,15 +152,15 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Hit test the markup box.
     if (InlineBox* markupBox = this->markupBox()) {
         const RenderStyle& lineStyle = this->lineStyle();
-        LayoutUnit mtx = adjustedLocation.x() + logicalWidth() - markupBox->x();
-        LayoutUnit mty = adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent());
+        LayoutUnit mtx { adjustedLocation.x() + logicalWidth() - markupBox->x() };
+        LayoutUnit mty { adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()) };
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom, hitTestAction)) {
             blockFlow().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
             return true;
         }
     }
 
-    LayoutRect boundsRect(adjustedLocation, LayoutSize(logicalWidth(), m_height));
+    LayoutRect boundsRect { adjustedLocation, LayoutSize(LayoutUnit(logicalWidth()), m_height) };
     if (visibleToHitTesting() && boundsRect.intersects(HitTestLocation::rectForPoint(locationInContainer.point(), 0, 0, 0, 0))) {
         blockFlow().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
         if (result.addNodeToListBasedTestResult(blockFlow().element(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)

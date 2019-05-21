@@ -2902,8 +2902,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 FloatSize WebPage::viewLayoutSizeAdjustedForQuirks(const FloatSize& size)
 {
-    if (auto* document = m_page->mainFrame().document())
-        return { document->quirks().overriddenViewLayoutWidth(size.width()).valueOr(size.width()), size.height() };
+    if (auto* document = m_page->mainFrame().document()) {
+        LayoutUnit width { size.width() };
+        return { document->quirks().overriddenViewLayoutWidth(width).valueOr(width), size.height() };
+    }
+
     return size;
 }
 

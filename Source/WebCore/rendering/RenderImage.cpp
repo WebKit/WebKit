@@ -109,8 +109,8 @@ void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, 
         isFirstOnLine = !inlineBox->previousOnLineExists();
         isLastOnLine = !inlineBox->nextOnLineExists();
         LogicalSelectionOffsetCaches cache(*containingBlock);
-        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, inlineBox->logicalTop(), cache);
-        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, inlineBox->logicalTop(), cache);
+        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(inlineBox->logicalTop()), cache);
+        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(inlineBox->logicalTop()), cache);
         lineExtentRect = IntRect(leftOffset - logicalLeft(), imageRect.y(), rightOffset - leftOffset, imageRect.height());
         if (!inlineBox->isHorizontal()) {
             imageRect = imageRect.transposedRect();
@@ -461,10 +461,10 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 FloatSize imageSize = image->size();
                 imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
                 // Center the error image, accounting for border and padding.
-                LayoutUnit centerX = (usableSize.width() - imageSize.width()) / 2;
+                LayoutUnit centerX { (usableSize.width() - imageSize.width()) / 2 };
                 if (centerX < 0)
                     centerX = 0;
-                LayoutUnit centerY = (usableSize.height() - imageSize.height()) / 2;
+                LayoutUnit centerY { (usableSize.height() - imageSize.height()) / 2 };
                 if (centerY < 0)
                     centerY = 0;
                 imageOffset = LayoutSize(leftBorder + leftPad + centerX + missingImageBorderWidth, topBorder + topPad + centerY + missingImageBorderWidth);
@@ -489,7 +489,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
                 TextRun textRun = RenderBlock::constructTextRun(text, style());
-                LayoutUnit textWidth = font.width(textRun);
+                LayoutUnit textWidth { font.width(textRun) };
                 if (errorPictureDrawn) {
                     if (usableSize.width() >= textWidth && fontMetrics.height() <= imageOffset.height())
                         context.drawText(font, textRun, altTextOffset);

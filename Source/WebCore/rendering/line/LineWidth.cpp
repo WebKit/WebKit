@@ -182,7 +182,7 @@ void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
 
         ++newLineTop;
     }
-    updateLineDimension(newLineTop, newLineWidth, newLineLeft, newLineRight);
+    updateLineDimension(newLineTop, LayoutUnit(newLineWidth), LayoutUnit(newLineLeft), LayoutUnit(newLineRight));
 }
 
 void LineWidth::fitBelowFloats(bool isFirstLine)
@@ -212,7 +212,7 @@ void LineWidth::fitBelowFloats(bool isFirstLine)
             break;
     }
 
-    updateLineDimension(lastFloatLogicalBottom, newLineWidth, newLineLeft, newLineRight);
+    updateLineDimension(lastFloatLogicalBottom, LayoutUnit(newLineWidth), LayoutUnit(newLineLeft), LayoutUnit(newLineRight));
 }
 
 void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin)

@@ -191,7 +191,7 @@ void RenderSliderContainer::layout()
     double percentageOffset = sliderPosition(input).toDouble();
     LayoutUnit availableExtent = isVertical ? track->contentHeight() : track->contentWidth();
     availableExtent -= isVertical ? thumb->height() : thumb->width();
-    LayoutUnit offset = percentageOffset * availableExtent;
+    LayoutUnit offset { percentageOffset * availableExtent };
     LayoutPoint thumbLocation = thumb->location();
     if (isVertical)
         thumbLocation.setY(thumbLocation.y() + track->contentHeight() - thumb->height() - offset);
@@ -301,7 +301,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         if (Optional<Decimal> closest = input->findClosestTickMarkValue(value)) {
             double closestFraction = stepRange.proportionFromValue(*closest).toDouble();
             double closestRatio = isVertical || !isLeftToRightDirection ? 1.0 - closestFraction : closestFraction;
-            LayoutUnit closestPosition = trackLength * closestRatio;
+            LayoutUnit closestPosition { trackLength * closestRatio };
             if ((closestPosition - position).abs() <= snappingThreshold)
                 value = *closest;
         }

@@ -253,9 +253,6 @@ protected:
     enum StylePropagationType { PropagateToAllChildren, PropagateToBlockChildrenOnly };
     void propagateStyleToAnonymousChildren(StylePropagationType);
 
-    LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue) const;
-    LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue) const;
-
     void setFirstChild(RenderObject* child) { m_firstChild = child; }
     void setLastChild(RenderObject* child) { m_lastChild = child; }
 
@@ -374,16 +371,6 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
     setNormalChildNeedsLayoutBit(true);
     if (markParents == MarkContainingBlockChain)
         markContainingBlocksForLayout();
-}
-
-inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue) const
-{
-    return WebCore::valueForLength(length, maximumValue);
-}
-
-inline LayoutUnit RenderElement::minimumValueForLength(const Length& length, LayoutUnit maximumValue) const
-{
-    return WebCore::minimumValueForLength(length, maximumValue);
 }
 
 inline bool RenderElement::isRenderLayerModelObject() const

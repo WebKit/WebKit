@@ -1180,7 +1180,7 @@ LayoutRect RenderListMarker::localSelectionRect()
     if (!box)
         return LayoutRect(LayoutPoint(), size());
     const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop = rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop();
+    LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
     if (rootBox.blockFlow().style().isHorizontalWritingMode())
         return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());
     return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
@@ -1409,9 +1409,9 @@ void RenderListMarker::layout()
     Length startMargin = style().marginStart();
     Length endMargin = style().marginEnd();
     if (startMargin.isFixed())
-        setMarginStart(startMargin.value());
+        setMarginStart(LayoutUnit(startMargin.value()));
     if (endMargin.isFixed())
-        setMarginEnd(endMargin.value());
+        setMarginEnd(LayoutUnit(endMargin.value()));
 
     clearNeedsLayout();
 }
@@ -1654,9 +1654,9 @@ void RenderListMarker::computePreferredLogicalWidths()
             logicalWidth = 0;
         else {
             TextRun run = RenderBlock::constructTextRun(m_text, style());
-            LayoutUnit itemWidth = font.width(run);
+            LayoutUnit itemWidth { font.width(run) };
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
-            LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(suffixSpace, 2, style()));
+            LayoutUnit suffixSpaceWidth { font.width(RenderBlock::constructTextRun(suffixSpace, 2, style())) };
             logicalWidth = itemWidth + suffixSpaceWidth;
         }
         break;

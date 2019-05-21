@@ -158,8 +158,8 @@ LayoutUnit RenderMathMLScripts::spaceAfterScript()
 {
     const auto& primaryFont = style().fontCascade().primaryFont();
     if (auto* mathData = primaryFont.mathData())
-        return mathData->getMathConstant(primaryFont, OpenTypeMathData::SpaceAfterScript);
-    return style().fontCascade().size() / 5;
+        return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::SpaceAfterScript));
+    return LayoutUnit(style().fontCascade().size() / 5);
 }
 
 LayoutUnit RenderMathMLScripts::italicCorrection(const ReferenceChildren& reference)

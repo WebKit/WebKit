@@ -184,7 +184,7 @@ void InlineBox::adjustPosition(float dx, float dy)
         return;
 
     if (m_renderer.isReplaced())
-        downcast<RenderBox>(renderer()).move(dx, dy);
+        downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
 const RootInlineBox& InlineBox::root() const

@@ -446,8 +446,8 @@ void RenderBlockFlow::setMarginsForRubyRun(BidiRun* run, RenderRubyRun& renderer
         }
     }
     renderer.getOverhang(lineInfo.isFirstLine(), renderer.style().isLeftToRightDirection() ? previousObject : nextObject, renderer.style().isLeftToRightDirection() ? nextObject : previousObject, startOverhang, endOverhang);
-    setMarginStartForChild(renderer, -startOverhang);
-    setMarginEndForChild(renderer, -endOverhang);
+    setMarginStartForChild(renderer, LayoutUnit(-startOverhang));
+    setMarginEndForChild(renderer, LayoutUnit(-endOverhang));
 }
 
 static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
@@ -568,7 +568,7 @@ void RenderBlockFlow::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun
     float newBaseWidth = rubyRun.logicalWidth() + totalExpansion + marginStartForChild(rubyRun) + marginEndForChild(rubyRun);
     float newRubyRunWidth = rubyRun.logicalWidth() + totalExpansion;
     rubyBase.setInitialOffset((newRubyRunWidth - newBaseWidth) / 2);
-    rubyRun.setOverrideContentLogicalWidth(newRubyRunWidth);
+    rubyRun.setOverrideContentLogicalWidth(LayoutUnit(newRubyRunWidth));
     rubyRun.setNeedsLayout(MarkOnlyThis);
     rootBox.markDirty();
     if (RenderRubyText* rubyText = rubyRun.rubyText()) {
@@ -2143,14 +2143,14 @@ void RenderBlockFlow::checkLinesForTextOverflow()
         IndentTextOrNot shouldIndentText = firstLine ? IndentText : DoNotIndentText;
         LayoutUnit blockRightEdge = logicalRightOffsetForLine(curr->lineTop(), shouldIndentText);
         LayoutUnit blockLeftEdge = logicalLeftOffsetForLine(curr->lineTop(), shouldIndentText);
-        LayoutUnit lineBoxEdge = ltr ? curr->x() + curr->logicalWidth() : curr->x();
+        LayoutUnit lineBoxEdge { ltr ? curr->x() + curr->logicalWidth() : curr->x() };
         if ((ltr && lineBoxEdge > blockRightEdge) || (!ltr && lineBoxEdge < blockLeftEdge)) {
             // This line spills out of our box in the appropriate direction.  Now we need to see if the line
             // can be truncated.  In order for truncation to be possible, the line must have sufficient space to
             // accommodate our truncation string, and no replaced elements (images, tables) can overlap the ellipsis
             // space.
-            LayoutUnit width = firstLine ? firstLineEllipsisWidth : ellipsisWidth;
-            LayoutUnit blockEdge = ltr ? blockRightEdge : blockLeftEdge;
+            LayoutUnit width { firstLine ? firstLineEllipsisWidth : ellipsisWidth };
+            LayoutUnit blockEdge { ltr ? blockRightEdge : blockLeftEdge };
             if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width)) {
                 float totalLogicalWidth = curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
 
@@ -2258,8 +2258,8 @@ LayoutUnit RenderBlockFlow::startAlignedOffsetForLine(LayoutUnit position, Inden
     updateLogicalWidthForAlignment(textAlign, 0, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
 
     if (!style().isLeftToRightDirection())
-        return logicalWidth() - logicalLeft;
-    return logicalLeft;
+        return LayoutUnit(logicalWidth() - logicalLeft);
+    return LayoutUnit(logicalLeft);
 }
 
 void RenderBlockFlow::updateFragmentForLine(RootInlineBox* lineBox) const

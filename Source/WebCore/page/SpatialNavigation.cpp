@@ -505,7 +505,7 @@ static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRec
     for (Frame* frame = initialFrame; frame; frame = frame->tree().parent()) {
         if (Element* element = frame->ownerElement()) {
             do {
-                rect.move(element->offsetLeft(), element->offsetTop());
+                rect.move(LayoutUnit(element->offsetLeft()), LayoutUnit(element->offsetTop()));
             } while ((element = element->offsetParent()));
             rect.moveBy((-frame->view()->scrollPosition()));
         }

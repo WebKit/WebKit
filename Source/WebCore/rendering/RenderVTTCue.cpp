@@ -180,8 +180,8 @@ bool RenderVTTCue::shouldSwitchDirection(InlineFlowBox* firstLineBox, LayoutUnit
 {
     LayoutUnit top = y();
     LayoutUnit left = x();
-    LayoutUnit bottom = top + firstLineBox->height();
-    LayoutUnit right = left + firstLineBox->width();
+    LayoutUnit bottom { top + firstLineBox->height() };
+    LayoutUnit right { left + firstLineBox->width() };
 
     // 12. Horizontal: If step is negative and the top of the first line
     // box in boxes is now above the top of the video's rendering area,
@@ -352,7 +352,7 @@ void RenderVTTCue::repositionGenericCue()
     InlineFlowBox* firstLineBox = downcast<RenderInline>(*backdropElement.firstChild()).firstLineBox();
     if (static_cast<TextTrackCueGeneric*>(m_cue)->useDefaultPosition() && firstLineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();
-        LayoutUnit width = firstLineBox->width();
+        LayoutUnit width { firstLineBox->width() };
         LayoutUnit right = (parentWidth / 2) - (width / 2);
         setX(right);
     }

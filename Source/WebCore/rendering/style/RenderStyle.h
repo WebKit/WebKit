@@ -2025,7 +2025,7 @@ inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle& style)
 
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderStyle& style)
 {
-    return value / style.effectiveZoom();
+    return LayoutUnit(value / style.effectiveZoom());
 }
 
 inline BorderStyle collapsedBorderStyle(BorderStyle style)

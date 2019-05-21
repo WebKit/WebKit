@@ -64,7 +64,7 @@ LayoutUnit Replaced::intrinsicWidth() const
     ASSERT(hasIntrinsicWidth());
     if (m_intrinsicSize)
         return m_intrinsicSize->width();
-    return m_layoutBox->style().logicalWidth().value();
+    return LayoutUnit(m_layoutBox->style().logicalWidth().value());
 }
 
 LayoutUnit Replaced::intrinsicHeight() const
@@ -72,7 +72,7 @@ LayoutUnit Replaced::intrinsicHeight() const
     ASSERT(hasIntrinsicHeight());
     if (m_intrinsicSize)
         return m_intrinsicSize->height();
-    return m_layoutBox->style().logicalHeight().value();
+    return LayoutUnit(m_layoutBox->style().logicalHeight().value());
 }
 
 LayoutUnit Replaced::intrinsicRatio() const

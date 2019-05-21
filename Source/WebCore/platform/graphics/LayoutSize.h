@@ -51,22 +51,23 @@ class LayoutSize {
 public:
     LayoutSize() : m_width(0), m_height(0) { }
     LayoutSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
-    LayoutSize(LayoutUnit width, LayoutUnit height) : m_width(width), m_height(height) { }
+    template<typename T, typename U> LayoutSize(T width, U height) : m_width(width), m_height(height) { }
 
     explicit LayoutSize(const FloatSize& size) : m_width(size.width()), m_height(size.height()) { }
     
     LayoutUnit width() const { return m_width; }
     LayoutUnit height() const { return m_height; }
 
-    void setWidth(LayoutUnit width) { m_width = width; }
-    void setHeight(LayoutUnit height) { m_height = height; }
+    template<typename T> void setWidth(T width) { m_width = width; }
+    template<typename T> void setHeight(T height) { m_height = height; }
 
     bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
     bool isZero() const { return !m_width && !m_height; }
 
     float aspectRatio() const { return static_cast<float>(m_width) / static_cast<float>(m_height); }
     
-    void expand(LayoutUnit width, LayoutUnit height)
+    template<typename T, typename U>
+    void expand(T width, U height)
     {
         m_width += width;
         m_height += height;

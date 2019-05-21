@@ -105,7 +105,7 @@ static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, 
     if (firstLineDoesNotFit || orphanDoesNotFit) {
         auto firstLine = lines.first();
         auto firstLineOverflowRect = computeOverflow(flow, LayoutRect(0_lu, firstLine.top, 0_lu, firstLine.height));
-        auto firstLineUpperOverhang = std::max<LayoutUnit>(-firstLineOverflowRect.y(), 0_lu);
+        auto firstLineUpperOverhang = std::max(LayoutUnit(-firstLineOverflowRect.y()), 0_lu);
         flow.setPaginationStrut(line.top + remainingLogicalHeight + firstLineUpperOverhang);
         return;
     }

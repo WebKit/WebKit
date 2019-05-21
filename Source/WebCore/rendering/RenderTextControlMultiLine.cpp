@@ -84,7 +84,7 @@ float RenderTextControlMultiLine::getAverageCharWidth()
 
 LayoutUnit RenderTextControlMultiLine::preferredContentLogicalWidth(float charWidth) const
 {
-    return ceilf(charWidth * textAreaElement().cols()) + scrollbarThickness();
+    return LayoutUnit(ceilf(charWidth * textAreaElement().cols()) + scrollbarThickness());
 }
 
 LayoutUnit RenderTextControlMultiLine::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const

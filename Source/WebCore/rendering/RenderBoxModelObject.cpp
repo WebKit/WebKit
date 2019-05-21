@@ -2083,10 +2083,10 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
 
         // Paint inner only
         GraphicsContextStateSaver stateSaver(graphicsContext);
-        LayoutUnit topWidth = edges[BSTop].widthForPainting() / 2;
-        LayoutUnit bottomWidth = edges[BSBottom].widthForPainting() / 2;
-        LayoutUnit leftWidth = edges[BSLeft].widthForPainting() / 2;
-        LayoutUnit rightWidth = edges[BSRight].widthForPainting() / 2;
+        LayoutUnit topWidth { edges[BSTop].widthForPainting() / 2 };
+        LayoutUnit bottomWidth { edges[BSBottom].widthForPainting() / 2 };
+        LayoutUnit leftWidth { edges[BSLeft].widthForPainting() / 2 };
+        LayoutUnit rightWidth { edges[BSRight].widthForPainting() / 2 };
 
         RoundedRect clipRect = style.getRoundedInnerBorderFor(borderRect,
             topWidth, bottomWidth, leftWidth, rightWidth,

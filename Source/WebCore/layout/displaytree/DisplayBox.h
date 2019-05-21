@@ -200,8 +200,8 @@ private:
     void setTopLeft(const LayoutPoint&);
     void setTop(LayoutUnit);
     void setLeft(LayoutUnit);
-    void moveHorizontally(LayoutUnit offset) { m_topLeft.move(offset, { }); }
-    void moveVertically(LayoutUnit offset) { m_topLeft.move({ }, offset); }
+    void moveHorizontally(LayoutUnit offset) { m_topLeft.move(offset, 0_lu); }
+    void moveVertically(LayoutUnit offset) { m_topLeft.move(0_lu, offset); }
 
     void setContentBoxHeight(LayoutUnit);
     void setContentBoxWidth(LayoutUnit);
@@ -418,13 +418,13 @@ inline void Box::Rect::shiftBottomTo(LayoutUnit bottom)
 inline void Box::Rect::moveHorizontally(LayoutUnit offset)
 {
     ASSERT(m_hasValidLeft);
-    m_rect.move(offset, { });
+    m_rect.move(offset, 0_lu);
 }
 
 inline void Box::Rect::moveVertically(LayoutUnit offset)
 {
     ASSERT(m_hasValidTop);
-    m_rect.move({ }, offset);
+    m_rect.move(0_lu, offset);
 }
 
 inline void Box::Rect::expand(LayoutUnit width, LayoutUnit height)

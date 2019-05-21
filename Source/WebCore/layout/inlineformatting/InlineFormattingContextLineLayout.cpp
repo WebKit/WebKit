@@ -528,7 +528,7 @@ void InlineFormattingContext::LineLayout::justifyRuns(Line& line)
     float expansion = widthToDistribute.toFloat() / expansionOpportunities;
     LayoutUnit accumulatedExpansion;
     for (auto& inlineRun : inlineRuns) {
-        auto expansionForRun = inlineRun.expansionOpportunity().count * expansion;
+        LayoutUnit expansionForRun { inlineRun.expansionOpportunity().count * expansion };
 
         inlineRun.expansionOpportunity().expansion = expansionForRun;
         inlineRun.setLogicalLeft(inlineRun.logicalLeft() + accumulatedExpansion);

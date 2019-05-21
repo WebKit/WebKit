@@ -72,7 +72,7 @@ private:
 inline LayoutUnit CollapsedBorderValue::adjustedCollapsedBorderWidth(float borderWidth, float deviceScaleFactor, bool roundUp)
 {
     float halfCollapsedBorderWidth = (borderWidth + (roundUp ? (1 / deviceScaleFactor) : 0)) / 2;
-    return floorToDevicePixel(halfCollapsedBorderWidth, deviceScaleFactor);
+    return LayoutUnit(floorToDevicePixel(halfCollapsedBorderWidth, deviceScaleFactor));
 }
 
 } // namespace WebCore

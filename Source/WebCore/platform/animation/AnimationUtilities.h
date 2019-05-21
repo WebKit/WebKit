@@ -53,7 +53,7 @@ inline float blend(float from, float to, double progress)
 
 inline LayoutUnit blend(LayoutUnit from, LayoutUnit to, double progress)
 {  
-    return from + (to - from) * progress;
+    return LayoutUnit(from + (to - from) * progress);
 }
 
 inline IntPoint blend(const IntPoint& from, const IntPoint& to, double progress)

@@ -160,8 +160,8 @@ public:
     static LayoutUnit computeOutset(const Length& outsetSide, LayoutUnit borderSide)
     {
         if (outsetSide.isRelative())
-            return outsetSide.value() * borderSide;
-        return outsetSide.value();
+            return LayoutUnit(outsetSide.value() * borderSide);
+        return LayoutUnit(outsetSide.value());
     }
 
     static LayoutUnit computeSlice(Length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent);

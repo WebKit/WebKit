@@ -35,9 +35,7 @@ class RenderView;
 struct Length;
 struct LengthSize;
 
-int minimumIntValueForLength(const Length&, LayoutUnit maximumValue);
 int intValueForLength(const Length&, LayoutUnit maximumValue);
-LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue);
 WEBCORE_EXPORT LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue);
 LayoutSize sizeForLengthSize(const LengthSize&, const LayoutSize& maximumValue);
 float floatValueForLength(const Length&, LayoutUnit maximumValue);
@@ -48,12 +46,12 @@ inline LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximum
 {
     switch (length.type()) {
     case Fixed:
-        return length.value();
+        return LayoutUnit(length.value());
     case Percent:
         // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
         return LayoutUnit(static_cast<float>(maximumValue * length.percent() / 100.0f));
     case Calculated:
-        return length.nonNanCalculatedValue(maximumValue);
+        return LayoutUnit(length.nonNanCalculatedValue(maximumValue));
     case FillAvailable:
     case Auto:
         return 0;
@@ -74,5 +72,8 @@ inline int minimumIntValueForLength(const Length& length, LayoutUnit maximumValu
 {
     return static_cast<int>(minimumValueForLength(length, maximumValue));
 }
+
+template<typename T> inline LayoutUnit valueForLength(const Length& length, T maximumValue) { return valueForLength(length, LayoutUnit(maximumValue)); }
+template<typename T> inline LayoutUnit minimumValueForLength(const Length& length, T maximumValue) { return minimumValueForLength(length, LayoutUnit(maximumValue)); }
 
 } // namespace WebCore

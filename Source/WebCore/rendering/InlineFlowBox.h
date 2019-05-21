@@ -124,8 +124,8 @@ public:
     bool boxShadowCanBeAppliedToBackground(const FillLayer&) const;
 
     // logicalLeft = left in a horizontal line and top in a vertical line.
-    LayoutUnit marginBorderPaddingLogicalLeft() const { return marginLogicalLeft() + borderLogicalLeft() + paddingLogicalLeft(); }
-    LayoutUnit marginBorderPaddingLogicalRight() const { return marginLogicalRight() + borderLogicalRight() + paddingLogicalRight(); }
+    LayoutUnit marginBorderPaddingLogicalLeft() const { return LayoutUnit(marginLogicalLeft() + borderLogicalLeft() + paddingLogicalLeft()); }
+    LayoutUnit marginBorderPaddingLogicalRight() const { return LayoutUnit(marginLogicalRight() + borderLogicalRight() + paddingLogicalRight()); }
     LayoutUnit marginLogicalLeft() const
     {
         if (!includeLogicalLeftEdge())

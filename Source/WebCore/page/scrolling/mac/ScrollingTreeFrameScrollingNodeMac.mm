@@ -74,7 +74,7 @@ static inline Vector<ScrollOffsetRange<LayoutUnit>> convertToLayoutUnits(const V
     Vector<ScrollOffsetRange<LayoutUnit>> snapOffsetRanges;
     snapOffsetRanges.reserveInitialCapacity(snapOffsetRangesAsFloat.size());
     for (auto range : snapOffsetRangesAsFloat)
-        snapOffsetRanges.uncheckedAppend({ range.start, range.end });
+        snapOffsetRanges.uncheckedAppend({ LayoutUnit(range.start), LayoutUnit(range.end) });
 
     return snapOffsetRanges;
 }

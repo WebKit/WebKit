@@ -100,7 +100,7 @@ LayoutUnit RenderMathMLOperator::trailingSpace() const
 
 LayoutUnit RenderMathMLOperator::minSize() const
 {
-    LayoutUnit minSize = style().fontCascade().size(); // Default minsize is "1em".
+    LayoutUnit minSize { style().fontCascade().size() }; // Default minsize is "1em".
     minSize = toUserUnits(element().minSize(), style(), minSize);
     return std::max<LayoutUnit>(0, minSize);
 }

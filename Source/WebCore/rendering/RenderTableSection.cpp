@@ -214,9 +214,9 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 static LayoutUnit resolveLogicalHeightForRow(const Length& rowLogicalHeight)
 {
     if (rowLogicalHeight.isFixed())
-        return rowLogicalHeight.value();
+        return LayoutUnit(rowLogicalHeight.value());
     if (rowLogicalHeight.isCalculated())
-        return rowLogicalHeight.nonNanCalculatedValue(0);
+        return LayoutUnit(rowLogicalHeight.nonNanCalculatedValue(0));
     return 0;
 }
 
@@ -388,7 +388,7 @@ void RenderTableSection::distributeExtraLogicalHeightToPercentRows(LayoutUnit& e
     LayoutUnit rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
         if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
-            LayoutUnit toAdd = std::min<LayoutUnit>(extraLogicalHeight, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight);
+            LayoutUnit toAdd = std::min(extraLogicalHeight, LayoutUnit((totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight));
             // If toAdd is negative, then we don't want to shrink the row (this bug
             // affected Outlook Web Access).
             toAdd = std::max(0_lu, toAdd);
@@ -1142,18 +1142,18 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
     switch (borderSide) {
     case BSTop:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), style.borderTop().width()), BSTop, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderTop().width())), BSTop, CSSPropertyBorderTopColor, style.borderTopStyle(), table()->style().borderTopStyle());
         break;
     case BSBottom:
         paintRowGroupBorder(paintInfo, antialias, LayoutRect(paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row), rowGroupRect.y() + rowGroupRect.height(), 
-            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), style.borderBottom().width()), BSBottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
+            horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column), LayoutUnit(style.borderBottom().width())), BSBottom, CSSPropertyBorderBottomColor, style.borderBottomStyle(), table()->style().borderBottomStyle());
         break;
     case BSLeft:
-        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), style.borderLeft().width(),
+        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderLeft().width()),
             verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BSLeft, CSSPropertyBorderLeftColor, style.borderLeftStyle(), table()->style().borderLeftStyle());
         break;
     case BSRight:
-        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), style.borderRight().width(),
+        paintRowGroupBorder(paintInfo, antialias, LayoutRect(rowGroupRect.x() + rowGroupRect.width(), rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row), LayoutUnit(style.borderRight().width()),
             verticalRowGroupBorderHeight(cell, rowGroupRect, row)), BSRight, CSSPropertyBorderRightColor, style.borderRightStyle(), table()->style().borderRightStyle());
         break;
     default:

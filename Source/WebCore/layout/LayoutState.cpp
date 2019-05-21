@@ -59,8 +59,8 @@ LayoutState::LayoutState(const Container& initialContainingBlock)
     displayBox.setBorder({ });
     displayBox.setPadding({ });
     displayBox.setTopLeft({ });
-    displayBox.setContentBoxHeight(initialContainingBlock.style().logicalHeight().value());
-    displayBox.setContentBoxWidth(initialContainingBlock.style().logicalWidth().value());
+    displayBox.setContentBoxHeight(LayoutUnit(initialContainingBlock.style().logicalHeight().value()));
+    displayBox.setContentBoxWidth(LayoutUnit(initialContainingBlock.style().logicalWidth().value()));
 
     m_formattingContextRootListForLayout.add(&initialContainingBlock);
 }

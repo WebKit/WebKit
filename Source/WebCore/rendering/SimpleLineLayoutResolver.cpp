@@ -206,7 +206,7 @@ unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) cons
     adjustedY = std::max<float>(adjustedY, 0);
     auto lineIndexCandidate =  std::min<unsigned>(adjustedY / m_lineHeight, m_layout.lineCount() - 1);
     if (m_layout.hasLineStruts())
-        return adjustLineIndexForStruts(y, type, lineIndexCandidate);
+        return adjustLineIndexForStruts(LayoutUnit(y), type, lineIndexCandidate);
     return lineIndexCandidate;
 }
 

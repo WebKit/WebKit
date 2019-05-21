@@ -96,7 +96,7 @@ float ScrollSnapAnimatorState::targetOffsetForStartOffset(const Vector<LayoutUni
         return clampTo<float>(startOffset, 0, maxScrollOffset);
     }
 
-    float targetOffset = closestSnapOffset(snapOffsets, snapOffsetRanges, predictedOffset / pageScale, initialDelta, outActiveSnapIndex);
+    float targetOffset = closestSnapOffset(snapOffsets, snapOffsetRanges, LayoutUnit(predictedOffset / pageScale), initialDelta, outActiveSnapIndex);
     float minimumTargetOffset = std::max<float>(0, snapOffsets.first());
     float maximumTargetOffset = std::min<float>(maxScrollOffset, snapOffsets.last());
     targetOffset = clampTo<float>(targetOffset, minimumTargetOffset, maximumTargetOffset);

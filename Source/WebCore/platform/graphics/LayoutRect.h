@@ -47,7 +47,8 @@ public:
     LayoutRect() { }
     LayoutRect(const LayoutPoint& location, const LayoutSize& size)
         : m_location(location), m_size(size) { }
-    LayoutRect(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height)
+    template<typename T1, typename T2, typename U1, typename U2>
+    LayoutRect(T1 x, T2 y, U1 width, U2 height)
         : m_location(LayoutPoint(x, y)), m_size(LayoutSize(width, height)) { }
     LayoutRect(const LayoutPoint& topLeft, const LayoutPoint& bottomRight)
         : m_location(topLeft), m_size(LayoutSize(bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y())) { }
@@ -70,10 +71,10 @@ public:
     LayoutUnit width() const { return m_size.width(); }
     LayoutUnit height() const { return m_size.height(); }
 
-    void setX(LayoutUnit x) { m_location.setX(x); }
-    void setY(LayoutUnit y) { m_location.setY(y); }
-    void setWidth(LayoutUnit width) { m_size.setWidth(width); }
-    void setHeight(LayoutUnit height) { m_size.setHeight(height); }
+    template<typename T> void setX(T x) { m_location.setX(x); }
+    template<typename T> void setY(T y) { m_location.setY(y); }
+    template<typename T> void setWidth(T width) { m_size.setWidth(width); }
+    template<typename T> void setHeight(T height) { m_size.setHeight(height); }
 
     bool isEmpty() const { return m_size.isEmpty(); }
 
@@ -83,7 +84,7 @@ public:
 
     void move(const LayoutSize& size) { m_location += size; } 
     void moveBy(const LayoutPoint& offset) { m_location.move(offset.x(), offset.y()); }
-    void move(LayoutUnit dx, LayoutUnit dy) { m_location.move(dx, dy); } 
+    template<typename T, typename U> void move(T dx, U dy) { m_location.move(dx, dy); }
 
     void expand(const LayoutSize& size) { m_size += size; }
     void expand(const LayoutBoxExtent& box)
@@ -91,14 +92,14 @@ public:
         m_location.move(-box.left(), -box.top());
         m_size.expand(box.left() + box.right(), box.top() + box.bottom());
     }
-    void expand(LayoutUnit dw, LayoutUnit dh) { m_size.expand(dw, dh); }
+    template<typename T, typename U> void expand(T dw, U dh) { m_size.expand(dw, dh); }
     void contract(const LayoutSize& size) { m_size -= size; }
     void contract(const LayoutBoxExtent& box)
     {
         m_location.move(box.left(), box.top());
         m_size.shrink(box.left() + box.right(), box.top() + box.bottom());
     }
-    void contract(LayoutUnit dw, LayoutUnit dh) { m_size.expand(-dw, -dh); }
+    template<typename T, typename U> void contract(T dw, U dh) { m_size.expand(-dw, -dh); }
 
     void shiftXEdgeTo(LayoutUnit edge)
     {
@@ -122,6 +123,11 @@ public:
         LayoutUnit delta = edge - maxY();
         setHeight(std::max<LayoutUnit>(0, height() + delta));
     }
+
+    template<typename T> void shiftXEdgeTo(T edge) { shiftXEdgeTo(LayoutUnit(edge)); }
+    template<typename T> void shiftMaxXEdgeTo(T edge) { shiftMaxXEdgeTo(LayoutUnit(edge)); }
+    template<typename T> void shiftYEdgeTo(T edge) { shiftYEdgeTo(LayoutUnit(edge)); }
+    template<typename T> void shiftMaxYEdgeTo(T edge) { shiftMaxYEdgeTo(LayoutUnit(edge)); }
 
     LayoutPoint minXMinYCorner() const { return m_location; } // typically topLeft
     LayoutPoint maxXMinYCorner() const { return LayoutPoint(m_location.x() + m_size.width(), m_location.y()); } // typically topRight
@@ -160,8 +166,11 @@ public:
         m_location.setY(m_location.y() - dy);
         m_size.setHeight(m_size.height() + dy + dy);
     }
-    void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }
     void inflate(LayoutSize size) { inflateX(size.width()); inflateY(size.height()); }
+    template<typename T> void inflateX(T dx) { inflateX(LayoutUnit(dx)); }
+    template<typename T> void inflateY(T dy) { inflateY(LayoutUnit(dy)); }
+    template<typename T> void inflate(T d) { inflateX(d); inflateY(d); }
+
     WEBCORE_EXPORT void scale(float);
     void scale(float xScale, float yScale);
 

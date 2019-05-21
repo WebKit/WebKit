@@ -583,8 +583,8 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
         child->layoutIfNeeded();
 
-    setLogicalWidth(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph));
-    setLogicalHeight(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height());
+    setLogicalWidth(LayoutUnit(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph)));
+    setLogicalHeight(LayoutUnit(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height()));
 
     updateScrollInfoAfterLayout();
 

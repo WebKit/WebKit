@@ -1,3 +1,14 @@
+2019-05-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Make lossy LayoutUnit constructors explicit
+        https://bugs.webkit.org/show_bug.cgi?id=191811
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        Make usage of LayoutUnit(float) explicit.
+
 2019-05-20  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] WebKit crash loop

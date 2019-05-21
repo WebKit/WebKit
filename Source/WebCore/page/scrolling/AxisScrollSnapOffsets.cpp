@@ -197,7 +197,7 @@ static void computeAxisProximitySnapOffsetRanges(const Vector<LayoutUnit>& snapO
     // instead, it is more intuitive to either return to the original snap position (which we arbitrarily choose here)
     // or scroll just outside of the snap offset range. This is another minor behavior tweak that we should play around
     // with to see what feels best.
-    LayoutUnit proximityDistance = ratioOfScrollPortAxisLengthToBeConsideredForProximity * scrollPortAxisLength;
+    LayoutUnit proximityDistance { ratioOfScrollPortAxisLengthToBeConsideredForProximity * scrollPortAxisLength };
     for (size_t index = 1; index < snapOffsets.size(); ++index) {
         auto startOffset = snapOffsets[index - 1] + proximityDistance;
         auto endOffset = snapOffsets[index] - proximityDistance;
