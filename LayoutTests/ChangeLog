@@ -1,5 +1,53 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245502. rdar://problem/50865946
+
+    Layers painting into shared backing need to contribute to overlap
+    https://bugs.webkit.org/show_bug.cgi?id=198021
+    
+    Reviewed by Zalan Bujtas.
+    Source/WebCore:
+    
+    Layers that paint into a composited (non-root) layer get added to the overlap map so
+    that later layers correct overlap them; this is done via the test against currentState.compositingAncestor.
+    
+    We need the same logic for layers that paint into shared backing; they need to behave
+    the same way in terms of how they contribute to overlap. We already had currentState.backingSharingAncestor
+    which was unused, but now use it for this, and correctly null it out when a layer composites.
+    
+    Bug was noticed during testing, and not known to affect any websites (though it probably does).
+    
+    Also move the overlap container popping into updateOverlapMap() so the two callers can
+    share the code, and more explicitly track whether a container was pushed.
+    
+    Test: compositing/shared-backing/sharing-child-contributes-to-overlap.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+    (WebCore::RenderLayerCompositor::updateOverlapMap const):
+    * rendering/RenderLayerCompositor.h:
+    
+    LayoutTests:
+    
+    * compositing/shared-backing/sharing-child-contributes-to-overlap-expected.html: Added.
+    * compositing/shared-backing/sharing-child-contributes-to-overlap.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245502 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+            Layers painting into shared backing need to contribute to overlap
+            https://bugs.webkit.org/show_bug.cgi?id=198021
+
+            Reviewed by Zalan Bujtas.
+
+            * compositing/shared-backing/sharing-child-contributes-to-overlap-expected.html: Added.
+            * compositing/shared-backing/sharing-child-contributes-to-overlap.html: Added.
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245490. rdar://problem/50865946
 
     REGRESSION (r245170): gmail.com inbox table header flickers
