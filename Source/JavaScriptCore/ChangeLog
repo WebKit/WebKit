@@ -1,5 +1,11 @@
 2019-05-21  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, add mistakenly ommited initializer.
+
+        * runtime/RegExpInlines.h:
+
+2019-05-21  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed build fix add UNUSED_PARAM.
 
         * runtime/RegExpInlines.h:

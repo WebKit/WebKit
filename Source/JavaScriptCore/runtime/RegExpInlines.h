@@ -115,7 +115,7 @@ public:
 
 private:
     VM& m_vm;
-    void* m_buffer;
+    void* m_buffer { nullptr };
 };
 
 ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSize)
