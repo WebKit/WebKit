@@ -33,7 +33,6 @@
 #include <WebCore/ScrollingTreeScrollingNodeDelegate.h>
 
 OBJC_CLASS CALayer;
-OBJC_CLASS UIScrollView;
 OBJC_CLASS WKScrollingNodeScrollViewDelegate;
 
 namespace WebCore {
@@ -72,8 +71,6 @@ public:
 #endif
 
 private:
-    UIScrollView *scrollView() const;
-
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;
     RetainPtr<WKScrollingNodeScrollViewDelegate> m_scrollViewDelegate;
