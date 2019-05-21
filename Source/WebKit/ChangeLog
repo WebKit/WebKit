@@ -1,3 +1,15 @@
+2019-05-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] WebKit crash loop
+        https://bugs.webkit.org/show_bug.cgi?id=198061
+        <rdar://problem/50967271>
+
+        Reviewed by Brent Fulgham.
+
+        A new syscall rule needs to be added to the sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-05-20  Sihui Liu  <sihui_liu@apple.com>
 
         Move Web Storage to Network Process

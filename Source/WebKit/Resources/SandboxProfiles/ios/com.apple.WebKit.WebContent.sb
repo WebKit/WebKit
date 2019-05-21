@@ -608,5 +608,6 @@
         (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50266257>
         (syscall-number SYS_fsetxattr) ;; <rdar://problem/49795964>
+        (syscall-number SYS_abort_with_payload) ;; <rdar://problem/50967271>
     )
 )
