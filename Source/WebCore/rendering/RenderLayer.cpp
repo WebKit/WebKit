@@ -4100,13 +4100,18 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
         return;
     }
 
+    paintLayerWithEffects(context, paintingInfo, paintFlags);
+}
+
+void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
+{
     // Non self-painting leaf layers don't need to be painted as their renderer() should properly paint itself.
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
         return;
 
     if (shouldSuppressPaintingLayer(this))
         return;
-    
+
     // If this layer is totally invisible then there is nothing to paint.
     if (!renderer().opacity())
         return;
