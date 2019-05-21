@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "LayerOverlapMap.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -73,6 +74,8 @@ public:
     {
         m_rectList.append(otherContainer.m_rectList);
     }
+    
+    const RectList& rectList() const { return m_rectList; }
 
 private:
     RectList m_rectList;
@@ -113,6 +116,32 @@ void LayerOverlapMap::popCompositingContainer()
 {
     m_overlapStack[m_overlapStack.size() - 2]->unite(*m_overlapStack.last());
     m_overlapStack.removeLast();
+}
+
+static TextStream& operator<<(TextStream& ts, const RectList& rectList)
+{
+    ts << "bounds " << rectList.boundingRect << " (" << rectList.rects << " rects)";
+    return ts;
+}
+
+static TextStream& operator<<(TextStream& ts, const OverlapMapContainer& container)
+{
+    ts << container.rectList();
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const LayerOverlapMap& overlapMap)
+{
+    TextStream multilineStream;
+
+    TextStream::GroupScope scope(ts);
+    multilineStream << indent << "LayerOverlapMap\n";
+
+    for (auto& container : overlapMap.overlapStack())
+        multilineStream << "  " << *container << "\n";
+
+    ts << multilineStream.release();
+    return ts;
 }
 
 } // namespace WebCore
