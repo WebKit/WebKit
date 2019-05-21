@@ -157,7 +157,9 @@ String LocalStorageDatabaseTracker::databasePath(const String& filename) const
     }
 
 #if PLATFORM(IOS_FAMILY)
-    platformMaybeExcludeFromBackup();
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)]() mutable {
+        platformMaybeExcludeFromBackup();
+    });
 #endif
 
     return SQLiteFileSystem::appendDatabaseFileNameToPath(m_localStorageDirectory, filename);

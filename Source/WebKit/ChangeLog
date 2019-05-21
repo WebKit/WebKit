@@ -1,3 +1,13 @@
+2019-05-21  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r245540): ASSERTION FAILED: identifier.isNull() || RunLoop::isMain()
+        https://bugs.webkit.org/show_bug.cgi?id=198074
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath const):
+
 2019-05-21  Antti Koivisto  <antti@apple.com>
 
         RTL/overflow scroll tests fail with async overflow enabled
