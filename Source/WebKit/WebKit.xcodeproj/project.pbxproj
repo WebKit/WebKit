@@ -1097,6 +1097,12 @@
 		5CD286571E7235C90094FDC8 /* WKContentRuleListStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */; };
 		5CD286581E7235D10094FDC8 /* WKContentRuleListStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
+		5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120C2293C1E0005BEC78 /* WKMain.mm */; };
+		5CE912102293C277005BEC78 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
+		5CE912112293C278005BEC78 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
+		5CE912122293C278005BEC78 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
+		5CE912132293C279005BEC78 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
+		5CE912142293C280005BEC78 /* WKMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE9120B2293C1E0005BEC78 /* WKMain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */; };
 		63108F961F96719C00A0DB84 /* _WKApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63108F991F9671F700A0DB84 /* _WKApplicationManifestInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F981F9671F700A0DB84 /* _WKApplicationManifestInternal.h */; };
@@ -3568,6 +3574,9 @@
 		5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStoreInternal.h; sourceTree = "<group>"; };
 		5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStorePrivate.h; sourceTree = "<group>"; };
 		5CE85B1F1C88E6430070BFCE /* PingLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoad.h; sourceTree = "<group>"; };
+		5CE9120B2293C1E0005BEC78 /* WKMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMain.h; sourceTree = "<group>"; };
+		5CE9120C2293C1E0005BEC78 /* WKMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKMain.mm; sourceTree = "<group>"; };
+		5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuxiliaryProcessMain.cpp; path = Cocoa/AuxiliaryProcessMain.cpp; sourceTree = "<group>"; };
 		5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCustomProtocolManager.cpp; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServiceWorkerClientFetchMessageReceiver.cpp; path = DerivedSources/WebKit2/ServiceWorkerClientFetchMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6430,6 +6439,8 @@
 				37A709A81E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h */,
 				F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */,
 				37DFA6FF1810BB92001F4A9F /* WKFoundation.h */,
+				5CE9120B2293C1E0005BEC78 /* WKMain.h */,
+				5CE9120C2293C1E0005BEC78 /* WKMain.mm */,
 				1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */,
 				1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */,
 				1A9E329D1822FEDD00F5D04C /* WKRemoteObjectCoder.h */,
@@ -8204,6 +8215,7 @@
 			isa = PBXGroup;
 			children = (
 				BC82836B16B3587900A278FE /* XPCService */,
+				5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */,
 			);
 			path = EntryPointUtilities;
 			sourceTree = "<group>";
@@ -9963,6 +9975,7 @@
 				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
+				5CE912142293C280005BEC78 /* WKMain.h in Headers */,
 				C98C48AA1B6FD5B500145103 /* WKMediaSessionFocusManager.h in Headers */,
 				C9CD439D1B4B024F00239E33 /* WKMediaSessionMetadata.h in Headers */,
 				1AB40EE61BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h in Headers */,
@@ -10940,6 +10953,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CE912112293C278005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
 				5C9A9112228F69CC005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11305,6 +11319,7 @@
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
+				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				4657D88A22664A2F005DE823 /* WKOrientationAccessAlert.mm in Sources */,
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
@@ -11317,6 +11332,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CE912102293C277005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
 				5C9A9111228F69CC005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11325,6 +11341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CE912122293C278005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
 				5C9A9113228F69CD005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11333,6 +11350,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CE912132293C279005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
 				5C9A9114228F69CE005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,3 +1,21 @@
+2019-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r245501
+        https://bugs.webkit.org/show_bug.cgi?id=198007
+
+        That change did not fix <rdar://problem/49808949> but it caused <rdar://problem/50967271> so out it goes.
+
+        * Shared/API/Cocoa/WKMain.h: Added.
+        * Shared/API/Cocoa/WKMain.mm: Added.
+        (WKXPCServiceMain):
+        * Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp: Added.
+        (main):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (main): Deleted.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-05-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Layout viewport size on google.com increases after rotating to landscape and back

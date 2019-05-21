@@ -200,7 +200,7 @@ void ProcessLauncher::launchProcess()
 
     auto errorHandlerImpl = [weakProcessLauncher = makeWeakPtr(*this), listeningPort] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
-
+        
         auto processLauncher = weakProcessLauncher.get();
         if (!processLauncher)
             return;
