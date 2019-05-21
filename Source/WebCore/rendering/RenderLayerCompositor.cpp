@@ -138,7 +138,7 @@ struct RenderLayerCompositor::CompositingState {
 #if ENABLE(CSS_COMPOSITING)
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
 #endif
-#if ENABLE(TREE_DEBUGGING)
+#if !LOG_DISABLED
         childState.depth = depth + 1;
 #endif
         return childState;
@@ -167,8 +167,8 @@ struct RenderLayerCompositor::CompositingState {
 #if ENABLE(CSS_COMPOSITING)
     bool hasNotIsolatedCompositedBlendingDescendants { false };
 #endif
-#if ENABLE(TREE_DEBUGGING)
-    int depth { 0 };
+#if !LOG_DISABLED
+    unsigned depth { 0 };
 #endif
 };
 
@@ -830,9 +830,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         return;
     }
 
-#if ENABLE(TREE_DEBUGGING)
-    LOG(Compositing, "%*p %s computeCompositingRequirements (backing provider candidate %p)", 12 + compositingState.depth * 2, &layer, layer.isNormalFlowOnly() ? "n" : "s", backingSharingState.backingProviderCandidate());
-#endif
+    LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(compositingState.depth * 2, ' ') << &layer << (layer.isNormalFlowOnly() ? " n" : " s") << " computeCompositingRequirements (backing provider candidate " << backingSharingState.backingProviderCandidate() << ")");
 
     // FIXME: maybe we can avoid updating all remaining layers in paint order.
     compositingState.fullPaintOrderTraversalRequired |= layer.needsCompositingRequirementsTraversal();
@@ -1060,13 +1058,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         layer.setNeedsCompositingLayerConnection();
     }
 
-#if ENABLE(TREE_DEBUGGING)
-    LOG(Compositing, "%*p computeCompositingRequirements - willBeComposited %d (backing provider candidate %p)", 12 + compositingState.depth * 2, &layer, willBeComposited, backingSharingState.backingProviderCandidate());
-#endif
-
     layer.clearCompositingRequirementsTraversalState();
-    
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
+
+    LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(compositingState.depth * 2, ' ') << &layer << " computeCompositingRequirements - willBeComposited " << willBeComposited << " (backing provider candidate " << backingSharingState.backingProviderCandidate() << ")");
 }
 
 // We have to traverse unchanged layers to fill in the overlap map.
@@ -1076,9 +1071,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     ASSERT(!layer.hasDescendantNeedingCompositingRequirementsTraversal());
     ASSERT(!layer.needsCompositingRequirementsTraversal());
 
-#if ENABLE(TREE_DEBUGGING)
-    LOG(Compositing, "%*p traverseUnchangedSubtree", 12 + compositingState.depth * 2, &layer);
-#endif
+    LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(compositingState.depth * 2, ' ') << &layer << (layer.isNormalFlowOnly() ? " n" : " s") << " traverseUnchangedSubtree");
 
     layer.updateDescendantDependentFlags();
     layer.updateLayerListsIfNeeded();

@@ -1,3 +1,55 @@
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r245336. rdar://problem/50865946
+
+    Make LOG_WITH_STREAM more efficient
+    https://bugs.webkit.org/show_bug.cgi?id=197905
+    
+    Reviewed by Alex Christensen.
+    Source/WebCore:
+    
+    No longer need to conditionalize ClipRects logging on the channel being enabled
+    since LOG_WITH_STREAM fix the performance problem.
+    
+    Convert some RenderLayerCompositor logging to use LOG_WITH_STREAM.
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::calculateClipRects const):
+    (WebCore::clipRectsLogEnabled): Deleted.
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+    
+    Source/WebCore/PAL:
+    
+    Make the LOG_WITH_STREAM macro check that the log channel is enabled before
+    building the stream.
+    
+    * pal/LogMacros.h:
+    
+    Source/WTF:
+    
+    Add a streamable Repeat() class that can be used to output a series of characters.
+    This is useful for indenting output.
+    
+    * wtf/text/TextStream.h:
+    (WTF::TextStream::repeat::repeat):
+    (WTF::TextStream::operator<<):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245336 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Make LOG_WITH_STREAM more efficient
+            https://bugs.webkit.org/show_bug.cgi?id=197905
+
+            Reviewed by Alex Christensen.
+
+            Make the LOG_WITH_STREAM macro check that the log channel is enabled before
+            building the stream.
+
+            * pal/LogMacros.h:
+
 2019-05-12  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r245183. rdar://problem/50065100

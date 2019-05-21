@@ -32,9 +32,11 @@
 #else
 
 #define LOG_WITH_STREAM(channel, commands) do { \
-        WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
-        commands; \
-        WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), "%s", stream.release().utf8().data()); \
+        if (JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel).state == WTFLogChannelState::On) { \
+            WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
+            commands; \
+            WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), "%s", stream.release().utf8().data()); \
+        } \
     } while (0)
 
 #endif // !LOG_DISABLED
