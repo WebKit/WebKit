@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
+#include "LayerOverlapMap.h"
 #include "Logging.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -110,119 +111,6 @@ using namespace HTMLNames;
 struct ScrollingTreeState {
     Optional<ScrollingNodeID> parentNodeID;
     size_t nextChildIndex { 0 };
-};
-
-class OverlapMapContainer {
-public:
-    void add(const LayoutRect& bounds)
-    {
-        m_layerRects.append(bounds);
-        m_boundingBox.unite(bounds);
-    }
-
-    bool overlapsLayers(const LayoutRect& bounds) const
-    {
-        // Checking with the bounding box will quickly reject cases when
-        // layers are created for lists of items going in one direction and
-        // never overlap with each other.
-        if (!bounds.intersects(m_boundingBox))
-            return false;
-        for (const auto& layerRect : m_layerRects) {
-            if (layerRect.intersects(bounds))
-                return true;
-        }
-        return false;
-    }
-
-    void unite(const OverlapMapContainer& otherContainer)
-    {
-        m_layerRects.appendVector(otherContainer.m_layerRects);
-        m_boundingBox.unite(otherContainer.m_boundingBox);
-    }
-private:
-    Vector<LayoutRect> m_layerRects;
-    LayoutRect m_boundingBox;
-};
-
-class RenderLayerCompositor::OverlapMap {
-    WTF_MAKE_NONCOPYABLE(OverlapMap);
-public:
-    OverlapMap()
-        : m_geometryMap(UseTransforms)
-    {
-        // Begin assuming the root layer will be composited so that there is
-        // something on the stack. The root layer should also never get an
-        // popCompositingContainer call.
-        pushCompositingContainer();
-    }
-
-    void add(const LayoutRect& bounds)
-    {
-        // Layers do not contribute to overlap immediately--instead, they will
-        // contribute to overlap as soon as their composited ancestor has been
-        // recursively processed and popped off the stack.
-        ASSERT(m_overlapStack.size() >= 2);
-        m_overlapStack[m_overlapStack.size() - 2].add(bounds);
-        m_isEmpty = false;
-    }
-
-    bool overlapsLayers(const LayoutRect& bounds) const
-    {
-        return m_overlapStack.last().overlapsLayers(bounds);
-    }
-
-    bool isEmpty() const
-    {
-        return m_isEmpty;
-    }
-
-    void pushCompositingContainer()
-    {
-        m_overlapStack.append(OverlapMapContainer());
-    }
-
-    void popCompositingContainer()
-    {
-        m_overlapStack[m_overlapStack.size() - 2].unite(m_overlapStack.last());
-        m_overlapStack.removeLast();
-    }
-
-    const RenderGeometryMap& geometryMap() const { return m_geometryMap; }
-    RenderGeometryMap& geometryMap() { return m_geometryMap; }
-
-private:
-    struct RectList {
-        Vector<LayoutRect> rects;
-        LayoutRect boundingRect;
-        
-        void append(const LayoutRect& rect)
-        {
-            rects.append(rect);
-            boundingRect.unite(rect);
-        }
-
-        void append(const RectList& rectList)
-        {
-            rects.appendVector(rectList.rects);
-            boundingRect.unite(rectList.boundingRect);
-        }
-        
-        bool intersects(const LayoutRect& rect) const
-        {
-            if (!rects.size() || !boundingRect.intersects(rect))
-                return false;
-
-            for (const auto& currentRect : rects) {
-                if (currentRect.intersects(rect))
-                    return true;
-            }
-            return false;
-        }
-    };
-
-    Vector<OverlapMapContainer> m_overlapStack;
-    RenderGeometryMap m_geometryMap;
-    bool m_isEmpty { true };
 };
 
 struct RenderLayerCompositor::CompositingState {
@@ -867,7 +755,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (updateRoot->hasDescendantNeedingCompositingRequirementsTraversal() || updateRoot->needsCompositingRequirementsTraversal()) {
         CompositingState compositingState(updateRoot);
         BackingSharingState backingSharingState;
-        OverlapMap overlapMap;
+        LayerOverlapMap overlapMap;
 
         bool descendantHas3DTransform = false;
         computeCompositingRequirements(nullptr, rootRenderLayer(), overlapMap, compositingState, backingSharingState, descendantHas3DTransform);
@@ -932,7 +820,7 @@ static bool backingProviderLayerCanIncludeLayer(const RenderLayer& sharedLayer, 
     return layer.ancestorLayerIsInContainingBlockChain(sharedLayer);
 }
 
-void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer& layer, OverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
+void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
 {
     if (!layer.hasDescendantNeedingCompositingRequirementsTraversal()
         && !layer.needsCompositingRequirementsTraversal()
@@ -1182,7 +1070,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 }
 
 // We have to traverse unchanged layers to fill in the overlap map.
-void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer& layer, OverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
+void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
 {
     ASSERT(!compositingState.fullPaintOrderTraversalRequired);
     ASSERT(!layer.hasDescendantNeedingCompositingRequirementsTraversal());
@@ -1888,7 +1776,7 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return nullptr;
 }
 
-void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
+void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
     if (extent.extentComputed)
         return;
@@ -1919,7 +1807,7 @@ void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const Re
     extent.extentComputed = true;
 }
 
-void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent)
+void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent)
 {
     if (layer.isRenderViewLayer())
         return;
@@ -1935,7 +1823,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, const Render
     overlapMap.add(clipRect);
 }
 
-void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, const RenderLayer& layer, const RenderLayer* ancestorLayer)
+void RenderLayerCompositor::addToOverlapMapRecursive(LayerOverlapMap& overlapMap, const RenderLayer& layer, const RenderLayer* ancestorLayer)
 {
     if (!canBeComposited(layer))
         return;
