@@ -146,6 +146,10 @@ public:
 
     Ref<CachedBytecode> release()
     {
+        if (!m_currentPage)
+            return CachedBytecode::create();
+
+        m_currentPage->alignEnd();
         size_t size = m_baseOffset + m_currentPage->size();
         MallocPtr<uint8_t> buffer = MallocPtr<uint8_t>::malloc(size);
         unsigned offset = 0;
@@ -193,6 +197,15 @@ private:
             return false;
         }
 
+        void alignEnd()
+        {
+            ptrdiff_t size = roundUpToMultipleOf(alignof(std::max_align_t), m_offset);
+            if (size == m_offset)
+                return;
+            ASSERT(static_cast<size_t>(size) <= m_capacity);
+            m_offset = size;
+        }
+
     private:
         MallocPtr<uint8_t> m_buffer;
         ptrdiff_t m_offset;
@@ -202,8 +215,10 @@ private:
     void allocateNewPage(size_t size = 0)
     {
         static size_t minPageSize = pageSize();
-        if (m_currentPage)
+        if (m_currentPage) {
+            m_currentPage->alignEnd();
             m_baseOffset += m_currentPage->size();
+        }
         if (size < minPageSize)
             size = minPageSize;
         else
@@ -383,6 +398,7 @@ protected:
     template<typename T>
     const T* buffer() const
     {
+        ASSERT(!(bitwise_cast<uintptr_t>(buffer()) % alignof(T)));
         return bitwise_cast<const T*>(buffer());
     }
 
@@ -403,6 +419,7 @@ protected:
     T* allocate(Encoder& encoder, unsigned size = 1)
     {
         uint8_t* result = allocate(encoder, sizeof(T) * size);
+        ASSERT(!(bitwise_cast<uintptr_t>(result) % alignof(T)));
         return new (result) T[size];
     }
 
@@ -2100,8 +2117,11 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
                 codeBlockOffset = offset;
                 m_isCached = true;
                 leafExecutables--;
+                return;
             }
         }
+
+        codeBlockOffset = 0;
     };
 
     if (!cachedExecutable.unlinkedCodeBlockForCall().isEmpty() || !cachedExecutable.unlinkedCodeBlockForConstruct().isEmpty()) {
@@ -2109,6 +2129,8 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
         checkBounds(m_cachedCodeBlockForConstructOffset, cachedExecutable.unlinkedCodeBlockForConstruct());
         if (m_isCached)
             m_decoder = &decoder;
+        else
+            m_decoder = nullptr;
     }
 
     if (leafExecutables)

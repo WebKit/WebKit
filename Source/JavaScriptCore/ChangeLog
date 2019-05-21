@@ -1,3 +1,28 @@
+2019-05-20  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Fix 32-bit btyecode cache crashes
+        https://bugs.webkit.org/show_bug.cgi?id=198035
+        <rdar://problem/49905560>
+
+        Reviewed by Michael Saboff.
+
+        There were 2 32-bit issues with the bytecode cache:
+        - UnlinkedFunctionExecutable::m_cachedCodeBlockForConstructOffset was not initialized.
+          The code was relying on the other member of the union, `m_unlinkedCodeBlockForConstruct`,
+          initializing both m_cachedCodeBlockForCallOffset and m_cachedCodeBlockForConstructOffset.
+          This is undefined behavior and is also incorrect in 32-bit. Since m_unlinkedCodeBlockForConstruct
+          is 32-bit, it only initializes the first member of the struct.
+        - Encoder::Page was not aligned at the end. This lead to unaligned allocations on subsequent
+          pages, since the start of the following page would not be aligned.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::Encoder::release):
+        (JSC::Encoder::Page::alignEnd):
+        (JSC::Encoder::allocateNewPage):
+        (JSC::VariableLengthObject::buffer const):
+        (JSC::VariableLengthObject::allocate):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+
 2019-05-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Implement Remote Web Inspector Client.
