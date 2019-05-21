@@ -51,6 +51,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << metaViewportPolicy;
     encoder << mediaSourcePolicy;
     encoder << simulatedMouseEventsDispatchPolicy;
+    encoder << legacyOverflowScrollingTouchPolicy;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -122,6 +123,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!simulatedMouseEventsDispatchPolicy)
         return WTF::nullopt;
 
+    Optional<WebsiteLegacyOverflowScrollingTouchPolicy> legacyOverflowScrollingTouchPolicy;
+    decoder >> legacyOverflowScrollingTouchPolicy;
+    if (!legacyOverflowScrollingTouchPolicy)
+        return WTF::nullopt;
+
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
@@ -138,6 +144,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*metaViewportPolicy),
         WTFMove(*mediaSourcePolicy),
         WTFMove(*simulatedMouseEventsDispatchPolicy),
+        WTFMove(*legacyOverflowScrollingTouchPolicy),
     } };
 }
 
@@ -233,6 +240,18 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     case WebsiteSimulatedMouseEventsDispatchPolicy::Deny:
         documentLoader.setSimulatedMouseEventsDispatchPolicy(WebCore::SimulatedMouseEventsDispatchPolicy::Deny);
+        break;
+    }
+
+    switch (websitePolicies.legacyOverflowScrollingTouchPolicy) {
+    case WebsiteLegacyOverflowScrollingTouchPolicy::Default:
+        documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Default);
+        break;
+    case WebsiteLegacyOverflowScrollingTouchPolicy::Disable:
+        documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Disable);
+        break;
+    case WebsiteLegacyOverflowScrollingTouchPolicy::Enable:
+        documentLoader.setLegacyOverflowScrollingTouchPolicy(WebCore::LegacyOverflowScrollingTouchPolicy::Enable);
         break;
     }
 

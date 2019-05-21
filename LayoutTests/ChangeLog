@@ -1,5 +1,64 @@
 2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245483. rdar://problem/49078202
+
+    Add a website policy to disable the legacy -webkit-overflow-scrolling:touch behavior
+    https://bugs.webkit.org/show_bug.cgi?id=197943
+    <rdar://problem/49078202>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Tests: fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html
+           platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html
+    
+    * css/parser/CSSParserContext.cpp:
+    (WebCore::CSSParserContext::CSSParserContext):
+    * loader/DocumentLoader.h:
+    (WebCore::DocumentLoader::legacyOverflowScrollingTouchPolicy const):
+    (WebCore::DocumentLoader::setLegacyOverflowScrollingTouchPolicy):
+    
+    Source/WebKit:
+    
+    * Shared/WebsiteLegacyOverflowScrollingTouchPolicy.h: Added.
+    * Shared/WebsitePoliciesData.cpp:
+    (WebKit::WebsitePoliciesData::encode const):
+    (WebKit::WebsitePoliciesData::decode):
+    (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+    * Shared/WebsitePoliciesData.h:
+    * UIProcess/API/APIWebsitePolicies.cpp:
+    (API::WebsitePolicies::copy const):
+    (API::WebsitePolicies::data):
+    * UIProcess/API/APIWebsitePolicies.h:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    LayoutTests:
+    
+    * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode-expected.html: Added.
+    * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html: Added.
+    * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode-expected.txt: Added.
+    * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html: Added.
+    * platform/ios/TestExpectations: Skip the new tests since they depend on code in WebKitAdditions.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245483 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-17  Antoine Quint  <graouts@apple.com>
+
+            Add a website policy to disable the legacy -webkit-overflow-scrolling:touch behavior
+            https://bugs.webkit.org/show_bug.cgi?id=197943
+            <rdar://problem/49078202>
+
+            Reviewed by Brent Fulgham.
+
+            * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode-expected.html: Added.
+            * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html: Added.
+            * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode-expected.txt: Added.
+            * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html: Added.
+            * platform/ios/TestExpectations: Skip the new tests since they depend on code in WebKitAdditions.
+
+2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245465. rdar://problem/50252398
 
     [iOS] Respect scrolling="no" on composited frames
