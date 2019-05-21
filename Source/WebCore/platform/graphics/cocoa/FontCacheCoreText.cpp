@@ -484,6 +484,8 @@ struct FontType {
         auto tables = adoptCF(CTFontCopyAvailableTables(font, kCTFontTableOptionNoOptions));
         if (!tables)
             return;
+        bool foundStat = false;
+        bool foundTrak = false;
         auto size = CFArrayGetCount(tables.get());
         for (CFIndex i = 0; i < size; ++i) {
             // This is so yucky.
@@ -497,6 +499,7 @@ struct FontType {
                     variationType = VariationType::TrueTypeGX;
                 break;
             case 'STAT':
+                foundStat = true;
                 variationType = VariationType::OpenType18;
                 break;
             case 'morx':
@@ -507,35 +510,38 @@ struct FontType {
             case 'GSUB':
                 openTypeShaping = true;
                 break;
+            case 'trak':
+                foundTrak = true;
+                break;
             }
         }
+        if (foundStat && foundTrak)
+            trackingType = TrackingType::Automatic;
+        else if (foundTrak)
+            trackingType = TrackingType::Manual;
     }
 
-    enum class VariationType {
-        NotVariable,
-        TrueTypeGX,
-        OpenType18
-    };
+    enum class VariationType : uint8_t { NotVariable, TrueTypeGX, OpenType18, };
     VariationType variationType { VariationType::NotVariable };
+    enum class TrackingType : uint8_t { None, Automatic, Manual, };
+    TrackingType trackingType { TrackingType::None };
     bool openTypeShaping { false };
     bool aatShaping { false };
 };
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size, bool applyWeightWidthSlopeVariations)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool applyWeightWidthSlopeVariations)
 {
-    bool alwaysAddVariations = false;
+    if (!originalFont)
+        return originalFont;
 
-    // FIXME: Remove when <rdar://problem/29859207> is fixed
 #if ENABLE(VARIATION_FONTS)
     auto defaultValues = defaultVariationValues(originalFont);
-    alwaysAddVariations = !defaultValues.isEmpty();
 
     auto fontSelectionRequest = fontDescription.fontSelectionRequest();
     auto fontOpticalSizing = fontDescription.opticalSizing();
     auto fontStyleAxis = fontDescription.fontStyleAxis();
 #else
     UNUSED_PARAM(fontFaceCapabilities);
-    UNUSED_PARAM(size);
     UNUSED_PARAM(applyWeightWidthSlopeVariations);
 #endif
 
@@ -544,8 +550,20 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     const auto& variations = fontDescription.variationSettings();
     auto textRenderingMode = fontDescription.textRenderingMode();
 
-    if (!originalFont || (!features.size() && (!alwaysAddVariations && variations.isEmpty()) && (textRenderingMode == TextRenderingMode::AutoTextRendering) && variantSettings.isAllNormal()
-        && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
+    FontType fontType { originalFont };
+
+    bool forceOpticalSizingOn = fontOpticalSizing == FontOpticalSizing::Enabled && fontType.variationType == FontType::VariationType::TrueTypeGX && defaultValues.contains({{'o', 'p', 's', 'z'}});
+    bool forceVariations = defaultValues.contains({{'w', 'g', 'h', 't'}}) || defaultValues.contains({{'w', 'd', 't', 'h'}}) || (fontStyleAxis == FontStyleAxis::ital && defaultValues.contains({{'i', 't', 'a', 'l'}})) || (fontStyleAxis == FontStyleAxis::slnt && defaultValues.contains({{'s', 'l', 'n', 't'}}));
+
+    // We might want to check fontType.trackingType == FontType::TrackingType::Manual here, but in order to maintain compatibility with the rest of the system, we don't.
+    bool noFontFeatureSettings = features.isEmpty();
+    bool noFontVariationSettings = !forceVariations && variations.isEmpty();
+    bool textRenderingModeIsAuto = textRenderingMode == TextRenderingMode::AutoTextRendering;
+    bool variantSettingsIsNormal = variantSettings.isAllNormal();
+    bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
+    bool fontFaceDoesntSpecifyFeatures = !fontFaceFeatures || fontFaceFeatures->isEmpty();
+    bool fontFaceDoesntSpecifyVariations = !fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal();
+    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && fontFaceDoesntSpecifyVariations)
         return originalFont;
 
     // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
@@ -579,8 +597,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // Step 6: Font-feature-settings
     for (auto& newFeature : features)
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
-
-    FontType fontType(originalFont);
 
 #if ENABLE(VARIATION_FONTS)
     VariationsMap variationsToBeApplied;
@@ -619,14 +635,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
             applyVariation({{'s', 'l', 'n', 't'}}, slope);
     }
 
-    if (fontOpticalSizing == FontOpticalSizing::Enabled) {
-        const float pxToPtRatio = 3.0f / 4;
-        applyVariation({{'o', 'p', 's', 'z'}}, size * pxToPtRatio);
-    }
-
     for (auto& newVariation : variations)
         applyVariation(newVariation.tag(), newVariation.value());
-
 #endif // ENABLE(VARIATION_FONTS)
 
     auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -655,11 +665,20 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     }
 #endif
 
-    if (textRenderingMode == TextRenderingMode::OptimizeLegibility) {
-        CGFloat size = CTFontGetSize(originalFont);
+    if (forceOpticalSizingOn || textRenderingMode == TextRenderingMode::OptimizeLegibility) {
+#if HAVE(CORETEXT_AUTO_OPTICAL_SIZING)
+        CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, CFSTR("auto"));
+#else
+        auto size = CTFontGetSize(originalFont);
         auto sizeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size));
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, sizeNumber.get());
+#endif
+    } else if (fontOpticalSizing == FontOpticalSizing::Disabled) {
+#if HAVE(CORETEXT_AUTO_OPTICAL_SIZING)
+        CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, CFSTR("none"));
+#endif
     }
+
     auto descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     auto result = adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
     return result;
@@ -1223,7 +1242,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, const Fon
     fontLookup.result = platformFontWithFamilySpecialCase(family, request, size, fontDescription.shouldAllowUserInstalledFonts());
     if (!fontLookup.result)
         fontLookup = platformFontLookupWithFamily(family, request, size, fontDescription.shouldAllowUserInstalledFonts());
-    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, size, !fontLookup.createdFromPostScriptName);
+    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, !fontLookup.createdFromPostScriptName);
 }
 
 #if PLATFORM(MAC)
@@ -1374,7 +1393,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
 
     auto result = lookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
-    result = preparePlatformFont(result.get(), description, nullptr, nullptr, { }, description.computedSize());
+    result = preparePlatformFont(result.get(), description, nullptr, nullptr, { });
 
     if (!result)
         return lastResortFallbackFont(description);

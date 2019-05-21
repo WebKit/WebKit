@@ -108,7 +108,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
             fontForSynthesisComputation = physicalFont;
 #endif
 
-        font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { }, fontDescription.computedSize());
+        font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { });
 
         bool syntheticBold, syntheticOblique;
         std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();

@@ -1,3 +1,24 @@
+2019-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-optical-sizing applies the wrong variation value
+        https://bugs.webkit.org/show_bug.cgi?id=197528
+        <rdar://problem/50152854>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/variations/optical-sizing-trak-2-expected-mismatch.html: Added.
+        * fast/text/variations/optical-sizing-trak-2.html: Added.
+        * fast/text/variations/optical-sizing-trak-expected.html: Added.
+        * fast/text/variations/optical-sizing-trak.html: Added.
+        * fast/text/variations/optical-sizing-units-2-expected-mismatch.html: Added.
+        * fast/text/variations/optical-sizing-units-2.html: Added.
+        * fast/text/variations/optical-sizing-units-expected.html: Added.
+        * fast/text/variations/optical-sizing-units.html: Added.
+        * fast/text/variations/resources/Amstelvar/Amstelvar-Roman-VF104.ttf: Added.
+        This font havariations/s been approved by the lawyers to add for layout tests.
+        * fast/text/variations/resources/Amstelvar/COPYRIGHT.md: Added.
+        * fast/text/variations/resources/Amstelvar/OFL.txt: Added.
+
 2019-05-21  Antti Koivisto  <antti@apple.com>
 
         RTL/overflow scroll tests fail with async overflow enabled
