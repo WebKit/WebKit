@@ -1,5 +1,30 @@
 2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245520. rdar://problem/50552974
+
+    Allow WebContent mach-lookup AGXCompilerService
+    https://bugs.webkit.org/show_bug.cgi?id=198031
+    <rdar://problem/50552974>
+    
+    Patch by Zhifei Fang <zhifei_fang@apple.com> on 2019-05-20
+    Reviewed by Per Arne Vollan.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245520 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-20  Zhifei Fang  <zhifei_fang@apple.com>
+
+            Allow WebContent mach-lookup AGXCompilerService
+            https://bugs.webkit.org/show_bug.cgi?id=198031
+            <rdar://problem/50552974>
+
+            Reviewed by Per Arne Vollan.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245483. rdar://problem/49078202
 
     Add a website policy to disable the legacy -webkit-overflow-scrolling:touch behavior
