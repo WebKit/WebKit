@@ -1,5 +1,59 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245490. rdar://problem/50865946
+
+    REGRESSION (r245170): gmail.com inbox table header flickers
+    https://bugs.webkit.org/show_bug.cgi?id=198005
+    <rdar://problem/50907718>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When a layer started as painting into shared backing, but then became independently
+    composited (e.g. by having to clip composited children), it wouldn't have the "overlap"
+    indirect compositing reason. This allowed requiresOwnBackingStore() to say that it
+    could paint into some ancestor, but this breaks overlap. So in this code path,
+    put IndirectCompositingReason::Overlap back on the layer which restores the previous
+    behavior.
+    
+    Make some logging changes to help diagnose things like this.
+    
+    Test: compositing/shared-backing/overlap-after-end-sharing.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::calculateClipRects const):
+    (WebCore::outputPaintOrderTreeLegend):
+    (WebCore::outputPaintOrderTreeRecursive):
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    (WebCore::RenderLayerCompositor::updateBacking):
+    (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+    (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+    (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason const):
+    * rendering/RenderLayerCompositor.h:
+    
+    LayoutTests:
+    
+    * compositing/shared-backing/overlap-after-end-sharing-expected.html: Added.
+    * compositing/shared-backing/overlap-after-end-sharing.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245490 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-17  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r245170): gmail.com inbox table header flickers
+            https://bugs.webkit.org/show_bug.cgi?id=198005
+            <rdar://problem/50907718>
+
+            Reviewed by Antti Koivisto.
+
+            * compositing/shared-backing/overlap-after-end-sharing-expected.html: Added.
+            * compositing/shared-backing/overlap-after-end-sharing.html: Added.
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245471. rdar://problem/50865946
 
     REGRESSION (r245170): gmail.com header flickers when hovering over the animating buttons

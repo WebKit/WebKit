@@ -478,7 +478,7 @@ private:
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForEditableImage(RenderLayerModelObject&) const;
-    bool requiresCompositingForIndirectReason(const RenderLayer&, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, RenderLayer::IndirectCompositingReason&) const;
+    bool requiresCompositingForIndirectReason(const RenderLayer&, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, IndirectCompositingReason&) const;
 
     static bool layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer&, const RenderLayer& compositedAncestor);
 
