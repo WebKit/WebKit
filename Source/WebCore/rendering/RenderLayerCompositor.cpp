@@ -175,6 +175,11 @@ struct RenderLayerCompositor::CompositingState {
 #endif
     }
 
+    bool hasNonRootCompositedAncestor() const
+    {
+        return compositingAncestor && !compositingAncestor->isRenderViewLayer();
+    }
+
     RenderLayer* compositingAncestor;
     RenderLayer* backingSharingAncestor { nullptr };
     RenderLayer* stackingContextAncestor { nullptr };
@@ -855,6 +860,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     RequiresCompositingData queryData;
     bool willBeComposited = layer.isComposited();
     bool becameCompositedAfterDescendantTraversal = false;
+
     if (layer.needsPostLayoutCompositingUpdate() || compositingState.fullPaintOrderTraversalRequired || compositingState.descendantsRequireCompositingUpdate) {
         layer.setIndirectCompositingReason(RenderLayer::IndirectCompositingReason::None);
         willBeComposited = needsToBeComposited(layer, queryData);
@@ -951,6 +957,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 #endif
 
     bool anyDescendantHas3DTransform = false;
+    bool descendantsAddedToOverlap = currentState.hasNonRootCompositedAncestor();
 
     for (auto* childLayer : layer.negativeZOrderLayers()) {
         computeCompositingRequirements(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
@@ -1048,7 +1055,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     compositingState.updateWithDescendantStateAndLayer(currentState, layer, layerExtent);
 
     bool layerContributesToOverlap = currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer();
-    updateOverlapMap(overlapMap, layer, layerExtent, layerContributesToOverlap, becameCompositedAfterDescendantTraversal);
+    updateOverlapMap(overlapMap, layer, layerExtent, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
 
     // Pop backing/overlap sharing state.
     if ((willBeComposited && !layer.isRenderViewLayer()) || currentState.backingSharingAncestor == &layer) {
