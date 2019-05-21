@@ -27,6 +27,10 @@
 
 #include "LayoutRect.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class HitTestLocation;
@@ -102,5 +106,7 @@ inline ClipRect intersection(const ClipRect& a, const ClipRect& b)
     c.intersect(b);
     return c;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ClipRect&);
 
 } // namespace WebCore
