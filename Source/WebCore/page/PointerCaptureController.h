@@ -54,6 +54,7 @@ public:
 
     void touchEndedOrWasCancelledForIdentifier(PointerID);
     bool hasCancelledPointerEventForIdentifier(PointerID);
+    bool preventsCompatibilityMouseEventsForIdentifier(PointerID);
     void dispatchEvent(PointerEvent&, EventTarget*);
     WEBCORE_EXPORT void cancelPointer(PointerID, const IntPoint&);
 
@@ -64,6 +65,7 @@ private:
         String pointerType;
         bool cancelled { false };
         bool isPrimary { false };
+        bool preventsCompatibilityMouseEvents { false };
     };
 
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);

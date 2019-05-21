@@ -157,6 +157,12 @@ bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID p
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.cancelled;
 }
 
+bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(PointerID pointerId)
+{
+    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+    return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.preventsCompatibilityMouseEvents;
+}
+
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view)
 {
@@ -249,8 +255,6 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
 
 void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& event)
 {
-    // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
-
     auto iterator = m_activePointerIdsToCapturingData.find(event.pointerId());
     if (iterator != m_activePointerIdsToCapturingData.end()) {
         auto& capturingData = iterator->value;
@@ -259,8 +263,14 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         // Immediately after firing the pointerup or pointercancel events, a user agent MUST clear the pending pointer capture target
         // override for the pointerId of the pointerup or pointercancel event that was just dispatched, and then run Process Pending
         // Pointer Capture steps to fire lostpointercapture if necessary.
+        // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
         if (event.type() == eventNames().pointerupEvent)
             capturingData.pendingTargetOverride = nullptr;
+
+        // If the pointer event dispatched was pointerdown and the event was canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
+        // https://www.w3.org/TR/pointerevents/#mapping-for-devices-that-support-hover
+        if (event.type() == eventNames().pointerdownEvent)
+            capturingData.preventsCompatibilityMouseEvents = event.defaultPrevented();
     }
 
     processPendingPointerCapture(event);

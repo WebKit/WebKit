@@ -306,11 +306,14 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 #if ENABLE(POINTER_EVENTS) && !ENABLE(TOUCH_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
         if (auto pointerEvent = PointerEvent::create(mouseEvent)) {
-            if (auto* page = document().page())
+            if (auto* page = document().page()) {
                 page->pointerCaptureController().dispatchEvent(*pointerEvent, this);
+                if (mouseEvent->type() != eventNames().clickEvent && page->pointerCaptureController().preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
+                    return false;
+            }
             if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
                 didNotSwallowEvent = false;
-                if (pointerEvent->type() == eventNames().pointerdownEvent || pointerEvent->type() == eventNames().pointerupEvent)
+                if (pointerEvent->type() == eventNames().pointerdownEvent)
                     return false;
             }
         }

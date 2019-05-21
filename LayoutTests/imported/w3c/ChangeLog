@@ -1,5 +1,17 @@
 2019-05-21  Antoine Quint  <graouts@apple.com>
 
+        [macOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown
+        https://bugs.webkit.org/show_bug.cgi?id=198072
+        <rdar://problem/50983361>
+
+        Reviewed by Dean Jackson.
+
+        Mark the WPT test progression after fixing this bug.
+
+        * web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_click-expected.txt:
+
+2019-05-21  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events] Do not dispatch pointermove events when the pointer is not down in WPT testdriver
         https://bugs.webkit.org/show_bug.cgi?id=198071
 
