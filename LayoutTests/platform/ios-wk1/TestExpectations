@@ -629,6 +629,7 @@ compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+compositing/ios/rtl-overflow-scrolling-2.html [ ImageOnlyFailure ]
 
 # Compositing tests that are flaky:
 compositing/cliprect-and-position-change-on-compositing-layer.html [ ImageOnlyFailure Pass ]

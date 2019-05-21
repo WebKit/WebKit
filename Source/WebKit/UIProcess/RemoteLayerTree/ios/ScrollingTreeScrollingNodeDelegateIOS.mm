@@ -294,10 +294,9 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 
 void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 {
-    auto scrollPosition = scrollingNode().currentScrollPosition();
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [scrollView() setContentOffset:scrollPosition];
+    auto scrollOffset = ScrollableArea::scrollOffsetFromPosition(scrollingNode().currentScrollPosition(), toFloatSize(scrollOrigin()));
+    [scrollView() setContentOffset:scrollOffset];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -316,11 +315,12 @@ void ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture() cons
     scrollingTree().scrollingTreeNodeWillStartPanGesture();
 }
 
-void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteraction)
+void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollOffset, bool inUserInteraction)
 {
     if (m_updatingFromStateNode)
         return;
 
+    auto scrollPosition = ScrollableArea::scrollPositionFromOffset(scrollOffset, toFloatSize(scrollOrigin()));
     scrollingNode().wasScrolledByDelegatedScrolling(scrollPosition);
 }
 

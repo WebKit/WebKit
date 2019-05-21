@@ -125,13 +125,15 @@ FloatPoint ScrollingTreeScrollingNode::clampScrollPosition(const FloatPoint& scr
 
 FloatPoint ScrollingTreeScrollingNode::minimumScrollPosition() const
 {
-    return { };
+    auto minimumScrollOffset = FloatPoint { };
+    return ScrollableArea::scrollPositionFromOffset(minimumScrollOffset, toFloatSize(scrollOrigin()));
 }
 
 FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
 {
     FloatPoint contentSizePoint(totalContentsSize());
-    return FloatPoint(contentSizePoint - scrollableAreaSize()).expandedTo(FloatPoint());
+    auto maximumScrollOffset = FloatPoint(contentSizePoint - scrollableAreaSize()).expandedTo(FloatPoint());
+    return ScrollableArea::scrollPositionFromOffset(maximumScrollOffset, toFloatSize(scrollOrigin()));
 }
 
 bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wheelEvent) const
