@@ -84,9 +84,17 @@ DownloadProxy& DownloadProxyMap::createDownloadProxy(WebProcessPool& processPool
     auto downloadProxy = DownloadProxy::create(*this, processPool, resourceRequest);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy.copyRef());
 
+    RELEASE_LOG(Loading, "Adding download %" PRIu64 " to UIProcess DownloadProxyMap", downloadProxy->downloadID().downloadID());
+
     if (m_downloads.size() == 1 && m_shouldTakeAssertion) {
-        ASSERT(!m_downloadAssertion);
-        m_downloadAssertion = std::make_unique<ProcessAssertion>(getCurrentProcessID(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
+        ASSERT(!m_downloadUIAssertion);
+        m_downloadUIAssertion = std::make_unique<ProcessAssertion>(getCurrentProcessID(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
+
+        ASSERT(!m_downloadNetworkingAssertion);
+        RELEASE_ASSERT(m_process);
+        m_downloadNetworkingAssertion = std::make_unique<ProcessAssertion>(m_process->processIdentifier(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
+
+        RELEASE_LOG(ProcessSuspension, "UIProcess took 'WebKit downloads' assertions for UIProcess and NetworkProcess");
     }
 
     m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().downloadID(), downloadProxy.get());
@@ -98,6 +106,8 @@ void DownloadProxyMap::downloadFinished(DownloadProxy& downloadProxy)
 {
     auto downloadID = downloadProxy.downloadID();
 
+    RELEASE_LOG(Loading, "Removing download %" PRIu64 " from UIProcess DownloadProxyMap", downloadID.downloadID());
+
     // The DownloadProxy may be holding the last reference to the process pool.
     auto protectedProcessPool = makeRefPtr(m_process->processPool());
 
@@ -108,8 +118,11 @@ void DownloadProxyMap::downloadFinished(DownloadProxy& downloadProxy)
     m_downloads.remove(downloadID);
 
     if (m_downloads.isEmpty() && m_shouldTakeAssertion) {
-        ASSERT(m_downloadAssertion);
-        m_downloadAssertion = nullptr;
+        ASSERT(m_downloadUIAssertion);
+        ASSERT(m_downloadNetworkingAssertion);
+        m_downloadUIAssertion = nullptr;
+        m_downloadNetworkingAssertion = nullptr;
+        RELEASE_LOG(ProcessSuspension, "UIProcess released 'WebKit downloads' assertions for UIProcess and NetworkProcess");
     }
 }
 
@@ -123,7 +136,10 @@ void DownloadProxyMap::invalidate()
     }
 
     m_downloads.clear();
-    m_downloadAssertion = nullptr;
+    m_downloadUIAssertion = nullptr;
+    m_downloadNetworkingAssertion = nullptr;
+    RELEASE_LOG(ProcessSuspension, "UIProcess DownloadProxyMap invalidated - Released 'WebKit downloads' assertions for UIProcess and NetworkProcess");
+
     m_process = nullptr;
 }
 
