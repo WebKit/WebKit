@@ -906,4 +906,18 @@ window.UIHelper = class UIHelper {
             functionToCall.apply(this, theArguments);
         });
     }
+
+    static rotateDevice(orientationName, animatedResize = false)
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.${animatedResize ? "simulateRotationLikeSafari" : "simulateRotation"}("${orientationName}", function() {
+                    uiController.doAfterVisibleContentRectUpdate(() => uiController.uiScriptComplete());
+                });
+            })()`, resolve);
+        });
+    }
 }

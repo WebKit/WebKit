@@ -1,3 +1,22 @@
+2019-05-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Layout viewport size on google.com increases after rotating to landscape and back
+        https://bugs.webkit.org/show_bug.cgi?id=198062
+        <rdar://problem/50547895>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a UIHelper method to simulate device rotation to a given orientation, and use it in a new layout test that
+        simulates rotation to and from landscape orientation, and verifies that the initial scale did not change from
+        its expected value of 1.
+
+        * fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation-expected.txt: Added.
+        * fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.rotateDevice.return.new.Promise.):
+        (window.UIHelper.rotateDevice):
+        (window.UIHelper):
+
 2019-05-20  Chris Dumez  <cdumez@apple.com>
 
         Fix security check in ScriptController::canAccessFromCurrentOrigin()

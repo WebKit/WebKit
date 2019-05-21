@@ -1,3 +1,28 @@
+2019-05-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Layout viewport size on google.com increases after rotating to landscape and back
+        https://bugs.webkit.org/show_bug.cgi?id=198062
+        <rdar://problem/50547895>
+
+        Reviewed by Maciej Stachowiak.
+
+        During an animated resize (e.g. when rotating the device on iOS), we currently immediately trigger the new
+        shrink-to-fit content size heuristic in the middle of dynamicViewportSizeUpdate, after the new view layout size
+        has been applied to the viewport configuration but before we've issued a resize event to the page.
+
+        Thus, on pages that use listen to the resize event and adjust their content accordingly to fit within the new
+        layout width, we prematurely declare that the page has horizontally overflowed, and try to lay out at a larger
+        width and scale down. This causes the page to unnecessarily shrink after rotating to landscale orientation and
+        back.
+
+        To fix this, we simply move the call to shrink-to-fit-content to the end of the dynamic viewport size update,
+        such that the page has had a chance to adjust to the new layout size.
+
+        Test: fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2019-05-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Make lossy LayoutUnit constructors explicit

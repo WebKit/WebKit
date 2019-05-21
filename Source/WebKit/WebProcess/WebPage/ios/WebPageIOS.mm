@@ -3002,11 +3002,6 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     if (viewportChanged)
         viewportConfigurationChanged();
 
-#if ENABLE(VIEWPORT_RESIZING)
-    if (immediatelyShrinkToFitContent())
-        viewportConfigurationChanged();
-#endif
-
     IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
 
     if (setFixedLayoutSize(newLayoutSize))
@@ -3137,6 +3132,11 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     frameView.setCustomSizeForResizeEvent(expandedIntSize(targetUnobscuredRectInScrollViewCoordinates.size()));
     setDeviceOrientation(deviceOrientation);
     frameView.setScrollOffset(roundedUnobscuredContentRectPosition);
+
+#if ENABLE(VIEWPORT_RESIZING)
+    if (immediatelyShrinkToFitContent())
+        viewportConfigurationChanged();
+#endif
 
     m_drawingArea->scheduleCompositingLayerFlush();
 
