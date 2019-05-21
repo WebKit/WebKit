@@ -28,6 +28,7 @@
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
 #include "DownloadManager.h"
+#include "LocalStorageDatabaseTracker.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
@@ -164,6 +165,7 @@ public:
 
     void setSession(const PAL::SessionID&, Ref<NetworkSession>&&);
     NetworkSession* networkSession(const PAL::SessionID&) const override;
+    NetworkSession* networkSessionByConnection(IPC::Connection&) const;
     void destroySession(const PAL::SessionID&);
 
     // Needed for test infrastructure
@@ -227,6 +229,7 @@ public:
     void setVeryPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
     void setPruneEntriesDownTo(PAL::SessionID, uint64_t pruneTargetCount, CompletionHandler<void()>&&);
     void hadUserInteraction(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+    void hasLocalStorage(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
     void logFrameNavigation(PAL::SessionID, const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame);
     void logUserInteraction(PAL::SessionID, const TopFrameDomain&, CompletionHandler<void()>&&);
@@ -267,6 +270,12 @@ public:
 
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
+
+    void webPageWasAdded(IPC::Connection&, PAL::SessionID, uint64_t pageID, uint64_t oldPageID);
+    void webPageWasRemoved(IPC::Connection&, PAL::SessionID, uint64_t pageID);
+    void webProcessWasDisconnected(IPC::Connection&);
+    void webProcessSessionChanged(IPC::Connection&, PAL::SessionID, const Vector<uint64_t>&);
+    void getLocalStorageOriginDetails(PAL::SessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
@@ -558,6 +567,8 @@ private:
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };
+
+    HashMap<IPC::Connection::UniqueID, PAL::SessionID> m_sessionByConnection;
 };
 
 } // namespace WebKit

@@ -5028,7 +5028,6 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
 
         reply(newPage->pageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
 
-        WebsiteDataStore::cloneSessionData(*this, *newPage);
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL({ }, mainFrameURL), request.url());
 
 #if HAVE(LOAD_OPTIMIZER)

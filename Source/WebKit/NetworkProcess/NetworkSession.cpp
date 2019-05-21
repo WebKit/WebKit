@@ -32,6 +32,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "PingLoad.h"
+#include "StorageManager.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
@@ -72,11 +73,13 @@ NetworkStorageSession& NetworkSession::networkStorageSession() const
     return *storageSession;
 }
 
-NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID)
+NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID, const String& localStorageDirectory, SandboxExtension::Handle& handle)
     : m_sessionID(sessionID)
     , m_networkProcess(networkProcess)
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(sessionID))
+    , m_storageManager(StorageManager::create(localStorageDirectory))
 {
+    SandboxExtension::consumePermanently(handle);
     m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
             return;
@@ -87,6 +90,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID se
 
 NetworkSession::~NetworkSession()
 {
+    m_storageManager->waitUntilWritesFinished();
 }
 
 void NetworkSession::invalidateAndCancel()

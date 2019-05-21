@@ -99,9 +99,9 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
     case WebsiteDataType::OfflineWebApplicationCache:
         return WebsiteDataProcessType::UI;
     case WebsiteDataType::SessionStorage:
-        return WebsiteDataProcessType::UI;
+        return WebsiteDataProcessType::Network;
     case WebsiteDataType::LocalStorage:
-        return WebsiteDataProcessType::UI;
+        return WebsiteDataProcessType::Network;
     case WebsiteDataType::WebSQLDatabases:
         return WebsiteDataProcessType::UI;
     case WebsiteDataType::IndexedDBDatabases:

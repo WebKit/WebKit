@@ -30,6 +30,7 @@ VPATH = \
     $(WebKit2)/NetworkProcess/webrtc \
     $(WebKit2)/NetworkProcess/IndexedDB \
     $(WebKit2)/NetworkProcess/ServiceWorker \
+    $(WebKit2)/NetworkProcess/WebStorage \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Shared/Plugins \
@@ -79,7 +80,6 @@ VPATH = \
     $(WebKit2)/UIProcess/Storage \
     $(WebKit2)/UIProcess/UserContent \
     $(WebKit2)/UIProcess/WebAuthentication \
-    $(WebKit2)/UIProcess/WebStorage \
     $(WebKit2)/UIProcess/mac \
     $(WebKit2)/UIProcess/ios \
     $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) \

@@ -97,6 +97,7 @@ class InjectedBundle;
 class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
+class StorageAreaMap;
 class UserData;
 class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
@@ -146,7 +147,7 @@ public:
 
     WebPage* webPage(uint64_t pageID) const;
     void createWebPage(uint64_t pageID, WebPageCreationParameters&&);
-    void removeWebPage(uint64_t pageID);
+    void removeWebPage(PAL::SessionID, uint64_t pageID);
     WebPage* focusedWebPage() const;
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
@@ -202,6 +203,12 @@ public:
     void pageWillLeaveWindow(uint64_t pageID);
 
     void nonVisibleProcessCleanupTimerFired();
+
+    void registerStorageAreaMap(StorageAreaMap&);
+    void unregisterStorageAreaMap(StorageAreaMap&);
+    StorageAreaMap* storageAreaMap(uint64_t identifier) const;
+
+    void enablePrivateBrowsingForTesting(bool);
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
@@ -554,6 +561,8 @@ private:
 #if PLATFORM(IOS)
     float m_backlightLevel { 0 };
 #endif
+
+    HashMap<uint64_t, StorageAreaMap*> m_storageAreaMaps;
 };
 
 } // namespace WebKit

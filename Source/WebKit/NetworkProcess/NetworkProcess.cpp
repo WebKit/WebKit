@@ -53,6 +53,8 @@
 #include "ShouldGrandfatherStatistics.h"
 #include "StatisticsData.h"
 #include "StorageAccessStatus.h"
+#include "StorageManager.h"
+#include "StorageManagerMessages.h"
 #include "WebCookieManager.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
@@ -560,6 +562,14 @@ NetworkSession* NetworkProcess::networkSession(const PAL::SessionID& sessionID) 
     return m_networkSessions.get(sessionID);
 }
 
+NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& connection) const
+{
+    if (!m_sessionByConnection.contains(connection.uniqueID()))
+        return nullptr;
+
+    return networkSession(m_sessionByConnection.get(connection.uniqueID()));
+}
+
 void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSession>&& session)
 {
     m_networkSessions.set(sessionID, WTFMove(session));
@@ -1011,6 +1021,19 @@ void NetworkProcess::clearUserInteraction(PAL::SessionID sessionID, const Regist
     }
 }
 
+void NetworkProcess::hasLocalStorage(PAL::SessionID sessionID, const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID)) {
+        session->storageManager().getLocalStorageOrigins([domain, completionHandler = WTFMove(completionHandler)](auto&& origins) mutable {
+            completionHandler(WTF::anyOf(origins, [&domain](auto& origin) {
+                return domain.matches(origin);
+            }));
+        });
+        return;
+    }
+    completionHandler(false);
+}
+
 void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vector<RegistrableDomain>& domains)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
@@ -1260,6 +1283,21 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         });
     }
 
+    auto* session = networkSession(sessionID);
+    if (websiteDataTypes.contains(WebsiteDataType::SessionStorage) && session) {
+        session->storageManager().getSessionStorageOrigins([callbackAggregator = callbackAggregator.copyRef()](auto&& origins) {
+            while (!origins.isEmpty())
+                callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::SessionStorage, 0 });
+        });
+    }
+
+    if (websiteDataTypes.contains(WebsiteDataType::LocalStorage) && session) {
+        session->storageManager().getLocalStorageOrigins([callbackAggregator = callbackAggregator.copyRef()](auto&& origins) {
+            while (!origins.isEmpty())
+                callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::LocalStorage, 0 });
+        });
+    }
+
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
         if (auto* networkStorageSession = storageSession(sessionID))
@@ -1322,6 +1360,13 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
         CacheStorage::Engine::clearAllCaches(*this, sessionID, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+
+    auto* session = networkSession(sessionID);
+    if (websiteDataTypes.contains(WebsiteDataType::SessionStorage) && session)
+        session->storageManager().deleteSessionStorageOrigins([clearTasksHandler = clearTasksHandler.copyRef()] { });
+
+    if (websiteDataTypes.contains(WebsiteDataType::LocalStorage) && session)
+        session->storageManager().deleteLocalStorageOriginsModifiedSince(modifiedSince, [clearTasksHandler = clearTasksHandler.copyRef()] { });
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral())
@@ -1416,6 +1461,13 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             CacheStorage::Engine::clearCachesForOrigin(*this, sessionID, SecurityOriginData { originData }, [clearTasksHandler = clearTasksHandler.copyRef()] { });
     }
 
+    auto* session = networkSession(sessionID);
+    if (websiteDataTypes.contains(WebsiteDataType::SessionStorage) && session)
+        session->storageManager().deleteSessionStorageEntriesForOrigins(originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+
+    if (websiteDataTypes.contains(WebsiteDataType::LocalStorage) && session)
+        session->storageManager().deleteLocalStorageEntriesForOrigins(originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral())
         idbServer(sessionID).closeAndDeleteDatabasesForOrigins(originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
@@ -1474,6 +1526,20 @@ static Vector<WebsiteData::Entry> filterForRegistrableDomains(const Vector<Regis
     }
     
     return result;
+}
+
+static Vector<WebCore::SecurityOriginData> filterForRegistrableDomains(const HashSet<WebCore::SecurityOriginData>& origins, const Vector<RegistrableDomain>& domainsToDelete, HashSet<RegistrableDomain>& domainsDeleted)
+{
+    Vector<SecurityOriginData> originsDeleted;
+    for (const auto& origin : origins) {
+        auto domain = RegistrableDomain::uncheckedCreateFromHost(origin.host);
+        if (!domainsToDelete.contains(domain))
+            continue;
+        originsDeleted.append(origin);
+        domainsDeleted.add(domain);
+    }
+
+    return originsDeleted;
 }
 
 void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
@@ -1584,7 +1650,25 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
                 CacheStorage::Engine::clearCachesForOrigin(*this, sessionID, SecurityOriginData { entry.origin }, [callbackAggregator = callbackAggregator.copyRef()] { });
         });
     }
-    
+
+    auto* session = networkSession(sessionID);
+    if (session) {
+        auto& storageManager = session->storageManager();
+        if (websiteDataTypes.contains(WebsiteDataType::SessionStorage)) {
+            storageManager.getSessionStorageOrigins([storageManager = makeRefPtr(storageManager), callbackAggregator = callbackAggregator.copyRef(), domainsToDeleteAllButCookiesFor](auto&& origins) {
+                auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllButCookiesFor, callbackAggregator->m_domains);
+                storageManager->deleteSessionStorageEntriesForOrigins(originsToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
+            });
+        }
+
+        if (websiteDataTypes.contains(WebsiteDataType::LocalStorage)) {
+            storageManager.getLocalStorageOrigins([storageManager = makeRefPtr(storageManager), callbackAggregator = callbackAggregator.copyRef(), domainsToDeleteAllButCookiesFor](auto&& origins) {
+                auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllButCookiesFor, callbackAggregator->m_domains);
+                storageManager->deleteLocalStorageEntriesForOrigins(originsToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
+            });
+        }
+    }
+
 #if ENABLE(INDEXED_DATABASE)
     auto path = m_idbDatabasePaths.get(sessionID);
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
@@ -2533,6 +2617,88 @@ void NetworkProcess::removeKeptAliveLoad(NetworkResourceLoader& loader)
 {
     if (auto session = m_networkSessions.get(loader.sessionID()))
         session->removeKeptAliveLoad(loader);
+}
+
+void NetworkProcess::webPageWasAdded(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t pageID, uint64_t oldPageID)
+{
+    if (!pageID || !oldPageID) {
+        LOG_ERROR("Cannot add page with invalid id");
+        return;
+    }
+
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        LOG_ERROR("Cannot add page to an unknown session");
+        return;
+    }
+    auto& storageManager = session->storageManager();
+
+    auto connectionID = connection.uniqueID();
+    m_sessionByConnection.ensure(connectionID, [&]() {
+        storageManager.processWillOpenConnection(connection);
+        return sessionID;
+    });
+
+    storageManager.createSessionStorageNamespace(pageID, std::numeric_limits<unsigned>::max());
+    storageManager.addAllowedSessionStorageNamespaceConnection(pageID, connection);
+    if (pageID != oldPageID)
+        storageManager.cloneSessionStorageNamespace(oldPageID, pageID);
+}
+
+void NetworkProcess::webPageWasRemoved(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t pageID)
+{
+    if (!pageID) {
+        LOG_ERROR("Cannot remove page with invalid id");
+        return;
+    }
+
+    auto* session = networkSession(sessionID);
+    // Session can be destroyed before page gets removed.
+    if (!session)
+        return;
+
+    auto& storageManager = session->storageManager();
+    storageManager.removeAllowedSessionStorageNamespaceConnection(pageID, connection);
+    storageManager.destroySessionStorageNamespace(pageID);
+}
+
+void NetworkProcess::webProcessWasDisconnected(IPC::Connection& connection)
+{
+    auto connectionID = connection.uniqueID();
+    if (!m_sessionByConnection.contains(connectionID))
+        return;
+
+    auto sessionID = m_sessionByConnection.take(connectionID);
+    if (!m_networkSessions.contains(sessionID))
+        return;
+
+    networkSession(sessionID)->storageManager().processDidCloseConnection(connection);
+}
+
+void NetworkProcess::webProcessSessionChanged(IPC::Connection& connection, PAL::SessionID newSessionID, const Vector<uint64_t>& pageIDs)
+{
+    auto connectionID = connection.uniqueID();
+    ASSERT(m_sessionByConnection.contains(connectionID));
+    if (m_sessionByConnection.get(connectionID) == newSessionID)
+        return;
+
+    webProcessWasDisconnected(connection);
+    for (auto& pageID : pageIDs)
+        webPageWasAdded(connection, newSessionID, pageID, pageID);
+}
+
+void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        LOG_ERROR("Cannot get local storage information for an unknown session");
+        return;
+    }
+
+    auto& storageManager = session->storageManager();
+    storageManager.getLocalStorageOriginDetails([completionHandler = WTFMove(completionHandler)](auto&& details) mutable {
+        completionHandler(WTFMove(details));
+    });
 }
 
 } // namespace WebKit

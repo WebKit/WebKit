@@ -42,6 +42,7 @@
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
 #include "StatisticsData.h"
+#include "StorageAreaMap.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
 #include "WebCacheStorageProvider.h"
@@ -56,6 +57,7 @@
 #include "WebMemorySampler.h"
 #include "WebMessagePortChannelProvider.h"
 #include "WebPage.h"
+#include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
 #include "WebPaymentCoordinator.h"
 #include "WebPlatformStrategies.h"
@@ -675,6 +677,7 @@ void WebProcess::createWebPage(uint64_t pageID, WebPageCreationParameters&& para
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
     HashMap<uint64_t, RefPtr<WebPage>>::AddResult result = m_pageMap.add(pageID, nullptr);
+    auto oldPageID = parameters.oldPageID ? parameters.oldPageID.value() : pageID;
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
         result.iterator->value = WebPage::create(pageID, WTFMove(parameters));
@@ -685,13 +688,16 @@ void WebProcess::createWebPage(uint64_t pageID, WebPageCreationParameters&& para
     } else
         result.iterator->value->reinitializeWebPage(WTFMove(parameters));
 
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::WebPageWasAdded(result.iterator->value->sessionID(), pageID, oldPageID), 0);
+
     ASSERT(result.iterator->value);
 }
 
-void WebProcess::removeWebPage(uint64_t pageID)
+void WebProcess::removeWebPage(PAL::SessionID sessionID, uint64_t pageID)
 {
     ASSERT(m_pageMap.contains(pageID));
 
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::WebPageWasRemoved(sessionID, pageID), 0);
     pageWillLeaveWindow(pageID);
     m_pageMap.remove(pageID);
 
@@ -1241,6 +1247,16 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 
         m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::SetWebProcessIdentifier(Process::identifier()), 0);
+
+        // To recover web storage, network process needs to know active webpages to prepare session storage.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198051.
+        // Webpage should be added when Storage is used, not when connection is re-established.
+        for (auto& page : m_pageMap) {
+            if (!page.value)
+                continue;
+
+            m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::WebPageWasAdded(page.value->sessionID(), page.key, page.key), 0);
+        }
     }
     
     return *m_networkProcessConnection;
@@ -1270,6 +1286,9 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 {
     ASSERT(m_networkProcessConnection);
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
+
+    for (auto* storageAreaMap : m_storageAreaMaps.values())
+        storageAreaMap->disconnect();
 
 #if ENABLE(INDEXED_DATABASE)
     for (auto& page : m_pageMap.values()) {
@@ -1628,6 +1647,40 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 #if PLATFORM(COCOA)
     destroyRenderingResources();
 #endif
+}
+
+void WebProcess::registerStorageAreaMap(StorageAreaMap& storageAreaMap)
+{
+    ASSERT(!m_storageAreaMaps.contains(storageAreaMap.identifier()));
+    m_storageAreaMaps.set(storageAreaMap.identifier(), &storageAreaMap);
+}
+
+void WebProcess::unregisterStorageAreaMap(StorageAreaMap& storageAreaMap)
+{
+    ASSERT(m_storageAreaMaps.contains(storageAreaMap.identifier()));
+    ASSERT(m_storageAreaMaps.get(storageAreaMap.identifier()) == &storageAreaMap);
+    m_storageAreaMaps.remove(storageAreaMap.identifier());
+}
+
+StorageAreaMap* WebProcess::storageAreaMap(uint64_t identifier) const
+{
+    ASSERT(m_storageAreaMaps.contains(identifier));
+    return m_storageAreaMaps.get(identifier);
+}
+
+void WebProcess::enablePrivateBrowsingForTesting(bool enable)
+{
+    if (enable)
+        ensureLegacyPrivateBrowsingSessionInNetworkProcess();
+
+    Vector<uint64_t> pageIDs;
+    for (auto& page : m_pageMap) {
+        if (page.value)
+            pageIDs.append(page.key);
+    }
+
+    if (!pageIDs.isEmpty())
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::WebProcessSessionChanged(enable ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(), pageIDs), 0);
 }
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)

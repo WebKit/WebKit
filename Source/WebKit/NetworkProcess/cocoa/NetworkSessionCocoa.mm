@@ -875,7 +875,7 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
 }
 
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
-    : NetworkSession(networkProcess, parameters.sessionID)
+    : NetworkSession(networkProcess, parameters.sessionID, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle)
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
     , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
     , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)

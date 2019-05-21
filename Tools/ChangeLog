@@ -1,3 +1,18 @@
+2019-05-20  Sihui Liu  <sihui_liu@apple.com>
+
+        Move Web Storage to Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=197636
+ 
+        Reviewed by Youenn Fablet.
+ 
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm: Remove the wait for database file update.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm: Add a test for network process crash recovery.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm: Fix a typo and add a test case to cover it.
+        * TestWebKitAPI/Tests/WebKitCocoa/local-storage-process-crashes.html: Added.
+
 2019-05-20  Keith Rollin  <krollin@apple.com>
 
         generate-xcfilelists is stranding temporary files

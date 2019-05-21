@@ -60,9 +60,6 @@ TEST(WKWebView, LocalStorageFetchDataRecords)
     [webView loadHTMLString:@"<script>localStorage.setItem('testKey', 'testValue');alert(localStorage.getItem('testKey'));</script>" baseURL:[NSURL URLWithString:@"http://localhost"]];
     TestWebKitAPI::Util::run(&readyToContinue);
 
-    // Local storage database update interval is 1 second.
-    TestWebKitAPI::Util::sleep(1);
-
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         readyToContinue = true;

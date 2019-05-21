@@ -4999,7 +4999,7 @@ TEST(ProcessSwap, EphemeralWebStorage)
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-    [webView evaluateJavaScript:@"window.sessionStorage.setItem('b,'a')" completionHandler:^(id, NSError *) {
+    [webView evaluateJavaScript:@"window.sessionStorage.setItem('b','a')" completionHandler:^(id, NSError *) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -5015,6 +5015,13 @@ TEST(ProcessSwap, EphemeralWebStorage)
     done = false;
     [webView evaluateJavaScript:@"window.localStorage.getItem('a')" completionHandler:^(id result, NSError *) {
         EXPECT_TRUE([@"b" isEqualToString:result]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"window.sessionStorage.getItem('b')" completionHandler:^(id result, NSError *) {
+        EXPECT_TRUE([@"a" isEqualToString:result]);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

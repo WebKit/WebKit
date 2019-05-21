@@ -48,11 +48,11 @@ namespace WebKit {
 
 static id terminationObserver;
 
-static Vector<WebsiteDataStore*>& dataStoresWithStorageManagers()
+static HashSet<WebsiteDataStore*>& dataStores()
 {
-    static NeverDestroyed<Vector<WebsiteDataStore*>> dataStoresWithStorageManagers;
+    static NeverDestroyed<HashSet<WebsiteDataStore*>> dataStores;
 
-    return dataStoresWithStorageManagers;
+    return dataStores;
 }
 
 static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
@@ -107,6 +107,11 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!resourceLoadStatisticsDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
 
+    auto localStorageDirectory = resolvedLocalStorageDirectory();
+    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
+    if (!localStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, localStorageDirectoryExtensionHandle);
+
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
@@ -126,7 +131,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         false,
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
-        WTFMove(resourceLoadStatisticsManualPrevalentResource)
+        WTFMove(resourceLoadStatisticsManualPrevalentResource),
+        WTFMove(localStorageDirectory),
+        WTFMove(localStorageDirectoryExtensionHandle)
     };
     networkingHasBegun();
 
@@ -168,11 +175,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
 void WebsiteDataStore::platformInitialize()
 {
-    if (!m_storageManager)
-        return;
-
     if (!terminationObserver) {
-        ASSERT(dataStoresWithStorageManagers().isEmpty());
+        ASSERT(dataStores().isEmpty());
 
 #if PLATFORM(MAC)
         NSString *notificationName = NSApplicationWillTerminateNotification;
@@ -180,8 +184,7 @@ void WebsiteDataStore::platformInitialize()
         NSString *notificationName = UIApplicationWillTerminateNotification;
 #endif
         terminationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:nil usingBlock:^(NSNotification *note) {
-            for (auto& dataStore : dataStoresWithStorageManagers()) {
-                dataStore->m_storageManager->applicationWillTerminate();
+            for (auto& dataStore : dataStores()) {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
                 if (dataStore->m_resourceLoadStatistics)
                     dataStore->m_resourceLoadStatistics->applicationWillTerminate();
@@ -190,8 +193,8 @@ void WebsiteDataStore::platformInitialize()
         }];
     }
 
-    ASSERT(!dataStoresWithStorageManagers().contains(this));
-    dataStoresWithStorageManagers().append(this);
+    ASSERT(!dataStores().contains(this));
+    dataStores().add(this);
 }
 
 void WebsiteDataStore::platformDestroy()
@@ -201,16 +204,10 @@ void WebsiteDataStore::platformDestroy()
         m_resourceLoadStatistics->applicationWillTerminate();
 #endif
 
-    if (!m_storageManager)
-        return;
+    ASSERT(dataStores().contains(this));
+    dataStores().remove(this);
 
-    // FIXME: Rename applicationWillTerminate to something that better indicates what StorageManager does (waits for pending writes to finish).
-    m_storageManager->applicationWillTerminate();
-
-    ASSERT(dataStoresWithStorageManagers().contains(this));
-    dataStoresWithStorageManagers().removeFirst(this);
-
-    if (dataStoresWithStorageManagers().isEmpty()) {
+    if (dataStores().isEmpty()) {
         [[NSNotificationCenter defaultCenter] removeObserver:terminationObserver];
         terminationObserver = nil;
     }

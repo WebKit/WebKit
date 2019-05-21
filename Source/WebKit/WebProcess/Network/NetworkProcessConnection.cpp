@@ -30,6 +30,8 @@
 #include "LibWebRTCNetwork.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "ServiceWorkerClientFetchMessages.h"
+#include "StorageAreaMap.h"
+#include "StorageAreaMapMessages.h"
 #include "WebCacheStorageConnection.h"
 #include "WebCacheStorageConnectionMessages.h"
 #include "WebCacheStorageProvider.h"
@@ -91,6 +93,11 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
         if (auto* webPage = WebProcess::singleton().webPage(decoder.destinationID()))
             webPage->didReceiveWebPageMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
+        if (auto* stoargeAreaMap = WebProcess::singleton().storageAreaMap(decoder.destinationID()))
+            stoargeAreaMap->didReceiveMessage(connection, decoder);
         return;
     }
 

@@ -50,7 +50,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if USE(CURL)
         , { }, { }
 #endif
-        , { }, { }, false
+        , { }, { }, false, { }, { }, { }, { }, { }
     };
 }
 
@@ -83,6 +83,8 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldIncludeLocalhostInResourceLoadStatistics;
     encoder << enableResourceLoadStatisticsDebugMode;
     encoder << resourceLoadStatisticsManualPrevalentResource;
+
+    encoder << localStorageDirectory <<  localStorageDirectoryExtensionHandle;
 }
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -196,6 +198,16 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!resourceLoadStatisticsManualPrevalentResource)
         return WTF::nullopt;
 
+    Optional<String> localStorageDirectory;
+    decoder >> localStorageDirectory;
+    if (!localStorageDirectory)
+        return WTF::nullopt;
+
+    Optional<SandboxExtension::Handle> localStorageDirectoryExtensionHandle;
+    decoder >> localStorageDirectoryExtensionHandle;
+    if (!localStorageDirectoryExtensionHandle)
+        return WTF::nullopt;
+
     return {{
         sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -224,6 +236,8 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
         , WTFMove(*enableResourceLoadStatisticsDebugMode)
         , WTFMove(*resourceLoadStatisticsManualPrevalentResource)
+        , WTFMove(*localStorageDirectory)
+        , WTFMove(*localStorageDirectoryExtensionHandle)
     }};
 }
 

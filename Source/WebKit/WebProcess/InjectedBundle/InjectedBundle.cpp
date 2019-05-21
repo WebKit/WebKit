@@ -348,8 +348,7 @@ void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGrou
 void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    if (enabled)
-        WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
+    WebProcess::singleton().enablePrivateBrowsingForTesting(enabled);
 
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)

@@ -87,6 +87,9 @@ struct NetworkSessionCreationParameters {
     bool shouldIncludeLocalhostInResourceLoadStatistics { true };
     bool enableResourceLoadStatisticsDebugMode { false };
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
+
+    String localStorageDirectory;
+    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
 };
 
 } // namespace WebKit

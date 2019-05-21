@@ -131,6 +131,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << contentRuleLists;
 #endif
     encoder << backgroundColor;
+    encoder << oldPageID;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -390,6 +391,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!backgroundColor)
         return WTF::nullopt;
     parameters.backgroundColor = WTFMove(*backgroundColor);
+
+    Optional<Optional<uint64_t>> oldPageID;
+    decoder >> oldPageID;
+    if (!oldPageID)
+        return WTF::nullopt;
+    parameters.oldPageID = WTFMove(*oldPageID);
 
     return parameters;
 }

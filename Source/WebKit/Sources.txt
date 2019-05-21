@@ -65,6 +65,10 @@ NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify
 
+NetworkProcess/WebStorage/LocalStorageDatabase.cpp
+NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp
+NetworkProcess/WebStorage/StorageManager.cpp
+
 NetworkProcess/cache/CacheStorageEngine.cpp
 NetworkProcess/cache/CacheStorageEngineCache.cpp
 NetworkProcess/cache/CacheStorageEngineCaches.cpp
@@ -409,10 +413,6 @@ UIProcess/WebAuthentication/AuthenticatorManager.cpp
 UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
-
-UIProcess/WebStorage/LocalStorageDatabase.cpp
-UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
-UIProcess/WebStorage/StorageManager.cpp
 
 UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp
 UIProcess/WebsiteData/WebsiteDataRecord.cpp

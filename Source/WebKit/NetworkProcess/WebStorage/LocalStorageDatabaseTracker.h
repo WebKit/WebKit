@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,6 @@
 
 namespace WebKit {
 
-struct LocalStorageDetails;
-
 class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
 public:
     static Ref<LocalStorageDatabaseTracker> create(Ref<WorkQueue>&&, const String& localStorageDirectory);
@@ -55,8 +53,11 @@ public:
 
     struct OriginDetails {
         String originIdentifier;
-        Markable<WallTime, WallTime::MarkableTraits> creationTime;
-        Markable<WallTime, WallTime::MarkableTraits> modificationTime;
+        Optional<WallTime> creationTime;
+        Optional<WallTime> modificationTime;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<OriginDetails> decode(Decoder&);
     };
     Vector<OriginDetails> originDetails();
 
@@ -70,7 +71,7 @@ private:
         SkipIfNonExistent
     };
 
-    RefPtr<WorkQueue> m_queue;
+    Ref<WorkQueue> m_queue;
     String m_localStorageDirectory;
 
 #if PLATFORM(IOS_FAMILY)
@@ -79,5 +80,27 @@ private:
     mutable bool m_hasExcludedFromBackup { false };
 #endif
 };
+
+template<class Encoder>
+void LocalStorageDatabaseTracker::OriginDetails::encode(Encoder& encoder) const
+{
+    encoder << originIdentifier << creationTime << modificationTime;
+}
+
+template<class Decoder>
+Optional<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::OriginDetails::decode(Decoder& decoder)
+{
+    LocalStorageDatabaseTracker::OriginDetails result;
+    if (!decoder.decode(result.originIdentifier))
+        return WTF::nullopt;
+    
+    if (!decoder.decode(result.creationTime))
+        return WTF::nullopt;
+    
+    if (!decoder.decode(result.modificationTime))
+        return WTF::nullopt;
+    
+    return result;
+}
 
 } // namespace WebKit

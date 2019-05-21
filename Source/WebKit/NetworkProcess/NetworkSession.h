@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PrefetchCache.h"
+#include "SandboxExtension.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/RegistrableDomain.h>
@@ -51,6 +52,7 @@ class AdClickAttributionManager;
 class NetworkDataTask;
 class NetworkProcess;
 class NetworkResourceLoader;
+class StorageManager;
 class WebResourceLoadStatisticsStore;
 struct NetworkSessionCreationParameters;
 
@@ -72,6 +74,8 @@ public:
 
     void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
     void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
+
+    StorageManager& storageManager() { return m_storageManager.get(); }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
@@ -98,7 +102,7 @@ public:
     void clearPrefetchCache() { m_prefetchCache.clear(); }
 
 protected:
-    NetworkSession(NetworkProcess&, PAL::SessionID);
+    NetworkSession(NetworkProcess&, PAL::SessionID, const String& localStorageDirectory, SandboxExtension::Handle&);
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
@@ -115,6 +119,8 @@ protected:
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 
     PrefetchCache m_prefetchCache;
+
+    Ref<StorageManager> m_storageManager;
 };
 
 } // namespace WebKit

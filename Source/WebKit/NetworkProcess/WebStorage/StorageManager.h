@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -55,9 +54,9 @@ public:
     void removeAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection&);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
-    void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
-    void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
-    void applicationWillTerminate();
+    void processWillOpenConnection(IPC::Connection&);
+    void processDidCloseConnection(IPC::Connection&);
+    void waitUntilWritesFinished();
 
     void getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
     void deleteSessionStorageOrigins(Function<void()>&& completionHandler);
@@ -69,7 +68,10 @@ public:
     void deleteLocalStorageOriginsModifiedSince(WallTime, Function<void()>&& completionHandler);
     void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
 
-    void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler);
+    void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler);
+
+    void dispatchMessageToQueue(IPC::Connection&, IPC::Decoder&);
+    void dispatchSyncMessageToQueue(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);
@@ -85,7 +87,8 @@ private:
     void destroyStorageMap(IPC::Connection&, uint64_t storageMapID);
 
     void getValues(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t storageMapSeed, CompletionHandler<void(const HashMap<String, String>&)>&&);
-    void setItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
+    void setItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
+    void setItems(IPC::Connection&, uint64_t storageMapID, const HashMap<String, String>& items);
     void removeItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
     void clear(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
 
@@ -112,6 +115,7 @@ private:
 
     HashMap<WebCore::SecurityOriginData, Ref<WebCore::StorageMap>> m_ephemeralStorage;
     bool m_isEphemeral { false };
+
 };
 
 } // namespace WebKit

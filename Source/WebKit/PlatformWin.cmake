@@ -9,6 +9,8 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
     NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
+    NetworkProcess/WebStorage/StorageManager.cpp
+
     NetworkProcess/win/NetworkProcessMainWin.cpp
 
     Platform/IPC/win/AttachmentWin.cpp

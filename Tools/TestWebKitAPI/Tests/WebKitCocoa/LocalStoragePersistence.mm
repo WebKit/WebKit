@@ -53,6 +53,53 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @end
 
+TEST(WKWebView, LocalStorageProcessCrashes)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    RetainPtr<LocalStorageMessageHandler> handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"local-storage-process-crashes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    
+    receivedScriptMessage = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"local:storage", [lastScriptMessage body]);
+    
+    receivedScriptMessage = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"session:storage", [lastScriptMessage body]);
+
+    [configuration.get().processPool _terminateNetworkProcess];
+    
+    receivedScriptMessage = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"Network Process Crashed", [lastScriptMessage body]);
+
+    readyToContinue = false;
+    [webView evaluateJavaScript:@"window.localStorage.getItem('local')" completionHandler:^(id result, NSError *) {
+        EXPECT_TRUE([@"storage" isEqualToString:result]);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    readyToContinue = false;
+    [webView evaluateJavaScript:@"window.sessionStorage.getItem('session')" completionHandler:^(id result, NSError *) {
+        EXPECT_TRUE([@"storage" isEqualToString:result]);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+}
 
 TEST(WKWebView, LocalStorageEmptyString)
 {

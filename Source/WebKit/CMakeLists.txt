@@ -20,6 +20,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT_DIR}/NetworkProcess/IndexedDB"
     "${WEBKIT_DIR}/NetworkProcess/ServiceWorker"
+    "${WEBKIT_DIR}/NetworkProcess/WebStorage"
     "${WEBKIT_DIR}/NetworkProcess/cache"
     "${WEBKIT_DIR}/NetworkProcess/watchos"
     "${WEBKIT_DIR}/NetworkProcess/webrtc"
@@ -58,7 +59,6 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/UserContent"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/Mock"
-    "${WEBKIT_DIR}/UIProcess/WebStorage"
     "${WEBKIT_DIR}/UIProcess/WebsiteData"
     "${WEBKIT_DIR}/WebProcess"
     "${WEBKIT_DIR}/WebProcess/ApplePay"
@@ -117,6 +117,8 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
     NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 
+    NetworkProcess/WebStorage/StorageManager.messages.in
+
     NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 
     NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
@@ -156,8 +158,6 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/Plugins/PluginProcessProxy.messages.in
 
     UIProcess/UserContent/WebUserContentControllerProxy.messages.in
-
-    UIProcess/WebStorage/StorageManager.messages.in
 
     WebProcess/WebProcess.messages.in
 

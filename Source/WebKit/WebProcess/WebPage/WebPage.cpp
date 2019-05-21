@@ -1405,6 +1405,7 @@ void WebPage::close()
     m_mainFrame->coreFrame()->loader().detachFromParent();
     m_drawingArea = nullptr;
 
+    auto sessionID = this->sessionID();
     DeferredPageDestructor::createDeferredPageDestructor(WTFMove(m_page), this);
 
     bool isRunningModal = m_isRunningModal;
@@ -1432,7 +1433,7 @@ void WebPage::close()
 #endif
 
     // The WebPage can be destroyed by this call.
-    WebProcess::singleton().removeWebPage(m_pageID);
+    WebProcess::singleton().removeWebPage(sessionID, m_pageID);
 
     WebProcess::singleton().updateActivePages();
 

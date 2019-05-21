@@ -574,6 +574,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
 
+    auto localStorageDirectory = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().resolvedLocalStorageDirectory() : nullString();
+    if (!localStorageDirectory)
+        localStorageDirectory = API::WebsiteDataStore::defaultLocalStorageDirectory();
+    parameters.defaultDataStoreParameters.networkSessionParameters.localStorageDirectory = localStorageDirectory;
+    SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.localStorageDirectoryExtensionHandle);
+
     if (m_websiteDataStore)
         parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = m_websiteDataStore->websiteDataStore().resolvedResourceLoadStatisticsDirectory();
     if (parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory.isEmpty())

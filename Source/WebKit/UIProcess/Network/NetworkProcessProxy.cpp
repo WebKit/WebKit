@@ -566,6 +566,16 @@ void NetworkProcessProxy::clearUserInteraction(PAL::SessionID sessionID, const R
     sendWithAsyncReply(Messages::NetworkProcess::ClearUserInteraction(sessionID, resourceDomain), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::hasLocalStorage(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(false);
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::HasLocalStorage(sessionID, resourceDomain), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::setAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
@@ -1195,6 +1205,16 @@ void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatab
         FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);
 }
 #endif
+
+void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::GetLocalStorageOriginDetails(sessionID), WTFMove(completionHandler));
+}
 
 } // namespace WebKit
 

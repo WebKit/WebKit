@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LocalStorageDatabaseTracker.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
 #include "WebProcessLifetimeObserver.h"
@@ -71,7 +72,6 @@ namespace WebKit {
 
 class AuthenticatorManager;
 class SecKeyProxyStore;
-class StorageManager;
 class DeviceIdHashSaltStorage;
 class WebPageProxy;
 class WebProcessPool;
@@ -122,11 +122,11 @@ public:
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
 #endif
 
-    static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
-
     void fetchData(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, WallTime modifiedSince, Function<void()>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
+
+    void getLocalStorageDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&&);
@@ -179,6 +179,7 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
     void resolveDirectoriesIfNecessary();
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration->applicationCacheDirectory(); }
+    const String& resolvedLocalStorageDirectory() const { return m_resolvedConfiguration->localStorageDirectory(); }
     const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration->mediaCacheDirectory(); }
     const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration->mediaKeysStorageDirectory(); }
     const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration->webSQLDatabaseDirectory(); }
@@ -187,8 +188,6 @@ public:
     const String& resolvedIndexedDatabaseDirectory() const { return m_resolvedConfiguration->indexedDBDatabaseDirectory(); }
     const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
     const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
-
-    StorageManager* storageManager() { return m_storageManager.get(); }
 
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
 
@@ -265,14 +264,6 @@ private:
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
-    // WebProcessLifetimeObserver.
-    void webPageWasAdded(WebPageProxy&) override;
-    void webPageWasInvalidated(WebPageProxy&) override;
-    void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
-    void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) override;
-    void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) override;
-    void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
-
     void platformInitialize();
     void platformDestroy();
     static void platformRemoveRecentSearches(WallTime);
@@ -299,7 +290,6 @@ private:
     Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
 
-    const RefPtr<StorageManager> m_storageManager;
     const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

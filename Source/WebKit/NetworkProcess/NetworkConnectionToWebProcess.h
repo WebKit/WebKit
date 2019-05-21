@@ -144,6 +144,10 @@ public:
     void setConnectionHasUploads();
     void clearConnectionHasUploads();
 
+    void webPageWasAdded(PAL::SessionID, uint64_t pageID, uint64_t oldPageID);
+    void webPageWasRemoved(PAL::SessionID, uint64_t pageID);
+    void webProcessSessionChanged(PAL::SessionID newSessionID, const Vector<uint64_t>& pages);
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, IPC::Connection::Identifier);
 

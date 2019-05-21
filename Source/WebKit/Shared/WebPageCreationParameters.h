@@ -201,6 +201,8 @@ struct WebPageCreationParameters {
 #endif
 
     Optional<WebCore::Color> backgroundColor;
+
+    Optional<uint64_t> oldPageID;
 };
 
 } // namespace WebKit
