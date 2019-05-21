@@ -1,10 +1,12 @@
-include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "WebDriver")
 
-set(WebDriver_INCLUDE_DIRECTORIES
+include(WebKitCommon)
+
+set(WebDriver_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}"
     "${WEBDRIVER_DIR}"
     "${DERIVED_SOURCES_WEBDRIVER_DIR}"
-    "${FORWARDING_HEADERS_DIR}"
+    "${WTF_FRAMEWORK_HEADERS_DIR}"
 )
 
 set(WebDriver_SOURCES
@@ -38,16 +40,11 @@ MAKE_JS_FILE_ARRAYS(
 )
 list(APPEND WebDriver_SOURCES ${DERIVED_SOURCES_WEBDRIVER_DIR}/WebDriverAtoms.cpp)
 
+WEBKIT_EXECUTABLE_DECLARE(WebDriver)
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-include_directories(${WebDriver_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${WebDriver_SYSTEM_INCLUDE_DIRECTORIES})
-add_executable(WebDriver ${WebDriver_SOURCES})
-target_link_libraries(WebDriver ${WebDriver_LIBRARIES})
-
-if (WebDriver_Process_OUTPUT_NAME)
-    set_target_properties(WebDriver PROPERTIES OUTPUT_NAME ${WebDriver_Process_OUTPUT_NAME})
-endif ()
+WEBKIT_EXECUTABLE(WebDriver)
 
 install(TARGETS WebDriver
     RUNTIME DESTINATION "${EXEC_INSTALL_DIR}"

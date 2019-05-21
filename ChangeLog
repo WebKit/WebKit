@@ -1,3 +1,14 @@
+2019-05-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Build WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=198056
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add ENABLE_WEBDRIVER as an experimental feature for WinCairo.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2019-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add initial accessibility support using ATK

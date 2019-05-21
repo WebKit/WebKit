@@ -290,7 +290,7 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
         return;
     }
 
-    handleUserPrompts([this, url, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), url, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -302,7 +302,7 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
         parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -320,7 +320,7 @@ void Session::getCurrentURL(Function<void (CommandResult&&)>&& completionHandler
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -328,7 +328,7 @@ void Session::getCurrentURL(Function<void (CommandResult&&)>&& completionHandler
 
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        m_host->sendCommandToBackend("getBrowsingContext"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("getBrowsingContext"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -355,7 +355,7 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -365,7 +365,7 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -383,7 +383,7 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -393,7 +393,7 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -411,7 +411,7 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -421,7 +421,7 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -439,7 +439,7 @@ void Session::getTitle(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -448,7 +448,7 @@ void Session::getTitle(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("function"_s, "function() { return document.title; }"_s);
         parameters->setArray("arguments"_s, JSON::Array::create());
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -599,7 +599,7 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
         return;
     }
 
-    handleUserPrompts([this, frameID = WTFMove(frameID), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), frameID = WTFMove(frameID), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -630,7 +630,7 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
             }
         }
 
-        m_host->sendCommandToBackend("resolveChildFrameHandle"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("resolveChildFrameHandle"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -658,7 +658,7 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -666,7 +666,7 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        m_host->sendCommandToBackend("resolveParentFrameHandle"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("resolveParentFrameHandle"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -744,7 +744,7 @@ void Session::setWindowRect(Optional<double> x, Optional<double> y, Optional<dou
         return;
     }
 
-    handleUserPrompts([this, x, y, width, height, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), x, y, width, height, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -764,7 +764,7 @@ void Session::setWindowRect(Optional<double> x, Optional<double> y, Optional<dou
             windowSize->setDouble("height", height.value());
             parameters->setObject("size"_s, WTFMove(windowSize));
         }
-        m_host->sendCommandToBackend("setWindowFrameOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("setWindowFrameOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -781,7 +781,7 @@ void Session::maximizeWindow(Function<void (CommandResult&&)>&& completionHandle
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -789,7 +789,7 @@ void Session::maximizeWindow(Function<void (CommandResult&&)>&& completionHandle
 
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        m_host->sendCommandToBackend("maximizeWindowOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("maximizeWindowOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -806,7 +806,7 @@ void Session::minimizeWindow(Function<void (CommandResult&&)>&& completionHandle
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -814,7 +814,7 @@ void Session::minimizeWindow(Function<void (CommandResult&&)>&& completionHandle
 
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        m_host->sendCommandToBackend("hideWindowOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("hideWindowOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -831,7 +831,7 @@ void Session::fullscreenWindow(Function<void (CommandResult&&)>&& completionHand
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -842,7 +842,7 @@ void Session::fullscreenWindow(Function<void (CommandResult&&)>&& completionHand
         parameters->setString("function"_s, String(EnterFullscreenJavaScript, sizeof(EnterFullscreenJavaScript)));
         parameters->setArray("arguments"_s, JSON::Array::create());
         parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -983,7 +983,7 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         return;
     }
 
-    handleUserPrompts([this, strategy, selector, mode, rootElementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), strategy, selector, mode, rootElementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1009,7 +1009,7 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         if (m_implicitWaitTimeout)
             parameters->setInteger("callbackTimeout"_s, Seconds(m_implicitWaitTimeout + 1_s).millisecondsAs<int>());
 
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1062,7 +1062,7 @@ void Session::getActiveElement(Function<void (CommandResult&&)>&& completionHand
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1071,7 +1071,7 @@ void Session::getActiveElement(Function<void (CommandResult&&)>&& completionHand
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("function"_s, "function() { return document.activeElement; }"_s);
         parameters->setArray("arguments"_s, JSON::Array::create());
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1103,7 +1103,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1118,7 +1118,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, String(ElementAttributeJavaScript, sizeof(ElementAttributeJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1154,7 +1154,7 @@ void Session::getElementText(const String& elementID, Function<void (CommandResu
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1169,7 +1169,7 @@ void Session::getElementText(const String& elementID, Function<void (CommandResu
         // FIXME: Add an atom to properly implement this instead of just using innerText.
         parameters->setString("function"_s, "function(element) { return element.innerText.replace(/^[^\\S\\xa0]+|[^\\S\\xa0]+$/g, '') }"_s);
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1196,7 +1196,7 @@ void Session::getElementTagName(const String& elementID, Function<void (CommandR
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1210,7 +1210,7 @@ void Session::getElementTagName(const String& elementID, Function<void (CommandR
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, "function(element) { return element.tagName.toLowerCase() }"_s);
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1237,12 +1237,12 @@ void Session::getElementRect(const String& elementID, Function<void (CommandResu
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        computeElementLayout(elementID, { }, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&&, bool, RefPtr<JSON::Object>&& error) {
+        computeElementLayout(elementID, { }, [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&&, bool, RefPtr<JSON::Object>&& error) {
             if (!rect || error) {
                 completionHandler(CommandResult::fail(WTFMove(error)));
                 return;
@@ -1264,7 +1264,7 @@ void Session::isElementEnabled(const String& elementID, Function<void (CommandRe
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1278,7 +1278,7 @@ void Session::isElementEnabled(const String& elementID, Function<void (CommandRe
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, "function(element) { return element.disabled === undefined ? true : !element.disabled }"_s);
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1305,7 +1305,7 @@ void Session::isElementDisplayed(const String& elementID, Function<void (Command
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1319,7 +1319,7 @@ void Session::isElementDisplayed(const String& elementID, Function<void (Command
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, String(ElementDisplayedJavaScript, sizeof(ElementDisplayedJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1346,7 +1346,7 @@ void Session::getElementAttribute(const String& elementID, const String& attribu
         return;
     }
 
-    handleUserPrompts([this, elementID, attribute, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, attribute, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1361,7 +1361,7 @@ void Session::getElementAttribute(const String& elementID, const String& attribu
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, String(ElementAttributeJavaScript, sizeof(ElementAttributeJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1388,7 +1388,7 @@ void Session::getElementProperty(const String& elementID, const String& property
         return;
     }
 
-    handleUserPrompts([this, elementID, property, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, property, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1402,7 +1402,7 @@ void Session::getElementProperty(const String& elementID, const String& property
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, makeString("function(element) { return element.", property, "; }"));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1429,7 +1429,7 @@ void Session::getElementCSSValue(const String& elementID, const String& cssPrope
         return;
     }
 
-    handleUserPrompts([this, elementID, cssProperty, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, cssProperty, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1443,7 +1443,7 @@ void Session::getElementCSSValue(const String& elementID, const String& cssPrope
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, makeString("function(element) { return document.defaultView.getComputedStyle(element).getPropertyValue('", cssProperty, "'); }"));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1520,13 +1520,13 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
         OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
-        computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
+        computeElementLayout(elementID, options, [this, protectedThis = protectedThis.copyRef(), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
             if (!rect || error) {
                 completionHandler(CommandResult::fail(WTFMove(error)));
                 return;
@@ -1572,7 +1572,7 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
         return;
     }
 
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1587,7 +1587,7 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, String(FormElementClearJavaScript, sizeof(FormElementClearJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1742,7 +1742,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
         return;
     }
 
-    handleUserPrompts([this, elementID, text, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, text, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1771,7 +1771,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, focusScript);
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), text, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), text, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1850,7 +1850,7 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
         return;
     }
 
-    handleUserPrompts([this, script, argumentsArray = WTFMove(argumentsArray), mode, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), script, argumentsArray = WTFMove(argumentsArray), mode, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1877,7 +1877,7 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
             if (m_scriptTimeout)
                 parameters->setInteger("callbackTimeout"_s, m_scriptTimeout.millisecondsAs<int>());
         }
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 auto result = CommandResult::fail(WTFMove(response.responseObject));
                 if (result.errorCode() == CommandResult::ErrorCode::UnexpectedAlertOpen)
@@ -2057,7 +2057,7 @@ void Session::getAllCookies(Function<void (CommandResult&&)>&& completionHandler
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -2065,7 +2065,7 @@ void Session::getAllCookies(Function<void (CommandResult&&)>&& completionHandler
 
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        m_host->sendCommandToBackend("getAllCookies"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("getAllCookies"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -2127,7 +2127,7 @@ void Session::addCookie(const Cookie& cookie, Function<void (CommandResult&&)>&&
         return;
     }
 
-    handleUserPrompts([this, cookie = builtAutomationCookie(cookie), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), cookie = builtAutomationCookie(cookie), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -2135,7 +2135,7 @@ void Session::addCookie(const Cookie& cookie, Function<void (CommandResult&&)>&&
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         parameters->setObject("cookie"_s, WTFMove(cookie));
-        m_host->sendCommandToBackend("addSingleCookie"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("addSingleCookie"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -2152,7 +2152,7 @@ void Session::deleteCookie(const String& name, Function<void (CommandResult&&)>&
         return;
     }
 
-    handleUserPrompts([this, name, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), name, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -2160,7 +2160,7 @@ void Session::deleteCookie(const String& name, Function<void (CommandResult&&)>&
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("cookieName"_s, name);
-        m_host->sendCommandToBackend("deleteSingleCookie"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("deleteSingleCookie"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -2177,14 +2177,14 @@ void Session::deleteAllCookies(Function<void (CommandResult&&)>&& completionHand
         return;
     }
 
-    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        m_host->sendCommandToBackend("deleteAllCookies"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("deleteAllCookies"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -2240,7 +2240,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
         return;
     }
 
-    handleUserPrompts([this, actionsByTick = WTFMove(actionsByTick), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), actionsByTick = WTFMove(actionsByTick), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -2356,7 +2356,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
         }
 
         parameters->setArray("steps"_s, WTFMove(steps));
-        m_host->sendCommandToBackend("performInteractionSequence"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("performInteractionSequence"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -2472,7 +2472,7 @@ void Session::takeScreenshot(Optional<String> elementID, Optional<bool> scrollIn
         return;
     }
 
-    handleUserPrompts([this, elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = makeRef(*this), elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -2487,7 +2487,7 @@ void Session::takeScreenshot(Optional<String> elementID, Optional<bool> scrollIn
             parameters->setBoolean("clipToViewport"_s, true);
         if (scrollIntoView.valueOr(false))
             parameters->setBoolean("scrollIntoViewIfNeeded"_s, true);
-        m_host->sendCommandToBackend("takeScreenshot"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        m_host->sendCommandToBackend("takeScreenshot"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;

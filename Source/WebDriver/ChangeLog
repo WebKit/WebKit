@@ -1,3 +1,73 @@
+2019-05-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Build WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=198056
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the platform and source files to get WinCairo to compile a WebDriver executable.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake: Added.
+        * Session.cpp:
+        (WebDriver::Session::go):
+        (WebDriver::Session::getCurrentURL):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::getTitle):
+        (WebDriver::Session::switchToFrame):
+        (WebDriver::Session::switchToParentFrame):
+        (WebDriver::Session::setWindowRect):
+        (WebDriver::Session::maximizeWindow):
+        (WebDriver::Session::minimizeWindow):
+        (WebDriver::Session::fullscreenWindow):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::getActiveElement):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::getElementText):
+        (WebDriver::Session::getElementTagName):
+        (WebDriver::Session::getElementRect):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::getElementProperty):
+        (WebDriver::Session::getElementCSSValue):
+        (WebDriver::Session::elementClick):
+        (WebDriver::Session::elementClear):
+        (WebDriver::Session::elementSendKeys):
+        (WebDriver::Session::executeScript):
+        (WebDriver::Session::getAllCookies):
+        (WebDriver::Session::addCookie):
+        (WebDriver::Session::deleteCookie):
+        (WebDriver::Session::deleteAllCookies):
+        (WebDriver::Session::performActions):
+        (WebDriver::Session::takeScreenshot):
+        With nested lambdas MSVC believes the this pointer is for the enclosing lambda. Use a
+        protectedThis in the enclosing lambda and then use protectedThis.copyRef() in the nested
+        lambda.
+
+        * socket/HTTPServerSocket.cpp: Added.
+        (WebDriver::HTTPServer::listen):
+        (WebDriver::HTTPServer::disconnect):
+        Add stubs for HTTPServer when using a raw socket.
+
+        * socket/SessionHostSocket.cpp: Added.
+        (WebDriver::SessionHost::~SessionHost):
+        (WebDriver::SessionHost::connectToBrowser):
+        (WebDriver::SessionHost::isConnected const):
+        (WebDriver::SessionHost::startAutomationSession):
+        (WebDriver::SessionHost::sendMessageToBackend):
+        Add stubs for SessionHost when using a raw socket.
+
+        * win/WebDriverServiceWin.cpp: Added.
+        (WebDriver::WebDriverService::platformCapabilities):
+        (WebDriver::WebDriverService::platformCompareBrowserVersions):
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformMatchCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+        Add stubs for WebDriverService on Windows.
+
 2019-05-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin FindICU
