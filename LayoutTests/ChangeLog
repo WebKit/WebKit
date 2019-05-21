@@ -1,5 +1,45 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245471. rdar://problem/50865946
+
+    REGRESSION (r245170): gmail.com header flickers when hovering over the animating buttons
+    https://bugs.webkit.org/show_bug.cgi?id=197975
+    <rdar://problem/50865946>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When computeCompositingRequirements() determined that a layer could paint into shared backing, it
+    pushed an overlap container. If that layer then converted to normal composting, we'd push a second
+    overlap container, which left the overlap map in a bad state for the rest of the compositing
+    traversal, causing layers to not get composited when necessary.
+    
+    Test: compositing/shared-backing/overlap-after-shared-to-composited.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    
+    LayoutTests:
+    
+    * compositing/shared-backing/overlap-after-shared-to-composited-expected.html: Added.
+    * compositing/shared-backing/overlap-after-shared-to-composited.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245471 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-17  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r245170): gmail.com header flickers when hovering over the animating buttons
+            https://bugs.webkit.org/show_bug.cgi?id=197975
+            <rdar://problem/50865946>
+
+            Reviewed by Antti Koivisto.
+
+            * compositing/shared-backing/overlap-after-shared-to-composited-expected.html: Added.
+            * compositing/shared-backing/overlap-after-shared-to-composited.html: Added.
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245221. rdar://problem/50865946
 
     REGRESSION (r245208): compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html asserts
