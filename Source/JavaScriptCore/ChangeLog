@@ -1,3 +1,28 @@
+2019-05-20  Keith Miller  <keith_miller@apple.com>
+
+        Cleanup Yarr regexp code around paren contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=198063
+
+        Reviewed by Yusuke Suzuki.
+
+        There are three refactoring changes around paren contexts:
+        1. Make EncodedMatchResult the same type as MatchResult on X86_64 and arm64 and uint64_t elsewhere.
+        2. All function pointer types for Yarr JIT generated code reserve space for paren contexts.
+        3. initParenContextFreeList should bail based on VM::patternContextBufferSize as that's the buffer size anyway.
+
+        * runtime/MatchResult.h:
+        (JSC::MatchResult::MatchResult):
+        * runtime/RegExpInlines.h:
+        (JSC::PatternContextBufferHolder::PatternContextBufferHolder):
+        (JSC::PatternContextBufferHolder::~PatternContextBufferHolder):
+        (JSC::PatternContextBufferHolder::size):
+        (JSC::RegExp::matchInline):
+        * runtime/VM.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::initParenContextFreeList):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+
 2019-05-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         Only cache bytecode for API clients in data vaults

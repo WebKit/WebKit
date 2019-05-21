@@ -86,38 +86,36 @@ ALWAYS_INLINE bool RegExp::hasCodeFor(Yarr::YarrCharSize charSize)
     return false;
 }
 
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
 class PatternContextBufferHolder {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     PatternContextBufferHolder(VM& vm, bool needBuffer)
         : m_vm(vm)
-        , m_needBuffer(needBuffer)
     {
-        if (m_needBuffer) {
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+        if (needBuffer)
             m_buffer = m_vm.acquireRegExpPatternContexBuffer();
-            m_size = VM::patternContextBufferSize;
-        } else {
-            m_buffer = nullptr;
-            m_size = 0;
-        }
+#endif
+
     }
 
     ~PatternContextBufferHolder()
     {
-        if (m_needBuffer)
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+        if (buffer())
             m_vm.releaseRegExpPatternContexBuffer();
+#else
+        UNUSED_PARAM(m_vm);
+#endif
     }
 
     void* buffer() { return m_buffer; }
-    unsigned size() { return m_size; }
+    unsigned size() { return buffer() ? VM::patternContextBufferSize : 0; }
 
 private:
     VM& m_vm;
-    bool m_needBuffer;
     void* m_buffer;
-    unsigned m_size;
 };
-#endif
 
 ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSize)
 {
@@ -158,20 +156,12 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
     if (m_state == JITCode) {
         {
             ASSERT(m_regExpJITCode);
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
             PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode->usesPatternContextBuffer());
 
-#define EXTRA_JIT_PARAMS  , patternContextBufferHolder.buffer(), patternContextBufferHolder.size()
-#else
-#define EXTRA_JIT_PARAMS
-#endif
-
             if (s.is8Bit())
-                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector, patternContextBufferHolder.buffer(), patternContextBufferHolder.size()).start;
             else
-                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
-
-#undef EXTRA_JIT_PARAMS
+                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), offsetVector, patternContextBufferHolder.buffer(), patternContextBufferHolder.size()).start;
         }
 
         if (result == Yarr::JSRegExpJITCodeFailure) {
@@ -284,20 +274,11 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
     if (m_state == JITCode) {
         {
             ASSERT(m_regExpJITCode);
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
             PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode->usesPatternContextBuffer());
-
-#define EXTRA_JIT_PARAMS  , patternContextBufferHolder.buffer(), patternContextBufferHolder.size()
-#else
-#define EXTRA_JIT_PARAMS
-#endif
-
             if (s.is8Bit())
-                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length() EXTRA_JIT_PARAMS);
+                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), patternContextBufferHolder.buffer(), patternContextBufferHolder.size());
             else
-                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length() EXTRA_JIT_PARAMS);
-
-#undef EXTRA_JIT_PARAMS
+                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), patternContextBufferHolder.buffer(), patternContextBufferHolder.size());
         }
 
 #if ENABLE(REGEXP_TRACING)

@@ -229,7 +229,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         parenContextSize = WTF::roundUpToMultipleOf<sizeof(uintptr_t)>(parenContextSize);
 
         // Check that the paren context is a reasonable size.
-        if (parenContextSize > INT16_MAX)
+        if (parenContextSize > VM::patternContextBufferSize)
             m_abortExecution.append(jump());
 
         Jump emptyFreeList = branchTestPtr(Zero, freelistRegister);
