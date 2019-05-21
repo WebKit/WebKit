@@ -67,7 +67,8 @@ var PLATFORMS = {
                 expectationsDirectory: 'win',
                 subPlatforms: {
                     'XP': { fallbackPlatforms: ['APPLE_WIN'] },
-                    'WIN7': { fallbackPlatforms: ['APPLE_WIN'] }
+                    'WIN7': { fallbackPlatforms: ['APPLE_WIN'] },
+                    'WIN10': { fallbackPlatforms: ['APPLE_WIN'] }
                 }
             }
         }
@@ -343,6 +344,8 @@ function determineWKPlatform(builderName, basePlatform)
 
 function determineBuilderPlatform(builderNameUpperCase)
 {
+    if (string.contains(builderNameUpperCase, 'WIN 10'))
+        return 'APPLE_WIN_WIN10';
     if (string.contains(builderNameUpperCase, 'WIN 7'))
         return 'APPLE_WIN_WIN7';
     if (string.contains(builderNameUpperCase, 'WIN XP'))
@@ -710,6 +713,7 @@ function getParsedExpectations(data)
             'HighSierra': 'HIGHSIERRA',
             'Mojave': 'MOJAVE',
             'Win7': 'WIN7',
+            'Win10': 'WIN10',
             'XP': 'XP',
             'Vista': 'VISTA',
             'Android': 'ANDROID',
