@@ -1,5 +1,43 @@
 2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245220. rdar://problem/50686229
+
+    When the set of backing-sharing layers changes, we need to issue a repaint
+    https://bugs.webkit.org/show_bug.cgi?id=197825
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    If the set of layers painting into a shared backing store changes, we need
+    to repaint that backing store. This happens when scrolling as shared layers
+    enter the visible area.
+    
+    Test: compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll.html
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::setBackingSharingLayers):
+    
+    LayoutTests:
+    
+    * compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll-expected.html: Added.
+    * compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245220 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+            When the set of backing-sharing layers changes, we need to issue a repaint
+            https://bugs.webkit.org/show_bug.cgi?id=197825
+
+            Reviewed by Zalan Bujtas.
+
+            * compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll-expected.html: Added.
+            * compositing/shared-backing/overflow-scroll/repaint-shared-on-scroll.html: Added.
+
+2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245205. rdar://problem/50652127
 
     Backing-sharing layers with transforms render incorrectly
