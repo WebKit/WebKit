@@ -1,5 +1,66 @@
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245208. rdar://problem/50865946
+
+    Layer bounds are incorrect for sharing layers that paint with transforms
+    https://bugs.webkit.org/show_bug.cgi?id=197768
+    <rdar://problem/50695493>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    We don't need to traverse shared layers if the backing-provider has overflow clip,
+    because we know they are containing-block descendants and therefore clipped.
+    
+    Note tha the CSS "clip" property doesn't guarantee this, because the clip rect
+    can be larger than the element, so in that case we just traverse shared layers.
+    
+    Tests: compositing/shared-backing/sharing-bounds-clip.html
+           compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html
+           compositing/shared-backing/sharing-bounds-transformed-sharing-layer.html
+           compositing/shared-backing/sharing-bounds.html
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::updateCompositedBounds):
+    
+    LayoutTests:
+    
+    Tests for backing-shared layer bounds in various configurations.
+    
+    * compositing/shared-backing/sharing-bounds-clip-expected.txt: Added.
+    * compositing/shared-backing/sharing-bounds-clip.html: Added.
+    * compositing/shared-backing/sharing-bounds-expected.txt: Added.
+    * compositing/shared-backing/sharing-bounds-non-clipping-shared-layer-expected.txt: Added.
+    * compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html: Added.
+    * compositing/shared-backing/sharing-bounds-transformed-sharing-layer-expected.txt: Added.
+    * compositing/shared-backing/sharing-bounds-transformed-sharing-layer.html: Added.
+    * compositing/shared-backing/sharing-bounds.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+            Layer bounds are incorrect for sharing layers that paint with transforms
+            https://bugs.webkit.org/show_bug.cgi?id=197768
+            <rdar://problem/50695493>
+
+            Reviewed by Zalan Bujtas.
+
+            Tests for backing-shared layer bounds in various configurations.
+
+            * compositing/shared-backing/sharing-bounds-clip-expected.txt: Added.
+            * compositing/shared-backing/sharing-bounds-clip.html: Added.
+            * compositing/shared-backing/sharing-bounds-expected.txt: Added.
+            * compositing/shared-backing/sharing-bounds-non-clipping-shared-layer-expected.txt: Added.
+            * compositing/shared-backing/sharing-bounds-non-clipping-shared-layer.html: Added.
+            * compositing/shared-backing/sharing-bounds-transformed-sharing-layer-expected.txt: Added.
+            * compositing/shared-backing/sharing-bounds-transformed-sharing-layer.html: Added.
+            * compositing/shared-backing/sharing-bounds.html: Added.
+
+2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245207. rdar://problem/50865946
 
     Translucent gradient rendering bug due to will-change transform
