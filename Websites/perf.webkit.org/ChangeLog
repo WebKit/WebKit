@@ -1,3 +1,20 @@
+2019-05-14  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Pruning old file logic should not stop after removing 10 files if there are more files to be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=197870
+
+        Reviewed by Ryosuke Niwa.
+
+        Pruning old file logic should keep removing removable files to make enough space for a new file upload.
+        It should only attempt to remve the files that have not been removed.
+
+        * public/include/uploaded-file-helpers.php: Modified 'prune_old_files' to allow to remove more than 10 files.
+        Fixed a bug that a removed file keep getting removed but never free up new space.
+        * server-tests/privileged-api-upload-file-tests.js:
+        (makeRandomAlnumStringForLength): Helper function to generate random content for a given length.
+        * server-tests/resources/test-server.js: Update total file size limit for this change.
+        (TestServer.prototype.testConfig):
+
 2019-03-25  Dewei Zhu  <dewei_zhu@apple.com>
 
         Primary cluster of measurement set should always contain latest point.

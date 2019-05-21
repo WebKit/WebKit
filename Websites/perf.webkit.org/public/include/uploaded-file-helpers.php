@@ -162,7 +162,7 @@ function prune_old_files($db, $size_needed, $remote_user)
         WHERE file_id = commitset_root_file AND commitset_patch_file IS NOT NULL AND file_deleted_at IS NULL
             AND NOT EXISTS (SELECT request_id FROM build_requests WHERE request_commit_set = commitset_set AND request_status <= 'running')
             $user_filter
-        ORDER BY file_created_at LIMIT 10", $params);
+        ORDER BY file_created_at", $params);
     if (!$build_product_query)
         return FALSE;
     while ($row = $db->fetch_next_row($build_product_query)) {
@@ -178,8 +178,9 @@ function prune_old_files($db, $size_needed, $remote_user)
         WHERE NOT EXISTS (SELECT request_id FROM build_requests, commit_set_items
             WHERE (commitset_root_file = file_id OR commitset_patch_file = file_id)
                 AND request_commit_set = commitset_set AND request_status <= 'running')
+            AND file_deleted_at IS NULL
             $user_filter
-        ORDER BY file_created_at LIMIT 10", $params);
+        ORDER BY file_created_at", $params);
     if (!$unused_file_query)
         return FALSE;
     while ($row = $db->fetch_next_row($unused_file_query)) {

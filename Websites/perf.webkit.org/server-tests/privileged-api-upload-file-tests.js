@@ -13,6 +13,15 @@ const prepareServerTest = require('./resources/common-operations.js').prepareSer
 describe('/privileged-api/upload-file', function () {
     prepareServerTest(this);
     TemporaryFile.inject();
+    function makeRandomAlnumStringForLength(length)
+    {
+        let string = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        for (let i = 0; i < length; i++)
+            string += characters.charAt(Math.floor(Math.random() * charactersLength));
+        return string;
+    }
 
     it('should return "NotFileSpecified" when newFile not is specified', () => {
         return PrivilegedAPI.sendRequest('upload-file', {}, {useFormData: true}).then(() => {
@@ -194,6 +203,57 @@ describe('/privileged-api/upload-file', function () {
             assert.equal(rows[2].filename, 'another.dat');
             assert.equal(rows[2].deleted_at, null);
         })
+    });
+
+    it('should prune all removable files to get space for a file upload', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        const userQuotaInMB = TestServer.testConfig().uploadUserQuotaInMB;
+        const splitCount = 40;
+        const contentLength = userQuotaInMB * 1024 * 1024 / splitCount;
+        for (let i = 0; i < splitCount; i += 1) {
+            const content = makeRandomAlnumStringForLength(contentLength);
+            const stream = await TemporaryFile.makeTemporaryFile('file-' + i, content);
+            await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }
+        let rows = await db.selectAll('uploaded_files');
+        assert.equal(rows.length, splitCount);
+
+        const stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('limit.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        rows = await db.selectAll('uploaded_files');
+        assert.equal(rows.length, splitCount + 1);
+        const deletedFiles = rows.filter((row) => row['deleted_at']);
+        assert.equal(deletedFiles.length, 16);
+    });
+
+    it('should not prune files that have been deleted', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('limit.dat', limitInMB, 'a');
+        let response = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const fileA = response.uploadedFile;
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('limit.dat', limitInMB, 'b');
+        response = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const fileB = response.uploadedFile;
+
+        await MockData.addMockData(db, ['completed', 'completed', 'completed', 'completed']);
+        await db.query('UPDATE commit_set_items SET commitset_root_file=$1 WHERE commitset_set=401 AND commitset_commit=87832', [fileA.id]);
+        await db.query('UPDATE commit_set_items SET commitset_root_file=$1 WHERE commitset_set=401 AND commitset_commit=93116', [fileB.id]);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('limit.dat', limitInMB, 'c');
+        response = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const fileC = response.uploadedFile;
+        await db.query('UPDATE commit_set_items SET commitset_root_file=$1 WHERE commitset_set=402 AND commitset_commit=87832', [fileC.id]);
+
+        const deletedFileA = await db.selectFirstRow('uploaded_files', {id: fileA.id});
+        assert.ok(deletedFileA.deleted_at);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('limit.dat', limitInMB, 'd');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const deletedFileB = await db.selectFirstRow('uploaded_files', {id: fileB.id});
+        assert.ok(deletedFileB.deleted_at);
     });
 
     it('should return "FileSizeQuotaExceeded" when there is no file to delete', () => {
