@@ -44,6 +44,7 @@ namespace WebCore {
     M(Archives) \
     M(ClipRects) \
     M(Compositing) \
+    M(CompositingOverlap) \
     M(ContentFiltering) \
     M(ContentObservation) \
     M(DatabaseTracker) \
