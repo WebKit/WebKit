@@ -1,3 +1,14 @@
+2019-05-21  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Use custom templates for Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=198076
+
+        Rubber-stamped by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/master.cfg:
+        * BuildSlaveSupport/ews-build/templates: Added.
+        * BuildSlaveSupport/ews-build/templates/build.jade: Copied from https://github.com/buildbot/buildbot/blob/v1.7.0/www/base/src/app/builders/builds/build.tpl.jade
+
 2019-05-21  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Assertion hit when navigating back after a process swap forced by the client
