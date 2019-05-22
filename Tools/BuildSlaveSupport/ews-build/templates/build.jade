@@ -18,7 +18,7 @@
             span &rarr;
   .row
       uib-tabset
-          uib-tab(heading="Build stepsA")
+          uib-tab(heading="Build steps")
               buildsummary(ng-if="build", build="build", parentbuild="parent_build",
                            parentrelationship="buildset.parent_relationship")
           uib-tab(heading="Build Properties")
@@ -32,14 +32,14 @@
                 tr(ng-repeat="(name, value) in worker.workerinfo")
                   td.text-left {{ name }}
                   td.text-right {{ value }}
-          uib-tab(heading="Responsible UsersA")
+          uib-tab(heading="Responsible Users")
             ul.list-group
                 li.list-group-item(ng-repeat="(author, email) in responsibles")
                     .change-avatar
                         img(ng-src="avatar?email={{email}}")
                     a(ng-href="mailto:{{email}}")
                         | {{ author }}
-          uib-tab(heading="ChangesAA")
+          uib-tab(heading="Changes")
               changelist(changes="changes")
           uib-tab(heading="Debug")
               h4
