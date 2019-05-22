@@ -193,6 +193,11 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     }
 
     if (!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)) {
+        // Map Command + . to Escape since Apple Smart Keyboards lack an Escape key.
+        if ([charactersIgnoringModifiers isEqualToString:@"."] && (modifiers & WebEventFlagMaskCommandKey)) {
+            keyCode = kHIDUsage_KeyboardEscape;
+            _modifierFlags &= ~WebEventFlagMaskCommandKey;
+        }
         _characters = [normalizedStringWithAppKitCompatibilityMapping(characters, keyCode) retain];
         _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode) retain];
         _tabKey = tabKey;
