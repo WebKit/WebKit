@@ -1,3 +1,12 @@
+2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed fix for non-unified build after r245320.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::convertRectFromFrameClientToRootView):
+        (WebKit::convertPointFromFrameClientToRootView):
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+
 2019-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK unit tests after r245565

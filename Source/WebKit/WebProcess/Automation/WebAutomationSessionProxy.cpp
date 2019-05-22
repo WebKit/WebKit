@@ -503,7 +503,7 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     return &element;
 }
 
-static WebCore::FloatRect convertRectFromFrameClientToRootView(FrameView* frameView, WebCore::FloatRect clientRect)
+static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::FrameView* frameView, WebCore::FloatRect clientRect)
 {
     if (!frameView->delegatesScrolling())
         return frameView->contentsToRootView(frameView->clientToDocumentRect(clientRect));
@@ -515,7 +515,7 @@ static WebCore::FloatRect convertRectFromFrameClientToRootView(FrameView* frameV
     return clientRect;
 }
 
-static WebCore::FloatPoint convertPointFromFrameClientToRootView(FrameView* frameView, WebCore::FloatPoint clientPoint)
+static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::FrameView* frameView, WebCore::FloatPoint clientPoint)
 {
     if (!frameView->delegatesScrolling())
         return frameView->contentsToRootView(frameView->clientToDocumentPoint(clientPoint));
@@ -595,7 +595,7 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
     // Do that here so that the IVCP for an element larger than the viewport is within the viewport.
     // See spec bug here: https://github.com/w3c/webdriver/issues/1402
     auto viewportRect = frameView->documentToClientRect(frameView->visualViewportRect());
-    auto elementRect = FloatRect(firstElementRect->x(), firstElementRect->y(), firstElementRect->width(), firstElementRect->height());
+    auto elementRect = WebCore::FloatRect(firstElementRect->x(), firstElementRect->y(), firstElementRect->width(), firstElementRect->height());
     auto visiblePortionOfElementRect = intersection(viewportRect, elementRect);
 
     // If the element is entirely outside the viewport, still calculate it's bounds.
