@@ -281,6 +281,10 @@ static void clearBackingSharingLayerProviders(Vector<WeakPtr<RenderLayer>>& shar
 void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& sharingLayers)
 {
     clearBackingSharingLayerProviders(m_backingSharingLayers);
+
+    if (sharingLayers != m_backingSharingLayers)
+        setContentsNeedDisplay(); // This could be optimize to only repaint rects for changed layers.
+
     m_backingSharingLayers = WTFMove(sharingLayers);
 
     for (auto& layerWeakPtr : m_backingSharingLayers)
