@@ -32,7 +32,9 @@
 #ifndef WebDownload_h
 #define WebDownload_h
 
-#if !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
+#if (defined TARGET_OS_IOSMAC && TARGET_OS_IOSMAC)
+#import <CFNetwork/CFNSURLConnection.h>
+#elif !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
 #import <WebKitLegacy/NSURLDownloadSPI.h>
