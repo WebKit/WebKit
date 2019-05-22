@@ -803,6 +803,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue() && slot.slotBase() == baseValue) {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+
             // Start out by clearing out the old cache.
             metadata.m_mode = GetByIdMode::Default;
             metadata.m_modeMetadata.defaultMode.structureID = 0;
@@ -814,8 +816,6 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             if (structure->propertyAccessesAreCacheable()
                 && !structure->needImpurePropertyWatchpoint()) {
                 vm.heap.writeBarrier(codeBlock);
-                
-                ConcurrentJSLocker locker(codeBlock->m_lock);
 
                 metadata.m_modeMetadata.defaultMode.structureID = structure->id();
                 metadata.m_modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
@@ -829,6 +829,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     } else if (!LLINT_ALWAYS_ACCESS_SLOW
         && isJSArray(baseValue)
         && ident == vm.propertyNames->length) {
+        ConcurrentJSLocker locker(codeBlock->m_lock);
         metadata.m_mode = GetByIdMode::ArrayLength;
         new (&metadata.m_modeMetadata.arrayLengthMode.arrayProfile) ArrayProfile(codeBlock->bytecodeOffset(pc));
         metadata.m_modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
