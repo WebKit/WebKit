@@ -57,8 +57,8 @@ namespace JSC { namespace FTL {
     macro(DirectArguments_minCapacity, DirectArguments::offsetOfMinCapacity()) \
     macro(DirectArguments_mappedArguments, DirectArguments::offsetOfMappedArguments()) \
     macro(DirectArguments_modifiedArgumentsDescriptor, DirectArguments::offsetOfModifiedArgumentsDescriptor()) \
-    macro(FunctionRareData_allocator, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()) \
-    macro(FunctionRareData_structure, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()) \
+    macro(FunctionRareData_allocator, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfAllocator()) \
+    macro(FunctionRareData_structure, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfStructure()) \
     macro(GetterSetter_getter, GetterSetter::offsetOfGetter()) \
     macro(GetterSetter_setter, GetterSetter::offsetOfSetter()) \
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \

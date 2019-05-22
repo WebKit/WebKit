@@ -701,10 +701,10 @@ llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, 
     loadq [cfr, t0, 8], t0
     btqnz t0, tagMask, .opToThisSlow
     bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
-    loadStructureWithScratch(t0, t1, t2, t3)
+    loadi JSCell::m_structureID[t0], t1
     metadata(t2, t3)
-    loadp OpToThis::Metadata::m_cachedStructure[t2], t2
-    bpneq t1, t2, .opToThisSlow
+    loadi OpToThis::Metadata::m_cachedStructureID[t2], t2
+    bineq t1, t2, .opToThisSlow
     dispatch()
 
 .opToThisSlow:
@@ -1288,7 +1288,7 @@ end)
 
 llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadata, return)
     metadata(t2, t1)
-    loadb OpGetById::Metadata::m_mode[t2], t1
+    loadb OpGetById::Metadata::m_modeMetadata.mode[t2], t1
     get(m_base, t0)
     loadConstantOrVariableCell(size, t0, t3, .opGetByIdSlow)
 
@@ -1918,7 +1918,7 @@ macro arrayProfileForCall(opcodeStruct, getu)
     loadq ThisArgumentOffset[cfr, t3, 8], t0
     btqnz t0, tagMask, .done
     loadi JSCell::m_structureID[t0], t3
-    storei t3, %opcodeStruct%::Metadata::m_arrayProfile.m_lastSeenStructureID[t5]
+    storei t3, %opcodeStruct%::Metadata::m_callLinkInfo.m_arrayProfile.m_lastSeenStructureID[t5]
 .done:
 end
 
@@ -1931,7 +1931,7 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, prologue)
         end, metadata)
 
         get(m_callee, t0)
-        loadp %opcodeStruct%::Metadata::m_callLinkInfo.callee[t5], t2
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrLastSeenCalleeWithLinkBit[t5], t2
         loadConstantOrVariable(size, t0, t3)
         bqneq t3, t2, .opCallSlow
         getu(size, opcodeStruct, m_argv, t3)
@@ -1943,8 +1943,8 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, prologue)
         storei PC, ArgumentCount + TagOffset[cfr]
         storei t2, ArgumentCount + PayloadOffset[t3]
         move t3, sp
-        prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
-        callTargetFunction(size, opcodeStruct, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], JSEntryPtrTag)
+        prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
+        callTargetFunction(size, opcodeStruct, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], JSEntryPtrTag)
 
     .opCallSlow:
         slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)

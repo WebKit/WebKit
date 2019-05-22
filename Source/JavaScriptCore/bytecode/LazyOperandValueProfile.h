@@ -129,17 +129,18 @@ struct LazyOperandValueProfile : public MinimalValueProfile {
     }
     
     explicit LazyOperandValueProfile(const LazyOperandValueProfileKey& key)
-        : MinimalValueProfile(key.bytecodeOffset())
-        , m_operand(key.operand())
+        : MinimalValueProfile()
+        , m_key(key)
     {
     }
     
     LazyOperandValueProfileKey key() const
     {
-        return LazyOperandValueProfileKey(m_bytecodeOffset, m_operand);
+        return m_key;
     }
     
     VirtualRegister m_operand;
+    LazyOperandValueProfileKey m_key;
     
     typedef SegmentedVector<LazyOperandValueProfile, 8> List;
 };

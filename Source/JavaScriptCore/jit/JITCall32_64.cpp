@@ -160,7 +160,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
         emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);
         Jump done = branchIfNotCell(regT0);
         load32(Address(regT1, JSCell::structureIDOffset()), regT1);
-        store32(regT1, metadata.m_arrayProfile.addressOfLastSeenStructureID());
+        store32(regT1, metadata.m_callLinkInfo.m_arrayProfile.addressOfLastSeenStructureID());
         done.link(this);
     }
 

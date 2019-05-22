@@ -88,17 +88,17 @@ public:
         return refCount() == 1;
     }
 
-    UnlinkedMetadataTable::Offset* buffer()
-    {
-        return bitwise_cast<UnlinkedMetadataTable::Offset*>(this);
-    }
-
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
     UnlinkedMetadataTable::LinkingData& linkingData() const
     {
         return *bitwise_cast<UnlinkedMetadataTable::LinkingData*>((bitwise_cast<uint8_t*>(this) - sizeof(UnlinkedMetadataTable::LinkingData)));
+    }
+
+    UnlinkedMetadataTable::Offset* buffer()
+    {
+        return bitwise_cast<UnlinkedMetadataTable::Offset*>(this);
     }
 
     ALWAYS_INLINE uint8_t* getImpl(unsigned i)

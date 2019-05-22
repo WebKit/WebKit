@@ -31,12 +31,11 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalObject* globalObject, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity, JSFunction* constructor, FunctionRareData* functionRareData)
+template<typename Derived>
+ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& vm, JSGlobalObject* globalObject, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity, JSFunction* constructor, FunctionRareData* functionRareData)
 {
     ASSERT(!m_allocator);
     ASSERT(!m_structure);
-    ASSERT(!m_prototype);
-    ASSERT(!m_inlineCapacity);
 
     // FIXME: Teach create_this's fast path how to allocate poly
     // proto objects: https://bugs.webkit.org/show_bug.cgi?id=177517
@@ -56,8 +55,7 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
             RELEASE_ASSERT(structure->typeInfo().type() == FinalObjectType);
             m_allocator = Allocator();
             m_structure.set(vm, owner, structure);
-            m_prototype.set(vm, owner, prototype);
-            m_inlineCapacity = structure->inlineCapacity();
+            static_cast<Derived*>(this)->setPrototype(vm, owner, prototype);
             return;
         }
 
@@ -138,11 +136,11 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
     WTF::storeStoreFence();
 
     m_structure.set(vm, owner, structure);
-    m_prototype.set(vm, owner, prototype);
-    m_inlineCapacity = inlineCapacity;
+    static_cast<Derived*>(this)->setPrototype(vm, owner, prototype);
 }
 
-ALWAYS_INLINE unsigned ObjectAllocationProfile::possibleDefaultPropertyCount(VM& vm, JSObject* prototype)
+template<typename Derived>
+ALWAYS_INLINE unsigned ObjectAllocationProfileBase<Derived>::possibleDefaultPropertyCount(VM& vm, JSObject* prototype)
 {
     if (prototype == prototype->globalObject(vm)->objectPrototype())
         return 0;

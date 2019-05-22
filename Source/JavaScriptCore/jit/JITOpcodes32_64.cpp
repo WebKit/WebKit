@@ -899,7 +899,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
         buffer->forEach([&] (ValueProfileAndOperand& profile) {
             JSValueRegs regs(regT1, regT0);
             emitGetVirtualRegister(profile.m_operand, regs);
-            emitValueProfilingSite(profile.m_profile);
+            emitValueProfilingSite(static_cast<ValueProfile&>(profile));
         });
     }
 #endif // ENABLE(DFG_JIT)
@@ -1020,8 +1020,8 @@ void JIT::emit_op_create_this(const Instruction* currentInstruction)
     addSlowCase(branchIfNotFunction(calleeReg));
     loadPtr(Address(calleeReg, JSFunction::offsetOfRareData()), rareDataReg);
     addSlowCase(branchTestPtr(Zero, rareDataReg));
-    load32(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
-    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureReg);
+    load32(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfAllocator()), allocatorReg);
+    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfStructure()), structureReg);
 
     loadPtr(cachedFunction, cachedFunctionReg);
     Jump hasSeenMultipleCallees = branchPtr(Equal, cachedFunctionReg, TrustedImmPtr(JSCell::seenMultipleCalleeObjects()));
@@ -1031,9 +1031,7 @@ void JIT::emit_op_create_this(const Instruction* currentInstruction)
     JumpList slowCases;
     auto butterfly = TrustedImmPtr(nullptr);
     emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, scratchReg, slowCases);
-    emitLoadPayload(callee, scratchReg);
-    loadPtr(Address(scratchReg, JSFunction::offsetOfRareData()), scratchReg);
-    load32(Address(scratchReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), scratchReg);
+    load8(Address(structureReg, Structure::inlineCapacityOffset()), scratchReg);
     emitInitializeInlineStorage(resultReg, scratchReg);
     addSlowCase(slowCases);
     emitStoreCell(bytecode.m_dst.offset(), resultReg);
@@ -1043,7 +1041,7 @@ void JIT::emit_op_to_this(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToThis>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    WriteBarrierBase<Structure>* cachedStructure = &metadata.m_cachedStructure;
+    StructureID* cachedStructureID = &metadata.m_cachedStructureID;
     int thisRegister = bytecode.m_srcDst.offset();
 
     emitLoad(thisRegister, regT3, regT2);
@@ -1051,7 +1049,7 @@ void JIT::emit_op_to_this(const Instruction* currentInstruction)
     addSlowCase(branchIfNotCell(regT3));
     addSlowCase(branchIfNotType(regT2, FinalObjectType));
     loadPtr(Address(regT2, JSCell::structureIDOffset()), regT0);
-    loadPtr(cachedStructure, regT2);
+    load32(cachedStructureID, regT2);
     addSlowCase(branchPtr(NotEqual, regT0, regT2));
 }
 

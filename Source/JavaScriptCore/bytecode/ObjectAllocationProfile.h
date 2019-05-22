@@ -35,17 +35,14 @@ namespace JSC {
 
 class FunctionRareData;
 
-class ObjectAllocationProfile {
+template<typename Derived>
+class ObjectAllocationProfileBase {
     friend class LLIntOffsetsExtractor;
 public:
-    static ptrdiff_t offsetOfAllocator() { return OBJECT_OFFSETOF(ObjectAllocationProfile, m_allocator); }
-    static ptrdiff_t offsetOfStructure() { return OBJECT_OFFSETOF(ObjectAllocationProfile, m_structure); }
-    static ptrdiff_t offsetOfInlineCapacity() { return OBJECT_OFFSETOF(ObjectAllocationProfile, m_inlineCapacity); }
+    static ptrdiff_t offsetOfAllocator() { return OBJECT_OFFSETOF(ObjectAllocationProfileBase, m_allocator); }
+    static ptrdiff_t offsetOfStructure() { return OBJECT_OFFSETOF(ObjectAllocationProfileBase, m_structure); }
 
-    ObjectAllocationProfile()
-        : m_inlineCapacity(0)
-    {
-    }
+    ObjectAllocationProfileBase() = default;
 
     bool isNull() { return !m_structure; }
 
@@ -58,28 +55,18 @@ public:
         WTF::loadLoadFence();
         return structure;
     }
-    JSObject* prototype()
-    {
-        JSObject* prototype = m_prototype.get();
-        WTF::loadLoadFence();
-        return prototype;
-    }
-    unsigned inlineCapacity() { return m_inlineCapacity; }
 
-
+protected:
     void clear()
     {
         m_allocator = Allocator();
         m_structure.clear();
-        m_prototype.clear();
-        m_inlineCapacity = 0;
         ASSERT(isNull());
     }
 
     void visitAggregate(SlotVisitor& visitor)
     {
         visitor.append(m_structure);
-        visitor.append(m_prototype);
     }
 
 private:
@@ -87,8 +74,55 @@ private:
 
     Allocator m_allocator; // Precomputed to make things easier for generated code.
     WriteBarrier<Structure> m_structure;
-    WriteBarrier<JSObject> m_prototype;
-    unsigned m_inlineCapacity;
 };
+
+class ObjectAllocationProfile : public ObjectAllocationProfileBase<ObjectAllocationProfile> {
+public:
+    using Base = ObjectAllocationProfileBase<ObjectAllocationProfile>;
+
+    ObjectAllocationProfile() = default;
+
+    using Base::clear;
+    using Base::visitAggregate;
+
+    void setPrototype(VM&, JSCell*, JSObject*) { }
+};
+
+class ObjectAllocationProfileWithPrototype : public ObjectAllocationProfileBase<ObjectAllocationProfileWithPrototype> {
+public:
+    using Base = ObjectAllocationProfileBase<ObjectAllocationProfileWithPrototype>;
+
+    ObjectAllocationProfileWithPrototype() = default;
+
+    JSObject* prototype()
+    {
+        JSObject* prototype = m_prototype.get();
+        WTF::loadLoadFence();
+        return prototype;
+    }
+
+    void clear()
+    {
+        Base::clear();
+        m_prototype.clear();
+        ASSERT(isNull());
+    }
+
+    void visitAggregate(SlotVisitor& visitor)
+    {
+        Base::visitAggregate(visitor);
+        visitor.append(m_prototype);
+    }
+
+    void setPrototype(VM& vm, JSCell* owner, JSObject* object)
+    {
+        m_prototype.set(vm, owner, object);
+    }
+
+private:
+    WriteBarrier<JSObject> m_prototype;
+};
+
+
 
 } // namespace JSC

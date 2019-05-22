@@ -740,19 +740,12 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, const Instructio
     ConcurrentJSLocker locker(codeBlock->m_lock);
 
     if (slot.isUnset()) {
-        metadata.m_mode = GetByIdMode::Unset;
-        metadata.m_modeMetadata.unsetMode.structureID = structure->id();
+        metadata.m_modeMetadata.setUnsetMode(structure);
         return;
     }
     ASSERT(slot.isValue());
 
-    metadata.m_mode = GetByIdMode::ProtoLoad;
-    metadata.m_modeMetadata.protoLoadMode.structureID = structure->id();
-    metadata.m_modeMetadata.protoLoadMode.cachedOffset = offset;
-    metadata.m_modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
-    // We know that this pointer will remain valid because it will be cleared by either a watchpoint fire or
-    // during GC when we clear the LLInt caches.
-    metadata.m_modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
+    metadata.m_modeMetadata.setProtoLoadMode(structure, offset, slot.slotBase());
 }
 
 
@@ -775,8 +768,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         && slot.isCacheable()) {
         {
             StructureID oldStructureID;
-            auto mode = metadata.m_mode;
-            switch (mode) {
+            switch (metadata.m_modeMetadata.mode) {
             case GetByIdMode::Default:
                 oldStructureID = metadata.m_modeMetadata.defaultMode.structureID;
                 break;
@@ -806,12 +798,10 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             ConcurrentJSLocker locker(codeBlock->m_lock);
 
             // Start out by clearing out the old cache.
-            metadata.m_mode = GetByIdMode::Default;
-            metadata.m_modeMetadata.defaultMode.structureID = 0;
-            metadata.m_modeMetadata.defaultMode.cachedOffset = 0;
+            metadata.m_modeMetadata.clearToDefaultModeWithoutCache();
 
             // Prevent the prototype cache from ever happening.
-            metadata.m_hitCountForLLIntCaching = 0;
+            metadata.m_modeMetadata.hitCountForLLIntCaching = 0;
         
             if (structure->propertyAccessesAreCacheable()
                 && !structure->needImpurePropertyWatchpoint()) {
@@ -820,22 +810,18 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 metadata.m_modeMetadata.defaultMode.structureID = structure->id();
                 metadata.m_modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
             }
-        } else if (UNLIKELY(metadata.m_hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
+        } else if (UNLIKELY(metadata.m_modeMetadata.hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
             ASSERT(slot.slotBase() != baseValue);
 
-            if (!(--metadata.m_hitCountForLLIntCaching))
+            if (!(--metadata.m_modeMetadata.hitCountForLLIntCaching))
                 setupGetByIdPrototypeCache(exec, vm, pc, metadata, baseCell, slot, ident);
         }
     } else if (!LLINT_ALWAYS_ACCESS_SLOW
         && isJSArray(baseValue)
         && ident == vm.propertyNames->length) {
         ConcurrentJSLocker locker(codeBlock->m_lock);
-        metadata.m_mode = GetByIdMode::ArrayLength;
-        new (&metadata.m_modeMetadata.arrayLengthMode.arrayProfile) ArrayProfile(codeBlock->bytecodeOffset(pc));
+        metadata.m_modeMetadata.setArrayLengthMode();
         metadata.m_modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
-
-        // Prevent the prototype cache from ever happening.
-        metadata.m_hitCountForLLIntCaching = 0;
     }
 
     LLINT_PROFILE_VALUE(result);
@@ -1503,12 +1489,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, CodeSpecializationKin
                 CodeBlock* callerCodeBlock = exec->codeBlock();
 
                 ConcurrentJSLocker locker(callerCodeBlock->m_lock);
-
-                if (callLinkInfo->isOnList())
-                    callLinkInfo->remove();
-                callLinkInfo->callee.set(vm, callerCodeBlock, internalFunction);
-                callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, internalFunction);
-                callLinkInfo->machineCodeTarget = codePtr;
+                callLinkInfo->link(vm, callerCodeBlock, internalFunction, codePtr);
             }
 
             assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
@@ -1551,12 +1532,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, CodeSpecializationKin
         CodeBlock* callerCodeBlock = exec->codeBlock();
 
         ConcurrentJSLocker locker(callerCodeBlock->m_lock);
-        
-        if (callLinkInfo->isOnList())
-            callLinkInfo->remove();
-        callLinkInfo->callee.set(vm, callerCodeBlock, callee);
-        callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, callee);
-        callLinkInfo->machineCodeTarget = codePtr;
+        callLinkInfo->link(vm, callerCodeBlock, callee, codePtr);
         if (codeBlock)
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
@@ -1929,7 +1905,7 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
     auto bytecode = pc->as<OpCatch>();
     auto& metadata = bytecode.metadata(exec);
     metadata.m_buffer->forEach([&] (ValueProfileAndOperand& profile) {
-        profile.m_profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
+        profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
     });
 
     LLINT_END();

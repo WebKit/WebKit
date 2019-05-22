@@ -69,7 +69,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
         emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
         Jump done = branchIfNotCell(regT0);
         load32(Address(regT0, JSCell::structureIDOffset()), regT0);
-        store32(regT0, metadata.m_arrayProfile.addressOfLastSeenStructureID());
+        store32(regT0, metadata.m_callLinkInfo.m_arrayProfile.addressOfLastSeenStructureID());
         done.link(this);
     }
 

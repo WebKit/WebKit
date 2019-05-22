@@ -478,7 +478,6 @@ public:
     {
         ASSERT(vm()->canUseJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
         ValueProfile& result = m_argumentValueProfiles[argumentIndex];
-        ASSERT(result.m_bytecodeOffset == -1);
         return result;
     }
 
@@ -974,7 +973,7 @@ private:
     VM* m_vm;
 
     const void* m_instructionsRawPointer { nullptr };
-    SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
+    SentinelLinkedList<LLIntCallLinkInfo, PackedRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)

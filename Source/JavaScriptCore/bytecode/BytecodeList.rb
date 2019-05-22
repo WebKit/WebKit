@@ -136,7 +136,7 @@ op :to_this,
         srcDst: VirtualRegister,
     },
     metadata: {
-        cachedStructure: WriteBarrierBase[Structure],
+        cachedStructureID: StructureID,
         toThisStatus: ToThisStatus,
         profile: ValueProfile,
     }
@@ -414,8 +414,6 @@ op :get_by_id,
         property: unsigned,
     },
     metadata: {
-        mode: GetByIdMode,
-        hitCountForLLIntCaching: unsigned,
         modeMetadata: GetByIdModeMetadata,
         profile: ValueProfile,
     }
@@ -706,7 +704,6 @@ op :call,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -719,7 +716,6 @@ op :tail_call,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -732,7 +728,6 @@ op :call_eval,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -787,7 +782,6 @@ op :construct,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 

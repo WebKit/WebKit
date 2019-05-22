@@ -33,10 +33,6 @@
 
 namespace JSC {
 
-#if !ASSERT_DISABLED
-const char* const ArrayProfile::s_typeName = "ArrayProfile";
-#endif
-
 // Keep in sync with the order of TypedArrayType.
 const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView] = {
     Int8ArrayMode,

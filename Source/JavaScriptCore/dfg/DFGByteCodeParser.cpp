@@ -4795,7 +4795,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_to_this: {
             Node* op1 = getThis();
             auto& metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
-            Structure* cachedStructure = metadata.m_cachedStructure.get();
+            StructureID cachedStructureID = metadata.m_cachedStructureID;
+            Structure* cachedStructure = nullptr;
+            if (cachedStructureID)
+                cachedStructure = m_vm->heap.structureIDTable().get(cachedStructureID);
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
                 || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
@@ -6011,7 +6014,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 buffer->forEach([&] (ValueProfileAndOperand& profile) {
                     VirtualRegister operand(profile.m_operand);
-                    SpeculatedType prediction = profile.m_profile.computeUpdatedPrediction(locker);
+                    SpeculatedType prediction = profile.computeUpdatedPrediction(locker);
                     if (operand.isLocal())
                         localPredictions.append(prediction);
                     else {

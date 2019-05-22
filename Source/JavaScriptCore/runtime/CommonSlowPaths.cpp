@@ -242,7 +242,7 @@ SLOW_PATH_DECL(slow_path_create_this)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
         size_t inlineCapacity = bytecode.m_inlineCapacity;
-        ObjectAllocationProfile* allocationProfile = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile();
+        ObjectAllocationProfileWithPrototype* allocationProfile = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile();
         throwScope.releaseAssertNoException();
         Structure* structure = allocationProfile->structure();
         result = constructEmptyObject(exec, structure);
@@ -272,16 +272,17 @@ SLOW_PATH_DECL(slow_path_to_this)
     auto& metadata = bytecode.metadata(exec);
     JSValue v1 = GET(bytecode.m_srcDst).jsValue();
     if (v1.isCell()) {
-        Structure* myStructure = v1.asCell()->structure(vm);
-        Structure* otherStructure = metadata.m_cachedStructure.get();
-        if (myStructure != otherStructure) {
-            if (otherStructure)
+        StructureID myStructureID = v1.asCell()->structureID();
+        StructureID otherStructureID = metadata.m_cachedStructureID;
+        if (myStructureID != otherStructureID) {
+            if (otherStructureID)
                 metadata.m_toThisStatus = ToThisConflicted;
-            metadata.m_cachedStructure.set(vm, exec->codeBlock(), myStructure);
+            metadata.m_cachedStructureID = myStructureID;
+            vm.heap.writeBarrier(exec->codeBlock(), vm.getStructure(myStructureID));
         }
     } else {
         metadata.m_toThisStatus = ToThisConflicted;
-        metadata.m_cachedStructure.clear();
+        metadata.m_cachedStructureID = 0;
     }
     // Note: We only need to do this value profiling here on the slow path. The fast path
     // just returns the input to to_this if the structure check succeeds. If the structure

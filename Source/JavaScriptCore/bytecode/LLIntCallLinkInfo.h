@@ -34,10 +34,13 @@ namespace JSC {
 
 struct Instruction;
 
-struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
-    LLIntCallLinkInfo()
-    {
-    }
+class LLIntCallLinkInfo : public PackedRawSentinelNode<LLIntCallLinkInfo> {
+public:
+    friend class LLIntOffsetsExtractor;
+
+    static constexpr uintptr_t unlinkedBit = 0x1;
+
+    LLIntCallLinkInfo() = default;
     
     ~LLIntCallLinkInfo()
     {
@@ -45,19 +48,49 @@ struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
             remove();
     }
     
-    bool isLinked() { return !!callee; }
+    bool isLinked() const { return !(m_calleeOrLastSeenCalleeWithLinkBit & unlinkedBit); }
     
+
+    void link(VM& vm, JSCell* owner, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
+    {
+        if (isOnList())
+            remove();
+        m_calleeOrLastSeenCalleeWithLinkBit = bitwise_cast<uintptr_t>(callee);
+        vm.heap.writeBarrier(owner, callee);
+        m_machineCodeTarget = codePtr;
+    }
+
     void unlink()
     {
-        callee.clear();
-        machineCodeTarget = MacroAssemblerCodePtr<JSEntryPtrTag>();
+        // Make link invalidated. It works because LLInt tests the given callee with this pointer. But it is still valid as lastSeenCallee!
+        m_calleeOrLastSeenCalleeWithLinkBit |= unlinkedBit;
+        m_machineCodeTarget = MacroAssemblerCodePtr<JSEntryPtrTag>();
         if (isOnList())
             remove();
     }
-    
-    WriteBarrier<JSObject> callee;
-    WriteBarrier<JSObject> lastSeenCallee;
-    MacroAssemblerCodePtr<JSEntryPtrTag> machineCodeTarget;
+
+    JSObject* callee() const
+    {
+        if (!isLinked())
+            return nullptr;
+        return bitwise_cast<JSObject*>(m_calleeOrLastSeenCalleeWithLinkBit);
+    }
+
+    JSObject* lastSeenCallee() const
+    {
+        return bitwise_cast<JSObject*>(m_calleeOrLastSeenCalleeWithLinkBit & ~unlinkedBit);
+    }
+
+    void clearLastSeenCallee()
+    {
+        m_calleeOrLastSeenCalleeWithLinkBit = unlinkedBit;
+    }
+
+    ArrayProfile m_arrayProfile;
+
+private:
+    uintptr_t m_calleeOrLastSeenCalleeWithLinkBit { unlinkedBit };
+    MacroAssemblerCodePtr<JSEntryPtrTag> m_machineCodeTarget;
 };
 
 } // namespace JSC

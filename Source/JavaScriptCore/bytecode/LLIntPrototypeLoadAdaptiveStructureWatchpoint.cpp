@@ -65,9 +65,8 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(OpGetById::Metadata& metadata)
 {
-    metadata.m_mode = GetByIdMode::Default;
-    metadata.m_modeMetadata.defaultMode.cachedOffset = 0;
-    metadata.m_modeMetadata.defaultMode.structureID = 0;
+    // Keep hitCountForLLIntCaching value.
+    metadata.m_modeMetadata.clearToDefaultModeWithoutCache();
 }
 
 

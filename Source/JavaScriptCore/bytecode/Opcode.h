@@ -111,10 +111,6 @@ extern const unsigned opcodeLengths[];
     macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
     macro(OpGetByVal) \
-    macro(OpCall) \
-    macro(OpTailCall) \
-    macro(OpCallEval) \
-    macro(OpConstruct) \
     macro(OpInByVal) \
     macro(OpPutByVal) \
     macro(OpPutByValDirect) \

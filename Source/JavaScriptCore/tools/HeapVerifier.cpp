@@ -330,7 +330,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
         CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(vm, cell);
         if (UNLIKELY(codeBlock)) {
             bool success = true;
-            codeBlock->forEachValueProfile([&](ValueProfile& valueProfile) {
+            codeBlock->forEachValueProfile([&](ValueProfile& valueProfile, bool) {
                 for (unsigned i = 0; i < ValueProfile::totalNumberOfBuckets; ++i) {
                     JSValue value = JSValue::decode(valueProfile.m_buckets[i]);
                     if (!value)

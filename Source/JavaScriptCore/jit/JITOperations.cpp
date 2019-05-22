@@ -1695,7 +1695,7 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState* exec, 
     auto bytecode = codeBlock->instructions().at(bytecodeIndex)->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);
     metadata.m_buffer->forEach([&] (ValueProfileAndOperand& profile) {
-        profile.m_profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
+        profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
     });
 
     return nullptr;

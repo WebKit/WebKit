@@ -27,7 +27,6 @@
 
 #include "ConcurrentJSLock.h"
 #include "Structure.h"
-#include <wtf/SegmentedVector.h>
 
 namespace JSC {
 
@@ -194,20 +193,12 @@ class ArrayProfile {
     friend class CodeBlock;
 
 public:
-    ArrayProfile()
-        : ArrayProfile(std::numeric_limits<unsigned>::max())
-    {
-    }
-    
-    explicit ArrayProfile(unsigned bytecodeOffset)
-        : m_bytecodeOffset(bytecodeOffset)
-        , m_mayInterceptIndexedAccesses(false)
+    explicit ArrayProfile()
+        : m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
         , m_didPerformFirstRunPruning(false)
     {
     }
-    
-    unsigned bytecodeOffset() const { return m_bytecodeOffset; }
     
     StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
@@ -238,16 +229,11 @@ public:
     CString briefDescription(const ConcurrentJSLocker&, CodeBlock*);
     CString briefDescriptionWithoutUpdating(const ConcurrentJSLocker&);
     
-#if !ASSERT_DISABLED
-    inline bool isValid() const { return m_typeName == s_typeName; }
-#endif
-
 private:
     friend class LLIntOffsetsExtractor;
     
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
-    unsigned m_bytecodeOffset;
     StructureID m_lastSeenStructureID { 0 };
     bool m_mayStoreToHole { false }; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds { false };
@@ -255,13 +241,7 @@ private:
     bool m_usesOriginalArrayStructures : 1;
     bool m_didPerformFirstRunPruning : 1;
     ArrayModes m_observedArrayModes { 0 };
-
-#if !ASSERT_DISABLED
-    static const char* const s_typeName;
-    const char* m_typeName { s_typeName };
-#endif
 };
-
-typedef SegmentedVector<ArrayProfile, 4> ArrayProfileVector;
+static_assert(sizeof(ArrayProfile) == 12);
 
 } // namespace JSC

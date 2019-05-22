@@ -482,13 +482,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
-    auto link_profile = [&](const auto& instruction, auto /*bytecode*/, auto& metadata) {
+    auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& /*metadata*/) {
         m_numberOfNonArgumentValueProfiles++;
-        metadata.m_profile.m_bytecodeOffset = instruction.offset();
-    };
-
-    auto link_arrayProfile = [&](const auto& instruction, auto /*bytecode*/, auto& metadata) {
-        metadata.m_arrayProfile.m_bytecodeOffset = instruction.offset();
     };
 
     auto link_objectAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
@@ -497,10 +492,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     auto link_arrayAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
         metadata.m_arrayAllocationProfile.initializeIndexingMode(bytecode.m_recommendedIndexingType);
-    };
-
-    auto link_hitCountForLLIntCaching = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& metadata) {
-        metadata.m_hitCountForLLIntCaching = Options::prototypeHitCountForLLIntCaching();
     };
 
 #define LINK_FIELD(__field) \
@@ -527,13 +518,13 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         OpcodeID opcodeID = instruction->opcodeID();
         m_bytecodeCost += opcodeLengths[opcodeID];
         switch (opcodeID) {
-        LINK(OpHasIndexedProperty, arrayProfile)
+        LINK(OpHasIndexedProperty)
 
-        LINK(OpCallVarargs, arrayProfile, profile)
-        LINK(OpTailCallVarargs, arrayProfile, profile)
-        LINK(OpTailCallForwardArguments, arrayProfile, profile)
-        LINK(OpConstructVarargs, arrayProfile, profile)
-        LINK(OpGetByVal, arrayProfile, profile)
+        LINK(OpCallVarargs, profile)
+        LINK(OpTailCallVarargs, profile)
+        LINK(OpTailCallForwardArguments, profile)
+        LINK(OpConstructVarargs, profile)
+        LINK(OpGetByVal, profile)
 
         LINK(OpGetDirectPname, profile)
         LINK(OpGetByIdWithThis, profile)
@@ -550,16 +541,16 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpBitnot, profile)
         LINK(OpBitxor, profile)
 
-        LINK(OpGetById, profile, hitCountForLLIntCaching)
+        LINK(OpGetById, profile)
 
-        LINK(OpCall, profile, arrayProfile)
-        LINK(OpTailCall, profile, arrayProfile)
-        LINK(OpCallEval, profile, arrayProfile)
-        LINK(OpConstruct, profile, arrayProfile)
+        LINK(OpCall, profile)
+        LINK(OpTailCall, profile)
+        LINK(OpCallEval, profile)
+        LINK(OpConstruct, profile)
 
-        LINK(OpInByVal, arrayProfile)
-        LINK(OpPutByVal, arrayProfile)
-        LINK(OpPutByValDirect, arrayProfile)
+        LINK(OpInByVal)
+        LINK(OpPutByVal)
+        LINK(OpPutByValDirect)
 
         LINK(OpNewArray)
         LINK(OpNewArrayWithSize)
@@ -1208,7 +1199,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
         switch (curInstruction->opcodeID()) {
         case op_get_by_id: {
             auto& metadata = curInstruction->as<OpGetById>().metadata(this);
-            if (metadata.m_mode != GetByIdMode::Default)
+            if (metadata.m_modeMetadata.mode != GetByIdMode::Default)
                 break;
             StructureID oldStructureID = metadata.m_modeMetadata.defaultMode.structureID;
             if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
@@ -1252,11 +1243,13 @@ void CodeBlock::finalizeLLIntInlineCaches()
             break;
         case op_to_this: {
             auto& metadata = curInstruction->as<OpToThis>().metadata(this);
-            if (!metadata.m_cachedStructure || vm.heap.isMarked(metadata.m_cachedStructure.get()))
+            if (!metadata.m_cachedStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(metadata.m_cachedStructureID)))
                 break;
-            if (Options::verboseOSR())
-                dataLogF("Clearing LLInt to_this with structure %p.\n", metadata.m_cachedStructure.get());
-            metadata.m_cachedStructure.clear();
+            if (Options::verboseOSR()) {
+                Structure* structure = vm.heap.structureIDTable().get(metadata.m_cachedStructureID);
+                dataLogF("Clearing LLInt to_this with structure %p.\n", structure);
+            }
+            metadata.m_cachedStructureID = 0;
             metadata.m_toThisStatus = merge(metadata.m_toThisStatus, ToThisClearedByGC);
             break;
         }
@@ -1324,13 +1317,13 @@ void CodeBlock::finalizeLLIntInlineCaches()
     });
 
     forEachLLIntCallLinkInfo([&](LLIntCallLinkInfo& callLinkInfo) {
-        if (callLinkInfo.isLinked() && !vm.heap.isMarked(callLinkInfo.callee.get())) {
+        if (callLinkInfo.isLinked() && !vm.heap.isMarked(callLinkInfo.callee())) {
             if (Options::verboseOSR())
                 dataLog("Clearing LLInt call from ", *this, "\n");
             callLinkInfo.unlink();
         }
-        if (!!callLinkInfo.lastSeenCallee && !vm.heap.isMarked(callLinkInfo.lastSeenCallee.get()))
-            callLinkInfo.lastSeenCallee.clear();
+        if (callLinkInfo.lastSeenCallee() && !vm.heap.isMarked(callLinkInfo.lastSeenCallee()))
+            callLinkInfo.clearLastSeenCallee();
     });
 }
 
@@ -2575,17 +2568,24 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, unsigned byt
 {
     auto instruction = instructions().at(bytecodeOffset);
     switch (instruction->opcodeID()) {
-#define CASE(Op) \
+#define CASE1(Op) \
     case Op::opcodeID: \
         return &instruction->as<Op>().metadata(this).m_arrayProfile;
 
-    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(CASE)
-#undef CASE
+#define CASE2(Op) \
+    case Op::opcodeID: \
+        return &instruction->as<Op>().metadata(this).m_callLinkInfo.m_arrayProfile;
+
+    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(CASE1)
+    FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(CASE2)
+
+#undef CASE1
+#undef CASE2
 
     case OpGetById::opcodeID: {
         auto bytecode = instruction->as<OpGetById>();
         auto& metadata = bytecode.metadata(this);
-        if (metadata.m_mode == GetByIdMode::ArrayLength)
+        if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
             return &metadata.m_modeMetadata.arrayLengthMode.arrayProfile;
         break;
     }
@@ -2633,16 +2633,17 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonAr
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
 
-    forEachValueProfile([&](ValueProfile& profile) {
+    forEachValueProfile([&](ValueProfile& profile, bool isArgument) {
         unsigned numSamples = profile.totalNumberOfSamples();
+        static_assert(ValueProfile::numberOfBuckets == 1);
         if (numSamples > ValueProfile::numberOfBuckets)
             numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
         numberOfSamplesInProfiles += numSamples;
-        if (profile.m_bytecodeOffset < 0) {
+        if (isArgument) {
             profile.computeUpdatedPrediction(locker);
             return;
         }
-        if (profile.numberOfSamples() || profile.m_prediction != SpecNone)
+        if (profile.numberOfSamples() || profile.isSampledBefore())
             numberOfLiveNonArgumentValueProfiles++;
         profile.computeUpdatedPrediction(locker);
     });
@@ -2650,7 +2651,7 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonAr
     if (auto* rareData = m_rareData.get()) {
         for (auto& profileBucket : rareData->m_catchProfiles) {
             profileBucket->forEach([&] (ValueProfileAndOperand& profile) {
-                profile.m_profile.computeUpdatedPrediction(locker);
+                profile.computeUpdatedPrediction(locker);
             });
         }
     }
@@ -2800,12 +2801,11 @@ void CodeBlock::notifyLexicalBindingUpdate()
 void CodeBlock::dumpValueProfiles()
 {
     dataLog("ValueProfile for ", *this, ":\n");
-    forEachValueProfile([](ValueProfile& profile) {
-        if (profile.m_bytecodeOffset < 0) {
-            ASSERT(profile.m_bytecodeOffset == -1);
-            dataLogF("   arg = %u: ", i);
-        } else
-            dataLogF("   bc = %d: ", profile.m_bytecodeOffset);
+    forEachValueProfile([](ValueProfile& profile, bool isArgument) {
+        if (isArgument)
+            dataLogF("   arg: ");
+        else
+            dataLogF("   bc: ");
         if (!profile.numberOfSamples() && profile.m_prediction == SpecNone) {
             dataLogF("<empty>\n");
             continue;

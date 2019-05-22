@@ -44,14 +44,6 @@ struct ValueProfileBase {
     static const unsigned totalNumberOfBuckets = numberOfBuckets + numberOfSpecFailBuckets;
     
     ValueProfileBase()
-        : m_bytecodeOffset(-1)
-    {
-        for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
-            m_buckets[i] = JSValue::encode(JSValue());
-    }
-    
-    ValueProfileBase(int bytecodeOffset)
-        : m_bytecodeOffset(bytecodeOffset)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -86,8 +78,10 @@ struct ValueProfileBase {
     
     unsigned totalNumberOfSamples() const
     {
-        return numberOfSamples() + m_numberOfSamplesInPrediction;
+        return numberOfSamples() + isSampledBefore();
     }
+
+    bool isSampledBefore() const { return m_prediction != SpecNone; }
     
     bool isLive() const
     {
@@ -109,7 +103,7 @@ struct ValueProfileBase {
     
     void dump(PrintStream& out)
     {
-        out.print("samples = ", totalNumberOfSamples(), " prediction = ", SpeculationDump(m_prediction));
+        out.print("sampled before = ", isSampledBefore(), " live samples = ", numberOfSamples(), " prediction = ", SpeculationDump(m_prediction));
         bool first = true;
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
@@ -133,7 +127,6 @@ struct ValueProfileBase {
             if (!value)
                 continue;
             
-            m_numberOfSamplesInPrediction++;
             mergeSpeculation(m_prediction, speculationFromValue(value));
             
             m_buckets[i] = JSValue::encode(JSValue());
@@ -142,17 +135,13 @@ struct ValueProfileBase {
         return m_prediction;
     }
     
-    int m_bytecodeOffset; // -1 for prologue
-    unsigned m_numberOfSamplesInPrediction { 0 };
-    
-    SpeculatedType m_prediction { SpecNone };
-    
     EncodedJSValue m_buckets[totalNumberOfBuckets];
+
+    SpeculatedType m_prediction { SpecNone };
 };
 
 struct MinimalValueProfile : public ValueProfileBase<0> {
     MinimalValueProfile(): ValueProfileBase<0>() { }
-    MinimalValueProfile(int bytecodeOffset): ValueProfileBase<0>(bytecodeOffset) { }
 };
 
 template<unsigned logNumberOfBucketsArgument>
@@ -163,22 +152,11 @@ struct ValueProfileWithLogNumberOfBuckets : public ValueProfileBase<1 << logNumb
         : ValueProfileBase<1 << logNumberOfBucketsArgument>()
     {
     }
-    ValueProfileWithLogNumberOfBuckets(int bytecodeOffset)
-        : ValueProfileBase<1 << logNumberOfBucketsArgument>(bytecodeOffset)
-    {
-    }
 };
 
 struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
     ValueProfile() : ValueProfileWithLogNumberOfBuckets<0>() { }
-    ValueProfile(int bytecodeOffset) : ValueProfileWithLogNumberOfBuckets<0>(bytecodeOffset) { }
 };
-
-template<typename T>
-inline int getValueProfileBytecodeOffset(T* valueProfile)
-{
-    return valueProfile->m_bytecodeOffset;
-}
 
 // This is a mini value profile to catch pathologies. It is a counter that gets
 // incremented when we take the slow path on any instruction.
@@ -198,8 +176,7 @@ inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
     return rareCaseProfile->m_bytecodeOffset;
 }
 
-struct ValueProfileAndOperand {
-    ValueProfile m_profile;
+struct ValueProfileAndOperand : public ValueProfile {
     int m_operand;
 };
 

@@ -1,3 +1,151 @@
+2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink Metadata
+        https://bugs.webkit.org/show_bug.cgi?id=197940
+
+        Reviewed by Michael Saboff.
+
+        We get Metadata related data in Gmail and it turns out the following things.
+
+        1. At peak, MetadataTable eats a lot of bytes (30 MB - 50 MB, sometimes 70 MB while total Gmail footprint is 400 - 500 MB).
+        2. After full GC happens, most of Metadata is destroyed while some are kept. Still keeps 1 MB. But after the GC, # of MetadataTable eventually grows again.
+
+        If we shrink Metadata, we can reduce the peak memory footprint in Gmail.
+
+        This patch shrinks Metadata. This patch first focus on low hanging fruits: it does not include the change removing OSR exit JSValue in ValueProfile.
+        This patch uses fancy bit juggling & leverages nice data types to reduce Metadata, as follows.
+
+        1. ValueProfile is reduced from 32 to 24. It reduces Metadata using ValueProfile.
+        2. ArrayProfile is reduced from 16 to 12. Ditto.
+        3. OpCall::Metadata is reduced from 88 to 64.
+        4. OpGetById::Metadata is reduced from 56 to 40.
+        5. OpToThis::Metadata is reduced from 48 to 32.
+        6. OpNewObject::Metadata is reduced from 32 to 16.
+
+        According to the gathered data, it should reduce 1-2MB in steady state in Gmail, much more in peak memory, ~1 MB in the state just after full GC.
+        It also improves RAMification by 0.3% (6 runs).
+
+        * bytecode/ArrayProfile.cpp:
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::bytecodeOffset const): Deleted.
+        (JSC::ArrayProfile::isValid const): Deleted.
+        * bytecode/BytecodeList.rb:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfileForArgument):
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::forEachArrayProfile):
+        * bytecode/GetByIdMetadata.h:
+        We use ProtoLoad's JSObject's high bits to embed hitCountForLLIntCaching and mode, since they
+        are always zero for ProtoLoad mode.
+
+        (): Deleted.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::isLinked const):
+        (JSC::LLIntCallLinkInfo::link):
+        (JSC::LLIntCallLinkInfo::unlink):
+        (JSC::LLIntCallLinkInfo::callee const):
+        (JSC::LLIntCallLinkInfo::lastSeenCallee const):
+        (JSC::LLIntCallLinkInfo::clearLastSeenCallee):
+        (JSC::LLIntCallLinkInfo::LLIntCallLinkInfo): Deleted.
+        (JSC::LLIntCallLinkInfo::isLinked): Deleted.
+        In LLIntCallLinkInfo, we always set the same value to lastSeenCallee and callee. But later, callee can be cleared.
+        It means that we can represent them in one value + cleared flag. We encode this flag into the lowest bit of the callee cell so
+        that we can make them one pointer. We also use PackedRawSentinelNode to get some space, and embed ArrayProfile into this space
+        to get further memory reduction.
+
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache):
+        * bytecode/LazyOperandValueProfile.h:
+        (JSC::LazyOperandValueProfile::LazyOperandValueProfile):
+        (JSC::LazyOperandValueProfile::key const):
+        * bytecode/MetadataTable.h:
+        (JSC::MetadataTable::buffer):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfileBase::offsetOfAllocator):
+        (JSC::ObjectAllocationProfileBase::offsetOfStructure):
+        (JSC::ObjectAllocationProfileBase::clear):
+        (JSC::ObjectAllocationProfileBase::visitAggregate):
+        (JSC::ObjectAllocationProfile::setPrototype):
+        (JSC::ObjectAllocationProfileWithPrototype::prototype):
+        (JSC::ObjectAllocationProfileWithPrototype::clear):
+        (JSC::ObjectAllocationProfileWithPrototype::visitAggregate):
+        (JSC::ObjectAllocationProfileWithPrototype::setPrototype):
+        (JSC::ObjectAllocationProfile::offsetOfAllocator): Deleted.
+        (JSC::ObjectAllocationProfile::offsetOfStructure): Deleted.
+        (JSC::ObjectAllocationProfile::offsetOfInlineCapacity): Deleted.
+        (JSC::ObjectAllocationProfile::ObjectAllocationProfile): Deleted.
+        (JSC::ObjectAllocationProfile::isNull): Deleted.
+        (JSC::ObjectAllocationProfile::structure): Deleted.
+        (JSC::ObjectAllocationProfile::prototype): Deleted.
+        (JSC::ObjectAllocationProfile::inlineCapacity): Deleted.
+        (JSC::ObjectAllocationProfile::clear): Deleted.
+        (JSC::ObjectAllocationProfile::visitAggregate): Deleted.
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfileBase<Derived>::initializeProfile):
+        (JSC::ObjectAllocationProfileBase<Derived>::possibleDefaultPropertyCount):
+        (JSC::ObjectAllocationProfile::initializeProfile): Deleted.
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount): Deleted.
+        OpNewObject's ObjectAllocationProfile does not need to hold prototype. So we have two versions now, ObjectAllocationProfile and ObjectAllocationProfileWithPrototype
+        to cut one pointer. We also remove inline capacity since this can be retrieved from Structure.
+
+        * bytecode/Opcode.h:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::totalNumberOfSamples const):
+        (JSC::ValueProfileBase::isSampledBefore const):
+        (JSC::ValueProfileBase::dump):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        (JSC::MinimalValueProfile::MinimalValueProfile):
+        (JSC::ValueProfileWithLogNumberOfBuckets::ValueProfileWithLogNumberOfBuckets):
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::getValueProfileBytecodeOffset): Deleted.
+        Bytecode offset is no longer used. And sample count is not used effectively.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        * ftl/FTLAbstractHeapRepository.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupFrame):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupFrame):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_to_this):
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/FunctionRareData.h:
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::validateJSCell):
+
 2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ESNext] Implement support for Numeric Separators

@@ -86,7 +86,7 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeB
     }
     
     
-    return CallLinkStatus(callLinkInfo->lastSeenCallee.get());
+    return CallLinkStatus(callLinkInfo->lastSeenCallee());
 }
 
 CallLinkStatus CallLinkStatus::computeFor(

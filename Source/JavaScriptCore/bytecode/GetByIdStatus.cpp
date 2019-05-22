@@ -64,7 +64,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         auto& metadata = instruction->as<OpGetById>().metadata(profiledBlock);
         // FIXME: We should not just bail if we see a get_by_id_proto_load.
         // https://bugs.webkit.org/show_bug.cgi?id=158039
-        if (metadata.m_mode != GetByIdMode::Default)
+        if (metadata.m_modeMetadata.mode != GetByIdMode::Default)
             return GetByIdStatus(NoInformation, false);
         structureID = metadata.m_modeMetadata.defaultMode.structureID;
         break;

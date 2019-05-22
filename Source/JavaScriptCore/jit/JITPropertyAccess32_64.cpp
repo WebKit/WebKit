@@ -580,7 +580,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(base, regT1);
 
     if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
-        Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
+        Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
         emitArrayProfilingSiteWithCell(regT0, regT2, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
         notArrayLengthMode.link(this);
     }

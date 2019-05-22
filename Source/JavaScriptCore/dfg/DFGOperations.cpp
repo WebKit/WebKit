@@ -355,7 +355,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     if (constructor->type() == JSFunctionType && jsCast<JSFunction*>(constructor)->canUseAllocationProfile()) {
         auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndAllocationProfile(exec, inlineCapacity);
         scope.releaseAssertNoException();
-        ObjectAllocationProfile* allocationProfile = rareData->objectAllocationProfile();
+        ObjectAllocationProfileWithPrototype* allocationProfile = rareData->objectAllocationProfile();
         Structure* structure = allocationProfile->structure();
         JSObject* result = constructEmptyObject(exec, structure);
         if (structure->hasPolyProto()) {
