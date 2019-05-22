@@ -1,5 +1,19 @@
 2019-05-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix scrolling tree state for more obscure combinations of positioning and paint order
+        https://bugs.webkit.org/show_bug.cgi?id=198139
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/composited-in-absolute-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers.html: Added.
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-overflow.html: Added.
+
+2019-05-22  Simon Fraser  <simon.fraser@apple.com>
+
         Inner scroller of nested overflow:scrolls jitters when scrolling
         https://bugs.webkit.org/show_bug.cgi?id=198131
 

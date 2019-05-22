@@ -1794,6 +1794,34 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
     extent.extentComputed = true;
 }
 
+enum class AncestorTraversal { Continue, Stop };
+
+// This is a simplified version of containing block walking that only handles absolute position.
+template <typename Function>
+static AncestorTraversal traverseAncestorLayers(const RenderLayer& layer, Function&& function)
+{
+    bool containingBlockCanSkipLayers = layer.renderer().isAbsolutelyPositioned();
+    RenderLayer* nextPaintOrderParent = layer.paintOrderParent();
+
+    for (const auto* ancestorLayer = layer.parent(); ancestorLayer; ancestorLayer = ancestorLayer->parent()) {
+        bool inContainingBlockChain = true;
+
+        if (containingBlockCanSkipLayers)
+            inContainingBlockChain = ancestorLayer->renderer().canContainAbsolutelyPositionedObjects();
+
+        if (function(*ancestorLayer, inContainingBlockChain, ancestorLayer == nextPaintOrderParent) == AncestorTraversal::Stop)
+            return AncestorTraversal::Stop;
+
+        if (inContainingBlockChain)
+            containingBlockCanSkipLayers = ancestorLayer->renderer().isAbsolutelyPositioned();
+        
+        if (ancestorLayer == nextPaintOrderParent)
+            nextPaintOrderParent = ancestorLayer->paintOrderParent();
+    }
+    
+    return AncestorTraversal::Continue;
+}
+
 static bool createsClippingScope(const RenderLayer& layer)
 {
     return layer.hasCompositedScrollableOverflow();
@@ -1807,27 +1835,20 @@ static Vector<LayerOverlapMap::LayerAndBounds> enclosingClippingScopes(const Ren
     if (!layer.hasCompositedScrollingAncestor())
         return clippingScopes;
 
-    bool containingBlockCanSkipLayers = layer.renderer().isAbsolutelyPositioned();
-    for (const auto* ancestorLayer = layer.parent(); ancestorLayer; ancestorLayer = ancestorLayer->parent()) {
-        bool inContainingBlockChain = true;
-        if (containingBlockCanSkipLayers) {
-            inContainingBlockChain = ancestorLayer->renderer().canContainAbsolutelyPositionedObjects();
-            if (inContainingBlockChain)
-                containingBlockCanSkipLayers = ancestorLayer->renderer().isAbsolutelyPositioned();
-        }
-        
-        if (inContainingBlockChain && createsClippingScope(*ancestorLayer)) {
+    traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool inContainingBlockChain, bool) {
+        if (inContainingBlockChain && createsClippingScope(ancestorLayer)) {
             LayoutRect clipRect;
-            if (is<RenderBox>(ancestorLayer->renderer())) {
+            if (is<RenderBox>(ancestorLayer.renderer())) {
                 // FIXME: This is expensive. Broken with transforms.
-                LayoutPoint offsetFromRoot = ancestorLayer->convertToLayerCoords(&rootLayer, { });
-                clipRect = downcast<RenderBox>(ancestorLayer->renderer()).overflowClipRect(offsetFromRoot);
+                LayoutPoint offsetFromRoot = ancestorLayer.convertToLayerCoords(&rootLayer, { });
+                clipRect = downcast<RenderBox>(ancestorLayer.renderer()).overflowClipRect(offsetFromRoot);
             }
 
-            LayerOverlapMap::LayerAndBounds layerAndBounds { const_cast<RenderLayer&>(*ancestorLayer), clipRect };
+            LayerOverlapMap::LayerAndBounds layerAndBounds { const_cast<RenderLayer&>(ancestorLayer), clipRect };
             clippingScopes.insert(1, layerAndBounds); // Order is roots to leaves.
         }
-    }
+        return AncestorTraversal::Continue;
+    });
 
     return clippingScopes;
 }
@@ -3040,24 +3061,17 @@ static RenderLayer* enclosingCompositedScrollingLayer(const RenderLayer& layer, 
     return nullptr;
 }
 
-// Return true if overflowScrollLayer is in layer's containing block chain.
 static bool isScrolledByOverflowScrollLayer(const RenderLayer& layer, const RenderLayer& overflowScrollLayer)
 {
-    bool containingBlockCanSkipLayers = layer.renderer().isAbsolutelyPositioned();
-
-    for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
-        bool inContainingBlockChain = true;
-        if (containingBlockCanSkipLayers) {
-            inContainingBlockChain = currLayer->renderer().canContainAbsolutelyPositionedObjects();
-            if (inContainingBlockChain)
-                containingBlockCanSkipLayers = currLayer->renderer().isAbsolutelyPositioned();
+    bool scrolledByOverflowScroll = false;
+    traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool inContainingBlockChain, bool) {
+        if (&ancestorLayer == &overflowScrollLayer) {
+            scrolledByOverflowScroll = inContainingBlockChain;
+            return AncestorTraversal::Stop;
         }
-
-        if (currLayer == &overflowScrollLayer)
-            return inContainingBlockChain;
-    }
-
-    return false;
+        return AncestorTraversal::Continue;
+    });
+    return scrolledByOverflowScroll;
 }
 
 static bool isNonScrolledLayerInsideScrolledCompositedAncestor(const RenderLayer& layer, const RenderLayer& compositedAncestor, const RenderLayer& scrollingAncestor)
@@ -3083,7 +3097,7 @@ bool RenderLayerCompositor::layerContainingBlockCrossesCoordinatedScrollingBound
     return isNonScrolledLayerInsideScrolledCompositedAncestor(layer, compositedAncestor, *scrollingAncestor);
 }
 
-static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer, const RenderLayer& /*compositedAncestor*/, Vector<ScrollingNodeID>& scrollingNodes)
+static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer, const RenderLayer&, Vector<ScrollingNodeID>& scrollingNodes)
 {
     ASSERT(layer.isComposited());
     
@@ -3097,23 +3111,20 @@ static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer,
     };
 
     ASSERT(layer.renderer().isAbsolutelyPositioned());
-    bool containingBlockCanSkipLayers = true;
 
-    for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
-        bool inContainingBlockChain = true;
-        if (containingBlockCanSkipLayers) {
-            inContainingBlockChain = currLayer->renderer().canContainAbsolutelyPositionedObjects();
-            if (inContainingBlockChain)
-                containingBlockCanSkipLayers = currLayer->renderer().isAbsolutelyPositioned();
-        }
+    // Collect all the composited scrollers which affect the position of this layer relative to its compositing ancestor (which might be inside the scroller or the scroller itself).
+    bool seenPaintOrderAncestor = false;
+    traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool isPaintOrderAncestor) {
+        seenPaintOrderAncestor |= isPaintOrderAncestor;
+        if (isContainingBlockChain && isPaintOrderAncestor)
+            return AncestorTraversal::Stop;
 
-        if (currLayer->hasCompositedScrollableOverflow()) {
-            appendOverflowLayerNodeID(*currLayer);
-            break;
-        }
-    }
+        if (seenPaintOrderAncestor && !isContainingBlockChain && ancestorLayer.hasCompositedScrollableOverflow())
+            appendOverflowLayerNodeID(ancestorLayer);
+
+        return AncestorTraversal::Continue;
+    });
 }
-
 
 ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningForLayer(const RenderLayer& layer) const
 {
@@ -3182,7 +3193,6 @@ static Vector<ScrollingNodeID> collectRelatedCoordinatedScrollingNodes(const Ren
     }
     case ScrollPositioningBehavior::Stationary: {
         ASSERT(layer.renderer().isAbsolutelyPositioned());
-        // Collect all the composited scrollers between this layer and its composited ancestor.
         auto* compositedAncestor = layer.ancestorCompositingLayer();
         if (!compositedAncestor)
             return overflowNodeData;
