@@ -813,30 +813,6 @@ static ALWAYS_INLINE bool isIdentPartIncludingEscape(const UChar* code, const UC
     return isIdentPartIncludingEscapeTemplate(code, codeEnd);
 }
 
-template<typename CharacterType>
-static inline bool isASCIIDigitOrSeparator(CharacterType character)
-{
-    return isASCIIDigit(character) || character == '_';
-}
-
-template<typename CharacterType>
-static inline bool isASCIIHexDigitOrSeparator(CharacterType character)
-{
-    return isASCIIHexDigit(character) || character == '_';
-}
-
-template<typename CharacterType>
-static inline bool isASCIIBinaryDigitOrSeparator(CharacterType character)
-{
-    return isASCIIBinaryDigit(character) || character == '_';
-}
-
-template<typename CharacterType>
-static inline bool isASCIIOctalDigitOrSeparator(CharacterType character)
-{
-    return isASCIIOctalDigit(character) || character == '_';
-}
-
 static inline LChar singleEscape(int c)
 {
     if (c < 128) {
@@ -1514,29 +1490,20 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
 }
 
 template <typename T>
-ALWAYS_INLINE auto Lexer<T>::parseHex() -> Optional<NumberParseResult>
+ALWAYS_INLINE auto Lexer<T>::parseHex() -> NumberParseResult
 {
-    ASSERT(isASCIIHexDigit(m_current));
-
     // Optimization: most hexadecimal values fit into 4 bytes.
     uint32_t hexValue = 0;
     int maximumDigits = 7;
 
     do {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIHexDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
         hexValue = (hexValue << 4) + toASCIIHexValue(m_current);
         shift();
         --maximumDigits;
-    } while (isASCIIHexDigitOrSeparator(m_current) && maximumDigits >= 0);
+    } while (isASCIIHexDigit(m_current) && maximumDigits >= 0);
 
     if (LIKELY(maximumDigits >= 0 && m_current != 'n'))
-        return NumberParseResult { hexValue };
+        return hexValue;
 
     // No more place in the hexValue buffer.
     // The values are shifted out and placed into the m_buffer8 vector.
@@ -1549,29 +1516,20 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> Optional<NumberParseResult>
          hexValue <<= 4;
     }
 
-    while (isASCIIHexDigitOrSeparator(m_current)) {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIHexDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
+    while (isASCIIHexDigit(m_current)) {
         record8(m_current);
         shift();
     }
 
     if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return makeIdentifier(m_buffer8.data(), m_buffer8.size());
     
-    return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 16) };
+    return parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 16);
 }
 
 template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
 {
-    ASSERT(isASCIIBinaryDigit(m_current));
-
     // Optimization: most binary values fit into 4 bytes.
     uint32_t binaryValue = 0;
     const unsigned maximumDigits = 32;
@@ -1581,51 +1539,35 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
     LChar digits[maximumDigits];
 
     do {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIBinaryDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
         binaryValue = (binaryValue << 1) + (m_current - '0');
         digits[digit] = m_current;
         shift();
         --digit;
-    } while (isASCIIBinaryDigitOrSeparator(m_current) && digit >= 0);
+    } while (isASCIIBinaryDigit(m_current) && digit >= 0);
 
-    if (LIKELY(!isASCIIDigitOrSeparator(m_current) && digit >= 0 && m_current != 'n'))
-        return NumberParseResult { binaryValue };
+    if (LIKELY(!isASCIIDigit(m_current) && digit >= 0 && m_current != 'n'))
+        return Variant<double, const Identifier*> { binaryValue };
 
     for (int i = maximumDigits - 1; i > digit; --i)
         record8(digits[i]);
 
-    while (isASCIIBinaryDigitOrSeparator(m_current)) {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIBinaryDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
+    while (isASCIIBinaryDigit(m_current)) {
         record8(m_current);
         shift();
     }
 
     if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return Variant<double, const Identifier*> { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
         return WTF::nullopt;
 
-    return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2) };
+    return Variant<double, const Identifier*> { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2) };
 }
 
 template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
 {
-    ASSERT(isASCIIOctalDigit(m_current));
-
     // Optimization: most octal values fit into 4 bytes.
     uint32_t octalValue = 0;
     const unsigned maximumDigits = 10;
@@ -1635,51 +1577,36 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
     LChar digits[maximumDigits];
 
     do {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIOctalDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
         octalValue = octalValue * 8 + (m_current - '0');
         digits[digit] = m_current;
         shift();
         --digit;
-    } while (isASCIIOctalDigitOrSeparator(m_current) && digit >= 0);
+    } while (isASCIIOctalDigit(m_current) && digit >= 0);
 
-    if (LIKELY(!isASCIIDigitOrSeparator(m_current) && digit >= 0 && m_current != 'n'))
-        return NumberParseResult { octalValue };
+    if (LIKELY(!isASCIIDigit(m_current) && digit >= 0 && m_current != 'n'))
+        return Variant<double, const Identifier*> { octalValue };
+
 
     for (int i = maximumDigits - 1; i > digit; --i)
          record8(digits[i]);
 
-    while (isASCIIOctalDigitOrSeparator(m_current)) {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIOctalDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
+    while (isASCIIOctalDigit(m_current)) {
         record8(m_current);
         shift();
     }
 
     if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return Variant<double, const Identifier*> { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
         return WTF::nullopt;
 
-    return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8) };
+    return Variant<double, const Identifier*> { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8) };
 }
 
 template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
 {
-    ASSERT(isASCIIDigit(m_current));
-
     // Optimization: most decimal values fit into 4 bytes.
     uint32_t decimalValue = 0;
 
@@ -1693,63 +1620,38 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
         LChar digits[maximumDigits];
 
         do {
-            if (m_current == '_') {
-                if (UNLIKELY(!isASCIIDigit(peek(1))))
-                    return WTF::nullopt;
-
-                shift();
-            }
-
             decimalValue = decimalValue * 10 + (m_current - '0');
             digits[digit] = m_current;
             shift();
             --digit;
-        } while (isASCIIDigitOrSeparator(m_current) && digit >= 0);
+        } while (isASCIIDigit(m_current) && digit >= 0);
 
         if (digit >= 0 && m_current != '.' && !isASCIIAlphaCaselessEqual(m_current, 'e') && m_current != 'n')
-            return NumberParseResult { decimalValue };
+            return Variant<double, const Identifier*> { decimalValue };
 
         for (int i = maximumDigits - 1; i > digit; --i)
             record8(digits[i]);
     }
 
-    while (isASCIIDigitOrSeparator(m_current)) {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIDigit(peek(1))))
-                return WTF::nullopt;
-
-            shift();
-        }
-
+    while (isASCIIDigit(m_current)) {
         record8(m_current);
         shift();
     }
     
     if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
-        return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
+        return Variant<double, const Identifier*> { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     return WTF::nullopt;
 }
 
 template <typename T>
-ALWAYS_INLINE bool Lexer<T>::parseNumberAfterDecimalPoint()
+ALWAYS_INLINE void Lexer<T>::parseNumberAfterDecimalPoint()
 {
-    ASSERT(isASCIIDigit(m_current));
     record8('.');
-
-    do {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIDigit(peek(1))))
-                return false;
-
-            shift();
-        }
-
+    while (isASCIIDigit(m_current)) {
         record8(m_current);
         shift();
-    } while (isASCIIDigitOrSeparator(m_current));
-
-    return true;
+    }
 }
 
 template <typename T>
@@ -1766,17 +1668,9 @@ ALWAYS_INLINE bool Lexer<T>::parseNumberAfterExponentIndicator()
         return false;
 
     do {
-        if (m_current == '_') {
-            if (UNLIKELY(!isASCIIDigit(peek(1))))
-                return false;
-
-            shift();
-        }
-
         record8(m_current);
         shift();
-    } while (isASCIIDigitOrSeparator(m_current));
-
+    } while (isASCIIDigit(m_current));
     return true;
 }
 
@@ -2196,11 +2090,7 @@ start:
             token = DOT;
             break;
         }
-        if (UNLIKELY(!parseNumberAfterDecimalPoint())) {
-            m_lexErrorMessage = "Non-number found after decimal point"_s;
-            token = INVALID_NUMERIC_LITERAL_ERRORTOK;
-            goto returnError;
-        }
+        parseNumberAfterDecimalPoint();
         token = DOUBLE;
         if (isASCIIAlphaCaselessEqual(m_current, 'e')) {
             if (!parseNumberAfterExponentIndicator()) {
@@ -2234,14 +2124,12 @@ start:
             shift();
 
             auto parseNumberResult = parseHex();
-            if (!parseNumberResult)
-                tokenData->doubleValue = 0;
-            else if (WTF::holds_alternative<double>(*parseNumberResult))
-                tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+            if (WTF::holds_alternative<double>(parseNumberResult))
+                tokenData->doubleValue = WTF::get<double>(parseNumberResult);
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = WTF::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = WTF::get<const Identifier*>(parseNumberResult);
                 tokenData->radix = 16;
             }
 
@@ -2321,12 +2209,6 @@ start:
             break;
         }
 
-        if (UNLIKELY(m_current == '_')) {
-            m_lexErrorMessage = "Numeric literals may not begin with 0_"_s;
-            token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
-            goto returnError;
-        }
-
         record8('0');
         if (strictMode && isASCIIDigit(m_current)) {
             m_lexErrorMessage = "Decimal integer literals with a leading zero are forbidden in strict mode"_s;
@@ -2358,11 +2240,7 @@ start:
                     token = INTEGER;
                     if (m_current == '.') {
                         shift();
-                        if (UNLIKELY(isASCIIDigit(m_current) && !parseNumberAfterDecimalPoint())) {
-                            m_lexErrorMessage = "Non-number found after decimal point"_s;
-                            token = INVALID_NUMERIC_LITERAL_ERRORTOK;
-                            goto returnError;
-                        }
+                        parseNumberAfterDecimalPoint();
                         token = DOUBLE;
                     }
                     if (isASCIIAlphaCaselessEqual(m_current, 'e')) {

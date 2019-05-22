@@ -179,11 +179,11 @@ private:
     ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*, RawStringsBuildMode);
     
     using NumberParseResult = Variant<double, const Identifier*>;
-    ALWAYS_INLINE Optional<NumberParseResult> parseHex();
+    ALWAYS_INLINE NumberParseResult parseHex();
     ALWAYS_INLINE Optional<NumberParseResult> parseBinary();
     ALWAYS_INLINE Optional<NumberParseResult> parseOctal();
     ALWAYS_INLINE Optional<NumberParseResult> parseDecimal();
-    ALWAYS_INLINE bool parseNumberAfterDecimalPoint();
+    ALWAYS_INLINE void parseNumberAfterDecimalPoint();
     ALWAYS_INLINE bool parseNumberAfterExponentIndicator();
     ALWAYS_INLINE bool parseMultilineComment();
 
