@@ -1,3 +1,13 @@
+2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ArrayBufferContents::tryAllocate signs the pointer with allocation size and authenticates it with sizeInBytes
+        https://bugs.webkit.org/show_bug.cgi?id=198101
+
+        Reviewed by Michael Saboff.
+
+        * stress/zero-sized-array-buffer-pointer-should-be-signed-with-zero.js: Added.
+        (shouldBe):
+
 2019-05-20  Keith Miller  <keith_miller@apple.com>
 
         Cleanup Yarr regexp code around paren contexts.

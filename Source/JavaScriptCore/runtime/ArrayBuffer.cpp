@@ -106,21 +106,22 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
             return;
         }
     }
-    size_t size = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
-    if (!size)
-        size = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
+    size_t sizeInBytes = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
+    size_t allocationSize = sizeInBytes;
+    if (!allocationSize)
+        allocationSize = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
 
-    void* data = Gigacage::tryMalloc(Gigacage::Primitive, numElements * elementByteSize);
-    m_data = DataType(data, size);
+    void* data = Gigacage::tryMalloc(Gigacage::Primitive, allocationSize);
+    m_data = DataType(data, sizeInBytes);
     if (!data) {
         reset();
         return;
     }
     
     if (policy == ZeroInitialize)
-        memset(data, 0, size);
+        memset(data, 0, allocationSize);
 
-    m_sizeInBytes = numElements * elementByteSize;
+    m_sizeInBytes = sizeInBytes;
     RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
 }
