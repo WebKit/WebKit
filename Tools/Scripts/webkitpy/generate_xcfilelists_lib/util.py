@@ -186,10 +186,15 @@ def subprocess_run(args, **kwargs):
 # Utility function to allow us to verify that we're running under Xcode or not.
 # For example, if we are not, then we need to make sure that we don't try to
 # access Xcode-specific environment variables.
+#
+# Note: This function use to check XCODE_INSTALL_PATH. Because if Xcode is
+# running, it must have been installed. That's the theory, anyway. In
+# actuality, it seems possible to install Xcode without the result having
+# XCODE_INSTALL_PATH defined. So now we check XCODE_PRODUCT_BUILD_VERSION.
 
 @LogEntryExitGlobal
 def is_running_under_xcode():
-    return os.environ.get("XCODE_INSTALL_PATH")
+    return os.environ.get("XCODE_PRODUCT_BUILD_VERSION")
 
 
 # An argparse.Action subclass that validates the user-provided value against a

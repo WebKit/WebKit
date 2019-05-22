@@ -1,3 +1,23 @@
+2019-05-22  Keith Rollin  <krollin@apple.com>
+
+        Use a different variable when testing for Xcode context in generate-xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=198130
+        <rdar://problem/51032752>
+
+        Reviewed by Jonathan Bedard.
+
+        The generate-xcfilelists script can run stand-alone or in the context
+        of Xcode. There are a couple of places where it helps to know which
+        context is current. To determine the context, genreate-xfilelists
+        checks an environment variable that should be defined only when Xcode
+        is running. The variable chosen was XCODE_INSTALL_PATH. It turns out
+        that this variable is not always defined. Therefore, switch to
+        checking XCODE_PRODUCT_BUILD_VERSION.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/util.py:
+        (subprocess_run):
+        (is_running_under_xcode):
+
 2019-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WPE unit tests after r245565
