@@ -1,3 +1,14 @@
+2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Don't clear PropertyNameArray in Proxy code
+        https://bugs.webkit.org/show_bug.cgi?id=197691
+
+        Reviewed by Saam Barati.
+
+        * stress/proxy-get-own-property-names-should-not-clear-previous-results.js: Added.
+        (shouldBe):
+        (opt):
+
 2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ESNext] Implement support for Numeric Separators

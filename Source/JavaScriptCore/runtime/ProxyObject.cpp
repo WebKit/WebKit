@@ -893,7 +893,7 @@ bool ProxyObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyN
     return thisObject->performDefineOwnProperty(exec, propertyName, descriptor, shouldThrow);
 }
 
-void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray& trapResult, EnumerationMode enumerationMode)
+void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode enumerationMode)
 {
     NO_TAIL_CALLS();
 
@@ -917,7 +917,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     JSObject* target = this->target();
     if (ownKeysMethod.isUndefined()) {
         scope.release();
-        target->methodTable(vm)->getOwnPropertyNames(target, exec, trapResult, enumerationMode);
+        target->methodTable(vm)->getOwnPropertyNames(target, exec, propertyNames, enumerationMode);
         return;
     }
 
@@ -927,58 +927,61 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameMode propertyNameMode = trapResult.propertyNameMode();
-    RuntimeTypeMask resultFilter = 0;
-    switch (propertyNameMode) {
-    case PropertyNameMode::Symbols:
-        resultFilter = TypeSymbol;
-        break;
-    case PropertyNameMode::Strings:
-        resultFilter = TypeString;
-        break;
-    case PropertyNameMode::StringsAndSymbols:
-        resultFilter = TypeSymbol | TypeString;
-        break;
-    }
-    ASSERT(resultFilter);
-    RuntimeTypeMask dontThrowAnExceptionTypeFilter = TypeString | TypeSymbol;
+    PropertyNameArray trapResult(&vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
     HashSet<UniquedStringImpl*> uncheckedResultKeys;
-    HashSet<UniquedStringImpl*> seenKeys;
+    {
+        HashSet<RefPtr<UniquedStringImpl>> seenKeys;
 
-    auto addPropName = [&] (JSValue value, RuntimeType type) -> bool {
-        static const bool doExitEarly = true;
-        static const bool dontExitEarly = false;
-
-        Identifier ident = value.toPropertyKey(exec);
-        RETURN_IF_EXCEPTION(scope, doExitEarly);
-
-        // If trapResult contains any duplicate entries, throw a TypeError exception.
-        //    
-        // Per spec[1], filtering by type should occur _after_ [[OwnPropertyKeys]], so duplicates
-        // are tracked in a separate hashtable from uncheckedResultKeys (which only contain the
-        // keys filtered by type).
-        //
-        // [1] Per https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeysmust not contain any duplicate names"_s);
-        if (!seenKeys.add(ident.impl()).isNewEntry) {
-            throwTypeError(exec, scope, "Proxy handler's 'ownKeys' trap result must not contain any duplicate names"_s);
-            return doExitEarly;
+        RuntimeTypeMask resultFilter = 0;
+        switch (propertyNames.propertyNameMode()) {
+        case PropertyNameMode::Symbols:
+            resultFilter = TypeSymbol;
+            break;
+        case PropertyNameMode::Strings:
+            resultFilter = TypeString;
+            break;
+        case PropertyNameMode::StringsAndSymbols:
+            resultFilter = TypeSymbol | TypeString;
+            break;
         }
+        ASSERT(resultFilter);
 
-        if (!(type & resultFilter))
+        auto addPropName = [&] (JSValue value, RuntimeType type) -> bool {
+            static const bool doExitEarly = true;
+            static const bool dontExitEarly = false;
+
+            Identifier ident = value.toPropertyKey(exec);
+            RETURN_IF_EXCEPTION(scope, doExitEarly);
+
+            // If trapResult contains any duplicate entries, throw a TypeError exception.
+            //    
+            // Per spec[1], filtering by type should occur _after_ [[OwnPropertyKeys]], so duplicates
+            // are tracked in a separate hashtable from uncheckedResultKeys (which only contain the
+            // keys filtered by type).
+            //
+            // [1] Per https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeysmust not contain any duplicate names"_s);
+            if (!seenKeys.add(ident.impl()).isNewEntry) {
+                throwTypeError(exec, scope, "Proxy handler's 'ownKeys' trap result must not contain any duplicate names"_s);
+                return doExitEarly;
+            }
+
+            if (!(type & resultFilter))
+                return dontExitEarly;
+
+            uncheckedResultKeys.add(ident.impl());
+            trapResult.add(ident.impl());
             return dontExitEarly;
+        };
 
-        uncheckedResultKeys.add(ident.impl());
-        trapResult.addUnchecked(ident.impl());
-        return dontExitEarly;
-    };
-
-    createListFromArrayLike(exec, arrayLikeObject, dontThrowAnExceptionTypeFilter, "Proxy handler's 'ownKeys' method must return an array-like object containing only Strings and Symbols"_s, addPropName);
-    RETURN_IF_EXCEPTION(scope, void());
+        RuntimeTypeMask dontThrowAnExceptionTypeFilter = TypeString | TypeSymbol;
+        createListFromArrayLike(exec, arrayLikeObject, dontThrowAnExceptionTypeFilter, "Proxy handler's 'ownKeys' method must return an array-like object containing only Strings and Symbols"_s, addPropName);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
 
     bool targetIsExensible = target->isExtensible(exec);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameArray targetKeys(&vm, propertyNameMode, trapResult.privateSymbolMode());
+    PropertyNameArray targetKeys(&vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
     target->methodTable(vm)->getOwnPropertyNames(target, exec, targetKeys, enumerationMode);
     RETURN_IF_EXCEPTION(scope, void());
     Vector<UniquedStringImpl*> targetConfigurableKeys;
@@ -1026,10 +1029,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
 
     if (!enumerationMode.includeDontEnumProperties()) {
         // Filtering DontEnum properties is observable in proxies and must occur following the invariant checks above.
-        auto data = trapResult.releaseData();
-        trapResult.reset();
-
-        for (auto propertyName : data->propertyNameVector()) {
+        for (auto propertyName : trapResult) {
             PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
             auto result = getOwnPropertySlotCommon(exec, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, void());
@@ -1037,8 +1037,11 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
                 continue;
             if (slot.attributes() & PropertyAttribute::DontEnum)
                 continue;
-            trapResult.addUnchecked(propertyName.impl());
+            propertyNames.add(propertyName.impl());
         }
+    } else {
+        for (auto propertyName : trapResult)
+            propertyNames.add(propertyName.impl());
     }
 }
 

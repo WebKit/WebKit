@@ -1,3 +1,33 @@
+2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Don't clear PropertyNameArray in Proxy code
+        https://bugs.webkit.org/show_bug.cgi?id=197691
+
+        Reviewed by Saam Barati.
+
+        ProxyObject::performGetOwnPropertyNames clears the given PropertyNameArray to filter out non-enumerable keys.
+        But this does not assume that PropertyNameArray already contains the keys collected in the different objects.
+        We have an assumption that PropertyNameArray is always increasing, and JSPropertyNameEnumerator relies on this.
+        Since ProxyObject::performGetOwnPropertyNames clears the passed PropertyNameArray which contained the other
+        keys collected at some point of prototype hierarchy, this breaks JSPropertyNameEnumerator. Let's see the example.
+
+        var object = { __proto__: someProxy, someKey: 42 };
+        // Here, we first collect "someKey" in object. And using the same PropertyNameArray to add more keys from __proto__.
+        // But Proxy accidentally clears the passed PropertyNameArray, so "someKey" becomes missing.
+        for (var key in object);
+
+        This patch fixes ProxyObject::performGetOwnPropertyNames. Using separate PropertyNameArray to collect keys, and
+        filtering and adding them to the passed PropertyNameArray later. We also remove PropertyNameArray::reset method
+        since this breaks JSPropertyNameEnumerator's assumption.
+
+        We also fix the issue by changing seenKeys' HashSet<UniquedStringImpl*> to HashSet<RefPtr<UniquedStringImpl>>.
+        They can be deallocated if it is not added to trapResult later and it is toString-ed result from 'toPropertyKey()'.
+
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::reset): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+
 2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ESNext] Implement support for Numeric Separators
