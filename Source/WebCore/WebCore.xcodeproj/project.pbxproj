@@ -931,7 +931,7 @@
 		316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */; };
 		316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */; };
 		31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		317D3FF3215599F40034E3B9 /* PointerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 317D3FF2215599E30034E3B9 /* PointerEvent.h */; };
+		317D3FF3215599F40034E3B9 /* PointerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 317D3FF2215599E30034E3B9 /* PointerEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D26BBF1F86D189008FF255 /* ImageBitmap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		318436DE21B9DAAF00ED383E /* WebGPULayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 318436DB21B9DAA000ED383E /* WebGPULayer.h */; };
 		318891611AB7EEA100EA627B /* missingImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF419991AB0DA14004E64E1 /* missingImage@3x.png */; };
@@ -17009,11 +17009,11 @@
 		1CA0C2F621EEDAD200A11860 /* AST */ = {
 			isa = PBXGroup;
 			children = (
-				5215862C229377B7005925EF /* WHLSLAST.h */,
 				1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */,
 				C21BF72521CD89E200227979 /* WHLSLArrayReferenceType.h */,
 				C21BF70921CD89CA00227979 /* WHLSLArrayType.h */,
 				C21BF73021CD89ED00227979 /* WHLSLAssignmentExpression.h */,
+				5215862C229377B7005925EF /* WHLSLAST.h */,
 				C21BF70A21CD89CB00227979 /* WHLSLBaseFunctionAttribute.h */,
 				C21BF6FA21CD89BE00227979 /* WHLSLBaseSemantic.h */,
 				C21BF71E21CD89DC00227979 /* WHLSLBlock.h */,
@@ -25314,6 +25314,7 @@
 				BCBB8AB513F1AFB000734DF0 /* PODInterval.h */,
 				BCBB8AB613F1AFB000734DF0 /* PODIntervalTree.h */,
 				BCBB8AB713F1AFB000734DF0 /* PODRedBlackTree.h */,
+				71EADCD622087E6D0065A45F /* PointerID.h */,
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
@@ -27475,7 +27476,6 @@
 				317D3FF1215599E20034E3B9 /* PointerEvent.cpp */,
 				317D3FF2215599E30034E3B9 /* PointerEvent.h */,
 				317D3FEF215599E10034E3B9 /* PointerEvent.idl */,
-				71EADCD622087E6D0065A45F /* PointerID.h */,
 				5189F0DD10B46B0E00F3C739 /* PopStateEvent.cpp */,
 				5174E20810A1F44F00F95E6F /* PopStateEvent.h */,
 				5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */,

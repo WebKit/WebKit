@@ -47,7 +47,7 @@ PointerCaptureController::PointerCaptureController(Page& page)
 #if !ENABLE(TOUCH_EVENTS)
     CapturingData capturingData;
     capturingData.pointerType = PointerEvent::mousePointerType();
-    m_activePointerIdsToCapturingData.set(PointerEvent::defaultMousePointerIdentifier(), capturingData);
+    m_activePointerIdsToCapturingData.set(mousePointerID, capturingData);
 #endif
 }
 
@@ -146,7 +146,7 @@ void PointerCaptureController::elementWasRemoved(Element& element)
     }
 }
 
-void PointerCaptureController::touchEndedOrWasCancelledForIdentifier(PointerID pointerId)
+void PointerCaptureController::touchWithIdentifierWasRemoved(PointerID pointerId)
 {
     m_activePointerIdsToCapturingData.remove(pointerId);
 }

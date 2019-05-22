@@ -46,7 +46,7 @@ function dispatchMouseActions(actions)
     });
 }
 
-function dispatchTouchActions(actions)
+function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: false })
 {
     if (!window.testRunner || typeof window.testRunner.runUIScript !== "function")
         return Promise.reject(new Error("window.testRunner.runUIScript() is undefined."));
@@ -99,6 +99,9 @@ function dispatchTouchActions(actions)
             touch.x = x;
             touch.y = y;
             id++;
+            // We need to add a pause after a pointer up to ensure that a subsequent tap may be recognized as such.
+            if (options.insertPauseAfterPointerUp)
+                timeOffsetIncrease = 0.5;
             break;
         case "pause":
             timeOffsetIncrease = action.duration / 1000;
@@ -173,8 +176,10 @@ window.test_driver_internal.action_sequence = function(sources)
 
     logDebug(() => JSON.stringify(pointerSource));
 
-    if (pointerType === "mouse")
-        return dispatchMouseActions(pointerSource.actions);
     if (pointerType === "touch")
         return dispatchTouchActions(pointerSource.actions);
+    if ("createTouch" in document)
+        return dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
+    if (pointerType === "mouse")
+        return dispatchMouseActions(pointerSource.actions);
 };

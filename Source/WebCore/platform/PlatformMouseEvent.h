@@ -28,6 +28,7 @@
 
 #include "IntPoint.h"
 #include "PlatformEvent.h"
+#include "PointerID.h"
 #include <wtf/WindowsExtras.h>
 
 #if PLATFORM(GTK)
@@ -61,7 +62,7 @@ const double ForceAtForceClick = 2;
         }
 
         PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, PlatformEvent::Type type,
-                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, WallTime timestamp, double force, SyntheticClickType syntheticClickType)
+                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, WallTime timestamp, double force, SyntheticClickType syntheticClickType, PointerID pointerId = mousePointerID)
             : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
             , m_position(position)
             , m_globalPosition(globalPosition)
@@ -70,6 +71,7 @@ const double ForceAtForceClick = 2;
             , m_modifierFlags(0)
             , m_force(force)
             , m_syntheticClickType(syntheticClickType)
+            , m_pointerId(pointerId)
 #if PLATFORM(MAC)
             , m_eventNumber(0)
             , m_menuTypeForEvent(0)
@@ -91,6 +93,7 @@ const double ForceAtForceClick = 2;
         unsigned modifierFlags() const { return m_modifierFlags; }
         double force() const { return m_force; }
         SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
+        PointerID pointerId() const { return m_pointerId; }
 
 #if PLATFORM(GTK) 
         explicit PlatformMouseEvent(GdkEventButton*);
@@ -121,6 +124,7 @@ const double ForceAtForceClick = 2;
         unsigned m_modifierFlags;
         double m_force { 0 };
         SyntheticClickType m_syntheticClickType { NoTap };
+        PointerID m_pointerId { mousePointerID };
 
 #if PLATFORM(MAC)
         int m_eventNumber;

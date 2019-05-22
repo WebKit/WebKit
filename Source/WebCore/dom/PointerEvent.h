@@ -40,7 +40,7 @@ namespace WebCore {
 class PointerEvent final : public MouseEvent {
 public:
     struct Init : MouseEventInit {
-        PointerID pointerId { PointerEvent::defaultMousePointerIdentifier() };
+        PointerID pointerId { mousePointerID };
         double width { 1 };
         double height { 1 };
         float pressure { 0 };
@@ -85,7 +85,6 @@ public:
     static const String& mousePointerType();
     static const String& penPointerType();
     static const String& touchPointerType();
-    static PointerID defaultMousePointerIdentifier() { return 1; }
 
     virtual ~PointerEvent();
 
@@ -113,7 +112,7 @@ private:
     PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
-    PointerID m_pointerId { PointerEvent::defaultMousePointerIdentifier() };
+    PointerID m_pointerId { mousePointerID };
     double m_width { 1 };
     double m_height { 1 };
     float m_pressure { 0 };

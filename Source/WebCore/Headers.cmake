@@ -420,7 +420,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeRenderStyle.h
     dom/NodeTraversal.h
     dom/OverflowEvent.h
-    dom/PointerID.h
     dom/Position.h
     dom/ProcessingInstruction.h
     dom/ProgressEvent.h
@@ -928,6 +927,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PlatformTouchEvent.h
     platform/PlatformTouchPoint.h
     platform/PlatformWheelEvent.h
+    platform/PointerID.h
     platform/PopupMenu.h
     platform/PopupMenuClient.h
     platform/PopupMenuStyle.h

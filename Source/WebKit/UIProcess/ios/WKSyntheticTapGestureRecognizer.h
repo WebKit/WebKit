@@ -35,6 +35,10 @@
 - (void)setGestureIdentifiedTarget:(id)target action:(SEL)action;
 - (void)setGestureFailedTarget:(id)target action:(SEL)action;
 - (void)setResetTarget:(id)target action:(SEL)action;
+#if ENABLE(POINTER_EVENTS)
+@property (nonatomic, weak) UIWebTouchEventsGestureRecognizer *supportingWebTouchEventsGestureRecognizer;
+@property (nonatomic, readonly) NSNumber *lastActiveTouchIdentifier;
+#endif
 @end
 
 #endif

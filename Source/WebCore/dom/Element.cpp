@@ -303,8 +303,14 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
     bool didNotSwallowEvent = true;
 
-#if ENABLE(POINTER_EVENTS) && !ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
+#if ENABLE(TOUCH_EVENTS)
+        if (auto* page = document().page()) {
+            if (mouseEvent->type() != eventNames().clickEvent && page->pointerCaptureController().preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
+                return false;
+        }
+#else
         if (auto pointerEvent = PointerEvent::create(mouseEvent)) {
             if (auto* page = document().page()) {
                 page->pointerCaptureController().dispatchEvent(*pointerEvent, this);
@@ -317,6 +323,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
                     return false;
             }
         }
+#endif
     }
 #endif
 

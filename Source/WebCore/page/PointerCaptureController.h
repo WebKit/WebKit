@@ -52,7 +52,7 @@ public:
     void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
 #endif
 
-    void touchEndedOrWasCancelledForIdentifier(PointerID);
+    WEBCORE_EXPORT void touchWithIdentifierWasRemoved(PointerID);
     bool hasCancelledPointerEventForIdentifier(PointerID);
     bool preventsCompatibilityMouseEventsForIdentifier(PointerID);
     void dispatchEvent(PointerEvent&, EventTarget*);

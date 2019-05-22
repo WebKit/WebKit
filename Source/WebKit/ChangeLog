@@ -1,3 +1,53 @@
+2019-05-22  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown
+        https://bugs.webkit.org/show_bug.cgi?id=198124
+        <rdar://problem/50410863>
+
+        Reviewed by Tim Horton.
+
+        In order to correctly prevent "compatibility" mouse events from being dispatched when the initial "pointerdown" event had preventDefault()
+        called while handled, we need to pass the PointerID for the touch that triggered a tap gesture in the UI process down in the Web process
+        and into the resulting PlatformMouseEvent.
+
+        This means we need to identify the touch identifier, which is the same as the PointerID used for Pointer Events, in the single tap gesture
+        recognizer, an instance of WKSyntheticTapGestureRecognizer. To do this, we subclass the -[UIResponder touchesEnded:withEvent:] method and
+        track the touch identifier as the lastActiveTouchIdentifier, a new public property of WKSyntheticTapGestureRecognizer. To allow for this,
+        we need the support of the content view's UIWebTouchEventsGestureRecognizer which is exposed to the WKSyntheticTapGestureRecognizer as its
+        supportingWebTouchEventsGestureRecognizer property. This lastActiveTouchIdentifier property is cleared as the gesture recognizer is reset.
+
+        This allows the content view to pass the PointerID down to the Web process starting from -[WKContentView _singleTapRecognized:], going
+        through WebPageProxy::commitPotentialTap() and eventually WebPage::completeSyntheticClick().
+
+        While we used to tell the PointerCaptureController that a PointerID was no longer active when a given touch ended or was canceled (in
+        WebKitAdditions code), we can no longer do this as the dispatch of a synthetic tap is performed asynchronously and will happen past the
+        dispatch of "pointerup" and "pointercancel" Pointer Events. To clear inactive PointerIDs from the PointerCaptureController, we add a new
+        touchWithIdentifierWasRemoved() method on the WebPage and its proxy. When the WKSyntheticTapGestureRecognizer resets and -[WKContentView _singleTapDidReset:]
+        is called, we call that method which allows for only active PointerIDs to be tracked by the PointerCaptureController.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _singleTapDidReset:]):
+        (-[WKContentView _singleTapRecognized:]):
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.h:
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.m:
+        (-[WKSyntheticTapGestureRecognizer reset]):
+        (-[WKSyntheticTapGestureRecognizer touchesEnded:withEvent:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::touchWithIdentifierWasRemoved):
+        (WebKit::WebPageProxy::commitPotentialTap):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::dispatchSyntheticMouseMove):
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::commitPotentialTap):
+        (WebKit::WebPage::touchWithIdentifierWasRemoved):
+
 2019-05-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support Attestation Conveyance Preference
