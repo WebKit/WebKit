@@ -1,5 +1,116 @@
 2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245205. rdar://problem/50652127
+
+    Backing-sharing layers with transforms render incorrectly
+    https://bugs.webkit.org/show_bug.cgi?id=197692
+    <rdar://problem/50652127>
+    
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
+    
+    Layers that paint into shared backing need to enter the RenderLayer painting code
+    in a way that paints the filters, transforms, opacity and blending.
+    
+    RenderLayerBacking::paintIntoLayer() normally enters at paintLayerContents(), because
+    the effects are rendered via the GraphicsLayer, but shared layers will paint effects.
+    Note that if the backing-provider has effects, it will be the stacking context
+    for the shared layers, so it's correct that sharing layers are impacted by effects
+    on the backing-provider.
+    
+    In addition, we have to ensure that we don't over-eagerly make layers shared.
+    Consider:
+    
+    <div class="clipping">
+        <div class="sharing">
+            <div class="inner">
+            </div>
+        </div>
+    </div>
+    
+    Here "clipping" is the provider layer, "sharing" paints into shared backing, but
+    we don't want to also mark "inner" as sharing, since "sharing" will just paint it.
+    This is akin to avoiding unnecessary compositing of z-order descendants when they can just
+    paint.
+    
+    To do this we need to ensure that sharing layers are treated like compositing layers
+    in the overlap map, i.e. when a layer is sharing, we call overlapMap.pushCompositingContainer(),
+    and later overlapMap.popCompositingContainer().
+    
+    Tests: compositing/shared-backing/nested-shared-layers-with-opacity.html
+           compositing/shared-backing/shared-layer-has-blending.html
+           compositing/shared-backing/shared-layer-has-filter.html
+           compositing/shared-backing/shared-layer-has-opacity.html
+           compositing/shared-backing/shared-layer-has-reflection.html
+           compositing/shared-backing/shared-layer-has-transform.html
+           compositing/shared-backing/shared-layer-isolates-blending.html
+           compositing/shared-backing/shared-transformed-layer-bounds.html
+           compositing/shared-backing/sharing-layer-becomes-non-scrollable.html
+           compositing/shared-backing/sharing-layer-has-effect.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::paintLayer):
+    (WebCore::RenderLayer::paintLayerWithEffects):
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::paintIntoLayer):
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::CompositingState::stateForPaintOrderChildren const):
+    (WebCore::backingProviderLayerCanIncludeLayer):
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+    
+    LayoutTests:
+    
+    Ref tests for effects on sharing layers. The references make "clipping" be stacking context via z-index,
+    which eliminates sharing.
+    
+    * compositing/shared-backing/nested-shared-layers-with-opacity-expected.html: Added.
+    * compositing/shared-backing/nested-shared-layers-with-opacity.html: Added.
+    * compositing/shared-backing/shared-layer-has-blending-expected.html: Added.
+    * compositing/shared-backing/shared-layer-has-blending.html: Added.
+    * compositing/shared-backing/shared-layer-has-filter-expected.html: Added.
+    * compositing/shared-backing/shared-layer-has-filter.html: Added.
+    * compositing/shared-backing/shared-layer-has-opacity-expected.html: Added.
+    * compositing/shared-backing/shared-layer-has-opacity.html: Added.
+    * compositing/shared-backing/shared-layer-has-reflection-expected.html: Added.
+    * compositing/shared-backing/shared-layer-has-reflection.html: Added.
+    * compositing/shared-backing/shared-layer-has-transform-expected.html: Added.
+    * compositing/shared-backing/shared-layer-has-transform.html: Added.
+    * compositing/shared-backing/shared-layer-isolates-blending-expected.html: Added.
+    * compositing/shared-backing/shared-layer-isolates-blending.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245205 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+            Backing-sharing layers with transforms render incorrectly
+            https://bugs.webkit.org/show_bug.cgi?id=197692
+            <rdar://problem/50652127>
+
+            Reviewed by Antti Koivisto.
+
+            Ref tests for effects on sharing layers. The references make "clipping" be stacking context via z-index,
+            which eliminates sharing.
+
+            * compositing/shared-backing/nested-shared-layers-with-opacity-expected.html: Added.
+            * compositing/shared-backing/nested-shared-layers-with-opacity.html: Added.
+            * compositing/shared-backing/shared-layer-has-blending-expected.html: Added.
+            * compositing/shared-backing/shared-layer-has-blending.html: Added.
+            * compositing/shared-backing/shared-layer-has-filter-expected.html: Added.
+            * compositing/shared-backing/shared-layer-has-filter.html: Added.
+            * compositing/shared-backing/shared-layer-has-opacity-expected.html: Added.
+            * compositing/shared-backing/shared-layer-has-opacity.html: Added.
+            * compositing/shared-backing/shared-layer-has-reflection-expected.html: Added.
+            * compositing/shared-backing/shared-layer-has-reflection.html: Added.
+            * compositing/shared-backing/shared-layer-has-transform-expected.html: Added.
+            * compositing/shared-backing/shared-layer-has-transform.html: Added.
+            * compositing/shared-backing/shared-layer-isolates-blending-expected.html: Added.
+            * compositing/shared-backing/shared-layer-isolates-blending.html: Added.
+
+2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245181. rdar://problem/50670806
 
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant()) on nytimes.com after r245170
