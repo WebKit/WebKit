@@ -1,3 +1,9 @@
+2019-05-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land workaround for rdar://problem/51031394.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245322. rdar://problem/50107679
