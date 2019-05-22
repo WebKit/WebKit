@@ -69,7 +69,7 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
             auto blob = Blob::create(WTFMove(buffer), "image/png");
             if (!frame.document())
                 return nullptr;
-            return createFragmentForImageAndURL(*frame.document(), DOMURL::createObjectURL(*frame.document(), blob));
+            return createFragmentForImageAndURL(*frame.document(), DOMURL::createObjectURL(*frame.document(), blob), { });
         }
     }
 

@@ -1,3 +1,14 @@
+2019-05-22  Zalan Bujtas  <zalan@apple.com>
+
+        [Paste] Add support for preferred presentation size when pasting an image
+        https://bugs.webkit.org/show_bug.cgi?id=198132
+        <rdar://problem/50886917>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-05-22  Keith Rollin  <krollin@apple.com>
 
         Use a different variable when testing for Xcode context in generate-xcfilelists

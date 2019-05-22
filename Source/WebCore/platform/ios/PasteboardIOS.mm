@@ -181,7 +181,7 @@ static bool isTypeAllowedByReadingPolicy(NSString *type, WebContentReadingPolicy
         || [type isEqualToString:(__bridge NSString *)kUTTypeFlatRTFD];
 }
 
-Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, NSString *type, int itemIndex)
+Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, NSString *type, const PasteboardItemInfo& itemInfo, int itemIndex)
 {
     if ([type isEqualToString:WebArchivePboardType] || [type isEqualToString:(__bridge NSString *)kUTTypeWebArchive]) {
         auto buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName);
@@ -225,7 +225,7 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
         RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName);
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
-        return buffer && reader.readImage(buffer.releaseNonNull(), type) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
+        return buffer && reader.readImage(buffer.releaseNonNull(), type, itemInfo.preferredPresentationSize) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
 
     if ([type isEqualToString:(__bridge NSString *)kUTTypeURL]) {
@@ -318,7 +318,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
-            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, type, i);
+            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, type, info, i);
             if (itemResult == ReaderResult::PasteboardWasChangedExternally)
                 return;
 
@@ -358,7 +358,7 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
-            result = readPasteboardWebContentDataForType(reader, strategy, type, index);
+            result = readPasteboardWebContentDataForType(reader, strategy, type, info, index);
             if (result == ReaderResult::PasteboardWasChangedExternally)
                 return;
             if (result == ReaderResult::ReadType)
