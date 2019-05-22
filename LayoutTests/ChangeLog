@@ -1,5 +1,22 @@
 2019-05-22  Simon Fraser  <simon.fraser@apple.com>
 
+        <rdar://problem/50058173> REGRESSION (r243347) Layout tests fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on* are failing
+
+        Unreviewed test gardening.
+
+        I confirmed that “cancelable” is no longer true because
+        WebPageProxy::handleTouchEventSynchronously() is dispatching the events
+        asynchronously, so setCanPreventNativeGestures is set to false.
+
+        The exception is because the “touchEnd” event has no touches.
+
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block-expected.txt:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block.html:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document-expected.txt:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document.html:
+
+2019-05-22  Simon Fraser  <simon.fraser@apple.com>
+
         Fix scrolling tree state for more obscure combinations of positioning and paint order
         https://bugs.webkit.org/show_bug.cgi?id=198139
 

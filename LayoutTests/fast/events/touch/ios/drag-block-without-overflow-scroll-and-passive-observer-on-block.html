@@ -45,7 +45,10 @@
             eventTarget.addEventListener("scroll", scrollEventHandler);
 
             function touchEventHandler(event) {
-                debug("Received" + (event.cancelable ? " cancelable" : "") + " event " + event.type + " at " + event.touches[0].clientX + ", " + event.touches[0].clientY);
+                if (event.touches.length)
+                    debug("Received" + (event.cancelable ? " cancelable" : "") + " event " + event.type + " at " + event.touches[0].clientX + ", " + event.touches[0].clientY);
+                else
+                    debug("Received" + (event.cancelable ? " cancelable" : "") + " event " + event.type);
             }
             eventTarget.addEventListener('touchstart', touchEventHandler, { 'passive': true });
             eventTarget.addEventListener('touchmove', touchEventHandler, { 'passive': true });
