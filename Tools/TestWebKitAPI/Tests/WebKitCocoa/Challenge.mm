@@ -32,6 +32,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
+#import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
 static bool navigationFinished;
