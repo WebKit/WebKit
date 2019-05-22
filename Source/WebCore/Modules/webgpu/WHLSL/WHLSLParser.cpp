@@ -230,10 +230,11 @@ static Expected<int, Parser::Error> intLiteralToInt(StringView text)
             return Unexpected<Parser::Error>(Parser::Error(makeString("int literal ", text, " is out of bounds")));
     }
     if (negate) {
-        static_assert(std::numeric_limits<long long int>::min() < std::numeric_limits<int>::min(), "long long needs to be bigger than an int");
-        if (static_cast<long long>(result) > std::abs(static_cast<long long>(std::numeric_limits<int>::min())))
+        static_assert(sizeof(int64_t) > sizeof(unsigned) && sizeof(int64_t) > sizeof(int), "This code would be wrong otherwise");
+        int64_t intResult = -static_cast<int64_t>(result);
+        if (intResult < static_cast<int64_t>(std::numeric_limits<int>::min()))
             return Unexpected<Parser::Error>(Parser::Error(makeString("int literal ", text, " is out of bounds")));
-        return { static_cast<int>(static_cast<long long>(result) * 1) };
+        return { static_cast<int>(intResult) };
     }
     if (result > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return Unexpected<Parser::Error>(Parser::Error(makeString("int literal ", text, " is out of bounds")));
