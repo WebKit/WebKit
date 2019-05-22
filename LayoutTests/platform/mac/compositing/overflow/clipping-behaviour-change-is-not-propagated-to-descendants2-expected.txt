@@ -19,7 +19,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (coverage rect 0.00, 0.00 800.00 x 585.00)
       (intersects coverage rect 1)
       (contentsScale 1.00)
-      (children 6
+      (children 4
         (GraphicsLayer
           (position 8.00 96.00)
           (bounds 22.00 22.00)
@@ -48,38 +48,11 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
           (contentsScale 1.00)
         )
         (GraphicsLayer
-          (position 9.00 87.00)
-          (bounds 100.00 18.00)
-          (visible rect 0.00, 0.00 100.00 x 18.00)
-          (coverage rect 0.00, 0.00 100.00 x 18.00)
-          (intersects coverage rect 1)
-          (contentsScale 1.00)
-          (children 1
-            (GraphicsLayer
-              (bounds 100.00 18.00)
-              (drawsContent 1)
-              (visible rect 0.00, 0.00 100.00 x 18.00)
-              (coverage rect 0.00, 0.00 100.00 x 18.00)
-              (intersects coverage rect 1)
-              (contentsScale 1.00)
-            )
-          )
-        )
-        (GraphicsLayer
           (position 8.00 128.00)
-          (bounds 102.00 20.00)
+          (bounds 799.00 20.00)
           (drawsContent 1)
-          (visible rect 0.00, 0.00 102.00 x 20.00)
+          (visible rect 0.00, 0.00 792.00 x 20.00)
           (coverage rect -8.00, -128.00 800.00 x 585.00)
-          (intersects coverage rect 1)
-          (contentsScale 1.00)
-        )
-        (GraphicsLayer
-          (position 9.00 129.00)
-          (bounds 798.00 18.00)
-          (drawsContent 1)
-          (visible rect 0.00, 0.00 791.00 x 18.00)
-          (coverage rect -9.00, -129.00 800.00 x 585.00)
           (intersects coverage rect 1)
           (contentsScale 1.00)
         )

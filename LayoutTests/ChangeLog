@@ -1,3 +1,261 @@
+2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r245170. rdar://problem/50445998
+
+    Implement backing-sharing in compositing layers, allowing overlap layers to paint into the backing store of another layer
+    https://bugs.webkit.org/show_bug.cgi?id=197561
+    <rdar://problem/50445998>
+    
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
+    
+    This change introduces the concept of layers that share backing store for compositing. A layer
+    which is sharing its backing store first paints itself, and then some set of layers which come
+    later in paint order in the same stacking context. This reduces the composited layer count in
+    some overflow scrolling scenarios, thereby also simplifying the scrolling tree.
+    
+    A backing-shared layer stores a vector of "sharing" RenderLayer* in its RenderLayerBacking. At
+    paint time, the owning layer is painted, then the sharing layers, setting the owning layer as the
+    painting root so that positioning and clipping just work.
+    
+    Sharing layer relationships are constructed in RenderLayerCompositor::computeCompositingRequirements().
+    We track the last layer which was composited in paint order as a shared candidate. If a later layer
+    would composite for overlap (and no other reasons), then we allow it to share with the candidate
+    if the candidate is in its ancestor containing block chain. Sharing is currently limited to layers
+    in the same stacking context.
+    
+    isComposited() returns false for sharing layers, but they are like composited layers in that
+    they behave as painting boundaries, so RenderLayer::paintLayer() needs to stop at them,
+    and repaints in shared layers have to be directed to their shared layer, hence
+    changes to RenderLayer::clippingRootForPainting() and RenderLayer::enclosingCompositingLayerForRepaint().
+    
+    The clipping boundary logic in RenderLayer::backgroundClipRect() needed to be generalized so that
+    all calls to RenderLayer::parentClipRects() check for crossing painting boundaries and use
+    TemporaryClipRects in that case.
+    
+    Tests: compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller.html
+           compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller.html
+           compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow.html
+           compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness.html
+           compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping.html
+           compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping.html
+           compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll.html
+           compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content.html
+           compositing/shared-backing/overflow-scroll/scrolled-contents-unconstrained-clip.html
+           compositing/shared-backing/overflow-scroll/shared-layer-clipping.html
+           compositing/shared-backing/overflow-scroll/shared-layer-composited-bounds.html
+           compositing/shared-backing/overflow-scroll/shared-layer-nested-relative-stacking.html
+           compositing/shared-backing/overflow-scroll/shared-layer-repaint.html
+           compositing/shared-backing/partial-compositing-update.html
+           compositing/shared-backing/partial-compositing-update2.html
+           compositing/shared-backing/remove-sharing-layer.html
+           compositing/shared-backing/sharing-cached-clip-rects.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::~RenderLayer):
+    (WebCore::RenderLayer::ancestorLayerIsInContainingBlockChain const):
+    (WebCore::RenderLayer::setBackingProviderLayer):
+    (WebCore::RenderLayer::disconnectFromBackingProviderLayer):
+    (WebCore::RenderLayer::enclosingCompositingLayerForRepaint const):
+    (WebCore::RenderLayer::clippingRootForPainting const):
+    (WebCore::RenderLayer::clipToRect):
+    (WebCore::RenderLayer::paintLayer):
+    (WebCore::RenderLayer::updateClipRects):
+    (WebCore::RenderLayer::clipCrossesPaintingBoundary const):
+    (WebCore::RenderLayer::calculateClipRects const):
+    (WebCore::outputPaintOrderTreeLegend):
+    (WebCore::outputPaintOrderTreeRecursive):
+    (WebCore::inContainingBlockChain): Deleted.
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::willBeDestroyed):
+    (WebCore::clearBackingSharingLayerProviders):
+    (WebCore::RenderLayerBacking::setBackingSharingLayers):
+    (WebCore::RenderLayerBacking::removeBackingSharingLayer):
+    (WebCore::RenderLayerBacking::clearBackingSharingLayers):
+    (WebCore::RenderLayerBacking::updateCompositedBounds):
+    (WebCore::RenderLayerBacking::updateDrawsContent):
+    (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer const):
+    (WebCore::RenderLayerBacking::paintIntoLayer):
+    (WebCore::RenderLayerBacking::paintContents):
+    * rendering/RenderLayerBacking.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::CompositingState::stateForPaintOrderChildren const):
+    (WebCore::RenderLayerCompositor::CompositingState::propagateStateFromChildren):
+    (WebCore::RenderLayerCompositor::CompositingState::propagateStateFromChildrenForUnchangedSubtree):
+    (WebCore::RenderLayerCompositor::BackingSharingState::resetBackingProviderCandidate):
+    (WebCore::RenderLayerCompositor::updateCompositingLayers):
+    (WebCore::backingProviderLayerCanIncludeLayer):
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+    (WebCore::RenderLayerCompositor::updateBacking):
+    (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+    (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason const):
+    * rendering/RenderLayerCompositor.h:
+    * rendering/RenderTreeAsText.cpp:
+    
+    LayoutTests:
+    
+    New tests for backing sharing, and new baselines of tests whose behavior is changed.
+    
+    Scrolling tree tests that would be invalidate by sharing are changed to defeat sharing by adding
+    compositing layers early in stacking order.
+    
+    * TestExpectations:
+    * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+    * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+    * compositing/layer-creation/overflow-scroll-overlap.html:
+    * compositing/overflow/scrolling-content-clip-to-viewport.html:
+    * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+    * compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+    * compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller.html: Added.
+    * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller.html: Added.
+    * compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow.html: Copied from LayoutTests/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow.html.
+    * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness.html: Added.
+    * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping.html: Added.
+    * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping.html: Added.
+    * compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+    * compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll.html: Added.
+    * compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+    * compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content.html: Added.
+    * compositing/shared-backing/overflow-scroll/scrolled-contents-unconstrained-clip-expected.html: Added.
+    * compositing/shared-backing/overflow-scroll/scrolled-contents-unconstrained-clip.html: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-clipping-expected.html: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-clipping.html: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-composited-bounds-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-composited-bounds.html: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-nested-relative-stacking-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-nested-relative-stacking.html: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-repaint-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/shared-layer-repaint.html: Added.
+    * compositing/shared-backing/partial-compositing-update-expected.txt: Added.
+    * compositing/shared-backing/partial-compositing-update.html: Added.
+    * compositing/shared-backing/partial-compositing-update2-expected.txt: Added.
+    * compositing/shared-backing/partial-compositing-update2.html: Added.
+    * compositing/shared-backing/remove-sharing-layer-expected.txt: Added.
+    * compositing/shared-backing/remove-sharing-layer.html: Added.
+    * compositing/shared-backing/sharing-cached-clip-rects-expected.txt: Added.
+    * compositing/shared-backing/sharing-cached-clip-rects.html: Added.
+    * platform/ios-wk2/TestExpectations:
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt: Added.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt: Added.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt: Added.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt: Added.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping-expected.txt: Added.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+    * platform/ios-wk2/compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+    * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+    * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+    * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+    * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+    * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+    * platform/ios/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+    * platform/ios/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+    * platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+    * platform/mac-wk1/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+    * platform/mac-wk2/TestExpectations:
+    * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+    * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+    * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+    * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow.html:
+    * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+    * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow.html:
+    * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+    * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow.html:
+    * scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+    * scrollingcoordinator/scrolling-tree/positioned-nodes-complex.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245170 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+            Implement backing-sharing in compositing layers, allowing overlap layers to paint into the backing store of another layer
+            https://bugs.webkit.org/show_bug.cgi?id=197561
+            <rdar://problem/50445998>
+
+            Reviewed by Antti Koivisto.
+
+            New tests for backing sharing, and new baselines of tests whose behavior is changed.
+
+            Scrolling tree tests that would be invalidate by sharing are changed to defeat sharing by adding
+            compositing layers early in stacking order.
+
+            * TestExpectations:
+            * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+            * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+            * compositing/layer-creation/overflow-scroll-overlap.html:
+            * compositing/overflow/scrolling-content-clip-to-viewport.html:
+            * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+            * compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+            * compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller.html: Added.
+            * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller.html: Added.
+            * compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow.html: Copied from LayoutTests/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow.html.
+            * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness.html: Added.
+            * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping.html: Added.
+            * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping.html: Added.
+            * compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+            * compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll.html: Added.
+            * compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+            * compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content.html: Added.
+            * compositing/shared-backing/overflow-scroll/scrolled-contents-unconstrained-clip-expected.html: Added.
+            * compositing/shared-backing/overflow-scroll/scrolled-contents-unconstrained-clip.html: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-clipping-expected.html: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-clipping.html: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-composited-bounds-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-composited-bounds.html: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-nested-relative-stacking-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-nested-relative-stacking.html: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-repaint-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/shared-layer-repaint.html: Added.
+            * compositing/shared-backing/partial-compositing-update-expected.txt: Added.
+            * compositing/shared-backing/partial-compositing-update.html: Added.
+            * compositing/shared-backing/partial-compositing-update2-expected.txt: Added.
+            * compositing/shared-backing/partial-compositing-update2.html: Added.
+            * compositing/shared-backing/remove-sharing-layer-expected.txt: Added.
+            * compositing/shared-backing/remove-sharing-layer.html: Added.
+            * compositing/shared-backing/sharing-cached-clip-rects-expected.txt: Added.
+            * compositing/shared-backing/sharing-cached-clip-rects.html: Added.
+            * platform/ios-wk2/TestExpectations:
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt: Added.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt: Added.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt: Added.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt: Added.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping-expected.txt: Added.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+            * platform/ios-wk2/compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content-expected.txt: Copied from LayoutTests/platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+            * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+            * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+            * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+            * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+            * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+            * platform/ios/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+            * platform/ios/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+            * platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+            * platform/mac-wk1/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+            * platform/mac-wk2/TestExpectations:
+            * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+            * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+            * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+            * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow.html:
+            * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+            * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow.html:
+            * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+            * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow.html:
+            * scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+            * scrollingcoordinator/scrolling-tree/positioned-nodes-complex.html:
+
 2019-05-21  Kocsen Chung  <kocsen_chung@apple.com>
 
         Revert r245505. rdar://problem/50801608

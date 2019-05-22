@@ -1,0 +1,48 @@
+Clipping
+Relative
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 28.00 20.00)
+          (bounds 324.00 324.00)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
+              (position 2.00 2.00)
+              (bounds 320.00 320.00)
+              (children 1
+                (GraphicsLayer
+                  (position 10.00 10.00)
+                  (bounds 304.00 304.00)
+                  (drawsContent 1)
+                  (children 1
+                    (GraphicsLayer
+                      (offsetFromRenderer width=2 height=2)
+                      (position 2.00 2.00)
+                      (bounds 285.00 300.00)
+                      (children 1
+                        (GraphicsLayer
+                          (offsetFromRenderer width=2 height=2)
+                          (anchor 0.00 0.00)
+                          (bounds 285.00 426.00)
+                          (drawsContent 1)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

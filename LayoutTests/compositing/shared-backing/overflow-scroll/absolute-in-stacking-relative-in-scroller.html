@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests sharing with absolute inside a stacking relative in overflow</title>
+    <style>
+        .scroller {
+            overflow: scroll;
+            height: 300px;
+            width: 300px;
+            border: 2px solid black;
+            margin: 20px;
+        }
+
+        .relative {
+            position: relative;
+            border: 2px solid orange;
+            margin: 20px;
+            padding: 20px;
+            margin-top: 100px;
+        }
+        
+        .stacking {
+            z-index: 0;
+        }
+        
+        .absolute {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            height: 150px;
+            width: 150px;
+            background-color: silver;
+        }
+
+        .spacer {
+            height: 500px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="stacking relative">
+            relative
+            <div class="absolute">absolute</div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
