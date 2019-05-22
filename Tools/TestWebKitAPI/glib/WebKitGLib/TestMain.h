@@ -155,7 +155,10 @@ public:
 #if PLATFORM(WPE)
     static WebKitWebViewBackend* createWebViewBackend()
     {
+        // Don't make warnings fatal when creating the backend, since atk produces warnings when a11y bus is not running.
+        removeLogFatalFlag(G_LOG_LEVEL_WARNING);
         auto* headlessBackend = new WPEToolingBackends::HeadlessViewBackend(800, 600);
+        addLogFatalFlag(G_LOG_LEVEL_WARNING);
         // Make the view initially hidden for consistency with GTK+ tests.
         wpe_view_backend_remove_activity_state(headlessBackend->backend(), wpe_view_activity_state_visible | wpe_view_activity_state_focused);
         return webkit_web_view_backend_new(headlessBackend->backend(), [](gpointer userData) {
@@ -241,14 +244,14 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void addLogFatalFlag(unsigned flag)
+    static void addLogFatalFlag(unsigned flag)
     {
         unsigned fatalMask = g_log_set_always_fatal(static_cast<GLogLevelFlags>(G_LOG_FATAL_MASK));
         fatalMask |= flag;
         g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
     }
 
-    void removeLogFatalFlag(unsigned flag)
+    static void removeLogFatalFlag(unsigned flag)
     {
         unsigned fatalMask = g_log_set_always_fatal(static_cast<GLogLevelFlags>(G_LOG_FATAL_MASK));
         fatalMask &= ~flag;

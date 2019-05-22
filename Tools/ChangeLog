@@ -1,3 +1,19 @@
+2019-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WPE unit tests after r245565
+
+        Backend creation is failing when the a11y bus is not running because atk produces warning messages. We should
+        not make warnings fatal during backend creation.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        (testAutomationSessionRequestSession):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewGeolocationPermissionRequests):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend):
+        (Test::addLogFatalFlag):
+        (Test::removeLogFatalFlag):
+
 2019-05-21  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Use custom templates for Buildbot (follow-up fix)

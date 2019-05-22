@@ -791,7 +791,7 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
     // Some versions of geoclue give a runtime warning because it tries
     // to register the error quark twice. See https://bugs.webkit.org/show_bug.cgi?id=89858.
     // Make warnings non-fatal for this test to make it pass.
-    test->removeLogFatalFlag(G_LOG_LEVEL_WARNING);
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
 #if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
 #endif
@@ -828,7 +828,7 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
     test->loadHtml(geolocationRequestHTML, "https://foo.com/bar");
     result = test->waitUntilPermissionResultMessageReceived();
     g_assert_cmpstr(result, !=, "1");
-    test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
 }
 
 #if ENABLE(MEDIA_STREAM)
