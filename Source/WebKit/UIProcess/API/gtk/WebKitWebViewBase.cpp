@@ -561,7 +561,8 @@ static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
-    webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
+    if (webView->priv->accessible)
+        webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
 #if GTK_CHECK_VERSION(3, 24, 0)
     webkitWebViewBaseCompleteEmojiChooserRequest(webView, emptyString());
 #endif

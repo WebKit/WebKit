@@ -1,3 +1,10 @@
+2019-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK unit tests after r245565
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose): Null check accessible before calling webkitWebViewAccessibleSetWebView().
+
 2019-05-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PlayStation] Don't call fcntl.
