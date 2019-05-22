@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+
+PASS "camera 'none'" - same origin iframe 
+PASS "camera 'none'" - cross origin iframe 
+PASS "microphone 'none'" - same origin iframe 
+PASS "microphone 'none';camera 'none'" - same origin iframe 
+PASS "camera *;microphone 'none'" - same origin iframe 
+PASS "camera *;microphone 'none'" - cross origin iframe 
+PASS "camera 'none';microphone *" - same origin iframe 
+PASS "microphone *; microphone 'none'" - same origin iframe 
+PASS "microphone *; microphone ' none'" - same origin iframe 
+PASS "microphone *; microphone none" - same origin iframe 
+PASS "microphone *; camera 'self'" - same origin iframe 
+PASS "microphone *; camera 'self'" - cross origin iframe 
+PASS "microphone *; camera http:/example.org self" - same origin iframe 
+PASS "microphone *; camera http:/example.org 'self'" - same origin iframe 
+PASS "microphone *; camera http:/example.org 'self'" - cross origin iframe 
+PASS "microphone https://127.0.0.1:9443" - same origin iframe 
+PASS "microphone https://127.0.0.1:9443" - cross origin iframe 
+PASS "microphone 'self' https://127.0.0.1:9443" - same origin iframe 
+

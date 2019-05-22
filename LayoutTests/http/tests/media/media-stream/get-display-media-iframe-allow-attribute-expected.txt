@@ -5,5 +5,5 @@ CONSOLE MESSAGE: line 8: Trying to call getDisplayMedia from a frame without cor
 
 PASS: <iframe allow=''> got "deny"
 PASS: <iframe allow='camera'> got "deny"
-PASS: <iframe allow='display'> got "allow"
+PASS: <iframe allow='display-capture'> got "allow"
 PASS: <iframe allow='microphone'> got "deny"

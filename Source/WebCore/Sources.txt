@@ -1075,6 +1075,7 @@ html/DateTimeLocalInputType.cpp
 html/EmailInputType.cpp
 html/FTPDirectoryDocument.cpp
 html/FileListCreator.cpp
+html/FeaturePolicy.cpp
 html/FileInputType.cpp
 html/FormAssociatedElement.cpp
 html/FormController.cpp

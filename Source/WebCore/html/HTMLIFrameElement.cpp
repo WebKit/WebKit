@@ -150,4 +150,11 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
     return ReferrerPolicy::EmptyString;
 }
 
+const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
+{
+    if (!m_featurePolicy)
+        m_featurePolicy = FeaturePolicy::parse(document(), m_allow);
+    return *m_featurePolicy;
+}
+
 }

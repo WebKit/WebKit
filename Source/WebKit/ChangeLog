@@ -1,3 +1,15 @@
+2019-05-22  Youenn Fablet  <youenn@apple.com>
+
+        Implement Feature policy self/none/* parsing
+        https://bugs.webkit.org/show_bug.cgi?id=198078
+
+        Reviewed by Eric Carlson.
+
+        Fix a case where completion handler might not always be called.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasGranted):
+
 2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for non-unified build after r245320.

@@ -140,8 +140,10 @@ void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequ
 void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
     auto request = m_idToUserMediaRequestMap.take(requestID);
-    if (!request)
+    if (!request) {
+        completionHandler();
         return;
+    }
     removeMediaRequestFromMaps(*request);
 
     request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt), WTFMove(completionHandler));

@@ -1,3 +1,13 @@
+2019-05-22  Youenn Fablet  <youenn@apple.com>
+
+        Implement Feature policy self/none/* parsing
+        https://bugs.webkit.org/show_bug.cgi?id=198078
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-streams/MediaStream-feature-policy-none.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-feature-policy-none.https.html: Added.
+
 2019-05-21  Antoine Quint  <graouts@apple.com>
 
         [macOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown

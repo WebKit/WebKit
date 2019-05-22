@@ -1104,6 +1104,7 @@
 		419ACF921F97E7DA009F1A83 /* ServiceWorkerFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 419ACF8E1F97E7D5009F1A83 /* ServiceWorkerFetch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BC2DD1685329900D64D6D /* VisitedLinkState.h */; };
 		419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */; };
+		41A0829C22935F3D008426E0 /* FeaturePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A0829922932EF4008426E0 /* FeaturePolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41A1B01C1E54239B007F3769 /* JSDOMGuardedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A1B01A1E542396007F3769 /* JSDOMGuardedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */; };
 		41A7D3531F438D16008988DE /* WorkerCacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A7D3501F438D10008988DE /* WorkerCacheStorageConnection.h */; };
@@ -7323,6 +7324,8 @@
 		419FAFAD1ABABCD5005B828B /* ReadableStreamDefaultReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultReader.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722CF /* ReadableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStream.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722DF /* WritableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStream.idl; sourceTree = "<group>"; };
+		41A0829922932EF4008426E0 /* FeaturePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeaturePolicy.h; sourceTree = "<group>"; };
+		41A0829B22932EF4008426E0 /* FeaturePolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeaturePolicy.cpp; sourceTree = "<group>"; };
 		41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCProvider.cpp; path = libwebrtc/LibWebRTCProvider.cpp; sourceTree = "<group>"; };
 		41A1B01A1E542396007F3769 /* JSDOMGuardedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGuardedObject.h; sourceTree = "<group>"; };
 		41A1B01B1E542396007F3769 /* JSDOMGuardedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGuardedObject.cpp; sourceTree = "<group>"; };
@@ -21209,6 +21212,8 @@
 				2E37DFD912DBAFB800A6B233 /* DOMURL.idl */,
 				F55B3D871251F12D003EF269 /* EmailInputType.cpp */,
 				F55B3D881251F12D003EF269 /* EmailInputType.h */,
+				41A0829B22932EF4008426E0 /* FeaturePolicy.cpp */,
+				41A0829922932EF4008426E0 /* FeaturePolicy.h */,
 				F55B3D891251F12D003EF269 /* FileInputType.cpp */,
 				F55B3D8A1251F12D003EF269 /* FileInputType.h */,
 				835D54C11F4DE53400E60671 /* FileListCreator.cpp */,
@@ -28958,6 +28963,7 @@
 				E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */,
 				5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */,
 				7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */,
+				41A0829C22935F3D008426E0 /* FeaturePolicy.h in Headers */,
 				A75E8B890E1DE2D6007F2481 /* FEBlend.h in Headers */,
 				A75E8B8B0E1DE2D6007F2481 /* FEColorMatrix.h in Headers */,
 				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
