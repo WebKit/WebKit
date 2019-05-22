@@ -1,5 +1,45 @@
 2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245175. rdar://problem/50584991
+
+    Event region generation needs to know about backing-sharing
+    https://bugs.webkit.org/show_bug.cgi?id=197694
+    <rdar://problem/50584991>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Test: pointerevents/ios/touch-action-region-backing-sharing.html
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::updateEventRegion):
+    
+    Gather event region from backing sharing layers too.
+    
+    LayoutTests:
+    
+    * platform/ios-wk2/TestExpectations:
+    * pointerevents/ios/touch-action-region-backing-sharing-expected.txt: Added.
+    * pointerevents/ios/touch-action-region-backing-sharing.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245175 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-10  Antti Koivisto  <antti@apple.com>
+
+            Event region generation needs to know about backing-sharing
+            https://bugs.webkit.org/show_bug.cgi?id=197694
+            <rdar://problem/50584991>
+
+            Reviewed by Simon Fraser.
+
+            * platform/ios-wk2/TestExpectations:
+            * pointerevents/ios/touch-action-region-backing-sharing-expected.txt: Added.
+            * pointerevents/ios/touch-action-region-backing-sharing.html: Added.
+
+2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245170. rdar://problem/50445998
 
     Implement backing-sharing in compositing layers, allowing overlap layers to paint into the backing store of another layer

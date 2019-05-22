@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.scroll { position:absolute; width:200px; height:200px; overflow:scroll }
+.scrollcontent {  width:500px; height:500px; background:green; }
+.overlap { position:absolute; width:100px; height:100px; background:blue; touch-action: none; }
+</style>
+<body>
+<div class="scroll"><div class="scrollcontent"></div></div>
+<div class="overlap">
+    <div class="overlap" style="left:50px; top:50px"></div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+</script>
+</body>
+</html>
