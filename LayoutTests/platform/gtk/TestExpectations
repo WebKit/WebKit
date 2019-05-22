@@ -1234,6 +1234,9 @@ http/tests/resourceLoadStatistics/ [ Skip ]
 # No support for screen capture
 fast/mediastream/screencapture-user-gesture.html [ Skip ]
 
+# No different rendering for text-rendering: optimizeLegibility
+fast/text/variations/optical-sizing-trak-2.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1301,7 +1304,7 @@ webkit.org/b/183215 imported/w3c/web-platform-tests/encoding/legacy-mb-korean/eu
 
 webkit.org/b/183401 fast/animation/request-animation-frame-during-modal.html [ Crash Pass ]
 
-webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass ]
+webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass Timeout ]
 
 # Crashes only when GNOME icon theme is not installed
 webkit.org/b/186767 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash Pass ]
@@ -1325,6 +1328,8 @@ webkit.org/b/196542 printing/printing-events.html [ Timeout Crash ]
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Pass Crash ]
 
 webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash ]
+
+webkit.org/b/198126 http/tests/xmlhttprequest/access-control-response-with-body-sync.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1756,7 +1761,7 @@ webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 
-webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Pass ]
+webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Failure Pass ]
 webkit.org/b/153771 legacy-animation-engine/animations/resume-after-page-cache.html [ Timeout Pass ]
 
 webkit.org/b/153942 plugins/private-browsing-mode-2.html [ Failure Pass ]
@@ -1988,7 +1993,7 @@ webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pa
 
 webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
 
-webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass ]
+webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Pass Failure ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
@@ -2074,7 +2079,7 @@ webkit.org/b/191682 inspector/worker/worker-create-and-terminate.html [ Failure 
 
 webkit.org/b/191684 media/W3C/video/events/event_order_loadstart_progress.html [ Failure Pass ]
 
-webkit.org/b/191685 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ ImageOnlyFailure Pass ]
+webkit.org/b/191685 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ ImageOnlyFailure Pass Timeout ]
 
 webkit.org/b/191686 imported/blink/fast/canvas/bug382588.html [ Timeout Pass ]
 
@@ -2205,6 +2210,17 @@ webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-cor
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 webkit.org/b/197714 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html [ Pass Failure ]
 webkit.org/b/197716 webgl/1.0.2/conformance/canvas/buffer-preserve-test.html [ Pass Failure ]
+
+webkit.org/b/198104 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html [ Pass Failure ]
+
+webkit.org/b/198111 fast/css/animation-pseudo-style-change.html [ Pass Timeout ]
+webkit.org/b/198114 fast/shadow-dom/shadow-host-animation.html [ Pass Timeout ]
+
+webkit.org/b/198116 imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeout ]
+
+webkit.org/b/198117 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-pre-element/grouping-pre-reftest-001.html [ Pass Timeout ]
+
+webkit.org/b/198127 imported/w3c/web-platform-tests/IndexedDB/transaction-abort-object-store-metadata-revert.html [ Pass Crash Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2558,6 +2574,10 @@ webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout ]
 webkit.org/b/196250 inspector/console/heapSnapshot.html [ Timeout ]
 
 webkit.org/b/196251 http/wpt/service-workers/third-party-registration.html [ Timeout ]
+
+webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout ]
+
+webkit.org/b/198118 media/playlist-inherits-user-gesture.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3866,6 +3886,9 @@ webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
 webkit.org/b/197709 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Failure ]
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
+
+webkit.org/b/198119 compositing/shared-backing/shared-layer-has-reflection.html [ ImageOnlyFailure ]
+webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

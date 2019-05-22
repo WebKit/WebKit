@@ -1,10 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<html><head>
-<title>400 Bad Request</title>
-</head><body>
-<h1>Bad Request</h1>
-<p>Your browser sent a request that this server could not understand.<br />
-</p>
-<hr>
-<address>Apache/2.4 Server at build.webkit.org Port 443</address>
-</body></html>
+layer at (0,0) size 1000x18
+  RenderView at (0,0) size 1000x18
+layer at (0,0) size 1000x18
+  RenderBlock {HTML} at (0,0) size 1000x18
+    RenderBody {BODY} at (0,0) size 1000x18
+      RenderText {#text} at (0,0) size 311x17
+        text run at (0,0) width 311: "Text should start at the top right edge of the page."
