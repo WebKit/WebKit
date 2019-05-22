@@ -825,7 +825,17 @@ webkit.org/b/173742 security/contentSecurityPolicy/plugins-types-allows-youtube-
 
 webkit.org/b/181167 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Pass Failure ]
 
-webkit.org/b/181107 http/wpt/cache-storage/cache-put-stream.https.any.html [ Pass Failure ]
+http/wpt/cache-storage/cache-put-stream.https.any.html [ Slow ]
+http/wpt/cache-storage/cache-put-keys.https.any.html [ Slow ]
+http/wpt/cache-storage/a-cache-open.https.html [ Slow ]
+http/wpt/cache-storage/cache-put-stream.https.any.worker.html [ Slow ]
+http/wpt/cache-storage/cache-quota.any.html [ Slow ]
+http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Slow ]
+http/wpt/cache-storage/cache-remove-twice.html [ Slow ]
+http/wpt/cache-storage/cache-open-delete-in-parallel.https.html [ Slow ]
+http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
+http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
+http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
 
