@@ -189,6 +189,8 @@ public:
 
     WEBCORE_EXPORT IntRect boundsInRootViewSpace();
 
+    Optional<std::pair<RenderObject*, FloatRect>> boundingAbsoluteRectWithoutLayout();
+
     WEBCORE_EXPORT FloatRect boundingClientRect();
 
     WEBCORE_EXPORT Ref<DOMRectList> getClientRects();

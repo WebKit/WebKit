@@ -1424,10 +1424,8 @@ Ref<DOMRectList> Element::getClientRects()
     return DOMRectList::create(quads);
 }
 
-FloatRect Element::boundingClientRect()
+Optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWithoutLayout()
 {
-    document().updateLayoutIgnorePendingStylesheets();
-
     RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
     if (isSVGElement() && renderer && !renderer->isSVGRoot()) {
@@ -1443,12 +1441,23 @@ FloatRect Element::boundingClientRect()
         renderBoxModelObject->absoluteQuads(quads);
 
     if (quads.isEmpty())
-        return { };
+        return WTF::nullopt;
 
     FloatRect result = quads[0].boundingBox();
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
+    return std::make_pair(renderer, result);
+}
+
+FloatRect Element::boundingClientRect()
+{
+    document().updateLayoutIgnorePendingStylesheets();
+    auto pair = boundingAbsoluteRectWithoutLayout();
+    if (!pair)
+        return { };
+    RenderObject* renderer = pair->first;
+    FloatRect result = pair->second;
     document().convertAbsoluteToClientRect(result, renderer->style());
     return result;
 }

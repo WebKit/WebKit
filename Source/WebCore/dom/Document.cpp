@@ -7349,9 +7349,13 @@ static Optional<IntersectionObservationState> computeIntersectionState(FrameView
     LayoutRect localTargetBounds;
     if (is<RenderBox>(*targetRenderer))
         localTargetBounds = downcast<RenderBox>(targetRenderer)->borderBoundingBox();
-    else if (is<RenderInline>(targetRenderer))
-        localTargetBounds = downcast<RenderInline>(targetRenderer)->linesBoundingBox();
-    else if (is<RenderLineBreak>(targetRenderer))
+    else if (is<RenderInline>(targetRenderer)) {
+        auto pair = target.boundingAbsoluteRectWithoutLayout();
+        if (pair) {
+            FloatRect absoluteTargetBounds = pair->second;
+            localTargetBounds = enclosingLayoutRect(targetRenderer->absoluteToLocalQuad(absoluteTargetBounds).boundingBox());
+        }
+    } else if (is<RenderLineBreak>(targetRenderer))
         localTargetBounds = downcast<RenderLineBreak>(targetRenderer)->linesBoundingBox();
 
     Optional<LayoutRect> rootLocalTargetRect;
