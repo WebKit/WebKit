@@ -1,3 +1,18 @@
+2019-05-22  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Stack-buffer-overflow in decodeURIComponent
+        https://bugs.webkit.org/show_bug.cgi?id=198109
+        <rdar://problem/50397550>
+
+        Reviewed by Michael Saboff.
+
+        Since r244828 we started using U8_MAX_LENGTH to determine the size of the buffer and
+        U8_COUNT_TRAIL_BYTES when decoding UTF-8 sequences in JSC::decode. However, U8_MAX_LENGTH
+        is defined as 4 and in pre-60 ICU U8_COUNT_TRAIL_BYTES returns 0..5.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+
 2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Don't clear PropertyNameArray in Proxy code

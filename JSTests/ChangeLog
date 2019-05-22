@@ -1,3 +1,15 @@
+2019-05-22  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Stack-buffer-overflow in decodeURIComponent
+        https://bugs.webkit.org/show_bug.cgi?id=198109
+        <rdar://problem/50397550>
+
+        Reviewed by Michael Saboff.
+
+        * stress/decode-uri-icu-count-trail-bytes.js: Added.
+        (i.j.try.i.toString):
+        (i.j.catch):
+
 2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Don't clear PropertyNameArray in Proxy code
