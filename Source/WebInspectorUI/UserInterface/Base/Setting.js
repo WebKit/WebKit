@@ -58,6 +58,21 @@ WI.Setting = class Setting extends WI.Object
         return value;
     }
 
+    static reset()
+    {
+        let prefix = Setting._localStorageKey("");
+
+        let keysToRemove = [];
+        for (let i = 0; i < window.localStorage.length; ++i) {
+            let key = window.localStorage.key(i);
+            if (key.startsWith(prefix))
+                keysToRemove.push(key);
+        }
+
+        for (let key of keysToRemove)
+            window.localStorage.removeItem(key);
+    }
+
     static _localStorageKey(name)
     {
         let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;

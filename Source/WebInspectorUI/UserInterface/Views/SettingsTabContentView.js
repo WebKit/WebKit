@@ -356,6 +356,15 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         layoutDirectionEditor.value = WI.settings.layoutDirection.value;
         layoutDirectionEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => { WI.setLayoutDirection(layoutDirectionEditor.value); });
 
+        let resetInspectorButton = document.createElement("button");
+        resetInspectorButton.textContent = WI.unlocalizedString("Reset Web Inspector");
+        resetInspectorButton.addEventListener("click", async (event) => {
+            await WI.ObjectStore.reset();
+            WI.Setting.reset();
+            InspectorFrontendHost.reopen();
+        });
+        this._debugSettingsView.addCenteredContainer(resetInspectorButton);
+
         this.addSettingsView(this._debugSettingsView);
     }
 
