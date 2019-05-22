@@ -242,6 +242,7 @@ class BuildbotSyncer {
             properties[propertyName] = propertiesTemplate[propertyName];
 
         const repositoryGroupTemplate = buildRequest.isBuild() ? repositoryGroupConfiguration.buildPropertiesTemplate : repositoryGroupConfiguration.testPropertiesTemplate;
+        assert(!buildRequest.isBuild() || repositoryGroupTemplate, 'Repository group template cannot be null for build type build request');
         for (let propertyName in repositoryGroupTemplate) {
             let value = repositoryGroupTemplate[propertyName];
             const type = typeof(value) == 'object' ? value.type : 'string';
@@ -464,10 +465,10 @@ class BuildbotSyncer {
 
         let buildPropertiesTemplate = null;
         if ('buildProperties' in group) {
-            assert(patchAcceptingRepositoryList.size, `Repository group "${name}" specifies the properties for building but does not accept any patches`);
             assert(group.acceptsRoots, `Repository group "${name}" specifies the properties for building but does not accept roots in testing`);
             const revisionRepositories = new Set;
             const patchRepositories = new Set;
+            let hasOwnedRevisions = false;
             buildPropertiesTemplate = this._parseRepositoryGroupPropertyTemplate('build', name, group.buildProperties, (type, value, condition) => {
                 assert(type != 'roots', `Repository group "${name}" specifies roots in the properties for building`);
                 let repository = null;
@@ -482,6 +483,7 @@ class BuildbotSyncer {
                     revisionRepositories.add(repository);
                     return {type, repository};
                 case 'ownedRevisions':
+                    hasOwnedRevisions = true;
                     return {type, ownerRepository: resolveRepository(value)};
                 case 'ifRepositorySet':
                     assert(condition, 'condition must set if type is "ifRepositorySet"');
@@ -489,6 +491,7 @@ class BuildbotSyncer {
                 }
                 return null;
             });
+            assert(patchAcceptingRepositoryList.size || hasOwnedRevisions, `Repository group "${name}" specifies the properties for building but does not accept any patches or need to build owned components`);
             for (const repository of patchRepositories)
                 assert(revisionRepositories.has(repository), `Repository group "${name}" specifies a patch for "${repository.name()}" but does not specify a revision`);
             assert.equal(patchAcceptingRepositoryList.size, patchRepositories.size,

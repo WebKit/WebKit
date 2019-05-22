@@ -1,3 +1,20 @@
+2019-05-15  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Perf dashboard erroneously rejects a build request to build owned components when there are no patches.
+        https://bugs.webkit.org/show_bug.cgi?id=197928
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a bug that build type build request that only builds owned components failed to pass sanity check when there
+        is no repository accepts patch in triggerable repository group.
+        Add a sanity check to throw an error when build request type is build but there is no repository group template.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype._propertiesForBuildRequest): Changed sanity check the always requires repository accepts patch when there is a build to make it also works for build request only builds owned components.
+        (BuildbotSyncer._parseRepositoryGroup): Added check for repository group templates not null  when build requiest type is build.
+        * unit-tests/buildbot-syncer-tests.js: Added unit tests for this change.
+        * unit-tests/resources/mock-v3-models.js: Added mock date for unit tests.
+
 2019-05-14  Dewei Zhu  <dewei_zhu@apple.com>
 
         Pruning old file logic should not stop after removing 10 files if there are more files to be removed.

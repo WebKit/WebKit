@@ -1045,6 +1045,53 @@ describe('BuildbotSyncer', () => {
             assert.deepEqual(JSON.parse(properties['owned-commits']), {'Owner Repository': [{revision: 'owned-002', repository: 'Owned Repository', ownerRevision: 'owner-001'}]});
         });
 
+        it('should allow to build with an owned component even if no repository accepts a patch in the triggerable repository group', () => {
+            const config = sampleiOSConfig();
+            config.repositoryGroups['owner-repository'] = {
+                'repositories': {'Owner Repository': {}},
+                'testProperties': {
+                    'owner-repo': {'revision': 'Owner Repository'},
+                    'roots': {'roots': {}},
+                },
+                'buildProperties': {
+                    'owned-commits': {'ownedRevisions': 'Owner Repository'}
+                },
+                'acceptsRoots': true,
+            };
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, config, builderNameToIDMap());
+            const owner111289 = CommitLog.ensureSingleton('111289', {'id': '111289', 'time': 1456931874000, 'repository': MockModels.ownerRepository, 'revision': 'owner-001'});
+            const owned111222 = CommitLog.ensureSingleton('111222', {'id': '111222', 'time': 1456932774000, 'repository': MockModels.ownedRepository, 'revision': 'owned-002'});
+            const commitSet = CommitSet.ensureSingleton('53246486', {customRoots: [], revisionItems: [{commit: owner111289}, {commit: owned111222, commitOwner: owner111289, requiresBuild: true}]});
+            const request = BuildRequest.ensureSingleton(`123123`, {'triggerable': MockModels.triggerable,
+                repositoryGroup: MockModels.ownerRepositoryGroup,
+                'commitSet': commitSet, 'status': 'pending', 'platform': MockModels.iphone, 'test': null, 'order': -1});
+
+            const properties = syncers[2]._propertiesForBuildRequest(request, [request]);
+            assert.deepEqual(JSON.parse(properties['owned-commits']), {'Owner Repository': [{revision: 'owned-002', repository: 'Owned Repository', ownerRevision: 'owner-001'}]});
+        });
+
+        it('should fail if build type build request does not have any build repository group template', () => {
+            const config = sampleiOSConfig();
+            config.repositoryGroups['owner-repository'] = {
+                'repositories': {'Owner Repository': {}},
+                'testProperties': {
+                    'owner-repo': {'revision': 'Owner Repository'},
+                    'roots': {'roots': {}},
+                },
+                'acceptsRoots': true,
+            };
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, config, builderNameToIDMap());
+            const owner1 = CommitLog.ensureSingleton('111289', {'id': '111289', 'time': 1456931874000, 'repository': MockModels.ownerRepository, 'revision': 'owner-001'});
+            const owned2 = CommitLog.ensureSingleton('111222', {'id': '111222', 'time': 1456932774000, 'repository': MockModels.ownedRepository, 'revision': 'owned-002'});
+            const commitSet = CommitSet.ensureSingleton('53246486', {customRoots: [], revisionItems: [{commit: owner1}, {commit: owned2, commitOwner: owner1, requiresBuild: true}]});
+            const request = BuildRequest.ensureSingleton(`123123`, {'triggerable': MockModels.triggerable,
+                repositoryGroup: MockModels.ownerRepositoryGroup,
+                'commitSet': commitSet, 'status': 'pending', 'platform': MockModels.iphone, 'test': null, 'order': -1});
+
+            assert.throws(() => syncers[2]._propertiesForBuildRequest(request, [request]),
+                (error) => error.code === 'ERR_ASSERTION');
+        });
+
         it('should set the property for the build request id', () => {
             const syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig(), builderNameToIDMap());
             const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
