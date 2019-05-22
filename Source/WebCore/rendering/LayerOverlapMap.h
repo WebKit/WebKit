@@ -34,16 +34,23 @@ class TextStream;
 
 namespace WebCore {
 
+class OverflowAwareOverlapContainer;
 class OverlapMapContainer;
+class RenderLayer;
 
 class LayerOverlapMap {
     WTF_MAKE_NONCOPYABLE(LayerOverlapMap);
 public:
-    LayerOverlapMap();
+    LayerOverlapMap(const RenderLayer& rootLayer);
     ~LayerOverlapMap();
+    
+    struct LayerAndBounds {
+        RenderLayer& layer;
+        LayoutRect bounds;
+    };
 
-    void add(const LayoutRect& bounds);
-    bool overlapsLayers(const LayoutRect&) const;
+    void add(const RenderLayer&, const LayoutRect&, const Vector<LayerAndBounds>& enclosingClippingLayers);
+    bool overlapsLayers(const RenderLayer&, const LayoutRect&, const Vector<LayerAndBounds>& enclosingClippingLayers) const;
     bool isEmpty() const { return m_isEmpty; }
 
     void pushCompositingContainer();
@@ -57,6 +64,7 @@ public:
 private:
     Vector<std::unique_ptr<OverlapMapContainer>> m_overlapStack;
     RenderGeometryMap m_geometryMap;
+    const RenderLayer& m_rootLayer;
     bool m_isEmpty { true };
 };
 

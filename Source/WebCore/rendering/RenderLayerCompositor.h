@@ -409,6 +409,7 @@ private:
     void addToOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
     void addDescendantsToOverlapMapRecursive(LayerOverlapMap&, const RenderLayer&, const RenderLayer* ancestorLayer = nullptr) const;
     void updateOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap = false) const;
+    bool layerOverlaps(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
 
     void updateCompositingLayersTimerFired();
 

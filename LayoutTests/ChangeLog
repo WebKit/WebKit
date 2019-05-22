@@ -19,6 +19,33 @@
         * fast/text/variations/resources/Amstelvar/COPYRIGHT.md: Added.
         * fast/text/variations/resources/Amstelvar/OFL.txt: Added.
 
+2019-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer flashing and poor perf during scrolling of message list on gmail.com and hotmail.com - overlap testing needs to constrained to clipping scopes
+        https://bugs.webkit.org/show_bug.cgi?id=198091
+        <rdar://problem/49403082>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt: Added.
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap.html: Added.
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt: Added.
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller.html: Added.
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-stacking-context-scroller-expected.txt: Added.
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-stacking-context-scroller.html: Added.
+        * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt: Added.
+        * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children.html: Added.
+        * compositing/layer-creation/clipping-scope/shared-layers-in-scroller-expected.txt: Added.
+        * compositing/layer-creation/clipping-scope/shared-layers-in-scroller.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/overlap-constrained-inside-stacking-context-scroller-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/clipping-scope/shared-layers-in-scroller-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2019-05-21  Antti Koivisto  <antti@apple.com>
 
         RTL/overflow scroll tests fail with async overflow enabled

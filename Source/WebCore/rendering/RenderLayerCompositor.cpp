@@ -205,7 +205,6 @@ public:
     
     void appendSharingLayer(RenderLayer& layer)
     {
-        LOG_WITH_STREAM(Compositing, stream << &layer << " appendSharingLayer " << &layer << " for backing provider " << m_backingProviderCandidate);
         m_backingSharingLayers.append(makeWeakPtr(layer));
     }
 
@@ -249,7 +248,6 @@ void RenderLayerCompositor::BackingSharingState::updateBeforeDescendantTraversal
     // A layer that composites resets backing-sharing, since subsequent layers need to composite to overlap it.
     if (willBeComposited) {
         m_backingSharingLayers.removeAll(&layer);
-        LOG_WITH_STREAM(Compositing, stream << "Pre-descendant compositing of " << &layer << ", ending sharing sequence for " << m_backingProviderCandidate << " with " << m_backingSharingLayers.size() << " sharing layers");
         endBackingSharingSequence();
     }
 }
@@ -768,12 +766,13 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     // FIXME: optimize root-only update.
     if (updateRoot->hasDescendantNeedingCompositingRequirementsTraversal() || updateRoot->needsCompositingRequirementsTraversal()) {
+        auto& rootLayer = rootRenderLayer();
         CompositingState compositingState(updateRoot);
         BackingSharingState backingSharingState;
-        LayerOverlapMap overlapMap;
+        LayerOverlapMap overlapMap(rootLayer);
 
         bool descendantHas3DTransform = false;
-        computeCompositingRequirements(nullptr, rootRenderLayer(), overlapMap, compositingState, backingSharingState, descendantHas3DTransform);
+        computeCompositingRequirements(nullptr, rootLayer, overlapMap, compositingState, backingSharingState, descendantHas3DTransform);
     }
 
     LOG(Compositing, "\nRenderLayerCompositor::updateCompositingLayers - mid");
@@ -883,10 +882,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // If we know for sure the layer is going to be composited, don't bother looking it up in the overlap map
     if (!willBeComposited && !overlapMap.isEmpty() && compositingState.testingOverlap) {
-        computeExtent(overlapMap, layer, layerExtent);
-
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
-        if (overlapMap.overlapsLayers(layerExtent.bounds)) {
+        if (layerOverlaps(overlapMap, layer, layerExtent)) {
             if (backingSharingState.backingProviderCandidate() && canBeComposited(layer) && backingProviderLayerCanIncludeLayer(*backingSharingState.backingProviderCandidate(), layer)) {
                 backingSharingState.appendSharingLayer(layer);
                 LOG(Compositing, " layer %p can share with %p", &layer, backingSharingState.backingProviderCandidate());
@@ -1786,7 +1783,6 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
     if (extent.bounds.isEmpty())
         extent.bounds.setSize(LayoutSize(1, 1));
 
-
     RenderLayerModelObject& renderer = layer.renderer();
     if (renderer.isFixedPositioned() && renderer.container() == &m_renderView) {
         // Because fixed elements get moved around without re-computing overlap, we have to compute an overlap
@@ -1798,6 +1794,44 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
     extent.extentComputed = true;
 }
 
+static bool createsClippingScope(const RenderLayer& layer)
+{
+    return layer.hasCompositedScrollableOverflow();
+}
+
+static Vector<LayerOverlapMap::LayerAndBounds> enclosingClippingScopes(const RenderLayer& layer, const RenderLayer& rootLayer)
+{
+    Vector<LayerOverlapMap::LayerAndBounds> clippingScopes;
+    clippingScopes.append({ const_cast<RenderLayer&>(rootLayer), { } });
+
+    if (!layer.hasCompositedScrollingAncestor())
+        return clippingScopes;
+
+    bool containingBlockCanSkipLayers = layer.renderer().isAbsolutelyPositioned();
+    for (const auto* ancestorLayer = layer.parent(); ancestorLayer; ancestorLayer = ancestorLayer->parent()) {
+        bool inContainingBlockChain = true;
+        if (containingBlockCanSkipLayers) {
+            inContainingBlockChain = ancestorLayer->renderer().canContainAbsolutelyPositionedObjects();
+            if (inContainingBlockChain)
+                containingBlockCanSkipLayers = ancestorLayer->renderer().isAbsolutelyPositioned();
+        }
+        
+        if (inContainingBlockChain && createsClippingScope(*ancestorLayer)) {
+            LayoutRect clipRect;
+            if (is<RenderBox>(ancestorLayer->renderer())) {
+                // FIXME: This is expensive. Broken with transforms.
+                LayoutPoint offsetFromRoot = ancestorLayer->convertToLayerCoords(&rootLayer, { });
+                clipRect = downcast<RenderBox>(ancestorLayer->renderer()).overflowClipRect(offsetFromRoot);
+            }
+
+            LayerOverlapMap::LayerAndBounds layerAndBounds { const_cast<RenderLayer&>(*ancestorLayer), clipRect };
+            clippingScopes.insert(1, layerAndBounds); // Order is roots to leaves.
+        }
+    }
+
+    return clippingScopes;
+}
+
 void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
     if (layer.isRenderViewLayer())
@@ -1805,13 +1839,29 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
 
     computeExtent(overlapMap, layer, extent);
 
-    LayoutRect clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
+    // FIXME: constrain the scopes (by composited stacking context ancestor I think).
+    auto clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
 
-    // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
-    if (!m_renderView.settings().delegatesPageScaling())
-        clipRect.scale(pageScaleFactor());
-    clipRect.intersect(extent.bounds);
-    overlapMap.add(clipRect);
+    LayoutRect clipRect;
+    if (layer.hasCompositedScrollingAncestor()) {
+        // Compute a clip up to the composited scrolling ancestor, then convert it to absolute coordinates.
+        auto& scrollingScope = clippingScopes.last();
+        clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&scrollingScope.layer, TemporaryClipRects, IgnoreOverlayScrollbarSize, IgnoreOverflowClip)).rect();
+        if (!clipRect.isInfinite())
+            clipRect.setLocation(layer.convertToLayerCoords(&rootRenderLayer(), clipRect.location()));
+    } else
+        clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
+
+    auto clippedBounds = extent.bounds;
+    if (!clipRect.isInfinite()) {
+        // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
+        if (!m_renderView.settings().delegatesPageScaling())
+            clipRect.scale(pageScaleFactor());
+
+        clippedBounds.intersect(clipRect);
+    }
+
+    overlapMap.add(layer, clippedBounds, clippingScopes);
 }
 
 void RenderLayerCompositor::addDescendantsToOverlapMapRecursive(LayerOverlapMap& overlapMap, const RenderLayer& layer, const RenderLayer* ancestorLayer) const
@@ -1847,6 +1897,7 @@ void RenderLayerCompositor::addDescendantsToOverlapMapRecursive(LayerOverlapMap&
 void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& layerExtent, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap) const
 {
     if (addLayerToOverlap) {
+        auto clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
         addToOverlapMap(overlapMap, layer, layerExtent);
         LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " contributes to overlap, added to map " << overlapMap);
     }
@@ -1861,6 +1912,14 @@ void RenderLayerCompositor::updateOverlapMap(LayerOverlapMap& overlapMap, const 
         overlapMap.popCompositingContainer();
         LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " is composited or shared, popped container " << overlapMap);
     }
+}
+
+bool RenderLayerCompositor::layerOverlaps(const LayerOverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& layerExtent) const
+{
+    computeExtent(overlapMap, layer, layerExtent);
+
+    auto clippingScopes = enclosingClippingScopes(layer, rootRenderLayer());
+    return overlapMap.overlapsLayers(layer, layerExtent.bounds, clippingScopes);
 }
 
 #if ENABLE(VIDEO)
