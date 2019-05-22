@@ -31,6 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AttestationConveyancePreference.h"
 #include "AuthenticatorGetInfoResponse.h"
 #include "FidoConstants.h"
 #include "PublicKeyCredentialData.h"
@@ -48,7 +49,7 @@ WEBCORE_EXPORT CtapDeviceResponseCode getResponseCode(const Vector<uint8_t>&);
 // and converts response to AuthenticatorMakeCredentialResponse object with
 // CBOR map keys that conform to format of attestation object defined by the
 // WebAuthN spec : https://w3c.github.io/webauthn/#fig-attStructs
-WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>&);
+WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>&, const WebCore::AttestationConveyancePreference& attestation = WebCore::AttestationConveyancePreference::Direct);
 
 // De-serializes CBOR encoded response to AuthenticatorGetAssertion /
 // AuthenticatorGetNextAssertion request to AuthenticatorGetAssertionResponse

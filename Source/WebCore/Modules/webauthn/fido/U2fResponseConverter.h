@@ -31,6 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AttestationConveyancePreference.h"
 #include "PublicKeyCredentialData.h"
 #include <wtf/Forward.h>
 
@@ -38,7 +39,7 @@ namespace fido {
 
 // Converts a U2F register response to WebAuthN makeCredential response.
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorMakeCredential-interoperability
-WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData);
+WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, const WebCore::AttestationConveyancePreference& attestation = WebCore::AttestationConveyancePreference::Direct);
 
 // Converts a U2F authentication response to WebAuthN getAssertion response.
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorGetAssertion-interoperability

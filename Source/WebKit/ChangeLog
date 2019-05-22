@@ -1,3 +1,18 @@
+2019-05-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support Attestation Conveyance Preference
+        https://bugs.webkit.org/show_bug.cgi?id=192722
+        <rdar://problem/49939647>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        * UIProcess/WebAuthentication/fido/CtapHidAuthenticator.cpp:
+        (WebKit::CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived const):
+        * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.cpp:
+        (WebKit::U2fHidAuthenticator::continueRegisterCommandAfterResponseReceived):
+
 2019-05-22  Zalan Bujtas  <zalan@apple.com>
 
         [Paste] Add support for preferred presentation size when pasting an image

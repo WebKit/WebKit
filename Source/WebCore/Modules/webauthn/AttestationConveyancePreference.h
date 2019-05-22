@@ -27,28 +27,29 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AttestationConveyancePreference.h"
-#include "CBORValue.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-WEBCORE_EXPORT Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length);
-
-// Produce a SHA-256 hash of the given RP ID.
-WEBCORE_EXPORT Vector<uint8_t> produceRpIdHash(const String& rpId);
-
-WEBCORE_EXPORT Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, Vector<uint8_t>&& y);
-
-// https://www.w3.org/TR/webauthn/#attested-credential-data
-WEBCORE_EXPORT Vector<uint8_t> buildAttestedCredentialData(const Vector<uint8_t>& aaguid, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& coseKey);
-
-// https://www.w3.org/TR/webauthn/#sec-authenticator-data
-WEBCORE_EXPORT Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData);
-
-// https://www.w3.org/TR/webauthn/#attestation-object
-WEBCORE_EXPORT Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference&);
+enum class AttestationConveyancePreference {
+    None,
+    Indirect,
+    Direct
+};
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::AttestationConveyancePreference> {
+    using values = EnumValues<
+        WebCore::AttestationConveyancePreference,
+        WebCore::AttestationConveyancePreference::None,
+        WebCore::AttestationConveyancePreference::Indirect,
+        WebCore::AttestationConveyancePreference::Direct
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WEB_AUTHN)

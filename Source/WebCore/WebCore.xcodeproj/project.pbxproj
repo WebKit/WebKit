@@ -1810,6 +1810,9 @@
 		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
+		57D135252294A33C00827401 /* AttestationConveyancePreference.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D135212294973400827401 /* AttestationConveyancePreference.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57D1352A2294AA3900827401 /* JSAuthenticationExtensionsClientInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DA47AD224032DD002A4612 /* JSAuthenticationExtensionsClientInputs.h */; };
+		57D1352C2294AA3D00827401 /* JSAttestationConveyancePreference.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D135262294A7A700827401 /* JSAttestationConveyancePreference.h */; };
 		57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57D846351FEAFCD300CA3682 /* JSPublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */; };
 		57DA47B0224034E4002A4612 /* AuthenticationExtensionsClientInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DA47A522401E0F002A4612 /* AuthenticationExtensionsClientInputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8691,6 +8694,10 @@
 		57D0018B1DD3DBA400ED19D9 /* CryptoKeyUsage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyUsage.idl; sourceTree = "<group>"; };
 		57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyUsage.h; sourceTree = "<group>"; };
 		57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyUsage.cpp; sourceTree = "<group>"; };
+		57D135212294973400827401 /* AttestationConveyancePreference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AttestationConveyancePreference.h; sourceTree = "<group>"; };
+		57D135232294973400827401 /* AttestationConveyancePreference.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AttestationConveyancePreference.idl; sourceTree = "<group>"; };
+		57D135262294A7A700827401 /* JSAttestationConveyancePreference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAttestationConveyancePreference.h; sourceTree = "<group>"; };
+		57D135272294A7A800827401 /* JSAttestationConveyancePreference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAttestationConveyancePreference.cpp; sourceTree = "<group>"; };
 		57D846241FE895F500CA3682 /* NavigatorCredentials.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorCredentials.cpp; sourceTree = "<group>"; };
 		57D846251FE895F600CA3682 /* NavigatorCredentials.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorCredentials.idl; sourceTree = "<group>"; };
 		57D846261FE895F800CA3682 /* NavigatorCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorCredentials.h; sourceTree = "<group>"; };
@@ -19532,6 +19539,8 @@
 				57152B5321CB2CE3000C37CA /* apdu */,
 				57303BB32006C6ED00355965 /* cbor */,
 				578A4BFA2166AE0000D08F34 /* fido */,
+				57D135212294973400827401 /* AttestationConveyancePreference.h */,
+				57D135232294973400827401 /* AttestationConveyancePreference.idl */,
 				57DA47A522401E0F002A4612 /* AuthenticationExtensionsClientInputs.h */,
 				57DA47A722401E0F002A4612 /* AuthenticationExtensionsClientInputs.idl */,
 				57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */,
@@ -19570,6 +19579,8 @@
 		57D8462F1FEAFB0500CA3682 /* WebAuthN */ = {
 			isa = PBXGroup;
 			children = (
+				57D135272294A7A800827401 /* JSAttestationConveyancePreference.cpp */,
+				57D135262294A7A700827401 /* JSAttestationConveyancePreference.h */,
 				57DA47AC224032DC002A4612 /* JSAuthenticationExtensionsClientInputs.cpp */,
 				57DA47AD224032DD002A4612 /* JSAuthenticationExtensionsClientInputs.h */,
 				57303C2E2009B7DA00355965 /* JSAuthenticatorAssertionResponse.cpp */,
@@ -28187,6 +28198,7 @@
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */,
+				57D135252294A33C00827401 /* AttestationConveyancePreference.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */,
@@ -29551,6 +29563,7 @@
 				7C6579F41E00856600E3A27A /* JSApplePayShippingMethod.h in Headers */,
 				1AE96A931D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.h in Headers */,
 				A12C59FE20360B4A0012236B /* JSApplePayShippingMethodUpdate.h in Headers */,
+				57D1352C2294AA3D00827401 /* JSAttestationConveyancePreference.h in Headers */,
 				65DF31DB09D1C123000BE325 /* JSAttr.h in Headers */,
 				FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */,
 				FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */,
@@ -29563,6 +29576,7 @@
 				FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */,
 				BE8EF043171C8FF9009B48C3 /* JSAudioTrack.h in Headers */,
 				BE8EF045171C8FF9009B48C3 /* JSAudioTrackList.h in Headers */,
+				57D1352A2294AA3900827401 /* JSAuthenticationExtensionsClientInputs.h in Headers */,
 				57303C2F2009B7E100355965 /* JSAuthenticatorAssertionResponse.h in Headers */,
 				57303C222009AF0300355965 /* JSAuthenticatorAttestationResponse.h in Headers */,
 				57303BE120095D6100355965 /* JSAuthenticatorResponse.h in Headers */,

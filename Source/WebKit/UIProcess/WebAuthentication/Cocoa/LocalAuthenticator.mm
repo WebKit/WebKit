@@ -324,7 +324,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             cborArray.append(cbor::CBORValue(toVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "Apple", WTFMove(attestationStatementMap));
+    auto attestationObject = buildAttestationObject(WTFMove(authData), "Apple", WTFMove(attestationStatementMap), requestData().creationOptions.attestation);
 
     receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr, WTF::nullopt });
 #endif // !PLATFORM(IOS_FAMILY)

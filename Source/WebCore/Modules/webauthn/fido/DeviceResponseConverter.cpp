@@ -36,6 +36,7 @@
 #include "CBORReader.h"
 #include "CBORWriter.h"
 #include "WebAuthenticationConstants.h"
+#include "WebAuthenticationUtils.h"
 #include <wtf/StdSet.h>
 #include <wtf/Vector.h>
 
@@ -84,7 +85,7 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
 
 // Decodes byte array response from authenticator to CBOR value object and
 // checks for correct encoding format.
-Optional<PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer)
+Optional<PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, const WebCore::AttestationConveyancePreference& attestation)
 {
     if (inBuffer.size() <= kResponseCodeLength)
         return WTF::nullopt;
@@ -115,11 +116,19 @@ Optional<PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<ui
         return WTF::nullopt;
     auto attStmt = it->second.clone();
 
-    CBOR::MapValue attestationObjectMap;
-    attestationObjectMap[CBOR("authData")] = WTFMove(authenticatorData);
-    attestationObjectMap[CBOR("fmt")] = WTFMove(format);
-    attestationObjectMap[CBOR("attStmt")] = WTFMove(attStmt);
-    auto attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
+    Optional<Vector<uint8_t>> attestationObject;
+    if (attestation == AttestationConveyancePreference::None) {
+        // The reason why we can't directly pass authenticatorData/format/attStmt to buildAttestationObject
+        // is that they are CBORValue instead of the raw type.
+        // Also, format and attStmt are omitted as they are not useful in none attestation.
+        attestationObject = buildAttestationObject(Vector<uint8_t>(authenticatorData.getByteString()), "", { }, attestation);
+    } else {
+        CBOR::MapValue attestationObjectMap;
+        attestationObjectMap[CBOR("authData")] = WTFMove(authenticatorData);
+        attestationObjectMap[CBOR("fmt")] = WTFMove(format);
+        attestationObjectMap[CBOR("attStmt")] = WTFMove(attStmt);
+        attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
+    }
 
     return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.value().data(), attestationObject.value().size()), nullptr, nullptr, nullptr, WTF::nullopt };
 }

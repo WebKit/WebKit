@@ -2518,6 +2518,7 @@ JSAudioListener.cpp
 JSAudioNode.cpp
 JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
+JSAttestationConveyancePreference.cpp
 JSAuthenticationExtensionsClientInputs.cpp
 JSAuthenticatorAssertionResponse.cpp
 JSAuthenticatorAttestationResponse.cpp

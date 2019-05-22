@@ -147,7 +147,7 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
 
 } // namespace
 
-Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData)
+Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, const AttestationConveyancePreference& attestation)
 {
     auto publicKey = extractECPublicKeyFromU2fRegistrationResponse(u2fData);
     if (publicKey.isEmpty())
@@ -168,7 +168,7 @@ Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, co
     if (fidoAttestationStatement.empty())
         return WTF::nullopt;
 
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f", WTFMove(fidoAttestationStatement));
+    auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f", WTFMove(fidoAttestationStatement), attestation);
 
     return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr, WTF::nullopt };
 }

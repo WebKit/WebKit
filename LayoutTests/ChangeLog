@@ -1,3 +1,18 @@
+2019-05-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support Attestation Conveyance Preference
+        https://bugs.webkit.org/show_bug.cgi?id=192722
+        <rdar://problem/49939647>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html:
+
 2019-05-22  Jer Noble  <jer.noble@apple.com>
 
         Hide MediaCapabilities.encodingInfo() when the platform does not support it.

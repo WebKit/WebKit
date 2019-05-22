@@ -110,9 +110,20 @@ Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uin
     return authData;
 }
 
-Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap)
+Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation)
 {
     cbor::CBORValue::MapValue attestationObjectMap;
+    // The following implements Step 20 with regard to AttestationConveyancePreference
+    // of https://www.w3.org/TR/webauthn/#createCredential as of 4 March 2019.
+    // None attestation is always returned if it is requested to keep consistency, and therefore skip the
+    // step to return self attestation.
+    if (attestation == AttestationConveyancePreference::None) {
+        const size_t aaguidOffset = rpIdHashLength + flagsLength + signCounterLength;
+        if (authData.size() >= aaguidOffset + aaguidLength)
+            memset(authData.data() + aaguidOffset, 0, aaguidLength);
+        format = noneAttestationValue;
+        statementMap.clear();
+    }
     attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(WTFMove(authData));
     attestationObjectMap[cbor::CBORValue("fmt")] = cbor::CBORValue(WTFMove(format));
     attestationObjectMap[cbor::CBORValue("attStmt")] = cbor::CBORValue(WTFMove(statementMap));

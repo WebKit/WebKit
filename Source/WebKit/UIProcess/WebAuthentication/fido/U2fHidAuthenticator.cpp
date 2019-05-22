@@ -152,7 +152,7 @@ void U2fHidAuthenticator::continueRegisterCommandAfterResponseReceived(ApduRespo
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
-        auto response = readU2fRegisterResponse(requestData().creationOptions.rp.id, apduResponse.data());
+        auto response = readU2fRegisterResponse(requestData().creationOptions.rp.id, apduResponse.data(), requestData().creationOptions.attestation);
         if (!response) {
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F register response."_s });
             return;

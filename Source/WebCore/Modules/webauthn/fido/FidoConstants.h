@@ -207,7 +207,6 @@ enum class U2fApduInstruction : uint8_t {
 const char kFormatKey[] = "fmt";
 const char kAttestationStatementKey[] = "attStmt";
 const char kAuthDataKey[] = "authData";
-const char kNoneAttestationValue[] = "none";
 
 // String representation of public key credential enum.
 // https://w3c.github.io/webauthn/#credentialType

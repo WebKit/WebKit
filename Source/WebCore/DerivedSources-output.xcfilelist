@@ -124,6 +124,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayValidateMerchantEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayValidateMerchantEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAriaAttributes.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAriaAttributes.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAttestationConveyancePreference.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAttestationConveyancePreference.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAttr.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAttr.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBuffer.cpp

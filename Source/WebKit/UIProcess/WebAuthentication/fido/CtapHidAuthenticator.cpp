@@ -62,7 +62,7 @@ void CtapHidAuthenticator::makeCredential()
 
 void CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data) const
 {
-    auto response = readCTAPMakeCredentialResponse(data);
+    auto response = readCTAPMakeCredentialResponse(data, requestData().creationOptions.attestation);
     if (!response) {
         auto error = getResponseCode(data);
         if (error == CtapDeviceResponseCode::kCtap2ErrCredentialExcluded)

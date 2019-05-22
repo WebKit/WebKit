@@ -67,4 +67,7 @@ const size_t credentialIdLengthLength = 2;
 // Per Section 2.3.5 of http://www.secg.org/sec1-v2.pdf
 const size_t ES256FieldElementLength = 32;
 
+// https://www.w3.org/TR/webauthn/#none-attestation
+const char noneAttestationValue[] = "none";
+
 } // namespace WebCore

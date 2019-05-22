@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AttestationConveyancePreference.h"
 #include "AuthenticationExtensionsClientInputs.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
@@ -84,6 +85,7 @@ struct PublicKeyCredentialCreationOptions {
     Optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
     Optional<AuthenticatorSelectionCriteria> authenticatorSelection;
+    AttestationConveyancePreference attestation;
     Optional<AuthenticationExtensionsClientInputs> extensions; // A place holder, but never used.
 
     template<class Encoder> void encode(Encoder&) const;
@@ -142,7 +144,7 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
     encoder << rp.id << rp.name << rp.icon;
     encoder << static_cast<uint64_t>(user.id.length());
     encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
-    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection;
+    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestation;
 }
 
 template<class Decoder>
@@ -180,6 +182,12 @@ Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions:
     if (!authenticatorSelection)
         return WTF::nullopt;
     result.authenticatorSelection = WTFMove(*authenticatorSelection);
+
+    Optional<AttestationConveyancePreference> attestation;
+    decoder >> attestation;
+    if (!attestation)
+        return WTF::nullopt;
+    result.attestation = WTFMove(*attestation);
 
     return result;
 }

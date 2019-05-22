@@ -112,6 +112,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
 
+    Modules/webauthn/AttestationConveyancePreference.h
     Modules/webauthn/AuthenticationExtensionsClientInputs.h
     Modules/webauthn/AuthenticatorCoordinator.h
     Modules/webauthn/AuthenticatorCoordinatorClient.h
