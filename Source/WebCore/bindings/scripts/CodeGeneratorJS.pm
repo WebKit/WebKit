@@ -1710,7 +1710,8 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{EnabledBySetting}
         || $context->extendedAttributes->{DisabledByQuirk}
         || $context->extendedAttributes->{SecureContext}
-        || $context->extendedAttributes->{ContextHasServiceWorkerScheme};
+        || $context->extendedAttributes->{ContextHasServiceWorkerScheme}
+        || $context->extendedAttributes->{CustomEnabled};
 }
 
 # https://heycam.github.io/webidl/#es-operations
@@ -3743,6 +3744,13 @@ sub GenerateRuntimeEnableConditionalString
         foreach my $flag (@flags) {
             push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($flag) . "Enabled()");
         }
+    }
+
+    if ($context->extendedAttributes->{CustomEnabled}) {
+        assert("CustomEnabled can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
+
+        my $className = "JS" . $interface->type->name;
+        push(@conjuncts, "${className}" . $codeGenerator->WK_ucfirst($context->name) . "IsEnabled()");
     }
 
     if ($context->extendedAttributes->{DisabledByQuirk}) {

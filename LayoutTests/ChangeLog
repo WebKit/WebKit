@@ -1,3 +1,17 @@
+2019-05-22  Jer Noble  <jer.noble@apple.com>
+
+        Hide MediaCapabilities.encodingInfo() when the platform does not support it.
+        https://bugs.webkit.org/show_bug.cgi?id=197476
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/media/mediacapabilities/mediacapabilities-encodingInfo-undefined-expected.txt: Added.
+        * platform/ios/media/mediacapabilities/mediacapabilities-encodingInfo-undefined.html: Added.
+        * platform/ios/media/mediacapabilities/mediacapabilities-types-expected.txt: Added.
+        * platform/mac/media/mediacapabilities/mediacapabilities-encodingInfo-undefined-expected.txt: Added.
+        * platform/mac/media/mediacapabilities/mediacapabilities-encodingInfo-undefined.html: Added.
+        * platform/mac/media/mediacapabilities/mediacapabilities-types-expected.txt: Added.
+
 2019-05-22  Youenn Fablet  <youenn@apple.com>
 
         Implement Feature policy self/none/* parsing

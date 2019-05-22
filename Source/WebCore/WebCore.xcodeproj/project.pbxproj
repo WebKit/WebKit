@@ -13439,6 +13439,7 @@
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		CCC2B51115F613060048CDD6 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		CCC2B51215F613060048CDD6 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		CD0320152279F5BF00DD9F0B /* JSMediaCapabilitiesCustom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMediaCapabilitiesCustom.h; sourceTree = "<group>"; };
 		CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitDataRegistry.cpp; sourceTree = "<group>"; };
 		CD063F811E23FA8900812BE3 /* InitDataRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitDataRegistry.h; sourceTree = "<group>"; };
 		CD0C8B582141C8CA0062F59D /* MediaCapabilitiesInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaCapabilitiesInfo.h; sourceTree = "<group>"; };
@@ -20626,6 +20627,7 @@
 				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				77C13F042165658A002D9C5F /* JSIntersectionObserverEntryCustom.cpp */,
+				CD0320152279F5BF00DD9F0B /* JSMediaCapabilitiesCustom.h */,
 				AD726FE716D9F204003A4E6D /* JSMediaListCustom.h */,
 				415CDAF61E6CE0D3004F11EE /* JSMediaStreamTrackCustom.cpp */,
 				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,

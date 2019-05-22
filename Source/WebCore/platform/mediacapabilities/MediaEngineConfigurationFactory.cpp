@@ -33,6 +33,7 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactoryMock.h"
+#include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -69,6 +70,16 @@ static const FactoryVector& factories()
 #endif
     }));
     return factories;
+}
+
+bool MediaEngineConfigurationFactory::hasDecodingConfigurationFactory()
+{
+    return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return factory.createDecodingConfiguration; });
+}
+
+bool MediaEngineConfigurationFactory::hasEncodingConfigurationFactory()
+{
+    return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return factory.createEncodingConfiguration; });
 }
 
 void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
