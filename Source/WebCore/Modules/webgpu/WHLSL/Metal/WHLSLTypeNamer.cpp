@@ -380,21 +380,6 @@ String TypeNamer::metalTypeDeclarations()
     return metalTypeDeclarationWriter.toString();
 }
 
-static String toString(AST::AddressSpace addressSpace)
-{
-    switch (addressSpace) {
-    case AST::AddressSpace::Constant:
-        return "constant"_str;
-    case AST::AddressSpace::Device:
-        return "device"_str;
-    case AST::AddressSpace::Threadgroup:
-        return "threadgroup"_str;
-    default:
-        ASSERT(addressSpace == AST::AddressSpace::Thread);
-        return "thread"_str;
-    }
-}
-
 void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder& stringBuilder)
 {
     if (emittedUnnamedTypes.contains(&baseTypeNameNode))

@@ -81,6 +81,40 @@ public:
         return !(*this == other);
     }
 
+    String toString() const
+    {
+        switch (m_variable) {
+        case Variable::SVInstanceID:
+            return "SVInstanceID";
+        case Variable::SVVertexID:
+            return "SVVertexID";
+        case Variable::PSize:
+            return "PSize";
+        case Variable::SVPosition:
+            return "SVPosition";
+        case Variable::SVIsFrontFace:
+            return "SVIsFrontFace";
+        case Variable::SVSampleIndex:
+            return "SVSampleIndex";
+        case Variable::SVInnerCoverage:
+            return "SVInnerCoverage";
+        case Variable::SVTarget:
+            return "SVTarget";
+        case Variable::SVDepth:
+            return "SVDepth";
+        case Variable::SVCoverage:
+            return "SVCoverage";
+        case Variable::SVDispatchThreadID:
+            return "SVDispatchThreadID";
+        case Variable::SVGroupID:
+            return "SVGroupID";
+        case Variable::SVGroupIndex:
+            return "SVGroupIndex";
+        case Variable::SVGroupThreadID:
+            return "SVGroupThreadID";
+        }
+    }
+
     bool isAcceptableType(const UnnamedType&, const Intrinsics&) const override;
     bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const override;
 

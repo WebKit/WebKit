@@ -58,6 +58,20 @@ public:
     ResourceSemantic(const ResourceSemantic&) = delete;
     ResourceSemantic(ResourceSemantic&&) = default;
 
+    String toString()
+    {
+        switch (m_mode) {
+        case Mode::UnorderedAccessView:
+            return "UnorderedAccessView";
+        case Mode::Texture:
+            return "Texture";
+        case Mode::Buffer:
+            return "Buffer";
+        case Mode::Sampler:
+            return "Sampler";
+        }
+    }
+
     Mode mode() const { return m_mode; }
     unsigned index() const { return m_index; }
     unsigned space() const { return m_space; }

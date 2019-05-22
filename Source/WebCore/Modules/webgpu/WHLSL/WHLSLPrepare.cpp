@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLASTDumper.h"
 #include "WHLSLCheckDuplicateFunctions.h"
 #include "WHLSLChecker.h"
 #include "WHLSLFunctionStageChecker.h"
@@ -52,6 +53,44 @@ namespace WebCore {
 
 namespace WHLSL {
 
+static constexpr bool dumpASTBeforeEachPass = false;
+static constexpr bool dumpASTAfterParsing = false;
+static constexpr bool dumpASTAtEnd = false;
+
+static bool dumpASTIfNeeded(bool shouldDump, Program& program, const char* message)
+{
+    if (shouldDump) {
+        dataLogLn(message);
+        dumpAST(program);
+        return true;
+    }
+
+    return false;
+}
+
+static bool dumpASTAfterParsingIfNeeded(Program& program)
+{
+    return dumpASTIfNeeded(dumpASTAfterParsing, program, "AST after parsing");
+}
+
+static bool dumpASTBetweenEachPassIfNeeded(Program& program, const char* message)
+{
+    return dumpASTIfNeeded(dumpASTBeforeEachPass, program, message);
+}
+
+static bool dumpASTAtEndIfNeeded(Program& program)
+{
+    return dumpASTIfNeeded(dumpASTAtEnd, program, "AST at end");
+}
+
+#define RUN_PASS(pass, ...) \
+    do { \
+        dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
+        if (!pass(__VA_ARGS__)) \
+            return WTF::nullopt; \
+    } while (0)
+    
+
 static Optional<Program> prepareShared(String& whlslSource)
 {
     Program program;
@@ -61,35 +100,31 @@ static Optional<Program> prepareShared(String& whlslSource)
     ASSERT_UNUSED(failure, !failure);
     if (parser.parse(program, whlslSource, Parser::Mode::User))
         return WTF::nullopt;
-    NameResolver nameResolver(program.nameContext());
-    if (!resolveNamesInTypes(program, nameResolver))
-        return WTF::nullopt;
-    if (!checkRecursiveTypes(program))
-        return WTF::nullopt;
-    if (!synthesizeStructureAccessors(program))
-        return WTF::nullopt;
-    if (!synthesizeEnumerationFunctions(program))
-        return WTF::nullopt;
-    if (!synthesizeArrayOperatorLength(program))
-        return WTF::nullopt;
-    if (!synthesizeConstructors(program))
-        return WTF::nullopt;
-    if (!resolveNamesInFunctions(program, nameResolver))
-        return WTF::nullopt;
-    if (!checkDuplicateFunctions(program))
-        return WTF::nullopt;
 
-    if (!check(program))
-        return WTF::nullopt;
+    if (!dumpASTBetweenEachPassIfNeeded(program, "AST after parsing"))
+        dumpASTAfterParsingIfNeeded(program);
+
+    NameResolver nameResolver(program.nameContext());
+    RUN_PASS(resolveNamesInTypes, program, nameResolver);
+    RUN_PASS(checkRecursiveTypes, program);
+    RUN_PASS(synthesizeStructureAccessors, program);
+    RUN_PASS(synthesizeEnumerationFunctions, program);
+    RUN_PASS(synthesizeArrayOperatorLength, program);
+    RUN_PASS(synthesizeConstructors, program);
+    RUN_PASS(resolveNamesInFunctions, program, nameResolver);
+    RUN_PASS(checkDuplicateFunctions, program);
+
+    RUN_PASS(check, program);
+
     checkLiteralTypes(program);
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Resolve properties here
     findHighZombies(program);
-    if (!checkStatementBehavior(program))
-        return WTF::nullopt;
-    if (!checkRecursion(program))
-        return WTF::nullopt;
-    if (!checkFunctionStages(program))
-        return WTF::nullopt;
+    RUN_PASS(checkStatementBehavior, program);
+    RUN_PASS(checkRecursion, program);
+    RUN_PASS(checkFunctionStages, program);
+
+    dumpASTAtEndIfNeeded(program);
+
     return program;
 }
 
