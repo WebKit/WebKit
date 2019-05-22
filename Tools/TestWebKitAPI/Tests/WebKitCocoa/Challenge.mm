@@ -29,6 +29,8 @@
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WebKit.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
 
