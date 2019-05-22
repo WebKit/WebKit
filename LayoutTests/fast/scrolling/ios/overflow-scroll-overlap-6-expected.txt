@@ -2,5 +2,5 @@ Test that absolute positioned layer inside stacking-context overflow:scroll is c
 
 case 1: 
 case 2: 
-case 3: 
+case 3: Scrollable 3 
 

@@ -3026,7 +3026,7 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
 
 static RenderLayer* enclosingCompositedScrollingLayer(const RenderLayer& layer, const RenderLayer& intermediateLayer, bool& sawIntermediateLayer)
 {
-    const auto* currLayer = &layer;
+    const auto* currLayer = layer.parent();
     while (currLayer) {
         if (currLayer == &intermediateLayer)
             sawIntermediateLayer = true;
