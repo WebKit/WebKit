@@ -331,12 +331,9 @@ void Connection::readyReadHandler()
 
 bool Connection::open()
 {
-    int flags = fcntl(m_socketDescriptor, F_GETFL, 0);
-    while (fcntl(m_socketDescriptor, F_SETFL, flags | O_NONBLOCK) == -1) {
-        if (errno != EINTR) {
-            ASSERT_NOT_REACHED();
-            return false;
-        }
+    if (!setNonBlock(m_socketDescriptor)) {
+        ASSERT_NOT_REACHED();
+        return false;
     }
 
     RefPtr<Connection> protectedThis(this);

@@ -34,6 +34,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <wtf/UniStdExtras.h>
 
 namespace Inspector {
 
@@ -138,9 +139,8 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
 
 void setup(PlatformSocketType socket)
 {
-    fcntl(socket, F_SETFD, FD_CLOEXEC);
-    int flags = fcntl(socket, F_GETFL, 0);
-    fcntl(socket, F_SETFL, flags | O_NONBLOCK);
+    setCloseOnExec(socket);
+    setNonBlock(socket);
 
     setsockopt(socket, SOL_SOCKET, SO_RCVBUF, &BufferSize, sizeof(BufferSize));
     setsockopt(socket, SOL_SOCKET, SO_SNDBUF, &BufferSize, sizeof(BufferSize));

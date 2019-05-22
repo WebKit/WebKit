@@ -29,8 +29,6 @@ if (WIN32)
     )
 else ()
     list(APPEND WTF_SOURCES
-        UniStdExtras.cpp
-
         generic/MainThreadGeneric.cpp
 
         posix/FileSystemPOSIX.cpp
@@ -40,6 +38,7 @@ else ()
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 
         unix/LanguageUnix.cpp
+        unix/UniStdExtrasUnix.cpp
     )
     if (WTF_OS_FUCHSIA)
         list(APPEND WTF_SOURCES

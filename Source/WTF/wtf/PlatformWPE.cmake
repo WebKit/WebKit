@@ -11,8 +11,6 @@ list(APPEND WTF_PUBLIC_HEADERS
 )
 
 list(APPEND WTF_SOURCES
-    UniStdExtras.cpp
-
     generic/MainThreadGeneric.cpp
     generic/MemoryFootprintGeneric.cpp
     generic/WorkQueueGeneric.cpp
@@ -33,6 +31,7 @@ list(APPEND WTF_SOURCES
 
     unix/CPUTimeUnix.cpp
     unix/LanguageUnix.cpp
+    unix/UniStdExtrasUnix.cpp
 )
 
 list(APPEND WTF_LIBRARIES

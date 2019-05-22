@@ -1,3 +1,23 @@
+2019-05-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PlayStation] Don't call fcntl.
+        https://bugs.webkit.org/show_bug.cgi?id=197961
+
+        Reviewed by Fujii Hironori.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/UniStdExtras.h:
+        * wtf/playstation/UniStdExtrasPlayStation.cpp: Added.
+        (WTF::setCloseOnExec):
+        (WTF::dupCloseOnExec):
+        (WTF::setNonBlock):
+        * wtf/unix/UniStdExtrasUnix.cpp: Renamed from Source/WTF/wtf/UniStdExtras.cpp.
+        (WTF::setNonBlock):
+        Move UniStdExtras to unix/, add a PlayStation version that doesn't use fcntl, add an abstraction for O_NONBLOCK.
+
 2019-05-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         Only cache bytecode for API clients in data vaults

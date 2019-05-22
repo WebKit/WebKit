@@ -1,3 +1,14 @@
+2019-05-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PlayStation] Don't call fcntl.
+        https://bugs.webkit.org/show_bug.cgi?id=197961
+
+        Reviewed by Fujii Hironori.
+
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp:
+        (Inspector::Socket::setup):
+        Use WTF::setCloseOnExec and WTF::setNonBlock.
+
 2019-05-21  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Update initializer for changed port options

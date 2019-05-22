@@ -1,3 +1,14 @@
+2019-05-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PlayStation] Don't call fcntl.
+        https://bugs.webkit.org/show_bug.cgi?id=197961
+
+        Reviewed by Fujii Hironori.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::open):
+        Use WTF::setNonBlock.
+
 2019-05-21  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Assertion hit when navigating back after a process swap forced by the client

@@ -64,4 +64,14 @@ int dupCloseOnExec(int fileDescriptor)
     return duplicatedFileDescriptor;
 }
 
+bool setNonBlock(int fileDescriptor)
+{
+    int returnValue = -1;
+
+    int flags = fcntl(fileDescriptor, F_GETFL, 0);
+    while ((returnValue = fcntl(fileDescriptor, F_SETFL, flags | O_NONBLOCK)) == -1 && errno == EINTR) { }
+
+    return returnValue != -1;
+}
+
 } // namespace WTF
