@@ -1,3 +1,34 @@
+2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ESNext] Implement support for Numeric Separators
+        https://bugs.webkit.org/show_bug.cgi?id=196351
+
+        Reviewed by Keith Miller.
+
+        Implement the following proposal, which is now Stage 3:
+          https://github.com/tc39/proposal-numeric-separator
+
+        Specifically, this allows `_` to be used as a separator in numeric literals.
+        It may be inserted arbitrarily without semantic effect, but it may not occur:
+          - multiple times in a row
+          - at the beginning or end of the literal
+          - adjacent to `0x`, `0b`, `0o`, `.`, `e`, or `n`
+          - after a leading zero (e.g. `0_123`), even in sloppy mode
+
+        * parser/Lexer.cpp:
+        (JSC::isASCIIDigitOrSeparator): Added.
+        (JSC::isASCIIHexDigitOrSeparator): Added.
+        (JSC::isASCIIBinaryDigitOrSeparator): Added.
+        (JSC::isASCIIOctalDigitOrSeparator): Added.
+        (JSC::Lexer<T>::parseHex):
+        (JSC::Lexer<T>::parseBinary):
+        (JSC::Lexer<T>::parseOctal):
+        (JSC::Lexer<T>::parseDecimal):
+        (JSC::Lexer<T>::parseNumberAfterDecimalPoint):
+        (JSC::Lexer<T>::parseNumberAfterExponentIndicator):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/Lexer.h:
+
 2019-05-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         llint_slow_path_get_by_id needs to hold the CodeBlock's lock to update the metadata's mode

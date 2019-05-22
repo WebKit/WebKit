@@ -1,3 +1,16 @@
+2019-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ESNext] Implement support for Numeric Separators
+        https://bugs.webkit.org/show_bug.cgi?id=196351
+
+        Reviewed by Keith Miller.
+
+        * stress/numeric-literal-separators.js: Added.
+        Add tests for feature.
+
+        * test262/expectations.yaml:
+        Mark 60 test cases as passing.
+
 2019-05-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         llint_slow_path_get_by_id needs to hold the CodeBlock's to update the metadata's mode
