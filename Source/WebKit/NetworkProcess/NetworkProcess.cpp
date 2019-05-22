@@ -2635,7 +2635,6 @@ void NetworkProcess::webPageWasAdded(IPC::Connection& connection, PAL::SessionID
 
     auto connectionID = connection.uniqueID();
     m_sessionByConnection.ensure(connectionID, [&]() {
-        storageManager.processWillOpenConnection(connection);
         return sessionID;
     });
 

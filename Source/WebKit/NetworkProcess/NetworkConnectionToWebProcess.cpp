@@ -227,7 +227,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
 
     if (decoder.messageReceiverName() == Messages::StorageManager::messageReceiverName()) {
         if (auto* session = m_networkProcess->networkSessionByConnection(connection)) {
-            session->storageManager().dispatchMessageToQueue(connection, decoder);
+            session->storageManager().didReceiveMessage(connection, decoder);
             return;
         }
     }
@@ -273,7 +273,7 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 
     if (decoder.messageReceiverName() == Messages::StorageManager::messageReceiverName()) {
         if (auto* session = m_networkProcess->networkSessionByConnection(connection)) {
-            session->storageManager().dispatchSyncMessageToQueue(connection, decoder, reply);
+            session->storageManager().didReceiveSyncMessage(connection, decoder, reply);
             return;
         }
     }

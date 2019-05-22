@@ -1,3 +1,16 @@
+2019-05-22  Sihui Liu  <sihui_liu@apple.com>
+
+        API Test landed in r245540 [Mac WK2] TestWebKitAPI.WKWebView.LocalStorageProcessCrashes is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=198090
+        <rdar://problem/51003644>
+
+        Reviewed by Youenn Fablet.
+
+        WebView was wrongly loaded multiple times.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST):
+
 2019-05-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support Attestation Conveyance Preference

@@ -43,6 +43,8 @@ namespace WebKit {
 class LocalStorageDatabaseTracker;
 class WebProcessProxy;
 
+using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
+
 class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<StorageManager> create(const String& localStorageDirectory);
@@ -54,7 +56,6 @@ public:
     void removeAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection&);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
-    void processWillOpenConnection(IPC::Connection&);
     void processDidCloseConnection(IPC::Connection&);
     void waitUntilWritesFinished();
 
@@ -70,15 +71,12 @@ public:
 
     void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler);
 
-    void dispatchMessageToQueue(IPC::Connection&, IPC::Decoder&);
-    void dispatchSyncMessageToQueue(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
-
-private:
-    explicit StorageManager(const String& localStorageDirectory);
-
     // IPC::Connection::WorkQueueMessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder) override;
+
+private:
+    explicit StorageManager(const String& localStorageDirectory);
 
     // Message handlers.
     void createLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
@@ -86,7 +84,7 @@ private:
     void createSessionStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
     void destroyStorageMap(IPC::Connection&, uint64_t storageMapID);
 
-    void getValues(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t storageMapSeed, CompletionHandler<void(const HashMap<String, String>&)>&&);
+    void getValues(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t storageMapSeed, GetValuesCallback&&);
     void setItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
     void setItems(IPC::Connection&, uint64_t storageMapID, const HashMap<String, String>& items);
     void removeItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
@@ -115,7 +113,6 @@ private:
 
     HashMap<WebCore::SecurityOriginData, Ref<WebCore::StorageMap>> m_ephemeralStorage;
     bool m_isEphemeral { false };
-
 };
 
 } // namespace WebKit

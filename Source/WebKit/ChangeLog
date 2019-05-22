@@ -1,3 +1,46 @@
+2019-05-22  Sihui Liu  <sihui_liu@apple.com>
+
+        API Test landed in r245540 [Mac WK2] TestWebKitAPI.WKWebView.LocalStorageProcessCrashes is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=198090
+        <rdar://problem/51003644>
+
+        Reviewed by Youenn Fablet.
+
+        We used to dispatch StorageManager message to StorageManager's work queue, which required message handler to be
+        added to queue before receiving first StorageManager message, otherwise network process would not know how to
+        decode the message.
+
+        After r245540, when netork process crashes and dom storage is accessed from web process after that, web process 
+        re-establishes its connection to network process, asks network process to add message handler, and then sends 
+        StorageManager message immediately. Because work queue message receiver is added on a background thread in 
+        network process, it is possible the StorageManager message is received before that.
+
+        A safe and easy resolution is to not dispatch StorageManager message to work queue, so that we don't need to 
+        wait for the message receiver to be added. Handling message on the main thread also allows us to untying the 
+        knot that binds StorageManager and connection, which may be a preferred design in the future.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::webPageWasAdded):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::processDidCloseConnection):
+        (WebKit::StorageManager::createLocalStorageMap):
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::destroyStorageMap):
+        (WebKit::didGetValues):
+        (WebKit::StorageManager::getValues):
+        (WebKit::StorageManager::setItem):
+        (WebKit::StorageManager::setItems):
+        (WebKit::StorageManager::removeItem):
+        (WebKit::StorageManager::clear):
+        (WebKit::StorageManager::processWillOpenConnection): Deleted.
+        (WebKit::StorageManager::dispatchMessageToQueue): Deleted.
+        (WebKit::StorageManager::dispatchSyncMessageToQueue): Deleted.
+        * NetworkProcess/WebStorage/StorageManager.h:
+
 2019-05-22  Antoine Quint  <graouts@apple.com>
 
         [iOS] Compatibility mouse events aren't prevented by calling preventDefault() on pointerdown

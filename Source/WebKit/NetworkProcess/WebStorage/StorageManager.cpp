@@ -551,15 +551,8 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
     });
 }
 
-void StorageManager::processWillOpenConnection(IPC::Connection& connection)
-{
-    connection.addWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName(), m_queue.get(), this);
-}
-
 void StorageManager::processDidCloseConnection(IPC::Connection& connection)
 {
-    connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
-
     m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID()]() mutable {
         Vector<std::pair<IPC::Connection::UniqueID, uint64_t>> connectionAndStorageMapIDPairsToRemove;
         for (auto& storageArea : m_storageAreasByConnection) {
@@ -718,213 +711,219 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::S
 
 void StorageManager::createLocalStorageMap(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageNamespaceID, SecurityOriginData&& securityOriginData)
 {
-    // FIXME: Replace this check if https://bugs.webkit.org/show_bug.cgi?id=198048 is done.
-    ASSERT(!RunLoop::isMain());
-    ASSERT(!m_isEphemeral);
-    std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connection.uniqueID(), storageMapID);
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID(), storageMapID, storageNamespaceID, securityOriginData = securityOriginData.isolatedCopy()]() mutable {
+        ASSERT(!m_isEphemeral);
+        std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connectionID, storageMapID);
 
-    // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<IPC::Connection::UniqueID, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
+        // FIXME: This should be a message check.
+        ASSERT((HashMap<std::pair<IPC::Connection::UniqueID, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
 
-    auto result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
+        auto result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
 
-    // FIXME: These should be a message checks.
-    ASSERT(result.isNewEntry);
-    ASSERT((HashMap<uint64_t, RefPtr<LocalStorageNamespace>>::isValidKey(storageNamespaceID)));
+        // FIXME: These should be a message checks.
+        ASSERT(result.isNewEntry);
+        ASSERT((HashMap<uint64_t, RefPtr<LocalStorageNamespace>>::isValidKey(storageNamespaceID)));
 
-    LocalStorageNamespace* localStorageNamespace = getOrCreateLocalStorageNamespace(storageNamespaceID);
+        LocalStorageNamespace* localStorageNamespace = getOrCreateLocalStorageNamespace(storageNamespaceID);
 
-    // FIXME: This should be a message check.
-    ASSERT(localStorageNamespace);
+        // FIXME: This should be a message check.
+        ASSERT(localStorageNamespace);
 
-    auto storageArea = localStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData));
-    storageArea->addListener(connection.uniqueID(), storageMapID);
+        auto storageArea = localStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData));
+        storageArea->addListener(connectionID, storageMapID);
 
-    result.iterator->value = WTFMove(storageArea);
+        result.iterator->value = WTFMove(storageArea);
+    });
 }
 
 void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageNamespaceID, SecurityOriginData&& topLevelOriginData, SecurityOriginData&& origin)
 {
-    ASSERT(!RunLoop::isMain());
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID(), storageMapID, storageNamespaceID, topLevelOriginData = topLevelOriginData.isolatedCopy(), origin = origin.isolatedCopy()]() mutable {
+        // FIXME: This should be a message check.
+        ASSERT(m_storageAreasByConnection.isValidKey({ connectionID, storageMapID }));
 
-    // FIXME: This should be a message check.
-    ASSERT(m_storageAreasByConnection.isValidKey({ connection.uniqueID(), storageMapID }));
+        // See if we already have session storage for this connection/origin combo.
+        // If so, update the map with the new ID, otherwise keep on trucking.
+        for (auto it = m_storageAreasByConnection.begin(), end = m_storageAreasByConnection.end(); it != end; ++it) {
+            if (it->key.first != connectionID)
+                continue;
+            Ref<StorageArea> area = *it->value;
+            if (!area->isSessionStorage())
+                continue;
+            if (!origin.securityOrigin()->isSameSchemeHostPort(area->securityOrigin().securityOrigin().get()))
+                continue;
+            area->addListener(connectionID, storageMapID);
+            // If the storageMapID used as key in m_storageAreasByConnection is no longer one of the StorageArea's listeners, then this means
+            // that destroyStorageMap() was already called for that storageMapID but it decided not to remove it from m_storageAreasByConnection
+            // so that we could reuse it later on for the same connection/origin combo. In this case, it is safe to remove the previous
+            // storageMapID from m_storageAreasByConnection.
+            if (!area->hasListener(connectionID, it->key.second))
+                m_storageAreasByConnection.remove(it);
+            m_storageAreasByConnection.add({ connectionID, storageMapID }, WTFMove(area));
+            return;
+        }
 
-    // See if we already have session storage for this connection/origin combo.
-    // If so, update the map with the new ID, otherwise keep on trucking.
-    for (auto it = m_storageAreasByConnection.begin(), end = m_storageAreasByConnection.end(); it != end; ++it) {
-        if (it->key.first != connection.uniqueID())
-            continue;
-        Ref<StorageArea> area = *it->value;
-        if (!area->isSessionStorage())
-            continue;
-        if (!origin.securityOrigin()->isSameSchemeHostPort(area->securityOrigin().securityOrigin().get()))
-            continue;
-        area->addListener(connection.uniqueID(), storageMapID);
-        // If the storageMapID used as key in m_storageAreasByConnection is no longer one of the StorageArea's listeners, then this means
-        // that destroyStorageMap() was already called for that storageMapID but it decided not to remove it from m_storageAreasByConnection
-        // so that we could reuse it later on for the same connection/origin combo. In this case, it is safe to remove the previous
-        // storageMapID from m_storageAreasByConnection.
-        if (!area->hasListener(connection.uniqueID(), it->key.second))
-            m_storageAreasByConnection.remove(it);
-        m_storageAreasByConnection.add({ connection.uniqueID(), storageMapID }, WTFMove(area));
-        return;
-    }
+        auto& slot = m_storageAreasByConnection.add({ connectionID, storageMapID }, nullptr).iterator->value;
 
-    auto& slot = m_storageAreasByConnection.add({ connection.uniqueID(), storageMapID }, nullptr).iterator->value;
+        // FIXME: This should be a message check.
+        ASSERT(!slot);
 
-    // FIXME: This should be a message check.
-    ASSERT(!slot);
+        auto* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, WTFMove(topLevelOriginData));
 
-    auto* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, WTFMove(topLevelOriginData));
+        auto storageArea = transientLocalStorageNamespace->getOrCreateStorageArea(WTFMove(origin));
+        storageArea->addListener(connectionID, storageMapID);
 
-    auto storageArea = transientLocalStorageNamespace->getOrCreateStorageArea(WTFMove(origin));
-    storageArea->addListener(connection.uniqueID(), storageMapID);
-
-    slot = WTFMove(storageArea);
+        slot = WTFMove(storageArea);
+    });
 }
 
 void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageNamespaceID, SecurityOriginData&& securityOriginData)
 {
-    ASSERT(!RunLoop::isMain());
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID(), storageMapID, storageNamespaceID, securityOriginData = securityOriginData.isolatedCopy()]() mutable {
+        if (m_isEphemeral) {
+            m_ephemeralStorage.add(securityOriginData, WebCore::StorageMap::create(localStorageDatabaseQuotaInBytes));
+            return;
+        }
+        // FIXME: This should be a message check.
+        ASSERT(m_sessionStorageNamespaces.isValidKey(storageNamespaceID));
 
-    if (m_isEphemeral) {
-        m_ephemeralStorage.add(securityOriginData, WebCore::StorageMap::create(localStorageDatabaseQuotaInBytes));
-        return;
-    }
-    // FIXME: This should be a message check.
-    ASSERT(m_sessionStorageNamespaces.isValidKey(storageNamespaceID));
+        SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
+        if (!sessionStorageNamespace) {
+            // We're getting an incoming message from the web process that's for session storage for a web page
+            // that has already been closed, just ignore it.
+            return;
+        }
 
-    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
-    if (!sessionStorageNamespace) {
-        // We're getting an incoming message from the web process that's for session storage for a web page
-        // that has already been closed, just ignore it.
-        return;
-    }
+        // FIXME: This should be a message check.
+        ASSERT(m_storageAreasByConnection.isValidKey({ connectionID, storageMapID }));
 
-    // FIXME: This should be a message check.
-    ASSERT(m_storageAreasByConnection.isValidKey({ connection.uniqueID(), storageMapID }));
+        auto& slot = m_storageAreasByConnection.add({ connectionID, storageMapID }, nullptr).iterator->value;
 
-    auto& slot = m_storageAreasByConnection.add({ connection.uniqueID(), storageMapID }, nullptr).iterator->value;
+        // FIXME: This should be a message check.
+        ASSERT(!slot);
 
-    // FIXME: This should be a message check.
-    ASSERT(!slot);
+        // FIXME: This should be a message check.
+        ASSERT(sessionStorageNamespace->allowedConnections().contains(connectionID));
 
-    // FIXME: This should be a message check.
-    ASSERT(sessionStorageNamespace->allowedConnections().contains(connection.uniqueID()));
+        auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData));
+        storageArea->addListener(connectionID, storageMapID);
 
-    auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData));
-    storageArea->addListener(connection.uniqueID(), storageMapID);
-
-    slot = WTFMove(storageArea);
+        slot = WTFMove(storageArea);
+    });
 }
 
 void StorageManager::destroyStorageMap(IPC::Connection& connection, uint64_t storageMapID)
 {
-    ASSERT(!RunLoop::isMain());
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID(), storageMapID]() mutable {
+        std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connectionID, storageMapID);
 
-    std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connection.uniqueID(), storageMapID);
+        // FIXME: This should be a message check.
+        ASSERT(m_storageAreasByConnection.isValidKey(connectionAndStorageMapIDPair));
 
-    // FIXME: This should be a message check.
-    ASSERT(m_storageAreasByConnection.isValidKey(connectionAndStorageMapIDPair));
+        auto it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
+        if (it == m_storageAreasByConnection.end()) {
+            // The connection has been removed because the last page was closed.
+            return;
+        }
 
-    auto it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
-    if (it == m_storageAreasByConnection.end()) {
-        // The connection has been removed because the last page was closed.
-        return;
-    }
+        it->value->removeListener(connectionID, storageMapID);
 
-    it->value->removeListener(connection.uniqueID(), storageMapID);
+        // Don't remove session storage maps. The web process may reconnect and expect the data to still be around.
+        if (it->value->isSessionStorage())
+            return;
 
-    // Don't remove session storage maps. The web process may reconnect and expect the data to still be around.
-    if (it->value->isSessionStorage())
-        return;
-
-    m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
+        m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
+    });
 }
 
-void StorageManager::getValues(IPC::Connection& connection, WebCore::SecurityOriginData&& securityOriginData, uint64_t storageMapID, uint64_t storageMapSeed, CompletionHandler<void(const HashMap<String, String>&)>&& completionHandler)
+static void didGetValues(IPC::Connection& connection, uint64_t storageMapID, const HashMap<String, String>& items, GetValuesCallback&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    RunLoop::main().dispatch([items = crossThreadCopy(items), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler(items);
+    });
+}
 
-    auto* storageArea = findStorageArea(connection, storageMapID);
-    if (!storageArea) {
-        if (m_isEphemeral) {
-            if (auto storageMap = m_ephemeralStorage.get(securityOriginData))
-                return completionHandler(storageMap->items());
+void StorageManager::getValues(IPC::Connection& connection, WebCore::SecurityOriginData&& securityOriginData, uint64_t storageMapID, uint64_t storageMapSeed, GetValuesCallback&& completionHandler)
+{
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = makeRef(connection), securityOriginData = securityOriginData.isolatedCopy(), storageMapID, storageMapSeed, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto* storageArea = findStorageArea(connection.get(), storageMapID);
+        if (!storageArea) {
+            if (m_isEphemeral) {
+                if (auto storageMap = m_ephemeralStorage.get(securityOriginData))
+                    return didGetValues(connection.get(), storageMapID, storageMap->items(), WTFMove(completionHandler));
+            }
+            // This is a session storage area for a page that has already been closed. Ignore it.
+            return didGetValues(connection.get(), storageMapID, { }, WTFMove(completionHandler));
         }
-        // This is a session storage area for a page that has already been closed. Ignore it.
-        return completionHandler({ });
-    }
-
-    completionHandler(storageArea->items());
-    connection.send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
+        didGetValues(connection.get(), storageMapID, storageArea->items(), WTFMove(completionHandler));
+        connection->send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
+    });
 }
 
 void StorageManager::setItem(IPC::Connection& connection, WebCore::SecurityOriginData&& securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
 {
-    ASSERT(!RunLoop::isMain());
-
-    auto* storageArea = findStorageArea(connection, storageMapID);
-    if (!storageArea) {
-        if (m_isEphemeral) {
-            if (auto storageMap = m_ephemeralStorage.get(securityOriginData)) {
-                String oldValue;
-                bool quotaException;
-                storageMap->setItem(key, value, oldValue, quotaException);
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = makeRef(connection), securityOriginData = securityOriginData.isolatedCopy(), storageMapID, sourceStorageAreaID, storageMapSeed, key = key.isolatedCopy(), value = value.isolatedCopy(), urlString = urlString.isolatedCopy()]() mutable {
+        auto* storageArea = findStorageArea(connection.get(), storageMapID);
+        if (!storageArea) {
+            if (m_isEphemeral) {
+                if (auto storageMap = m_ephemeralStorage.get(securityOriginData)) {
+                    String oldValue;
+                    bool quotaException;
+                    storageMap->setItem(key, value, oldValue, quotaException);
+                }
             }
+            // This is a session storage area for a page that has already been closed. Ignore it.
+            return;
         }
-        // This is a session storage area for a page that has already been closed. Ignore it.
-        return;
-    }
 
-    bool quotaError;
-    storageArea->setItem(connection.uniqueID(), sourceStorageAreaID, key, value, urlString, quotaError);
-    connection.send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, quotaError), storageMapID);
+        bool quotaError;
+        storageArea->setItem(connection->uniqueID(), sourceStorageAreaID, key, value, urlString, quotaError);
+        connection->send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, quotaError), storageMapID);
+    });
 }
 
 void StorageManager::setItems(IPC::Connection& connection, uint64_t storageMapID, const HashMap<String, String>& items)
 {
-    ASSERT(!RunLoop::isMain());
-
-    if (auto* storageArea = findStorageArea(connection, storageMapID))
-        storageArea->setItems(items);
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = makeRef(connection), storageMapID, items = crossThreadCopy(items)]() mutable {
+        if (auto* storageArea = findStorageArea(connection.get(), storageMapID))
+            storageArea->setItems(items);
+    });
 }
 
 void StorageManager::removeItem(IPC::Connection& connection, WebCore::SecurityOriginData&& securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
 {
-    ASSERT(!RunLoop::isMain());
-
-    auto* storageArea = findStorageArea(connection, storageMapID);
-    if (!storageArea) {
-        if (m_isEphemeral) {
-            if (auto storageMap = m_ephemeralStorage.get(securityOriginData)) {
-                String oldValue;
-                storageMap->removeItem(key, oldValue);
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = makeRef(connection), securityOriginData = securityOriginData.isolatedCopy(), storageMapID, sourceStorageAreaID, storageMapSeed, key = key.isolatedCopy(), urlString = urlString.isolatedCopy()]() mutable {
+        auto* storageArea = findStorageArea(connection.get(), storageMapID);
+        if (!storageArea) {
+            if (m_isEphemeral) {
+                if (auto storageMap = m_ephemeralStorage.get(securityOriginData)) {
+                    String oldValue;
+                    storageMap->removeItem(key, oldValue);
+                }
             }
+            // This is a session storage area for a page that has already been closed. Ignore it.
+            return;
         }
-        // This is a session storage area for a page that has already been closed. Ignore it.
-        return;
-    }
 
-    storageArea->removeItem(connection.uniqueID(), sourceStorageAreaID, key, urlString);
-    connection.send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageMapID);
+        storageArea->removeItem(connection->uniqueID(), sourceStorageAreaID, key, urlString);
+        connection->send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageMapID);
+    });
 }
 
 void StorageManager::clear(IPC::Connection& connection, WebCore::SecurityOriginData&& securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
 {
-    ASSERT(!RunLoop::isMain());
+    m_queue->dispatch([this, protectedThis = makeRef(*this), connection = makeRef(connection), securityOriginData = securityOriginData.isolatedCopy(), storageMapID, sourceStorageAreaID, storageMapSeed, urlString = urlString.isolatedCopy()]() mutable {
+        auto* storageArea = findStorageArea(connection.get(), storageMapID);
+        if (!storageArea) {
+            if (m_isEphemeral)
+                m_ephemeralStorage.remove(securityOriginData);
+            // This is a session storage area for a page that has already been closed. Ignore it.
+            return;
+        }
 
-    auto* storageArea = findStorageArea(connection, storageMapID);
-    if (!storageArea) {
-        if (m_isEphemeral)
-            m_ephemeralStorage.remove(securityOriginData);
-        // This is a session storage area for a page that has already been closed. Ignore it.
-        return;
-    }
-
-    storageArea->clear(connection.uniqueID(), sourceStorageAreaID, urlString);
-    connection.send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageMapID);
+        storageArea->clear(connection->uniqueID(), sourceStorageAreaID, urlString);
+        connection->send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageMapID);
+    });
 }
 
 void StorageManager::waitUntilWritesFinished()
@@ -973,20 +972,6 @@ StorageManager::TransientLocalStorageNamespace* StorageManager::getOrCreateTrans
     return m_transientLocalStorageNamespaces.ensure({ storageNamespaceID, WTFMove(topLevelOrigin) }, [](){
         return TransientLocalStorageNamespace::create();
     }).iterator->value.get();
-}
-
-void StorageManager::dispatchMessageToQueue(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    m_queue->dispatch([this, protectedThis = makeRef(*this), &connection, &decoder] {
-        didReceiveMessage(connection, decoder);
-    });
-}
-
-void StorageManager::dispatchSyncMessageToQueue(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
-{
-    m_queue->dispatch([this, protectedThis = makeRef(*this), &connection, &decoder, replyEncoder = WTFMove(replyEncoder)] () mutable {
-        didReceiveSyncMessage(connection, decoder, replyEncoder);
-    });
 }
 
 } // namespace WebKit

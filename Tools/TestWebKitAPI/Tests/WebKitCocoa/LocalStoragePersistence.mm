@@ -68,21 +68,18 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"local-storage-process-crashes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-    
+
     receivedScriptMessage = false;
-    [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"local:storage", [lastScriptMessage body]);
-    
+
     receivedScriptMessage = false;
-    [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"session:storage", [lastScriptMessage body]);
 
     [configuration.get().processPool _terminateNetworkProcess];
-    
+
     receivedScriptMessage = false;
-    [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"Network Process Crashed", [lastScriptMessage body]);
 
