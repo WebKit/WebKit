@@ -1,5 +1,42 @@
 2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245181. rdar://problem/50670806
+
+    ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant()) on nytimes.com after r245170
+    https://bugs.webkit.org/show_bug.cgi?id=197776
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Only try to paint into shared backing for layers that are able to be composited. This
+    avoids trying to do sharing for non-self-painting layers, which doesn't make sense.
+    
+    Test: compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+    
+    LayoutTests:
+    
+    * compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share-expected.txt: Added.
+    * compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245181 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+            ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant()) on nytimes.com after r245170
+            https://bugs.webkit.org/show_bug.cgi?id=197776
+
+            Reviewed by Zalan Bujtas.
+
+            * compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share-expected.txt: Added.
+            * compositing/shared-backing/overflow-scroll/non-self-painting-layer-should-not-share.html: Added.
+
+2019-05-22  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245175. rdar://problem/50584991
 
     Event region generation needs to know about backing-sharing
