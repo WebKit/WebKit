@@ -730,6 +730,7 @@ public:
 #if ENABLE(C_LOOP)
     void* cloopStackLimit() { return m_cloopStackLimit; }
     void setCLoopStackLimit(void* limit) { m_cloopStackLimit = limit; }
+    JS_EXPORT_PRIVATE void* currentCLoopStackPointer() const;
 #endif
 
     inline bool isSafeToRecurseSoft() const;

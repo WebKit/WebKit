@@ -1148,6 +1148,11 @@ bool VM::isSafeToRecurseSoftCLoop() const
 {
     return interpreter->cloopStack().isSafeToRecurse();
 }
+
+void* VM::currentCLoopStackPointer() const
+{
+    return interpreter->cloopStack().currentStackPointer();
+}
 #endif // ENABLE(C_LOOP)
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)

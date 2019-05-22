@@ -38,10 +38,12 @@ class Exception;
 #define EXCEPTION_ASSERT_UNUSED(variable, assertion) RELEASE_ASSERT(assertion)
 #define EXCEPTION_ASSERT_WITH_MESSAGE(assertion, message) RELEASE_ASSERT_WITH_MESSAGE(assertion, message)
 
-#if ASAN_ENABLED && COMPILER(GCC_COMPATIBLE)
-#define EXCEPTION_SCOPE_POSITION_FOR_ASAN currentStackPointer()
+#if ENABLE(C_LOOP)
+#define EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__) (vm__).currentCLoopStackPointer()
+#elif ASAN_ENABLED && COMPILER(GCC_COMPATIBLE)
+#define EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__) currentStackPointer()
 #else
-#define EXCEPTION_SCOPE_POSITION_FOR_ASAN nullptr
+#define EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__) nullptr
 #endif
 
 class ExceptionScope {
@@ -53,7 +55,7 @@ public:
     ALWAYS_INLINE void assertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
 
-#if ASAN_ENABLED
+#if ASAN_ENABLED || ENABLE(C_LOOP)
     const void* stackPosition() const {  return m_location.stackPosition; }
 #else
     const void* stackPosition() const {  return this; }

@@ -48,7 +48,7 @@ public:
 };
 
 #define DECLARE_CATCH_SCOPE(vm__) \
-    JSC::CatchScope((vm__), JSC::ExceptionEventLocation(EXCEPTION_SCOPE_POSITION_FOR_ASAN, __FUNCTION__, __FILE__, __LINE__))
+    JSC::CatchScope((vm__), JSC::ExceptionEventLocation(EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__), __FUNCTION__, __FILE__, __LINE__))
 
 #else // not ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
