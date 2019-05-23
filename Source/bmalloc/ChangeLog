@@ -1,3 +1,21 @@
+2019-05-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use target oriented design for bmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=198046
+
+        Reviewed by Konstantin Tokarev.
+
+        Switch to a target oriented dsign for bmalloc. Use target_include_directories directly
+        instead of include_directories.
+
+        List the headers for bmalloc and copy them using WEBKIT_COPY_FILES.
+
+        Add an intermediate target bmalloc_PostBuild which depends on bmalloc and the headers
+        being copied. Then alias that to WebKit::bmalloc.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2019-05-16  Keith Miller  <keith_miller@apple.com>
 
         Wasm should cage the memory base pointers in structs

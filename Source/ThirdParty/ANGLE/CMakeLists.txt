@@ -1,35 +1,3 @@
-# FIXME: Remove when landing https://bugs.webkit.org/show_bug.cgi?id=197174
-function(WEBKIT_COPY_FILES target_name)
-    set(options FLATTENED)
-    set(oneValueArgs DESTINATION)
-    set(multiValueArgs FILES)
-    cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    set(files ${opt_FILES})
-    set(dst_files)
-    foreach (file IN LISTS files)
-        if (IS_ABSOLUTE ${file})
-            set(src_file ${file})
-        else ()
-            set(src_file ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-        endif ()
-        if (opt_FLATTENED)
-            get_filename_component(filename ${file} NAME)
-            set(dst_file ${opt_DESTINATION}/${filename})
-        else ()
-            get_filename_component(file_dir ${file} DIRECTORY)
-            file(MAKE_DIRECTORY ${opt_DESTINATION}/${file_dir})
-            set(dst_file ${opt_DESTINATION}/${file})
-        endif ()
-        add_custom_command(OUTPUT ${dst_file}
-            COMMAND ${CMAKE_COMMAND} -E copy ${src_file} ${dst_file}
-            MAIN_DEPENDENCY ${file}
-            VERBATIM
-        )
-        list(APPEND dst_files ${dst_file})
-    endforeach ()
-    add_custom_target(${target_name} DEPENDS ${dst_files})
-endfunction()
-
 include(Compiler.cmake)
 include(GLESv2.cmake)
 

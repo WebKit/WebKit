@@ -1,6 +1,6 @@
 set_property(DIRECTORY . PROPERTY FOLDER "bmalloc")
 
-set(bmalloc_INCLUDE_DIRECTORIES
+set(bmalloc_PRIVATE_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}"
 )
 
@@ -36,6 +36,101 @@ set(bmalloc_SOURCES
     bmalloc/mbmalloc.cpp
 )
 
+set(bmalloc_PUBLIC_HEADERS
+    bmalloc/Algorithm.h
+    bmalloc/AllIsoHeaps.h
+    bmalloc/AllIsoHeapsInlines.h
+    bmalloc/Allocator.h
+    bmalloc/AvailableMemory.h
+    bmalloc/BAssert.h
+    bmalloc/BCompiler.h
+    bmalloc/BExport.h
+    bmalloc/BInline.h
+    bmalloc/BMalloced.h
+    bmalloc/BPlatform.h
+    bmalloc/BVMTags.h
+    bmalloc/Bits.h
+    bmalloc/BulkDecommit.h
+    bmalloc/BumpAllocator.h
+    bmalloc/BumpRange.h
+    bmalloc/Cache.h
+    bmalloc/Chunk.h
+    bmalloc/CryptoRandom.h
+    bmalloc/Deallocator.h
+    bmalloc/DebugHeap.h
+    bmalloc/DeferredDecommit.h
+    bmalloc/DeferredDecommitInlines.h
+    bmalloc/DeferredTrigger.h
+    bmalloc/DeferredTriggerInlines.h
+    bmalloc/EligibilityResult.h
+    bmalloc/EligibilityResultInlines.h
+    bmalloc/Environment.h
+    bmalloc/FixedVector.h
+    bmalloc/FreeList.h
+    bmalloc/FreeListInlines.h
+    bmalloc/Gigacage.h
+    bmalloc/Heap.h
+    bmalloc/HeapKind.h
+    bmalloc/IsoAllocator.h
+    bmalloc/IsoAllocatorInlines.h
+    bmalloc/IsoConfig.h
+    bmalloc/IsoDeallocator.h
+    bmalloc/IsoDeallocatorInlines.h
+    bmalloc/IsoDirectory.h
+    bmalloc/IsoDirectoryInlines.h
+    bmalloc/IsoDirectoryPage.h
+    bmalloc/IsoDirectoryPageInlines.h
+    bmalloc/IsoHeap.h
+    bmalloc/IsoHeapImpl.h
+    bmalloc/IsoHeapImplInlines.h
+    bmalloc/IsoHeapInlines.h
+    bmalloc/IsoPage.h
+    bmalloc/IsoPageInlines.h
+    bmalloc/IsoPageTrigger.h
+    bmalloc/IsoSharedConfig.h
+    bmalloc/IsoSharedHeap.h
+    bmalloc/IsoSharedHeapInlines.h
+    bmalloc/IsoSharedPage.h
+    bmalloc/IsoSharedPageInlines.h
+    bmalloc/IsoTLS.h
+    bmalloc/IsoTLSAllocatorEntry.h
+    bmalloc/IsoTLSAllocatorEntryInlines.h
+    bmalloc/IsoTLSDeallocatorEntry.h
+    bmalloc/IsoTLSDeallocatorEntryInlines.h
+    bmalloc/IsoTLSEntry.h
+    bmalloc/IsoTLSEntryInlines.h
+    bmalloc/IsoTLSInlines.h
+    bmalloc/IsoTLSLayout.h
+    bmalloc/LargeMap.h
+    bmalloc/LargeRange.h
+    bmalloc/LineMetadata.h
+    bmalloc/List.h
+    bmalloc/Logging.h
+    bmalloc/Map.h
+    bmalloc/Mutex.h
+    bmalloc/Object.h
+    bmalloc/ObjectType.h
+    bmalloc/PerHeapKind.h
+    bmalloc/PerProcess.h
+    bmalloc/PerThread.h
+    bmalloc/PhysicalPageMap.h
+    bmalloc/ProcessCheck.h
+    bmalloc/Range.h
+    bmalloc/Scavenger.h
+    bmalloc/ScopeExit.h
+    bmalloc/Sizes.h
+    bmalloc/SmallLine.h
+    bmalloc/SmallPage.h
+    bmalloc/StaticPerProcess.h
+    bmalloc/StdLibExtras.h
+    bmalloc/Syscall.h
+    bmalloc/VMAllocate.h
+    bmalloc/VMHeap.h
+    bmalloc/Vector.h
+    bmalloc/Zone.h
+    bmalloc/bmalloc.h
+)
+
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     list(APPEND bmalloc_SOURCES
         bmalloc/Zone.cpp
@@ -49,13 +144,27 @@ set(bmalloc_LIBRARIES
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
-include_directories(${bmalloc_INCLUDE_DIRECTORIES})
+
 add_library(bmalloc STATIC ${bmalloc_SOURCES})
+target_include_directories(bmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
+target_include_directories(bmalloc INTERFACE "$<BUILD_INTERFACE:${bmalloc_FRAMEWORK_HEADERS_DIR}>")
 target_link_libraries(bmalloc ${bmalloc_LIBRARIES})
 set_target_properties(bmalloc PROPERTIES COMPILE_DEFINITIONS "BUILDING_bmalloc")
 
+WEBKIT_COPY_FILES(bmalloc_CopyHeaders
+    DESTINATION ${bmalloc_FRAMEWORK_HEADERS_DIR}
+    FILES ${bmalloc_PUBLIC_HEADERS}
+)
+
+add_library(bmalloc_PostBuild INTERFACE)
+target_link_libraries(bmalloc_PostBuild INTERFACE bmalloc)
+add_dependencies(bmalloc_PostBuild bmalloc_CopyHeaders)
+
+add_library(WebKit::bmalloc ALIAS bmalloc_PostBuild)
+
 if (DEVELOPER_MODE)
     add_library(mbmalloc SHARED bmalloc/mbmalloc.cpp)
+    target_include_directories(mbmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
     target_link_libraries(mbmalloc bmalloc ${CMAKE_THREAD_LIBS_INIT} ${bmalloc_LIBRARIES})
     set_target_properties(mbmalloc PROPERTIES COMPILE_DEFINITIONS "BUILDING_mbmalloc")
 endif ()

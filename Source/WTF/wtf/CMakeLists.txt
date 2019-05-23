@@ -458,7 +458,6 @@ set(WTF_SOURCES
 )
 
 set(WTF_INCLUDE_DIRECTORIES
-    "${BMALLOC_DIR}"
     # FIXME: https://bugs.webkit.org/show_bug.cgi?id=196734#c1
     "${CMAKE_BINARY_DIR}"
     "${DERIVED_SOURCES_DIR}"
@@ -483,7 +482,7 @@ set(WTF_LIBRARIES
 )
 
 if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WTF_LIBRARIES bmalloc)
+    list(APPEND WTF_LIBRARIES WebKit::bmalloc)
 endif ()
 
 list(APPEND WTF_SOURCES

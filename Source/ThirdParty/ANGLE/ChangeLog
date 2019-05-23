@@ -1,3 +1,14 @@
+2019-05-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use target oriented design for bmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=198046
+
+        Reviewed by Konstantin Tokarev.
+
+        Remove WEBKIT_COPY_FILES from CMakelists.txt now that it is in WebKitMacros.
+
+        * CMakeLists.txt:
+
 2019-05-14  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r245088): [GTK] Several WebGL tests failing
