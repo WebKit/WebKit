@@ -1,3 +1,13 @@
+2019-05-23  Tadeu Zagallo  <tzagallo@apple.com>
+
+        DFG::OSREntry should not perform arity check
+        https://bugs.webkit.org/show_bug.cgi?id=198189
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/loop-osr-with-arity-mismatch.js: Added.
+        (foo):
+
 2019-05-23  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Skip additional tests on PlayStation

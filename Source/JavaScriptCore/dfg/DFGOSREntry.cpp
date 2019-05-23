@@ -177,15 +177,6 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    OSR at this time.
     
     for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
-        if (argument >= exec->argumentCountIncludingThis()) {
-            if (Options::verboseOSR()) {
-                dataLogF("    OSR failed because argument %zu was not passed, expected ", argument);
-                entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
-                dataLogF(".\n");
-            }
-            return nullptr;
-        }
-        
         JSValue value;
         if (!argument)
             value = exec->thisValue();
