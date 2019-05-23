@@ -1,3 +1,17 @@
+2019-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Add API test to make sure the system font is drawn just like in native code
+        https://bugs.webkit.org/show_bug.cgi?id=198010
+
+        Reviewed by Daniel Bates.
+
+        We can compare the width of using font-family:system-ui to a CTLine.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/TextWidth.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/TextWidth.mm: Added.
+        (TEST):
+
 2019-05-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Provide UIString descriptions to improve localizations

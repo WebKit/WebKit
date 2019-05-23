@@ -758,6 +758,9 @@
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
+		C20F88A72295B96700D610FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20F88A62295B96700D610FA /* CoreText.framework */; };
+		C22FA32B228F8708009D7988 /* TextWidth.mm in Sources */ = {isa = PBXBuildFile; fileRef = C22FA32A228F8708009D7988 /* TextWidth.mm */; };
+		C22FA32D228F8AEB009D7988 /* TextWidth.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C22FA32C228F877A009D7988 /* TextWidth.html */; };
 		C25CCA061E51380B0026CB8A /* LineBreaking.mm in Sources */ = {isa = PBXBuildFile; fileRef = C25CCA051E51380B0026CB8A /* LineBreaking.mm */; };
 		C25CCA0B1E5140C10026CB8A /* LineBreaking.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C25CCA0A1E513F490026CB8A /* LineBreaking.html */; };
 		C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = C25CCA0C1E5140E50026CB8A /* AllAhem.svg */; };
@@ -1317,6 +1320,7 @@
 				F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */,
 				F44C7A0520FAAE3C0014478C /* text-with-deferred-script.html in Copy Resources */,
 				F41AB9AA1EF4696B0083FA08 /* textarea-to-input.html in Copy Resources */,
+				C22FA32D228F8AEB009D7988 /* TextWidth.html in Copy Resources */,
 				F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */,
 				C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */,
 				CD57779D211CE91F001B371E /* video-with-audio-and-web-audio.html in Copy Resources */,
@@ -2110,6 +2114,9 @@
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
 		C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessTerminate.mm; sourceTree = "<group>"; };
+		C20F88A62295B96700D610FA /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		C22FA32A228F8708009D7988 /* TextWidth.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextWidth.mm; sourceTree = "<group>"; };
+		C22FA32C228F877A009D7988 /* TextWidth.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = TextWidth.html; sourceTree = "<group>"; };
 		C25CCA051E51380B0026CB8A /* LineBreaking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LineBreaking.mm; path = ../WebCore/LineBreaking.mm; sourceTree = "<group>"; };
 		C25CCA0A1E513F490026CB8A /* LineBreaking.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LineBreaking.html; sourceTree = "<group>"; };
 		C25CCA0C1E5140E50026CB8A /* AllAhem.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllAhem.svg; sourceTree = "<group>"; };
@@ -2407,6 +2414,7 @@
 			files = (
 				7A010BCB1D877C0500EDE72A /* CoreGraphics.framework in Frameworks */,
 				634910E01E9D3FF300880309 /* CoreLocation.framework in Frameworks */,
+				C20F88A72295B96700D610FA /* CoreText.framework in Frameworks */,
 				CDA3159D1ED5643F009F60D3 /* IOKit.framework in Frameworks */,
 				5CFACF63226F73C60056C7D0 /* libboringssl.a in Frameworks */,
 				7C83E03F1D0A61A000FEBCF3 /* libicucore.dylib in Frameworks */,
@@ -2700,6 +2708,7 @@
 				5774AA6721FBBF7800AF2A1B /* TestLoadOptimizer.mm */,
 				F4CD74C720FDB49600DE3794 /* TestURLSchemeHandler.h */,
 				F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */,
+				C22FA32A228F8708009D7988 /* TextWidth.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
 				7C882E031C80C624006BF731 /* UserContentWorld.mm */,
@@ -2868,6 +2877,7 @@
 			children = (
 				7A010BCA1D877C0500EDE72A /* CoreGraphics.framework */,
 				634910DF1E9D3FF300880309 /* CoreLocation.framework */,
+				C20F88A62295B96700D610FA /* CoreText.framework */,
 				0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */,
 				CDA3159C1ED5643F009F60D3 /* IOKit.framework */,
 				5CFACF62226F73C60056C7D0 /* libboringssl.a */,
@@ -3095,6 +3105,7 @@
 				F4CD74C520FDACF500DE3794 /* text-with-async-script.html */,
 				F44C7A0420FAAE320014478C /* text-with-deferred-script.html */,
 				F41AB9951EF4692C0083FA08 /* textarea-to-input.html */,
+				C22FA32C228F877A009D7988 /* TextWidth.html */,
 				F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */,
 				CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */,
 				CD577798211CDE8F001B371E /* web-audio-only.html */,
@@ -4405,6 +4416,7 @@
 				F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */,
 				93E6193B1F931B3A00AF245E /* TextCodec.cpp in Sources */,
 				CE3524F91B1441C40028A7C5 /* TextFieldDidBeginAndEndEditing.cpp in Sources */,
+				C22FA32B228F8708009D7988 /* TextWidth.mm in Sources */,
 				7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */,
 				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
 				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
