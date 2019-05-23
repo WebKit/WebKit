@@ -1,3 +1,14 @@
+2019-05-22  Antti Koivisto  <antti@apple.com>
+
+        Subselectors not searched when determining property whitelist for selector
+        https://bugs.webkit.org/show_bug.cgi?id=198147
+        <rdar://problem/50405208>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/lists/marker-style-subselector-whitelist-expected.txt: Added.
+        * fast/lists/marker-style-subselector-whitelist.html: Added.
+
 2019-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] The shouldIgnoreMetaViewport test option incorrectly persists across layout tests
