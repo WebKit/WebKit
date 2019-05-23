@@ -30,6 +30,7 @@
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "RemoteObjectRegistry.h"
+#import "WKAccessibilityWebPageObjectBase.h"
 #import "WebPageProxyMessages.h"
 #import "WebPaymentCoordinator.h"
 #import <WebCore/DictionaryLookup.h>
@@ -223,6 +224,12 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
 void WebPage::setRemoteObjectRegistry(RemoteObjectRegistry& registry)
 {
     m_remoteObjectRegistry = makeWeakPtr(registry);
+}
+
+void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
+{
+    auto* document = mainFrame()->document();
+    [m_mockAccessibilityElement setHasMainFramePlugin:document ? document->isPluginDocument() : false];
 }
     
 } // namespace WebKit

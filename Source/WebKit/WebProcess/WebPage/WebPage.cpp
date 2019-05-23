@@ -5763,6 +5763,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     WebProcess::singleton().updateActivePages();
 
     updateMainFrameScrollOffsetPinning();
+
+    updateMockAccessibilityElementAfterCommittingLoad();
 }
 
 void WebPage::didFinishDocumentLoad(WebFrame& frame)
@@ -6726,6 +6728,12 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
 {
     send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));
 }
+
+#if !PLATFORM(COCOA)
+void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
+{
+}
+#endif
 
 } // namespace WebKit
 

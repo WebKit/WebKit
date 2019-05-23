@@ -1586,6 +1586,8 @@ private:
 
     bool shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
 
+    void updateMockAccessibilityElementAfterCommittingLoad();
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;
