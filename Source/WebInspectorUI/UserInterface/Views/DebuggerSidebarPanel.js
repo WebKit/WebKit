@@ -124,9 +124,6 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         this._debuggerStepOutButtonItem.enabled = false;
         this._navigationBar.addNavigationItem(this._debuggerStepOutButtonItem);
 
-        // Add this offset-sections class name so the sticky headers don't overlap the navigation bar.
-        this.element.classList.add(WI.DebuggerSidebarPanel.OffsetSectionsStyleClassName);
-
         function showResourcesWithIssuesOnlyFilterFunction(treeElement)
         {
             // Issues are only shown in the scripts tree outline.

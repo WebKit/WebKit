@@ -31,8 +31,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
 
         this._delegate = delegate || null;
 
-        // Add this offset-sections class name so the sticky headers don't overlap the navigation bar.
-        this.element.classList.add(className, "offset-sections");
+        this.element.classList.add(className);
 
         this._navigationInfo = {identifier, label};
 
