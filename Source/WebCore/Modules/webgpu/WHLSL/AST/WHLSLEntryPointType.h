@@ -39,7 +39,6 @@ enum class EntryPointType : uint8_t {
     Vertex,
     Fragment,
     Compute,
-    // FIXME: Add an entry point type for testing
 };
 
 static ALWAYS_INLINE String toString(EntryPointType type)

@@ -34,7 +34,7 @@ namespace WebCore {
 
 namespace WHLSL {
 
-// FIXME: Generate descriptive error messages and return them here.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Generate descriptive error messages and return them here.
 struct RenderPrepareResult {
     String metalSource;
     String mangledVertexEntryPointName;

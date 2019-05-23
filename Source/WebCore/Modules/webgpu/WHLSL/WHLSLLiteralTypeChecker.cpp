@@ -42,15 +42,12 @@ namespace WHLSL {
 #if !ASSERT_DISABLED
 static AST::NativeTypeDeclaration* getNativeTypeDeclaration(AST::ResolvableType& resolvableType)
 {
-    if (!resolvableType.resolvedType())
+    if (!is<AST::TypeReference>(resolvableType.resolvedType()))
         return nullptr;
-    if (!is<AST::TypeReference>(*resolvableType.resolvedType()))
+    auto& typeReference = downcast<AST::TypeReference>(resolvableType.resolvedType());
+    if (!is<AST::NativeTypeDeclaration>(typeReference.resolvedType()))
         return nullptr;
-    auto& typeReference = downcast<AST::TypeReference>(*resolvableType.resolvedType());
-    ASSERT(typeReference.resolvedType());
-    if (!is<AST::NativeTypeDeclaration>(*typeReference.resolvedType()))
-        return nullptr;
-    return &downcast<AST::NativeTypeDeclaration>(*typeReference.resolvedType());
+    return &downcast<AST::NativeTypeDeclaration>(typeReference.resolvedType());
 }
 
 class LiteralTypeChecker : public Visitor {
@@ -79,7 +76,7 @@ private:
 
     void visit(AST::NullLiteralType& nullLiteralType) override
     {
-        ASSERT(nullLiteralType.resolvedType());
+        ASSERT(nullLiteralType.maybeResolvedType());
     }
 };
 #endif

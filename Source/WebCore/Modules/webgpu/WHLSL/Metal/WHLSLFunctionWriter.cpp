@@ -107,7 +107,7 @@ void FunctionDeclarationWriter::visit(AST::FunctionDeclaration& functionDeclarat
     for (size_t i = 0; i < functionDeclaration.parameters().size(); ++i) {
         if (i)
             m_stringBuilder.append(", ");
-        m_stringBuilder.append(m_typeNamer.mangledNameForType(*functionDeclaration.parameters()[i].type()));
+        m_stringBuilder.append(m_typeNamer.mangledNameForType(*functionDeclaration.parameters()[i]->type()));
     }
     m_stringBuilder.append(");\n");
 }
@@ -227,7 +227,7 @@ void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition
             auto parameterName = generateNextVariableName();
             auto addResult = m_variableMapping.add(&parameter, parameterName);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
-            m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*parameter.type()), ' ', parameterName));
+            m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*parameter->type()), ' ', parameterName));
         }
         m_stringBuilder.append(") {\n");
         checkErrorAndVisit(functionDefinition.block());
@@ -282,7 +282,7 @@ void FunctionDefinitionWriter::visit(AST::EffectfulExpressionStatement& effectfu
 
 void FunctionDefinitionWriter::visit(AST::Fallthrough&)
 {
-    m_stringBuilder.append("[[clang::fallthrough]];\n"); // FIXME: Make sure this is okay. Alternatively, we could do nothing and just return here instead.
+    m_stringBuilder.append("[[clang::fallthrough]];\n"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195808 Make sure this is okay. Alternatively, we could do nothing and just return here instead.
 }
 
 void FunctionDefinitionWriter::visit(AST::ForLoop& forLoop)
@@ -376,41 +376,37 @@ void FunctionDefinitionWriter::visit(AST::WhileLoop& whileLoop)
 
 void FunctionDefinitionWriter::visit(AST::IntegerLiteral& integerLiteral)
 {
-    ASSERT(integerLiteral.resolvedType());
     auto variableName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(*integerLiteral.resolvedType());
+    auto mangledTypeName = m_typeNamer.mangledNameForType(integerLiteral.resolvedType());
     m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", integerLiteral.value(), ");\n"));
     m_stack.append(variableName);
 }
 
 void FunctionDefinitionWriter::visit(AST::UnsignedIntegerLiteral& unsignedIntegerLiteral)
 {
-    ASSERT(unsignedIntegerLiteral.resolvedType());
     auto variableName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(*unsignedIntegerLiteral.resolvedType());
+    auto mangledTypeName = m_typeNamer.mangledNameForType(unsignedIntegerLiteral.resolvedType());
     m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", unsignedIntegerLiteral.value(), ");\n"));
     m_stack.append(variableName);
 }
 
 void FunctionDefinitionWriter::visit(AST::FloatLiteral& floatLiteral)
 {
-    ASSERT(floatLiteral.resolvedType());
     auto variableName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(*floatLiteral.resolvedType());
+    auto mangledTypeName = m_typeNamer.mangledNameForType(floatLiteral.resolvedType());
     m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", floatLiteral.value(), ");\n"));
     m_stack.append(variableName);
 }
 
 void FunctionDefinitionWriter::visit(AST::NullLiteral& nullLiteral)
 {
-    ASSERT(nullLiteral.resolvedType());
-    auto& unifyNode = nullLiteral.resolvedType()->unifyNode();
+    auto& unifyNode = nullLiteral.resolvedType().unifyNode();
     ASSERT(is<AST::UnnamedType>(unifyNode));
     auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
     bool isArrayReferenceType = is<AST::ArrayReferenceType>(unnamedType);
 
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*nullLiteral.resolvedType()), ' ', variableName, " = "));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(nullLiteral.resolvedType()), ' ', variableName, " = "));
     if (isArrayReferenceType)
         m_stringBuilder.append("{ nullptr, 0 }");
     else
@@ -421,20 +417,18 @@ void FunctionDefinitionWriter::visit(AST::NullLiteral& nullLiteral)
 
 void FunctionDefinitionWriter::visit(AST::BooleanLiteral& booleanLiteral)
 {
-    ASSERT(booleanLiteral.resolvedType());
     auto variableName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(*booleanLiteral.resolvedType());
+    auto mangledTypeName = m_typeNamer.mangledNameForType(booleanLiteral.resolvedType());
     m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = static_cast<", mangledTypeName, ">(", booleanLiteral.value() ? "true" : "false", ");\n"));
     m_stack.append(variableName);
 }
 
 void FunctionDefinitionWriter::visit(AST::EnumerationMemberLiteral& enumerationMemberLiteral)
 {
-    ASSERT(enumerationMemberLiteral.resolvedType());
     ASSERT(enumerationMemberLiteral.enumerationDefinition());
     ASSERT(enumerationMemberLiteral.enumerationDefinition());
     auto variableName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(*enumerationMemberLiteral.resolvedType());
+    auto mangledTypeName = m_typeNamer.mangledNameForType(enumerationMemberLiteral.resolvedType());
     m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = ", mangledTypeName, '.', m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()), ";\n"));
     m_stack.append(variableName);
 }
@@ -474,7 +468,7 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
     auto variableName = generateNextVariableName();
     auto addResult = m_variableMapping.add(&variableDeclaration, variableName);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    // FIXME: Implement qualifiers.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198160 Implement qualifiers.
     if (variableDeclaration.initializer()) {
         checkErrorAndVisit(*variableDeclaration.initializer());
         m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", m_stack.takeLast(), ";\n"));
@@ -486,12 +480,21 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
 
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)
 {
+    if (is<AST::DereferenceExpression>(assignmentExpression.left())) {
+        checkErrorAndVisit(downcast<AST::DereferenceExpression>(assignmentExpression.left()).pointer());
+        auto leftName = m_stack.takeLast();
+        checkErrorAndVisit(assignmentExpression.right());
+        auto rightName = m_stack.takeLast();
+        m_stringBuilder.append(makeString('*', leftName, " = ", rightName, ";\n"));
+        m_stack.append(rightName);
+        return;
+    }
     checkErrorAndVisit(assignmentExpression.left());
     auto leftName = m_stack.takeLast();
     checkErrorAndVisit(assignmentExpression.right());
     auto rightName = m_stack.takeLast();
     m_stringBuilder.append(makeString(leftName, " = ", rightName, ";\n"));
-    m_stack.append(leftName);
+    m_stack.append(rightName);
 }
 
 void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
@@ -501,12 +504,11 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
         checkErrorAndVisit(argument);
         argumentNames.append(m_stack.takeLast());
     }
-    ASSERT(callExpression.resolvedType());
     ASSERT(callExpression.function());
     auto iterator = m_functionMapping.find(callExpression.function());
     ASSERT(iterator != m_functionMapping.end());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*callExpression.resolvedType()), ' ', variableName, " = ", iterator->value, '('));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(callExpression.resolvedType()), ' ', variableName, " = ", iterator->value, '('));
     for (size_t i = 0; i < argumentNames.size(); ++i) {
         if (i)
             m_stringBuilder.append(", ");
@@ -530,9 +532,8 @@ void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpr
 {
     checkErrorAndVisit(dereferenceExpression.pointer());
     auto right = m_stack.takeLast();
-    ASSERT(dereferenceExpression.resolvedType());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*dereferenceExpression.resolvedType()), ' ', variableName, " = *", right, ";\n"));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', variableName, " = *", right, ";\n"));
     m_stack.append(variableName);
 }
 
@@ -542,9 +543,8 @@ void FunctionDefinitionWriter::visit(AST::LogicalExpression& logicalExpression)
     auto left = m_stack.takeLast();
     checkErrorAndVisit(logicalExpression.right());
     auto right = m_stack.takeLast();
-    ASSERT(logicalExpression.resolvedType());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*logicalExpression.resolvedType()), ' ', variableName, " = ", left));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(logicalExpression.resolvedType()), ' ', variableName, " = ", left));
     switch (logicalExpression.type()) {
     case AST::LogicalExpression::Type::And:
         m_stringBuilder.append(" && ");
@@ -562,23 +562,21 @@ void FunctionDefinitionWriter::visit(AST::LogicalNotExpression& logicalNotExpres
 {
     checkErrorAndVisit(logicalNotExpression.operand());
     auto operand = m_stack.takeLast();
-    ASSERT(logicalNotExpression.resolvedType());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*logicalNotExpression.resolvedType()), ' ', variableName, " = !", operand, ";\n"));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(logicalNotExpression.resolvedType()), ' ', variableName, " = !", operand, ";\n"));
     m_stack.append(variableName);
 }
 
 void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpression)
 {
-    checkErrorAndVisit(makeArrayReferenceExpression.lValue());
+    checkErrorAndVisit(makeArrayReferenceExpression.leftValue());
     auto lValue = m_stack.takeLast();
-    ASSERT(makeArrayReferenceExpression.resolvedType());
     auto variableName = generateNextVariableName();
-    auto mangledTypeName = m_typeNamer.mangledNameForType(*makeArrayReferenceExpression.resolvedType());
-    if (is<AST::PointerType>(*makeArrayReferenceExpression.resolvedType()))
+    auto mangledTypeName = m_typeNamer.mangledNameForType(makeArrayReferenceExpression.resolvedType());
+    if (is<AST::PointerType>(makeArrayReferenceExpression.resolvedType()))
         m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { ", lValue, ", 1 };\n"));
-    else if (is<AST::ArrayType>(*makeArrayReferenceExpression.resolvedType())) {
-        auto& arrayType = downcast<AST::ArrayType>(*makeArrayReferenceExpression.resolvedType());
+    else if (is<AST::ArrayType>(makeArrayReferenceExpression.resolvedType())) {
+        auto& arrayType = downcast<AST::ArrayType>(makeArrayReferenceExpression.resolvedType());
         m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { &(", lValue, "[0]), ", arrayType.numElements(), " };\n"));
     } else
         m_stringBuilder.append(makeString(mangledTypeName, ' ', variableName, " = { &", lValue, ", 1 };\n"));
@@ -587,11 +585,10 @@ void FunctionDefinitionWriter::visit(AST::MakeArrayReferenceExpression& makeArra
 
 void FunctionDefinitionWriter::visit(AST::MakePointerExpression& makePointerExpression)
 {
-    checkErrorAndVisit(makePointerExpression.lValue());
+    checkErrorAndVisit(makePointerExpression.leftValue());
     auto lValue = m_stack.takeLast();
-    ASSERT(makePointerExpression.resolvedType());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*makePointerExpression.resolvedType()), ' ', variableName, " = &", lValue, ";\n"));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(makePointerExpression.resolvedType()), ' ', variableName, " = &", lValue, ";\n"));
     m_stack.append(variableName);
 }
 
@@ -606,9 +603,8 @@ void FunctionDefinitionWriter::visit(AST::TernaryExpression& ternaryExpression)
     checkErrorAndVisit(ternaryExpression.predicate());
     auto check = m_stack.takeLast();
 
-    ASSERT(ternaryExpression.resolvedType());
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*ternaryExpression.resolvedType()), ' ', variableName, ";\n"));
+    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(ternaryExpression.resolvedType()), ' ', variableName, ";\n"));
 
     m_stringBuilder.append(makeString("if (", check, ") {\n"));
     checkErrorAndVisit(ternaryExpression.bodyExpression());

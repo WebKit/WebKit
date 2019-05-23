@@ -349,6 +349,7 @@ Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp
 Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp
 Modules/webgpu/WHLSL/WHLSLPrepare.cpp
+Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUBindGroup.cpp

@@ -60,7 +60,7 @@ public:
         m_currentSemantic = nullptr;
     }
 
-    Vector<EntryPointItem>&& takeEntryPointItems()
+    Vector<EntryPointItem> takeEntryPointItems()
     {
         return WTFMove(m_entryPointItems);
     }
@@ -111,10 +111,9 @@ public:
 
     void visit(AST::TypeReference& typeReference)
     {
-        ASSERT(typeReference.resolvedType());
         m_typeReferences.append(typeReference);
         auto depth = m_typeReferences.size();
-        checkErrorAndVisit(*typeReference.resolvedType());
+        checkErrorAndVisit(typeReference.resolvedType());
         ASSERT_UNUSED(depth, m_typeReferences.size() == depth);
         m_typeReferences.removeLast();
     }

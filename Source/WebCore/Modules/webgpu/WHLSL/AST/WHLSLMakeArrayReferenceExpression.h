@@ -39,9 +39,9 @@ namespace AST {
 
 class MakeArrayReferenceExpression : public Expression {
 public:
-    MakeArrayReferenceExpression(Lexer::Token&& origin, UniqueRef<Expression>&& lValue)
+    MakeArrayReferenceExpression(Lexer::Token&& origin, UniqueRef<Expression>&& leftValue)
         : Expression(WTFMove(origin))
-        , m_lValue(WTFMove(lValue))
+        , m_leftValue(WTFMove(leftValue))
     {
     }
 
@@ -52,10 +52,10 @@ public:
 
     bool isMakeArrayReferenceExpression() const override { return true; }
 
-    Expression& lValue() { return m_lValue; }
+    Expression& leftValue() { return m_leftValue; }
 
 private:
-    UniqueRef<Expression> m_lValue;
+    UniqueRef<Expression> m_leftValue;
 };
 
 } // namespace AST

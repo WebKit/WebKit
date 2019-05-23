@@ -59,8 +59,8 @@ public:
     NullLiteral clone() const
     {
         auto result = NullLiteral(Lexer::Token(origin()));
-        if (result.m_type.resolvedType())
-            result.m_type.resolve(result.m_type.resolvedType()->clone());
+        if (auto* resolvedType = m_type.maybeResolvedType())
+            result.m_type.resolve(resolvedType->clone());
         return result;
     }
 

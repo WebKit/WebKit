@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include <cstdint>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -56,6 +57,74 @@ static ALWAYS_INLINE String toString(AddressSpace addressSpace)
         return "thread"_str;
     }
 }
+
+struct LeftValue {
+    AddressSpace addressSpace;
+};
+
+struct AbstractLeftValue {
+};
+
+struct RightValue {
+};
+
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=198158 This wrapper might not be necessary.
+class TypeAnnotation {
+public:
+    TypeAnnotation()
+#if !ASSERT_DISABLED
+        : m_empty(true)
+#endif
+    {
+    }
+
+    TypeAnnotation(LeftValue v)
+        : m_inner(v)
+    {
+    }
+
+    TypeAnnotation(AbstractLeftValue v)
+        : m_inner(v)
+    {
+    }
+
+    TypeAnnotation(RightValue v)
+        : m_inner(v)
+    {
+    }
+
+    TypeAnnotation(const TypeAnnotation&) = default;
+    TypeAnnotation(TypeAnnotation&& other) = default;
+
+    TypeAnnotation& operator=(const TypeAnnotation&) = default;
+    TypeAnnotation& operator=(TypeAnnotation&& other) = default;
+
+    Optional<AddressSpace> leftAddressSpace() const
+    {
+        ASSERT(!m_empty);
+        if (WTF::holds_alternative<LeftValue>(m_inner))
+            return WTF::get<LeftValue>(m_inner).addressSpace;
+        return WTF::nullopt;
+    }
+
+    bool isRightValue() const
+    {
+        ASSERT(!m_empty);
+        return WTF::holds_alternative<RightValue>(m_inner);
+    }
+
+    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<LeftValue, AbstractLeftValue, RightValue>&>()))
+    {
+        ASSERT(!m_empty);
+        return WTF::visit(visitor, m_inner);
+    }
+
+private:
+    Variant<LeftValue, AbstractLeftValue, RightValue> m_inner;
+#if !ASSERT_DISABLED
+    bool m_empty { false };
+#endif
+};
 
 }
 

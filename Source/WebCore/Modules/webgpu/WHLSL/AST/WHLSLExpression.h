@@ -57,7 +57,13 @@ public:
 
     const Lexer::Token& origin() const { return m_origin; }
 
-    UnnamedType* resolvedType() { return m_type ? &*m_type : nullptr; }
+    UnnamedType* maybeResolvedType() { return m_type ? &*m_type : nullptr; }
+
+    UnnamedType& resolvedType()
+    {
+        ASSERT(m_type);
+        return *m_type;
+    }
 
     void setType(UniqueRef<UnnamedType>&& type)
     {
@@ -65,12 +71,18 @@ public:
         m_type = WTFMove(type);
     }
 
-    const Optional<AddressSpace>& addressSpace() const { return m_addressSpace; }
+    const TypeAnnotation* maybeTypeAnnotation() const { return m_typeAnnotation ? &*m_typeAnnotation : nullptr; }
 
-    void setAddressSpace(Optional<AddressSpace>& addressSpace)
+    const TypeAnnotation& typeAnnotation() const
     {
-        ASSERT(!m_addressSpace);
-        m_addressSpace = addressSpace;
+        ASSERT(m_typeAnnotation);
+        return *m_typeAnnotation;
+    }
+
+    void setTypeAnnotation(TypeAnnotation&& typeAnnotation)
+    {
+        ASSERT(!m_typeAnnotation);
+        m_typeAnnotation = WTFMove(typeAnnotation);
     }
 
     virtual bool isAssignmentExpression() const { return false; }
@@ -97,7 +109,7 @@ public:
 private:
     Lexer::Token m_origin;
     Optional<UniqueRef<UnnamedType>> m_type;
-    Optional<AddressSpace> m_addressSpace;
+    Optional<TypeAnnotation> m_typeAnnotation;
 };
 
 } // namespace AST

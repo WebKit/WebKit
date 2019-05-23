@@ -39,10 +39,8 @@ namespace AST {
 
 int64_t UnsignedIntegerLiteral::valueForSelectedType() const
 {
-    ASSERT(m_type.resolvedType());
-    auto& typeReference = downcast<TypeReference>(*m_type.resolvedType());
-    ASSERT(typeReference.resolvedType());
-    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(*typeReference.resolvedType());
+    auto& typeReference = downcast<TypeReference>(m_type.resolvedType());
+    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(typeReference.resolvedType());
     return nativeTypeDeclaration.formatValueFromUnsignedInteger()(m_value);
 }
 

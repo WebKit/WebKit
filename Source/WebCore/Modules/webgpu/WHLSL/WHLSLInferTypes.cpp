@@ -104,7 +104,7 @@ bool matches(const AST::UnnamedType& unnamedType, const AST::NamedType& other)
 
 static Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::Type& unifyNode, AST::ResolvableType& resolvableType)
 {
-    ASSERT(!resolvableType.resolvedType());
+    ASSERT(!resolvableType.maybeResolvedType());
     if (!resolvableType.canResolve(unifyNode))
         return WTF::nullopt;
     if (is<AST::NamedType>(unifyNode)) {
@@ -131,8 +131,8 @@ Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::NamedType& namedType, 
 
 Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::ResolvableType& resolvableType1, AST::ResolvableType& resolvableType2)
 {
-    ASSERT(!resolvableType1.resolvedType());
-    ASSERT(!resolvableType2.resolvedType());
+    ASSERT(!resolvableType1.maybeResolvedType());
+    ASSERT(!resolvableType2.maybeResolvedType());
     if (is<AST::FloatLiteralType>(resolvableType1) && is<AST::FloatLiteralType>(resolvableType2)) {
         resolvableType1.resolve(downcast<AST::FloatLiteralType>(resolvableType1).preferredType().clone());
         resolvableType2.resolve(downcast<AST::FloatLiteralType>(resolvableType2).preferredType().clone());
@@ -157,7 +157,7 @@ Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::ResolvableType& resolv
 
 Optional<UniqueRef<AST::UnnamedType>> commit(AST::ResolvableType& resolvableType)
 {
-    ASSERT(!resolvableType.resolvedType());
+    ASSERT(!resolvableType.maybeResolvedType());
     if (is<AST::FloatLiteralType>(resolvableType)) {
         auto& floatLiteralType = downcast<AST::FloatLiteralType>(resolvableType);
         resolvableType.resolve(floatLiteralType.preferredType().clone());
@@ -227,9 +227,9 @@ bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::r
         return false;
     for (size_t i = 0; i < possibleFunction.parameters().size(); ++i) {
         auto success = argumentTypes[i].get().visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
-            return matches(*possibleFunction.parameters()[i].type(), unnamedType);
+            return matches(*possibleFunction.parameters()[i]->type(), unnamedType);
         }, [&](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> bool {
-            return resolvableTypeReference->resolvableType().canResolve(possibleFunction.parameters()[i].type()->unifyNode());
+            return resolvableTypeReference->resolvableType().canResolve(possibleFunction.parameters()[i]->type()->unifyNode());
         }));
         if (!success)
             return false;

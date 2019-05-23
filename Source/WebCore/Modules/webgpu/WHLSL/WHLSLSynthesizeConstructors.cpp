@@ -85,12 +85,12 @@ public:
         Visitor::visit(nativeTypeDeclaration);
     }
 
-    Vector<std::reference_wrapper<AST::UnnamedType>>&& takeUnnamedTypes()
+    Vector<std::reference_wrapper<AST::UnnamedType>> takeUnnamedTypes()
     {
         return WTFMove(m_unnamedTypes);
     }
 
-    Vector<std::reference_wrapper<AST::NamedType>>&& takeNamedTypes()
+    Vector<std::reference_wrapper<AST::NamedType>> takeNamedTypes()
     {
         return WTFMove(m_namedTypes);
     }
@@ -110,7 +110,7 @@ bool synthesizeConstructors(Program& program)
     bool isOperator = true;
 
     for (auto& unnamedType : unnamedTypes) {
-        AST::VariableDeclaration variableDeclaration(Lexer::Token(unnamedType.get().origin()), AST::Qualifiers(), { unnamedType.get().clone() }, String(), WTF::nullopt, WTF::nullopt);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(unnamedType.get().origin()), AST::Qualifiers(), unnamedType.get().clone(), String(), WTF::nullopt, WTF::nullopt);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
         AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.get().clone(), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
@@ -127,7 +127,7 @@ bool synthesizeConstructors(Program& program)
         if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtomic())
             continue;
 
-        AST::VariableDeclaration variableDeclaration(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()) }, String(), WTF::nullopt, WTF::nullopt);
+        auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get())), String(), WTF::nullopt, WTF::nullopt);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
         AST::NativeFunctionDeclaration copyConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));

@@ -53,17 +53,17 @@ public:
 
     bool isDotExpression() const override { return true; }
 
-    String getFunctionName() const override
+    String getterFunctionName() const override
     {
         return makeString("operator.", m_fieldName);
     }
 
-    String setFunctionName() const override
+    String setterFunctionName() const override
     {
         return makeString("operator.", m_fieldName, "=");
     }
 
-    String andFunctionName() const override
+    String anderFunctionName() const override
     {
         return makeString("operator&.", m_fieldName);
     }

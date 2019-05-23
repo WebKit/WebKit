@@ -44,7 +44,7 @@ static unsigned conversionCost(AST::FunctionDeclaration& candidate, const Vector
         conversionCost += argumentTypes[i].get().visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>&) -> unsigned {
             return 0;
         }, [&](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> unsigned {
-            return resolvableTypeReference->resolvableType().conversionCost(*candidate.parameters()[i].type());
+            return resolvableTypeReference->resolvableType().conversionCost(*candidate.parameters()[i]->type());
         }));
     }
     // The return type can never be a literal type, so its conversion cost is always 0.

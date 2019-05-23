@@ -38,6 +38,7 @@
 #include "WHLSLNameResolver.h"
 #include "WHLSLParser.h"
 #include "WHLSLProgram.h"
+#include "WHLSLPropertyResolver.h"
 #include "WHLSLRecursionChecker.h"
 #include "WHLSLRecursiveTypeChecker.h"
 #include "WHLSLSemanticMatcher.h"
@@ -117,7 +118,7 @@ static Optional<Program> prepareShared(String& whlslSource)
     RUN_PASS(check, program);
 
     checkLiteralTypes(program);
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Resolve properties here
+    resolveProperties(program);
     findHighZombies(program);
     RUN_PASS(checkStatementBehavior, program);
     RUN_PASS(checkRecursion, program);

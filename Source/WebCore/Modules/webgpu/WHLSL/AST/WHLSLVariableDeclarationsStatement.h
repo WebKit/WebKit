@@ -40,7 +40,7 @@ namespace AST {
 
 class VariableDeclarationsStatement : public Statement {
 public:
-    VariableDeclarationsStatement(Lexer::Token&& origin, Vector<VariableDeclaration>&& variableDeclarations)
+    VariableDeclarationsStatement(Lexer::Token&& origin, VariableDeclarations&& variableDeclarations)
         : Statement(WTFMove(origin))
         , m_variableDeclarations(WTFMove(variableDeclarations))
     {
@@ -53,10 +53,10 @@ public:
 
     bool isVariableDeclarationsStatement() const override { return true; }
 
-    Vector<VariableDeclaration>& variableDeclarations() { return m_variableDeclarations; }
+    Vector<UniqueRef<VariableDeclaration>>& variableDeclarations() { return m_variableDeclarations; }
 
 private:
-    Vector<VariableDeclaration> m_variableDeclarations;
+    VariableDeclarations m_variableDeclarations;
 };
 
 } // namespace AST

@@ -243,7 +243,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         ASSERT(typeReference->name() == "float4");
         return "float"_str;
     })();
-    // FIXME: Specify the second template argument to Metal texture types.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Specify the second template argument to Metal texture types.
     return makeString(prefix, '<', innerType, '>');
 }
 

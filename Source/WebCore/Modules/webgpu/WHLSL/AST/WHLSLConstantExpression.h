@@ -41,7 +41,7 @@ namespace WHLSL {
 
 namespace AST {
 
-// FIXME: macOS Sierra doesn't seem to support putting Variants inside Variants,
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=198158 macOS Sierra doesn't seem to support putting Variants inside Variants,
 // so this is a wrapper class to make sure that doesn't happen. As soon as we don't
 // have to support Sierra, this can be migrated to a Variant proper.
 class ConstantExpression {

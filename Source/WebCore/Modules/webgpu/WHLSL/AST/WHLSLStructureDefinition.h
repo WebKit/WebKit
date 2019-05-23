@@ -55,7 +55,7 @@ public:
     bool isStructureDefinition() const override { return true; }
 
     StructureElements& structureElements() { return m_structureElements; }
-    StructureElement* find(String& name)
+    StructureElement* find(const String& name)
     {
         auto iterator = std::find_if(m_structureElements.begin(), m_structureElements.end(), [&](StructureElement& structureElement) -> bool {
             return structureElement.name() == name;

@@ -390,4 +390,13 @@ native void AllMemoryBarrierWithGroupSync();
 native void DeviceMemoryBarrierWithGroupSync();
 native void GroupMemoryBarrierWithGroupSync();
 
+operator float4(float x, float y, float z, float w) {
+    float4 result;
+    result.x = x;
+    result.y = y;
+    result.z = z;
+    result.w = w;
+    return result;
+}
+
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=192890 Insert the rest of the standard library once the parser is fast enough

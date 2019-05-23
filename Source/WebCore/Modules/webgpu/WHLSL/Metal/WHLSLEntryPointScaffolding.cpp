@@ -86,7 +86,7 @@ static String attributeForSemantic(AST::Semantic& semantic)
     if (WTF::holds_alternative<AST::BuiltInSemantic>(semantic))
         return attributeForSemantic(WTF::get<AST::BuiltInSemantic>(semantic));
     auto& stageInOutSemantic = WTF::get<AST::StageInOutSemantic>(semantic);
-    return makeString("[[user(", stageInOutSemantic.index(), ")]]");
+    return makeString("[[user(user", stageInOutSemantic.index(), ")]]");
 }
 
 EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics, TypeNamer& typeNamer, EntryPointItems& entryPointItems, HashMap<Binding*, size_t>& resourceMap, Layout& layout, std::function<String()>&& generateNextVariableName)
@@ -188,9 +188,9 @@ String EntryPointScaffolding::mangledInputPath(Vector<String>& path)
     bool found = false;
     AST::StructureDefinition* structureDefinition = nullptr;
     for (size_t i = 0; i < m_functionDefinition.parameters().size(); ++i) {
-        if (m_functionDefinition.parameters()[i].name() == path[0]) {
+        if (m_functionDefinition.parameters()[i]->name() == path[0]) {
             stringBuilder.append(m_parameterVariables[i]);
-            auto& unifyNode = m_functionDefinition.parameters()[i].type()->unifyNode();
+            auto& unifyNode = m_functionDefinition.parameters()[i]->type()->unifyNode();
             if (is<AST::NamedType>(unifyNode)) {
                 auto& namedType = downcast<AST::NamedType>(unifyNode);
                 if (is<AST::StructureDefinition>(namedType))
@@ -249,7 +249,7 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
 {
     StringBuilder stringBuilder;
     for (size_t i = 0; i < m_functionDefinition.parameters().size(); ++i)
-        stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*m_functionDefinition.parameters()[i].type()), ' ', m_parameterVariables[i], ";\n"));
+        stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*m_functionDefinition.parameters()[i]->type()), ' ', m_parameterVariables[i], ";\n"));
 
     for (size_t i = 0; i < m_layout.size(); ++i) {
         auto variableName = m_namedBindGroups[i].variableName;
@@ -403,8 +403,8 @@ String FragmentEntryPointScaffolding::helperTypes()
     for (auto& namedStageIn : m_namedStageIns) {
         auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
         auto elementName = namedStageIn.elementName;
-        auto attributeIndex = namedStageIn.elementName;
-        stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[user(", attributeIndex, ")]];\n"));
+        auto attributeIndex = namedStageIn.attributeIndex;
+        stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[user(user", attributeIndex, ")]];\n"));
     }
     stringBuilder.append("};\n\n");
 
@@ -446,7 +446,7 @@ String FragmentEntryPointScaffolding::unpack()
     for (auto& namedStageIn : m_namedStageIns) {
         auto& path = m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].path;
         auto& elementName = namedStageIn.elementName;
-        stringBuilder.append(makeString(mangledInputPath(path), " = ", m_stageInStructName, '.', elementName, ";\n"));
+        stringBuilder.append(makeString(mangledInputPath(path), " = ", m_stageInParameterName, '.', elementName, ";\n"));
     }
 
     return stringBuilder.toString();

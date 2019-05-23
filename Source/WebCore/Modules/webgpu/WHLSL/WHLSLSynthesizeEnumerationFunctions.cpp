@@ -41,8 +41,8 @@ bool synthesizeEnumerationFunctions(Program& program)
     bool isOperator = true;
     for (auto& enumerationDefinition : program.enumerationDefinitions()) {
         {
-            AST::VariableDeclaration variableDeclaration1(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition) }, String(), WTF::nullopt, WTF::nullopt);
-            AST::VariableDeclaration variableDeclaration2(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition) }, String(), WTF::nullopt, WTF::nullopt);
+            auto variableDeclaration1 = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition)), String(), WTF::nullopt, WTF::nullopt);
+            auto variableDeclaration2 = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition)), String(), WTF::nullopt, WTF::nullopt);
             AST::VariableDeclarations parameters;
             parameters.append(WTFMove(variableDeclaration1));
             parameters.append(WTFMove(variableDeclaration2));
@@ -52,7 +52,7 @@ bool synthesizeEnumerationFunctions(Program& program)
         }
 
         {
-            AST::VariableDeclaration variableDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition) }, String(), WTF::nullopt, WTF::nullopt);
+            auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition)), String(), WTF::nullopt, WTF::nullopt);
             AST::VariableDeclarations parameters;
             parameters.append(WTFMove(variableDeclaration));
             AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::AttributeBlock(), WTF::nullopt, enumerationDefinition->type().clone(), "operator.value"_str, WTFMove(parameters), WTF::nullopt, isOperator));
@@ -61,7 +61,7 @@ bool synthesizeEnumerationFunctions(Program& program)
         }
 
         {
-            AST::VariableDeclaration variableDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition) }, String(), WTF::nullopt, WTF::nullopt);
+            auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition)), String(), WTF::nullopt, WTF::nullopt);
             AST::VariableDeclarations parameters;
             parameters.append(WTFMove(variableDeclaration));
             AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::AttributeBlock(), WTF::nullopt, enumerationDefinition->type().clone(), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
@@ -70,10 +70,10 @@ bool synthesizeEnumerationFunctions(Program& program)
         }
 
         {
-            AST::VariableDeclaration variableDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), enumerationDefinition->type().clone(), String(), WTF::nullopt, WTF::nullopt);
+            auto variableDeclaration = makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(enumerationDefinition->origin()), AST::Qualifiers(), enumerationDefinition->type().clone(), String(), WTF::nullopt, WTF::nullopt);
             AST::VariableDeclarations parameters;
             parameters.append(WTFMove(variableDeclaration));
-            AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::AttributeBlock(), WTF::nullopt, { AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition) }, "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
+            AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(enumerationDefinition->origin()), AST::AttributeBlock(), WTF::nullopt, UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(enumerationDefinition->origin()), enumerationDefinition)), "operator cast"_str, WTFMove(parameters), WTF::nullopt, isOperator));
             if (!program.append(WTFMove(nativeFunctionDeclaration)))
                 return false;
         }

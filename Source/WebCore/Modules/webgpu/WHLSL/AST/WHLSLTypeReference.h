@@ -62,7 +62,12 @@ public:
 
     String& name() { return m_name; }
     TypeArguments& typeArguments() { return m_typeArguments; }
-    NamedType* resolvedType() const { return m_resolvedType; }
+    NamedType* maybeResolvedType() const { return m_resolvedType; }
+    NamedType& resolvedType() const
+    {
+        ASSERT(m_resolvedType);
+        return *m_resolvedType;
+    }
 
     const Type& unifyNode() const override
     {

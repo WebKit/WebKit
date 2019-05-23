@@ -72,6 +72,7 @@ private:
 
 // This is a thin wrapper around a Variant.
 // It exists so we can make sure that the default constructor does the right thing.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=198158 This wrapper might not be necessary.
 class ResolvingType {
 public:
     ResolvingType()
@@ -102,10 +103,11 @@ public:
         return *this;
     }
 
-    AST::UnnamedType& getUnnamedType()
+    AST::UnnamedType* getUnnamedType()
     {
-        ASSERT(WTF::holds_alternative<UniqueRef<AST::UnnamedType>>(m_inner));
-        return WTF::get<UniqueRef<AST::UnnamedType>>(m_inner);
+        if (WTF::holds_alternative<UniqueRef<AST::UnnamedType>>(m_inner))
+            return &WTF::get<UniqueRef<AST::UnnamedType>>(m_inner);
+        return nullptr;
     }
 
     template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<UniqueRef<AST::UnnamedType>, RefPtr<ResolvableTypeReference>>&>()))

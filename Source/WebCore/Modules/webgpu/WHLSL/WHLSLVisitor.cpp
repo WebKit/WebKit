@@ -118,8 +118,8 @@ void Visitor::visit(AST::TypeReference& typeReference)
 {
     for (auto& typeArgument : typeReference.typeArguments())
         checkErrorAndVisit(typeArgument);
-    if (typeReference.resolvedType() && is<AST::TypeDefinition>(*typeReference.resolvedType())) {
-        auto& typeDefinition = downcast<AST::TypeDefinition>(*typeReference.resolvedType());
+    if (typeReference.maybeResolvedType() && is<AST::TypeDefinition>(typeReference.resolvedType())) {
+        auto& typeDefinition = downcast<AST::TypeDefinition>(typeReference.resolvedType());
         checkErrorAndVisit(typeDefinition.type());
     }
 }
@@ -254,29 +254,29 @@ void Visitor::visit(AST::BooleanLiteral&)
 
 void Visitor::visit(AST::IntegerLiteralType& integerLiteralType)
 {
-    if (integerLiteralType.resolvedType())
-        checkErrorAndVisit(*integerLiteralType.resolvedType());
+    if (integerLiteralType.maybeResolvedType())
+        checkErrorAndVisit(integerLiteralType.resolvedType());
     checkErrorAndVisit(integerLiteralType.preferredType());
 }
 
 void Visitor::visit(AST::UnsignedIntegerLiteralType& unsignedIntegerLiteralType)
 {
-    if (unsignedIntegerLiteralType.resolvedType())
-        checkErrorAndVisit(*unsignedIntegerLiteralType.resolvedType());
+    if (unsignedIntegerLiteralType.maybeResolvedType())
+        checkErrorAndVisit(unsignedIntegerLiteralType.resolvedType());
     checkErrorAndVisit(unsignedIntegerLiteralType.preferredType());
 }
 
 void Visitor::visit(AST::FloatLiteralType& floatLiteralType)
 {
-    if (floatLiteralType.resolvedType())
-        checkErrorAndVisit(*floatLiteralType.resolvedType());
+    if (floatLiteralType.maybeResolvedType())
+        checkErrorAndVisit(floatLiteralType.resolvedType());
     checkErrorAndVisit(floatLiteralType.preferredType());
 }
 
 void Visitor::visit(AST::NullLiteralType& nullLiteralType)
 {
-    if (nullLiteralType.resolvedType())
-        checkErrorAndVisit(*nullLiteralType.resolvedType());
+    if (nullLiteralType.maybeResolvedType())
+        checkErrorAndVisit(nullLiteralType.resolvedType());
 }
 
 void Visitor::visit(AST::EnumerationMemberLiteral&)
@@ -466,7 +466,7 @@ void Visitor::visit(AST::Trap&)
 void Visitor::visit(AST::VariableDeclarationsStatement& variableDeclarationsStatement)
 {
     for (auto& variableDeclaration : variableDeclarationsStatement.variableDeclarations())
-        checkErrorAndVisit(variableDeclaration);
+        checkErrorAndVisit(variableDeclaration.get());
 }
 
 void Visitor::visit(AST::WhileLoop& whileLoop)
@@ -523,17 +523,17 @@ void Visitor::visit(AST::LogicalNotExpression& logicalNotExpression)
 
 void Visitor::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpression)
 {
-    checkErrorAndVisit(makeArrayReferenceExpression.lValue());
+    checkErrorAndVisit(makeArrayReferenceExpression.leftValue());
 }
 
 void Visitor::visit(AST::MakePointerExpression& makePointerExpression)
 {
-    checkErrorAndVisit(makePointerExpression.lValue());
+    checkErrorAndVisit(makePointerExpression.leftValue());
 }
 
 void Visitor::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
 {
-    checkErrorAndVisit(readModifyWriteExpression.lValue());
+    checkErrorAndVisit(readModifyWriteExpression.leftValue());
     checkErrorAndVisit(readModifyWriteExpression.oldValue());
     checkErrorAndVisit(readModifyWriteExpression.newValue());
     if (readModifyWriteExpression.newValueExpression())

@@ -65,7 +65,7 @@ void NameResolver::visit(AST::TypeReference& typeReference)
     }
 
     Visitor::visit(typeReference);
-    if (typeReference.resolvedType())
+    if (typeReference.maybeResolvedType()) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we know by now whether the type has been resolved or not?
         return;
 
     auto* candidates = m_nameContext.getTypes(typeReference.name());
@@ -174,12 +174,12 @@ void NameResolver::visit(AST::Return& returnStatement)
 
 void NameResolver::visit(AST::PropertyAccessExpression& propertyAccessExpression)
 {
-    if (auto* getFunctions = m_nameContext.getFunctions(propertyAccessExpression.getFunctionName()))
-        propertyAccessExpression.setPossibleGetOverloads(*getFunctions);
-    if (auto* setFunctions = m_nameContext.getFunctions(propertyAccessExpression.setFunctionName()))
-        propertyAccessExpression.setPossibleSetOverloads(*setFunctions);
-    if (auto* andFunctions = m_nameContext.getFunctions(propertyAccessExpression.andFunctionName()))
-        propertyAccessExpression.setPossibleAndOverloads(*andFunctions);
+    if (auto* getterFunctions = m_nameContext.getFunctions(propertyAccessExpression.getterFunctionName()))
+        propertyAccessExpression.setPossibleGetterOverloads(*getterFunctions);
+    if (auto* setterFunctions = m_nameContext.getFunctions(propertyAccessExpression.setterFunctionName()))
+        propertyAccessExpression.setPossibleSetterOverloads(*setterFunctions);
+    if (auto* anderFunctions = m_nameContext.getFunctions(propertyAccessExpression.anderFunctionName()))
+        propertyAccessExpression.setPossibleAnderOverloads(*anderFunctions);
     Visitor::visit(propertyAccessExpression);
 }
 
@@ -196,10 +196,10 @@ void NameResolver::visit(AST::DotExpression& dotExpression)
                 if (auto* member = enumerationDefinition.memberByName(memberName)) {
                     static_assert(sizeof(AST::EnumerationMemberLiteral) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become EnumerationMemberLiterals without updating backreferences");
                     Lexer::Token origin = dotExpression.origin();
-                    // FIXME: Perhaps do this with variants or a Rewriter instead.
+                    void* location = &dotExpression;
                     dotExpression.~DotExpression();
                     auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(WTFMove(origin), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
-                    new (&dotExpression) AST::EnumerationMemberLiteral(WTFMove(enumerationMemberLiteral));
+                    new (location) AST::EnumerationMemberLiteral(WTFMove(enumerationMemberLiteral));
                     return;
                 }
                 setError();
@@ -254,7 +254,7 @@ void NameResolver::visit(AST::EnumerationMemberLiteral& enumerationMemberLiteral
     setError();
 }
 
-// FIXME: Make sure all the names have been resolved.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=198167 Make sure all the names have been resolved.
 
 bool resolveNamesInTypes(Program& program, NameResolver& nameResolver)
 {

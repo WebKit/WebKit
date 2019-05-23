@@ -62,8 +62,8 @@ public:
     FloatLiteral clone() const
     {
         FloatLiteral result(Lexer::Token(origin()), m_value);
-        if (result.m_type.resolvedType())
-            result.m_type.resolve(result.m_type.resolvedType()->clone());
+        if (auto* resolvedType = m_type.maybeResolvedType())
+            result.m_type.resolve(resolvedType->clone());
         return result;
     }
 

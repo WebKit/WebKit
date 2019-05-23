@@ -38,7 +38,7 @@ namespace WebCore {
 
 namespace WHLSL {
 
-// FIXME: Return a better error code from this, and report it to JavaScript.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Return a better error code from this, and report it to JavaScript.
 auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Optional<Error>
 {
     m_lexer = Lexer(stringView);
@@ -1083,13 +1083,13 @@ auto Parser::parseParameters() -> Expected<AST::VariableDeclarations, Error>
     auto firstParameter = parseParameter();
     if (!firstParameter)
         return Unexpected<Error>(firstParameter.error());
-    parameters.append(WTFMove(*firstParameter));
+    parameters.append(makeUniqueRef<AST::VariableDeclaration>(WTFMove(*firstParameter)));
 
     while (tryType(Lexer::Token::Type::Comma)) {
         auto parameter = parseParameter();
         if (!parameter)
             return Unexpected<Error>(parameter.error());
-        parameters.append(WTFMove(*parameter));
+        parameters.append(makeUniqueRef<AST::VariableDeclaration>(WTFMove(*parameter)));
     }
 
     auto rightParenthesis = consumeType(Lexer::Token::Type::RightParenthesis);
@@ -1568,14 +1568,14 @@ auto Parser::parseVariableDeclarations() -> Expected<AST::VariableDeclarationsSt
     if (!firstVariableDeclaration)
         return Unexpected<Error>(firstVariableDeclaration.error());
 
-    Vector<AST::VariableDeclaration> result;
-    result.append(WTFMove(*firstVariableDeclaration));
+    Vector<UniqueRef<AST::VariableDeclaration>> result;
+    result.append(makeUniqueRef<AST::VariableDeclaration>(WTFMove(*firstVariableDeclaration)));
 
     while (tryType(Lexer::Token::Type::Comma)) {
         auto variableDeclaration = parseVariableDeclaration((*type)->clone());
         if (!variableDeclaration)
             return Unexpected<Error>(variableDeclaration.error());
-        result.append(WTFMove(*variableDeclaration));
+        result.append(makeUniqueRef<AST::VariableDeclaration>(WTFMove(*variableDeclaration)));
     }
 
     return AST::VariableDeclarationsStatement(WTFMove(*origin), WTFMove(result));

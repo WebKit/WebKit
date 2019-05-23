@@ -590,13 +590,13 @@ void ASTDumper::visit(AST::LogicalNotExpression& logicalNotExpression)
 void ASTDumper::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpression)
 {
     m_out.print("@");
-    visit(makeArrayReferenceExpression.lValue());
+    visit(makeArrayReferenceExpression.leftValue());
 }
 
 void ASTDumper::visit(AST::MakePointerExpression& makePointerExpression)
 {
     m_out.print("&");
-    visit(makePointerExpression.lValue());
+    visit(makePointerExpression.leftValue());
 }
 
 void ASTDumper::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
@@ -607,7 +607,7 @@ void ASTDumper::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     m_out.print("(");
     visit(oldVariable.get());
     m_out.print(" = ");
-    visit(readModifyWriteExpression.lValue());
+    visit(readModifyWriteExpression.leftValue());
     m_out.print(", ");
 
     visit(newVariable.get());
@@ -615,7 +615,7 @@ void ASTDumper::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     visit(*readModifyWriteExpression.newValueExpression());
     m_out.print(", ");
 
-    visit(readModifyWriteExpression.lValue());
+    visit(readModifyWriteExpression.leftValue());
     m_out.print(" = ");
     visit(newVariable.get());
     m_out.print(", ");

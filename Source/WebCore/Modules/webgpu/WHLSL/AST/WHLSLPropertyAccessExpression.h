@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLExpression.h"
+#include "WHLSLFunctionDeclaration.h"
 #include "WHLSLLexer.h"
 #include <wtf/UniqueRef.h>
 
@@ -52,34 +53,63 @@ public:
 
     bool isPropertyAccessExpression() const override { return true; }
 
-    virtual String getFunctionName() const = 0;
-    virtual String setFunctionName() const = 0;
-    virtual String andFunctionName() const = 0;
+    virtual String getterFunctionName() const = 0;
+    virtual String setterFunctionName() const = 0;
+    virtual String anderFunctionName() const = 0;
 
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleGetOverloads() { return m_possibleGetOverloads; }
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleSetOverloads() { return m_possibleSetOverloads; }
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleAndOverloads() { return m_possibleAndOverloads; }
+    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleGetterOverloads() { return m_possibleGetterOverloads; }
+    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleSetterOverloads() { return m_possibleSetterOverloads; }
+    Vector<std::reference_wrapper<FunctionDeclaration>, 1>& possibleAnderOverloads() { return m_possibleAnderOverloads; }
+    FunctionDeclaration* getterFunction() { return m_getterFunction; }
+    FunctionDeclaration* anderFunction() { return m_anderFunction; }
+    FunctionDeclaration* threadAnderFunction() { return m_threadAnderFunction; }
+    FunctionDeclaration* setterFunction() { return m_setterFunction; }
 
-    void setPossibleGetOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
+    void setPossibleGetterOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
     {
-        m_possibleGetOverloads = overloads;
+        m_possibleGetterOverloads = overloads;
     }
-    void setPossibleSetOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
+    void setPossibleAnderOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
     {
-        m_possibleSetOverloads = overloads;
+        m_possibleAnderOverloads = overloads;
     }
-    void setPossibleAndOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
+    void setPossibleSetterOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
     {
-        m_possibleAndOverloads = overloads;
+        m_possibleSetterOverloads = overloads;
+    }
+
+    void setGetterFunction(FunctionDeclaration* getterFunction)
+    {
+        m_getterFunction = getterFunction;
+    }
+
+    void setAnderFunction(FunctionDeclaration* anderFunction)
+    {
+        m_anderFunction = anderFunction;
+    }
+
+    void setThreadAnderFunction(FunctionDeclaration* threadAnderFunction)
+    {
+        m_threadAnderFunction = threadAnderFunction;
+    }
+
+    void setSetterFunction(FunctionDeclaration* setterFunction)
+    {
+        m_setterFunction = setterFunction;
     }
 
     Expression& base() { return m_base; }
+    UniqueRef<Expression> takeBase() { return WTFMove(m_base); }
 
 private:
     UniqueRef<Expression> m_base;
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleGetOverloads;
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleSetOverloads;
-    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleAndOverloads;
+    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleGetterOverloads;
+    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleSetterOverloads;
+    Vector<std::reference_wrapper<FunctionDeclaration>, 1> m_possibleAnderOverloads;
+    FunctionDeclaration* m_getterFunction { nullptr };
+    FunctionDeclaration* m_anderFunction { nullptr };
+    FunctionDeclaration* m_threadAnderFunction { nullptr };
+    FunctionDeclaration* m_setterFunction { nullptr };
 };
 
 } // namespace AST

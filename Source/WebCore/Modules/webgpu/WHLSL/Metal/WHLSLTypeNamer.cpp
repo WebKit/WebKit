@@ -179,9 +179,8 @@ static Vector<UniqueRef<BaseTypeNameNode>>::iterator findInVector(AST::UnnamedTy
 {
     return std::find_if(types.begin(), types.end(), [&](BaseTypeNameNode& baseTypeNameNode) -> bool {
         if (is<AST::TypeReference>(unnamedType) && is<ReferenceTypeNameNode>(baseTypeNameNode)) {
-            auto* resolvedType = downcast<AST::TypeReference>(unnamedType).resolvedType();
-            ASSERT(resolvedType);
-            return resolvedType == &downcast<ReferenceTypeNameNode>(baseTypeNameNode).namedType();
+            auto& resolvedType = downcast<AST::TypeReference>(unnamedType).resolvedType();
+            return &resolvedType == &downcast<ReferenceTypeNameNode>(baseTypeNameNode).namedType();
         }
         if (is<AST::PointerType>(unnamedType) && is<PointerTypeNameNode>(baseTypeNameNode))
             return downcast<AST::PointerType>(unnamedType).addressSpace() == downcast<PointerTypeNameNode>(baseTypeNameNode).addressSpace();
@@ -278,8 +277,7 @@ void TypeNamer::visit(AST::TypeDefinition& typeDefinition)
 
 void TypeNamer::visit(AST::Expression& expression)
 {
-    ASSERT(expression.resolvedType());
-    insert(*expression.resolvedType(), m_trie);
+    insert(expression.resolvedType(), m_trie);
     Visitor::visit(expression);
 }
 
@@ -298,8 +296,7 @@ UniqueRef<BaseTypeNameNode> TypeNamer::createNameNode(AST::UnnamedType& unnamedT
 {
     if (is<AST::TypeReference>(unnamedType)) {
         auto& typeReference = downcast<AST::TypeReference>(unnamedType);
-        ASSERT(typeReference.resolvedType());
-        return makeUniqueRef<ReferenceTypeNameNode>(parent, generateNextTypeName(), *typeReference.resolvedType());
+        return makeUniqueRef<ReferenceTypeNameNode>(parent, generateNextTypeName(), typeReference.resolvedType());
     }
     if (is<AST::PointerType>(unnamedType)) {
         auto& pointerType = downcast<AST::PointerType>(unnamedType);

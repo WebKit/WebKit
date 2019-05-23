@@ -53,9 +53,8 @@ bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const In
             return true;
         if (is<TypeReference>(unnamedType)) {
             auto& typeReference = downcast<TypeReference>(unnamedType);
-            ASSERT(typeReference.resolvedType());
-            if (is<NativeTypeDeclaration>(*typeReference.resolvedType()))
-                return downcast<NativeTypeDeclaration>(*typeReference.resolvedType()).isTexture();
+            if (is<NativeTypeDeclaration>(typeReference.resolvedType()))
+                return downcast<NativeTypeDeclaration>(typeReference.resolvedType()).isTexture();
         }
         return false;
     case Mode::Texture:
@@ -65,9 +64,8 @@ bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const In
             return true;
         if (is<TypeReference>(unnamedType)) {
             auto& typeReference = downcast<TypeReference>(unnamedType);
-            ASSERT(typeReference.resolvedType());
-            if (is<NativeTypeDeclaration>(*typeReference.resolvedType()))
-                return downcast<NativeTypeDeclaration>(*typeReference.resolvedType()).isTexture();
+            if (is<NativeTypeDeclaration>(typeReference.resolvedType()))
+                return downcast<NativeTypeDeclaration>(typeReference.resolvedType()).isTexture();
         }
         return false;
     case Mode::Buffer:

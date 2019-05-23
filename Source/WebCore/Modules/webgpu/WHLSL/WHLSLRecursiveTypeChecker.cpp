@@ -85,8 +85,8 @@ void RecursiveTypeChecker::visit(AST::TypeReference& typeReference)
 
     for (auto& typeArgument : typeReference.typeArguments())
         checkErrorAndVisit(typeArgument);
-    if (typeReference.resolvedType())
-        checkErrorAndVisit(*typeReference.resolvedType());
+    if (typeReference.maybeResolvedType()) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we know by now whether the type has been resolved or not?
+        checkErrorAndVisit(typeReference.resolvedType());
 }
 
 void RecursiveTypeChecker::visit(AST::ReferenceType&)

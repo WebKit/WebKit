@@ -105,7 +105,7 @@ class Visitor {
 public:
     virtual ~Visitor() = default;
 
-    // FIXME: Add a way to visit a const Program
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198171 Add a way to visit a const Program
 
     virtual void visit(Program&);
     virtual void visit(AST::UnnamedType&);
@@ -192,7 +192,7 @@ protected:
     }
 
 private:
-    bool m_error { false }; // FIXME: Migrate this to be some sort of descriptive string.
+    bool m_error { false }; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195682 Migrate this to be some sort of descriptive string.
 };
 
 } // namespace WHLSL

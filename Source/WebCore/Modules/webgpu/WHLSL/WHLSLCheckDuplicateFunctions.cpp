@@ -70,7 +70,7 @@ bool checkDuplicateFunctions(const Program& program)
                 continue;
             bool same = true;
             for (size_t k = 0; k < functions[i].get().parameters().size(); ++k) {
-                if (!matches(*functions[i].get().parameters()[k].type(), *functions[j].get().parameters()[k].type())) {
+                if (!matches(*functions[i].get().parameters()[k]->type(), *functions[j].get().parameters()[k]->type())) {
                     same = false;
                     break;
                 }
@@ -80,10 +80,11 @@ bool checkDuplicateFunctions(const Program& program)
         }
         
         if (functions[i].get().name() == "operator&[]" && functions[i].get().parameters().size() == 2
-            && is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0].type()))) {
-            auto& type = static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1].type());
+            && is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))) {
+            auto& type = static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1]->type());
             if (is<AST::TypeReference>(type)) {
-                if (auto* resolvedType = downcast<AST::TypeReference>(type).resolvedType()) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we already know whether the types have been resolved by now?
+                if (auto* resolvedType = downcast<AST::TypeReference>(type).maybeResolvedType()) {
                     if (is<AST::NativeTypeDeclaration>(*resolvedType)) {
                         auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(*resolvedType);
                         if (nativeTypeDeclaration.name() == "uint")
@@ -92,14 +93,14 @@ bool checkDuplicateFunctions(const Program& program)
                 }
             }
         } else if (functions[i].get().name() == "operator.length" && functions[i].get().parameters().size() == 1
-            && (is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0].type()))
-            || is<AST::ArrayType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0].type()))))
+            && (is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))
+            || is<AST::ArrayType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))))
             return false;
         else if (functions[i].get().name() == "operator=="
             && functions[i].get().parameters().size() == 2
-            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0].type()))
-            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1].type()))
-            && matches(*functions[i].get().parameters()[0].type(), *functions[i].get().parameters()[1].type()))
+            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))
+            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1]->type()))
+            && matches(*functions[i].get().parameters()[0]->type(), *functions[i].get().parameters()[1]->type()))
             return false;
     }
     return true;

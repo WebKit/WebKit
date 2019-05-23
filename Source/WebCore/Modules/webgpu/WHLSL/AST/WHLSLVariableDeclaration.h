@@ -79,7 +79,7 @@ private:
     Optional<UniqueRef<Expression>> m_initializer;
 };
 
-using VariableDeclarations = Vector<VariableDeclaration>;
+using VariableDeclarations = Vector<UniqueRef<VariableDeclaration>>;
 
 } // namespace AST
 

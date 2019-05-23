@@ -52,17 +52,17 @@ public:
 
     bool isIndexExpression() const override { return true; }
 
-    String getFunctionName() const override
+    String getterFunctionName() const override
     {
         return "operator[]"_str;
     }
 
-    String setFunctionName() const override
+    String setterFunctionName() const override
     {
         return "operator&[]"_str;
     }
 
-    String andFunctionName() const override
+    String anderFunctionName() const override
     {
         return "operator[]="_str;
     }
