@@ -1,3 +1,27 @@
+2019-05-23  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate more preview API
+        https://bugs.webkit.org/show_bug.cgi?id=198152
+
+        Reviewed by Dean Jackson.
+
+        This is working towards <rdar://problem/51003503>
+
+        * UIProcess/API/Cocoa/WKPreviewActionItem.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItem.mm:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemInternal.h:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.mm:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::activeTouchActions const):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (previewIdentifierForElementAction):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:commitPreview:]):
+
 2019-05-23  Antoine Quint  <graouts@apple.com>
 
         [tvOS] Build broken by r245639

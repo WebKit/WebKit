@@ -7268,6 +7268,7 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (action.type) {
     case _WKElementActionTypeOpen:
         return WKPreviewActionItemIdentifierOpen;
@@ -7282,6 +7283,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     default:
         return nil;
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT_NOT_REACHED();
     return nil;
 }
@@ -7333,12 +7335,12 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     const URL& linkURL = _positionInformation.url;
     if (_positionInformation.isLink) {
         id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:(NSURL *)linkURL]);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return [uiDelegate webView:_webView shouldPreviewElement:previewElementInfo.get()];
-ALLOW_DEPRECATED_DECLARATIONS_END
         }
+        ALLOW_DEPRECATED_DECLARATIONS_END
         if (linkURL.isEmpty())
             return NO;
         if (linkURL.protocolIsInHTTPFamily())
@@ -7485,11 +7487,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 }];
                 [previewActions addObject:previewAction];
             }
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (UIViewController *controller = [uiDelegate webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:previewActions.get()])
                 return controller;
-ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
@@ -7548,7 +7550,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if ([uiDelegate respondsToSelector:@selector(webView:commitPreviewingViewController:)]) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [uiDelegate webView:_webView commitPreviewingViewController:viewController];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 

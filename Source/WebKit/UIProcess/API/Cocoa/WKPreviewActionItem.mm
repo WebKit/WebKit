@@ -31,12 +31,14 @@
 @implementation WKPreviewAction
 @synthesize identifier=_identifier;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 + (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler
 {
     WKPreviewAction *action = [self actionWithTitle:title style:style handler:handler];
     action->_identifier = identifier;
     return action;
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {

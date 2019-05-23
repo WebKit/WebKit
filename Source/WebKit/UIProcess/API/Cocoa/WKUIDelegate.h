@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param webView The web view invoking the delegate method.
  @param previewingViewController The view controller that is being popped.
  */
-- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_AVAILABLE(ios(10.0));
+- (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED("This API will be replaced", ios(10.0, WK_IOS_TBA));
 
 #endif // TARGET_OS_IPHONE
 

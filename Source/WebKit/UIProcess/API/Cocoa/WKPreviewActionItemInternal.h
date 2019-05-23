@@ -29,10 +29,12 @@
 
 #import "WKPreviewActionItem.h"
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @interface WKPreviewAction : UIPreviewAction <WKPreviewActionItem>
 
 + (instancetype)actionWithIdentifier:(NSString *)identifier title:(NSString *)title style:(UIPreviewActionStyle)style handler:(void (^)(UIPreviewAction *action, UIViewController *previewViewController))handler;
 
 @end
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
