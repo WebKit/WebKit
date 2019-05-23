@@ -1,3 +1,17 @@
+2019-05-23  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] The mouseover, mouseout, mouseenter, and mouseleave events should not be prevented while the pointer is down
+        https://bugs.webkit.org/show_bug.cgi?id=198177
+
+        Reviewed by Dean Jackson.
+
+        Add a test that listens to all mouse events and checks which are dispatched in the case preventDefault() is called when handling
+        "pointerdown" and when it isn't.
+
+        * platform/mac-wk1/TestExpectations: Skipping the test on WK1 where the sequence of dispatched mouse events does not match.
+        * pointerevents/mouse/compatibility-mouse-events-prevention-mouse-pressed-expected.txt: Added.
+        * pointerevents/mouse/compatibility-mouse-events-prevention-mouse-pressed.html: Added.
+
 2019-05-23  Truitt Savell  <tsavell@apple.com>
 
         Add Mojave+ back to media/track/track-cue-rendering-vertical.html expectation

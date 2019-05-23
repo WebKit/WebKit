@@ -288,6 +288,13 @@ static bool isForceEvent(const PlatformMouseEvent& platformEvent)
     return platformEvent.type() == PlatformEvent::MouseForceChanged || platformEvent.type() == PlatformEvent::MouseForceDown || platformEvent.type() == PlatformEvent::MouseForceUp;
 }
 
+static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
+{
+    // https://www.w3.org/TR/pointerevents/#compatibility-mapping-with-mouse-events
+    const auto& type = mouseEvent.type();
+    return type != eventNames().clickEvent && type != eventNames().mouseoverEvent && type != eventNames().mouseoutEvent && type != eventNames().mouseenterEvent && type != eventNames().mouseleaveEvent;
+}
+
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomicString& eventType, int detail, Element* relatedTarget)
 {
     if (isDisabledFormControl())
@@ -314,7 +321,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
         if (auto pointerEvent = PointerEvent::create(mouseEvent)) {
             if (auto* page = document().page()) {
                 page->pointerCaptureController().dispatchEvent(*pointerEvent, this);
-                if (mouseEvent->type() != eventNames().clickEvent && page->pointerCaptureController().preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
+                if (isCompatibilityMouseEvent(mouseEvent) && page->pointerCaptureController().preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
                     return false;
             }
             if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {

@@ -699,3 +699,5 @@ webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass 
 
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
+
+webkit.org/b/198177 pointerevents/mouse/compatibility-mouse-events-prevention-mouse-pressed.html [ Skip ]
