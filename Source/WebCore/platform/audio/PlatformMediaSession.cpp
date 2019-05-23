@@ -342,7 +342,7 @@ PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
     return m_client.displayType();
 }
 
-bool PlatformMediaSession::activeAudioSessionRequired()
+bool PlatformMediaSession::activeAudioSessionRequired() const
 {
     if (mediaType() == PlatformMediaSession::None)
         return false;
@@ -386,6 +386,11 @@ double PlatformMediaSessionClient::mediaSessionCurrentTime() const
 void PlatformMediaSession::clientCharacteristicsChanged()
 {
     PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this);
+}
+
+bool PlatformMediaSession::canPlayConcurrently(const PlatformMediaSession& otherSession) const
+{
+    return m_client.hasMediaStreamSource() && otherSession.m_client.hasMediaStreamSource();
 }
 
 #if !RELEASE_LOG_DISABLED

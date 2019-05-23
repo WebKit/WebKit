@@ -1,3 +1,14 @@
+2019-05-23  Youenn Fablet  <youenn@apple.com>
+
+        Multiple videos (with audios) with autoplay & playinline not working. Only one video play at a time.
+        https://bugs.webkit.org/show_bug.cgi?id=193312
+        <rdar://problem/47189864>
+
+        Reviewed by Jer Noble.
+
+        * webrtc/concurrentVideoPlayback-expected.txt: Added.
+        * webrtc/concurrentVideoPlayback.html: Added.
+
 2019-05-23  Shawn Roberts  <sroberts@apple.com>
 
         Updating test expectations for failing tests.

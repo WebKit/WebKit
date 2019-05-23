@@ -657,19 +657,17 @@ HTMLMediaElement::~HTMLMediaElement()
 }
 RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
 {
-    auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
-        return is<MediaElementSession>(session);
-    });
-
     Vector<MediaElementSessionInfo> candidateSessions;
     bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
-    for (auto& session : allSessions) {
-        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(*session), purpose);
+    PlatformMediaSessionManager::sharedManager().forEachMatchingSession([](auto& session) {
+        return is<MediaElementSession>(session);
+    }, [&](auto& session) {
+        auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(session), purpose);
         if (mediaElementSessionInfo.canShowControlsManager)
             candidateSessions.append(mediaElementSessionInfo);
         else if (mediaSessionMayBeConfusedWithMainContent(mediaElementSessionInfo, purpose))
             atLeastOneNonCandidateMayBeConfusedForMainContent = true;
-    }
+    });
 
     if (!candidateSessions.size())
         return nullptr;
@@ -8135,6 +8133,15 @@ void HTMLMediaElement::setInActiveDocument(bool inActiveDocument)
 HTMLMediaElementEnums::BufferingPolicy HTMLMediaElement::bufferingPolicy() const
 {
     return m_bufferingPolicy;    
+}
+
+bool HTMLMediaElement::hasMediaStreamSource() const
+{
+#if ENABLE(MEDIA_STREAM)
+    return hasMediaStreamSrcObject();
+#else
+    return false;
+#endif
 }
 
 }

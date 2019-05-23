@@ -1694,7 +1694,7 @@ void Document::allowsMediaDocumentInlinePlaybackChanged()
 void Document::stopAllMediaPlayback()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->stopAllMediaPlaybackForDocument(this);
+        platformMediaSessionManager->stopAllMediaPlaybackForDocument(*this);
 }
 
 void Document::suspendAllMediaPlayback()

@@ -146,7 +146,7 @@ bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 {
 #if HAVE(MEDIA_PLAYER) && !PLATFORM(WATCHOS)
-    bool requiresMonitoring = anyOfSessions([] (PlatformMediaSession& session, size_t) {
+    bool requiresMonitoring = anyOfSessions([] (auto& session) {
         return session.requiresPlaybackTargetRouteMonitoring();
     });
 
@@ -187,7 +187,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     bool haveTargets = [m_objcObserver hasWirelessTargetsAvailable];
     ALWAYS_LOG(LOGIDENTIFIER, haveTargets);
 
-    forEachSession([haveTargets] (PlatformMediaSession& session, size_t) {
+    forEachSession([haveTargets] (auto& session) {
         session.externalOutputDeviceAvailableDidChange(haveTargets);
     });
 

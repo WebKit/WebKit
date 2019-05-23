@@ -29,6 +29,7 @@
 #include "Timer.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -42,8 +43,9 @@ class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
 
 class PlatformMediaSession
+    : public CanMakeWeakPtr<PlatformMediaSession>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    : public MediaPlaybackTargetClient
+    , public MediaPlaybackTargetClient
 #endif
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
@@ -170,7 +172,7 @@ public:
     virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
 #endif
 
-    bool activeAudioSessionRequired();
+    bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
     void canProduceAudioChanged();
 
@@ -188,6 +190,8 @@ public:
     const char* logClassName() const override { return "PlatformMediaSession"; }
     WTFLogChannel& logChannel() const final;
 #endif
+
+    bool canPlayConcurrently(const PlatformMediaSession&) const;
 
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
@@ -252,6 +256,8 @@ public:
     virtual String sourceApplicationIdentifier() const = 0;
 
     virtual bool processingUserGestureForMedia() const = 0;
+
+    virtual bool hasMediaStreamSource() const { return false; }
 
 protected:
     virtual ~PlatformMediaSessionClient() = default;

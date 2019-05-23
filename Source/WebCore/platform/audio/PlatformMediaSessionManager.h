@@ -81,14 +81,14 @@ public:
     WEBCORE_EXPORT virtual void beginInterruption(PlatformMediaSession::InterruptionType);
     WEBCORE_EXPORT void endInterruption(PlatformMediaSession::EndInterruptionFlags);
 
-    WEBCORE_EXPORT void applicationWillBecomeInactive() const;
-    WEBCORE_EXPORT void applicationDidBecomeActive() const;
-    WEBCORE_EXPORT void applicationWillEnterForeground(bool suspendedUnderLock) const;
-    WEBCORE_EXPORT void applicationDidEnterBackground(bool suspendedUnderLock) const;
+    WEBCORE_EXPORT void applicationWillBecomeInactive();
+    WEBCORE_EXPORT void applicationDidBecomeActive();
+    WEBCORE_EXPORT void applicationWillEnterForeground(bool suspendedUnderLock);
+    WEBCORE_EXPORT void applicationDidEnterBackground(bool suspendedUnderLock);
     WEBCORE_EXPORT void processWillSuspend();
     WEBCORE_EXPORT void processDidResume();
 
-    void stopAllMediaPlaybackForDocument(const Document*);
+    void stopAllMediaPlaybackForDocument(const Document&);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
     void suspendAllMediaPlaybackForDocument(const Document&);
@@ -127,9 +127,9 @@ public:
     void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession() const;
 
-    Vector<PlatformMediaSession*> currentSessionsMatching(const WTF::Function<bool(const PlatformMediaSession&)>&);
-
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
+
+    void forEachMatchingSession(const Function<bool(const PlatformMediaSession&)>& predicate, const Function<void(PlatformMediaSession&)>& matchingCallback);
 
 protected:
     friend class PlatformMediaSession;
@@ -138,9 +138,9 @@ protected:
     void addSession(PlatformMediaSession&);
     virtual void removeSession(PlatformMediaSession&);
 
-    void forEachSession(const Function<void(PlatformMediaSession&, size_t)>&) const;
-    PlatformMediaSession* findSession(const Function<bool(PlatformMediaSession&, size_t)>&) const;
-    bool anyOfSessions(const Function<bool(PlatformMediaSession&, size_t)>& predicate) const { return findSession(predicate); }
+    void forEachSession(const Function<void(PlatformMediaSession&)>&);
+    void forEachDocumentSession(const Document&, const Function<void(PlatformMediaSession&)>&);
+    bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
     AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }
 
@@ -171,8 +171,10 @@ private:
     void systemWillSleep() override;
     void systemDidWake() override;
 
+    Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
+
     SessionRestrictions m_restrictions[PlatformMediaSession::MediaStreamCapturingAudio + 1];
-    mutable Vector<PlatformMediaSession*> m_sessions;
+    mutable Vector<WeakPtr<PlatformMediaSession>> m_sessions;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
@@ -185,7 +187,6 @@ private:
     bool m_interrupted { false };
     mutable bool m_isApplicationInBackground { false };
     bool m_willIgnoreSystemInterruptions { false };
-    mutable int m_iteratingOverSessions { 0 };
     bool m_processIsSuspended { false };
 
 #if USE(AUDIO_SESSION)

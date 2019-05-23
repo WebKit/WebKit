@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing concurrent video playing</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../media/media-file.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay controls></video>
+        <video id="video2" autoplay controls></video>
+        <video id="video3" autoplay controls></video>
+        <script src ="routines.js"></script>
+        <script>
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video1.srcObject = localStream;
+    video2.srcObject = remoteStream;
+}, "Basic audio/video exchange");
+
+promise_test(async (test) => {
+    await video1.play();
+    await video2.play();
+
+    assert_false(video1.paused, "video1 paused");
+    assert_false(video2.paused, "video2 paused");
+}, "Play MediaStream backed streams concurrently");
+
+promise_test(async (test) => {
+
+    if (window.internals)
+        internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted');
+
+    video3.src = findMediaFile('video', '../media/content/audio-tracks');
+    await video3.play();
+
+    let counter = 0;
+    while (!video1.paused && ++counter < 20)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(video1.paused, "video1 paused");
+    assert_true(video2.paused, "video2 paused");
+    assert_false(video3.paused, "video3 paused");
+}, "Play regular video content should pause MediaStream backed video elements");
+
+promise_test(async (test) => {
+    await video1.play();
+
+    assert_true(video3.paused, "video3 paused");
+
+    await video2.play();
+
+    let counter = 0;
+    while (!video3.paused && ++counter < 20)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_false(video1.paused, "video1 paused");
+    assert_false(video2.paused, "video2 paused");
+    assert_true(video3.paused, "video3 paused");
+}, "Play MediaStream backed video elements should pause regular video content");
+        </script>
+    </body>
+</html>

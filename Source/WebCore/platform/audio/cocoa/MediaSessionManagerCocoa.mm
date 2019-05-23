@@ -97,7 +97,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         return;
 
     bool hasAudibleAudioOrVideoMediaType = false;
-    forEachSession([&hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
+    forEachSession([&hasAudibleAudioOrVideoMediaType] (auto& session) mutable {
         auto type = session.mediaType();
         if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
             hasAudibleAudioOrVideoMediaType = true;
@@ -122,7 +122,7 @@ void MediaSessionManagerCocoa::updateSessionState()
 void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::InterruptionType type)
 {
     if (type == PlatformMediaSession::InterruptionType::SystemInterruption) {
-        forEachSession([] (PlatformMediaSession& session, size_t) {
+        forEachSession([] (auto& session) {
             session.clearHasPlayedSinceLastInterruption();
         });
     }
