@@ -1,3 +1,15 @@
+2019-05-23  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Skip additional tests on PlayStation
+        https://bugs.webkit.org/show_bug.cgi?id=198145
+
+        Reviewed by Ross Kirsling.
+
+        * exceptionFuzz.yaml:
+        Add skip on hostOS playstation
+        * executableAllocationFuzz.yaml:
+        Add skip on hostOS playstation
+
 2019-05-23  Tadeu Zagallo  <tzagallo@apple.com>
 
         createListFromArrayLike should throw if value is not an object
