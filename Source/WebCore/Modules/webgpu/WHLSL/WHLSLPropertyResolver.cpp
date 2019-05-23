@@ -589,6 +589,8 @@ bool PropertyResolver::simplifyRightValue(AST::DotExpression& dotExpression)
 {
     Lexer::Token origin = dotExpression.origin();
 
+    checkErrorAndVisit(dotExpression.base());
+
     if (auto* anderFunction = dotExpression.anderFunction()) {
         auto& base = dotExpression.base();
         if (auto leftAddressSpace = base.typeAnnotation().leftAddressSpace()) {
