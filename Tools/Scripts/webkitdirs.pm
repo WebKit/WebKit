@@ -1873,15 +1873,33 @@ sub buildXCodeProject($$@)
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
-sub getMSBuildPlatformArgument()
+sub getVisualStudioToolset()
 {
     if (isPlayStation()) {
         return "";
     } elsif (isWin64()) {
-        return "/p:Platform=x64";
+        return "x64";
     } else {
-        return "/p:Platform=Win32";
+        return "Win32";
     }
+}
+
+sub getMSBuildPlatformArgument()
+{
+    my $toolset = getVisualStudioToolset();
+    if (defined($toolset) && length($toolset)) {
+        return "/p:Platform=$toolset";
+    }
+    return "";
+}
+
+sub getCMakeWindowsToolsetArgument()
+{
+    my $toolset = getVisualStudioToolset();
+    if (defined($toolset) && length($toolset)) {
+        return "-A $toolset";
+    }
+    return "";
 }
 
 sub buildVisualStudioProject
@@ -2197,8 +2215,8 @@ sub generateBuildSystemFromCMakeProject
         }
         push @args, "-DUSE_THIN_ARCHIVES=OFF" if isPlayStation();
     } else {
-        if (isAnyWindows() && isWin64()) {
-            push @args, '-A x64';
+        if (isAnyWindows()) {
+            push @args, getCMakeWindowsToolsetArgument();
         }
         if ((isAnyWindows() || isPlayStation()) && defined $ENV{VisualStudioVersion}) {
             my $var = int($ENV{VisualStudioVersion});
