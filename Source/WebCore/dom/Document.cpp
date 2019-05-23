@@ -183,6 +183,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include "ScriptedAnimationController.h"
+#include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
@@ -330,6 +331,26 @@ using namespace WTF::Unicode;
 static const unsigned cMaxWriteRecursionDepth = 21;
 bool Document::hasEverCreatedAnAXObjectCache = false;
 static const Seconds maxIntervalForUserGestureForwardingAfterMediaFinishesPlaying { 1_s };
+
+struct FrameFlatteningLayoutDisallower {
+    FrameFlatteningLayoutDisallower(FrameView& frameView)
+        : m_frameView(frameView)
+        , m_disallowLayout(frameView.effectiveFrameFlattening() != FrameFlattening::Disabled)
+    {
+        if (m_disallowLayout)
+            m_frameView.startDisallowingLayout();
+    }
+
+    ~FrameFlatteningLayoutDisallower()
+    {
+        if (m_disallowLayout)
+            m_frameView.endDisallowingLayout();
+    }
+
+private:
+    FrameView& m_frameView;
+    bool m_disallowLayout { false };
+};
 
 // DOM Level 2 says (letters added):
 //
@@ -1786,7 +1807,7 @@ void Document::scheduleFullStyleRebuild()
 
 void Document::scheduleStyleRecalc()
 {
-    ASSERT(!m_renderView || !m_renderView->inHitTesting());
+    ASSERT(!m_renderView || !inHitTesting());
 
     if (m_styleRecalcTimer.isActive() || pageCacheState() != NotInPageCache)
         return;
@@ -3704,7 +3725,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
         return MouseEventWithHitTestResults(event, HitTestResult(LayoutPoint()));
 
     HitTestResult result(documentPoint);
-    renderView()->hitTest(request, result);
+    hitTest(request, result);
 
     if (!request.readOnly())
         updateHoverActiveState(request, result.targetElement());
@@ -8012,6 +8033,45 @@ void Document::frameWasDisconnectedFromOwner()
         window->willDetachDocumentFromFrame();
 
     detachFromFrame();
+}
+
+bool Document::hitTest(const HitTestRequest& request, HitTestResult& result)
+{
+    return hitTest(request, result.hitTestLocation(), result);
+}
+
+bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
+{
+    Ref<Document> protectedThis(*this);
+    updateLayout();
+    if (!renderView())
+        return false;
+
+#if !ASSERT_DISABLED
+    SetForScope<bool> hitTestRestorer { m_inHitTesting, true };
+#endif
+
+    auto& frameView = renderView()->frameView();
+    Ref<FrameView> protector(frameView);
+
+    FrameFlatteningLayoutDisallower disallower(frameView);
+
+    bool resultLayer = renderView()->layer()->hitTest(request, location, result);
+
+    // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
+    // so we need to test ScrollView scrollbars separately here. In case of using overlay scrollbars, the layer hit test
+    // will always work so we need to check the ScrollView scrollbars in that case too.
+    if (!resultLayer || ScrollbarTheme::theme().usesOverlayScrollbars()) {
+        // FIXME: Consider if this test should be done unconditionally.
+        if (request.allowsFrameScrollbars()) {
+            IntPoint windowPoint = frameView.contentsToWindow(location.roundedPoint());
+            if (auto* frameScrollbar = frameView.scrollbarAtPoint(windowPoint)) {
+                result.setScrollbar(frameScrollbar);
+                return true;
+            }
+        }
+    }
+    return resultLayer;
 }
 
 ElementIdentifier Document::identifierForElement(Element& element)

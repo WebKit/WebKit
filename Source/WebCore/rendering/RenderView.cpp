@@ -49,7 +49,6 @@
 #include "RenderQuote.h"
 #include "RenderTreeBuilder.h"
 #include "RenderWidget.h"
-#include "ScrollbarTheme.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
@@ -60,26 +59,6 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
-
-struct FrameFlatteningLayoutDisallower {
-    FrameFlatteningLayoutDisallower(FrameView& frameView)
-        : m_frameView(frameView)
-        , m_disallowLayout(frameView.effectiveFrameFlattening() != FrameFlattening::Disabled)
-    {
-        if (m_disallowLayout)
-            m_frameView.startDisallowingLayout();
-    }
-
-    ~FrameFlatteningLayoutDisallower()
-    {
-        if (m_disallowLayout)
-            m_frameView.endDisallowingLayout();
-    }
-
-private:
-    FrameView& m_frameView;
-    bool m_disallowLayout { false };
-};
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
@@ -135,40 +114,6 @@ void RenderView::lazyRepaintTimerFired()
         renderer->setRenderBoxNeedsLazyRepaint(false);
     }
     m_renderersNeedingLazyRepaint.clear();
-}
-
-bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
-{
-    return hitTest(request, result.hitTestLocation(), result);
-}
-
-bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
-{
-    document().updateLayout();
-    
-#if !ASSERT_DISABLED
-    SetForScope<bool> hitTestRestorer { m_inHitTesting, true };
-#endif
-
-    FrameFlatteningLayoutDisallower disallower(frameView());
-
-    bool resultLayer = layer()->hitTest(request, location, result);
-
-    // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
-    // so we need to test ScrollView scrollbars separately here. In case of using overlay scrollbars, the layer hit test
-    // will always work so we need to check the ScrollView scrollbars in that case too.
-    if (!resultLayer || ScrollbarTheme::theme().usesOverlayScrollbars()) {
-        // FIXME: Consider if this test should be done unconditionally.
-        if (request.allowsFrameScrollbars()) {
-            IntPoint windowPoint = frameView().contentsToWindow(location.roundedPoint());
-            if (Scrollbar* frameScrollbar = frameView().scrollbarAtPoint(windowPoint)) {
-                result.setScrollbar(frameScrollbar);
-                return true;
-            }
-        }
-    }
-
-    return resultLayer;
 }
 
 RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit) const

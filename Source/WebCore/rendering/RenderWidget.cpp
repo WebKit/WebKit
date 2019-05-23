@@ -364,7 +364,6 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 {
     if (request.allowsChildFrameContent() && is<FrameView>(widget()) && downcast<FrameView>(*widget()).renderView()) {
         FrameView& childFrameView = downcast<FrameView>(*widget());
-        RenderView& childRoot = *childFrameView.renderView();
 
         LayoutPoint adjustedLocation = accumulatedOffset + location();
         LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - toIntSize(childFrameView.scrollPosition());
@@ -372,7 +371,10 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
         HitTestRequest newHitTestRequest(request.type() | HitTestRequest::ChildFrameHitTest);
         HitTestResult childFrameResult(newHitTestLocation);
 
-        bool isInsideChildFrame = childRoot.hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
+        auto* document = childFrameView.frame().document();
+        if (!document)
+            return false;
+        bool isInsideChildFrame = document->hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
 
         if (request.resultIsElementList())
             result.append(childFrameResult, request);

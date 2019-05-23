@@ -2985,8 +2985,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
         HitTestResult hitTestResult = HitTestResult(unobscuredContentRectCenter);
 
-        if (RenderView* mainFrameRenderView = frameView.renderView())
-            mainFrameRenderView->hitTest(HitTestRequest(), hitTestResult);
+        if (auto* document = frameView.frame().document())
+            document->hitTest(HitTestRequest(), hitTestResult);
 
         if (Node* node = hitTestResult.innerNode()) {
             if (RenderObject* renderer = node->renderer()) {

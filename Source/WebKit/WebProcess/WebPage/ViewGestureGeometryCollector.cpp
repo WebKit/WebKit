@@ -115,7 +115,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     IntPoint originInContentsSpace = m_webPage.mainFrameView()->windowToContents(roundedIntPoint(origin));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
-    m_webPage.mainFrameView()->renderView()->hitTest(HitTestRequest(), hitTestResult);
+    m_webPage.mainFrame()->document()->hitTest(HitTestRequest(), hitTestResult);
     Node* node = hitTestResult.innerNode();
     if (!node) {
         dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint(), FloatRect(), FloatRect(), false, 0, 0);

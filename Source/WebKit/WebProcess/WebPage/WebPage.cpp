@@ -5924,9 +5924,9 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollPosition, plugInRectRelativeToView.size());
             HitTestResult hitTestResult(plugInRectRelativeToTopDocument.center());
 
-            if (!mainFrameView->renderView())
+            if (!mainFrame() || !mainFrame()->document())
                 return;
-            mainFrameView->renderView()->hitTest(request, hitTestResult);
+            mainFrame()->document()->hitTest(request, hitTestResult);
 
             RefPtr<Element> element = hitTestResult.targetElement();
             if (!element)

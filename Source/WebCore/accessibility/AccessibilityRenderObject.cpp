@@ -2211,7 +2211,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         HitTestRequest request(HitTestRequest::ReadOnly |
                                HitTestRequest::Active);
         HitTestResult result(ourpoint);
-        renderView->hitTest(request, result);
+        renderView->document().hitTest(request, result);
         innerNode = result.innerNode();
         if (!innerNode)
             return VisiblePosition();

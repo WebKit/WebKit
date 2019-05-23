@@ -138,6 +138,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLPictureElement;
 class HTMLScriptElement;
+class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
 class ImageBitmapRenderingContext;
@@ -1524,6 +1525,12 @@ public:
 
     void frameWasDisconnectedFromOwner();
 
+    WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
+    bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
+#if !ASSERT_DISABLED
+    bool inHitTesting() const { return m_inHitTesting; }
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -2000,6 +2007,9 @@ private:
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
     bool m_userDidInteractWithPage { false };
+#if !ASSERT_DISABLED
+    bool m_inHitTesting { false };
+#endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool m_isTelephoneNumberParsingAllowed { true };

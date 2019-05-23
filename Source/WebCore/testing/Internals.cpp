@@ -2100,7 +2100,7 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
         return nullptr;
 
     HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
-    renderView->hitTest(request, result);
+    document.hitTest(request, result);
     const HitTestResult::NodeSet& nodeSet = result.listBasedTestResult();
     Vector<Ref<Node>> matches;
     matches.reserveInitialCapacity(nodeSet.size());
