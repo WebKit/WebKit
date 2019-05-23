@@ -1670,7 +1670,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
-    return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode]
+    return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode];
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     if (GSEventIsHardwareKeyboardAttached())
         return YES;
