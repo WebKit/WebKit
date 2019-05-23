@@ -1,5 +1,14 @@
 2019-05-23  Shawn Roberts  <sroberts@apple.com>
 
+        fast/css-grid-layout/flex-content-sized-columns-resize.html is a flaky ImageOnlyFailure
+        https://bugs.webkit.org/show_bug.cgi?id=187828#add_comment
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating for flkay test
+
+2019-05-23  Shawn Roberts  <sroberts@apple.com>
+
         fast/css/sticky/sticky-left-percentage.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=198195
 
