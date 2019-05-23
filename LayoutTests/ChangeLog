@@ -1,3 +1,15 @@
+2019-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r245148): Removing inputmode="none" does not bring up software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=198141
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test.
+
+        * fast/forms/ios/inputmode-removing-none-expected.txt: Added.
+        * fast/forms/ios/inputmode-removing-none.html: Added.
+
 2019-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         <rdar://problem/50058173> REGRESSION (r243347) Layout tests fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on* are failing
