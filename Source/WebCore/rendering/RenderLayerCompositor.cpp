@@ -3110,8 +3110,6 @@ static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer,
             LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &overflowLayer);
     };
 
-    ASSERT(layer.renderer().isAbsolutelyPositioned());
-
     // Collect all the composited scrollers which affect the position of this layer relative to its compositing ancestor (which might be inside the scroller or the scroller itself).
     bool seenPaintOrderAncestor = false;
     traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool isPaintOrderAncestor) {
@@ -3147,8 +3145,8 @@ ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningFo
         return ScrollPositioningBehavior::None;
     }
 
-    bool compositedAncestorIsInsideScroller = false;
-    auto* scrollingAncestor = enclosingCompositedScrollingLayer(layer, *compositedAncestor, compositedAncestorIsInsideScroller);
+    bool compositedAncestorIsScrolling = false;
+    auto* scrollingAncestor = enclosingCompositedScrollingLayer(layer, *compositedAncestor, compositedAncestorIsScrolling);
     if (!scrollingAncestor) {
         ASSERT_NOT_REACHED(); // layer.hasCompositedScrollingAncestor() should guarantee we have one.
         return ScrollPositioningBehavior::None;
@@ -3157,16 +3155,14 @@ ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningFo
     // There are two cases we have to deal with here:
     // 1. There's a composited overflow:scroll in the parent chain between the renderer and its containing block, and the layer's
     //    composited (z-order) ancestor is inside the scroller or is the scroller. In this case, we have to compensate for scroll position
-    //    changes to make the positioned layer stay in the same place. This only applies to position:absolute (since we handle fixed elsewhere).
-    if (layer.renderer().isAbsolutelyPositioned()) {
-        if (compositedAncestorIsInsideScroller && isNonScrolledLayerInsideScrolledCompositedAncestor(layer, *compositedAncestor, *scrollingAncestor))
-            return ScrollPositioningBehavior::Stationary;
-    }
+    //    changes to make the positioned layer stay in the same place. This only applies to position:absolute or descendants of position:absolute.
+    if (compositedAncestorIsScrolling && isNonScrolledLayerInsideScrolledCompositedAncestor(layer, *compositedAncestor, *scrollingAncestor))
+        return ScrollPositioningBehavior::Stationary;
 
     // 2. The layer's containing block is the overflow or inside the overflow:scroll, but its z-order ancestor is
     //    outside the overflow:scroll. In that case, we have to move the layer via the scrolling tree to make
     //    it move along with the overflow scrolling.
-    if (!compositedAncestorIsInsideScroller && isScrolledByOverflowScrollLayer(layer, *scrollingAncestor))
+    if (!compositedAncestorIsScrolling && isScrolledByOverflowScrollLayer(layer, *scrollingAncestor))
         return ScrollPositioningBehavior::Moves;
 
     return ScrollPositioningBehavior::None;
@@ -3192,7 +3188,6 @@ static Vector<ScrollingNodeID> collectRelatedCoordinatedScrollingNodes(const Ren
         break;
     }
     case ScrollPositioningBehavior::Stationary: {
-        ASSERT(layer.renderer().isAbsolutelyPositioned());
         auto* compositedAncestor = layer.ancestorCompositingLayer();
         if (!compositedAncestor)
             return overflowNodeData;

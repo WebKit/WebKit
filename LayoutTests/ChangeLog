@@ -1,3 +1,16 @@
+2019-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Create scrolling tree nodes for descendants of position:absolute inside stacking-context overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198154
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow-expected.txt: Copied from LayoutTests/platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow-expected.txt: Copied from LayoutTests/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt.
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow.html: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+
 2019-05-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Implement property resolver

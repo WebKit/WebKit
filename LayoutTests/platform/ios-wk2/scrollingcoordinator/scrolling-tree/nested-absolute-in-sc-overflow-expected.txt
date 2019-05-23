@@ -25,10 +25,16 @@ abs
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1))
-      (children 2
+      (children 3
         (Positioned node
           (layout constraints 
             (layer-position-at-last-layout (20,28))
+            (positioning-behavior stationary))
+          (related overflow nodes 1)
+        )
+        (Positioned node
+          (layout constraints 
+            (layer-position-at-last-layout (32,60))
             (positioning-behavior stationary))
           (related overflow nodes 1)
         )
