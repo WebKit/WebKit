@@ -1,3 +1,13 @@
+2019-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-optical-sizing applies the wrong variation value
+        https://bugs.webkit.org/show_bug.cgi?id=197528
+        <rdar://problem/50152854>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Platform.h:
+
 2019-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245598.
