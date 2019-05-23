@@ -1348,23 +1348,35 @@ public:
         m_hasMetadata = metadataTable.m_hasMetadata;
         if (!m_hasMetadata)
             return;
-        for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
-            m_metadata[i] = metadataTable.buffer()[i];
+        m_is32Bit = metadataTable.m_is32Bit;
+        if (m_is32Bit) {
+            for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
+                m_metadata[i] = metadataTable.offsetTable32()[i];
+        } else {
+            for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
+                m_metadata[i] = metadataTable.offsetTable16()[i];
+        }
     }
 
     Ref<UnlinkedMetadataTable> decode(Decoder&) const
     {
-        Ref<UnlinkedMetadataTable> metadataTable = UnlinkedMetadataTable::create();
+        Ref<UnlinkedMetadataTable> metadataTable = UnlinkedMetadataTable::create(m_is32Bit);
         metadataTable->m_isFinalized = true;
         metadataTable->m_isLinked = false;
         metadataTable->m_hasMetadata = m_hasMetadata;
-        for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
-            metadataTable->buffer()[i] = m_metadata[i];
+        if (m_is32Bit) {
+            for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
+                metadataTable->offsetTable32()[i] = m_metadata[i];
+        } else {
+            for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
+                metadataTable->offsetTable16()[i] = m_metadata[i];
+        }
         return metadataTable;
     }
 
 private:
     bool m_hasMetadata;
+    bool m_is32Bit;
     std::array<unsigned, UnlinkedMetadataTable::s_offsetTableEntries> m_metadata;
 };
 

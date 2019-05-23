@@ -63,16 +63,16 @@ public:
 
     size_t sizeInBytes();
 
-    void ref() const
+    void ref()
     {
         ++linkingData().refCount;
     }
 
-    void deref() const
+    void deref()
     {
         unsigned tempRefCount = linkingData().refCount - 1;
         if (!tempRefCount) {
-            this->~MetadataTable();
+            MetadataTable::destroy(this);
             return;
         }
         linkingData().refCount = tempRefCount;
@@ -91,20 +91,37 @@ public:
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
+    UnlinkedMetadataTable::Offset16* offsetTable16() const { return bitwise_cast<UnlinkedMetadataTable::Offset16*>(this); }
+    UnlinkedMetadataTable::Offset32* offsetTable32() const { return bitwise_cast<UnlinkedMetadataTable::Offset32*>(bitwise_cast<uint8_t*>(this) + UnlinkedMetadataTable::s_offset16TableSize); }
+
+    size_t totalSize() const
+    {
+        return getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
+    }
+
     UnlinkedMetadataTable::LinkingData& linkingData() const
     {
         return *bitwise_cast<UnlinkedMetadataTable::LinkingData*>((bitwise_cast<uint8_t*>(this) - sizeof(UnlinkedMetadataTable::LinkingData)));
     }
 
-    UnlinkedMetadataTable::Offset* buffer()
+    void* buffer() { return this; }
+
+    bool is32Bit() const { return !offsetTable16()[0]; }
+
+    ALWAYS_INLINE unsigned getOffset(unsigned i) const
     {
-        return bitwise_cast<UnlinkedMetadataTable::Offset*>(this);
+        unsigned offset = offsetTable16()[i];
+        if (offset)
+            return offset;
+        return offsetTable32()[i];
     }
 
     ALWAYS_INLINE uint8_t* getImpl(unsigned i)
     {
-        return bitwise_cast<uint8_t*>(this) + buffer()[i];
+        return bitwise_cast<uint8_t*>(this) + getOffset(i);
     }
+
+    static void destroy(MetadataTable*);
 };
 
 } // namespace JSC

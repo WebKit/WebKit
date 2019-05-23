@@ -1,5 +1,75 @@
 2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] UnlinkedMetadataTable's offset table should be small
+        https://bugs.webkit.org/show_bug.cgi?id=197910
+
+        Reviewed by Saam Barati.
+
+        In Gmail, we found that massive # of UnlinkedMetadataTable (21979 - 24727) exists. Each UnlinkedMetadataTable takes at least 204 bytes
+        because of large (unsinged) offset table. This patch reduces the size of offset table by introducing 16bit version offset table.
+        Previously our code for looking up Metadata is like this.
+
+            offset = offsetTable32[opcode]
+            metadata = (SomeOp::Metadata*)table[offset] + id
+
+        Instead, we introduce uint16_t offset table. The lookup code becomes like this.
+
+            offset = offsetTable16[opcode]
+            if (!offset)
+                offset = offsetTable32[opcode]
+            metadata = (SomeOp::Metadata*)table[offset] + id
+
+        We use 0 offset as a marker to indicate that we have 32bit offset table. This is OK since 0 offset does not appear since all the offsets
+        included in this table is larger than s_offset16TableSize.
+
+        32bit offset table is allocated only when the offset exceeds 16bit range. It means that this will be used only when Metadata table is larger
+        than almost 64KB. Even in Gmail, such MetadataTable is rare, and additional 32bit offset table size does not matter much in this case since
+        MetadataTable is already so large.
+
+        Based on the # of UnlinkedMetadataTables, this optimization should improve Gmail steady state memory by 2MB.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/MetadataTable.cpp:
+        (JSC::MetadataTable::~MetadataTable):
+        (JSC::MetadataTable::destroy):
+        * bytecode/MetadataTable.h:
+        (JSC::MetadataTable::ref):
+        (JSC::MetadataTable::deref):
+        (JSC::MetadataTable::buffer):
+        (JSC::MetadataTable::is32Bit const):
+        (JSC::MetadataTable::offsetTable16 const):
+        (JSC::MetadataTable::offsetTable32 const):
+        (JSC::MetadataTable::totalSize const):
+        (JSC::MetadataTable::getOffset const):
+        (JSC::MetadataTable::getImpl):
+        (JSC::MetadataTable::ref const): Deleted.
+        (JSC::MetadataTable::deref const): Deleted.
+        * bytecode/Opcode.cpp:
+        * bytecode/UnlinkedMetadataTable.cpp: Added.
+        (JSC::UnlinkedMetadataTable::finalize):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::create):
+        (JSC::UnlinkedMetadataTable::totalSize const):
+        (JSC::UnlinkedMetadataTable::offsetTableSize const):
+        (JSC::UnlinkedMetadataTable::preprocessBuffer const):
+        (JSC::UnlinkedMetadataTable::buffer const):
+        (JSC::UnlinkedMetadataTable::offsetTable16 const):
+        (JSC::UnlinkedMetadataTable::offsetTable32 const):
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::addEntry):
+        (JSC::UnlinkedMetadataTable::sizeInBytes):
+        (JSC::UnlinkedMetadataTable::link):
+        (JSC::UnlinkedMetadataTable::unlink):
+        (JSC::UnlinkedMetadataTable::finalize): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedMetadataTable::encode):
+        (JSC::CachedMetadataTable::decode const):
+
+2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ArrayAllocationProfile should not access to butterfly in concurrent compiler
         https://bugs.webkit.org/show_bug.cgi?id=197809
 

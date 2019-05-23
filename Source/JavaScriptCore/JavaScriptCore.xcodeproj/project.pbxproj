@@ -4724,6 +4724,7 @@
 		E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitializeThreading.cpp; sourceTree = "<group>"; };
 		E18E3A560DF9278C00D90B34 /* VM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VM.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		E18E3A570DF9278C00D90B34 /* VM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = VM.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		E3060128228F978100FAABDF /* UnlinkedMetadataTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedMetadataTable.cpp; sourceTree = "<group>"; };
 		E30677971B8BC6F5003F87F0 /* ModuleLoader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoader.js; sourceTree = "<group>"; };
 		E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SymbolTableOrScopeDepth.h; sourceTree = "<group>"; };
 		E31618101EC5FE080006A218 /* DOMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAnnotation.h; sourceTree = "<group>"; };
@@ -8067,6 +8068,7 @@
 				14142E541B7973C000F4BF4B /* UnlinkedFunctionExecutable.cpp */,
 				14142E501B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h */,
 				14AD911C1DCA9FA40014F9FE /* UnlinkedGlobalCodeBlock.h */,
+				E3060128228F978100FAABDF /* UnlinkedMetadataTable.cpp */,
 				142D52BE21762958002DB086 /* UnlinkedMetadataTable.h */,
 				142D52BD21762957002DB086 /* UnlinkedMetadataTableInlines.h */,
 				14AD912A1DCAAAB00014F9FE /* UnlinkedModuleProgramCodeBlock.cpp */,

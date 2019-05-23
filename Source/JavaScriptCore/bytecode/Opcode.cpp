@@ -203,7 +203,7 @@ void OpcodeStats::resetLastInstruction()
 
 #endif
 
-static unsigned metadataSizes[] = {
+static const unsigned metadataSizes[] = {
 
 #define METADATA_SIZE(size) size,
     FOR_EACH_BYTECODE_METADATA_SIZE(METADATA_SIZE)
@@ -211,7 +211,7 @@ static unsigned metadataSizes[] = {
 
 };
 
-static unsigned metadataAlignments[] = {
+static const unsigned metadataAlignments[] = {
 
 #define METADATA_ALIGNMENT(size) size,
     FOR_EACH_BYTECODE_METADATA_ALIGNMENT(METADATA_ALIGNMENT)

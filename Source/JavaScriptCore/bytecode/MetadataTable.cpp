@@ -56,11 +56,16 @@ MetadataTable::~MetadataTable()
 {
     for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; i++)
         getOpcodeType<DeallocTable>(static_cast<OpcodeID>(i), this);
-    Ref<UnlinkedMetadataTable> unlinkedMetadata = WTFMove(linkingData().unlinkedMetadata);
     linkingData().~LinkingData();
+}
+
+void MetadataTable::destroy(MetadataTable* table)
+{
+    Ref<UnlinkedMetadataTable> unlinkedMetadata = WTFMove(table->linkingData().unlinkedMetadata);
+    table->~MetadataTable();
     // Since UnlinkedMetadata::unlink frees the underlying memory of MetadataTable.
     // We need to destroy LinkingData before calling it.
-    unlinkedMetadata->unlink(*this);
+    unlinkedMetadata->unlink(*table);
 }
 
 size_t MetadataTable::sizeInBytes()

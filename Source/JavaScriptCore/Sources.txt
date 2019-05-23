@@ -273,6 +273,7 @@ bytecode/UnlinkedCodeBlock.cpp
 bytecode/UnlinkedEvalCodeBlock.cpp
 bytecode/UnlinkedFunctionCodeBlock.cpp
 bytecode/UnlinkedFunctionExecutable.cpp
+bytecode/UnlinkedMetadataTable.cpp
 bytecode/UnlinkedModuleProgramCodeBlock.cpp
 bytecode/UnlinkedProgramCodeBlock.cpp
 bytecode/ValueRecovery.cpp

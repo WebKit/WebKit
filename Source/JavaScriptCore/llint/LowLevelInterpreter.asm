@@ -181,6 +181,9 @@ const ThisArgumentOffset = ArgumentCount + SlotSize
 const FirstArgumentOffset = ThisArgumentOffset + SlotSize
 const CallFrameHeaderSize = ThisArgumentOffset
 
+const MetadataOffsetTable16Offset = 0
+const MetadataOffsetTable32Offset = constexpr UnlinkedMetadataTable::s_offset16TableSize
+
 # Some value representation constants.
 if JSVALUE64
     const TagBitTypeOther = constexpr TagBitTypeOther
@@ -336,7 +339,10 @@ macro wide(narrowFn, wideFn, k)
 end
 
 macro metadata(size, opcode, dst, scratch)
-    loadi constexpr %opcode%::opcodeID * 4[metadataTable], dst # offset = metadataTable<unsigned*>[opcodeID]
+    loadh (constexpr %opcode%::opcodeID * 2 + MetadataOffsetTable16Offset)[metadataTable], dst # offset = metadataTable<uint16_t*>[opcodeID]
+    btinz dst, .setUpOffset
+    loadi (constexpr %opcode%::opcodeID * 4 + MetadataOffsetTable32Offset)[metadataTable], dst # offset = metadataTable<uint32_t*>[opcodeID]
+.setUpOffset:
     getu(size, opcode, m_metadataID, scratch) # scratch = bytecode.m_metadataID
     muli sizeof %opcode%::Metadata, scratch # scratch *= sizeof(Op::Metadata)
     addi scratch, dst # offset += scratch
