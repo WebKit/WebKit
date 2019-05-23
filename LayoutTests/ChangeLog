@@ -1,3 +1,10 @@
+2019-05-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Land test changes for rdar://problem/51086725.
+
+        * inspector/runtime/parse-expected.txt:
+        * inspector/runtime/parse.html:
+
 2019-05-16  Shawn Roberts  <sroberts@apple.com>
 
         quicklook/numbers.html is an ImageOnlyFailure
