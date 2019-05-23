@@ -1,3 +1,16 @@
+2019-05-22  Stephanie Lewis  <slewis@apple.com>
+
+        release builds of webkit cannot be used to generate a dyld shared cache
+        https://bugs.webkit.org/show_bug.cgi?id=198150
+        <rdar://problem/50675982>
+
+        Reviewed by Dan Bernstein.
+
+        Restrict the -not_for_dyld_shared_cache linker flag to macosx
+
+        * Configurations/WebKit.xcconfig:
+
+
 2019-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [Hittest] Move hittesting from RenderView to Document
