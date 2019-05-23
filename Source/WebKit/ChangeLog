@@ -1,3 +1,50 @@
+2019-05-23  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r245661. rdar://problem/50613388
+
+    REGRESSION(r245148): Removing inputmode="none" does not bring up software keyboard
+    https://bugs.webkit.org/show_bug.cgi?id=198141
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    r245148 changed _requiresKeyboardWhenFirstResponder to return NO when shouldShowAutomaticKeyboardUI
+    returns NO with regards to software keyboard. This introduced a regression that removing inputmode="none"
+    no longer brings up the software keyboard. Fixed the bug by making it return YES when inputmode="none"
+    is present on an editable element in shouldShowAutomaticKeyboardUI, partially restoring the old behavior.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView shouldShowAutomaticKeyboardUI]):
+    (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+    (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+    
+    LayoutTests:
+    
+    Added a regression test.
+    
+    * fast/forms/ios/inputmode-removing-none-expected.txt: Added.
+    * fast/forms/ios/inputmode-removing-none.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245661 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r245148): Removing inputmode="none" does not bring up software keyboard
+            https://bugs.webkit.org/show_bug.cgi?id=198141
+
+            Reviewed by Geoffrey Garen.
+
+            r245148 changed _requiresKeyboardWhenFirstResponder to return NO when shouldShowAutomaticKeyboardUI
+            returns NO with regards to software keyboard. This introduced a regression that removing inputmode="none"
+            no longer brings up the software keyboard. Fixed the bug by making it return YES when inputmode="none"
+            is present on an editable element in shouldShowAutomaticKeyboardUI, partially restoring the old behavior.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView shouldShowAutomaticKeyboardUI]):
+            (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+            (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+
 2019-05-20  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245520. rdar://problem/50552974

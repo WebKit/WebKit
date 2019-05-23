@@ -1634,6 +1634,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_focusedElementInformation.inputMode == WebCore::InputMode::None && !GSEventIsHardwareKeyboardAttached())
         return NO;
 
+    return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode];
+}
+
+- (BOOL)_shouldShowAutomaticKeyboardUIIgnoringInputMode
+{
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
@@ -1664,8 +1669,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
-    // FIXME: Only create keyboard if [self shouldShowAutomaticKeyboardUI] returns YES or
-    // on first hardware keydown in a non-editable element. See <https://bugs.webkit.org/show_bug.cgi?id=197746>.
+    // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
+    return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode]
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     if (GSEventIsHardwareKeyboardAttached())
         return YES;
