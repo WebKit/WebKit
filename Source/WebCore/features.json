@@ -25,7 +25,7 @@
     {
         "name": "Beacon API",
         "status": {
-            "status": "Supported In Preview"
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/beacon/",
         "webkit-url": "https://webkit.org/b/147885",
@@ -231,7 +231,7 @@
     {
         "name": "CSS Text Decoration Level 4",
         "status": {
-            "status": "Supported in Preview",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://drafts.csswg.org/css-text-decor-4/",
@@ -442,7 +442,7 @@
     {
         "name": "Intersection Observer",
         "status": {
-            "status": "Supported in Preview"
+            "status": "Supported"
         },
         "url": "https://wicg.github.io/IntersectionObserver/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=159475",
@@ -887,7 +887,7 @@
     {
         "name": "Conic Gradients",
         "status": {
-            "status": "Supported in Preview"
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/css4-images/#conic-gradients",
         "specification": "CSS Image Values and Replaced Content Module Level 4",
@@ -915,7 +915,7 @@
     {
         "name": "Datalist Element",
         "status": {
-            "status": "Supported in Preview"
+            "status": "Supported"
         },
         "url": "https://html.spec.whatwg.org/multipage/form-elements.html#the-datalist-element",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=27247",
@@ -1362,7 +1362,7 @@
     {
         "name": "Web Share",
         "status": {
-            "status": "Supported in Preview"
+            "status": "Supported"
         },
         "url": "https://github.com/WICG/web-share/blob/master/docs/interface.md",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171100",
