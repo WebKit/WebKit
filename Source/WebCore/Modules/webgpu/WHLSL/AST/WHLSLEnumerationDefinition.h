@@ -64,7 +64,7 @@ public:
     bool add(EnumerationMember&& member)
     {
         auto result = m_members.add(member.name(), std::make_unique<EnumerationMember>(WTFMove(member)));
-        return !result.isNewEntry;
+        return result.isNewEntry;
     }
 
     EnumerationMember* memberByName(const String& name)

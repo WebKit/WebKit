@@ -55,7 +55,7 @@ public:
     EnumerationMember(EnumerationMember&&) = default;
 
     const Lexer::Token& origin() const { return m_origin; }
-    String& name() { return m_name; }
+    String name() { return m_name; }
     Optional<ConstantExpression>& value() { return m_value; }
 
     void setValue(ConstantExpression&& value)

@@ -111,10 +111,7 @@ void ASTDumper::visit(AST::StructureElement& structureElement)
 
 void ASTDumper::visit(AST::EnumerationDefinition& enumerationDefinition)
 {
-    // FIXME: Test this once we parse enums:
-    // https://bugs.webkit.org/show_bug.cgi?id=198087
-
-    m_out.println(m_indent, "enum ");
+    m_out.print(m_indent, "enum ");
     visit(enumerationDefinition.type());
     m_out.print(" {");
 
@@ -339,10 +336,9 @@ void ASTDumper::visit(AST::NullLiteralType&)
 {
 }
 
-void ASTDumper::visit(AST::EnumerationMemberLiteral&)
+void ASTDumper::visit(AST::EnumerationMemberLiteral& enumerationMemberLiteral)
 {
-    // FIXME: Handle this when we can parse enums:
-    // https://bugs.webkit.org/show_bug.cgi?id=198087
+    m_out.print(enumerationMemberLiteral.left(), ".", enumerationMemberLiteral.right());
 }
 
 void ASTDumper::visit(AST::FunctionAttribute& functionAttribute)

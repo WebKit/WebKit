@@ -1,3 +1,13 @@
+2019-05-22  Saam barati  <sbarati@apple.com>
+
+        WHLSL: fix enum parsing
+        https://bugs.webkit.org/show_bug.cgi?id=198087
+
+        Reviewed by Myles Maxfield.
+
+        * webgpu/whlsl-dont-crash-parsing-enum-expected.html: Added.
+        * webgpu/whlsl-dont-crash-parsing-enum.html: Added.
+
 2019-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r245148): Removing inputmode="none" does not bring up software keyboard
