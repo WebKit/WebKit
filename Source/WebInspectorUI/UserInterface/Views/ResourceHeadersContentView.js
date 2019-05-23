@@ -270,6 +270,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             const options = {
                 dontFloat: true,
                 ignoreSearchTab: true,
+                ignoreNetworkTab: true,
             };
             let link = WI.createSourceCodeLocationLink(initiatorLocation, options);
             fragment.appendChild(link);
@@ -283,7 +284,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                 this._popoverCallStackIconElement.addEventListener("click", (event) => {
                     if (!this._popover) {
                         this._popover = new WI.Popover(this);
-                        this._popover.windowResizeHandler = () => { this._presentPopoverBelowCallStackElement() };
+                        this._popover.windowResizeHandler = () => { this._presentPopoverBelowCallStackElement(); };
                     }
 
                     const selectable = false;

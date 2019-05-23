@@ -3235,7 +3235,10 @@ WI.dialogWasDismissedWithRepresentedObject = function(dialog, representedObject)
     if (!representedObject)
         return;
 
-    WI.showRepresentedObject(representedObject, dialog.cookie);
+    WI.showRepresentedObject(representedObject, dialog.cookie, {
+        ignoreSearchTab: true,
+        ignoreNetworkTab: true,
+    });
 };
 
 // Popover delegate

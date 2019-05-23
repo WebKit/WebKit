@@ -1,3 +1,29 @@
+2019-05-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: clicking a source link should never open the Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=197951
+
+        Reviewed by Timothy Hatcher.
+
+        The preview panel in the Network tab is really meant to be just that; a preview.
+
+        Opening resources in the preview panel is not a great experience, as the Network tab doesn't
+        have as much of the information one would expect when viewing a resource (namely the
+        Resource details sidebar panel).
+
+        Navigating within the Network tab also completely wipes out the current "state" of what
+        you're looking at (e.g. which panel), which could be unexpected.
+
+        The only way this could happen previously was if the Resources/Debugger/Sources tabs had
+        never been active at any point in the past. Selecting one of those tabs and then clicking on
+        an initiator link in the Network tab would re-select that other tab.
+
+        * UserInterface/Base/Main.js:
+        (WI.dialogWasDismissedWithRepresentedObject):
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+
 2019-05-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Provide UIString descriptions to improve localizations
