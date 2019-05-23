@@ -1,5 +1,36 @@
 2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ArrayAllocationProfile should not access to butterfly in concurrent compiler
+        https://bugs.webkit.org/show_bug.cgi?id=197809
+
+        Reviewed by Michael Saboff.
+
+        ArrayAllocationProfile assumes that Butterfly can be accessed concurrently. But this is not correct now
+        since LargeAllocation Butterfly can be realloced. In this patch, we switch profiling array allocations
+        only in the main thread. This allocation profiling is repeatedly called in the main thread's slow path,
+        and it is also called when updating the profiles in the main thread.
+
+        We also rename updateAllPredictionsAndCountLiveness to updateAllValueProfilePredictionsAndCountLiveness
+        since it only cares ValueProfiles.
+
+        * bytecode/ArrayAllocationProfile.cpp:
+        (JSC::ArrayAllocationProfile::updateProfile):
+        * bytecode/ArrayAllocationProfile.h:
+        (JSC::ArrayAllocationProfile::selectIndexingTypeConcurrently):
+        (JSC::ArrayAllocationProfile::selectIndexingType):
+        (JSC::ArrayAllocationProfile::vectorLengthHintConcurrently):
+        (JSC::ArrayAllocationProfile::vectorLengthHint):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateAllValueProfilePredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness): Deleted.
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Shrink Metadata
         https://bugs.webkit.org/show_bug.cgi?id=197940
 
