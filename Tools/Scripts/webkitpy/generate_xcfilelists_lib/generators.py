@@ -253,7 +253,8 @@ class BaseGenerator(object):
         if not script:
             return
 
-        with tempfile.NamedTemporaryFile() as input, tempfile.NamedTemporaryFile() as output:
+        with tempfile.NamedTemporaryFile(dir=self._get_temp_dir()) as input, \
+                tempfile.NamedTemporaryFile(dir=self._get_temp_dir()) as output:
             (stdout, stderr) = util.subprocess_run(
                     [script,
                         "NO_SUPPLEMENTAL_FILES=1",
@@ -308,7 +309,7 @@ class BaseGenerator(object):
         if not script:
             return
 
-        with tempfile.NamedTemporaryFile() as output:
+        with tempfile.NamedTemporaryFile(dir=self._get_temp_dir()) as output:
 
             # We need to define BUILD_SCRIPTS_DIR so that the bash script we're
             # invoking can find the ruby script that it invokes. If we don't
@@ -640,6 +641,10 @@ class BaseGenerator(object):
     @util.LogEntryExit
     def _get_generate_unified_sources_script(self):
         return None
+
+    @util.LogEntryExit
+    def _get_temp_dir(self):
+        return self.application.get_xcode_project_temp_dir()
 
 
 class JavaScriptCoreGenerator(BaseGenerator):

@@ -459,6 +459,11 @@ specified on the command-line:
         assert util.is_running_under_xcode()
         return self._getenv("BUILT_PRODUCTS_DIR")
 
+    @util.LogEntryExit
+    def get_xcode_project_temp_dir(self):
+        assert util.is_running_under_xcode()
+        return self._getenv("PROJECT_TEMP_DIR")
+
     # Return the named environment variable.
     @util.LogEntryExit
     def _getenv(self, variable_name):
