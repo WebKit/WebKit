@@ -955,3 +955,5 @@ webkit.org/b/197289 [ Mojave Debug ] webgl/2.0.0/conformance/state/gl-object-get
 webkit.org/b/189672 [ Mojave Debug ] webgl/2.0.0/conformance2/textures/misc/tex-new-formats.html [ Skip ]
 
 webkit.org/b/196445 [ Debug ] storage/indexeddb/modern/deletedatabase-2-private.html [ Pass Failure ]
+
+webkit.org/b/198195 [ Release ] fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnlyFailure ]
