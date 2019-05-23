@@ -764,16 +764,16 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (isEditableNode) {
             if (!forbiddenClosingTag) {
-                subMenus.add.appendItem(WI.UIString("Child"), () => {
+                subMenus.add.appendItem(WI.UIString("Child", "A submenu item of 'Add' to append DOM nodes to the selected DOM node"), () => {
                     this._addHTML();
                 });
             }
 
-            subMenus.add.appendItem(WI.UIString("Previous Sibling"), () => {
+            subMenus.add.appendItem(WI.UIString("Previous Sibling", "A submenu item of 'Add' to add DOM nodes before the selected DOM node"), () => {
                 this._addPreviousSibling();
             });
 
-            subMenus.add.appendItem(WI.UIString("Next Sibling"), () => {
+            subMenus.add.appendItem(WI.UIString("Next Sibling", "A submenu item of 'Add' to add DOM nodes after the selected DOM node"), () => {
                 this._addNextSibling();
             });
         }
@@ -797,7 +797,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 });
             }
 
-            subMenus.edit.appendItem(WI.UIString("Tag"), () => {
+            subMenus.edit.appendItem(WI.UIString("Tag", "A submenu item of 'Edit' to change DOM element's tag name"), () => {
                 this._startEditingTagName();
             });
         }
