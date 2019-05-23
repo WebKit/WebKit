@@ -40,7 +40,7 @@
     {
         return new Promise(async resolve => {
             await UIHelper.setViewScale(scale);
-            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+            await UIHelper.ensurePresentationUpdate();
             resolve(internals.pageScaleFactor().toFixed(2));
         });
     }

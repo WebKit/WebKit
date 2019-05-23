@@ -1,3 +1,20 @@
+2019-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The shouldIgnoreMetaViewport test option incorrectly persists across layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=198135
+        <rdar://problem/51001306>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Attempt to fix a handful of viewport tests that currently try to wait for the next visible content rect update,
+        but end up timing out in the process. Instead, only wait for the presentation update, which is guaranteed to
+        happen.
+
+        * fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html:
+        * fast/viewport/ios/device-width-viewport-after-changing-view-scale.html:
+        * fast/viewport/ios/initial-scale-after-changing-view-scale.html:
+        * fast/viewport/ios/minimum-scale-after-changing-view-scale.html:
+
 2019-05-22  Saam barati  <sbarati@apple.com>
 
         WHLSL: fix enum parsing

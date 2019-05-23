@@ -39,7 +39,7 @@
             appendOutput(`setViewScale(${targetScale.toFixed(2)})`);
 
             await UIHelper.setViewScale(targetScale);
-            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+            await UIHelper.ensurePresentationUpdate();
 
             appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
             appendOutput(`square size: [${square.clientWidth}, ${square.clientHeight}]`);

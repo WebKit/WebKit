@@ -187,12 +187,12 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
-    if (!test.options().useFlexibleViewport)
-        return;
-        
     TestRunnerWKWebView *webView = mainWebView()->platformView();
 
     webView.configuration.preferences._shouldIgnoreMetaViewport = test.options().shouldIgnoreMetaViewport;
+
+    if (!test.options().useFlexibleViewport)
+        return;
 
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     CGSize oldSize = webView.bounds.size;

@@ -1,3 +1,21 @@
+2019-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The shouldIgnoreMetaViewport test option incorrectly persists across layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=198135
+        <rdar://problem/51001306>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When shouldIgnoreMetaViewport=true is specified on a test, if the following test does not use a flexible
+        viewport, we will continue ignoring the meta viewport, since we'll bail before we attempt to reset
+        WKPreferences' _shouldIgnoreMetaViewport property to NO.
+
+        We fix this by simply allowing shouldIgnoreMetaViewport to take precedence over useFlexibleViewport, such that
+        -[WKPreferences _shouldIgnoreMetaViewport] will always be updated to its intended value between tests.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
 2019-05-22  Sihui Liu  <sihui_liu@apple.com>
 
         API Test landed in r245540 [Mac WK2] TestWebKitAPI.WKWebView.LocalStorageProcessCrashes is a flaky failure
