@@ -33,10 +33,15 @@ namespace JSC {
 
 // Section 7.3.17 of the spec.
 template <typename AddFunction> // Add function should have a type like: (JSValue, RuntimeType) -> bool
-void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTypeMask legalTypesFilter, const String& errorMessage, AddFunction addFunction)
+void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTypeMask legalTypesFilter, const String& notAnObjectErroMessage, const String& illegalTypeErrorMessage, AddFunction addFunction)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!arrayLikeValue.isObject()) {
+        throwTypeError(exec, scope, notAnObjectErroMessage);
+        return;
+    }
     
     Vector<JSValue> result;
     JSValue lengthProperty = arrayLikeValue.get(exec, vm.propertyNames->length);
@@ -51,7 +56,7 @@ void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTyp
         
         RuntimeType type = runtimeTypeForValue(vm, next);
         if (!(type & legalTypesFilter)) {
-            throwTypeError(exec, scope, errorMessage);
+            throwTypeError(exec, scope, illegalTypeErrorMessage);
             return;
         }
         

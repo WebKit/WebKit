@@ -1,3 +1,21 @@
+2019-05-23  Tadeu Zagallo  <tzagallo@apple.com>
+
+        createListFromArrayLike should throw if value is not an object
+        https://bugs.webkit.org/show_bug.cgi?id=198138
+
+        Reviewed by Yusuke Suzuki.
+
+        According to the spec[1], createListFromArrayLike should throw a type error if the array-like value
+        passed in is not an object.
+        [1]: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-createlistfromarraylike
+
+        * runtime/JSObjectInlines.h:
+        (JSC::createListFromArrayLike):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+
 2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] UnlinkedMetadataTable's offset table should be small

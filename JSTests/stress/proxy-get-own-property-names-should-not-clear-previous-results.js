@@ -6,7 +6,7 @@ function shouldBe(actual, expected) {
 a = {defineProperties:Object};
 function opt() {
     a.__proto__ = new Proxy(Object,{ownKeys:opt});
-    return 1;
+    return [];
 }
 for(var i=0;i<400;i=i+1) {
     var prop = null;

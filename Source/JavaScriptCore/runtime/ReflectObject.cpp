@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState* exec)
     if (!argumentsObject)
         return JSValue::encode(throwTypeError(exec, scope, "Reflect.construct requires the second argument be an object"_s));
 
-    createListFromArrayLike(exec, argumentsObject, RuntimeTypeMaskAllTypes, "This error must not be raised"_s, [&] (JSValue value, RuntimeType) -> bool {
+    createListFromArrayLike(exec, argumentsObject, RuntimeTypeMaskAllTypes, "This error must not be raised"_s, "This error must not be raised"_s, [&] (JSValue value, RuntimeType) -> bool {
         arguments.append(value);
         return false;
     });
