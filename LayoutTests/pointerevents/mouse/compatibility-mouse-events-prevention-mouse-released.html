@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    // First, let's make sure we call preventDefault() the first time we get a pointerdown event.
+    target.addEventListener("pointerdown", event => event.preventDefault(), { once: true });
+
+    // Press the mouse while over the element.
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+
+    let obtainedMouseMove = false;
+    target.addEventListener("mousemove", event => obtainedMouseMove = true, { once: true });
+    eventSender.mouseMoveTo(60, 60);
+    assert_false(obtainedMouseMove, "The mousemove event is not fired after calling preventDefault() while handling the pointerdown event.");
+
+    // Release the mouse.
+    eventSender.mouseUp();
+
+    // Now, without the mouse pressed, move the pointer over the element again. This should not prevent the mousemove event anymore since
+    // the mouse pointer is not pressed.
+    eventSender.mouseMoveTo(50, 50);
+    assert_true(obtainedMouseMove, "The mousemove event is fired after releasing the mouse.");
+
+    test.done();
+}, `Testing that calling preventDefault() when handling a "pointerdown" event only blocks events while the mouse pointer is pressed.`);
+
+</script>
+</body>
+</html>

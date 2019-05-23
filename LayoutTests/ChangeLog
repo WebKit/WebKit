@@ -1,5 +1,18 @@
 2019-05-23  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events] Compatibility mouse events can only be prevented while the pointer is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=198178
+
+        Reviewed by Dean Jackson.
+
+        Add a test that listens "mousemove" events and checks it is not dispatched after preventDefault() is called when handling
+         "pointerdown" but it is dispatched after releasing the mouse pointer and moving it again.
+
+        * pointerevents/mouse/compatibility-mouse-events-prevention-mouse-released-expected.txt: Added.
+        * pointerevents/mouse/compatibility-mouse-events-prevention-mouse-released.html: Added.
+
+2019-05-23  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events] The mouseover, mouseout, mouseenter, and mouseleave events should not be prevented while the pointer is down
         https://bugs.webkit.org/show_bug.cgi?id=198177
 

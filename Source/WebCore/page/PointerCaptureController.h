@@ -66,6 +66,7 @@ private:
         bool cancelled { false };
         bool isPrimary { false };
         bool preventsCompatibilityMouseEvents { false };
+        bool pointerIsPressed { false };
     };
 
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);

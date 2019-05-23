@@ -264,13 +264,22 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         // override for the pointerId of the pointerup or pointercancel event that was just dispatched, and then run Process Pending
         // Pointer Capture steps to fire lostpointercapture if necessary.
         // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
-        if (event.type() == eventNames().pointerupEvent)
+        if (event.type() == eventNames().pointerupEvent) {
             capturingData.pendingTargetOverride = nullptr;
+            capturingData.pointerIsPressed = false;
+        }
+
+        // If a mouse pointer has moved while it isn't pressed, make sure we reset the preventsCompatibilityMouseEvents flag since
+        // we could otherwise prevent compatibility mouse events while those are only supposed to be prevented while the pointer is pressed.
+        if (event.type() == eventNames().pointermoveEvent && capturingData.pointerType == PointerEvent::mousePointerType() && !capturingData.pointerIsPressed)
+            capturingData.preventsCompatibilityMouseEvents = false;
 
         // If the pointer event dispatched was pointerdown and the event was canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
         // https://www.w3.org/TR/pointerevents/#mapping-for-devices-that-support-hover
-        if (event.type() == eventNames().pointerdownEvent)
+        if (event.type() == eventNames().pointerdownEvent) {
             capturingData.preventsCompatibilityMouseEvents = event.defaultPrevented();
+            capturingData.pointerIsPressed = true;
+        }
     }
 
     processPendingPointerCapture(event);
