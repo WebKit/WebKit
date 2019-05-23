@@ -1678,6 +1678,8 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
 template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
 {
+    ASSERT(isASCIIDigit(m_current) || m_buffer8.size());
+
     // Optimization: most decimal values fit into 4 bytes.
     uint32_t decimalValue = 0;
 
@@ -2196,16 +2198,14 @@ start:
         }
         if (UNLIKELY(!parseNumberAfterDecimalPoint())) {
             m_lexErrorMessage = "Non-number found after decimal point"_s;
-            token = INVALID_NUMERIC_LITERAL_ERRORTOK;
+            token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
             goto returnError;
         }
         token = DOUBLE;
-        if (isASCIIAlphaCaselessEqual(m_current, 'e')) {
-            if (!parseNumberAfterExponentIndicator()) {
-                m_lexErrorMessage = "Non-number found after exponent indicator"_s;
-                token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
-                goto returnError;
-            }
+        if (UNLIKELY(isASCIIAlphaCaselessEqual(m_current, 'e') && !parseNumberAfterExponentIndicator())) {
+            m_lexErrorMessage = "Non-number found after exponent indicator"_s;
+            token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
+            goto returnError;
         }
         size_t parsedLength;
         tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
@@ -2222,7 +2222,7 @@ start:
     case CharacterZero:
         shift();
         if (isASCIIAlphaCaselessEqual(m_current, 'x')) {
-            if (!isASCIIHexDigit(peek(1))) {
+            if (UNLIKELY(!isASCIIHexDigit(peek(1)))) {
                 m_lexErrorMessage = "No hexadecimal digits after '0x'"_s;
                 token = UNTERMINATED_HEX_NUMBER_ERRORTOK;
                 goto returnError;
@@ -2243,7 +2243,7 @@ start:
                 tokenData->radix = 16;
             }
 
-            if (isIdentStart(m_current)) {
+            if (UNLIKELY(isIdentStart(m_current))) {
                 m_lexErrorMessage = "No space between hexadecimal literal and identifier"_s;
                 token = UNTERMINATED_HEX_NUMBER_ERRORTOK;
                 goto returnError;
@@ -2254,7 +2254,7 @@ start:
             break;
         }
         if (isASCIIAlphaCaselessEqual(m_current, 'b')) {
-            if (!isASCIIBinaryDigit(peek(1))) {
+            if (UNLIKELY(!isASCIIBinaryDigit(peek(1)))) {
                 m_lexErrorMessage = "No binary digits after '0b'"_s;
                 token = UNTERMINATED_BINARY_NUMBER_ERRORTOK;
                 goto returnError;
@@ -2275,7 +2275,7 @@ start:
                 tokenData->radix = 2;
             }
 
-            if (isIdentStart(m_current)) {
+            if (UNLIKELY(isIdentStart(m_current))) {
                 m_lexErrorMessage = "No space between binary literal and identifier"_s;
                 token = UNTERMINATED_BINARY_NUMBER_ERRORTOK;
                 goto returnError;
@@ -2287,7 +2287,7 @@ start:
         }
 
         if (isASCIIAlphaCaselessEqual(m_current, 'o')) {
-            if (!isASCIIOctalDigit(peek(1))) {
+            if (UNLIKELY(!isASCIIOctalDigit(peek(1)))) {
                 m_lexErrorMessage = "No octal digits after '0o'"_s;
                 token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
                 goto returnError;
@@ -2308,7 +2308,7 @@ start:
                 tokenData->radix = 8;
             }
 
-            if (isIdentStart(m_current)) {
+            if (UNLIKELY(isIdentStart(m_current))) {
                 m_lexErrorMessage = "No space between octal literal and identifier"_s;
                 token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
                 goto returnError;
@@ -2326,7 +2326,7 @@ start:
         }
 
         record8('0');
-        if (strictMode && isASCIIDigit(m_current)) {
+        if (UNLIKELY(strictMode && isASCIIDigit(m_current))) {
             m_lexErrorMessage = "Decimal integer literals with a leading zero are forbidden in strict mode"_s;
             token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
             goto returnError;
@@ -2342,39 +2342,36 @@ start:
     case CharacterNumber:
         if (LIKELY(token != INTEGER && token != DOUBLE)) {
             auto parseNumberResult = parseDecimal();
-            if (parseNumberResult && WTF::holds_alternative<double>(*parseNumberResult)) {
-                tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
-                token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
-            } else {
-                if (parseNumberResult) {
-                    ASSERT(WTF::get<const Identifier*>(*parseNumberResult));
+            if (parseNumberResult) {
+                if (WTF::holds_alternative<double>(*parseNumberResult)) {
+                    tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+                    token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
+                } else {
                     token = BIGINT;
                     shift();
                     tokenData->bigIntString = WTF::get<const Identifier*>(*parseNumberResult);
                     tokenData->radix = 10;
-                } else {
-                    token = INTEGER;
-                    if (m_current == '.') {
-                        shift();
-                        if (UNLIKELY(isASCIIDigit(m_current) && !parseNumberAfterDecimalPoint())) {
-                            m_lexErrorMessage = "Non-number found after decimal point"_s;
-                            token = INVALID_NUMERIC_LITERAL_ERRORTOK;
-                            goto returnError;
-                        }
-                        token = DOUBLE;
-                    }
-                    if (isASCIIAlphaCaselessEqual(m_current, 'e')) {
-                        if (!parseNumberAfterExponentIndicator()) {
-                            m_lexErrorMessage = "Non-number found after exponent indicator"_s;
-                            token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
-                            goto returnError;
-                        }
-                    }
-                    size_t parsedLength;
-                    tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
-                    if (token == INTEGER)
-                        token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
                 }
+            } else {
+                token = INTEGER;
+                if (m_current == '.') {
+                    shift();
+                    if (UNLIKELY(isASCIIDigit(m_current) && !parseNumberAfterDecimalPoint())) {
+                        m_lexErrorMessage = "Non-number found after decimal point"_s;
+                        token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
+                        goto returnError;
+                    }
+                    token = DOUBLE;
+                }
+                if (UNLIKELY(isASCIIAlphaCaselessEqual(m_current, 'e') && !parseNumberAfterExponentIndicator())) {
+                    m_lexErrorMessage = "Non-number found after exponent indicator"_s;
+                    token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
+                    goto returnError;
+                }
+                size_t parsedLength;
+                tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
+                if (token == INTEGER)
+                    token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }
         }
 
