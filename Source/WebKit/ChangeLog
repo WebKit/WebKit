@@ -1,3 +1,55 @@
+2019-05-23  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorageConnection callbacks should be completed on network connection close
+        https://bugs.webkit.org/show_bug.cgi?id=195757
+
+        Reviewed by Alex Christensen.
+
+        Update according new WebCore CacheStorageConnection interface.
+        Use Async IPC replies so that the completion handlers are called on network crash.
+
+        Allow to have specific error handling in case of cancelled reply or badly decoded message.
+        This allows to reject the corresponding JS promise.
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearMemoryRepresentation):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::requestSpace):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        (IPC::AsyncReplyError<WebCore::DOMCacheEngine::CacheIdentifierOrError>::create):
+        (IPC::AsyncReplyError<WebCore::DOMCacheEngine::RecordIdentifiersOrError>::create):
+        (IPC::AsyncReplyError<WebCore::DOMCacheEngine::CacheInfosOrError>::create):
+        (IPC::AsyncReplyError<WebCore::DOMCacheEngine::RecordsOrError>::create):
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/Connection.h:
+        (IPC::AsyncReplyError::create):
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::open):
+        (WebKit::WebCacheStorageConnection::remove):
+        (WebKit::WebCacheStorageConnection::retrieveCaches):
+        (WebKit::WebCacheStorageConnection::retrieveRecords):
+        (WebKit::WebCacheStorageConnection::batchDeleteOperation):
+        (WebKit::WebCacheStorageConnection::batchPutOperation):
+        (WebKit::WebCacheStorageConnection::engineRepresentation):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/Cache/WebCacheStorageConnection.messages.in: Removed.
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+
 2019-05-23  Sihui Liu  <sihui_liu@apple.com>
 
         Handling for non-persistent data should be consistent in computeNetworkProcessAccessTypeForDataFetch

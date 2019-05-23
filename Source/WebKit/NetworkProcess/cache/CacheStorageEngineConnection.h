@@ -27,14 +27,27 @@
 
 #include "ArgumentCoders.h"
 #include "CacheStorageEngine.h"
+#include "Connection.h"
 #include <WebCore/CacheStorageConnection.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace IPC {
-class Connection;
-class Decoder;
+
+template<> struct AsyncReplyError<WebCore::DOMCacheEngine::CacheIdentifierOrError> {
+    static WebCore::DOMCacheEngine::CacheIdentifierOrError create() { return makeUnexpected(WebCore::DOMCacheEngine::Error::Internal); };
+};
+template<> struct AsyncReplyError<WebCore::DOMCacheEngine::RecordIdentifiersOrError> {
+    static WebCore::DOMCacheEngine::RecordIdentifiersOrError create() { return makeUnexpected(WebCore::DOMCacheEngine::Error::Internal); };
+};
+template<> struct AsyncReplyError<WebCore::DOMCacheEngine::CacheInfosOrError> {
+    static WebCore::DOMCacheEngine::CacheInfosOrError create() { return makeUnexpected(WebCore::DOMCacheEngine::Error::Internal); };
+};
+template<> struct AsyncReplyError<WebCore::DOMCacheEngine::RecordsOrError> {
+    static WebCore::DOMCacheEngine::RecordsOrError create() { return makeUnexpected(WebCore::DOMCacheEngine::Error::Internal); };
+};
+
 }
 
 namespace WebKit {
@@ -50,13 +63,13 @@ public:
 private:
     explicit CacheStorageEngineConnection(NetworkConnectionToWebProcess&);
 
-    void open(PAL::SessionID, uint64_t openRequestIdentifier, WebCore::ClientOrigin&&, String&& cacheName);
-    void remove(PAL::SessionID, uint64_t removeRequestIdentifier, uint64_t cacheIdentifier);
-    void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, WebCore::ClientOrigin&&, uint64_t updateCounter);
+    void open(PAL::SessionID, WebCore::ClientOrigin&&, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(PAL::SessionID, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void caches(PAL::SessionID, WebCore::ClientOrigin&&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    void retrieveRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, URL&&);
-    void deleteMatchingRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&);
-    void putRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&);
+    void retrieveRecords(PAL::SessionID, uint64_t cacheIdentifier, URL&&, WebCore::DOMCacheEngine::RecordsCallback&&);
+    void deleteMatchingRecords(PAL::SessionID, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void putRecords(PAL::SessionID, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
     void reference(PAL::SessionID, uint64_t cacheIdentifier);
     void dereference(PAL::SessionID, uint64_t cacheIdentifier);

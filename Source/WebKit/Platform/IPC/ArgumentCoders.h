@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/SHA1.h>
+#include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
 namespace IPC {

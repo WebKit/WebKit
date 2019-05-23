@@ -32,6 +32,7 @@
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -99,19 +100,19 @@ struct CacheIdentifierOperationResult {
 };
 
 using CacheIdentifierOrError = Expected<CacheIdentifierOperationResult, Error>;
-using CacheIdentifierCallback = WTF::Function<void(const CacheIdentifierOrError&)>;
+using CacheIdentifierCallback = CompletionHandler<void(const CacheIdentifierOrError&)>;
 
 using RecordIdentifiersOrError = Expected<Vector<uint64_t>, Error>;
-using RecordIdentifiersCallback = WTF::Function<void(RecordIdentifiersOrError&&)>;
+using RecordIdentifiersCallback = CompletionHandler<void(RecordIdentifiersOrError&&)>;
 
 
 using CacheInfosOrError = Expected<CacheInfos, Error>;
-using CacheInfosCallback = WTF::Function<void(CacheInfosOrError&&)>;
+using CacheInfosCallback = CompletionHandler<void(CacheInfosOrError&&)>;
 
 using RecordsOrError = Expected<Vector<Record>, Error>;
-using RecordsCallback = WTF::Function<void(RecordsOrError&&)>;
+using RecordsCallback = CompletionHandler<void(RecordsOrError&&)>;
 
-using CompletionCallback = WTF::Function<void(Optional<Error>&&)>;
+using CompletionCallback = CompletionHandler<void(Optional<Error>&&)>;
 
 template<class Encoder> inline void CacheInfos::encode(Encoder& encoder) const
 {

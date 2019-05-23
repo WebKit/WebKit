@@ -49,10 +49,4 @@ Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorage
     return *m_defaultConnection;
 }
 
-void WebCacheStorageProvider::process(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    if (auto* cacheConnection = m_connections.get(decoder.destinationID()))
-        cacheConnection->didReceiveMessage(connection, decoder);
-}
-
 }

@@ -117,7 +117,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyScriptSource.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebCacheStorageConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebCacheStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebConnectionMessages.h

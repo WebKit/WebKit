@@ -600,7 +600,7 @@ void Engine::deleteDirectoryRecursivelyOnBackgroundThread(const String& path, Co
 
 void Engine::clearMemoryRepresentation(const WebCore::ClientOrigin& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
-    readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& result) {
+    readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& result) mutable {
         if (!result.has_value()) {
             callback(result.error());
             return;

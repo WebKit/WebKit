@@ -150,7 +150,6 @@ MESSAGE_RECEIVERS = \
     WebAuthenticatorCoordinatorProxy \
     WebAutomationSession \
     WebAutomationSessionProxy \
-    WebCacheStorageConnection \
     WebConnection \
     WebCookieManager \
     WebCookieManagerProxy \

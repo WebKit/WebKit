@@ -163,8 +163,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/Automation/WebAutomationSessionProxy.messages.in
 
-    WebProcess/Cache/WebCacheStorageConnection.messages.in
-
     WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
 
     WebProcess/FullScreen/WebFullScreenManager.messages.in

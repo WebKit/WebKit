@@ -33,8 +33,23 @@ namespace WebCore {
 
 class CacheStorageProvider : public RefCounted<CacheStorageProvider> {
 public:
+    class DummyCacheStorageConnection final : public WebCore::CacheStorageConnection {
+    public:
+        static Ref<DummyCacheStorageConnection> create() { return adoptRef(*new DummyCacheStorageConnection); }
+
+    private:
+        void open(const ClientOrigin&, const String&, DOMCacheEngine::CacheIdentifierCallback&&) final { }
+        void remove(uint64_t, DOMCacheEngine::CacheIdentifierCallback&&) final { }
+        void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&&) final { }
+        void retrieveRecords(uint64_t, const URL&, DOMCacheEngine::RecordsCallback&&) final { }
+        void batchDeleteOperation(uint64_t, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }
+        void batchPutOperation(uint64_t, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }
+        void reference(uint64_t) final { }
+        void dereference(uint64_t) final { }
+    };
+
     static Ref<CacheStorageProvider> create() { return adoptRef(*new CacheStorageProvider); }
-    virtual Ref<CacheStorageConnection> createCacheStorageConnection(PAL::SessionID) { return CacheStorageConnection::create(); }
+    virtual Ref<CacheStorageConnection> createCacheStorageConnection(PAL::SessionID) { return DummyCacheStorageConnection::create(); }
     virtual ~CacheStorageProvider() { };
 
 protected:

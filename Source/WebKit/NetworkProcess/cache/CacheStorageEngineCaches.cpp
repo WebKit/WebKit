@@ -515,7 +515,7 @@ void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::Compl
         return;
     }
 
-    m_quotaManager->requestSpace(spaceRequired, [callback = WTFMove(callback)](auto decision) {
+    m_quotaManager->requestSpace(spaceRequired, [callback = WTFMove(callback)](auto decision) mutable {
         switch (decision) {
         case WebCore::StorageQuotaManager::Decision::Deny:
             callback(Error::QuotaExceeded);
@@ -540,7 +540,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
         return;
     }
 
-    m_storage->store(Cache::encode(recordInformation, record), { }, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) {
+    m_storage->store(Cache::encode(recordInformation, record), { }, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(CacheStorage, "Caches::writeRecord failed with error %d", error);
             callback(Error::WriteDisk);

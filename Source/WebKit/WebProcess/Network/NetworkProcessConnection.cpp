@@ -32,8 +32,6 @@
 #include "ServiceWorkerClientFetchMessages.h"
 #include "StorageAreaMap.h"
 #include "StorageAreaMapMessages.h"
-#include "WebCacheStorageConnection.h"
-#include "WebCacheStorageConnectionMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToServerMessages.h"
@@ -121,10 +119,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
 #endif
-    if (decoder.messageReceiverName() == Messages::WebCacheStorageConnection::messageReceiverName()) {
-        WebProcess::singleton().cacheStorageProvider().process(connection, decoder);
-        return;
-    }
 
 #if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {

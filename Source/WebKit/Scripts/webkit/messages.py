@@ -594,13 +594,15 @@ def generate_message_handler(file):
                 for x in message.reply_parameters:
                     result.append('    Optional<%s> %s;\n' % (x.type, x.name))
                     result.append('    decoder >> %s;\n' % x.name)
-                    result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        return;\n    }\n' % x.name)
+                    result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        completionHandler(' % x.name)
+                    result.append(', '.join(['IPC::AsyncReplyError<' + x.type + '>::create()' for x in message.reply_parameters]))
+                    result.append(');\n        return;\n    }\n')
                 result.append('    completionHandler(')
                 if len(message.reply_parameters):
                     result.append('WTFMove(*%s)' % ('), WTFMove(*'.join(x.name for x in message.reply_parameters)))
                 result.append(');\n}\n\n')
                 result.append('void %s::cancelReply(CompletionHandler<void(%s)>&& completionHandler)\n{\n    completionHandler(' % move_parameters)
-                result.append(', '.join(['{ }' for x in message.reply_parameters]))
+                result.append(', '.join(['IPC::AsyncReplyError<' + x.type + '>::create()' for x in message.reply_parameters]))
                 result.append(');\n}\n\n')
 
             result.append('void %s::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection' % (message.name))

@@ -83,6 +83,10 @@ enum class WaitForOption {
     } \
 while (0)
 
+template<typename AsyncReplyResult> struct AsyncReplyError {
+    static AsyncReplyResult create() { return { }; };
+};
+
 class MachMessage;
 class UnixMessage;
 
