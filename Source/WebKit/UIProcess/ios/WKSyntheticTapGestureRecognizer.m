@@ -70,16 +70,18 @@
 {
     [super reset];
     [_resetTarget performSelector:_resetAction withObject:self];
+#if ENABLE(POINTER_EVENTS) 
     _lastActiveTouchIdentifier = nil;
+#endif
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
+#if ENABLE(POINTER_EVENTS) && HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
     if (!_supportingWebTouchEventsGestureRecognizer)
         return;
 
-#if ENABLE(POINTER_EVENTS) && HAVE(UI_WEB_TOUCH_EVENTS_GESTURE_RECOGNIZER_WITH_ACTIVE_TOUCHES_BY_ID)
     // FIXME: <rdar://problem/48035706>
     NSMapTable<NSNumber *, UITouch *> *activeTouches = [_supportingWebTouchEventsGestureRecognizer activeTouchesByIdentifier];
     for (NSNumber *touchIdentifier in activeTouches) {
