@@ -201,6 +201,35 @@ enum MediaPlayerAVFoundationObservationContext {
 #endif
 
 namespace WebCore {
+static String convertEnumerationToString(AVPlayerTimeControlStatus enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("AVPlayerTimeControlStatusPaused"),
+        MAKE_STATIC_STRING_IMPL("AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate"),
+        MAKE_STATIC_STRING_IMPL("AVPlayerTimeControlStatusPlaying"),
+    };
+    static_assert(!static_cast<size_t>(AVPlayerTimeControlStatusPaused), "AVPlayerTimeControlStatusPaused is not 0 as expected");
+    static_assert(static_cast<size_t>(AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate) == 1, "AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate is not 1 as expected");
+    static_assert(static_cast<size_t>(AVPlayerTimeControlStatusPlaying) == 2, "AVPlayerTimeControlStatusPlaying is not 2 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+}
+
+namespace WTF {
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<AVPlayerTimeControlStatus> {
+    static String toString(const AVPlayerTimeControlStatus status)
+    {
+        return convertEnumerationToString(status);
+    }
+};
+}; // namespace WTF
+
+namespace WebCore {
 using namespace PAL;
 
 static NSArray *assetMetadataKeyNames();
@@ -3045,6 +3074,8 @@ void MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange(int timeCont
 {
     if (m_cachedTimeControlStatus == timeControlStatus)
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, static_cast<AVPlayerTimeControlStatus>(timeControlStatus), ", observing = ", m_shouldObserveTimeControlStatus);
 
     if (!m_shouldObserveTimeControlStatus)
         return;
