@@ -636,7 +636,7 @@ void ASTDumper::visit(AST::TernaryExpression& ternaryExpression)
 void ASTDumper::visit(AST::VariableReference& variableReference)
 {
     if (variableReference.name().isEmpty())
-        m_out.print("$(", RawPointer(variableReference.variable()), ")");
+        m_out.print("$", RawPointer(variableReference.variable()));
     else
         m_out.print(variableReference.name());
 }
