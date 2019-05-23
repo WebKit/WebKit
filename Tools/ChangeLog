@@ -1,3 +1,13 @@
+2019-05-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move win-ews queue bubble to Win10 section of dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=198159
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): Change platform to Windows10 to match the OS version of the bots.
+
 2019-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Add API test to make sure the system font is drawn just like in native code
