@@ -2710,6 +2710,11 @@ void WebPageProxy::cancelPointer(WebCore::PointerID pointerId, const WebCore::In
 {
     m_process->send(Messages::WebPage::CancelPointer(pointerId, documentPoint), m_pageID);
 }
+
+void WebPageProxy::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
+{
+    m_process->send(Messages::WebPage::TouchWithIdentifierWasRemoved(pointerId), m_pageID);
+}
 #endif
 
 void WebPageProxy::scrollBy(ScrollDirection direction, ScrollGranularity granularity)

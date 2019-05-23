@@ -836,13 +836,6 @@ void WebPageProxy::willStartUserTriggeredZooming()
     process().send(Messages::WebPage::WillStartUserTriggeredZooming(), m_pageID);
 }
 
-#if ENABLE(POINTER_EVENTS)
-void WebPageProxy::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
-{
-    process().send(Messages::WebPage::TouchWithIdentifierWasRemoved(pointerId), m_pageID);
-}
-#endif
-
 void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation, uint64_t& requestID)
 {
     hideValidationMessage();

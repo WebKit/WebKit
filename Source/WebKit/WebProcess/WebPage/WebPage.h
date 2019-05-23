@@ -622,10 +622,6 @@ public:
     bool allowsUserScaling() const;
     bool hasStablePageScaleFactor() const { return m_hasStablePageScaleFactor; }
 
-#if ENABLE(POINTER_EVENTS)
-    void touchWithIdentifierWasRemoved(WebCore::PointerID);
-#endif
-
     void handleTap(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t lastLayerTreeTransactionId);
     void potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint&, bool shouldRequestMagnificationInformation);
     void commitPotentialTap(OptionSet<WebKit::WebEvent::Modifier>, uint64_t lastLayerTreeTransactionId, WebCore::PointerID);
@@ -1323,6 +1319,7 @@ private:
 
 #if ENABLE(POINTER_EVENTS)
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
+    void touchWithIdentifierWasRemoved(WebCore::PointerID);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

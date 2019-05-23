@@ -2953,6 +2953,11 @@ void WebPage::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoin
 {
     m_page->pointerCaptureController().cancelPointer(pointerId, documentPoint);
 }
+
+void WebPage::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
+{
+    m_page->pointerCaptureController().touchWithIdentifierWasRemoved(pointerId);
+}
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)

@@ -1036,13 +1036,6 @@ void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& posit
     sendTapHighlightForNodeIfNecessary(requestID, mainframe.nodeRespondingToClickEvents(position, adjustedPoint));
 }
 
-#if ENABLE(POINTER_EVENTS)
-void WebPage::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
-{
-    m_page->pointerCaptureController().touchWithIdentifierWasRemoved(pointerId);
-}
-#endif
-
 void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)
 {
     IntPoint adjustedPoint = roundedIntPoint(position);
