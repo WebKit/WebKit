@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <WebCore/StorageQuotaManager.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -97,13 +98,11 @@ public:
     const URL& httpsProxy() const { return m_httpsProxy; }
     void setHTTPSProxy(URL&& proxy) { m_httpsProxy = WTFMove(proxy); }
 
-    constexpr static uint64_t defaultPerOriginStorageQuota = 50 * 1024 * 1024;
-
 private:
     WebsiteDataStoreConfiguration();
 
     String m_cacheStorageDirectory;
-    uint64_t m_perOriginStorageQuota { defaultPerOriginStorageQuota };
+    uint64_t m_perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;
     String m_applicationCacheFlatFileSubdirectoryName;

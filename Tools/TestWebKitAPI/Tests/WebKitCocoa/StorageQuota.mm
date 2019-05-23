@@ -28,6 +28,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -41,10 +42,13 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
 using namespace TestWebKitAPI;
+
+static bool didFinishNavigation;
 
 @interface QuotaDelegate : NSObject <WKUIDelegate>
 -(bool)quotaDelegateCalled;
@@ -178,6 +182,31 @@ doTest();
 function doTestAgain()
 {
     doTest();
+}
+</script>
+)SWRESOURCE";
+
+static const char* TestUrlBytes = R"SWRESOURCE(
+<script>
+
+var index = 0;
+async function test(num)
+{
+    index++;
+    url = "http://example.org/test" + index;
+
+    const cache = await window.caches.open("mycache");
+    const promise = cache.put(url, new Response(new ArrayBuffer(num * 1024 * 1024)));
+    promise.then(() => {
+        window.webkit.messageHandlers.qt.postMessage("pass");
+    }, () => {
+        window.webkit.messageHandlers.qt.postMessage("fail");
+    });
+}
+
+function doTest(num)
+{
+    test(num);
 }
 </script>
 )SWRESOURCE";
@@ -347,5 +376,50 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     receivedMessage = false;
     Util::run(&receivedMessage);
 
+    EXPECT_FALSE(receivedQuotaDelegateCalled);
+}
+
+TEST(WebKit, DefaultQuota)
+{
+    done = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
+
+    auto handler = adoptNS([[StorageSchemes alloc] init]);
+    handler->resources.set("qt://test1.html", ResourceInfo { @"text/html", TestUrlBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"QT"];
+    [configuration.get().processPool _registerURLSchemeServiceWorkersCanHandle:@"qt"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([[QuotaDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    setVisible(webView.get());
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    didFinishNavigation = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"qt://test1.html"]]];
+    Util::run(&didFinishNavigation);
+
+    receivedQuotaDelegateCalled = false;
+
+    // Storing 10 entries of 10 MB should not hit the default quota which is 1GB
+    for (int i = 0; i < 10; ++i) {
+        [webView stringByEvaluatingJavaScript:makeString("doTest(10)")];
+        [messageHandler setExpectedMessage: @"pass"];
+        receivedMessage = false;
+        Util::run(&receivedMessage);
+    }
     EXPECT_FALSE(receivedQuotaDelegateCalled);
 }
