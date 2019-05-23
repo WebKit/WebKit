@@ -34,11 +34,12 @@ class WebPage;
     WebKit::WebPage* m_page;
     uint64_t m_pageID;
     id m_parent;
-    bool m_hasPlugin;
+    bool m_hasMainFramePlugin;
 }
 
 - (void)setWebPage:(WebKit::WebPage*)page;
 - (void)setRemoteParent:(id)parent;
+- (void)setHasMainFramePlugin:(bool)hasPlugin;
 
 - (id)accessibilityRootObjectWrapper;
 - (id)accessibilityFocusedUIElement;

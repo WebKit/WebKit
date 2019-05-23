@@ -120,7 +120,7 @@
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
-    if (m_hasPlugin)
+    if (m_hasMainFramePlugin)
         return self.accessibilityPluginObject;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -141,14 +141,21 @@
 - (void)setWebPage:(WebKit::WebPage*)page
 {
     m_page = page;
-    
+
     if (page) {
         m_pageID = page->pageID();
-        m_hasPlugin = page->accessibilityObjectForMainFramePlugin();
+
+        auto* frame = page->mainFrame();
+        m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
         m_pageID = 0;
-        m_hasPlugin = false;
+        m_hasMainFramePlugin = false;
     }
+}
+
+- (void)setHasMainFramePlugin:(bool)hasPlugin
+{
+    m_hasMainFramePlugin = hasPlugin;
 }
 
 - (void)setRemoteParent:(id)parent
