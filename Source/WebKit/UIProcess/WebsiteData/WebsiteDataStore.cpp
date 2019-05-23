@@ -212,44 +212,14 @@ enum class ProcessAccessType {
 
 static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
-    ProcessAccessType processAccessType = ProcessAccessType::None;
-
-    if (dataTypes.contains(WebsiteDataType::Cookies)) {
-        if (isNonPersistentStore)
-            processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-        else
-            processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+    for (auto dataType : dataTypes) {
+        if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network) {
+            if (isNonPersistentStore)
+                return ProcessAccessType::OnlyIfLaunched;
+            return ProcessAccessType::Launch;
+        }
     }
-
-    if (dataTypes.contains(WebsiteDataType::Credentials) && isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-
-    if (dataTypes.contains(WebsiteDataType::DiskCache) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-
-    if (dataTypes.contains(WebsiteDataType::SessionStorage))
-        processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-    
-    if (dataTypes.contains(WebsiteDataType::LocalStorage)) {
-        if (isNonPersistentStore)
-            processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-        else
-            processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-    }
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198050.
-    if (dataTypes.contains(WebsiteDataType::DOMCache))
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-    
-    if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-
-#if ENABLE(SERVICE_WORKER)
-    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-#endif
-
-    return processAccessType;
+    return ProcessAccessType::None;
 }
 
 static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)

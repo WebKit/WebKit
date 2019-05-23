@@ -1,3 +1,13 @@
+2019-05-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Handling for non-persistent data should be consistent in computeNetworkProcessAccessTypeForDataFetch
+        https://bugs.webkit.org/show_bug.cgi?id=198050
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessTypeForDataFetch):
+
 2019-05-23  Youenn Fablet  <youenn@apple.com>
 
         Set default WebsiteDataStore storage quota based on StorageQuotaManager
