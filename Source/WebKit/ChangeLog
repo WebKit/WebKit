@@ -1,3 +1,23 @@
+2019-05-22  Youenn Fablet  <youenn@apple.com>
+
+        Use modern async IPC for EngineRepresentationCompleted and ClearMemoryRepresentationCompleted
+        https://bugs.webkit.org/show_bug.cgi?id=198134
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::clearMemoryRepresentation):
+        (WebKit::CacheStorageEngineConnection::engineRepresentation):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::clearMemoryRepresentation):
+        (WebKit::WebCacheStorageConnection::engineRepresentation):
+        (WebKit::WebCacheStorageConnection::clearMemoryRepresentationCompleted): Deleted.
+        (WebKit::WebCacheStorageConnection::engineRepresentationCompleted): Deleted.
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/Cache/WebCacheStorageConnection.messages.in:
+
 2019-05-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r245148): Removing inputmode="none" does not bring up software keyboard

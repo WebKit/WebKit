@@ -149,18 +149,14 @@ void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_
     references.remove(referenceResult);
 }
 
-void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, WebCore::ClientOrigin&& origin)
+void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, CompletionHandler<void(Optional<Error>&&)>&& completionHandler)
 {
-    Engine::clearMemoryRepresentation(m_connection.networkProcess(), sessionID, WTFMove(origin), [connection = makeRef(m_connection.connection()), sessionID, requestIdentifier] (Optional<Error>&& error) {
-        connection->send(Messages::WebCacheStorageConnection::ClearMemoryRepresentationCompleted(requestIdentifier, error), sessionID.sessionID());
-    });
+    Engine::clearMemoryRepresentation(m_connection.networkProcess(), sessionID, WTFMove(origin), WTFMove(completionHandler));
 }
 
-void CacheStorageEngineConnection::engineRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier)
+void CacheStorageEngineConnection::engineRepresentation(PAL::SessionID sessionID , CompletionHandler<void(String&&)>&& completionHandler)
 {
-    Engine::representation(m_connection.networkProcess(), sessionID, [connection = makeRef(m_connection.connection()), sessionID, requestIdentifier] (auto&& representation) {
-        connection->send(Messages::WebCacheStorageConnection::EngineRepresentationCompleted { requestIdentifier, representation }, sessionID.sessionID());
-    });
+    Engine::representation(m_connection.networkProcess(), sessionID, WTFMove(completionHandler));
 }
 
 }

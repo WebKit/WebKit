@@ -28,7 +28,4 @@ messages -> WebCacheStorageConnection {
     UpdateRecords(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordsOrError result);
     DeleteRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError result);
     PutRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError result);
-
-    EngineRepresentationCompleted(uint64_t requestIdentifier, String representation);
-    ClearMemoryRepresentationCompleted(uint64_t requestIdentifier, Optional<WebCore::DOMCacheEngine::Error> error);
 }

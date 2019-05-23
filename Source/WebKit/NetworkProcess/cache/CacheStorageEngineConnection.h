@@ -61,8 +61,8 @@ private:
     void reference(PAL::SessionID, uint64_t cacheIdentifier);
     void dereference(PAL::SessionID, uint64_t cacheIdentifier);
 
-    void clearMemoryRepresentation(PAL::SessionID, uint64_t requestIdentifier, WebCore::ClientOrigin&&);
-    void engineRepresentation(PAL::SessionID, uint64_t requestIdentifier);
+    void clearMemoryRepresentation(PAL::SessionID, WebCore::ClientOrigin&&, CompletionHandler<void(Optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    void engineRepresentation(PAL::SessionID, CompletionHandler<void(String&&)>&&);
 
     NetworkConnectionToWebProcess& m_connection;
     HashMap<PAL::SessionID, HashMap<CacheStorage::CacheIdentifier, CacheStorage::LockCount>> m_cachesLocks;

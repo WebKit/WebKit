@@ -128,28 +128,12 @@ void WebCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, 
 
 void WebCacheStorageConnection::clearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_engineRepresentationNextIdentifier;
-    m_clearRepresentationCallbacks.set(requestIdentifier, WTFMove(callback));
-    connection().send(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation(m_sessionID, requestIdentifier, origin), 0);
-}
-
-void WebCacheStorageConnection::clearMemoryRepresentationCompleted(uint64_t requestIdentifier, Optional<Error>&& result)
-{
-    if (auto callback = m_clearRepresentationCallbacks.take(requestIdentifier))
-        callback(WTFMove(result));
+    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation { m_sessionID, origin }, WTFMove(callback));
 }
 
 void WebCacheStorageConnection::engineRepresentation(WTF::Function<void(const String&)>&& callback)
 {
-    uint64_t requestIdentifier = ++m_engineRepresentationNextIdentifier;
-    m_engineRepresentationCallbacks.set(requestIdentifier, WTFMove(callback));
-    connection().send(Messages::CacheStorageEngineConnection::EngineRepresentation(m_sessionID, requestIdentifier), 0);
-}
-
-void WebCacheStorageConnection::engineRepresentationCompleted(uint64_t requestIdentifier, const String& result)
-{
-    if (auto callback = m_engineRepresentationCallbacks.take(requestIdentifier))
-        callback(result);
+    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::EngineRepresentation { m_sessionID }, WTFMove(callback));
 }
 
 void WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin& origin)
