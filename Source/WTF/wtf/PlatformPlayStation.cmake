@@ -5,6 +5,7 @@ list(APPEND WTF_SOURCES
     generic/RunLoopGeneric.cpp
     generic/WorkQueueGeneric.cpp
 
+    playstation/LanguagePlayStation.cpp
     playstation/UniStdExtrasPlayStation.cpp
 
     posix/FileSystemPOSIX.cpp
