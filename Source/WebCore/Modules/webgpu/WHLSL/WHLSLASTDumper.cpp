@@ -419,7 +419,20 @@ void ASTDumper::visit(AST::ForLoop& forLoop)
 
 void ASTDumper::visit(AST::Expression& expression)
 {
+    bool skipParens = is<AST::BooleanLiteral>(expression)
+        || is<AST::FloatLiteral>(expression)
+        || is<AST::IntegerLiteral>(expression)
+        || is<AST::NullLiteral>(expression)
+        || is<AST::UnsignedIntegerLiteral>(expression)
+        || is<AST::EnumerationMemberLiteral>(expression)
+        || is<AST::CommaExpression>(expression)
+        || is<AST::VariableReference>(expression);
+
+    if (!skipParens)
+        m_out.print("(");
     Base::visit(expression);
+    if (!skipParens)
+        m_out.print(")");
 }
 
 void ASTDumper::visit(AST::DotExpression& dotExpression)
