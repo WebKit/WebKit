@@ -64,7 +64,7 @@ public:
 
     const HashMap<ConnectionID, Vector<Target>>& targets() const { return m_targets; }
 
-    void inspect(ConnectionID, TargetID);
+    void inspect(ConnectionID, TargetID, const String&);
     void sendMessageToBackend(ConnectionID, TargetID, const String&);
     void closeFromFrontend(ConnectionID, TargetID);
 

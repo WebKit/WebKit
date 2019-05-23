@@ -52,25 +52,28 @@ public:
     void didPostMessage(WebPageProxy& page, const FrameInfoData&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
         auto tokens = serializedScriptValue.toString().split(":");
-        if (tokens.size() != 2)
+        if (tokens.size() != 3)
             return;
 
         URL requestURL { { }, page.pageLoadState().url() };
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUIntStrict(), tokens[1].toUIntStrict());
+        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUIntStrict(), tokens[1].toUIntStrict(), tokens[2]);
     }
 
 private:
     RemoteInspectorProtocolHandler& m_inspectorProtocolHandler;
 };
 
-void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, ConnectionID connectionID, TargetID targetID)
+void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, ConnectionID connectionID, TargetID targetID, const String& type)
 {
     if (auto* client = m_inspectorClients.get(hostAndPort))
-        client->inspect(connectionID, targetID);
+        client->inspect(connectionID, targetID, type);
 }
 
 void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient&)
 {
+    if (m_page.pageLoadState().isLoading())
+        return;
+
     m_page.reload({ });
 }
 
@@ -118,7 +121,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
                 htmlBuilder.append(makeString(
                     "<tbody><tr>"
                     "<td class=\"data\"><div class=\"targetname\">", target.name, "</div><div class=\"targeturl\">", target.url, "</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('", connectionID, ":", target.id, "');\"></td>"
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('", connectionID, ":", target.id, ":", target.type, "');\"></td>"
                     "</tr></tbody>"
                 ));
             }

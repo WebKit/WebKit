@@ -42,7 +42,7 @@ class RemoteInspectorProtocolHandler final : public RemoteInspectorObserver, pub
 public:
     static Ref<RemoteInspectorProtocolHandler> create(WebPageProxy& page) { return adoptRef(*new RemoteInspectorProtocolHandler(page)); }
 
-    void inspect(const String&, ConnectionID, TargetID);
+    void inspect(const String& hostAndPort, ConnectionID, TargetID, const String& type);
 
 private:
     RemoteInspectorProtocolHandler(WebPageProxy& page)

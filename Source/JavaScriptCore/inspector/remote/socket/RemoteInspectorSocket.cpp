@@ -140,11 +140,11 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     targetListing->setInteger("targetID"_s, target.targetIdentifier());
     targetListing->setBoolean("hasLocalDebugger"_s, target.hasLocalDebugger());
     if (target.type() == RemoteInspectionTarget::Type::Web)
-        targetListing->setString("type"_s, "Web"_s);
+        targetListing->setString("type"_s, "web"_s);
     else if (target.type() == RemoteInspectionTarget::Type::JavaScript)
-        targetListing->setString("type"_s, "JavaScript"_s);
+        targetListing->setString("type"_s, "javascript"_s);
     else if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
-        targetListing->setString("type"_s, "ServiceWorker"_s);
+        targetListing->setString("type"_s, "service-worker"_s);
 
     return targetListing;
 }

@@ -36,11 +36,12 @@ namespace WebKit {
 class RemoteInspectorProxy final : public RemoteWebInspectorProxyClient {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, ConnectionID connectionID, TargetID targetID)
+    RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, ConnectionID connectionID, TargetID targetID, const String& type)
         : m_proxy(RemoteWebInspectorProxy::create())
         , m_inspectorClient(inspectorClient)
         , m_connectionID(connectionID)
         , m_targetID(targetID)
+        , m_debuggableType(type)
     {
         m_proxy->setClient(this);
     }
@@ -53,7 +54,7 @@ public:
 
     void load()
     {
-        m_proxy->load("web", "");
+        m_proxy->load(m_debuggableType, String());
     }
 
     void show()
@@ -81,6 +82,7 @@ private:
     RemoteInspectorClient& m_inspectorClient;
     ConnectionID m_connectionID;
     TargetID m_targetID;
+    String m_debuggableType;
 };
 
 RemoteInspectorClient::RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver& observer)
@@ -138,10 +140,10 @@ void RemoteInspectorClient::didClose(ConnectionID)
 {
 }
 
-void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID)
+void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID, const String& type)
 {
-    auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID] {
-        return std::make_unique<RemoteInspectorProxy>(*this, connectionID, targetID);
+    auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID, &type] {
+        return std::make_unique<RemoteInspectorProxy>(*this, connectionID, targetID, type);
     });
 
     if (!addResult.isNewEntry) {
