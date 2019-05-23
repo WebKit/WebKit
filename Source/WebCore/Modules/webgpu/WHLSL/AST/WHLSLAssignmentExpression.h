@@ -44,6 +44,9 @@ public:
         , m_left(WTFMove(left))
         , m_right(WTFMove(right))
     {
+#if CPU(ADDRESS32)
+        UNUSED_PARAM(m_pad);
+#endif
     }
 
     virtual ~AssignmentExpression() = default;
@@ -60,6 +63,9 @@ public:
 private:
     UniqueRef<Expression> m_left;
     UniqueRef<Expression> m_right;
+#if CPU(ADDRESS32)
+    char m_pad[1];
+#endif
 };
 
 } // namespace AST
