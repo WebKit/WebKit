@@ -27,6 +27,7 @@
 #include "FeaturePolicy.h"
 
 #include "Document.h"
+#include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
