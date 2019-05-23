@@ -1,3 +1,13 @@
+2019-05-23  Philippe Normand  <philn@igalia.com>
+
+        [JHBuild][GStreamer] Enable libsrtp
+        https://bugs.webkit.org/show_bug.cgi?id=198041
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gstreamer/jhbuild.modules: Enable libsrtp. The system version
+        can't be used from Stretch because it's too old.
+
 2019-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move win-ews queue bubble to Win10 section of dashboard

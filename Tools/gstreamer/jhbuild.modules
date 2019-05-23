@@ -48,6 +48,11 @@
             revision="master" tag="cdb083e84a71d6d31163a4f64f18dc1328fd782c" />
   </cmake>
 
+  <autotools id="libsrtp">
+    <branch repo="github-tarball" module="cisco/libsrtp/archive/v${version}.tar.gz" version="2.2.0"
+            checkoutdir="libsrtp-${version}"/>
+  </autotools>
+
   <meson id="gstreamer" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dtests=disabled">
     <dependencies>
       <dep package="orc"/>
@@ -84,6 +89,7 @@
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
       <dep package="aom"/>
+      <dep package="libsrtp"/>
     </dependencies>
     <branch hash="sha256:22139de35626ada6090bdfa3423b27b7fc15a0198331d25c95e6b12cb1072b05" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.0">
     </branch>
