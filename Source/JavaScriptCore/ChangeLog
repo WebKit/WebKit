@@ -1,3 +1,51 @@
+2019-05-23  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r245622. rdar://problem/50754184
+
+    [JSC] ArrayBufferContents::tryAllocate signs the pointer with allocation size and authenticates it with sizeInBytes
+    https://bugs.webkit.org/show_bug.cgi?id=198101
+    
+    Reviewed by Michael Saboff.
+    
+    JSTests:
+    
+    * stress/zero-sized-array-buffer-pointer-should-be-signed-with-zero.js: Added.
+    (shouldBe):
+    
+    Source/JavaScriptCore:
+    
+    When we allocate 0-length ArrayBuffer, we allocate 1 byte storage instead because we would like to ensure that
+    non-neutered ArrayBuffer always have non nullptr. While we allocate a 1 byte storage, this ArrayBuffer says
+    sizeInBytes = 0. However, we accidentally configure the vector pointer with this 1 byte size in the constructor.
+    In ARM64E device, we sign the vector pointer with modifier = 1 (1 byte size), and later we authenticate this
+    pointer with modifier = 0 (sizeInBytes), and fail to authenticate the pointer.
+    
+    In this patch, we sign the pointer with sizeInBytes so that we correctly authenticate the 0 bytes vector pointer.
+    
+    * runtime/ArrayBuffer.cpp:
+    (JSC::ArrayBufferContents::tryAllocate):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245622 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] ArrayBufferContents::tryAllocate signs the pointer with allocation size and authenticates it with sizeInBytes
+            https://bugs.webkit.org/show_bug.cgi?id=198101
+
+            Reviewed by Michael Saboff.
+
+            When we allocate 0-length ArrayBuffer, we allocate 1 byte storage instead because we would like to ensure that
+            non-neutered ArrayBuffer always have non nullptr. While we allocate a 1 byte storage, this ArrayBuffer says
+            sizeInBytes = 0. However, we accidentally configure the vector pointer with this 1 byte size in the constructor.
+            In ARM64E device, we sign the vector pointer with modifier = 1 (1 byte size), and later we authenticate this
+            pointer with modifier = 0 (sizeInBytes), and fail to authenticate the pointer.
+
+            In this patch, we sign the pointer with sizeInBytes so that we correctly authenticate the 0 bytes vector pointer.
+
+            * runtime/ArrayBuffer.cpp:
+            (JSC::ArrayBufferContents::tryAllocate):
+
 2019-05-15  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245168. rdar://problem/50629257
