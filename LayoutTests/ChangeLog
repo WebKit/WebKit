@@ -1,5 +1,14 @@
 2019-05-23  Shawn Roberts  <sroberts@apple.com>
 
+        http/tests/resourceLoadStatistics/prune-statistics.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=197285
+
+        Unreviewed test gardening. Updating expectations for Release as well
+
+        * platform/mac-wk2/TestExpectations:
+
+2019-05-23  Shawn Roberts  <sroberts@apple.com>
+
         fast/css-grid-layout/flex-content-sized-columns-resize.html is a flaky ImageOnlyFailure
         https://bugs.webkit.org/show_bug.cgi?id=187828#add_comment
 
