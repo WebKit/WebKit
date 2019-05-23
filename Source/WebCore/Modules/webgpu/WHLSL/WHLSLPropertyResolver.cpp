@@ -404,11 +404,8 @@ void PropertyResolver::visit(AST::AssignmentExpression& assignmentExpression)
     }
     simplifyLeftValue(modifyResult->innerLeftValue);
 
-    static_assert(sizeof(AST::CommaExpression) <= sizeof(AST::AssignmentExpression), "Assignment expressions need to be able to become comma expressions without updating backreferences");
     Lexer::Token origin = assignmentExpression.origin();
-    void* location = &assignmentExpression;
-    assignmentExpression.~AssignmentExpression();
-    auto* commaExpression = new (location) AST::CommaExpression(WTFMove(origin), WTFMove(modifyResult->expressions));
+    auto* commaExpression = AST::replaceWith<AST::CommaExpression>(assignmentExpression, WTFMove(origin), WTFMove(modifyResult->expressions));
     commaExpression->setType(WTFMove(type));
     commaExpression->setTypeAnnotation(AST::RightValue());
 
@@ -513,11 +510,8 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
         UniqueRef<AST::VariableDeclaration> oldVariableDeclaration = readModifyWriteExpression.takeOldValue();
         UniqueRef<AST::VariableDeclaration> newVariableDeclaration = readModifyWriteExpression.takeNewValue();
 
-        static_assert(sizeof(AST::CommaExpression) <= sizeof(AST::ReadModifyWriteExpression), "ReadModifyWrite expressions need to be able to become comma expressions without updating backreferences");
         Lexer::Token origin = readModifyWriteExpression.origin();
-        void* location = &readModifyWriteExpression;
-        readModifyWriteExpression.~ReadModifyWriteExpression();
-        auto* commaExpression = new (location) AST::CommaExpression(WTFMove(origin), WTFMove(expressions));
+        auto* commaExpression = AST::replaceWith<AST::CommaExpression>(readModifyWriteExpression, WTFMove(origin), WTFMove(expressions));
         commaExpression->setType(WTFMove(type));
         commaExpression->setTypeAnnotation(AST::RightValue());
 
@@ -580,11 +574,8 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
     UniqueRef<AST::VariableDeclaration> oldVariableDeclaration = readModifyWriteExpression.takeOldValue();
     UniqueRef<AST::VariableDeclaration> newVariableDeclaration = readModifyWriteExpression.takeNewValue();
 
-    static_assert(sizeof(AST::CommaExpression) <= sizeof(AST::ReadModifyWriteExpression), "ReadModifyWrite expressions need to be able to become comma expressions without updating backreferences");
     Lexer::Token origin = readModifyWriteExpression.origin();
-    void* location = &readModifyWriteExpression;
-    readModifyWriteExpression.~ReadModifyWriteExpression();
-    auto* commaExpression = new (location) AST::CommaExpression(WTFMove(origin), WTFMove(modifyResult->expressions));
+    auto* commaExpression = AST::replaceWith<AST::CommaExpression>(readModifyWriteExpression, WTFMove(origin), WTFMove(modifyResult->expressions));
     commaExpression->setType(WTFMove(type));
     commaExpression->setTypeAnnotation(AST::RightValue());
 
@@ -612,10 +603,7 @@ bool PropertyResolver::simplifyRightValue(AST::DotExpression& dotExpression)
             callExpression->setTypeAnnotation(AST::RightValue());
             callExpression->setFunction(*anderFunction);
 
-            static_assert(sizeof(AST::DereferenceExpression) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become dereference expressions without updating backreferences");
-            void* location = &dotExpression;
-            dotExpression.~DotExpression();
-            auto* dereferenceExpression = new (location) AST::DereferenceExpression(WTFMove(origin), WTFMove(callExpression));
+            auto* dereferenceExpression = AST::replaceWith<AST::DereferenceExpression>(dotExpression, WTFMove(origin), WTFMove(callExpression));
             dereferenceExpression->setType(downcast<AST::PointerType>(anderFunction->type()).elementType().clone());
             dereferenceExpression->setTypeAnnotation(AST::LeftValue { downcast<AST::PointerType>(anderFunction->type()).addressSpace() });
             return true;
@@ -655,13 +643,10 @@ bool PropertyResolver::simplifyRightValue(AST::DotExpression& dotExpression)
         dereferenceExpression->setType(downcast<AST::PointerType>(anderFunction->type()).elementType().clone());
         dereferenceExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
-        static_assert(sizeof(AST::CommaExpression) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become comma expressions without updating backreferences");
-        void* location = &dotExpression;
-        dotExpression.~DotExpression();
         Vector<UniqueRef<AST::Expression>> expressions;
         expressions.append(WTFMove(assignmentExpression));
         expressions.append(WTFMove(dereferenceExpression));
-        auto* commaExpression = new (location) AST::CommaExpression(WTFMove(origin), WTFMove(expressions));
+        auto* commaExpression = AST::replaceWith<AST::CommaExpression>(dotExpression, WTFMove(origin), WTFMove(expressions));
         commaExpression->setType(downcast<AST::PointerType>(anderFunction->type()).elementType().clone());
         commaExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
@@ -669,14 +654,11 @@ bool PropertyResolver::simplifyRightValue(AST::DotExpression& dotExpression)
         return true;
     }
 
-    static_assert(sizeof(AST::CallExpression) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become call expressions without updating backreferences");
     ASSERT(dotExpression.getterFunction());
     auto& getterFunction = *dotExpression.getterFunction();
     Vector<UniqueRef<AST::Expression>> arguments;
     arguments.append(dotExpression.takeBase());
-    void* location = &dotExpression;
-    dotExpression.~DotExpression();
-    auto* callExpression = new (location) AST::CallExpression(WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
+    auto* callExpression = AST::replaceWith<AST::CallExpression>(dotExpression, WTFMove(origin), String(getterFunction.name()), WTFMove(arguments));
     callExpression->setFunction(getterFunction);
     callExpression->setType(getterFunction.type().clone());
     callExpression->setTypeAnnotation(AST::RightValue());
@@ -712,10 +694,7 @@ void LeftValueSimplifier::visit(AST::DotExpression& dotExpression)
     callExpression->setTypeAnnotation(AST::RightValue());
     callExpression->setFunction(*anderFunction);
 
-    static_assert(sizeof(AST::DereferenceExpression) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become dereference expressions without updating backreferences");
-    void* location = &dotExpression;
-    dotExpression.~DotExpression();
-    auto* dereferenceExpression = new (location) AST::DereferenceExpression(WTFMove(origin), WTFMove(callExpression));
+    auto* dereferenceExpression = AST::replaceWith<AST::DereferenceExpression>(dotExpression, WTFMove(origin), WTFMove(callExpression));
     dereferenceExpression->setType(downcast<AST::PointerType>(anderFunction->type()).elementType().clone());
     dereferenceExpression->setTypeAnnotation(AST::LeftValue { downcast<AST::PointerType>(anderFunction->type()).addressSpace() });
 }

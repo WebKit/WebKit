@@ -194,12 +194,9 @@ void NameResolver::visit(AST::DotExpression& dotExpression)
                 AST::EnumerationDefinition& enumerationDefinition = downcast<AST::EnumerationDefinition>(type);
                 auto memberName = dotExpression.fieldName();
                 if (auto* member = enumerationDefinition.memberByName(memberName)) {
-                    static_assert(sizeof(AST::EnumerationMemberLiteral) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become EnumerationMemberLiterals without updating backreferences");
                     Lexer::Token origin = dotExpression.origin();
-                    void* location = &dotExpression;
-                    dotExpression.~DotExpression();
                     auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(WTFMove(origin), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
-                    new (location) AST::EnumerationMemberLiteral(WTFMove(enumerationMemberLiteral));
+                    AST::replaceWith<AST::EnumerationMemberLiteral>(dotExpression, WTFMove(enumerationMemberLiteral));
                     return;
                 }
                 setError();
