@@ -44,7 +44,8 @@ enum class VertexFormat : uint8_t {
 
 struct VertexAttribute {
     VertexFormat vertexFormat;
-    unsigned name;
+    unsigned shaderLocation;
+    unsigned metalLocation;
 };
 
 using VertexAttributes = Vector<VertexAttribute>;

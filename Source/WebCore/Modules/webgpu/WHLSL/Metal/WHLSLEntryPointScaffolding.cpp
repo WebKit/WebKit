@@ -283,7 +283,7 @@ VertexEntryPointScaffolding::VertexEntryPointScaffolding(AST::FunctionDefinition
         NamedStageIn namedStageIn;
         namedStageIn.indexInEntryPointItems = keyValuePair.value;
         namedStageIn.elementName = m_typeNamer.generateNextStructureElementName();
-        namedStageIn.attributeIndex = keyValuePair.key->name;
+        namedStageIn.attributeIndex = keyValuePair.key->metalLocation;
         m_namedStageIns.uncheckedAppend(WTFMove(namedStageIn));
     }
 

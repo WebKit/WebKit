@@ -164,7 +164,7 @@ static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<
             if (!WTF::holds_alternative<AST::StageInOutSemantic>(semantic))
                 continue;
             auto& stageInOutSemantic = WTF::get<AST::StageInOutSemantic>(semantic);
-            if (stageInOutSemantic.index() != vertexAttribute.name)
+            if (stageInOutSemantic.index() != vertexAttribute.shaderLocation)
                 continue;
             if (!isAcceptableFormat(vertexAttribute.vertexFormat, *item.unnamedType, intrinsics))
                 return WTF::nullopt;
