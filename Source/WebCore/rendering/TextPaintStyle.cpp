@@ -52,6 +52,9 @@ bool TextPaintStyle::operator==(const TextPaintStyle& other) const
 #if ENABLE(LETTERPRESS)
         && useLetterpressEffect == other.useLetterpressEffect
 #endif
+#if HAVE(OS_DARK_MODE_SUPPORT)
+        && useDarkAppearance == other.useDarkAppearance
+#endif
         && lineCap == other.lineCap && miterLimit == other.miterLimit;
 }
 
@@ -81,6 +84,11 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
 #if ENABLE(LETTERPRESS)
     paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect().contains(TextDecoration::Letterpress);
 #endif
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    paintStyle.useDarkAppearance = frame.document() ? frame.document()->useDarkAppearance(&lineStyle) : false;
+#endif
+
     auto viewportSize = frame.view() ? frame.view()->size() : IntSize();
     paintStyle.strokeWidth = lineStyle.computedStrokeWidth(viewportSize);
     paintStyle.paintOrder = lineStyle.paintOrder();
@@ -185,6 +193,10 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
         context.setTextDrawingMode(newMode);
         mode = newMode;
     }
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    context.setUseDarkAppearance(paintStyle.useDarkAppearance);
+#endif
 
     Color fillColor = fillColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.fillColor;
     if (mode & TextModeFill && (fillColor != context.fillColor()))
