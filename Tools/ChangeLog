@@ -1,3 +1,17 @@
+2019-05-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r245665.
+        https://bugs.webkit.org/show_bug.cgi?id=198203
+
+        Inspector appears blank, again. (Requested by NVI on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: Provide UIString descriptions to improve
+        localizations"
+        https://bugs.webkit.org/show_bug.cgi?id=195132
+        https://trac.webkit.org/changeset/245665
+
 2019-05-23  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win][CMake] Pass architecture to cmake via -A for both x64 and Win32

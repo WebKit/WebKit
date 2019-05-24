@@ -46,9 +46,9 @@ WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.
         case WI.RenderingFrameTimelineRecord.TaskType.Script:
             return WI.UIString("Script");
         case WI.RenderingFrameTimelineRecord.TaskType.Layout:
-            return WI.repeatedUIString.timelineRecordLayout();
+            return WI.UIString("Layout");
         case WI.RenderingFrameTimelineRecord.TaskType.Paint:
-            return WI.repeatedUIString.timelineRecordPaint();
+            return WI.UIString("Paint");
         case WI.RenderingFrameTimelineRecord.TaskType.Other:
             return WI.UIString("Other");
         }

@@ -51,13 +51,13 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
         case WI.LayoutTimelineRecord.EventType.InvalidateLayout:
             return WI.UIString("Layout Invalidated");
         case WI.LayoutTimelineRecord.EventType.ForcedLayout:
-            return WI.UIString("Forced Layout", "Layout phase records that were imperative (forced)");
+            return WI.UIString("Forced Layout");
         case WI.LayoutTimelineRecord.EventType.Layout:
-            return WI.repeatedUIString.timelineRecordLayout();
+            return WI.UIString("Layout");
         case WI.LayoutTimelineRecord.EventType.Paint:
-            return WI.repeatedUIString.timelineRecordPaint();
+            return WI.UIString("Paint");
         case WI.LayoutTimelineRecord.EventType.Composite:
-            return WI.repeatedUIString.timelineRecordComposite();
+            return WI.UIString("Composite");
         }
     }
 

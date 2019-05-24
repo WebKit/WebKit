@@ -50,11 +50,11 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralT
     {
         switch (type) {
         case WI.DOMBreakpoint.Type.SubtreeModified:
-            return WI.UIString("Subtree Modified", "A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified");
+            return WI.UIString("Subtree Modified");
         case WI.DOMBreakpoint.Type.AttributeModified:
-            return WI.UIString("Attribute Modified", "A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified");
+            return WI.UIString("Attribute Modified");
         case WI.DOMBreakpoint.Type.NodeRemoved:
-            return WI.UIString("Node Removed", "A submenu item of 'Break On' that breaks (pauses) before DOM node is removed");
+            return WI.UIString("Node Removed");
         default:
             console.error("Unexpected DOM breakpoint type: " + type);
             return null;

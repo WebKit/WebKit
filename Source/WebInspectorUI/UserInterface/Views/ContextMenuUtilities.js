@@ -210,7 +210,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     if (WI.cssManager.canForcePseudoClasses() && domNode.attached) {
         contextMenu.appendSeparator();
 
-        let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes", "A context menu item to force (override) a DOM node's pseudo-classes"));
+        let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes"));
 
         let enabledPseudoClasses = domNode.enabledPseudoClasses;
         WI.CSSManager.ForceablePseudoClasses.forEach((pseudoClass) => {
@@ -230,10 +230,10 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     contextMenu.appendSeparator();
 
     if (!options.excludeLogElement && !domNode.isInUserAgentShadowTree() && !domNode.isPseudoElement()) {
-        let label = isElement ? WI.UIString("Log Element", "Log (print) DOM element to Console") : WI.UIString("Log Node", "Log (print) DOM node to Console");
+        let label = isElement ? WI.UIString("Log Element") : WI.UIString("Log Node");
         contextMenu.appendItem(label, () => {
             WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
-                let text = isElement ? WI.UIString("Selected Element", "Selected DOM element") : WI.UIString("Selected Node", "Selected DOM node");
+                let text = isElement ? WI.UIString("Selected Element") : WI.UIString("Selected Node");
                 const addSpecialUserLogClass = true;
                 WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
@@ -241,19 +241,19 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     }
 
     if (!options.excludeRevealElement && window.DOMAgent && attached) {
-        contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
+        contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
             WI.domManager.inspectElement(domNode.id);
         });
     }
 
     if (WI.settings.experimentalEnableLayersTab.value && window.LayerTreeAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
+        contextMenu.appendItem(WI.UIString("Reveal in Layers Tab"), () => {
             WI.showLayersTab({nodeToSelect: domNode});
         });
     }
 
     if (window.PageAgent && attached) {
-        contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
+        contextMenu.appendItem(WI.UIString("Capture Screenshot"), () => {
             PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
                 if (error) {
                     const target = WI.mainTarget;
@@ -276,7 +276,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     }
 
     if (isElement && attached) {
-        contextMenu.appendItem(WI.UIString("Scroll into View", "Scroll selected DOM node into view on the inspected web page"), () => {
+        contextMenu.appendItem(WI.UIString("Scroll Into View"), () => {
             domNode.scrollIntoView();
         });
     }
