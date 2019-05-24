@@ -52,6 +52,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include "TextEvent.h"
@@ -452,9 +453,13 @@ void TextFieldInputType::createDataListDropdownIndicator()
     ASSERT(!m_dataListDropdownIndicator);
     if (!m_container)
         createContainer();
+
+    ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
-    m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
     m_container->appendChild(*m_dataListDropdownIndicator);
+    m_dataListDropdownIndicator->setPseudo(AtomicString("-webkit-list-button", AtomicString::ConstructFromLiteral));
+    m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+
 }
 #endif
 
@@ -773,14 +778,15 @@ void TextFieldInputType::createContainer()
     ASSERT(!m_container);
     ASSERT(element());
 
+    ScriptDisallowedScope::EventAllowedScope allowedScope(*element()->userAgentShadowRoot());
+
     m_container = TextControlInnerContainer::create(element()->document());
+    element()->userAgentShadowRoot()->appendChild(*m_container);
     m_container->setPseudo(AtomicString("-webkit-textfield-decoration-container", AtomicString::ConstructFromLiteral));
 
     m_innerBlock = TextControlInnerElement::create(element()->document());
-    m_innerBlock->appendChild(*m_innerText);
     m_container->appendChild(*m_innerBlock);
-
-    element()->userAgentShadowRoot()->appendChild(*m_container);
+    m_innerBlock->appendChild(*m_innerText);
 }
 
 void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonType)

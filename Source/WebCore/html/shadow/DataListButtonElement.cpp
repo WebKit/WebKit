@@ -49,7 +49,6 @@ DataListButtonElement::DataListButtonElement(Document& document, DataListButtonO
     : HTMLDivElement(divTag, document)
     , m_owner(owner)
 {
-    setPseudo(AtomicString("-webkit-list-button", AtomicString::ConstructFromLiteral));
 }
 
 DataListButtonElement::~DataListButtonElement() { }

@@ -1,0 +1,4 @@
+This tests removing the datalist element immediately after changing the type of the input element's type.
+WebKit should not hit a debug assertion.
+
+PASS
