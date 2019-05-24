@@ -153,10 +153,4 @@ String WebsiteDataRecord::topPrivatelyControlledDomain()
     return emptyString();
 }
 
-void WebsiteDataRecord::addOriginWithCredential(const String& origin)
-{
-    types.add(WebsiteDataType::Credentials);
-    originsWithCredentials.add(origin);
-}
-
 }

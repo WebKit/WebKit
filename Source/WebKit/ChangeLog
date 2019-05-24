@@ -1,3 +1,19 @@
+2019-05-24  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove unused member in WebsiteDataRecord
+        https://bugs.webkit.org/show_bug.cgi?id=198231
+
+        Reviewed by Brent Fulgham.
+
+        The data member 'originsWithCredentials' in WebsiteDataRecord is no longer needed since origins
+        with credentials are now stored in the 'origins' member.
+
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::addOriginWithCredential): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+
 2019-05-24  David Quesada  <david_quesada@apple.com>
 
         Crash under WebCore::TimerBase::~TimerBase after a download is canceled

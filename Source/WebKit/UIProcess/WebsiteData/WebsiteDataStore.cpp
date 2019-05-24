@@ -319,17 +319,6 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
             }
 #endif
 
-            for (auto& origin : websiteData.originsWithCredentials) {
-                auto displayName = WebsiteDataRecord::displayNameForOrigin(WebCore::SecurityOriginData::fromURL(URL(URL(), origin)));
-                ASSERT(!displayName.isEmpty());
-
-                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
-                if (!record.displayName)
-                    record.displayName = WTFMove(displayName);
-
-                record.addOriginWithCredential(origin);
-            }
-
             for (auto& hostName : websiteData.hostNamesWithHSTSCache) {
                 auto displayName = WebsiteDataRecord::displayNameForHostName(hostName);
                 if (!displayName)
