@@ -220,8 +220,11 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
 
 void SWServer::startSuspension(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_registrationStore)
-        m_registrationStore->startSuspension(WTFMove(completionHandler));
+    if (!m_registrationStore) {
+        completionHandler();
+        return;
+    }
+    m_registrationStore->startSuspension(WTFMove(completionHandler));
 }
 
 void SWServer::endSuspension()
