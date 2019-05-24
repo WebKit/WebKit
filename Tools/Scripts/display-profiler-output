@@ -539,7 +539,11 @@ end
 
 def screenWidth
     if $stdin.tty?
-        HighLine::SystemExtensions.terminal_size[0] - 3
+        begin
+            HighLine::SystemExtensions.terminal_size[0] - 3
+        rescue
+            HighLine::default_instance.terminal.terminal_size[0] - 3
+        end
     else
         200
     end

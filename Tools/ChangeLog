@@ -1,3 +1,14 @@
+2019-05-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Make display-profiler-output work with newer HighLine
+        https://bugs.webkit.org/show_bug.cgi?id=198205
+
+        Reviewed by Saam Barati.
+
+        Newer HighLine does not have SystemExtensions. Access @terminal member in default instance of HighLine.
+
+        * Scripts/display-profiler-output:
+
 2019-05-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-webkit-tests: Remove feature detection support
