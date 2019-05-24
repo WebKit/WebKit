@@ -233,9 +233,6 @@ class DarwinPort(ApplePort):
     def make_command(self):
         return self.xcrun_find('make', '/usr/bin/make')
 
-    def nm_command(self):
-        return self.xcrun_find('nm', 'nm')
-
     def xcrun_find(self, command, fallback=None):
         fallback = fallback or command
         try:

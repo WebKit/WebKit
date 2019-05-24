@@ -31,11 +31,9 @@
 test infrastructure (the Port and Driver classes)."""
 
 import difflib
-import itertools
 import json
 import logging
 import os
-import operator
 import optparse
 import re
 import sys
@@ -1557,64 +1555,7 @@ class Port(object):
                 dirs_to_skip.append('platform/%s' % basename)
         return dirs_to_skip
 
-    def _runtime_feature_list(self):
-        """If a port makes certain features available only through runtime flags, it can override this routine to indicate which ones are available."""
-        return None
-
-    def nm_command(self):
-        return 'nm'
-
-    def _modules_to_search_for_symbols(self):
-        path = self._path_to_webcore_library()
-        if path:
-            return [path]
-        return []
-
-    def _symbols_string(self):
-        symbols = ''
-        for path_to_module in self._modules_to_search_for_symbols():
-            try:
-                symbols += self._executive.run_command([self.nm_command(), path_to_module], ignore_errors=True)
-            except OSError as e:
-                _log.warn("Failed to run nm: %s.  Can't determine supported features correctly." % e)
-        return symbols
-
-    # Ports which use run-time feature detection should define this method and return
-    # a dictionary mapping from Feature Names to skipped directoires.  NRWT will
-    # run DumpRenderTree --print-supported-features and parse the output.
-    # If the Feature Names are not found in the output, the corresponding directories
-    # will be skipped.
-    def _missing_feature_to_skipped_tests(self):
-        """Return the supported feature dictionary. Keys are feature names and values
-        are the lists of directories to skip if the feature name is not matched."""
-        # FIXME: This list matches WebKitWin and should be moved onto the Win port.
-        return {
-            "Accelerated Compositing": ["compositing"],
-            "3D Rendering": ["animations/3d", "transforms/3d"],
-        }
-
-    def _has_test_in_directories(self, directory_lists, test_list):
-        if not test_list:
-            return False
-
-        directories = itertools.chain.from_iterable(directory_lists)
-        for directory, test in itertools.product(directories, test_list):
-            if test.startswith(directory):
-                return True
-        return False
-
     def _skipped_tests_for_unsupported_features(self, test_list):
-        # Only check the runtime feature list of there are tests in the test_list that might get skipped.
-        # This is a performance optimization to avoid the subprocess call to DRT.
-        # If the port supports runtime feature detection, disable any tests
-        # for features missing from the runtime feature list.
-        # If _runtime_feature_list returns a non-None value, then prefer
-        # runtime feature detection over static feature detection.
-        if self._has_test_in_directories(self._missing_feature_to_skipped_tests().values(), test_list):
-            supported_feature_list = self._runtime_feature_list()
-            if supported_feature_list is not None:
-                return reduce(operator.add, [directories for feature, directories in self._missing_feature_to_skipped_tests().items() if feature not in supported_feature_list])
-
         return []
 
     def _wk2_port_name(self):

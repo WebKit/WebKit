@@ -1,3 +1,14 @@
+2019-05-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-tests: Remove feature detection support
+        https://bugs.webkit.org/show_bug.cgi?id=198105
+
+        Reviewed by Jonathan Bedard.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Added Skip for all compositing, animations/3d and transforms/3d tests temporarily.
+
 2019-05-23  Saam barati  <sbarati@apple.com>
 
         [WHLSL] Property resolver needs to recurse to handle the base when simplifying rvalues

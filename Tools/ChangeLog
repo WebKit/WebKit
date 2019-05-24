@@ -1,3 +1,57 @@
+2019-05-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-tests: Remove feature detection support
+        https://bugs.webkit.org/show_bug.cgi?id=198105
+
+        Reviewed by Jonathan Bedard.
+
+        Feature detection support was added to DRT for Windows and old
+        run-webkit-tests in Bug 35610. It was added for NRWT in Bug 41842.
+        But, it doesn't work for DRT for Windows because of feature name
+        mismatches. Since USE(ACCELERATED_COMPOSITING) flag has been
+        removed in Bug 127833, it is not needed anymore.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        * Scripts/webkitpy/port/base.py:
+        (Port._tests_for_other_platforms):
+        (Port._skipped_tests_for_unsupported_features):
+        (Port._runtime_feature_list): Deleted.
+        (Port.nm_command): Deleted.
+        (Port._modules_to_search_for_symbols): Deleted.
+        (Port._symbols_string): Deleted.
+        (Port._missing_feature_to_skipped_tests): Deleted.
+        (Port._has_test_in_directories): Deleted.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.make_command):
+        (DarwinPort.nm_command): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.reset_preferences):
+        (IOSSimulatorPort.nm_command): Deleted.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (TestWebKitPort.__init__):
+        (TestWebKitPort.all_test_configurations):
+        (PortTestCase.test_path_to_test_expectations_file):
+        (TestWebKitPort._symbols_string): Deleted.
+        (PortTestCase.test_skipped_directories_for_features): Deleted.
+        (PortTestCase.test_skipped_directories_for_features_no_matching_tests_in_test_list): Deleted.
+        (PortTestCase.test_skipped_tests_for_unsupported_features_empty_test_list): Deleted.
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort.reset_preferences):
+        (WatchSimulatorPort.nm_command): Deleted.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.show_results_html_file):
+        (WinPort._runtime_feature_list): Deleted.
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_operating_system):
+        (WinPortTest.test_runtime_feature_list): Deleted.
+        * WebKitTestRunner/Options.cpp:
+        (WTR::OptionsHandler::OptionsHandler):
+        (WTR::handleOptionPrintSupportedFeatures): Deleted.
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2019-05-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r245665.

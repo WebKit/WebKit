@@ -154,20 +154,6 @@ class WinPort(ApplePort):
     def show_results_html_file(self, results_filename):
         self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
 
-    def _runtime_feature_list(self):
-        supported_features_command = [self._path_to_driver(), '--print-supported-features']
-        try:
-            output = self._executive.run_command(supported_features_command, ignore_errors=True)
-        except OSError as e:
-            _log.warn("Exception running driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
-            return None
-
-        # Note: win/DumpRenderTree.cpp does not print a leading space before the features_string.
-        match_object = re.match("SupportedFeatures:\s*(?P<features_string>.*)\s*", output)
-        if not match_object:
-            return None
-        return match_object.group('features_string').split(' ')
-
     def _build_path(self, *comps):
         """Returns the full path to the test driver (DumpRenderTree)."""
         root_directory = self.get_option('_cached_root') or self.get_option('root')

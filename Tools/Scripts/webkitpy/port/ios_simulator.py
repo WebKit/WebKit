@@ -96,9 +96,6 @@ class IOSSimulatorPort(IOSPort):
         _log.debug("reset_preferences")
         SimulatedDeviceManager.tear_down(self.host)
 
-    def nm_command(self):
-        return self.xcrun_find('nm')
-
     @property
     @memoized
     def developer_dir(self):

@@ -87,9 +87,6 @@ class WatchSimulatorPort(WatchPort):
     def reset_preferences(self):
         SimulatedDeviceManager.tear_down(self.host)
 
-    def nm_command(self):
-        return self.xcrun_find('nm')
-
     @property
     @memoized
     def developer_dir(self):

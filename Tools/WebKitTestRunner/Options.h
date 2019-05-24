@@ -42,7 +42,6 @@ struct Options {
     bool verbose { false };
     bool gcBetweenTests { false };
     bool shouldDumpPixelsForAllTests { false };
-    bool printSupportedFeatures { false };
     bool forceComplexText { false };
     bool shouldUseAcceleratedDrawing { false };
     bool shouldUseRemoteLayerTree { false };

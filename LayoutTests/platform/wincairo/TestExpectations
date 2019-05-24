@@ -1502,6 +1502,8 @@ storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+animations/3d [ Skip ]
+compositing [ Skip ]
 fast/attachment [ Skip ]
 fast/backgrounds [ Skip ]
 fast/block [ Skip ]

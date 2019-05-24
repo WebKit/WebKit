@@ -459,13 +459,6 @@ void TestController::initialize(int argc, const char* argv[])
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
 
-    if (options.printSupportedFeatures) {
-        // FIXME: On Windows, DumpRenderTree uses this to expose whether it supports 3d
-        // transforms and accelerated compositing. When we support those features, we
-        // should match DRT's behavior.
-        exit(0);
-    }
-
     m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");
     if (m_usingServerMode)
         m_printSeparators = true;

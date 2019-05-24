@@ -104,7 +104,6 @@ static bool useAcceleratedDrawing = true; // Not used
 static bool gcBetweenTests = true; 
 static bool printSeparators = false;
 static bool leakChecking = false;
-static bool printSupportedFeatures = false;
 static bool showWebView = false;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
@@ -1465,11 +1464,6 @@ static Vector<const char*> initializeGlobalsFromCommandLineOptions(int argc, con
             continue;
         }
 
-        if (!stricmp(argv[i], "--print-supported-features")) {
-            printSupportedFeatures = true;
-            continue;
-        }
-
         if (!stricmp(argv[i], "--show-webview")) {
             showWebView = true;
             continue;
@@ -1579,23 +1573,6 @@ int main(int argc, const char* argv[])
         return -3;
 
     prepareConsistentTestingEnvironment(standardPreferences.get(), standardPreferencesPrivate.get());
-
-    if (printSupportedFeatures) {
-        BOOL acceleratedCompositingAvailable = FALSE;
-        standardPreferences->acceleratedCompositingEnabled(&acceleratedCompositingAvailable);
-
-#if ENABLE(3D_TRANSFORMS)
-        // In theory, we could have a software-based 3D rendering implementation that we use when
-        // hardware-acceleration is not available. But we don't have any such software
-        // implementation, so 3D rendering is only available when hardware-acceleration is.
-        BOOL threeDTransformsAvailable = acceleratedCompositingAvailable;
-#else
-        BOOL threeDTransformsAvailable = FALSE;
-#endif
-
-        fprintf(testResult, "SupportedFeatures:%s %s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing" : "", threeDTransformsAvailable ? "3DTransforms" : "");
-        return 0;
-    }
 
     COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
     if (!webView)

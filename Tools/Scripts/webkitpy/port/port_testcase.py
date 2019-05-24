@@ -56,19 +56,15 @@ from webkitpy.tool.mocktool import MockOptions
 class TestWebKitPort(Port):
     port_name = "testwebkitport"
 
-    def __init__(self, port_name=None, symbols_string=None,
+    def __init__(self, port_name=None,
                  expectations_file=None, skips_file=None, host=None, config=None,
                  **kwargs):
         port_name = port_name or TestWebKitPort.port_name
-        self.symbols_string = symbols_string  # Passing "" disables all staticly-detectable features.
         host = host or MockSystemHost()
         super(TestWebKitPort, self).__init__(host, port_name=port_name, **kwargs)
 
     def all_test_configurations(self):
         return [self.test_configuration()]
-
-    def _symbols_string(self):
-        return self.symbols_string
 
     def _tests_for_other_platforms(self, **kwargs):
         return ["media", ]
@@ -499,26 +495,6 @@ class PortTestCase(unittest.TestCase):
         port.host.filesystem.files['/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations'] = 'some content'
         port._options = MockOptions(webkit_test_runner=False)
         self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations')
-
-    def test_skipped_directories_for_features(self):
-        supported_features = ["Accelerated Compositing", "Foo Feature"]
-        expected_directories = set(["animations/3d", "transforms/3d"])
-        port = TestWebKitPort(supported_features=supported_features)
-        port._runtime_feature_list = lambda: supported_features
-        result_directories = set(port._skipped_tests_for_unsupported_features(test_list=["animations/3d/foo.html"]))
-        self.assertEqual(result_directories, expected_directories)
-
-    def test_skipped_directories_for_features_no_matching_tests_in_test_list(self):
-        supported_features = ["Accelerated Compositing", "Foo Feature"]
-        expected_directories = set([])
-        result_directories = set(TestWebKitPort(supported_features=supported_features)._skipped_tests_for_unsupported_features(test_list=['foo.html']))
-        self.assertEqual(result_directories, expected_directories)
-
-    def test_skipped_tests_for_unsupported_features_empty_test_list(self):
-        supported_features = ["Accelerated Compositing", "Foo Feature"]
-        expected_directories = set([])
-        result_directories = set(TestWebKitPort(supported_features=supported_features)._skipped_tests_for_unsupported_features(test_list=None))
-        self.assertEqual(result_directories, expected_directories)
 
     def test_skipped_layout_tests(self):
         self.assertEqual(TestWebKitPort().skipped_layout_tests(test_list=[]), set(['media']))

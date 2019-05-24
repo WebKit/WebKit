@@ -2601,11 +2601,12 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 ######################### Start list of UNREVIEWED failures ########################
 ################################################################################
 
+compositing [ Skip ]
+animations/3d [ Skip ]
+transforms/3d [ Skip ]
+
 # Skip tests that fail only in Debug mode 
-[ Debug ] compositing [ Skip ]
 [ Debug ] legacy-animation-engine/compositing [ Skip ]
-[ Debug ] transforms/3d/hit-testing [ Skip ]
-[ Debug ] transforms/3d/point-mapping [ Skip ]
 
 # These failures all seem to be related to the page cache being in a bad state.
 [ Debug ] css2.1/t090402-c42-ibx-pad-00-d-ag.html [ Skip ] # Debug assertion
@@ -2693,7 +2694,6 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 [ Debug ] http/tests/security/listener/xss-window-onclick-addEventListener.html [ Skip ] # Causes later tests to fail
 [ Debug ] platform/win/fast/events/panScroll-no-iframe-jump.html [ Skip ] # Causes later tests to fail
 [ Debug ] svg/custom/list-items-with-svg-font-family.html [ Skip ] # Causes later tests to fail
-[ Debug ] transforms/3d/general/perspective-non-layer.html [ Failure ]
 
 # These don't seem to be running.
 webkit.org/b/113946 compositing/contents-opaque/control-layer.html [ Failure ]
