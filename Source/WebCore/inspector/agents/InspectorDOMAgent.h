@@ -120,7 +120,7 @@ public:
     void discardSearchResults(ErrorString&, const String& searchId) override;
     void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
     void getAttributes(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<String>>& result) override;
-    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig) override;
+    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers) override;
     void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
     void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
     void hideHighlight(ErrorString&) override;
@@ -204,7 +204,7 @@ private:
 #endif
 
     void highlightMousedOverNode();
-    void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig);
+    void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig, bool showRulers);
     std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString&, const JSON::Object* highlightInspectorObject);
 
     // Node-related methods.

@@ -166,6 +166,7 @@ WI.settings = {
     showJavaScriptTypeInformation: new WI.Setting("show-javascript-type-information", false),
     showPaintRects: new WI.Setting("show-paint-rects", false),
     showRulers: new WI.Setting("show-rulers", false),
+    showRulersDuringElementSelection: new WI.Setting("show-rulers-during-element-selection", true),
     showScopeChainOnPause: new WI.Setting("show-scope-chain-sidebar", true),
     showShadowDOM: new WI.Setting("show-shadow-dom", false),
     showWhitespaceCharacters: new WI.Setting("show-whitespace-characters", false),

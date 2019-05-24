@@ -540,7 +540,12 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (enabled === this._inspectModeEnabled)
             return;
 
-        DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), (error) => {
+        let commandArguments = {
+            enabled,
+            highlightConfig: this._buildHighlightConfig(),
+            showRulers: WI.settings.showRulersDuringElementSelection.value,
+        };
+        DOMAgent.setInspectModeEnabled.invoke(commandArguments, (error) => {
             this._inspectModeEnabled = error ? false : enabled;
             this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
         });

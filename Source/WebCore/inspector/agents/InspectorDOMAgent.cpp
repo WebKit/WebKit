@@ -325,7 +325,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     m_inspectedNode = nullptr;
 
     ErrorString unused;
-    setSearchingForNode(unused, false, nullptr);
+    setSearchingForNode(unused, false, nullptr, false);
     hideHighlight(unused);
 
     m_instrumentingAgents.setInspectorDOMAgent(nullptr);
@@ -1094,7 +1094,7 @@ void InspectorDOMAgent::inspect(Node* inspectedNode)
 {
     ErrorString unused;
     RefPtr<Node> node = inspectedNode;
-    setSearchingForNode(unused, false, nullptr);
+    setSearchingForNode(unused, false, nullptr, false);
 
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
@@ -1147,14 +1147,16 @@ void InspectorDOMAgent::highlightMousedOverNode()
         m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
 }
 
-void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabled, const JSON::Object* highlightInspectorObject)
+void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabled, const JSON::Object* highlightInspectorObject, bool showRulers)
 {
     if (m_searchingForNode == enabled)
         return;
 
     m_searchingForNode = enabled;
 
-    if (enabled) {
+    m_overlay->setShowRulersDuringElementSelection(m_searchingForNode && showRulers);
+
+    if (m_searchingForNode) {
         m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, highlightInspectorObject);
         if (!m_inspectModeHighlightConfig)
             return;
@@ -1187,9 +1189,9 @@ std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspector
     return highlightConfig;
 }
 
-void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const JSON::Object* highlightConfig)
+void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers)
 {
-    setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig : nullptr);
+    setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig : nullptr, showRulers && *showRulers);
 }
 
 void InspectorDOMAgent::highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates)

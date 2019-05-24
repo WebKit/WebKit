@@ -115,6 +115,7 @@ public:
     void showPaintRect(const FloatRect&);
 
     void setShowRulers(bool);
+    void setShowRulersDuringElementSelection(bool enabled) { m_showRulersDuringElementSelection = enabled; }
 
     Node* highlightedNode() const;
 
@@ -150,9 +151,10 @@ private:
     Deque<TimeRectPair> m_paintRects;
     Timer m_paintRectUpdateTimer;
 
-    bool m_indicating {false};
-    bool m_showPaintRects {false};
-    bool m_showRulers {false};
+    bool m_indicating { false };
+    bool m_showPaintRects { false };
+    bool m_showRulers { false };
+    bool m_showRulersDuringElementSelection { false };
 };
 
 } // namespace WebCore

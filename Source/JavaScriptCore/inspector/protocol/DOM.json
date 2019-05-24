@@ -400,7 +400,8 @@
             "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection.",
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
-                { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." },
+                { "name": "showRulers", "type": "boolean", "optional": true, "description": "Whether the rulers should be shown during element selection. This overrides Page.setShowRulers." }
             ]
         },
         {

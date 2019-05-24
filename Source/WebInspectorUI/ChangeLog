@@ -1,3 +1,31 @@
+2019-05-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Overlay: rulers/guides should be shown whenever element selection is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=198088
+
+        Reviewed by Timothy Hatcher.
+
+        When trying to "measure" the absolute position (to the viewport) or relative position (to
+        another element) of a given element, often the easiest way is to enable Element Selection
+        and Show Rulers at the same time.
+
+        This can have the undesired "side-effect" of having the rulers be always present, even when
+        not highlighting any nodes.
+
+        The ideal functionality is to allow the rulers/guides to be shown when element selection is
+        active and a node is hovered, regardless of whether "Show Rulers" is enabled.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        Add a setting for controlling whether rulers/guides are shown during element selection.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.set inspectModeEnabled):
+        Pass the setting value as an optional parameter when calling `DOM.setInspectModeEnabled`.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-05-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r245665.

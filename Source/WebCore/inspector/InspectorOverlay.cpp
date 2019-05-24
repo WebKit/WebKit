@@ -411,7 +411,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
-    if (m_showRulers)
+    if (m_showRulers || m_showRulersDuringElementSelection)
         drawRulers(context, bounds);
 }
 
@@ -492,6 +492,8 @@ void InspectorOverlay::setIndicating(bool indicating)
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
+    // Don't show the overlay when m_showRulersDuringElementSelection is true, as it's only supposed
+    // to have an effect when element selection is active (e.g. a node is hovered).
     return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showPaintRects || m_showRulers;
 }
 
@@ -577,7 +579,7 @@ Highlight::Bounds InspectorOverlay::drawNodeHighlight(GraphicsContext& context, 
     if (m_nodeHighlightConfig.showInfo)
         drawShapeHighlight(context, node, bounds);
 
-    if (m_showRulers)
+    if (m_showRulers || m_showRulersDuringElementSelection)
         drawBounds(context, bounds);
 
     // Ensure that the title information is drawn after the bounds.
@@ -597,7 +599,7 @@ Highlight::Bounds InspectorOverlay::drawQuadHighlight(GraphicsContext& context, 
     if (highlight.quads.size() >= 1) {
         drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
 
-        if (m_showRulers)
+        if (m_showRulers || m_showRulersDuringElementSelection)
             drawBounds(context, bounds);
     }
 
@@ -929,7 +931,7 @@ void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
 
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
     contentInset.expand(elementDataSpacing, elementDataSpacing);
-    if (m_showRulers)
+    if (m_showRulers || m_showRulersDuringElementSelection)
         contentInset.expand(rulerSize, rulerSize);
 
     float anchorTop = bounds.y();
