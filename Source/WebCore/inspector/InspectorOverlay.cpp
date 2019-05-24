@@ -198,7 +198,7 @@ static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& hig
     highlight.quads.append(quad);
 }
 
-static Path quadToPath(const FloatQuad& quad, FloatRect& bounds)
+static Path quadToPath(const FloatQuad& quad, Highlight::Bounds& bounds)
 {
     Path path;
     path.moveTo(quad.p1());
@@ -212,7 +212,7 @@ static Path quadToPath(const FloatQuad& quad, FloatRect& bounds)
     return path;
 }
 
-static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor, FloatRect& bounds)
+static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor, Highlight::Bounds& bounds)
 {
     GraphicsContextStateSaver stateSaver(context);
 
@@ -225,7 +225,7 @@ static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& 
     context.fillPath(quadToPath(clipQuad, bounds));
 }
 
-static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor, FloatRect& bounds)
+static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor, Highlight::Bounds& bounds)
 {
     Path path = quadToPath(quad, bounds);
 
@@ -242,7 +242,7 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
     context.strokePath(path);
 }
 
-static void drawFragmentHighlight(GraphicsContext& context, Node& node, const HighlightConfig& highlightConfig, FloatRect& bounds)
+static void drawFragmentHighlight(GraphicsContext& context, Node& node, const HighlightConfig& highlightConfig, Highlight::Bounds& bounds)
 {
     Highlight highlight;
     buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
@@ -275,7 +275,7 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const Hi
         drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
 }
 
-static void drawShapeHighlight(GraphicsContext& context, Node& node, FloatRect& bounds)
+static void drawShapeHighlight(GraphicsContext& context, Node& node, Highlight::Bounds& bounds)
 {
     Element* element = effectiveElementForNode(node);
     if (!element)
@@ -387,24 +387,32 @@ void InspectorOverlay::paint(GraphicsContext& context)
         context.fillRect({ FloatPoint::zero(), viewportSize });
     }
 
-    if (m_highlightQuad)
-        drawQuadHighlight(context, *m_highlightQuad);
+    Highlight::Bounds bounds;
+
+    if (m_highlightQuad) {
+        auto quadBounds = drawQuadHighlight(context, *m_highlightQuad);
+        bounds.unite(quadBounds);
+    }
 
     if (m_highlightNodeList) {
         for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
-            if (Node* node = m_highlightNodeList->item(i))
-                drawNodeHighlight(context, *node);
+            if (Node* node = m_highlightNodeList->item(i)) {
+                auto nodeBounds = drawNodeHighlight(context, *node);
+                bounds.unite(nodeBounds);
+            }
         }
     }
 
-    if (m_highlightNode)
-        drawNodeHighlight(context, *m_highlightNode);
+    if (m_highlightNode) {
+        auto nodeBounds = drawNodeHighlight(context, *m_highlightNode);
+        bounds.unite(nodeBounds);
+    }
 
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
     if (m_showRulers)
-        drawRulers(context);
+        drawRulers(context, bounds);
 }
 
 void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
@@ -560,9 +568,9 @@ void InspectorOverlay::updatePaintRectsTimerFired()
         update();
 }
 
-void InspectorOverlay::drawNodeHighlight(GraphicsContext& context, Node& node)
+Highlight::Bounds InspectorOverlay::drawNodeHighlight(GraphicsContext& context, Node& node)
 {
-    FloatRect bounds;
+    Highlight::Bounds bounds;
 
     drawFragmentHighlight(context, node, m_nodeHighlightConfig, bounds);
 
@@ -575,21 +583,25 @@ void InspectorOverlay::drawNodeHighlight(GraphicsContext& context, Node& node)
     // Ensure that the title information is drawn after the bounds.
     if (m_nodeHighlightConfig.showInfo)
         drawElementTitle(context, node, bounds);
+
+    return bounds;
 }
 
-void InspectorOverlay::drawQuadHighlight(GraphicsContext& context, const FloatQuad& quad)
+Highlight::Bounds InspectorOverlay::drawQuadHighlight(GraphicsContext& context, const FloatQuad& quad)
 {
+    Highlight::Bounds bounds;
+
     Highlight highlight;
     buildQuadHighlight(quad, m_quadHighlightConfig, highlight);
 
     if (highlight.quads.size() >= 1) {
-        FloatRect bounds;
-
         drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
 
         if (m_showRulers)
             drawBounds(context, bounds);
     }
+
+    return bounds;
 }
 
 void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<TimeRectPair>& paintRects)
@@ -603,7 +615,7 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
         context.fillRect(pair.second);
 }
 
-void InspectorOverlay::drawBounds(GraphicsContext& context, const FloatRect& bounds)
+void InspectorOverlay::drawBounds(GraphicsContext& context, const Highlight::Bounds& bounds)
 {
     FrameView* pageView = m_page.mainFrame().view();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
@@ -653,7 +665,7 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const FloatRect& bou
     context.strokePath(path);
 }
 
-void InspectorOverlay::drawRulers(GraphicsContext& context)
+void InspectorOverlay::drawRulers(GraphicsContext& context, const Highlight::Bounds& bounds)
 {
     const Color rulerBackgroundColor(1.0f, 1.0f, 1.0f, 0.6f);
     const Color lightRulerColor(0.0f, 0.0f, 0.0f, 0.2f);
@@ -693,21 +705,51 @@ void InspectorOverlay::drawRulers(GraphicsContext& context)
     float maxX = minX + width;
     float maxY = minY + height;
 
+    bool drawTopEdge = true;
+    bool drawLeftEdge = true;
+
+    // Determine which side (top/bottom and left/right) to draw the rulers.
+    {
+        FloatRect topEdge(contentInset.width(), contentInset.height(), zoom(width) - contentInset.width(), rulerSize);
+        FloatRect bottomEdge(contentInset.width(), zoom(height) - rulerSize, zoom(width) - contentInset.width(), rulerSize);
+        drawTopEdge = !bounds.intersects(topEdge) || bounds.intersects(bottomEdge);
+
+        FloatRect rightEdge(zoom(width) - rulerSize, contentInset.height(), rulerSize, zoom(height) - contentInset.height());
+        FloatRect leftEdge(contentInset.width(), contentInset.height(), rulerSize, zoom(height) - contentInset.height());
+        drawLeftEdge = !bounds.intersects(leftEdge) || bounds.intersects(rightEdge);
+    }
+
+    float cornerX = drawLeftEdge ? contentInset.width() : zoom(width) - rulerSize;
+    float cornerY = drawTopEdge ? contentInset.height() : zoom(height) - rulerSize;
+
     // Draw backgrounds.
     {
         GraphicsContextStateSaver backgroundStateSaver(context);
 
-        float offsetX = contentInset.width() + rulerSize;
-        float offsetY = contentInset.height() + rulerSize;
-
         context.setFillColor(rulerBackgroundColor);
-        context.fillRect({ contentInset.width(), contentInset.height(), rulerSize, rulerSize });
-        context.fillRect({ offsetX, contentInset.height(), zoom(width) - offsetX, rulerSize });
-        context.fillRect({ contentInset.width(), offsetY, rulerSize, zoom(height) - offsetY });
+
+        context.fillRect({ cornerX, cornerY, rulerSize, rulerSize });
+
+        if (drawLeftEdge)
+            context.fillRect({ cornerX + rulerSize, cornerY, zoom(width) - cornerX - rulerSize, rulerSize });
+        else
+            context.fillRect({ contentInset.width(), cornerY, cornerX - contentInset.width(), rulerSize });
+
+        if (drawTopEdge)
+            context.fillRect({ cornerX, cornerY + rulerSize, rulerSize, zoom(height) - cornerY - rulerSize });  
+        else
+            context.fillRect({ cornerX, contentInset.height(), rulerSize, cornerY - contentInset.height() });
     }
 
     // Draw lines.
     {
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily(m_page.settings().sansSerifFontFamily());
+        fontDescription.setComputedSize(10);
+
+        FontCascade font(WTFMove(fontDescription), 0, 0);
+        font.update(nullptr);
+
         GraphicsContextStateSaver lineStateSaver(context);
 
         context.setFillColor(darkRulerColor);
@@ -717,24 +759,36 @@ void InspectorOverlay::drawRulers(GraphicsContext& context)
         {
             GraphicsContextStateSaver horizontalRulerStateSaver(context);
 
-            context.translate(contentInset.width() - scrollX + 0.5f, contentInset.height() - scrollY);
+            context.translate(contentInset.width() - scrollX + 0.5f, cornerY - scrollY);
 
             for (float x = multipleBelow(minX, rulerSubStepIncrement); x < maxX; x += rulerSubStepIncrement) {
                 if (!x && !scrollX)
                     continue;
 
                 Path path;
-                path.moveTo({ zoom(x), scrollY });
+                path.moveTo({ zoom(x), drawTopEdge ? scrollY : scrollY + rulerSize });
 
+                float lineLength = 0.0f;
                 if (std::fmod(x, rulerStepIncrement)) {
+                    lineLength = rulerSubStepLength;
                     context.setStrokeColor(lightRulerColor);
-                    path.addLineTo({ zoom(x), scrollY + rulerSubStepLength });
                 } else {
+                    lineLength = std::fmod(x, rulerStepIncrement * 2) ? rulerSubStepLength : rulerStepLength;
                     context.setStrokeColor(darkRulerColor);
-                    path.addLineTo({ zoom(x), scrollY + (std::fmod(x, rulerStepIncrement * 2) ? rulerSubStepLength : rulerStepLength) });
                 }
+                path.addLineTo({ zoom(x), scrollY + (drawTopEdge ? lineLength : rulerSize - lineLength) });
 
                 context.strokePath(path);
+            }
+
+            // Draw labels.
+            for (float x = multipleBelow(minX, rulerStepIncrement * 2); x < maxX; x += rulerStepIncrement * 2) {
+                if (!x && !scrollX)
+                    continue;
+
+                GraphicsContextStateSaver verticalLabelStateSaver(context);
+                context.translate(zoom(x) + 0.5f, scrollY);
+                context.drawText(font, TextRun(String::numberToStringFixedPrecision(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.fontMetrics().height() - 1.0f });
             }
         }
 
@@ -742,63 +796,43 @@ void InspectorOverlay::drawRulers(GraphicsContext& context)
         {
             GraphicsContextStateSaver veritcalRulerStateSaver(context);
 
-            context.translate(contentInset.width() - scrollX, contentInset.height() - scrollY + 0.5f);
+            context.translate(cornerX - scrollX, contentInset.height() - scrollY + 0.5f);
 
             for (float y = multipleBelow(minY, rulerSubStepIncrement); y < maxY; y += rulerSubStepIncrement) {
                 if (!y && !scrollY)
                     continue;
 
                 Path path;
-                path.moveTo({ scrollX, zoom(y) });
+                path.moveTo({ drawLeftEdge ? scrollX : scrollX + rulerSize, zoom(y) });
 
+                float lineLength = 0.0f;
                 if (std::fmod(y, rulerStepIncrement)) {
+                    lineLength = rulerSubStepLength;
                     context.setStrokeColor(lightRulerColor);
-                    path.addLineTo({ scrollX + rulerSubStepLength, zoom(y) });
                 } else {
+                    lineLength = std::fmod(y, rulerStepIncrement * 2) ? rulerSubStepLength : rulerStepLength;
                     context.setStrokeColor(darkRulerColor);
-                    path.addLineTo({ scrollX + (std::fmod(y, rulerStepIncrement * 2) ? rulerSubStepLength : rulerStepLength), zoom(y) });
                 }
+                path.addLineTo({ scrollX + (drawLeftEdge ? lineLength : rulerSize - lineLength), zoom(y) });
 
                 context.strokePath(path);
             }
-        }
 
-        // Draw labels.
-        {
-            GraphicsContextStateSaver labelStateSaver(context);
-
-            FontCascadeDescription fontDescription;
-            fontDescription.setOneFamily(m_page.settings().sansSerifFontFamily());
-            fontDescription.setComputedSize(10);
-
-            FontCascade font(WTFMove(fontDescription), 0, 0);
-            font.update(nullptr);
-
-            context.translate(contentInset.width() - scrollX, contentInset.height() - scrollY);
-
-            for (float x = multipleBelow(minX, rulerStepIncrement * 2); x < maxX; x += rulerStepIncrement * 2) {
-                if (!x && !scrollX)
-                    continue;
-
-                GraphicsContextStateSaver verticalLabelStateSaver(context);
-                context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun(String::numberToStringFixedPrecision(x)), { 2, rulerLabelSize });
-            }
-
+            // Draw labels.
             for (float y = multipleBelow(minY, rulerStepIncrement * 2); y < maxY; y += rulerStepIncrement * 2) {
                 if (!y && !scrollY)
                     continue;
 
                 GraphicsContextStateSaver horizontalLabelStateSaver(context);
                 context.translate(scrollX, zoom(y) + 0.5f);
-                context.rotate(-piOverTwoFloat);
-                context.drawText(font, TextRun(String::numberToStringFixedPrecision(y)), { 2, rulerLabelSize });
+                context.rotate(drawLeftEdge ? -piOverTwoFloat : piOverTwoFloat);
+                context.drawText(font, TextRun(String::numberToStringFixedPrecision(y)), { 2, drawLeftEdge ? rulerLabelSize : rulerLabelSize - rulerSize });
             }
         }
     }
 }
 
-void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const FloatRect& bounds)
+void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const Highlight::Bounds& bounds)
 {
     if (bounds.isEmpty())
         return;

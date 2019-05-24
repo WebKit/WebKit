@@ -87,6 +87,8 @@ struct Highlight {
     HighlightType type {HighlightType::Node};
     Vector<FloatQuad> quads;
     bool usePageCoordinates {true};
+
+    using Bounds = FloatRect;
 };
 
 class InspectorOverlay {
@@ -125,13 +127,13 @@ private:
 
     bool shouldShowOverlay() const;
 
-    void drawNodeHighlight(GraphicsContext&, Node&);
-    void drawQuadHighlight(GraphicsContext&, const FloatQuad&);
+    Highlight::Bounds drawNodeHighlight(GraphicsContext&, Node&);
+    Highlight::Bounds drawQuadHighlight(GraphicsContext&, const FloatQuad&);
     void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
-    void drawBounds(GraphicsContext&, const FloatRect&);
-    void drawRulers(GraphicsContext&);
+    void drawBounds(GraphicsContext&, const Highlight::Bounds&);
+    void drawRulers(GraphicsContext&, const Highlight::Bounds&);
 
-    void drawElementTitle(GraphicsContext&, Node&, const FloatRect& bounds);
+    void drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
 
     void updatePaintRectsTimerFired();
 
