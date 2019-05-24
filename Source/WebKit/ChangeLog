@@ -1,3 +1,20 @@
+2019-05-24  David Quesada  <david_quesada@apple.com>
+
+        Crash under WebCore::TimerBase::~TimerBase after a download is canceled
+        https://bugs.webkit.org/show_bug.cgi?id=197927
+        rdar://problem/50822728
+
+        Reviewed by Ryosuke Niwa.
+
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::platformCancelNetworkLoad):
+            CFNetwork makes no guarantees about what thread is used to call the completion block
+            passed to -[NSURLSessionDownloadTask cancelByProducingResumeData], and in some cases,
+            it can be called on a background queue. This eventually causes the Download to be
+            deallocated on the background queue, which triggers a release assertion failure in
+            ~TimerBase. When CFNetwork finishes canceling the download, we should move to the
+            main thread before calling didCancel().
+
 2019-05-24  Youenn Fablet  <youenn@apple.com>
 
         Update messages_unittest.py after r245715

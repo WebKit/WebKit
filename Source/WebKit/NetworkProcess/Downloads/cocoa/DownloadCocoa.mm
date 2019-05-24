@@ -81,10 +81,12 @@ void Download::platformCancelNetworkLoad()
 {
     ASSERT(m_downloadTask);
     [m_downloadTask cancelByProducingResumeData:^(NSData *resumeData) {
-        if (resumeData && resumeData.bytes && resumeData.length)
-            didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>(resumeData.bytes), resumeData.length));
-        else
-            didCancel({ });
+        callOnMainThread([this, resumeData = retainPtr(resumeData)] {
+            if (resumeData && resumeData.get().bytes && resumeData.get().length)
+                didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>(resumeData.get().bytes), resumeData.get().length));
+            else
+                didCancel({ });
+        });
     }];
 }
 
