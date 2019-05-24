@@ -49,6 +49,7 @@ void TestAsyncMessage::callReply(IPC::Decoder& decoder, CompletionHandler<void(u
     decoder >> result;
     if (!result) {
         ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
         return;
     }
     completionHandler(WTFMove(*result));
@@ -56,7 +57,7 @@ void TestAsyncMessage::callReply(IPC::Decoder& decoder, CompletionHandler<void(u
 
 void TestAsyncMessage::cancelReply(CompletionHandler<void(uint64_t&&)>&& completionHandler)
 {
-    completionHandler({ });
+    completionHandler(IPC::AsyncReplyError<uint64_t>::create());
 }
 
 void TestAsyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, uint64_t result)
@@ -94,12 +95,14 @@ void TestAsyncMessageWithMultipleArguments::callReply(IPC::Decoder& decoder, Com
     decoder >> flag;
     if (!flag) {
         ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
         return;
     }
     Optional<uint64_t> value;
     decoder >> value;
     if (!value) {
         ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
         return;
     }
     completionHandler(WTFMove(*flag), WTFMove(*value));
@@ -107,7 +110,7 @@ void TestAsyncMessageWithMultipleArguments::callReply(IPC::Decoder& decoder, Com
 
 void TestAsyncMessageWithMultipleArguments::cancelReply(CompletionHandler<void(bool&&, uint64_t&&)>&& completionHandler)
 {
-    completionHandler({ }, { });
+    completionHandler(IPC::AsyncReplyError<bool>::create(), IPC::AsyncReplyError<uint64_t>::create());
 }
 
 void TestAsyncMessageWithMultipleArguments::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag, uint64_t value)

@@ -1,3 +1,21 @@
+2019-05-24  Youenn Fablet  <youenn@apple.com>
+
+        Update messages_unittest.py after r245715
+        https://bugs.webkit.org/show_bug.cgi?id=198214
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update expected results for messages.py output.i
+        Small refactoring to messages.py: instead of calling the completionHandler in case of decoding error with AsyncReply errors,
+        call cancelReply directly as it does the same thing.
+
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        (Messages::WebPage::TestAsyncMessage::callReply):
+        (Messages::WebPage::TestAsyncMessage::cancelReply):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::callReply):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::cancelReply):
+        * Scripts/webkit/messages.py:
+
 2019-05-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         Socket-based RWI should be able to inspect a JSContext
