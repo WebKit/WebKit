@@ -625,7 +625,7 @@ void ASTDumper::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
 
     visit(newVariable.get());
     m_out.print(" = ");
-    visit(*readModifyWriteExpression.newValueExpression());
+    visit(readModifyWriteExpression.newValueExpression());
     m_out.print(", ");
 
     visit(readModifyWriteExpression.leftValue());
@@ -633,7 +633,7 @@ void ASTDumper::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     visit(newVariable.get());
     m_out.print(", ");
 
-    visit(*readModifyWriteExpression.resultExpression());
+    visit(readModifyWriteExpression.resultExpression());
     m_out.print(")");
 }
 

@@ -86,13 +86,31 @@ public:
     Expression& leftValue() { return m_leftValue; }
     VariableDeclaration& oldValue() { return m_oldValue; }
     VariableDeclaration& newValue() { return m_newValue; }
-    Expression* newValueExpression() { return m_newValueExpression ? &*m_newValueExpression : nullptr; }
-    Expression* resultExpression() { return m_resultExpression ? &*m_resultExpression : nullptr; }
+    Expression& newValueExpression()
+    {
+        ASSERT(m_newValueExpression);
+        return *m_newValueExpression;
+    }
+    Expression& resultExpression()
+    {
+        ASSERT(m_resultExpression);
+        return *m_resultExpression;
+    }
     UniqueRef<Expression> takeLeftValue() { return WTFMove(m_leftValue); }
     UniqueRef<VariableDeclaration> takeOldValue() { return WTFMove(m_oldValue); }
     UniqueRef<VariableDeclaration> takeNewValue() { return WTFMove(m_newValue); }
-    Optional<UniqueRef<Expression>> takeNewValueExpression() { return WTFMove(m_newValueExpression); }
-    Optional<UniqueRef<Expression>> takeResultExpression() { return WTFMove(m_resultExpression); }
+    UniqueRef<Expression> takeNewValueExpression()
+    {
+        auto result = WTFMove(m_newValueExpression.value());
+        m_newValueExpression.reset();
+        return result;
+    }
+    UniqueRef<Expression> takeResultExpression()
+    {
+        auto result = WTFMove(m_resultExpression.value());
+        m_resultExpression.reset();
+        return result;
+    }
 
 private:
     template<class U, class... Args> friend UniqueRef<U> WTF::makeUniqueRef(Args&&...);

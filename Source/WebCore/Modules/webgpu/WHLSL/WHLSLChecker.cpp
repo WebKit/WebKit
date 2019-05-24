@@ -847,7 +847,7 @@ void Checker::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198166 Figure out what to do with the ReadModifyWriteExpression's AnonymousVariables.
 
-    auto newValueInfo = recurseAndGetInfo(*readModifyWriteExpression.newValueExpression());
+    auto newValueInfo = recurseAndGetInfo(readModifyWriteExpression.newValueExpression());
     if (!newValueInfo)
         return;
 
@@ -856,7 +856,7 @@ void Checker::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
         return;
     }
 
-    auto resultInfo = recurseAndGetInfo(*readModifyWriteExpression.resultExpression());
+    auto resultInfo = recurseAndGetInfo(readModifyWriteExpression.resultExpression());
     if (!resultInfo)
         return;
 

@@ -474,8 +474,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
             auto newValueExpression = readModifyWriteExpression.takeNewValueExpression();
-            ASSERT(newValueExpression); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198170 Relax this constraint.
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference), WTFMove(*newValueExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.origin()), WTFMove(variableReference), WTFMove(newValueExpression));
             assignmentExpression->setType(baseType->clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -503,9 +502,8 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
         }
 
         auto resultExpression = readModifyWriteExpression.takeResultExpression();
-        ASSERT(resultExpression); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198170 Be resilient to this being null.
-        auto type = (*resultExpression)->resolvedType().clone();
-        expressions.append(WTFMove(*resultExpression));
+        auto type = resultExpression->resolvedType().clone();
+        expressions.append(WTFMove(resultExpression));
 
         UniqueRef<AST::VariableDeclaration> oldVariableDeclaration = readModifyWriteExpression.takeOldValue();
         UniqueRef<AST::VariableDeclaration> newVariableDeclaration = readModifyWriteExpression.takeNewValue();
@@ -549,8 +547,7 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
 
             auto newValueExpression = readModifyWriteExpression.takeNewValueExpression();
-            ASSERT(newValueExpression); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198170 Relax this constraint
-            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), WTFMove(variableReference), WTFMove(*newValueExpression));
+            auto assignmentExpression = makeUniqueRef<AST::AssignmentExpression>(Lexer::Token(readModifyWriteExpression.leftValue().origin()), WTFMove(variableReference), WTFMove(newValueExpression));
             assignmentExpression->setType(readModifyWriteExpression.leftValue().resolvedType().clone());
             assignmentExpression->setTypeAnnotation(AST::RightValue());
 
@@ -567,9 +564,8 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
     simplifyLeftValue(modifyResult->innerLeftValue);
 
     auto resultExpression = readModifyWriteExpression.takeResultExpression();
-    ASSERT(resultExpression); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198170 Be resilient to this being null.
-    auto type = (*resultExpression)->resolvedType().clone();
-    modifyResult->expressions.append(WTFMove(*resultExpression));
+    auto type = resultExpression->resolvedType().clone();
+    modifyResult->expressions.append(WTFMove(resultExpression));
 
     UniqueRef<AST::VariableDeclaration> oldVariableDeclaration = readModifyWriteExpression.takeOldValue();
     UniqueRef<AST::VariableDeclaration> newVariableDeclaration = readModifyWriteExpression.takeNewValue();

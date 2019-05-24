@@ -536,10 +536,8 @@ void Visitor::visit(AST::ReadModifyWriteExpression& readModifyWriteExpression)
     checkErrorAndVisit(readModifyWriteExpression.leftValue());
     checkErrorAndVisit(readModifyWriteExpression.oldValue());
     checkErrorAndVisit(readModifyWriteExpression.newValue());
-    if (readModifyWriteExpression.newValueExpression())
-        checkErrorAndVisit(*readModifyWriteExpression.newValueExpression());
-    if (readModifyWriteExpression.resultExpression())
-        checkErrorAndVisit(*readModifyWriteExpression.resultExpression());
+    checkErrorAndVisit(readModifyWriteExpression.newValueExpression());
+    checkErrorAndVisit(readModifyWriteExpression.resultExpression());
 }
 
 void Visitor::visit(AST::TernaryExpression& ternaryExpression)
