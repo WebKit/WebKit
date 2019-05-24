@@ -8,6 +8,18 @@
         * platform/ios-wk2/TestExpectations:
         * platform/mac-wk2/TestExpectations: Removing failed expectations
 
+2019-05-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebase compositing/rtl/rtl-overflow-scrolling.html
+        https://bugs.webkit.org/show_bug.cgi?id=198220
+        <rdar://problem/51114177>
+
+        Unreviewed test gardening.
+        
+        New result is a progression (scrollX, which is an offset, should not be negative).
+
+        * platform/ios-wk2/compositing/rtl/rtl-overflow-scrolling-expected.txt:
+
 2019-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Asssertion failure in dispatchSubtreeModifiedEvent due to TextFieldInputType updating UA shadow tree inside Element::removedFromAncestor
