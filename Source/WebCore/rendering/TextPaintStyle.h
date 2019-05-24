@@ -52,6 +52,9 @@ struct TextPaintStyle {
 #if ENABLE(LETTERPRESS)
     bool useLetterpressEffect { false };
 #endif
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    bool useDarkAppearance { false };
+#endif
     PaintOrder paintOrder { PaintOrder::Normal };
     LineJoin lineJoin { MiterJoin };
     LineCap lineCap { ButtCap };

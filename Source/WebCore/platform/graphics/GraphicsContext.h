@@ -163,6 +163,9 @@ struct GraphicsContextState {
         ShouldSubpixelQuantizeFontsChange       = 1 << 19,
         DrawLuminanceMaskChange                 = 1 << 20,
         ImageInterpolationQualityChange         = 1 << 21,
+#if HAVE(OS_DARK_MODE_SUPPORT)
+        UseDarkAppearanceChange                 = 1 << 22,
+#endif
     };
     typedef uint32_t StateChangeFlags;
 
@@ -199,6 +202,9 @@ struct GraphicsContextState {
     bool shadowsUseLegacyRadius : 1;
 #endif
     bool drawLuminanceMask : 1;
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    bool useDarkAppearance : 1;
+#endif
 };
 
 struct ImagePaintingOptions {
@@ -409,6 +415,11 @@ public:
 
     void setTextDrawingMode(TextDrawingModeFlags);
     TextDrawingModeFlags textDrawingMode() const { return m_state.textDrawingMode; }
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    void setUseDarkAppearance(bool);
+    bool useDarkAppearance() const { return m_state.useDarkAppearance; }
+#endif
 
     float drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt);
     void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
