@@ -2435,8 +2435,8 @@ ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) co
 
 void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollType scrollType, ScrollClamping clamping)
 {
-    ScrollOffset newScrollOffset = clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
-    if (newScrollOffset == this->scrollOffset())
+    ScrollOffset clampedScrollOffset = clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
+    if (clampedScrollOffset == this->scrollOffset())
         return;
 
     auto previousScrollType = currentScrollType();
@@ -2445,11 +2445,11 @@ void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollType sc
     bool handled = false;
 #if ENABLE(ASYNC_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
-        handled = scrollingCoordinator->requestScrollPositionUpdate(*this, scrollPositionFromOffset(scrollOffset));
+        handled = scrollingCoordinator->requestScrollPositionUpdate(*this, scrollPositionFromOffset(clampedScrollOffset));
 #endif
 
     if (!handled)
-        scrollToOffsetWithoutAnimation(newScrollOffset, clamping);
+        scrollToOffsetWithoutAnimation(clampedScrollOffset, clamping);
 
     setCurrentScrollType(previousScrollType);
 }

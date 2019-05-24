@@ -1,3 +1,14 @@
+2019-05-23  Simon Fraser  <simon.fraser@apple.com>
+
+        With async overflow scrolling, programmatic scroll to a negative offset fails to clamp the scroll offset
+        https://bugs.webkit.org/show_bug.cgi?id=198208
+        <rdar://problem/49720087>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/scrolling/programmatic-scroll-to-negative-offset-expected.txt: Added.
+        * fast/scrolling/programmatic-scroll-to-negative-offset.html: Added.
+
 2019-05-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-webkit-tests: Remove feature detection support
