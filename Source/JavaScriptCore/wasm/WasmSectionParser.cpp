@@ -476,6 +476,12 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         break;
     }
 
+    case RefNull: {
+        resultType = Anyref;
+        bitsOrImportNumber = JSValue::encode(jsNull());
+        break;
+    }
+
     default:
         WASM_PARSER_FAIL_IF(true, "unknown init_expr opcode ", opcode);
     }

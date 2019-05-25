@@ -535,6 +535,10 @@ export default class Builder {
                         GetGlobal: (type, initValue, mutability) => {
                             s.data.push({ type, op: "get_global", mutability: _normalizeMutability(mutability), initValue });
                             return _errorHandlingProxyFor(globalBuilder);
+                        },
+                        RefNull: (type, mutability) => {
+                            s.data.push({ type, op: "ref.null", mutability: _normalizeMutability(mutability) });
+                            return _errorHandlingProxyFor(globalBuilder);
                         }
                     };
                     for (let op of WASM.description.value_type) {

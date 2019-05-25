@@ -687,6 +687,16 @@ public:
         return OBJECT_OFFSETOF(VM, topEntryFrame);
     }
 
+    static ptrdiff_t offsetOfHeapBarrierThreshold()
+    {
+        return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_barrierThreshold);
+    }
+
+    static ptrdiff_t offsetOfHeapMutatorShouldBeFenced()
+    {
+        return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_mutatorShouldBeFenced);
+    }
+
     void restorePreviousException(Exception* exception) { setException(exception); }
 
     void clearLastException() { m_lastException = nullptr; }

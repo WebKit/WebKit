@@ -1,3 +1,22 @@
+2019-05-24  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Support Anyref in globals
+        https://bugs.webkit.org/show_bug.cgi?id=198102
+
+        Reviewed by Saam Barati.
+
+        Add test for anyrefs in globals, as well as adding a new RefNull initExpr for Builder.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.putInitExpr):
+        * wasm/references/anyref_globals.js: Added.
+        (GetGlobal.0.End.End.WebAssembly):
+        (5.doGCSet):
+        (doGCTest):
+        (doGCSet.doGCTest.let.count.0.doBarrierSet):
+
 2019-05-23  Tadeu Zagallo  <tzagallo@apple.com>
 
         DFG::OSREntry should not perform arity check

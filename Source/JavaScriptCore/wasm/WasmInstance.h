@@ -31,6 +31,8 @@
 #include "WasmMemory.h"
 #include "WasmModule.h"
 #include "WasmTable.h"
+#include "WriteBarrier.h"
+#include <wtf/BitVector.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -82,11 +84,13 @@ public:
     }
     void setTable(Ref<Table>&& table) { m_table = WTFMove(table); }
 
-    int32_t loadI32Global(unsigned i) const { return m_globals.get()[i]; }
-    int64_t loadI64Global(unsigned i) const { return m_globals.get()[i]; }
+    int32_t loadI32Global(unsigned i) const { return m_globals.get()[i].primitive; }
+    int64_t loadI64Global(unsigned i) const { return m_globals.get()[i].primitive; }
     float loadF32Global(unsigned i) const { return bitwise_cast<float>(loadI32Global(i)); }
     double loadF64Global(unsigned i) const { return bitwise_cast<double>(loadI64Global(i)); }
-    void setGlobal(unsigned i, int64_t bits) { m_globals.get()[i] = bits; }
+    void setGlobal(unsigned i, int64_t bits) { m_globals.get()[i].primitive = bits; }
+    void setGlobal(unsigned, JSValue);
+    const BitVector& globalsToMark() { return m_globalsToMark; }
 
     static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
@@ -149,7 +153,13 @@ private:
     RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;
     RefPtr<Table> m_table;
-    MallocPtr<uint64_t> m_globals;
+
+    union GlobalValue {
+        WriteBarrier<Unknown> anyref;
+        uint64_t primitive;
+    };
+    MallocPtr<GlobalValue> m_globals;
+    BitVector m_globalsToMark;
     EntryFrame** m_pointerToTopEntryFrame { nullptr };
     void** m_pointerToActualStackLimit { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };

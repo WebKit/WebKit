@@ -82,6 +82,7 @@ public:
 
     static size_t offsetOfInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
     static size_t offsetOfCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
+    static size_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
 
 protected:
     JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&);
@@ -91,6 +92,7 @@ protected:
 
 private:
     Ref<Wasm::Instance> m_instance;
+    VM* m_vm;
 
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;

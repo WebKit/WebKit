@@ -49,6 +49,7 @@
 #include "B3WasmBoundsCheckValue.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
@@ -239,6 +240,7 @@ private:
 
     void emitTierUpCheck(uint32_t decrementCount, Origin);
 
+    void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     B3::Kind memoryKind(B3::Opcode memoryOp);
     ExpressionType emitLoadOp(LoadOpType, ExpressionType pointer, uint32_t offset);
@@ -641,7 +643,63 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
     ASSERT(toB3Type(m_info.globals[index].type) == value->type());
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
     m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+
+    if (m_info.globals[index].type == Anyref)
+        emitWriteBarrierForJSWrapper();
+
     return { };
+}
+
+inline void B3IRGenerator::emitWriteBarrierForJSWrapper()
+{
+    Value* cell = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+    Value* cellState = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
+    Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), cell, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
+    Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
+
+    BasicBlock* fenceCheckPath = m_proc.addBlock();
+    BasicBlock* fencePath = m_proc.addBlock();
+    BasicBlock* doSlowPath = m_proc.addBlock();
+    BasicBlock* continuation = m_proc.addBlock();
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Above, origin(), cellState, threshold),
+        FrequentedBlock(continuation), FrequentedBlock(fenceCheckPath, FrequencyClass::Rare));
+    fenceCheckPath->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(m_currentBlock);
+    m_currentBlock = fenceCheckPath;
+
+    Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+        shouldFence,
+        FrequentedBlock(fencePath), FrequentedBlock(doSlowPath));
+    fencePath->addPredecessor(m_currentBlock);
+    doSlowPath->addPredecessor(m_currentBlock);
+    m_currentBlock = fencePath;
+
+    B3::PatchpointValue* doFence = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+    doFence->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.memoryFence();
+    });
+
+    Value* cellStateLoadAfterFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Above, origin(), cellStateLoadAfterFence, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), blackThreshold)),
+        FrequentedBlock(continuation), FrequentedBlock(doSlowPath, FrequencyClass::Rare));
+    doSlowPath->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(m_currentBlock);
+    m_currentBlock = doSlowPath;
+
+    void (*writeBarrier)(JSWebAssemblyInstance*, VM*) = [] (JSWebAssemblyInstance* cell, VM* vm) -> void {
+        vm->heap.writeBarrierSlowPath(cell);
+    };
+
+    Value* writeBarrierAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(writeBarrier, B3CCallPtrTag));
+    m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(), writeBarrierAddress, cell, vm);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+
+    continuation->addPredecessor(m_currentBlock);
+    m_currentBlock = continuation;
 }
 
 inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)

@@ -52,6 +52,7 @@ Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* global
 JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<Wasm::Instance>&& instance)
     : Base(vm, structure)
     , m_instance(WTFMove(instance))
+    , m_vm(&vm)
 {
     for (unsigned i = 0; i < this->instance().numImportFunctions(); ++i)
         new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
@@ -89,6 +90,12 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
         visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
+
+    for (size_t i : thisObject->instance().globalsToMark()) {
+        // FIXME: We need to box wasm Funcrefs once they are supported here.
+        // <https://bugs.webkit.org/show_bug.cgi?id=198157>
+        visitor.appendUnbarriered(JSValue::decode(thisObject->instance().loadI64Global(i)));
+    }
 }
 
 void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock, JSObject* importObject, Wasm::CreationMode creationMode)

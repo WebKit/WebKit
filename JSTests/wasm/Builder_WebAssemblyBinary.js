@@ -90,7 +90,10 @@ const putOp = (bin, op) => {
 };
 
 const putInitExpr = (bin, expr) => {
-    putOp(bin, { value: WASM.description.opcode[expr.op].value, name: expr.op, immediates: [expr.initValue], arguments: [] });
+    if (expr.op == "ref.null")
+        putOp(bin, { value: WASM.description.opcode[expr.op].value, name: expr.op, immediates: [], arguments: [] });
+    else
+        putOp(bin, { value: WASM.description.opcode[expr.op].value, name: expr.op, immediates: [expr.initValue], arguments: [] });
     putOp(bin, { value: WASM.description.opcode.end.value, name: "end", immediates: [], arguments: [] });
 };
 

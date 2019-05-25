@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCInlines.h"
+#include "JSWebAssemblyInstance.h"
 #include "Register.h"
 #include "WasmModuleInformation.h"
 #include <wtf/CheckedArithmetic.h>
@@ -44,7 +46,8 @@ size_t globalMemoryByteSize(Module& module)
 Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
     : m_context(context)
     , m_module(WTFMove(module))
-    , m_globals(MallocPtr<uint64_t>::malloc(globalMemoryByteSize(m_module.get())))
+    , m_globals(MallocPtr<GlobalValue>::malloc(globalMemoryByteSize(m_module.get())))
+    , m_globalsToMark(m_module.get().moduleInformation().globals.size())
     , m_pointerToTopEntryFrame(pointerToTopEntryFrame)
     , m_pointerToActualStackLimit(pointerToActualStackLimit)
     , m_storeTopCallFrame(WTFMove(storeTopCallFrame))
@@ -52,6 +55,11 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) ImportFunctionInfo();
+    memset(m_globals.get(), 0, globalMemoryByteSize(m_module.get()));
+    for (unsigned i = 0; i < m_module->moduleInformation().globals.size(); ++i) {
+        if (m_module.get().moduleInformation().globals[i].type == Anyref)
+            m_globalsToMark.set(i);
+    }
 }
 
 Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
@@ -64,6 +72,12 @@ Instance::~Instance() { }
 size_t Instance::extraMemoryAllocated() const
 {
     return globalMemoryByteSize(m_module.get()) + allocationSize(m_numImportFunctions);
+}
+
+void Instance::setGlobal(unsigned i, JSValue value)
+{
+    ASSERT(m_owner);
+    m_globals.get()[i].anyref.set(*owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
 }
 
 } } // namespace JSC::Wasm

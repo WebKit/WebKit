@@ -42,6 +42,7 @@
 #include "BinarySwitch.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
@@ -529,7 +530,7 @@ private:
         Inst inst(CCall, origin);
 
         Tmp callee = g64();
-        append(Move, Arg::immPtr(tagCFunctionPtr<void*>(func, B3CCallPtrTag)), callee);
+        append(block, Move, Arg::immPtr(tagCFunctionPtr<void*>(func, B3CCallPtrTag)), callee);
         inst.args.append(callee);
 
         if (result)
@@ -547,6 +548,7 @@ private:
         case Type::I32:
             return Move32;
         case Type::I64:
+        case Type::Anyref:
             return Move;
         case Type::F32:
             return MoveFloat;
@@ -561,6 +563,7 @@ private:
 
     void emitTierUpCheck(uint32_t decrementCount, B3::Origin);
 
+    void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     ExpressionType emitLoadOp(LoadOpType, ExpressionType pointer, uint32_t offset);
     void emitStoreOp(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
@@ -1059,7 +1062,58 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
         append(moveOpForValueType(type), value, Arg::addr(temp));
     }
 
+    if (type == Anyref)
+        emitWriteBarrierForJSWrapper();
+
     return { };
+}
+
+inline void AirIRGenerator::emitWriteBarrierForJSWrapper()
+{
+    auto cell = g64();
+    auto vm = g64();
+    auto cellState = g32();
+    auto threshold = g32();
+
+    BasicBlock* fenceCheckPath = m_code.addBlock();
+    BasicBlock* fencePath = m_code.addBlock();
+    BasicBlock* doSlowPath = m_code.addBlock();
+    BasicBlock* continuation = m_code.addBlock();
+
+    append(Move, Arg::addr(instanceValue(), Instance::offsetOfOwner()), cell);
+    append(Move, Arg::addr(cell, JSWebAssemblyInstance::offsetOfVM()), vm);
+    append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
+    append(Move32, Arg::addr(vm, VM::offsetOfHeapBarrierThreshold()), threshold);
+
+    append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, threshold);
+    m_currentBlock->setSuccessors(continuation, fenceCheckPath);
+    m_currentBlock = fenceCheckPath;
+
+    append(Load8, Arg::addr(vm, VM::offsetOfHeapMutatorShouldBeFenced()), threshold);
+    append(BranchTest32, Arg::resCond(MacroAssembler::Zero), threshold, threshold);
+    m_currentBlock->setSuccessors(doSlowPath, fencePath);
+    m_currentBlock = fencePath;
+
+    auto* doFence = addPatchpoint(B3::Void);
+    doFence->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.memoryFence();
+    });
+    emitPatchpoint(doFence, Tmp());
+
+    append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
+    append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, Arg::imm(blackThreshold));
+    m_currentBlock->setSuccessors(continuation, doSlowPath);
+    m_currentBlock = doSlowPath;
+
+    void (*writeBarrier)(JSWebAssemblyInstance*, VM*) = [] (JSWebAssemblyInstance* cell, VM* vm) -> void {
+        ASSERT(cell);
+        ASSERT(vm);
+        vm->heap.writeBarrierSlowPath(cell);
+    };
+    emitCCall(writeBarrier, TypedTmp(), cell, vm);
+    append(Jump);
+    m_currentBlock->setSuccessors(continuation);
+    m_currentBlock = continuation;
 }
 
 inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)

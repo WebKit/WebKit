@@ -235,10 +235,13 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
             if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-            if (!value.isNumber())
+            if (moduleInformation.globals[import.kindIndex].type != Wasm::Anyref && !value.isNumber())
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a number")));
             // iii. Append ToWebAssemblyValue(v) to imports.
             switch (moduleInformation.globals[import.kindIndex].type) {
+            case Wasm::Anyref:
+                m_instance->instance().setGlobal(import.kindIndex, value);
+                break;
             case Wasm::I32:
                 m_instance->instance().setGlobal(import.kindIndex, value.toInt32(exec));
                 break;
@@ -379,6 +382,12 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             ASSERT(global.mutability == Wasm::Global::Immutable);
             // Return ToJSValue(v).
             switch (global.type) {
+            case Wasm::Anyref:
+                // FIXME: We need to box wasm Funcrefs once they are supported here.
+                // <https://bugs.webkit.org/show_bug.cgi?id=198157>
+                exportedValue = JSValue::decode(m_instance->instance().loadI64Global(exp.kindIndex));
+                break;
+
             case Wasm::I32:
                 exportedValue = JSValue(m_instance->instance().loadI32Global(exp.kindIndex));
                 break;

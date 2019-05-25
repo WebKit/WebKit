@@ -1,3 +1,38 @@
+2019-05-24  Justin Michaud  <justin_michaud@apple.com>
+
+        [WASM-References] Support Anyref in globals
+        https://bugs.webkit.org/show_bug.cgi?id=198102
+
+        Reviewed by Saam Barati.
+
+        Support anyref for globals, imports and exports. This adds code in B3 and Air to emit a write barrier
+        on the JSWebAssemblyWrapper whenever an anyref global is set. This also fixes a small bug in emitCCall
+        for air where it adds code to the wrong block.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::setGlobal):
+        (JSC::Wasm::AirIRGenerator::emitWriteBarrierForJSWrapper):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::emitWriteBarrierForJSWrapper):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::setGlobal):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::loadI32Global const):
+        (JSC::Wasm::Instance::loadI64Global const):
+        (JSC::Wasm::Instance::setGlobal):
+        (JSC::Wasm::Instance::shouldMarkGlobal):
+        (JSC::Wasm::Instance::numGlobals const):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2019-05-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Overlay: rulers/guides should be shown whenever element selection is enabled
