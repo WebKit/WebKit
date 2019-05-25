@@ -1850,13 +1850,13 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
         }
     }
 
-    if (subscript.isUInt32()) {
+    if (subscript.isInt32()) {
         ASSERT(exec->bytecodeOffset());
         byValInfo->tookSlowPath = true;
 
-        uint32_t i = subscript.asUInt32();
+        int32_t i = subscript.asInt32();
         if (isJSString(baseValue)) {
-            if (asString(baseValue)->canGetIndex(i)) {
+            if (i >= 0 && asString(baseValue)->canGetIndex(i)) {
                 ctiPatchCallByReturnAddress(returnAddress, operationGetByValString);
                 RELEASE_AND_RETURN(scope, asString(baseValue)->getIndex(exec, i));
             }
@@ -1868,7 +1868,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
 
             bool skipMarkingOutOfBounds = false;
 
-            if (object->indexingType() == ArrayWithContiguous && i < object->butterfly()->publicLength()) {
+            if (object->indexingType() == ArrayWithContiguous && i >= 0 && static_cast<uint32_t>(i) < object->butterfly()->publicLength()) {
                 // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
                 // https://bugs.webkit.org/show_bug.cgi?id=182940
                 auto* globalObject = object->globalObject(vm);
@@ -1883,7 +1883,8 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
             }
         }
 
-        RELEASE_AND_RETURN(scope, baseValue.get(exec, i));
+        if (i >= 0)
+            RELEASE_AND_RETURN(scope, baseValue.get(exec, static_cast<uint32_t>(i)));
     }
 
     baseValue.requireObjectCoercible(exec);

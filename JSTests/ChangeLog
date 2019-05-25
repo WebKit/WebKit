@@ -1,3 +1,13 @@
+2019-05-25  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JITOperations getByVal should mark negative array indices as out-of-bounds
+        https://bugs.webkit.org/show_bug.cgi?id=198229
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/get-by-val-negative-array-index.js: Added.
+        (foo):
+
 2019-05-24  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Support Anyref in globals

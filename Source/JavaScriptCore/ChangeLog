@@ -1,3 +1,22 @@
+2019-05-25  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JITOperations getByVal should mark negative array indices as out-of-bounds
+        https://bugs.webkit.org/show_bug.cgi?id=198229
+
+        Reviewed by Saam Barati.
+
+        get_by_val with an array or string as base value and a negative index causes DFG to OSR exit,
+        but baseline doesn't mark it as out-of-bounds, since it only considers positive indices. This
+        leads to discarding DFG code, recompiling it and exiting at the same bytecode.
+
+        This is observed in the prepack-wtb subtest of JetStream2. In popContext#CdOhFJ, the last item
+        of the array popped and the new last value is accessed using `array[array.length - 1]`, which
+        is -1 when the array is empty. It shows a ~0.5% progression in JetStream2, but it's within the
+        noise.
+
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+
 2019-05-24  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Support Anyref in globals
