@@ -1,3 +1,12 @@
+2019-05-25  Rafael Fontenelle  <rafaelff@gnome.org>
+
+        [l10n] [pt_BR] Updated Brazilian Portuguese translation
+        https://bugs.webkit.org/show_bug.cgi?id=198245
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * pt_BR.po:
+
 2019-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Need WebKitContextMenuItemType to open emoji picker
