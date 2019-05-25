@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        
+        #scroller {
+		    direction: rtl;
+            overflow-x: scroll;
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+        }
+        
+        .contents {
+		    width: 200%;
+		    height: 100%;
+			background-image: linear-gradient(to right, red, red 50%, green 50%, green);
+        }
+
+        .scrollbar-hider {
+            position: absolute;
+            width: 300px;
+            height: 16px;
+            left: 10px;
+            top: calc(310px - 16px);
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div id="scroller">
+        <div class="contents"></div>
+    </div>
+    <div class="scrollbar-hider"></div>
+</body>
+</html>

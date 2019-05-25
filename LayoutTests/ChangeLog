@@ -1,3 +1,13 @@
+2019-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS] Fix programmatic scroll in RTL overflow with async scrolling enabled
+        https://bugs.webkit.org/show_bug.cgi?id=198226
+
+        Reviewed by Antti Koivisto.
+
+        * scrollingcoordinator/mac/rtl-programmatic-overflow-scroll-expected.html: Added.
+        * scrollingcoordinator/mac/rtl-programmatic-overflow-scroll.html: Added.
+
 2019-05-24  Joonghun Park  <jh718.park@samsung.com>
 
         Make computed width of non-replaced inline return computed style.
