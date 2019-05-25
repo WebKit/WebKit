@@ -28,18 +28,17 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineItem.h"
-#include "InlineRunProvider.h"
 
 namespace WebCore {
 namespace Layout {
 
 class TextUtil {
 public:
-    static LayoutUnit width(const InlineItem&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft);
-    static Optional<ItemPosition> hyphenPositionBefore(const InlineItem&, ItemPosition from, unsigned length);
+    static LayoutUnit width(const InlineBox&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
+    static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
 
 private:
-    static LayoutUnit fixedPitchWidth(String, const RenderStyle&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft);
+    static LayoutUnit fixedPitchWidth(String, const RenderStyle&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
 };
 
 }

@@ -1349,7 +1349,7 @@ layout/inlineformatting/InlineFormattingContextLineLayout.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
-layout/inlineformatting/InlineRunProvider.cpp
+layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp
 layout/layouttree/LayoutBlockContainer.cpp
 layout/layouttree/LayoutBox.cpp

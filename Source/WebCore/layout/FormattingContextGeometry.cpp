@@ -109,12 +109,11 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
     auto bottom = borderAndPaddingTop;
     auto& formattingRootContainer = downcast<Container>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext()) {
-        // This is temp and will be replaced by the correct display box once inline runs move over to the display tree.
-        auto& inlineRuns = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).inlineRuns();
-        if (!inlineRuns.isEmpty()) {
-            top = inlineRuns[0].logicalTop();
-            bottom =  inlineRuns.last().logicalBottom();
-        }
+        auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).lineBoxes();
+        // Even empty containers generate one line. 
+        ASSERT(!lineBoxes.isEmpty());
+        top = lineBoxes.first().logicalTop();
+        bottom = lineBoxes.last().logicalBottom();
     } else if (formattingRootContainer.establishesBlockFormattingContext() || layoutBox.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());

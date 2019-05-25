@@ -74,7 +74,7 @@ public:
     bool isEmpty() const { return m_floatPair.isEmpty(); }
     const FloatingState::FloatItem* left() const;
     const FloatingState::FloatItem* right() const;
-    bool intersects(const Display::Box::Rect&) const;
+    bool intersects(const Display::Rect&) const;
     PositionInContextRoot verticalConstraint() const { return m_verticalPosition; }
     FloatAvoider::HorizontalConstraints horizontalConstraints() const;
     PositionInContextRoot bottom() const;
@@ -370,7 +370,7 @@ const FloatingState::FloatItem* FloatPair::right() const
     return &m_floats[*m_floatPair.right];
 }
 
-bool FloatPair::intersects(const Display::Box::Rect& floatAvoiderRect) const
+bool FloatPair::intersects(const Display::Rect& floatAvoiderRect) const
 {
     auto intersects = [&](auto* floating) {
         return floating && floating->rectWithMargin().intersects(floatAvoiderRect);

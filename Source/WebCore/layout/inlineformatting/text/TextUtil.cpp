@@ -34,19 +34,19 @@
 namespace WebCore {
 namespace Layout {
 
-Optional<ItemPosition> TextUtil::hyphenPositionBefore(const InlineItem&, ItemPosition, unsigned)
+Optional<unsigned> TextUtil::hyphenPositionBefore(const InlineItem&, unsigned, unsigned)
 {
     return WTF::nullopt;
 }
 
-LayoutUnit TextUtil::width(const InlineItem& inlineTextItem, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft)
+LayoutUnit TextUtil::width(const InlineBox& inlineBox, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
 {
-    auto& style = inlineTextItem.style();
+    auto& style = inlineBox.style();
     auto& font = style.fontCascade();
     if (!font.size() || from == to)
         return 0;
 
-    auto text = inlineTextItem.textContent();
+    auto text = inlineBox.textContent();
     ASSERT(to <= text.length());
 
     if (font.isFixedPitch())
@@ -70,7 +70,7 @@ LayoutUnit TextUtil::width(const InlineItem& inlineTextItem, ItemPosition from, 
     return std::max<LayoutUnit>(0, width);
 }
 
-LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft)
+LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
 {
     auto& font = style.fontCascade();
     auto monospaceCharacterWidth = font.spaceWidth();

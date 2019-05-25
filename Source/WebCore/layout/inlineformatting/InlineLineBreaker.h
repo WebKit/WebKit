@@ -27,41 +27,37 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineRunProvider.h"
-#include <wtf/IsoMalloc.h>
-
 namespace WebCore {
 namespace Layout {
 
-class InlineLineBreaker {
-    WTF_MAKE_ISO_ALLOCATED(InlineLineBreaker);
-public:
-    InlineLineBreaker(const LayoutState&, const InlineContent&, const Vector<InlineRunProvider::Run>&);
+class InlineTextItem;
 
-    struct Run {
-        enum class Position { Undetermined, LineBegin, LineEnd };
-        Position position;
-        LayoutUnit width;
-        InlineRunProvider::Run content;
+class LineBreaker {
+public:
+    LineBreaker(const LayoutState&);
+
+    enum class BreakingBehavior { Keep, Break, Wrap };
+    struct BreakingContext {
+        BreakingBehavior breakingBehavior;
+        bool isAtBreakingOpportunity { false };
     };
-    Optional<Run> nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
+    struct LineContext {
+        LayoutUnit availableWidth;
+        LayoutUnit logicalLeft;
+        LayoutUnit trimmableWidth;
+        bool isEmpty { false };
+    };
+    BreakingContext breakingContext(InlineItem&, const LineContext);
 
 private:
-    enum class LineBreakingBehavior { Keep, Break, WrapToNextLine };
-    LineBreakingBehavior lineBreakingBehavior(const InlineRunProvider::Run&, bool lineIsEmpty);
-    bool isAtContentEnd() const;
-    Run splitRun(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
-    LayoutUnit runWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
-    LayoutUnit textWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
-    Optional<ItemPosition> adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition splitPosition, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool isLineEmpty) const;
+
+    BreakingBehavior wordBreakingBehavior(const InlineTextItem&, bool lineIsEmpty) const;
+    bool isAtBreakingOpportunity(const InlineItem&);
+    LayoutUnit runWidth(const InlineItem&, LayoutUnit contentLogicalLeft) const;
+    LayoutUnit textWidth(const InlineTextItem&, LayoutUnit contentLogicalLeft) const;
 
     const LayoutState& m_layoutState;
-    const InlineContent& m_inlineContent;
-    const Vector<InlineRunProvider::Run>& m_inlineRuns;
-
-    unsigned m_currentRunIndex { 0 };
-    Optional<ItemPosition> m_splitPosition;
-    bool m_hyphenationIsDisabled { false };
+    bool m_hyphenationIsDisabled { true };
 };
 
 }

@@ -35,6 +35,7 @@
 #include "LayoutTreeBuilder.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
+#include "RenderLineBreak.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
 
@@ -46,7 +47,7 @@ static bool areEssentiallyEqual(float a, LayoutUnit b)
     if (a == b.toFloat())
         return true;
 
-    return fabs(a - b.toFloat()) <= 8 * LayoutUnit::epsilon();
+    return fabs(a - b.toFloat()) <= 10 * LayoutUnit::epsilon();
 }
 
 static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
@@ -72,33 +73,37 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
         auto& simpleRun = lineLayoutData->runAt(i);
         auto& inlineRun = inlineRunList[i];
 
-        auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, inlineRun.logicalLeft()) && areEssentiallyEqual(simpleRun.logicalRight, inlineRun.logicalRight());
-        if (matchingRuns)
-            matchingRuns = (simpleRun.start == inlineRun.textContext()->start() && simpleRun.end == (inlineRun.textContext()->start() + inlineRun.textContext()->length()));
+        auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, inlineRun->logicalLeft()) && areEssentiallyEqual(simpleRun.logicalRight, inlineRun->logicalRight());
+        if (matchingRuns && inlineRun->textContext()) {
+            matchingRuns = simpleRun.start == inlineRun->textContext()->start() && simpleRun.end == inlineRun->textContext()->end();
+            // SLL handles strings in a more concatenated format <div>foo<br>bar</div> -> foo -> 0,3 bar -> 3,6 vs. 0,3 and 0,3
+            if (!matchingRuns)
+                matchingRuns = (simpleRun.end - simpleRun.start) == (inlineRun->textContext()->end() - inlineRun->textContext()->start()); 
+        }
         if (matchingRuns)
             continue;
 
-        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ") layout run(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
+        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ") layout run(" << inlineRun->textContext()->start() << ", " << inlineRun->textContext()->end() << ") (" << inlineRun->logicalLeft() << ", " << inlineRun->logicalRight() << ")";
         stream.nextLine();
         mismatched = true;
     }
     return mismatched;
 }
 
-static bool checkForMatchingNonTextRuns(const InlineRun& inlineRun, const WebCore::InlineBox& inlineBox)
+static bool checkForMatchingNonTextRuns(const Display::Run& inlineRun, const WebCore::InlineBox& inlineBox)
 {
     return areEssentiallyEqual(inlineBox.logicalLeft(), inlineRun.logicalLeft())
         && areEssentiallyEqual(inlineBox.logicalRight(), inlineRun.logicalRight())
         && areEssentiallyEqual(inlineBox.logicalHeight(), inlineRun.logicalHeight());
 }
 
-static bool checkForMatchingTextRuns(const InlineRun& inlineRun, float logicalLeft, float logicalRight, unsigned start, unsigned end, float logicalHeight)
+static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const InlineTextBox& inlineTextBox)
 {
-    return areEssentiallyEqual(logicalLeft, inlineRun.logicalLeft())
-        && areEssentiallyEqual(logicalRight, inlineRun.logicalRight())
-        && start == inlineRun.textContext()->start()
-        && (end == (inlineRun.textContext()->start() + inlineRun.textContext()->length()))
-        && areEssentiallyEqual(logicalHeight, inlineRun.logicalHeight());
+    return areEssentiallyEqual(inlineTextBox.logicalLeft(), inlineRun.logicalLeft())
+        && areEssentiallyEqual(inlineTextBox.logicalRight(), inlineRun.logicalRight())
+        && inlineTextBox.start() == inlineRun.textContext()->start()
+        && (inlineTextBox.end() + 1) == inlineRun.textContext()->end()
+        && areEssentiallyEqual(inlineTextBox.logicalHeight(), inlineRun.logicalHeight());
 }
 
 static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
@@ -126,19 +131,6 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Inli
     }
 }
 
-static LayoutUnit resolveForRelativePositionIfNeeded(const InlineTextBox& inlineTextBox)
-{
-    LayoutUnit xOffset;
-    auto* parent = inlineTextBox.parent();
-    while (is<InlineFlowBox>(parent)) {
-        auto& renderer = parent->renderer();
-        if (renderer.isInFlowPositioned())
-            xOffset = renderer.offsetForInFlowPosition().width();
-        parent = parent->parent();
-    }
-    return xOffset;
-}
-
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
@@ -158,66 +150,30 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     }
 
     for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && runIndex < inlineRunList.size(); ++inlineBoxIndex) {
+        auto& inlineRun = inlineRunList[runIndex];
         auto* inlineBox = inlineBoxes[inlineBoxIndex];
         auto* inlineTextBox = is<InlineTextBox>(inlineBox) ? downcast<InlineTextBox>(inlineBox) : nullptr;
-
-        auto& inlineRun = inlineRunList[runIndex];
-        auto matchingRuns = false;
-        if (inlineTextBox) {
-            auto xOffset = resolveForRelativePositionIfNeeded(*inlineTextBox);
-            matchingRuns = checkForMatchingTextRuns(inlineRun, inlineTextBox->logicalLeft() + xOffset,
-                inlineTextBox->logicalRight() + xOffset,
-                inlineTextBox->start(),
-                inlineTextBox->end() + 1,
-                inlineTextBox->logicalHeight());
-
-            // <span>foobar</span>foobar generates 2 inline text boxes while we only generate one inline run.
-            // also <div>foo<img style="float: left;">bar</div> too.
-            auto inlineRunEnd = inlineRun.textContext()->start() + inlineRun.textContext()->length();
-            auto textRunMightBeExtended = !matchingRuns && inlineTextBox->end() < inlineRunEnd && inlineBoxIndex < inlineBoxes.size() - 1;
-
-            if (textRunMightBeExtended) {
-                auto logicalLeft = inlineTextBox->logicalLeft() + xOffset;
-                auto logicalRight = inlineTextBox->logicalRight() + xOffset;
-                auto start = inlineTextBox->start();
-                auto end = inlineTextBox->end() + 1;
-                auto index = ++inlineBoxIndex;
-                for (; index < inlineBoxes.size(); ++index) {
-                    auto* inlineBox = inlineBoxes[index];
-                    auto* inlineTextBox = is<InlineTextBox>(inlineBox) ? downcast<InlineTextBox>(inlineBox) : nullptr;
-                    // Can't mix different inline boxes.
-                    if (!inlineTextBox)
-                        break;
-
-                    auto xOffset = resolveForRelativePositionIfNeeded(*inlineTextBox);
-                    logicalRight = inlineTextBox->logicalRight() + xOffset;
-                    end += (inlineTextBox->end() + 1);
-                    if (checkForMatchingTextRuns(inlineRun, logicalLeft, logicalRight, start, end, inlineTextBox->logicalHeight())) {
-                        matchingRuns = true;
-                        inlineBoxIndex = index;
-                        break;
-                    }
-
-                    // Went too far?
-                    if (end >= inlineRunEnd)
-                        break;
-                }
-            }
-        } else
-            matchingRuns = checkForMatchingNonTextRuns(inlineRun, *inlineBox);
-
+        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(*inlineRun, *inlineTextBox) : matchingRuns = checkForMatchingNonTextRuns(*inlineRun, *inlineBox);
 
         if (!matchingRuns) {
-            stream << "Mismatching: run ";
+            
+            if (is<RenderLineBreak>(inlineBox->renderer())) {
+                // <br> positioning is weird at this point. It needs proper baseline.
+                matchingRuns = true;
+                ++runIndex;
+                continue;
+            }
+
+            stream << "Mismatching: run";
 
             if (inlineTextBox)
-                stream << "(" << inlineTextBox->start() << ", " << inlineTextBox->end() + 1 << ")";
-            stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalRight() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
+                stream << " (" << inlineTextBox->start() << ", " << inlineTextBox->end() + 1 << ")";
+            stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalTop() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
 
-            stream << "inline run ";
-            if (inlineRun.textContext())
-                stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
-            stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ") (" << inlineRun.logicalWidth() << "x" << inlineRun.logicalHeight() << ")";
+            stream << " inline run";
+            if (inlineRun->textContext())
+                stream << " (" << inlineRun->textContext()->start() << ", " << inlineRun->textContext()->end() << ")";
+            stream << " (" << inlineRun->logicalLeft() << ", " << inlineRun->logicalTop() << ") (" << inlineRun->logicalWidth() << "x" << inlineRun->logicalHeight() << ")";
             stream.nextLine();
             mismatched = true;
         }
@@ -245,7 +201,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         // Produce a RenderBox matching margin box.
         auto borderBox = displayBox.borderBox();
 
-        return Display::Box::Rect {
+        return Display::Rect {
             borderBox.top() - displayBox.nonCollapsedMarginBefore(),
             borderBox.left() - displayBox.computedMarginStart().valueOr(0),
             displayBox.computedMarginStart().valueOr(0) + borderBox.width() + displayBox.computedMarginEnd().valueOr(0),

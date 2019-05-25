@@ -30,7 +30,6 @@
 #include "DisplayBox.h"
 #include "FormattingContext.h"
 #include "InlineFormattingState.h"
-#include "InlineRun.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -38,7 +37,6 @@ namespace Layout {
 
 class FloatingState;
 class InlineContainer;
-class InlineRunProvider;
 class Line;
 
 // This class implements the layout logic for inline formatting contexts.
@@ -55,21 +53,15 @@ private:
     class LineLayout {
     public:
         LineLayout(const InlineFormattingContext&);
-        void layout(const InlineRunProvider&) const;
+        void layout() const;
 
     private:
-        enum class IsLastLine { No, Yes };
-        void initializeNewLine(Line&) const;
-        void closeLine(Line&, IsLastLine) const;
-        void appendContentToLine(Line&, const InlineRunProvider::Run&, const LayoutSize&) const;
-        void postProcessInlineRuns(Line&, IsLastLine) const;
-        void createFinalRuns(Line&) const;
-        void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;
-        void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
-        void placeInFlowPositionedChildren(unsigned firstRunIndex) const;
-        void alignRuns(TextAlignMode, Line&, IsLastLine) const;
-        void computeExpansionOpportunities(Line&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType) const;
-        LayoutUnit runWidth(const InlineContent&, const InlineItem&, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft) const;
+        LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
+        void initializeLine(Line&, LayoutUnit lineLogicalTop) const;
+        void closeLine(Line&) const;
+        void commitInlineItemToLine(Line&, const InlineItem&) const;
+        void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
+        void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
         static void justifyRuns(Line&);
@@ -89,13 +81,15 @@ private:
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
     void computeIntrinsicWidthForFloatBox(const Box&) const;
+    void computeMarginBorderAndPaddingForInlineContainer(const InlineContainer&, UsedHorizontalValues) const;
+    void initializeMarginBorderAndPaddingForGenericInlineBox(const InlineBox&) const;
     void computeIntrinsicWidthForInlineBlock(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
-    void computeMargin(const Box&, UsedHorizontalValues) const;
+    void computeHorizontalMargin(const Box&, UsedHorizontalValues) const;
     void computeHeightAndMargin(const Box&) const;
     void computeWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
-    void collectInlineContent(InlineRunProvider&) const;
+    void collectInlineContent() const;
 
     InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 };

@@ -36,17 +36,6 @@ namespace Display {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Rect::Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height)
-    : m_rect(left, top, width, height)
-{
-#if !ASSERT_DISABLED
-    m_hasValidTop = true;
-    m_hasValidLeft = true;
-    m_hasValidWidth = true;
-    m_hasValidHeight = true;
-#endif
-}
-
 Box::Box(const RenderStyle& style)
     : m_style(style)
 {
@@ -88,7 +77,7 @@ Box::Style::Style(const RenderStyle& style)
 {
 }
 
-Box::Rect Box::marginBox() const
+Rect Box::marginBox() const
 {
     auto borderBox = this->borderBox();
 
@@ -100,7 +89,7 @@ Box::Rect Box::marginBox() const
     return marginBox;
 }
 
-Box::Rect Box::nonCollapsedMarginBox() const
+Rect Box::nonCollapsedMarginBox() const
 {
     auto borderBox = this->borderBox();
 
@@ -112,7 +101,7 @@ Box::Rect Box::nonCollapsedMarginBox() const
     return marginBox;
 }
 
-Box::Rect Box::borderBox() const
+Rect Box::borderBox() const
 {
     Rect borderBox;
     borderBox.setTopLeft({ });
@@ -120,7 +109,7 @@ Box::Rect Box::borderBox() const
     return borderBox;
 }
 
-Box::Rect Box::paddingBox() const
+Rect Box::paddingBox() const
 {
     auto borderBox = this->borderBox();
 
@@ -132,7 +121,7 @@ Box::Rect Box::paddingBox() const
     return paddingBox;
 }
 
-Box::Rect Box::contentBox() const
+Rect Box::contentBox() const
 {
     Rect contentBox;
     contentBox.setTop(contentBoxTop());

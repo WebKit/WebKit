@@ -113,7 +113,7 @@ bool FloatAvoider::overflowsContainingBlock() const
     return containingBlockContentBoxRight < right;
 }
 
-Display::Box::Rect FloatAvoider::rectInContainingBlock() const
+Display::Rect FloatAvoider::rectInContainingBlock() const
 {
     // From formatting root coordinate system back to containing block's.
     if (layoutBox().containingBlock() == &floatingState().root())

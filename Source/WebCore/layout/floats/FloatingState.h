@@ -74,7 +74,7 @@ public:
         bool isLeftPositioned() const { return m_layoutBox->isLeftFloatingPositioned(); }
         bool isDescendantOfFormattingRoot(const Box&) const;
 
-        Display::Box::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
+        Display::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
         PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
 
     private:

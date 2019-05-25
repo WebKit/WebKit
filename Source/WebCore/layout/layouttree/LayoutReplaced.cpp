@@ -80,7 +80,7 @@ LayoutUnit Replaced::intrinsicRatio() const
     ASSERT(hasIntrinsicRatio() || (hasIntrinsicWidth() && hasIntrinsicHeight()));
     if (m_intrinsicRatio)
         return *m_intrinsicRatio;
-    if (m_intrinsicSize)
+    if (m_intrinsicSize && m_intrinsicSize->height())
         return m_intrinsicSize->width() / m_intrinsicSize->height();
     return 1;
 }

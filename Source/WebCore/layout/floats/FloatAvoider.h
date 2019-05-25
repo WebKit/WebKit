@@ -46,8 +46,8 @@ public:
     FloatAvoider(const Box&, const FloatingState&, const LayoutState&);
     virtual ~FloatAvoider() = default;
 
-    virtual Display::Box::Rect rect() const { return m_absoluteDisplayBox.rect(); }
-    Display::Box::Rect rectInContainingBlock() const;
+    virtual Display::Rect rect() const { return m_absoluteDisplayBox.rect(); }
+    Display::Rect rectInContainingBlock() const;
 
     struct HorizontalConstraints {
         Optional<PositionInContextRoot> left;

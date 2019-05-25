@@ -41,7 +41,7 @@ FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, con
     displayBox().setTopLeft({ initialHorizontalPosition(), initialVerticalPosition() });
 }
 
-Display::Box::Rect FloatBox::rect() const
+Display::Rect FloatBox::rect() const
 {
     auto rect = displayBox().rect();
     return { rect.top() - marginBefore(), rect.left() - marginStart(), marginStart() + rect.width() + marginEnd(), marginBefore() + rect.height() + marginAfter() };

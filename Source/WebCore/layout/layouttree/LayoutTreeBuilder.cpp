@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "DisplayRun.h"
 #include "InlineFormattingState.h"
 #include "LayoutBlockContainer.h"
 #include "LayoutBox.h"
@@ -42,6 +43,7 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
+#include "RenderLineBreak.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
@@ -58,6 +60,15 @@ std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& rende
     std::unique_ptr<Container> initialContainingBlock(new BlockContainer(WTF::nullopt, WTFMove(style)));
     TreeBuilder::createSubTree(renderView, *initialContainingBlock);
     return initialContainingBlock;
+}
+
+static Optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuation(const RenderBox& block)
+{
+    // FIXE: This is a workaround of the continuation logic when the relatively positioned parent inline box
+    // becomes a sibling box of this block and only reachable through the continuation link which we don't have here.
+    if (!block.isAnonymous() || !block.isInFlowPositioned() || !block.isContinuation())
+        return { };
+    return block.relativePositionOffset();
 }
 
 void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& rootContainer)
@@ -97,6 +108,9 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
         if (is<RenderText>(child)) {
             box = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
             downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
+        } else if (is<RenderLineBreak>(child)) {
+            auto& renderer = downcast<RenderLineBreak>(child);
+            box = std::make_unique<LineBreakBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else if (is<RenderReplaced>(child)) {
             auto& renderer = downcast<RenderReplaced>(child);
             auto display = renderer.style().display();
@@ -115,9 +129,15 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
         } else if (is<RenderElement>(child)) {
             auto& renderer = downcast<RenderElement>(child);
             auto display = renderer.style().display();
-            if (display == DisplayType::Block)
-                box = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            else if (display == DisplayType::Inline)
+            if (display == DisplayType::Block) {
+                if (auto offset = accumulatedOffsetForInFlowPositionedContinuation(downcast<RenderBox>(renderer))) {
+                    auto style = RenderStyle::clonePtr(renderer.style());
+                    style->setTop({ offset->height(), Fixed });
+                    style->setLeft({ offset->width(), Fixed });
+                    box = std::make_unique<BlockContainer>(elementAttributes(renderer), WTFMove(*style));
+                } else
+                    box = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            } else if (display == DisplayType::Inline)
                 box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
             else if (display == DisplayType::InlineBlock)
                 box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
@@ -157,20 +177,30 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
 #if ENABLE(TREE_DEBUGGING)
 static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState, const Container& inlineFormattingRoot, unsigned depth)
 {
-    auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
-    ASSERT(is<InlineFormattingState>(inlineFormattingState));
-    auto& inlineRuns = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
+    auto& inlineFormattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(inlineFormattingRoot));
+    auto& inlineRuns = inlineFormattingState.inlineRuns();
+    auto& lineBoxes = inlineFormattingState.lineBoxes();
+
+    unsigned printedCharacters = 0;
+    while (++printedCharacters <= depth * 3)
+        stream << " ";
+
+    stream << "lines are -> ";
+    for (auto& lineBox : lineBoxes)
+        stream << "[" << lineBox.logicalLeft() << "," << lineBox.logicalTop() << " " << lineBox.logicalWidth() << "x" << lineBox.logicalHeight() << "] ";
+    stream.nextLine();
 
     for (auto& inlineRun : inlineRuns) {
         unsigned printedCharacters = 0;
-        while (++printedCharacters <= depth * 2)
+        while (++printedCharacters <= depth * 3)
             stream << " ";
-        stream << "run";
-        if (inlineRun.textContext())
-            stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
-        else
-            stream << "(x, x) ";
-        stream << "at [" << inlineRun.logicalLeft() << ", " << inlineRun.logicalTop() << "] size [" << inlineRun.logicalWidth() << " " << inlineRun.logicalHeight() << "]";
+        if (inlineRun->textContext())
+            stream << "inline text box";
+        else  
+            stream << "inline box";
+        stream << " at (" << inlineRun->logicalLeft() << "," << inlineRun->logicalTop() << ") size " << inlineRun->logicalWidth() << "x" << inlineRun->logicalHeight();
+        if (inlineRun->textContext())
+            stream << " run(" << inlineRun->textContext()->start() << ", " << inlineRun->textContext()->end() << ")";
         stream.nextLine();
     }
 }
@@ -181,33 +211,46 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     while (++printedCharacters <= depth * 2)
         stream << " ";
 
-    if (is<InlineContainer>(layoutBox))
-        stream << "inline container";
-    else if (is<InlineBox>(layoutBox)) {
+    if (layoutBox.isFloatingPositioned())
+        stream << "[float] ";
+
+    if (is<InlineContainer>(layoutBox)) {
+        // FIXME: fix names
+        if (layoutBox.isInlineBlockBox())
+            stream << "DIV inline-block container";
+        else
+            stream << "SPAN inline container";
+    } else if (is<InlineBox>(layoutBox)) {
         if (layoutBox.replaced())
-            stream << "inline replaced box";
-        else if (downcast<InlineBox>(layoutBox).hasTextContent()) {
-            auto textContent = downcast<InlineBox>(layoutBox).textContent();
-            stream << "inline text [\"" << textContent.utf8().data() << "\"]";
-        } else
+            stream << "IMG replaced inline box";
+        else if (layoutBox.isAnonymous())
+            stream << "anonymous inline box";
+        else if (is<LineBreakBox>(layoutBox))
+            stream << "BR line break";
+        else
             stream << "inline box";
     } else if (is<BlockContainer>(layoutBox)) {
         if (!layoutBox.parent())
-            stream << "initial ";
-        stream << "block container";
+            stream << "Initial";
+        else if (layoutBox.isDocumentBox())
+            stream << "HTML";
+        else if (layoutBox.isBodyBox())
+            stream << "BODY";
+        else {
+            // FIXME
+            stream << "DIV";
+        }
+        stream << " block container";
     } else if (layoutBox.isBlockLevelBox())
         stream << "block box";
     else
         stream << "box";
     // FIXME: Inline text runs don't create display boxes yet.
-    if (displayBox) {
-        // FIXME: display box is not completely set yet.
-        if ((is<InlineBox>(layoutBox) || is<InlineContainer>(layoutBox)) && !layoutBox.isFloatingPositioned())
-            stream << " at [" << "." << " " << "." << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
-        else
-            stream << " at [" << displayBox->left() << " " << displayBox->top() << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
-    }
-    stream << " [" << &layoutBox << "]";
+    if (displayBox)
+        stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
+    stream << " layout box->(" << &layoutBox << ")";
+    if (is<InlineBox>(layoutBox) && downcast<InlineBox>(layoutBox).hasTextContent())
+        stream << " text content [\"" << downcast<InlineBox>(layoutBox).textContent().utf8().data() << "\"]";
 
     stream.nextLine();
 }
