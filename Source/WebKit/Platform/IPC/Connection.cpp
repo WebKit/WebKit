@@ -242,7 +242,9 @@ static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>&
     static NeverDestroyed<HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>> map;
     return map.get();
 }
-    
+
+static void clearAsyncReplyHandlers(const Connection&);
+
 Connection::Connection(Identifier identifier, bool isServer, Client& client)
     : m_client(client)
     , m_uniqueID(UniqueID::generate())
@@ -277,12 +279,8 @@ Connection::~Connection()
     ASSERT(!isValid());
 
     allConnections().remove(m_uniqueID);
-    
-    auto map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(this));
-    for (auto& handler : map.values()) {
-        if (handler)
-            handler(nullptr);
-    }
+
+    clearAsyncReplyHandlers(*this);
 }
 
 Connection* Connection::connection(UniqueID uniqueID)
@@ -849,6 +847,8 @@ void Connection::connectionDidClose()
         protectedThis->m_isValid = false;
 
         protectedThis->m_client.didClose(protectedThis.get());
+
+        clearAsyncReplyHandlers(protectedThis.get());
     });
 }
 
@@ -1137,6 +1137,15 @@ void addAsyncReplyHandler(Connection& connection, uint64_t identifier, Completio
         return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
     }).iterator->value.add(identifier, WTFMove(completionHandler));
     ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void clearAsyncReplyHandlers(const Connection& connection)
+{
+    auto map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(&connection));
+    for (auto& handler : map.values()) {
+        if (handler)
+            handler(nullptr);
+    }
 }
 
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, uint64_t identifier)

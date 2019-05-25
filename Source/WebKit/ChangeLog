@@ -1,3 +1,21 @@
+2019-05-24  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r245715?) [WK2] Layout Test http/wpt/cache-storage/cache-storage-networkprocess-crash.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=198222
+        <rdar://problem/51114899>
+
+        Reviewed by Alex Christensen.
+
+        In case a connection gets closed, handle all of its async reply completion handlers.
+        This ensures they handlers are called in case the connection does not get destroyed until a much later stage.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::~Connection):
+        (IPC::Connection::connectionDidClose):
+        (IPC::addAsyncReplyHandler):
+        (IPC::clearAsyncReplyHandlers):
+        (IPC::CompletionHandler<void):
+
 2019-05-24  Per Arne Vollan  <pvollan@apple.com>
 
         Remove unused member in WebsiteDataRecord
