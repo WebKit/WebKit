@@ -1,5 +1,5 @@
 
 FAIL object.contentWindow assert_equals: The contentWindow's name of the object element should be 'o1'. expected "o1" but got "o"
-FAIL object.width assert_equals: The width should be 100px. expected "100px" but got "auto"
-FAIL object.height assert_equals: The height should be 50px. expected "50px" but got "auto"
+PASS object.width 
+PASS object.height 
  

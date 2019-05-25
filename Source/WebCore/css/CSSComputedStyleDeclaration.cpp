@@ -3190,9 +3190,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             if (renderer && !renderer->isRenderSVGModelObject()) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,
                 // the "height" property does not apply for non-replaced inline elements.
-                if (isNonReplacedInline(*renderer))
-                    return cssValuePool.createIdentifierValue(CSSValueAuto);
-                return zoomAdjustedPixelValue(sizingBox(*renderer).height(), style);
+                if (!isNonReplacedInline(*renderer))
+                    return zoomAdjustedPixelValue(sizingBox(*renderer).height(), style);
             }
             return zoomAdjustedPixelValueForLength(style.height(), style);
         case CSSPropertyWebkitHyphens:
@@ -3513,9 +3512,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             if (renderer && !renderer->isRenderSVGModelObject()) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-width-property,
                 // the "width" property does not apply for non-replaced inline elements.
-                if (isNonReplacedInline(*renderer))
-                    return cssValuePool.createIdentifierValue(CSSValueAuto);
-                return zoomAdjustedPixelValue(sizingBox(*renderer).width(), style);
+                if (!isNonReplacedInline(*renderer))
+                    return zoomAdjustedPixelValue(sizingBox(*renderer).width(), style);
             }
             return zoomAdjustedPixelValueForLength(style.width(), style);
         case CSSPropertyWillChange:

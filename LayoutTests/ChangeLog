@@ -1,3 +1,26 @@
+2019-05-24  Joonghun Park  <jh718.park@samsung.com>
+
+        Make computed width of non-replaced inline return computed style.
+        https://bugs.webkit.org/show_bug.cgi?id=197814
+
+        Reviewed by Antti Koivisto.
+
+        Currently, Computed width of non-replaced inline incorrectly returns "auto"
+        instead of the computed value.
+        This patch changes the behavior according to
+        https://drafts.csswg.org/cssom/#resolved-value as below.
+
+        'If the property applies to the element or pseudo-element
+        and the resolved value of the display property is not none or contents,
+        then the resolved value is the used value.
+        Otherwise the resolved value is the computed value.'
+
+        * fast/css/getComputedStyle/getComputedStyle-resolved-values-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html:
+        * legacy-animation-engine/fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt:
+        * legacy-animation-engine/fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html:
+
 2019-05-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Allow vertex attributes to have arbitrary names in the shader
