@@ -1,3 +1,16 @@
+2019-05-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Respect -[NSItemProvider preferredPresentationSize] when dropping images
+        https://bugs.webkit.org/show_bug.cgi?id=198242
+
+        Reviewed by Beth Dakin.
+
+        Add a new test that simulates dropping an image with a preferred presentation size into an editable element
+        with attachment elements enabled.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-05-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Make display-profiler-output work with newer HighLine

@@ -71,13 +71,14 @@ public:
 private:
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
+    bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }) override;
     bool readFilePaths(const Vector<String>&) override;
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
     bool readImage(Ref<SharedBuffer>&&, const String& type, Optional<FloatSize> preferredPresentationSize = { }) override;
     bool readURL(const URL&, const String& title) override;
-    bool readDataBuffer(SharedBuffer&, const String& type, const String& name) override;
+    bool readDataBuffer(SharedBuffer&, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize = { }) override;
 #endif
     bool readPlainText(const String&) override;
 };
@@ -94,13 +95,14 @@ public:
 private:
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
+    bool readFilePath(const String&, Optional<FloatSize> = { }) override { return false; }
     bool readFilePaths(const Vector<String>&) override { return false; }
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
     bool readImage(Ref<SharedBuffer>&&, const String&, Optional<FloatSize> = { }) override { return false; }
     bool readURL(const URL&, const String&) override { return false; }
-    bool readDataBuffer(SharedBuffer&, const String&, const String&) override { return false; }
+    bool readDataBuffer(SharedBuffer&, const String&, const String&, Optional<FloatSize> = { }) override { return false; }
 #endif
     bool readPlainText(const String&) override { return false; }
 };
