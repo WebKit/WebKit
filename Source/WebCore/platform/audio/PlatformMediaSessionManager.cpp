@@ -246,7 +246,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
 void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
-    
+
     if (m_sessions.size() < 2)
         return;
     
@@ -254,26 +254,23 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
     size_t lastPlayingSessionIndex = notFound;
     for (size_t i = 0, size = m_sessions.size(); i < size; ++i) {
         const auto& oneSession = *m_sessions[i];
-        if (&oneSession == &session) {
+        if (&oneSession == &session)
             pausingSessionIndex = i;
-            break;
-        }
-        if (oneSession.state() == PlatformMediaSession::Playing) {
+        else if (oneSession.state() == PlatformMediaSession::Playing)
             lastPlayingSessionIndex = i;
-            break;
-        }
-        if (oneSession.state() != PlatformMediaSession::Playing)
+        else
             break;
     }
+
     if (lastPlayingSessionIndex == notFound || pausingSessionIndex == notFound)
         return;
-    
+
     if (pausingSessionIndex > lastPlayingSessionIndex)
         return;
 
     m_sessions.remove(pausingSessionIndex);
     m_sessions.append(makeWeakPtr(session));
-    
+
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", pausingSessionIndex, " to ", lastPlayingSessionIndex);
 }
 

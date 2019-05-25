@@ -1,3 +1,13 @@
+2019-05-25  Youenn Fablet  <youenn@apple.com>
+
+        media/video-remote-control-playpause.html is timing out after r245712
+        https://bugs.webkit.org/show_bug.cgi?id=198238
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        Removed old flaky expectation that is no longer valid according dashboard.
+
 2019-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scrolling] Absolute positioned element inside async overflow scroll didn't get composited sometimes
