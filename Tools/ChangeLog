@@ -1,3 +1,15 @@
+2019-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        MobileMiniBrowser: Add iPad support, and allow insecure loads
+        https://bugs.webkit.org/show_bug.cgi?id=198249
+
+        Reviewed by Tim Horton.
+
+        Add iPad support to MobileMiniBrowser, and allow insecure loads.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+        * MobileMiniBrowser/MobileMiniBrowser/Info.plist:
+
 2019-05-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Respect -[NSItemProvider preferredPresentationSize] when dropping images
