@@ -311,6 +311,8 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         return true;
     if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
         return true;
+    if (equalLettersIgnoringASCIICase(host, "naver.com") || host.endsWithIgnoringASCIICase(".naver.com"))
+        return true;
 #endif
     return false;
 }
