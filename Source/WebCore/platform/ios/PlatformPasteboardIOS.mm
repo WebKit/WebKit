@@ -155,6 +155,8 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
 #if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
 #endif
+    if (!CGSizeEqualToSize(itemProvider.preferredPresentationSize, CGSizeZero))
+        info.preferredPresentationSize = FloatSize { itemProvider.preferredPresentationSize };
     info.containsFileURLAndFileUploadContent = itemProvider.web_containsFileURLAndFileUploadContent;
     info.suggestedFileName = itemProvider.suggestedName;
     NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;

@@ -1,5 +1,65 @@
 2019-05-26  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r245637. rdar://problem/35205373
+
+    [Paste] Add support for preferred presentation size when pasting an image
+    https://bugs.webkit.org/show_bug.cgi?id=198132
+    <rdar://problem/50886917>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Set the pasted <img> width/height attributes when the preferred presentation size is available.
+    
+    * editing/WebContentReader.h:
+    * editing/cocoa/WebContentReaderCocoa.mm:
+    (WebCore::createFragmentForImageAttachment):
+    (WebCore::WebContentReader::readImage):
+    * editing/markup.cpp:
+    (WebCore::createFragmentForImageAndURL):
+    * editing/markup.h:
+    * platform/Pasteboard.h:
+    (WebCore::PasteboardWebContentReader::readImage):
+    * platform/PasteboardItemInfo.h:
+    (WebCore::PasteboardItemInfo::encode const):
+    (WebCore::PasteboardItemInfo::decode):
+    * platform/ios/PasteboardIOS.mm:
+    (WebCore::Pasteboard::readPasteboardWebContentDataForType):
+    (WebCore::Pasteboard::read):
+    (WebCore::Pasteboard::readRespectingUTIFidelities):
+    * platform/ios/PlatformPasteboardIOS.mm:
+    (WebCore::PlatformPasteboard::informationForItemAtIndex):
+    
+    Source/WebKit:
+    
+    * UIProcess/API/Cocoa/_WKElementAction.mm:
+    (addToReadingList):
+    * UIProcess/ios/WKActionSheetAssistant.mm:
+    (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+    (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245637 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-22  Zalan Bujtas  <zalan@apple.com>
+
+            [Paste] Add support for preferred presentation size when pasting an image
+            https://bugs.webkit.org/show_bug.cgi?id=198132
+            <rdar://problem/50886917>
+
+            Reviewed by Wenson Hsieh.
+
+            * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+            (TestWebKitAPI::TEST):
+
+2019-05-26  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r245778. rdar://problem/35205373
 
     [iOS] Dropped text, attachments, and images should animate into place
