@@ -1,3 +1,41 @@
+2019-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dropped text, attachments, and images should animate into place
+        https://bugs.webkit.org/show_bug.cgi?id=198243
+        <rdar://problem/35205373>
+
+        Reviewed by Tim Horton.
+
+        Adjusts the iOS dragging simulator, and adds a new API test. See below for more detail.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::isCompletelyWhite):
+        (TestWebKitAPI::TEST):
+
+        Add a test that drags and drops an image into a contenteditable element, and then observes the resulting
+        UITargetedDragPreviews upon drop.
+
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator runFrom:to:additionalItemRequestLocations:]):
+        (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+
+        Teach the iOS version of DragAndDropSimulator to invoke -dropInteraction:concludeDrop: on the drop interaction
+        delegate when the drop finishes. This additionally uses _doAfterReceivingEditDragSnapshotForTesting: to defer
+        the end of the simulated drag and drop until after drag previews have been received during an edit drag.
+
+        (-[DragAndDropSimulator dropPreviews]):
+        (-[DragAndDropSimulator delayedDropPreviews]):
+
+        Have the drag and drop simulator remember which previews were returned by the delegate on drop, as well as which
+        previews were provided asynchronously.
+
+        (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        Stage the new private drop interacton delegate method.
+
 2019-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         MobileMiniBrowser: Add iPad support, and allow insecure loads

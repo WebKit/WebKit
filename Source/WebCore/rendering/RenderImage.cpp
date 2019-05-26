@@ -378,6 +378,9 @@ void RenderImage::notifyFinished(CachedResource& newImage)
         // that the image is done and they can reference it directly.
         contentChanged(ImageChanged);
     }
+
+    if (is<HTMLImageElement>(element()))
+        page().didFinishLoadingImageForElement(downcast<HTMLImageElement>(*element()));
 }
 
 bool RenderImage::isShowingMissingOrImageError() const

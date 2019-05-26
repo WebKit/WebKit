@@ -527,6 +527,8 @@ public:
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
 
+    void didFinishLoadingImageForElement(HTMLImageElement&);
+
     WEBCORE_EXPORT void addLayoutMilestones(OptionSet<LayoutMilestone>);
     WEBCORE_EXPORT void removeLayoutMilestones(OptionSet<LayoutMilestone>);
     OptionSet<LayoutMilestone> requestedLayoutMilestones() const { return m_requestedLayoutMilestones; }

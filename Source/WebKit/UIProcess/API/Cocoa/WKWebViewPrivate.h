@@ -489,6 +489,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, readonly) CGRect _dragCaretRect WK_API_AVAILABLE(ios(11.0));
 
+- (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 - (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(11.0));
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler WK_API_AVAILABLE(ios(11.3));
 - (void)_accessibilityStoreSelection WK_API_AVAILABLE(ios(11.3));

@@ -841,6 +841,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _outstandingPositionInformationRequest = WTF::nullopt;
 
     _focusRequiresStrongPasswordAssistance = NO;
+    _waitingForEditDragSnapshot = NO;
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     _candidateViewNeedsUpdate = NO;
@@ -6269,6 +6270,9 @@ static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperati
 
 - (void)cleanUpDragSourceSessionState
 {
+    if (_waitingForEditDragSnapshot)
+        return;
+
     if (_dragDropInteractionState.dragSession() || _dragDropInteractionState.isPerformingDrop())
         RELEASE_LOG(DragAndDrop, "Cleaning up dragging state (has pending operation: %d)", [[WebItemProviderPasteboard sharedInstance] hasPendingOperation]);
 
@@ -6281,11 +6285,9 @@ static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperati
     [[WebItemProviderPasteboard sharedInstance] stageRegistrationList:nil];
     [self _restoreCalloutBarIfNeeded];
 
-    [_visibleContentViewSnapshot removeFromSuperview];
-    _visibleContentViewSnapshot = nil;
+    [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [_editDropCaretView remove];
     _editDropCaretView = nil;
-    _isAnimatingConcludeEditDrag = NO;
     _shouldRestoreCalloutBarAfterDrop = NO;
 
     _dragDropInteractionState.dragAndDropSessionsDidEnd();
@@ -6307,9 +6309,31 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return extractItemProvidersFromDragItems(session.items);
 }
 
-- (void)_didConcludeEditDrag:(Optional<WebCore::TextIndicatorData>)data
+- (void)_willReceiveEditDragSnapshot
 {
+    _waitingForEditDragSnapshot = YES;
+}
+
+- (void)_didReceiveEditDragSnapshot:(Optional<WebCore::TextIndicatorData>)data
+{
+    _waitingForEditDragSnapshot = NO;
+
+    [self _deliverDelayedDropPreviewIfPossible:data];
+    [self cleanUpDragSourceSessionState];
+
+    if (auto action = WTFMove(_actionToPerformAfterReceivingEditDragSnapshot))
+        action();
+}
+
+- (void)_deliverDelayedDropPreviewIfPossible:(Optional<WebCore::TextIndicatorData>)data
+{
+    if (!_visibleContentViewSnapshot)
+        return;
+
     if (!data)
+        return;
+
+    if (!data->contentImage)
         return;
 
     auto snapshotWithoutSelection = data->contentImageWithoutSelection;
@@ -6321,25 +6345,11 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return;
 
     auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
-    auto unselectedContentSnapshot = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
-    [unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
+    _unselectedContentSnapshot = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
+    [_unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
 
-    auto protectedSelf = retainPtr(self);
-    auto visibleContentViewSnapshot = adoptNS(_visibleContentViewSnapshot.leakRef());
-
-    _isAnimatingConcludeEditDrag = YES;
-    [self insertSubview:unselectedContentSnapshot.get() belowSubview:visibleContentViewSnapshot.get()];
-    [UIView animateWithDuration:0.25 animations:^() {
-        [visibleContentViewSnapshot setAlpha:0];
-    } completion:^(BOOL completed) {
-        [visibleContentViewSnapshot removeFromSuperview];
-        [UIView animateWithDuration:0.25 animations:^() {
-            [protectedSelf _stopSuppressingSelectionAssistantForReason:WebKit::DropAnimationIsRunning];
-            [unselectedContentSnapshot setAlpha:0];
-        } completion:^(BOOL completed) {
-            [unselectedContentSnapshot removeFromSuperview];
-        }];
-    }];
+    [self insertSubview:_unselectedContentSnapshot.get() belowSubview:_visibleContentViewSnapshot.get()];
+    _dragDropInteractionState.deliverDelayedDropPreview(self, self.unscaledView, data.value());
 }
 
 - (void)_didPerformDragOperation:(BOOL)handled
@@ -6349,9 +6359,6 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     id <UIDropSession> dropSession = _dragDropInteractionState.dropSession();
     if ([self.webViewUIDelegate respondsToSelector:@selector(_webView:dataInteractionOperationWasHandled:forSession:itemProviders:)])
         [self.webViewUIDelegate _webView:_webView dataInteractionOperationWasHandled:handled forSession:dropSession itemProviders:[WebItemProviderPasteboard sharedInstance].itemProviders];
-
-    if (!_isAnimatingConcludeEditDrag)
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::DropAnimationIsRunning];
 
     CGPoint global;
     CGPoint client;
@@ -6507,6 +6514,15 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     }
 
     return dragItems;
+}
+
+- (UIView *)textEffectsWindow
+{
+#if HAVE(UISCENE)
+    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
+#else
+    return [UITextEffectsWindow sharedTextEffectsWindow];
+#endif
 }
 
 - (NSDictionary *)_autofillContext
@@ -6890,21 +6906,40 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     }];
 }
 
+- (void)dropInteraction:(UIDropInteraction *)interaction item:(UIDragItem *)item willAnimateDropWithAnimator:(id <UIDragAnimating>)animator
+{
+    [animator addCompletion:[strongSelf = retainPtr(self)] (UIViewAnimatingPosition) {
+        [std::exchange(strongSelf->_unselectedContentSnapshot, nil) removeFromSuperview];
+    }];
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
+{
+    [self _stopSuppressingSelectionAssistantForReason:WebKit::DropAnimationIsRunning];
+    [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
+    [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
+    _dragDropInteractionState.clearAllDelayedItemPreviewProviders();
+    _page->didConcludeDrop();
+}
+
 - (UITargetedDragPreview *)dropInteraction:(UIDropInteraction *)interaction previewForDroppingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
 {
     CGRect caretRect = _page->currentDragCaretRect();
     if (CGRectIsEmpty(caretRect))
         return nil;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: <rdar://problem/31074376> [WK2] Performing an edit drag should transition from the initial drag preview to the final drop preview
-    // This is blocked on UIKit support, since we aren't able to update the text clipping rects of a UITargetedDragPreview mid-flight. For now,
-    // just zoom to the center of the caret rect while shrinking the drop preview.
-    auto caretRectInWindowCoordinates = [self convertRect:caretRect toView:[UITextEffectsWindow sharedTextEffectsWindow]];
+    UIView *textEffectsWindow = self.textEffectsWindow;
+    auto caretRectInWindowCoordinates = [self convertRect:caretRect toView:textEffectsWindow];
     auto caretCenterInWindowCoordinates = CGPointMake(CGRectGetMidX(caretRectInWindowCoordinates), CGRectGetMidY(caretRectInWindowCoordinates));
-    auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:[UITextEffectsWindow sharedTextEffectsWindow] center:caretCenterInWindowCoordinates transform:CGAffineTransformMakeScale(0, 0)]);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    auto targetPreviewCenterInWindowCoordinates = CGPointMake(caretCenterInWindowCoordinates.x + defaultPreview.size.width / 2, caretCenterInWindowCoordinates.y + defaultPreview.size.height / 2);
+    auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:textEffectsWindow center:targetPreviewCenterInWindowCoordinates transform:CGAffineTransformIdentity]);
     return [defaultPreview retargetedPreviewWithTarget:target.get()];
+}
+
+- (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider
+{
+    // FIXME: This doesn't currently handle multiple items in a drop session.
+    _dragDropInteractionState.prepareForDelayedDropPreview(item, previewProvider);
 }
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnd:(id <UIDropSession>)session
@@ -7165,6 +7200,18 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 @end
 
 @implementation WKContentView (WKTesting)
+
+- (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
+{
+#if ENABLE(DRAG_SUPPORT)
+    ASSERT(!_actionToPerformAfterReceivingEditDragSnapshot);
+    if (_waitingForEditDragSnapshot) {
+        _actionToPerformAfterReceivingEditDragSnapshot = action;
+        return;
+    }
+#endif
+    action();
+}
 
 - (WKFormInputControl *)formInputControl
 {

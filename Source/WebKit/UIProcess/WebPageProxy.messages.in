@@ -333,7 +333,8 @@ messages -> WebPageProxy {
 #if ENABLE(DATA_INTERACTION)
     DidHandleDragStartRequest(bool started)
     DidHandleAdditionalDragItemsRequest(bool added)
-    DidConcludeEditDrag(Optional<WebCore::TextIndicatorData> textIndicator)
+    WillReceiveEditDragSnapshot()
+    DidReceiveEditDragSnapshot(Optional<WebCore::TextIndicatorData> textIndicator)
 #endif
 
 #if PLATFORM(COCOA)

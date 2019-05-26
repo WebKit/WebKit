@@ -29,6 +29,7 @@
 #include <WebCore/ChromeClient.h>
 
 namespace WebCore {
+class HTMLImageElement;
 class RegistrableDomain;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
@@ -120,6 +121,8 @@ private:
 
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
+
+    void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;

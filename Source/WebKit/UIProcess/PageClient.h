@@ -479,7 +479,8 @@ public:
 #if ENABLE(DATA_INTERACTION)
     virtual void didHandleDragStartRequest(bool started) = 0;
     virtual void didHandleAdditionalDragItemsRequest(bool added) = 0;
-    virtual void didConcludeEditDrag(Optional<WebCore::TextIndicatorData>) = 0;
+    virtual void willReceiveEditDragSnapshot() = 0;
+    virtual void didReceiveEditDragSnapshot(Optional<WebCore::TextIndicatorData>) = 0;
     virtual void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
 

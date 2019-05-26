@@ -1,3 +1,149 @@
+2019-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dropped text, attachments, and images should animate into place
+        https://bugs.webkit.org/show_bug.cgi?id=198243
+        <rdar://problem/35205373>
+
+        Reviewed by Tim Horton.
+
+        Adds support for targeted drop animations on iOS in modern WebKit by adopting UIKit SPI introduced in
+        <rdar://problem/31075005> to allow updating the drop preview mid-flight. To get the animation right, we refactor
+        and augment existing logic for taking snapshots after performing a drop in an editable content.
+
+        Currently, upon dropping in editable content, we first snapshot the web view and temporarily cover the real web
+        view with this snapshot. When the TextIndicator data arrives that contains (1) a snapshot of the visible part of
+        the web view ignoring the selection, and (2) a snapshot of just the selected contents after drop, we crossfade
+        from the web view snapshot to the snapshot in (1) using a hard-coded time delay (~500ms), and target the drop
+        preview to the drag caret rect. During this process, snapshot (2) is completely ignored.
+
+        This was effectively a halfway implemention of the desired effect of animating the dropped content into place
+        and crossfading to the final content; before UIKit implemented updateable drag previews, the full implementation
+        was not possible in modern WebKit (without using synchronous IPC).
+
+        Now that we're able to update the drag preview in the middle of the drop animation, we can now utilize snapshot
+        (2) above and clean up some parts of the drop animation in editable content. See below for more details.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _doAfterReceivingEditDragSnapshotForTesting:]):
+
+        Add a testing hook to perform the given block after any pending edit drag snapshot has been received. See
+        TestWebKitAPI changes for more detail.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Split up the existing DidConcludeEditDrag IPC message into two messages: WillReceiveEditDragSnapshot and
+        DidReceiveEditDragSnapshot. This allows us to defer cleaning up the drag session state during an edit drop,
+        until after the final edit drag snapshot has been received.
+
+        * UIProcess/ios/DragDropInteractionState.h:
+
+        Add some new methods to help manage the lifecycle of drop preview provider blocks.
+
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::createTargetedDragPreview):
+
+        Drive-by fix: make this return a RetainPtr.
+
+        (WebKit::DragDropInteractionState::prepareForDelayedDropPreview):
+
+        Stores a drop preview provider, given to us by UIKit.
+
+        (WebKit::DragDropInteractionState::deliverDelayedDropPreview):
+
+        Invokes the stored drop preview providers with given text indicator data. This is invoked after snapshots are
+        taken following an edit drag (this is additionally after all images in the inserted fragment have finished
+        loading).
+
+        (WebKit::DragDropInteractionState::clearAllDelayedItemPreviewProviders):
+
+        Invokes all stored drop preview providers with a nil preview. This is invoked in any case where drag session
+        cleanup occurs earlier than normal (e.g., if the web process crashes during drop), and ensures that the handlers
+        are always invoked when cleaning up the drag session.
+
+        (WebKit::DragDropInteractionState::previewForDragItem const):
+        (WebKit::DragDropInteractionState::dragAndDropSessionsDidEnd):
+
+        Call clearAllDelayedItemPreviewProviders.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::willReceiveEditDragSnapshot):
+        (WebKit::PageClientImpl::didReceiveEditDragSnapshot):
+        (WebKit::PageClientImpl::didConcludeEditDrag): Deleted.
+
+        More plumbing (see changes to DidConcludeEditDrag above).
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView cleanUpDragSourceSessionState]):
+        (-[WKContentView _willReceiveEditDragSnapshot]):
+        (-[WKContentView _didReceiveEditDragSnapshot:]):
+
+        Set _waitingForEditDragSnapshot to YES in the gap between when -_willReceiveEditDragSnapshot is invoked, and
+        when -_didReceiveEditDragSnapshot is invoked. If _waitingForEditDragSnapshot is YES, we bail out of
+        -cleanUpDragSourceSessionState, and instead clean up drag session state after the edit drag snapshot is
+        received.
+
+        (-[WKContentView _deliverDelayedDropPreviewIfPossible:]):
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView textEffectsWindow]):
+
+        Drive-by fix to remove a workaround for a deprecation warning.
+
+        (-[WKContentView dropInteraction:item:willAnimateDropWithAnimator:]):
+        (-[WKContentView dropInteraction:concludeDrop:]):
+
+        Implement this hook to ensure that the unselected content snapshot view and visible content snapshot view are
+        guaranteed to be removed from the view after a drop in editable content, even if the drag edit snapshot arrives
+        after the drop is concluded.
+
+        (-[WKContentView dropInteraction:previewForDroppingItem:withDefault:]):
+        (-[WKContentView _dropInteraction:delayedPreviewProviderForDroppingItem:previewProvider:]):
+
+        Implement the new UIKit SPI here. UIKit hands us a preview provider here, which we can invoke at a later time
+        to update the drop preview. We do this in _didReceiveEditDragSnapshot.
+
+        (-[WKContentView _doAfterReceivingEditDragSnapshotForTesting:]):
+        (-[WKContentView _didConcludeEditDrag:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willReceiveEditDragSnapshot):
+        (WebKit::WebPageProxy::didReceiveEditDragSnapshot):
+        (WebKit::WebPageProxy::didConcludeDrop):
+        (WebKit::WebPageProxy::didConcludeEditDrag): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didFinishLoadingImageForElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didFinishLoadingImageForElement):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeDrop):
+
+        If an edit drag has been concluded, there's no need to hang on to pending dropped image elements anymore; clear
+        out the set here.
+
+        (WebKit::WebPage::didConcludeEditDrag):
+
+        After concluding an edit drag, we try to deliver two web content snapshots to the UI process, so that the UI
+        process can assemble a targeted drop preview for UIKit. One snapshot is of the visible content area, not
+        including any selected content. The other snapshot is of the selected content only. However, when dropping
+        images (or a text selection containing images), these images may not yet have been loaded. If that is the case,
+        these images will appear to be missing from these snapshots.
+
+        To ensure that we don't take this snapshot too early, defer it until all image elements in the dropped content
+        range have finished loading. We can tell that all dropped images have finished loading by using a new client
+        hook that is invoked when an image has finished loading.
+
+        (WebKit::WebPage::didFinishLoadingImageForElement):
+        (WebKit::WebPage::computeAndSendEditDragSnapshot):
+
+        Snapshot the selected content and send it to the UI process.
+
 2019-05-24  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r245715?) [WK2] Layout Test http/wpt/cache-storage/cache-storage-networkprocess-crash.html is a flaky failure

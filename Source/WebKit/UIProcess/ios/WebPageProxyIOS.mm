@@ -1219,9 +1219,19 @@ void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPo
         m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition, allowedActions), m_pageID);
 }
 
-void WebPageProxy::didConcludeEditDrag(Optional<TextIndicatorData> data)
+void WebPageProxy::willReceiveEditDragSnapshot()
 {
-    pageClient().didConcludeEditDrag(data);
+    pageClient().willReceiveEditDragSnapshot();
+}
+
+void WebPageProxy::didReceiveEditDragSnapshot(Optional<TextIndicatorData> data)
+{
+    pageClient().didReceiveEditDragSnapshot(data);
+}
+
+void WebPageProxy::didConcludeDrop()
+{
+    m_process->send(Messages::WebPage::DidConcludeDrop(), m_pageID);
 }
 
 #endif

@@ -610,6 +610,10 @@ IntRect WebChromeClient::rootViewToAccessibilityScreen(const IntRect& r) const
     return rootViewToScreen(r);
 }
 
+void WebChromeClient::didFinishLoadingImageForElement(HTMLImageElement&)
+{
+}
+
 PlatformPageClient WebChromeClient::platformPageClient() const
 {
     return 0;

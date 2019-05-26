@@ -2107,6 +2107,44 @@ TEST(DragAndDropTests, DataTransferSanitizeHTML)
     TestWebKitAPI::Util::run(&done);
 }
 
+static BOOL isCompletelyWhite(UIImage *image)
+{
+    auto data = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image.CGImage)));
+    auto* dataPtr = CFDataGetBytePtr(data.get());
+    int imageWidth = image.size.width;
+    for (int row = 0; row < image.size.height; ++row) {
+        for (int column = 0; column < imageWidth; ++column) {
+            int pixelOffset = ((imageWidth * row) + column) * 4;
+            if (dataPtr[pixelOffset] != 0xFF || dataPtr[pixelOffset + 1] != 0xFF || dataPtr[pixelOffset + 2] != 0xFF)
+                return NO;
+        }
+    }
+    return YES;
+}
+
+TEST(DragAndDropTests, DropPreviewForImageInEditableArea)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+
+    // Ensure that the resulting snapshot on drop contains only the dragged image.
+    [webView stringByEvaluatingJavaScript:@"editor.style.border = 'none'; editor.style.outline = 'none'"];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    NSArray *dropPreviews = [simulator dropPreviews];
+    NSArray *delayedDropPreviews = [simulator delayedDropPreviews];
+    EXPECT_EQ(1U, dropPreviews.count);
+    EXPECT_EQ(1U, delayedDropPreviews.count);
+    EXPECT_EQ(UITargetedDragPreview.class, [dropPreviews.firstObject class]);
+    EXPECT_EQ(UITargetedDragPreview.class, [delayedDropPreviews.firstObject class]);
+
+    UITargetedDragPreview *finalPreview = (UITargetedDragPreview *)delayedDropPreviews.firstObject;
+    EXPECT_EQ(UIImageView.class, finalPreview.view.class);
+    EXPECT_FALSE(isCompletelyWhite([(UIImageView *)finalPreview.view image]));
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)

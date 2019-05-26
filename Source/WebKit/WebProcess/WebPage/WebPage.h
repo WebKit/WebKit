@@ -154,6 +154,7 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class GraphicsContext;
+class HTMLImageElement;
 class HTMLMenuElement;
 class HTMLMenuItemElement;
 class HTMLPlugInElement;
@@ -1113,9 +1114,12 @@ public:
     void didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, OptionalCallbackID);
     void setUseIconLoadingClient(bool);
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     void didConcludeEditDrag();
+    void didConcludeDrop();
 #endif
+
+    void didFinishLoadingImageForElement(WebCore::HTMLImageElement&);
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(const String&);
     void stopAllURLSchemeTasks();
@@ -1258,6 +1262,7 @@ private:
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
     void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t allowedActions);
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t allowedActions);
+    void computeAndSendEditDragSnapshot();
 #endif
 
 #if !PLATFORM(COCOA) && !PLATFORM(WPE)
@@ -1768,6 +1773,10 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     bool m_isStartingDrag { false };
     WebCore::DragSourceAction m_allowedDragSourceActions { WebCore::DragSourceActionAny };
+#endif
+
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
+    HashSet<RefPtr<WebCore::HTMLImageElement>> m_pendingImageElementsForDropSnapshot;
 #endif
 
     bool m_cachedMainFrameIsPinnedToLeftSide { true };

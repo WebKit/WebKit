@@ -820,9 +820,14 @@ void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmap::Hand
     [m_contentView _startDrag:ShareableBitmap::create(image)->makeCGImageCopy() item:item];
 }
 
-void PageClientImpl::didConcludeEditDrag(Optional<TextIndicatorData> data)
+void PageClientImpl::willReceiveEditDragSnapshot()
 {
-    [m_contentView _didConcludeEditDrag:data];
+    [m_contentView _willReceiveEditDragSnapshot];
+}
+
+void PageClientImpl::didReceiveEditDragSnapshot(Optional<TextIndicatorData> data)
+{
+    [m_contentView _didReceiveEditDragSnapshot:data];
 }
 
 void PageClientImpl::didChangeDragCaretRect(const IntRect& previousCaretRect, const IntRect& caretRect)

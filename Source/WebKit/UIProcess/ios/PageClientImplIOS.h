@@ -237,7 +237,8 @@ private:
     void didHandleDragStartRequest(bool started) override;
     void didHandleAdditionalDragItemsRequest(bool added) override;
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image) override;
-    void didConcludeEditDrag(Optional<WebCore::TextIndicatorData>) override;
+    void willReceiveEditDragSnapshot() override;
+    void didReceiveEditDragSnapshot(Optional<WebCore::TextIndicatorData>) override;
     void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
 #endif
 

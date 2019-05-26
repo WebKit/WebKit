@@ -825,19 +825,63 @@ void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPositio
     send(Messages::WebPageProxy::DidHandleAdditionalDragItemsRequest(didHandleDrag));
 }
 
+void WebPage::didConcludeDrop()
+{
+    m_pendingImageElementsForDropSnapshot.clear();
+}
+
 void WebPage::didConcludeEditDrag()
 {
-    Optional<TextIndicatorData> textIndicatorData;
+    send(Messages::WebPageProxy::WillReceiveEditDragSnapshot());
 
+    layoutIfNeeded();
+
+    m_pendingImageElementsForDropSnapshot.clear();
+
+    bool waitingForAnyImageToLoad = false;
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    if (auto range = frame.selection().selection().toNormalizedRange()) {
+        for (TextIterator iterator(range.get()); !iterator.atEnd(); iterator.advance()) {
+            auto* node = iterator.node();
+            if (!is<HTMLImageElement>(node))
+                continue;
+
+            auto& imageElement = downcast<HTMLImageElement>(*node);
+            auto* cachedImage = imageElement.cachedImage();
+            if (cachedImage && cachedImage->image() && cachedImage->image()->isNull()) {
+                m_pendingImageElementsForDropSnapshot.add(&imageElement);
+                waitingForAnyImageToLoad = true;
+            }
+        }
+    }
+
+    if (!waitingForAnyImageToLoad)
+        computeAndSendEditDragSnapshot();
+}
+
+void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element)
+{
+    if (m_pendingImageElementsForDropSnapshot.isEmpty())
+        return;
+
+    m_pendingImageElementsForDropSnapshot.remove(&element);
+
+    if (m_pendingImageElementsForDropSnapshot.isEmpty())
+        computeAndSendEditDragSnapshot();
+}
+
+void WebPage::computeAndSendEditDragSnapshot()
+{
+    Optional<TextIndicatorData> textIndicatorData;
     static auto defaultTextIndicatorOptionsForEditDrag = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor| TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
     auto& frame = m_page->focusController().focusedOrMainFrame();
     if (auto range = frame.selection().selection().toNormalizedRange()) {
-        if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, FloatSize()))
+        if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
     }
-
-    send(Messages::WebPageProxy::DidConcludeEditDrag(WTFMove(textIndicatorData)));
+    send(Messages::WebPageProxy::DidReceiveEditDragSnapshot(WTFMove(textIndicatorData)));
 }
+
 #endif
 
 void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)

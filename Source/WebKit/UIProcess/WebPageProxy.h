@@ -726,12 +726,14 @@ public:
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
     void requestDocumentEditingContext(WebKit::DocumentEditingContextRequest, CompletionHandler<void(WebKit::DocumentEditingContext)>&&);
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
     void didHandleDragStartRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);
     void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, WebCore::DragSourceAction allowedActions);
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, WebCore::DragSourceAction allowedActions);
-    void didConcludeEditDrag(Optional<WebCore::TextIndicatorData>);
+    void willReceiveEditDragSnapshot();
+    void didReceiveEditDragSnapshot(Optional<WebCore::TextIndicatorData>);
+    void didConcludeDrop();
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 #if ENABLE(DATA_DETECTION)

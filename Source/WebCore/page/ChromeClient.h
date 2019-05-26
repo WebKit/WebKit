@@ -87,6 +87,7 @@ class FrameLoadRequest;
 class Geolocation;
 class GraphicsLayer;
 class GraphicsLayerFactory;
+class HTMLImageElement;
 class HTMLInputElement;
 class HTMLMediaElement;
 class HTMLVideoElement;
@@ -181,6 +182,8 @@ public:
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
+
+    virtual void didFinishLoadingImageForElement(HTMLImageElement&) = 0;
 
     virtual PlatformPageClient platformPageClient() const = 0;
 

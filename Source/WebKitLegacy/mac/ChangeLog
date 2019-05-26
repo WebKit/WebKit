@@ -1,3 +1,17 @@
+2019-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dropped text, attachments, and images should animate into place
+        https://bugs.webkit.org/show_bug.cgi?id=198243
+        <rdar://problem/35205373>
+
+        Reviewed by Tim Horton.
+
+        Add a new chrome client method. See other changelogs for more detail.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::didFinishLoadingImageForElement):
+
 2019-05-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix IOSMAC build
