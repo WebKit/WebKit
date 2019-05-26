@@ -333,6 +333,7 @@ struct WKAutoCorrectionData {
     BOOL _isBlurringFocusedElement;
 
     BOOL _focusRequiresStrongPasswordAssistance;
+    BOOL _waitingForEditDragSnapshot;
 
     BOOL _hasSetUpInteractions;
     NSUInteger _ignoreSelectionCommandFadeCount;
@@ -344,9 +345,10 @@ struct WKAutoCorrectionData {
     RetainPtr<UIDragInteraction> _dragInteraction;
     RetainPtr<UIDropInteraction> _dropInteraction;
     BOOL _shouldRestoreCalloutBarAfterDrop;
-    BOOL _isAnimatingConcludeEditDrag;
     RetainPtr<UIView> _visibleContentViewSnapshot;
+    RetainPtr<UIView> _unselectedContentSnapshot;
     RetainPtr<_UITextDragCaretView> _editDropCaretView;
+    BlockPtr<void()> _actionToPerformAfterReceivingEditDragSnapshot;
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -489,7 +491,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didHandleDragStartRequest:(BOOL)started;
 - (void)_didHandleAdditionalDragItemsRequest:(BOOL)added;
 - (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item;
-- (void)_didConcludeEditDrag:(Optional<WebCore::TextIndicatorData>)data;
+- (void)_willReceiveEditDragSnapshot;
+- (void)_didReceiveEditDragSnapshot:(Optional<WebCore::TextIndicatorData>)data;
 - (void)_didChangeDragCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
 #endif
 
@@ -514,6 +517,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
+- (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action;
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;

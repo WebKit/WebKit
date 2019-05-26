@@ -2995,4 +2995,9 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 #endif
 }
 
+void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
+{
+    chrome().client().didFinishLoadingImageForElement(element);
+}
+
 } // namespace WebCore

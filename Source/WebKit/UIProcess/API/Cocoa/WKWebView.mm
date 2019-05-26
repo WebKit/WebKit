@@ -6889,6 +6889,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     };
 }
 
+- (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
+{
+    [_contentView _doAfterReceivingEditDragSnapshotForTesting:action];
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)

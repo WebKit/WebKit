@@ -28,6 +28,11 @@
 
 #include <WebCore/ChromeClient.h>
 
+<<<<<<< HEAD
+namespace WebCore {
+class HTMLImageElement;
+}
+
 namespace WebKit {
 
 class WebFrame;
@@ -114,6 +119,8 @@ private:
 
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
+
+    void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;

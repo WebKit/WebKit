@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DiagnosticLoggingClient;
 class EditorClient;
+class HTMLImageElement;
 class PageConfiguration;
 
 class EmptyChromeClient : public ChromeClient {
@@ -110,6 +111,8 @@ class EmptyChromeClient : public ChromeClient {
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
+
+    void didFinishLoadingImageForElement(HTMLImageElement&) final { }
 
     PlatformPageClient platformPageClient() const final { return 0; }
     void contentsSizeChanged(Frame&, const IntSize&) const final { }

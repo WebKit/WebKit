@@ -40,6 +40,7 @@
 
 namespace WebCore {
 struct DragItem;
+struct TextIndicatorData;
 }
 
 namespace WebKit {
@@ -56,6 +57,11 @@ struct DragSourceState {
     bool possiblyNeedsDragPreviewUpdate { true };
 
     NSInteger itemIdentifier { 0 };
+};
+
+struct ItemAndPreviewProvider {
+    RetainPtr<UIDragItem> item;
+    BlockPtr<void(UITargetedDragPreview *)> provider;
 };
 
 class DragDropInteractionState {
@@ -92,6 +98,10 @@ public:
     BlockPtr<void()> takeDragCancelSetDownBlock() { return WTFMove(m_dragCancelSetDownBlock); }
     BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTFMove(m_addDragItemCompletionBlock); }
 
+    void prepareForDelayedDropPreview(UIDragItem *, void(^provider)(UITargetedDragPreview *preview));
+    void deliverDelayedDropPreview(UIView *contentView, UIView *previewContainer, const WebCore::TextIndicatorData&);
+    void clearAllDelayedItemPreviewProviders();
+
 private:
     void updatePreviewsForActiveDragSources();
     Optional<DragSourceState> activeDragSourceForItem(UIDragItem *) const;
@@ -108,6 +118,7 @@ private:
 
     Optional<DragSourceState> m_stagedDragSource;
     Vector<DragSourceState> m_activeDragSources;
+    Vector<ItemAndPreviewProvider> m_delayedItemPreviewProviders;
 };
 
 } // namespace WebKit

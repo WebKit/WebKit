@@ -6706,6 +6706,14 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
     send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));
 }
 
+#if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
+
+void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement&)
+{
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

@@ -183,4 +183,12 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)setNextPreviousItemsVisible:(BOOL)visible;
 @end
 
+#if PLATFORM(IOS)
+
+@protocol UIDropInteractionDelegate_Staging_31075005 <UIDropInteractionDelegate>
+- (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider;
+@end
+
+#endif // PLATFORM(IOS)
+
 #endif // PLATFORM(IOS_FAMILY)

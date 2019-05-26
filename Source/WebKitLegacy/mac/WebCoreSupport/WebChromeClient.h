@@ -31,6 +31,10 @@
 #import <WebCore/FocusDirection.h>
 #import <wtf/Forward.h>
 
+namespace WebCore {
+class HTMLImageElement;
+}
+
 @class WebView;
 
 // FIXME: This class is used as a concrete class on Mac, but on iOS this is an abstract
@@ -101,6 +105,8 @@ private:
 
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
+
+    void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;

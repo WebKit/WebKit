@@ -172,6 +172,8 @@ public:
 
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>&) final;
 
+    void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
+
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
 

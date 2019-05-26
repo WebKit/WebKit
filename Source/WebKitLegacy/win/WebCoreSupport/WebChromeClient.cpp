@@ -703,6 +703,10 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
     return Icon::createIconForFiles(filenames);
 }
 
+void WebChromeClient::didFinishLoadingImageForElement(WebCore::HTMLImageElement&)
+{
+}
+
 void WebChromeClient::setCursor(const Cursor& cursor)
 {
     if (!cursor.platformCursor())
