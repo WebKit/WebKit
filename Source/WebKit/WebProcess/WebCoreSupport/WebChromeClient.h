@@ -28,7 +28,6 @@
 
 #include <WebCore/ChromeClient.h>
 
-<<<<<<< HEAD
 namespace WebCore {
 class HTMLImageElement;
 }
