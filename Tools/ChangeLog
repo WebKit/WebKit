@@ -1,3 +1,72 @@
+2019-05-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r245775. rdar://problem/35205373
+
+    [iOS] Respect -[NSItemProvider preferredPresentationSize] when dropping images
+    https://bugs.webkit.org/show_bug.cgi?id=198242
+    
+    Reviewed by Beth Dakin.
+    
+    Source/WebCore:
+    
+    Teach the web content reader to respect the -preferredPresentationSize when creating attachment-backed image
+    elements. See below for more details.
+    
+    Test: WKAttachmentTestsIOS.InsertDroppedImageWithPreferredPresentationSize
+    
+    * editing/WebContentReader.h:
+    * editing/cocoa/WebContentReaderCocoa.mm:
+    (WebCore::attachmentForFilePath):
+    (WebCore::attachmentForData):
+    
+    When creating attachment-backed image elements, additionally set width and height attributes from the preferred
+    presentation size, if specified.
+    
+    (WebCore::WebContentReader::readFilePath):
+    
+    Add a version of readFilePath that takes a single file path, and an optional preferred presentation size.
+    
+    (WebCore::WebContentReader::readFilePaths):
+    
+    Reimplement readFilePaths in terms of readFilePath.
+    
+    (WebCore::WebContentReader::readDataBuffer):
+    
+    Add more plumbing for preferredPresentationSize.
+    
+    * platform/Pasteboard.h:
+    (WebCore::PasteboardWebContentReader::readFilePath):
+    (WebCore::PasteboardWebContentReader::readDataBuffer):
+    * platform/ios/PasteboardIOS.mm:
+    (WebCore::Pasteboard::read):
+    (WebCore::Pasteboard::readRespectingUTIFidelities):
+    
+    Forward PasteboardItemInfo's preferredPresentationSize to the web content reader.
+    
+    Tools:
+    
+    Add a new test that simulates dropping an image with a preferred presentation size into an editable element
+    with attachment elements enabled.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245775 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Respect -[NSItemProvider preferredPresentationSize] when dropping images
+            https://bugs.webkit.org/show_bug.cgi?id=198242
+
+            Reviewed by Beth Dakin.
+
+            Add a new test that simulates dropping an image with a preferred presentation size into an editable element
+            with attachment elements enabled.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+            (TestWebKitAPI::TEST):
+
 2019-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land workaround for rdar://problem/51031394.

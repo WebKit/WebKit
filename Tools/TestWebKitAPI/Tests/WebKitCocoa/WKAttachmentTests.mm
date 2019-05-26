@@ -1631,6 +1631,21 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
     }
 }
 
+TEST(WKAttachmentTestsIOS, InsertDroppedImageWithPreferredPresentationSize)
+{
+    auto webView = webViewForTestingAttachments();
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerData:testImageData() type:(__bridge NSString *)kUTTypePNG];
+    [item setPreferredPresentationSize:CGSizeMake(200, 100)];
+    [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+
+    CGSize imageElementSize = [webView imageElementSize];
+    EXPECT_EQ(200, imageElementSize.width);
+    EXPECT_EQ(100, imageElementSize.height);
+}
+
 TEST(WKAttachmentTestsIOS, InsertDroppedAttributedStringContainingAttachment)
 {
     auto webView = webViewForTestingAttachments();
