@@ -6492,6 +6492,15 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, m_pageID), WTFMove(completionHandler));
 }
+
+void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
+{
+    auto* frame = mainFrame();
+    if (!frame || !frame->document())
+        return;
+
+    frame->document()->wasLoadedWithDataTransferFromPrevalentResource();
+}
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

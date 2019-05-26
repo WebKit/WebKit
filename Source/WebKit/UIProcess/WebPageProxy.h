@@ -1449,6 +1449,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, uint64_t frameID, CompletionHandler<void(bool)>&&);
+    void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

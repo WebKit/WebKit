@@ -37,6 +37,7 @@
 #include "WebsiteData.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/IDBKeyData.h>
@@ -258,7 +259,7 @@ public:
     void setTopFrameUniqueRedirectTo(PAL::SessionID, const TopFrameDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectFrom(PAL::SessionID, const TopFrameDomain&, const RedirectedFromDomain&, CompletionHandler<void()>&&);
     void registrableDomainsWithWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID, CompletionHandler<void()>&&);
+    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, uint64_t pageID);
     void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 #endif

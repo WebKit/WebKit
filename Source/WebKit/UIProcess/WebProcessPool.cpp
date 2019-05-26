@@ -2519,20 +2519,15 @@ void WebProcessPool::clearCurrentModifierStateForTesting()
     sendToAllProcesses(Messages::WebProcess::ClearCurrentModifierStateForTesting());
 }
 
-void WebProcessPool::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID)
-{
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, uint64_t pageID)
+{
     if (!m_networkProcess)
         return;
 
-    m_networkProcess->committedCrossSiteLoadWithLinkDecoration(sessionID, fromDomain, toDomain, pageID, [] { });
-#else
-    UNUSED_PARAM(sessionID);
-    UNUSED_PARAM(fromDomain);
-    UNUSED_PARAM(toDomain);
-    UNUSED_PARAM(pageID);
-#endif
+    m_networkProcess->didCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, pageID);
 }
+#endif
 
 void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
 {

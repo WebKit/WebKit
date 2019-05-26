@@ -134,6 +134,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/BitmapImage.h>
+#include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -4133,9 +4134,21 @@ void WebPageProxy::clearLoadDependentCallbacks()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-static bool isNonUniqueNavigationWithLinkDecoration(const SecurityOriginData requesterOrigin, const URL& currentURL)
+static OptionSet<CrossSiteNavigationDataTransfer::Flag> checkIfNavigationContainsDataTransfer(const SecurityOriginData requesterOrigin, const ResourceRequest& currentRequest)
 {
-    return !requesterOrigin.securityOrigin()->isUnique() && (!currentURL.query().isEmpty() || !currentURL.fragmentIdentifier().isEmpty());
+    OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer;
+    if (requesterOrigin.securityOrigin()->isUnique())
+        return navigationDataTransfer;
+
+    auto currentURL = currentRequest.url();
+    if (!currentURL.query().isEmpty() || !currentURL.fragmentIdentifier().isEmpty())
+        navigationDataTransfer.add(CrossSiteNavigationDataTransfer::Flag::DestinationLinkDecoration);
+
+    URL referrerURL { URL(), currentRequest.httpReferrer() };
+    if (!referrerURL.query().isEmpty() || !referrerURL.fragmentIdentifier().isEmpty())
+        navigationDataTransfer.add(CrossSiteNavigationDataTransfer::Flag::ReferrerLinkDecoration);
+
+    return navigationDataTransfer;
 }
 #endif
 
@@ -4155,12 +4168,13 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     if (frame->isMainFrame() && navigationID && (navigation = navigationState().navigation(navigationID))) {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         auto requesterOrigin = navigation->lastNavigationAction().requesterOrigin;
-        auto currentURL = navigation->currentRequest().url();
-        if (isNonUniqueNavigationWithLinkDecoration(requesterOrigin, currentURL)) {
-            RegistrableDomain currentDomain { currentURL };
+        auto currentRequest = navigation->currentRequest();
+        auto navigationDataTransfer = checkIfNavigationContainsDataTransfer(requesterOrigin, currentRequest);
+        if (!navigationDataTransfer.isEmpty()) {
+            RegistrableDomain currentDomain { currentRequest.url() };
             URL requesterURL { URL(), requesterOrigin.toString() };
             if (!currentDomain.matches(requesterURL))
-                m_process->processPool().committedCrossSiteLoadWithLinkDecoration(m_websiteDataStore->sessionID(), RegistrableDomain { requesterURL }, currentDomain, m_pageID);
+                m_process->processPool().didCommitCrossSiteLoadWithDataTransfer(m_websiteDataStore->sessionID(), RegistrableDomain { requesterURL }, currentDomain, navigationDataTransfer, m_pageID);
         }
 #endif
     }
@@ -8633,6 +8647,14 @@ void WebPageProxy::loadSynchronousURLSchemeTask(URLSchemeTaskParameters&& parame
 void WebPageProxy::requestStorageAccessConfirm(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_uiClient->requestStorageAccessConfirm(*this, m_process->webFrame(frameID), subFrameDomain, topFrameDomain, WTFMove(completionHandler));
+}
+
+void WebPageProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource()
+{
+    if (!hasRunningProcess())
+        return;
+
+    m_process->send(Messages::WebPage::WasLoadedWithDataTransferFromPrevalentResource(), m_pageID);
 }
 #endif
 

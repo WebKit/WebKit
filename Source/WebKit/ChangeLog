@@ -1,3 +1,47 @@
+2019-05-26  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Downgrade document.referrer to the referrer's eTLD+1 if the page was navigated to with a prevalent resource referrer containing link decoration
+        https://bugs.webkit.org/show_bug.cgi?id=198227
+        <rdar://problem/51117258>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a call back to the UI process if the network process finds the navigational
+        data transfer was done by a prevalent resource and we need to adjust something for the page.
+        Currently, that adjustment is to downgrade document.referrer.
+
+        The patch also removes an unused completion handler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didCommitCrossSiteLoadWithDataTransfer):
+        (WebKit::NetworkProcess::committedCrossSiteLoadWithLinkDecoration): Deleted.
+            New name since we no longer only look for link decoration but also other means of navigational data transfer.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer):
+        (WebKit::NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource):
+        (WebKit::NetworkProcessProxy::committedCrossSiteLoadWithLinkDecoration): Deleted.
+            New name since we no longer only look for link decoration but also other means of navigational data transfer.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::checkIfNavigationContainsDataTransfer):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource):
+        (WebKit::isNonUniqueNavigationWithLinkDecoration): Deleted.
+            New name since we no longer only look for link decoration but also other means of navigational data transfer.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didCommitCrossSiteLoadWithDataTransfer):
+        (WebKit::WebProcessPool::committedCrossSiteLoadWithLinkDecoration): Deleted.
+            New name since we no longer only look for link decoration but also other means of navigational data transfer.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::wasLoadedWithDataTransferFromPrevalentResource):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dropped text, attachments, and images should animate into place

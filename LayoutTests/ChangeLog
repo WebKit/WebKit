@@ -1,3 +1,14 @@
+2019-05-26  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Downgrade document.referrer to the referrer's eTLD+1 if the page was navigated to with a prevalent resource referrer containing link decoration
+        https://bugs.webkit.org/show_bug.cgi?id=198227
+        <rdar://problem/51117258>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource.html: Added.
+
 2019-05-25  Youenn Fablet  <youenn@apple.com>
 
         media/video-remote-control-playpause.html is timing out after r245712

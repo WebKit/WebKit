@@ -1978,6 +1978,7 @@
 		6A22E8701F10418600F546C3 /* InspectorCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A22E86F1F10418600F546C3 /* InspectorCanvas.h */; };
 		6A72798B1F16C29C003F39B8 /* InspectorShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A7279881F16C29B003F39B8 /* InspectorShaderProgram.h */; };
 		6B0A07F221FA4B5C00D57391 /* AdClickAttribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B0A07F021FA4B5C00D57391 /* AdClickAttribution.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6B1F48112298A37E00DE8B82 /* CrossSiteNavigationDataTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B1F480F22989EC400DE8B82 /* CrossSiteNavigationDataTransfer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B3480940EEF50D400AC1B41 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B4E8613221B713F0022F389 /* RegistrableDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4E8612221B713F0022F389 /* RegistrableDomain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B693A2E1C51A82E00B03BEF /* ResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9055,6 +9056,7 @@
 		6A7279891F16C29B003F39B8 /* InspectorShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorShaderProgram.cpp; sourceTree = "<group>"; };
 		6B0A07F021FA4B5C00D57391 /* AdClickAttribution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdClickAttribution.h; sourceTree = "<group>"; };
 		6B0A07F121FA4B5C00D57391 /* AdClickAttribution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AdClickAttribution.cpp; sourceTree = "<group>"; };
+		6B1F480F22989EC400DE8B82 /* CrossSiteNavigationDataTransfer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrossSiteNavigationDataTransfer.h; sourceTree = "<group>"; };
 		6B3480920EEF50D400AC1B41 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		6B4E8612221B713F0022F389 /* RegistrableDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegistrableDomain.h; sourceTree = "<group>"; };
 		6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadObserver.h; sourceTree = "<group>"; };
@@ -20095,6 +20097,7 @@
 				065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */,
 				065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */,
 				7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */,
+				6B1F480F22989EC400DE8B82 /* CrossSiteNavigationDataTransfer.h */,
 				975CA287130365F800E99AD9 /* Crypto.cpp */,
 				975CA288130365F800E99AD9 /* Crypto.h */,
 				975CA289130365F800E99AD9 /* Crypto.idl */,
@@ -28554,6 +28557,7 @@
 				E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */,
 				41ABE67B1D0580DB006D862D /* CrossOriginPreflightChecker.h in Headers */,
 				E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */,
+				6B1F48112298A37E00DE8B82 /* CrossSiteNavigationDataTransfer.h in Headers */,
 				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				7C9ACA981F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h in Headers */,

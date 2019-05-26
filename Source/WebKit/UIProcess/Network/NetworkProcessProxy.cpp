@@ -908,14 +908,24 @@ void NetworkProcessProxy::notifyResourceLoadStatisticsTelemetryFinished(unsigned
     WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Dictionary::create(messageBody).ptr());
 }
 
-void NetworkProcessProxy::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, uint64_t pageID)
 {
-    if (!canSendMessage()) {
-        completionHandler();
+    if (!canSendMessage())
         return;
-    }
-    
-    sendWithAsyncReply(Messages::NetworkProcess::CommittedCrossSiteLoadWithLinkDecoration(sessionID, fromDomain, toDomain, pageID), WTFMove(completionHandler));
+
+    send(Messages::NetworkProcess::DidCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, pageID), 0);
+}
+
+void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(uint64_t pageID)
+{
+    if (!canSendMessage())
+        return;
+
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    page->didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
 }
 
 void NetworkProcessProxy::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, CompletionHandler<void()>&& completionHandler)

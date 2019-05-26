@@ -1155,21 +1155,28 @@ void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID ses
     completionHandler();
 }
 
-void NetworkProcess::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, uint64_t pageID)
 {
-    if (auto* networkStorageSession = storageSession(sessionID))
-        networkStorageSession->committedCrossSiteLoadWithLinkDecoration(fromDomain, toDomain, pageID);
-    else
+    ASSERT(!navigationDataTransfer.isEmpty());
+
+    if (auto* networkStorageSession = storageSession(sessionID)) {
+        if (!networkStorageSession->shouldBlockThirdPartyCookies(fromDomain))
+            return;
+
+        if (navigationDataTransfer.contains(CrossSiteNavigationDataTransfer::Flag::DestinationLinkDecoration))
+            networkStorageSession->didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(toDomain, pageID);
+
+        if (navigationDataTransfer.contains(CrossSiteNavigationDataTransfer::Flag::ReferrerLinkDecoration))
+            parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(pageID), 0);
+    } else
         ASSERT_NOT_REACHED();
-    
-    if (auto* networkSession = this->networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(fromDomain, toDomain, WTFMove(completionHandler));
-        else
-            completionHandler();
-    } else {
-        ASSERT_NOT_REACHED();
-        completionHandler();
+
+    if (navigationDataTransfer.contains(CrossSiteNavigationDataTransfer::Flag::DestinationLinkDecoration)) {
+        if (auto* networkSession = this->networkSession(sessionID)) {
+            if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+                resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(fromDomain, toDomain, [] { });
+        } else
+            ASSERT_NOT_REACHED();
     }
 }
 

@@ -1496,6 +1496,8 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
     void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
+    WEBCORE_EXPORT void wasLoadedWithDataTransferFromPrevalentResource();
+    void downgradeReferrerToRegistrableDomain();
 #endif
 
     String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
@@ -2043,6 +2045,7 @@ private:
     
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
+    String m_referrerOverride;
 #endif
     
     CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;

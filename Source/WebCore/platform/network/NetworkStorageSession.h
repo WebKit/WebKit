@@ -144,6 +144,7 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const;
+    WEBCORE_EXPORT bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
     WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<RegistrableDomain>&);
     WEBCORE_EXPORT void setAgeCapForClientSideCookies(Optional<Seconds>);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<RegistrableDomain>& domains);
@@ -156,7 +157,7 @@ public:
     WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
     WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
     WEBCORE_EXPORT Optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
-    WEBCORE_EXPORT void committedCrossSiteLoadWithLinkDecoration(const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID);
+    WEBCORE_EXPORT void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, uint64_t pageID);
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
 #endif
 
@@ -181,7 +182,6 @@ private:
     CredentialStorage m_credentialStorage;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
     Optional<Seconds> clientSideCookieCap(const RegistrableDomain& firstParty, Optional<uint64_t> pageID) const;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockCookieFor;
     HashMap<uint64_t, HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;

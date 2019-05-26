@@ -36,6 +36,7 @@
 #include "ProcessThrottlerClient.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/RegistrableDomain.h>
 #include <memory>
 #include <wtf/Deque.h>
@@ -145,7 +146,8 @@ public:
     void setResourceLoadStatisticsDebugMode(PAL::SessionID, bool debugMode, CompletionHandler<void()>&&);
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::SessionID, bool, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
-    void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, PageID, CompletionHandler<void()>&&);
+    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, PageID);
+    void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(PageID);
     void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void deleteCookiesForTesting(PAL::SessionID, const RegistrableDomain&, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);

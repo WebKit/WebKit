@@ -215,10 +215,9 @@ void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
     m_cacheMaxAgeCapForPrevalentResources = WTF::nullopt;
 }
 
-void NetworkStorageSession::committedCrossSiteLoadWithLinkDecoration(const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID)
+void NetworkStorageSession::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, uint64_t pageID)
 {
-    if (shouldBlockThirdPartyCookies(fromDomain))
-        m_navigatedToWithLinkDecorationByPrevalentResource.add(pageID, toDomain);
+    m_navigatedToWithLinkDecorationByPrevalentResource.add(pageID, toDomain);
 }
 
 void NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting()

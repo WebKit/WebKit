@@ -567,4 +567,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebKit::TextInputContext> contexts) Async
     FocusTextInputContext(struct WebKit::TextInputContext context) -> (bool success) Async
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WasLoadedWithDataTransferFromPrevalentResource()
+#endif
 }

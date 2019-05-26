@@ -742,6 +742,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ContextMenuContext.h
     page/ContextMenuController.h
     page/ContextMenuProvider.h
+    page/CrossSiteNavigationDataTransfer.h
     page/DOMSelection.h
     page/DOMTimer.h
     page/DOMWindow.h
