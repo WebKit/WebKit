@@ -122,7 +122,7 @@ void WebFrameLoaderClient::frameLoaderDestroyed()
 {
 }
 
-Optional<uint64_t> WebFrameLoaderClient::pageID() const
+Optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     return WTF::nullopt;
 }

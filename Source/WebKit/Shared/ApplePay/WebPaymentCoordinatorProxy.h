@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "PaymentAuthorizationPresenter.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -115,7 +116,7 @@ private:
     void canMakePayments(CompletionHandler<void(bool)>&&);
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID, CompletionHandler<void(bool)>&&);
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
-    void showPaymentUI(uint64_t destinationID, PAL::SessionID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
+    void showPaymentUI(WebCore::PageIdentifier destinationID, PAL::SessionID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
     void completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
@@ -147,7 +148,7 @@ private:
 #endif
 
     Client& m_client;
-    Optional<uint64_t> m_destinationID;
+    Optional<WebCore::PageIdentifier> m_destinationID;
 
     enum class State {
         // Idle - Nothing's happening.

@@ -75,7 +75,7 @@ uint64_t AuthenticationManager::addChallengeToChallengeMap(Challenge&& challenge
     return challengeID;
 }
 
-bool AuthenticationManager::shouldCoalesceChallenge(uint64_t pageID, uint64_t challengeID, const AuthenticationChallenge& challenge) const
+bool AuthenticationManager::shouldCoalesceChallenge(PageIdentifier pageID, uint64_t challengeID, const AuthenticationChallenge& challenge) const
 {
     if (!canCoalesceChallenge(challenge))
         return false;
@@ -108,7 +108,7 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
     return challengesToCoalesce;
 }
 
-void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
+void AuthenticationManager::didReceiveAuthenticationChallenge(PageIdentifier pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     ASSERT(pageID);
     ASSERT(frameID);
@@ -124,7 +124,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
-    uint64_t dummyPageID = 0;
+    PageIdentifier dummyPageID;
     uint64_t challengeID = addChallengeToChallengeMap({ dummyPageID, authenticationChallenge, WTFMove(completionHandler) });
     
     // Coalesce challenges in the same protection space and in the same page.

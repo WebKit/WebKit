@@ -41,14 +41,14 @@ public:
 
     static bool hasRegisteredServiceWorkers(const String& serviceWorkerDirectory);
 
-    void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
+    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
 
     void start(const WebPreferencesStore&, Optional<PAL::SessionID> initialSessionID);
     void setUserAgent(const String&);
     void updatePreferencesStore(const WebPreferencesStore&);
 
     const WebCore::RegistrableDomain& registrableDomain() { return m_registrableDomain; }
-    uint64_t pageID() const { return m_serviceWorkerPageID; }
+    WebCore::PageIdentifier pageID() const { return m_serviceWorkerPageID; }
 
 private:
     // AuxiliaryProcessProxy
@@ -59,7 +59,7 @@ private:
     ServiceWorkerProcessProxy(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&);
 
     WebCore::RegistrableDomain m_registrableDomain;
-    uint64_t m_serviceWorkerPageID { 0 };
+    WebCore::PageIdentifier m_serviceWorkerPageID;
 };
 
 } // namespace WebKit

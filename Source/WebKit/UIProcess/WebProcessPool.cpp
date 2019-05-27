@@ -1296,9 +1296,9 @@ bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& sto
 }
 #endif
 
-void WebProcessPool::pageBeginUsingWebsiteDataStore(uint64_t pageID, WebsiteDataStore& dataStore)
+void WebProcessPool::pageBeginUsingWebsiteDataStore(PageIdentifier pageID, WebsiteDataStore& dataStore)
 {
-    auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<uint64_t>()).iterator->value.add(pageID);
+    auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<PageIdentifier>()).iterator->value.add(pageID);
     ASSERT_UNUSED(result, result.isNewEntry);
 
     auto sessionID = dataStore.sessionID();
@@ -1316,7 +1316,7 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(uint64_t pageID, WebsiteData
     }
 }
 
-void WebProcessPool::pageEndUsingWebsiteDataStore(uint64_t pageID, WebsiteDataStore& dataStore)
+void WebProcessPool::pageEndUsingWebsiteDataStore(PageIdentifier pageID, WebsiteDataStore& dataStore)
 {
     auto sessionID = dataStore.sessionID();
     auto iterator = m_sessionToPageIDsMap.find(sessionID);
@@ -2211,7 +2211,7 @@ void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& 
 }
 
 #if ENABLE(SERVICE_WORKER)
-ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(uint64_t pageID) const
+ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(PageIdentifier pageID) const
 {
     // FIXME: This is inefficient.
     for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
@@ -2520,7 +2520,7 @@ void WebProcessPool::clearCurrentModifierStateForTesting()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, uint64_t pageID)
+void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, PageIdentifier pageID)
 {
     if (!m_networkProcess)
         return;

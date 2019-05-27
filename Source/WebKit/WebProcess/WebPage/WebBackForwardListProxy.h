@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/BackForwardClient.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ public:
         Yes,
         No
     };
-    void addItemFromUIProcess(const WebCore::BackForwardItemIdentifier&, Ref<WebCore::HistoryItem>&&, uint64_t pageID, OverwriteExistingItem);
+    void addItemFromUIProcess(const WebCore::BackForwardItemIdentifier&, Ref<WebCore::HistoryItem>&&, WebCore::PageIdentifier, OverwriteExistingItem);
 
     void clear();
 

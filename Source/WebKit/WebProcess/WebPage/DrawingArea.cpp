@@ -68,7 +68,7 @@ DrawingArea::DrawingArea(DrawingAreaType type, DrawingAreaIdentifier identifier,
     , m_identifier(identifier)
     , m_webPage(webPage)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier.toUInt64(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier, *this);
 }
 
 DrawingArea::~DrawingArea()
@@ -94,7 +94,7 @@ void DrawingArea::removeMessageReceiverIfNeeded()
     if (m_hasRemovedMessageReceiver)
         return;
     m_hasRemovedMessageReceiver = true;
-    WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier.toUInt64());
+    WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier);
 }
 
 } // namespace WebKit

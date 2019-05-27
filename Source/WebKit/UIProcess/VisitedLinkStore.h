@@ -67,7 +67,7 @@ private:
     void didInvalidateSharedMemory() final;
     void didUpdateSharedStringHashes(const Vector<WebCore::SharedStringHash>& addedHashes, const Vector<WebCore::SharedStringHash>& removedHashes) final;
 
-    void addVisitedLinkHashFromPage(uint64_t pageID, WebCore::SharedStringHash);
+    void addVisitedLinkHashFromPage(WebCore::PageIdentifier, WebCore::SharedStringHash);
 
     void sendStoreHandleToProcess(WebProcessProxy&);
 

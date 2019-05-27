@@ -55,7 +55,7 @@ static IDToHistoryItemMap& idToHistoryItemMap()
     return map;
 }
 
-void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifier& itemID, Ref<HistoryItem>&& item, uint64_t pageID, OverwriteExistingItem overwriteExistingItem)
+void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifier& itemID, Ref<HistoryItem>&& item, PageIdentifier pageID, OverwriteExistingItem overwriteExistingItem)
 {
     // This item/itemID pair should not already exist in our map.
     ASSERT_UNUSED(overwriteExistingItem, overwriteExistingItem == OverwriteExistingItem::Yes || !idToHistoryItemMap().contains(itemID));

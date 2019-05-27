@@ -168,7 +168,7 @@ IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 
 uint64_t WebPaymentCoordinator::messageSenderDestinationID() const
 {
-    return m_webPage.pageID();
+    return m_webPage.pageID().toUInt64();
 }
 
 void WebPaymentCoordinator::validateMerchant(const String& validationURLString)

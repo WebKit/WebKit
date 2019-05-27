@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "StorageAccessStatus.h"
 #include "WebsiteDataType.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
@@ -82,8 +83,6 @@ public:
     using NavigatedToDomain = WebCore::RegistrableDomain;
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
-    using OpenerPageID = uint64_t;
-    using PageID = uint64_t;
     using FrameID = uint64_t;
     using StorageAccessWasGranted = WebCore::StorageAccessWasGranted;
     using StorageAccessPromptWasShown = WebCore::StorageAccessPromptWasShown;
@@ -104,7 +103,7 @@ public:
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
     void setShouldSubmitTelemetry(bool);
 
-    void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
 
     void applicationWillTerminate();
 
@@ -118,11 +117,11 @@ public:
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, HashMap<RegistrableDomain, WebsiteDataToRemove>&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    StorageAccessWasGranted grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID);
+    StorageAccessWasGranted grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
-    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&);
-    bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID);
-    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
+    bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier);
+    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
@@ -166,11 +165,11 @@ public:
     void setPrevalentResourceForDebugMode(const RegistrableDomain&, CompletionHandler<void()>&&);
 
     void logTestingEvent(const String&);
-    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessWasGranted)>&&);
+    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
     void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     void callRemoveDomainsHandler(const Vector<RegistrableDomain>&);
-    void callHasStorageAccessForFrameHandler(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(bool)>&&);
+    void callHasStorageAccessForFrameHandler(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
 
     void didCreateNetworkProcess();
 
@@ -182,7 +181,7 @@ public:
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const;
 
     void resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&&);
-    void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, uint64_t openerPageID, OpenerDomain&&);
+    void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);

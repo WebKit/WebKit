@@ -539,7 +539,7 @@ static NSURL *origin(WebPage& page)
 #endif
 
 #if PLATFORM(MAC)
-static RetainPtr<NSArray<NSString *>> activePagesOrigins(const HashMap<uint64_t, RefPtr<WebPage>>& pageMap)
+static RetainPtr<NSArray<NSString *>> activePagesOrigins(const HashMap<PageIdentifier, RefPtr<WebPage>>& pageMap)
 {
     RetainPtr<NSMutableArray<NSString *>> activeOrigins = adoptNS([[NSMutableArray alloc] init]);
 

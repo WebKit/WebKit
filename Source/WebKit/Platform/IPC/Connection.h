@@ -186,6 +186,36 @@ public:
     template<typename T> void sendWithReply(T&& message, uint64_t destinationID, FunctionDispatcher& replyDispatcher, Function<void(Optional<typename CodingType<typename T::Reply>::Type>)>&& replyHandler);
     template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { });
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { });
+    
+    template<typename T, typename C, typename U>
+    void sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID = { })
+    {
+        sendWithAsyncReply<T, C>(WTFMove(message), WTFMove(completionHandler), destinationID.toUInt64());
+    }
+    
+    template<typename T, typename U>
+    bool send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<SendOption> sendOptions = { })
+    {
+        return send<T>(WTFMove(message), destinationID.toUInt64(), sendOptions);
+    }
+    
+    template<typename T, typename U>
+    void sendWithReply(T&& message, ObjectIdentifier<U> destinationID, FunctionDispatcher& replyDispatcher, Function<void(Optional<typename CodingType<typename T::Reply>::Type>)>&& replyHandler)
+    {
+        return sendWithReply<T>(WTFMove(message), destinationID.toUInt64(), replyDispatcher, WTFMove(replyHandler));
+    }
+    
+    template<typename T, typename U>
+    bool sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    {
+        return sendSync<T>(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout, sendSyncOptions);
+    }
+    
+    template<typename T, typename U>
+    bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { })
+    {
+        return waitForAndDispatchImmediately<T>(destinationID.toUInt64(), timeout, waitForOptions);
+    }
 
     bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
     void sendMessageWithReply(uint64_t requestID, std::unique_ptr<Encoder>, FunctionDispatcher& replyDispatcher, Function<void(std::unique_ptr<Decoder>)>&& replyHandler);

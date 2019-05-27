@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FetchOptions.h"
+#include "PageIdentifier.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
 #include "StoredCredentialsPolicy.h"
@@ -57,7 +58,7 @@ class WEBCORE_EXPORT LoaderStrategy {
 public:
     virtual void loadResource(Frame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
     virtual void loadResourceSynchronously(FrameLoader&, unsigned long identifier, const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
-    virtual void pageLoadCompleted(uint64_t webPageID) = 0;
+    virtual void pageLoadCompleted(PageIdentifier) = 0;
 
     virtual void remove(ResourceLoader*) = 0;
     virtual void setDefersLoading(ResourceLoader&, bool) = 0;

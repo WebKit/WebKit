@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebInspectorUI {
-    EstablishConnection(uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
+    EstablishConnection(WebCore::PageIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
     UpdateConnection()
 
     AttachedBottom()

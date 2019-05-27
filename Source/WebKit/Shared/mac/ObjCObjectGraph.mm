@@ -298,11 +298,12 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::WKBrowsingContextHandle: {
-        uint64_t pageID;
-        if (!decoder.decode(pageID))
+        Optional<WebCore::PageIdentifier> pageID;
+        decoder >> pageID;
+        if (!pageID)
             return false;
 
-        result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageID:pageID]);
+        result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageID:*pageID]);
         break;
     }
 

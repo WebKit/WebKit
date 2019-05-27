@@ -35,6 +35,7 @@
 #include "NetworkResourceLoadMap.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include <WebCore/NetworkLoadInformation.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/RefCounted.h>
@@ -133,7 +134,7 @@ public:
         m_networkLoadInformationByID.remove(identifier);
     }
 
-    Optional<NetworkActivityTracker> startTrackingResourceLoad(uint64_t pageID, ResourceLoadIdentifier resourceID, bool isMainResource, const PAL::SessionID&);
+    Optional<NetworkActivityTracker> startTrackingResourceLoad(WebCore::PageIdentifier, ResourceLoadIdentifier resourceID, bool isMainResource, const PAL::SessionID&);
     void stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode);
 
     WebCore::BlobRegistryImpl& blobRegistry();
@@ -144,9 +145,9 @@ public:
     void setConnectionHasUploads();
     void clearConnectionHasUploads();
 
-    void webPageWasAdded(PAL::SessionID, uint64_t pageID, uint64_t oldPageID);
-    void webPageWasRemoved(PAL::SessionID, uint64_t pageID);
-    void webProcessSessionChanged(PAL::SessionID newSessionID, const Vector<uint64_t>& pages);
+    void webPageWasAdded(PAL::SessionID, WebCore::PageIdentifier, WebCore::PageIdentifier oldPageID);
+    void webPageWasRemoved(PAL::SessionID, WebCore::PageIdentifier);
+    void webProcessSessionChanged(PAL::SessionID newSessionID, const Vector<WebCore::PageIdentifier>& pages);
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, IPC::Connection::Identifier);
@@ -170,16 +171,16 @@ private:
     void preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&&);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
-    void pageLoadCompleted(uint64_t webPageID);
+    void pageLoadCompleted(WebCore::PageIdentifier);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const URL& redirectURL);
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(PAL::SessionID, uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void cookiesForDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void setCookiesFromDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String&);
+    void cookiesForDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void setCookiesFromDOM(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, const String&);
     void cookiesEnabled(PAL::SessionID, CompletionHandler<void(bool)>&&);
-    void cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void getRawCookies(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void getRawCookies(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void deleteCookie(PAL::SessionID, const URL&, const String& cookieName);
 
     void registerFileBlobURL(const URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);
@@ -218,17 +219,17 @@ private:
     CacheStorageEngineConnection& cacheStorageConnection();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, uint64_t pageID);
-    void clearPageSpecificDataForResourceLoadStatistics(PAL::SessionID, uint64_t pageID);
+    void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, WebCore::PageIdentifier);
+    void clearPageSpecificDataForResourceLoadStatistics(PAL::SessionID, WebCore::PageIdentifier);
 
     void logUserInteraction(PAL::SessionID, const RegistrableDomain&);
     void logWebSocketLoading(PAL::SessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen);
     void logSubresourceLoading(PAL::SessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen);
     void logSubresourceRedirect(PAL::SessionID, const RegistrableDomain& sourceDomain, const RegistrableDomain& targetDomain);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
-    void hasStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
-    void requestStorageAccessUnderOpener(PAL::SessionID, WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, uint64_t openerPageID, WebCore::RegistrableDomain&& openerDomain);
+    void hasStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(PAL::SessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, WebCore::PageIdentifier, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
+    void requestStorageAccessUnderOpener(PAL::SessionID, WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain);
 #endif
 
     void addOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
@@ -239,29 +240,29 @@ private:
         ResourceNetworkActivityTracker() = default;
         ResourceNetworkActivityTracker(const ResourceNetworkActivityTracker&) = default;
         ResourceNetworkActivityTracker(ResourceNetworkActivityTracker&&) = default;
-        ResourceNetworkActivityTracker(uint64_t pageID)
+        ResourceNetworkActivityTracker(WebCore::PageIdentifier pageID)
             : pageID { pageID }
             , isRootActivity { true }
             , networkActivity { NetworkActivityTracker::Label::LoadPage }
         {
         }
 
-        ResourceNetworkActivityTracker(uint64_t pageID, ResourceLoadIdentifier resourceID)
+        ResourceNetworkActivityTracker(WebCore::PageIdentifier pageID, ResourceLoadIdentifier resourceID)
             : pageID { pageID }
             , resourceID { resourceID }
             , networkActivity { NetworkActivityTracker::Label::LoadResource }
         {
         }
 
-        uint64_t pageID { 0 };
+        WebCore::PageIdentifier pageID;
         ResourceLoadIdentifier resourceID { 0 };
         bool isRootActivity { false };
         NetworkActivityTracker networkActivity;
     };
 
     void stopAllNetworkActivityTracking();
-    void stopAllNetworkActivityTrackingForPage(uint64_t pageID);
-    size_t findRootNetworkActivity(uint64_t pageID);
+    void stopAllNetworkActivityTrackingForPage(WebCore::PageIdentifier);
+    size_t findRootNetworkActivity(WebCore::PageIdentifier);
     size_t findNetworkActivityTracker(ResourceLoadIdentifier resourceID);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)

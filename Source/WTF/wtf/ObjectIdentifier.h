@@ -29,6 +29,7 @@
 #include <mutex>
 #include <wtf/HashTraits.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -121,6 +122,13 @@ template<typename T> struct HashTraits<ObjectIdentifier<T>> : SimpleClassHashTra
 template<typename T> struct DefaultHash<ObjectIdentifier<T>> {
     typedef ObjectIdentifierHash<T> Hash;
 };
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const ObjectIdentifier<T>& identifier)
+{
+    ts << identifier.toUInt64();
+    return ts;
+}
 
 } // namespace WTF
 

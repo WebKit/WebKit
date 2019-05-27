@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "CoordinateSystem.h"
 #include <JavaScriptCore/JSBase.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -60,17 +61,17 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(uint64_t pageID, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID);
-    void resolveChildFrameWithOrdinal(uint64_t pageID, uint64_t frameID, uint32_t ordinal, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void resolveChildFrameWithNodeHandle(uint64_t pageID, uint64_t frameID, const String& nodeHandle, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void resolveChildFrameWithName(uint64_t pageID, uint64_t frameID, const String& name, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void resolveParentFrame(uint64_t pageID, uint64_t frameID, CompletionHandler<void(Optional<String>, uint64_t)>&&);
-    void focusFrame(uint64_t pageID, uint64_t frameID);
-    void computeElementLayout(uint64_t pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&&);
-    void selectOptionElement(uint64_t pageID, uint64_t frameID, String nodeHandle, CompletionHandler<void(Optional<String>)>&&);
-    void takeScreenshot(uint64_t pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID);
-    void getCookiesForFrame(uint64_t pageID, uint64_t frameID, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&&);
-    void deleteCookie(uint64_t pageID, uint64_t frameID, String cookieName, CompletionHandler<void(Optional<String>)>&&);
+    void evaluateJavaScriptFunction(WebCore::PageIdentifier, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID);
+    void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, uint64_t frameID, uint32_t ordinal, CompletionHandler<void(Optional<String>, uint64_t)>&&);
+    void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, uint64_t frameID, const String& nodeHandle, CompletionHandler<void(Optional<String>, uint64_t)>&&);
+    void resolveChildFrameWithName(WebCore::PageIdentifier, uint64_t frameID, const String& name, CompletionHandler<void(Optional<String>, uint64_t)>&&);
+    void resolveParentFrame(WebCore::PageIdentifier, uint64_t frameID, CompletionHandler<void(Optional<String>, uint64_t)>&&);
+    void focusFrame(WebCore::PageIdentifier, uint64_t frameID);
+    void computeElementLayout(WebCore::PageIdentifier, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&&);
+    void selectOptionElement(WebCore::PageIdentifier, uint64_t frameID, String nodeHandle, CompletionHandler<void(Optional<String>)>&&);
+    void takeScreenshot(WebCore::PageIdentifier, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID);
+    void getCookiesForFrame(WebCore::PageIdentifier, uint64_t frameID, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&&);
+    void deleteCookie(WebCore::PageIdentifier, uint64_t frameID, String cookieName, CompletionHandler<void(Optional<String>)>&&);
 
     String m_sessionIdentifier;
 

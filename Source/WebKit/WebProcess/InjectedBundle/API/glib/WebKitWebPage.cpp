@@ -763,7 +763,7 @@ guint64 webkit_web_page_get_id(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
-    return webPage->priv->webPage->pageID();
+    return webPage->priv->webPage->pageID().toUInt64();
 }
 
 /**

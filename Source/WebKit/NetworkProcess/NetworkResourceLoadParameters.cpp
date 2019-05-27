@@ -107,8 +107,11 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.identifier))
         return false;
 
-    if (!decoder.decode(result.webPageID))
+    Optional<PageIdentifier> webPageID;
+    decoder >> webPageID;
+    if (!webPageID)
         return false;
+    result.webPageID = *webPageID;
 
     if (!decoder.decode(result.webFrameID))
         return false;

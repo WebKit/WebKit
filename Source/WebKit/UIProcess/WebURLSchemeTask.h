@@ -57,7 +57,7 @@ public:
     static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, WebProcessProxy&, uint64_t identifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
 
     uint64_t identifier() const { return m_identifier; }
-    uint64_t pageID() const { return m_pageIdentifier; }
+    WebCore::PageIdentifier pageID() const { return m_pageIdentifier; }
     WebProcessProxy* process() const { return m_process.get(); }
 
     const WebCore::ResourceRequest& request() const { return m_request; }
@@ -87,7 +87,7 @@ private:
     WebPageProxy* m_page;
     RefPtr<WebProcessProxy> m_process;
     uint64_t m_identifier;
-    uint64_t m_pageIdentifier;
+    WebCore::PageIdentifier m_pageIdentifier;
     WebCore::ResourceRequest m_request;
     bool m_stopped { false };
     bool m_responseSent { false };

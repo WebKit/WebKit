@@ -32,6 +32,7 @@
 #include "BackForwardItemIdentifier.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutPoint.h"
+#include "PageIdentifier.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "UserGestureIndicator.h"
@@ -63,14 +64,14 @@ public:
     NavigationAction(NavigationAction&&);
     NavigationAction& operator=(NavigationAction&&);
 
-    using PageIDAndFrameIDPair = std::pair<uint64_t /* pageID */, uint64_t /* frameID */>;
+    using PageIDAndFrameIDPair = std::pair<PageIdentifier, uint64_t /* frameID */>;
     class Requester {
     public:
         Requester(const Document&);
 
         const URL& url() const { return m_url; }
         const SecurityOrigin& securityOrigin() const { return *m_origin; }
-        uint64_t pageID() const { return m_pageIDAndFrameIDPair.first; }
+        PageIdentifier pageID() const { return m_pageIDAndFrameIDPair.first; }
         uint64_t frameID() const { return m_pageIDAndFrameIDPair.second; }
     private:
         URL m_url;

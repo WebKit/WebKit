@@ -290,7 +290,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
         interface->layerHostingContext()->setRootLayer(videoLayer);
     }
 
-    m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby));
 }
 
 void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
@@ -308,7 +308,7 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
         return;
 
     interface.setIsAnimating(true);
-    m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)));
 }
 
 void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
@@ -324,7 +324,7 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::
 
     interface.setTargetIsFullscreen(false);
 
-    m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode));
 #else
     UNUSED_PARAM(videoElement);
     UNUSED_PARAM(targetMode);
@@ -336,13 +336,13 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::
 void VideoFullscreenManager::hasVideoChanged(uint64_t contextId, bool hasVideo)
 {
     if (m_page)
-        m_page->send(Messages::VideoFullscreenManagerProxy::SetHasVideo(contextId, hasVideo), m_page->pageID());
+        m_page->send(Messages::VideoFullscreenManagerProxy::SetHasVideo(contextId, hasVideo));
 }
 
 void VideoFullscreenManager::videoDimensionsChanged(uint64_t contextId, const FloatSize& videoDimensions)
 {
     if (m_page)
-        m_page->send(Messages::VideoFullscreenManagerProxy::SetVideoDimensions(contextId, videoDimensions), m_page->pageID());
+        m_page->send(Messages::VideoFullscreenManagerProxy::SetVideoDimensions(contextId, videoDimensions));
 }
 
 #pragma mark Messages from VideoFullscreenManagerProxy:
@@ -364,7 +364,7 @@ void VideoFullscreenManager::requestUpdateInlineRect(uint64_t contextId)
 
     auto& model = ensureModel(contextId);
     IntRect inlineRect = inlineVideoFrame(*model.videoElement());
-    m_page->send(Messages::VideoFullscreenManagerProxy::SetInlineRect(contextId, inlineRect, inlineRect != IntRect(0, 0, 0, 0)), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManagerProxy::SetInlineRect(contextId, inlineRect, inlineRect != IntRect(0, 0, 0, 0)));
 }
 
 void VideoFullscreenManager::requestVideoContentLayer(uint64_t contextId)
@@ -378,7 +378,7 @@ void VideoFullscreenManager::requestVideoContentLayer(uint64_t contextId)
     model->setVideoFullscreenLayer(videoLayer, [protectedThis = makeRefPtr(this), this, contextId] () mutable {
         dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this, contextId] {
             if (protectedThis->m_page)
-                m_page->send(Messages::VideoFullscreenManagerProxy::SetHasVideoContentLayer(contextId, true), protectedThis->m_page->pageID());
+                m_page->send(Messages::VideoFullscreenManagerProxy::SetHasVideoContentLayer(contextId, true));
         });
     });
 }
@@ -394,7 +394,7 @@ void VideoFullscreenManager::returnVideoContentLayer(uint64_t contextId)
             model->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), this, contextId] () mutable {
                 dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this, contextId] {
                     if (protectedThis->m_page)
-                        m_page->send(Messages::VideoFullscreenManagerProxy::SetHasVideoContentLayer(contextId, false), protectedThis->m_page->pageID());
+                        m_page->send(Messages::VideoFullscreenManagerProxy::SetHasVideoContentLayer(contextId, false));
                 });
             });
         });
@@ -413,7 +413,7 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
 #if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, contextId] {
         if (protectedThis->m_page)
-            m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId), protectedThis->m_page->pageID());
+            m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId));
     });
 #else
     CALayer* videoLayer = interface->layerHostingContext()->rootLayer();
@@ -421,7 +421,7 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     model->setVideoFullscreenLayer(videoLayer, [protectedThis = makeRefPtr(this), this, contextId] () mutable {
         dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this, contextId] {
             if (protectedThis->m_page)
-                m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId), protectedThis->m_page->pageID());
+                m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId));
         });
     });
 #endif
@@ -442,7 +442,7 @@ void VideoFullscreenManager::willExitFullscreen(uint64_t contextId)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), videoElement = WTFMove(videoElement), contextId] {
         videoElement->willExitFullscreen();
         if (protectedThis->m_page)
-            protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToExitFullscreen(contextId), protectedThis->m_page->pageID());
+            protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToExitFullscreen(contextId));
     });
 }
 
@@ -486,7 +486,7 @@ void VideoFullscreenManager::didExitFullscreen(uint64_t contextId)
 #if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), contextId, interface] {
         if (protectedThis->m_page)
-            protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId), protectedThis->m_page->pageID());
+            protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId));
     });
 #else
     model->waitForPreparedForInlineThen([protectedThis = makeRefPtr(this), contextId, interface, model] () mutable {
@@ -498,7 +498,7 @@ void VideoFullscreenManager::didExitFullscreen(uint64_t contextId)
                         interface->setLayerHostingContext(nullptr);
                     }
                     if (protectedThis->m_page)
-                        protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId), protectedThis->m_page->pageID());
+                        protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId));
                 });
             });
         });
@@ -555,7 +555,7 @@ void VideoFullscreenManager::fullscreenMayReturnToInline(uint64_t contextId, boo
 
     if (!isPageVisible)
         model.videoElement()->scrollIntoViewIfNotVisible(false);
-    m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToReturnToInline(contextId, true, inlineVideoFrame(*model.videoElement())), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToReturnToInline(contextId, true, inlineVideoFrame(*model.videoElement())));
 }
 
 void VideoFullscreenManager::requestRouteSharingPolicyAndContextUID(uint64_t contextId, Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUID::AsyncReply&& reply)

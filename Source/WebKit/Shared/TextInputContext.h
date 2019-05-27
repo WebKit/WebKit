@@ -29,13 +29,14 @@
 #include <WebCore/DocumentIdentifier.h>
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/PageIdentifier.h>
 
 namespace WebKit {
 
 struct TextInputContext {
     WebCore::FloatRect boundingRect;
 
-    uint64_t webPageIdentifier;
+    WebCore::PageIdentifier webPageIdentifier;
     WebCore::DocumentIdentifier documentIdentifier;
     WebCore::ElementIdentifier elementIdentifier;
 

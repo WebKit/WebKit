@@ -103,7 +103,7 @@ public:
     bool isRunning() const { return !!m_display; }
     String displayName() const { return m_displayName; }
 
-    void bindSurfaceToWebPage(Surface*, uint64_t pageID);
+    void bindSurfaceToWebPage(Surface*, WebCore::PageIdentifier);
     void registerWebPage(WebPageProxy&);
     void unregisterWebPage(WebPageProxy&);
 

@@ -309,7 +309,7 @@ void WebEditorClient::registerUndoStep(UndoStep& step)
     auto stepID = webStep->stepID();
 
     m_page->addWebUndoStep(stepID, WTFMove(webStep));
-    m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(stepID, step.label()), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(stepID, step.label()), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void WebEditorClient::registerRedoStep(UndoStep&)

@@ -41,7 +41,7 @@ namespace WebCore {
 NavigationAction::Requester::Requester(const Document& document)
     : m_url { URL { document.url() } }
     , m_origin { makeRefPtr(document.securityOrigin()) }
-    , m_pageIDAndFrameIDPair { document.frame() ? std::make_pair(document.frame()->loader().client().pageID().valueOr(0), document.frame()->loader().client().frameID().valueOr(0)) : std::make_pair<uint64_t, uint64_t>(0, 0) }
+    , m_pageIDAndFrameIDPair { document.frame() ? std::make_pair(document.frame()->loader().client().pageID().valueOr(PageIdentifier { }), document.frame()->loader().client().frameID().valueOr(0)) : std::make_pair<PageIdentifier, uint64_t>({ }, 0) }
 {
 }
 

@@ -39,6 +39,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaProducer.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -202,7 +203,7 @@ struct WebPageCreationParameters {
 
     Optional<WebCore::Color> backgroundColor;
 
-    Optional<uint64_t> oldPageID;
+    Optional<WebCore::PageIdentifier> oldPageID;
 };
 
 } // namespace WebKit

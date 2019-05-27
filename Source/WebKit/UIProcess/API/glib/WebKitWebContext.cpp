@@ -1749,5 +1749,5 @@ void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* 
 
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext* context, WebPageProxy* page)
 {
-    return page ? context->priv->webViews.get(page->pageID()) : 0;
+    return page ? context->priv->webViews.get(page->pageID().toUInt64()) : nullptr;
 }

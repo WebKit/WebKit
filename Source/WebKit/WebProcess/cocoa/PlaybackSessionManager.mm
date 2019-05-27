@@ -279,7 +279,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
     addClientForContext(m_controlsManagerContextId);
 
     m_page->videoControlsManagerDidChange();
-    m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId));
 }
 
 void PlaybackSessionManager::clearPlaybackControlsManager()
@@ -291,7 +291,7 @@ void PlaybackSessionManager::clearPlaybackControlsManager()
     m_controlsManagerContextId = 0;
 
     m_page->videoControlsManagerDidChange();
-    m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager(), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager());
 }
 
 uint64_t PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
@@ -318,27 +318,27 @@ WebCore::HTMLMediaElement* PlaybackSessionManager::currentPlaybackControlsElemen
 
 void PlaybackSessionManager::durationChanged(uint64_t contextId, double duration)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::DurationChanged(contextId, duration), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::DurationChanged(contextId, duration));
 }
 
 void PlaybackSessionManager::currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::CurrentTimeChanged(contextId, currentTime, anchorTime), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::CurrentTimeChanged(contextId, currentTime, anchorTime));
 }
 
 void PlaybackSessionManager::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::BufferedTimeChanged(contextId, bufferedTime), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::BufferedTimeChanged(contextId, bufferedTime));
 }
 
 void PlaybackSessionManager::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::PlaybackStartedTimeChanged(contextId, playbackStartedTime), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::PlaybackStartedTimeChanged(contextId, playbackStartedTime));
 }
 
 void PlaybackSessionManager::rateChanged(uint64_t contextId, bool isPlaying, float playbackRate)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(contextId, isPlaying, playbackRate), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::RateChanged(contextId, isPlaying, playbackRate));
 }
 
 void PlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -349,37 +349,37 @@ void PlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const Web
         double end = timeRanges.ranges().end(i).toDouble();
         rangesVector.append({ start, end });
     }
-    m_page->send(Messages::PlaybackSessionManagerProxy::SeekableRangesVectorChanged(contextId, WTFMove(rangesVector), lastModifiedTime, liveUpdateInterval), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::SeekableRangesVectorChanged(contextId, WTFMove(rangesVector), lastModifiedTime, liveUpdateInterval));
 }
 
 void PlaybackSessionManager::canPlayFastReverseChanged(uint64_t contextId, bool value)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::CanPlayFastReverseChanged(contextId, value), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::CanPlayFastReverseChanged(contextId, value));
 }
 
 void PlaybackSessionManager::audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionOptionsChanged(contextId, options, selectedIndex), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
 void PlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
 void PlaybackSessionManager::externalPlaybackChanged(uint64_t contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName));
 }
 
 void PlaybackSessionManager::audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionIndexChanged(contextId, selectedIndex), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::AudioMediaSelectionIndexChanged(contextId, selectedIndex));
 }
 
 void PlaybackSessionManager::legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionIndexChanged(contextId, selectedIndex), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionIndexChanged(contextId, selectedIndex));
 }
 
 void PlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)

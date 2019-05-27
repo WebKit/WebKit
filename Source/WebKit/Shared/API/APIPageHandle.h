@@ -27,6 +27,7 @@
 #define APIPageHandle_h
 
 #include "APIObject.h"
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Ref.h>
 
 namespace IPC {
@@ -38,20 +39,20 @@ namespace API {
 
 class PageHandle : public ObjectImpl<Object::Type::PageHandle> {
 public:
-    static Ref<PageHandle> create(uint64_t pageID);
-    static Ref<PageHandle> createAutoconverting(uint64_t pageID);
+    static Ref<PageHandle> create(WebCore::PageIdentifier);
+    static Ref<PageHandle> createAutoconverting(WebCore::PageIdentifier);
     virtual ~PageHandle();
 
-    uint64_t pageID() const { return m_pageID; }
+    WebCore::PageIdentifier pageID() const { return m_pageID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
-    explicit PageHandle(uint64_t pageID, bool isAutoconverting);
+    PageHandle(WebCore::PageIdentifier, bool isAutoconverting);
 
-    const uint64_t m_pageID;
+    const WebCore::PageIdentifier m_pageID;
     const bool m_isAutoconverting;
 };
 

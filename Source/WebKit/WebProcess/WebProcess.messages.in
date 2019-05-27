@@ -25,7 +25,7 @@ messages -> WebProcess LegacyReceiver {
     SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
 
     # Create a new page.
-    CreateWebPage(uint64_t newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
+    CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
 
     PrewarmGlobally();
     PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
@@ -111,7 +111,7 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID)
+    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID)
     RegisterServiceWorkerClients()
 #endif
 

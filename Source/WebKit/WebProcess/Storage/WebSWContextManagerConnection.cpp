@@ -73,7 +73,7 @@ static const Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by la
 
 class ServiceWorkerFrameLoaderClient final : public EmptyFrameLoaderClient {
 public:
-    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID, const String& userAgent)
+    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, PAL::SessionID sessionID, WebCore::PageIdentifier pageID, uint64_t frameID, const String& userAgent)
         : m_connection(connection)
         , m_sessionID(sessionID)
         , m_pageID(pageID)
@@ -95,18 +95,18 @@ private:
     bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) final { return true; }
 
     PAL::SessionID sessionID() const final { return m_sessionID; }
-    Optional<uint64_t> pageID() const final { return m_pageID; }
+    Optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     Optional<uint64_t> frameID() const final { return m_frameID; }
     String userAgent(const URL&) final { return m_userAgent; }
 
     WebSWContextManagerConnection& m_connection;
     PAL::SessionID m_sessionID;
-    uint64_t m_pageID { 0 };
+    WebCore::PageIdentifier m_pageID;
     uint64_t m_frameID { 0 };
     String m_userAgent;
 };
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageGroupID, PageIdentifier pageID, const WebPreferencesStore& store)
     : m_connectionToNetworkProcess(WTFMove(connection))
     , m_pageGroupID(pageGroupID)
     , m_pageID(pageID)
@@ -226,12 +226,12 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
 {
     auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
     if (!serviceWorkerThreadProxy) {
-        m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier.toUInt64());
+        m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier);
         return;
     }
 
     if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
-        m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier.toUInt64());
+        m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier);
         return;
     }
 

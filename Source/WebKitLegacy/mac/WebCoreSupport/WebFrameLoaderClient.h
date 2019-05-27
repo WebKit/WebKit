@@ -63,7 +63,7 @@ private:
     void frameLoaderDestroyed() final;
     bool hasWebView() const final; // mainly for assertions
 
-    Optional<uint64_t> pageID() const final;
+    Optional<WebCore::PageIdentifier> pageID() const final;
     Optional<uint64_t> frameID() const final;
     PAL::SessionID sessionID() const final;
 

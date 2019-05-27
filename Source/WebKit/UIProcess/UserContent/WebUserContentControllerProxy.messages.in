@@ -24,5 +24,5 @@
  */
 
 messages -> WebUserContentControllerProxy {
-DidPostMessage(uint64_t pageID, struct WebKit::FrameInfoData frameInfoData, uint64_t messageHandlerID, IPC::DataReference message) WantsConnection
+DidPostMessage(WebCore::PageIdentifier pageID, struct WebKit::FrameInfoData frameInfoData, uint64_t messageHandlerID, IPC::DataReference message) WantsConnection
 }

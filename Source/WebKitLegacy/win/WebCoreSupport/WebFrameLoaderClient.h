@@ -51,7 +51,7 @@ public:
 
     void dispatchDidFailToStartPlugin(const WebCore::PluginView&) const;
 
-    Optional<uint64_t> pageID() const final;
+    Optional<WebCore::PageIdentifier> pageID() const final;
     Optional<uint64_t> frameID() const final;
     PAL::SessionID sessionID() const final;
 

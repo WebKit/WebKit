@@ -27,6 +27,7 @@
 
 #include "NetworkActivityTracker.h"
 #include <WebCore/BlobDataFileReference.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <pal/SessionID.h>
@@ -38,7 +39,7 @@ enum class PreconnectOnly { No, Yes };
 
 class NetworkLoadParameters {
 public:
-    uint64_t webPageID { 0 };
+    WebCore::PageIdentifier webPageID;
     uint64_t webFrameID { 0 };
     WTF::ProcessID parentPID { 0 };
     PAL::SessionID sessionID { PAL::SessionID::emptySessionID() };

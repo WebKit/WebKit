@@ -109,7 +109,7 @@ void WebURLSchemeHandler::taskCompleted(WebURLSchemeTask& task)
     platformTaskCompleted(task);
 }
 
-void WebURLSchemeHandler::removeTaskFromPageMap(uint64_t pageID, uint64_t taskID)
+void WebURLSchemeHandler::removeTaskFromPageMap(PageIdentifier pageID, uint64_t taskID)
 {
     auto iterator = m_tasksByPageIdentifier.find(pageID);
     ASSERT(iterator != m_tasksByPageIdentifier.end());

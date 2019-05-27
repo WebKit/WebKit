@@ -777,6 +777,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageConfiguration.h
     page/PageConsoleClient.h
     page/PageGroup.h
+    page/PageIdentifier.h
     page/PageOverlay.h
     page/PageOverlayController.h
     page/PerformanceLogging.h

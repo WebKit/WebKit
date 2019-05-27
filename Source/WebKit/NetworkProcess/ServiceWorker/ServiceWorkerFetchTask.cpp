@@ -45,40 +45,40 @@ namespace WebKit {
 void ServiceWorkerFetchTask::didReceiveRedirectResponse(const ResourceResponse& response)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveRedirectResponse: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveRedirectResponse { response }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveRedirectResponse { response }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didReceiveResponse(const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveData { data, encodedDataLength }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveData { data, encodedDataLength }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didReceiveFormData(const IPC::FormDataReference& formData)
 {
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveFormData { formData }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveFormData { formData }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didFinish()
 {
     RELEASE_LOG_IF_ALLOWED("didFinishFetch: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didFail(const ResourceError& error)
 {
     RELEASE_LOG_ERROR_IF_ALLOWED("didFailFetch: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidFail { error }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidFail { error }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didNotHandle()
 {
     RELEASE_LOG_IF_ALLOWED("didNotHandleFetch: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
-    m_connection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, m_identifier.fetchIdentifier.toUInt64());
+    m_connection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, m_identifier.fetchIdentifier);
 }
 
 } // namespace WebKit

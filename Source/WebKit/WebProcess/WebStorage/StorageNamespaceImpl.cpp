@@ -96,7 +96,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
     ASSERT(m_storageNamespaceID);
 
     if (m_storageType == StorageType::Session)
-        return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID(), m_quotaInBytes);
+        return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID().toUInt64(), m_quotaInBytes);
 
     ASSERT(m_storageType == StorageType::EphemeralLocal);
     auto newNamespace = adoptRef(*new StorageNamespaceImpl(m_storageType, m_storageNamespaceID, m_topLevelOrigin.get(), m_quotaInBytes));

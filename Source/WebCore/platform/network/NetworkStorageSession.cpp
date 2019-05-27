@@ -66,12 +66,12 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookies(const RegistrableDomain
     return m_registrableDomainsToBlockCookieFor.contains(registrableDomain);
 }
 
-bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const
+bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
 {
     return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, pageID);
 }
     
-bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const
+bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
 {
     RegistrableDomain firstPartyDomain { firstPartyForCookies };
     if (firstPartyDomain.isEmpty())
@@ -115,7 +115,7 @@ void NetworkStorageSession::removePrevalentDomains(const Vector<RegistrableDomai
         m_registrableDomainsToBlockCookieFor.remove(domain);
 }
 
-bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) const
+bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID) const
 {
     if (frameID) {
         auto framesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
@@ -148,7 +148,7 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
     return entries;
 }
     
-void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID)
+void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, PageIdentifier pageID)
 {
     if (!frameID) {
         if (firstPartyDomain.isEmpty())
@@ -182,7 +182,7 @@ void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resource
     }
 }
 
-void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID)
+void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, PageIdentifier pageID)
 {
     auto iteration = m_framesGrantedStorageAccess.find(pageID);
     if (iteration == m_framesGrantedStorageAccess.end())
@@ -191,7 +191,7 @@ void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64
     iteration->value.remove(frameID);
 }
 
-void NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics(uint64_t pageID)
+void NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics(PageIdentifier pageID)
 {
     m_pagesGrantedStorageAccess.remove(pageID);
     m_framesGrantedStorageAccess.remove(pageID);
@@ -215,7 +215,7 @@ void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
     m_cacheMaxAgeCapForPrevalentResources = WTF::nullopt;
 }
 
-void NetworkStorageSession::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, uint64_t pageID)
+void NetworkStorageSession::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier pageID)
 {
     m_navigatedToWithLinkDecorationByPrevalentResource.add(pageID, toDomain);
 }
@@ -226,7 +226,7 @@ void NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting()
     m_navigationWithLinkDecorationTestMode = true;
 }
 
-Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, Optional<uint64_t> pageID) const
+Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, Optional<PageIdentifier> pageID) const
 {
     if (!m_ageCapForClientSideCookies || !pageID || m_navigatedToWithLinkDecorationByPrevalentResource.isEmpty())
         return m_ageCapForClientSideCookies;

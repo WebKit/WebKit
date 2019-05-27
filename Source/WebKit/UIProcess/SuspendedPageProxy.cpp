@@ -246,7 +246,7 @@ void SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 
 const char* SuspendedPageProxy::loggingString() const
 {
-    return debugString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " page ID ", m_page.pageID(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
+    return debugString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " page ID ", m_page.pageID().toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
 }
 
 #endif

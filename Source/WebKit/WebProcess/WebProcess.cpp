@@ -221,7 +221,7 @@ WebProcess::WebProcess()
         ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 
-    ResourceLoadObserver::shared().setRequestStorageAccessUnderOpenerCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain) {
+    ResourceLoadObserver::shared().setRequestStorageAccessUnderOpenerCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, const RegistrableDomain& openerDomain) {
         ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(sessionID, domainInNeedOfStorageAccess, openerPageID, openerDomain), 0);
     });
 #endif
@@ -667,16 +667,16 @@ WebPage* WebProcess::focusedWebPage() const
     return 0;
 }
     
-WebPage* WebProcess::webPage(uint64_t pageID) const
+WebPage* WebProcess::webPage(PageIdentifier pageID) const
 {
     return m_pageMap.get(pageID);
 }
 
-void WebProcess::createWebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
+void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 {
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
-    HashMap<uint64_t, RefPtr<WebPage>>::AddResult result = m_pageMap.add(pageID, nullptr);
+    auto result = m_pageMap.add(pageID, nullptr);
     auto oldPageID = parameters.oldPageID ? parameters.oldPageID.value() : pageID;
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
@@ -693,7 +693,7 @@ void WebProcess::createWebPage(uint64_t pageID, WebPageCreationParameters&& para
     ASSERT(result.iterator->value);
 }
 
-void WebProcess::removeWebPage(PAL::SessionID sessionID, uint64_t pageID)
+void WebProcess::removeWebPage(PAL::SessionID sessionID, PageIdentifier pageID)
 {
     ASSERT(m_pageMap.contains(pageID));
 
@@ -1450,7 +1450,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason)
 
 #endif
 
-void WebProcess::pageActivityStateDidChange(uint64_t, OptionSet<WebCore::ActivityState::Flag> changed)
+void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::ActivityState::Flag> changed)
 {
     if (changed & WebCore::ActivityState::IsVisible)
         updateCPUMonitorState(CPUMonitorUpdateReason::VisibilityHasChanged);
@@ -1624,13 +1624,13 @@ void WebProcess::sendPrewarmInformation(const URL& url)
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCollectPrewarmInformation(registrableDomain, WebCore::ProcessWarming::collectPrewarmInformation()), 0);
 }
 
-void WebProcess::pageDidEnterWindow(uint64_t pageID)
+void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.add(pageID);
     m_nonVisibleProcessCleanupTimer.stop();
 }
 
-void WebProcess::pageWillLeaveWindow(uint64_t pageID)
+void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.remove(pageID);
 
@@ -1673,7 +1673,7 @@ void WebProcess::enablePrivateBrowsingForTesting(bool enable)
     if (enable)
         ensureLegacyPrivateBrowsingSessionInNetworkProcess();
 
-    Vector<uint64_t> pageIDs;
+    Vector<PageIdentifier> pageIDs;
     for (auto& page : m_pageMap) {
         if (page.value)
             pageIDs.append(page.key);
@@ -1853,7 +1853,7 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)
+void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, PageIdentifier pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)
 {
     // We are in the Service Worker context process and the call below establishes our connection to the Network Process
     // by calling ensureNetworkProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the

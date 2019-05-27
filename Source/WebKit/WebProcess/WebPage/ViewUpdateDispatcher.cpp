@@ -54,7 +54,7 @@ void ViewUpdateDispatcher::initializeConnection(IPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::ViewUpdateDispatcher::messageReceiverName(), m_queue.get(), this);
 }
 
-void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
+void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier pageID, const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
     bool updateListWasEmpty;
     {
@@ -75,7 +75,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const Visib
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
-    HashMap<uint64_t, UpdateData> update;
+    HashMap<PageIdentifier, UpdateData> update;
     {
         LockHolder locker(&m_dataMutex);
         update = WTFMove(m_latestUpdate);

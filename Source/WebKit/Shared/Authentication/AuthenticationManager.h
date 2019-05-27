@@ -29,6 +29,7 @@
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -60,7 +61,7 @@ public:
 
     static const char* supplementName();
 
-    void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
+    void didReceiveAuthenticationChallenge(WebCore::PageIdentifier, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 
     void completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition, WebCore::Credential&&);
@@ -69,7 +70,7 @@ public:
 
 private:
     struct Challenge {
-        uint64_t pageID;
+        WebCore::PageIdentifier pageID;
         WebCore::AuthenticationChallenge challenge;
         ChallengeCompletionHandler completionHandler;
     };
@@ -83,7 +84,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     uint64_t addChallengeToChallengeMap(Challenge&&);
-    bool shouldCoalesceChallenge(uint64_t pageID, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
+    bool shouldCoalesceChallenge(WebCore::PageIdentifier, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
 
     Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
 

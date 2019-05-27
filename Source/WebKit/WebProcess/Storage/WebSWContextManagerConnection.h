@@ -51,7 +51,7 @@ struct WebPreferencesStore;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
 public:
-    WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore&);
+    WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&);
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -96,7 +96,7 @@ private:
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;
     uint64_t m_pageGroupID;
-    uint64_t m_pageID { 0 };
+    WebCore::PageIdentifier m_pageID;
     uint64_t m_previousServiceWorkerID { 0 };
 
     WebCore::SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy { WebCore::SecurityOrigin::StorageBlockingPolicy::AllowAllStorage };

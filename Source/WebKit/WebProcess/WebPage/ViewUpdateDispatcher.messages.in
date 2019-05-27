@@ -21,5 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> ViewUpdateDispatcher {
-    VisibleContentRectUpdate(uint64_t pageID, WebKit::VisibleContentRectUpdateInfo visibleContentRectUpdateInfo)
+    VisibleContentRectUpdate(WebCore::PageIdentifier pageID, WebKit::VisibleContentRectUpdateInfo visibleContentRectUpdateInfo)
 }

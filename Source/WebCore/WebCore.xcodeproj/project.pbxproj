@@ -1218,6 +1218,7 @@
 		4682D2001F79783000C863DB /* StoredCredentialsPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4682D1FF1F79782300C863DB /* StoredCredentialsPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468344E01EDDFAAA00B7795B /* DOMRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = 468344DE1EDDFA5F00B7795B /* DOMRectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B63F6C1C6E8D19002E914B /* JSEventTargetCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46B650DD2296262700FD8AA4 /* PageIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B650DB2296262700FD8AA4 /* PageIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B95195207D633400A7D2DD /* AbstractDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B9518A207D632800A7D2DD /* AbstractDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B95196207D633A00A7D2DD /* AbstractFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B9518F207D632B00A7D2DD /* AbstractFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B95197207D634000A7D2DD /* GlobalWindowIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95190207D632C00A7D2DD /* GlobalWindowIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7605,6 +7606,7 @@
 		468344DD1EDDFA5F00B7795B /* DOMRectList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMRectList.cpp; sourceTree = "<group>"; };
 		468344DE1EDDFA5F00B7795B /* DOMRectList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMRectList.h; sourceTree = "<group>"; };
 		46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventTargetCustom.h; sourceTree = "<group>"; };
+		46B650DB2296262700FD8AA4 /* PageIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageIdentifier.h; sourceTree = "<group>"; };
 		46B9518A207D632800A7D2DD /* AbstractDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDOMWindow.h; sourceTree = "<group>"; };
 		46B9518C207D632900A7D2DD /* RemoteFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteFrame.cpp; sourceTree = "<group>"; };
 		46B9518D207D632A00A7D2DD /* RemoteDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDOMWindow.cpp; sourceTree = "<group>"; };
@@ -20209,6 +20211,7 @@
 				9302B0BE0D79F82C00C7EE83 /* PageGroup.h */,
 				7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */,
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
+				46B650DB2296262700FD8AA4 /* PageIdentifier.h */,
 				2D5C9CFB19C7B52E00B3C5C1 /* PageOverlay.cpp */,
 				2D5C9CFC19C7B52E00B3C5C1 /* PageOverlay.h */,
 				2D5C9CFD19C7B52E00B3C5C1 /* PageOverlayController.cpp */,
@@ -30772,6 +30775,7 @@
 				9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */,
 				7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */,
 				A5B81CC41FAA44BC0037D1E6 /* PageHeapAgent.h in Headers */,
+				46B650DD2296262700FD8AA4 /* PageIdentifier.h in Headers */,
 				A5CB05241FB51F3300089B97 /* PageNetworkAgent.h in Headers */,
 				2D5C9D0019C7B52E00B3C5C1 /* PageOverlay.h in Headers */,
 				2D5C9D0219C7B52E00B3C5C1 /* PageOverlayController.h in Headers */,

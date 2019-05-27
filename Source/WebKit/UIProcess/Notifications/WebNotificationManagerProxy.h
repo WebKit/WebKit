@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
 #include <WebCore/NotificationClient.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
@@ -78,7 +79,7 @@ public:
 private:
     explicit WebNotificationManagerProxy(WebProcessPool*);
 
-    typedef bool (*NotificationFilterFunction)(uint64_t pageID, uint64_t pageNotificationID, uint64_t desiredPageID, const Vector<uint64_t>& desiredPageNotificationIDs);
+    typedef bool (*NotificationFilterFunction)(WebCore::PageIdentifier pageID, uint64_t pageNotificationID, WebCore::PageIdentifier desiredPageID, const Vector<uint64_t>& desiredPageNotificationIDs);
     void clearNotifications(WebPageProxy*, const Vector<uint64_t>& pageNotificationIDs, NotificationFilterFunction);
 
     // WebContextSupplement
@@ -88,9 +89,9 @@ private:
 
     std::unique_ptr<API::NotificationProvider> m_provider;
     // Pair comprised of web page ID and the web process's notification ID
-    HashMap<uint64_t, std::pair<uint64_t, uint64_t>> m_globalNotificationMap;
+    HashMap<uint64_t, std::pair<WebCore::PageIdentifier, uint64_t>> m_globalNotificationMap;
     // Key pair comprised of web page ID and the web process's notification ID; value pair comprised of global notification ID, and notification object
-    HashMap<std::pair<uint64_t, uint64_t>, std::pair<uint64_t, RefPtr<WebNotification>>> m_notifications;
+    HashMap<std::pair<WebCore::PageIdentifier, uint64_t>, std::pair<uint64_t, RefPtr<WebNotification>>> m_notifications;
 };
 
 } // namespace WebKit

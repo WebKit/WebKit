@@ -29,6 +29,7 @@
 #include "SameDocumentNavigationType.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -175,7 +176,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    static ViewGestureController* controllerForGesture(uint64_t pageID, GestureID);
+    static ViewGestureController* controllerForGesture(WebCore::PageIdentifier, GestureID);
 
     static GestureID takeNextGestureID();
     void willBeginGesture(ViewGestureType);

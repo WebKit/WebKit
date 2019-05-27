@@ -159,7 +159,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
     auto* worker = server().activeWorkerFromRegistrationID(serviceWorkerRegistrationIdentifier);
     if (!worker) {
         SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s -> DidNotHandle because no active worker", fetchIdentifier.loggingString().utf8().data());
-        m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier.toUInt64());
+        m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
         return;
     }
     auto serviceWorkerIdentifier = worker->identifier();
@@ -170,13 +170,13 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
 
         if (!success) {
             SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because worker did not become activated", fetchIdentifier.loggingString().utf8().data());
-            m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier.toUInt64());
+            m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
             return;
         }
 
         auto* worker = server().workerByID(serviceWorkerIdentifier);
         if (!worker) {
-            m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier.toUInt64());
+            m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
             return;
         }
 
@@ -192,7 +192,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
                 static_cast<WebSWServerToContextConnection&>(*contextConnection).startFetch(m_sessionID, m_contentConnection.get(), this->identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer);
             } else {
                 SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because failed to run service worker", fetchIdentifier.loggingString().utf8().data());
-                m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier.toUInt64());
+                m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
             }
         });
     };

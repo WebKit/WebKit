@@ -47,7 +47,7 @@ void WebProcessLifetimeObserver::addWebPage(WebPageProxy& webPageProxy, WebProce
     RELEASE_ASSERT(!process.isPrewarmed());
 
     if (m_processes.add(&process).isNewEntry) {
-        RELEASE_LOG(Loading, "%p - WebProcessLifetimeObserver::addWebPage: webPID = %i, pageID = %" PRIu64, this, process.processIdentifier(), webPageProxy.pageID());
+        RELEASE_LOG(Loading, "%p - WebProcessLifetimeObserver::addWebPage: webPID = %i, pageID = %" PRIu64, this, process.processIdentifier(), webPageProxy.pageID().toUInt64());
         webProcessWillOpenConnection(process, *process.connection());
     }
 
@@ -63,7 +63,7 @@ void WebProcessLifetimeObserver::removeWebPage(WebPageProxy& webPageProxy, WebPr
     webPageDidCloseConnection(webPageProxy, *process.connection());
 
     if (m_processes.remove(&process)) {
-        RELEASE_LOG(Loading, "%p - WebProcessLifetimeObserver::removeWebPage: webPID = %i, pageID = %" PRIu64, this, process.processIdentifier(), webPageProxy.pageID());
+        RELEASE_LOG(Loading, "%p - WebProcessLifetimeObserver::removeWebPage: webPID = %i, pageID = %" PRIu64, this, process.processIdentifier(), webPageProxy.pageID().toUInt64());
         webProcessDidCloseConnection(process, *process.connection());
     }
 }

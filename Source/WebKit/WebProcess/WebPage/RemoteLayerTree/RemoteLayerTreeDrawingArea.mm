@@ -75,7 +75,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     // FIXME: While using the high end of the range of DisplayIDs makes a collision with real, non-RemoteLayerTreeDrawingArea
     // DisplayIDs less likely, it is not entirely safe to have a RemoteLayerTreeDrawingArea and TiledCoreAnimationDrawingArea
     // coeexist in the same process.
-    webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - webPage.pageID());
+    webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - webPage.pageID().toUInt64());
 }
 
 RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
@@ -434,7 +434,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(contextsToFlush));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
-    uint64_t pageID = m_webPage.pageID();
+    auto pageID = m_webPage.pageID();
     dispatch_async(m_commitQueue, [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
         backingStoreFlusher->flush();
 

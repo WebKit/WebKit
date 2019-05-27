@@ -148,7 +148,7 @@
         auto* frame = page->mainFrame();
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
-        m_pageID = 0;
+        m_pageID = { };
         m_hasMainFramePlugin = false;
     }
 }

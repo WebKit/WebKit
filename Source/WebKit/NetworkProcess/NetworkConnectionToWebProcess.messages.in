@@ -26,18 +26,18 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<char> data) Synchronous
     LoadPing(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
-    PageLoadCompleted(uint64_t webPageID)
+    PageLoadCompleted(WebCore::PageIdentifier webPageID)
     PrefetchDNS(String hostname)
     PreconnectTo(uint64_t preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
 
     StartDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
     ConvertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
-    CookiesForDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
-    SetCookiesFromDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, String cookieString)
+    CookiesForDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
+    SetCookiesFromDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier> pageID, String cookieString)
     CookiesEnabled(PAL::SessionID sessionID) -> (bool enabled) Synchronous
-    CookieRequestHeaderFieldValue(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
-    GetRawCookies(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID) -> (Vector<WebCore::Cookie> cookies) Synchronous
+    CookieRequestHeaderFieldValue(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
+    GetRawCookies(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<WebCore::PageIdentifier> pageID) -> (Vector<WebCore::Cookie> cookies) Synchronous
     DeleteCookie(PAL::SessionID sessionID, URL url, String cookieName)
 
     RegisterFileBlobURL(URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
@@ -56,16 +56,16 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     EnsureLegacyPrivateBrowsingSession()
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
-    ClearPageSpecificDataForResourceLoadStatistics(PAL::SessionID sessionID, uint64_t pageID);
+    RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, WebCore::PageIdentifier pageID);
+    ClearPageSpecificDataForResourceLoadStatistics(PAL::SessionID sessionID, WebCore::PageIdentifier pageID);
     LogUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain domain)
     LogWebSocketLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
     LogSubresourceLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
     LogSubresourceRedirect(PAL::SessionID sessionID, WebCore::RegistrableDomain sourceDomain, WebCore::RegistrableDomain targetDomain)
     ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics)
-    HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
-    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID) -> (enum:bool WebCore::StorageAccessWasGranted wasGranted, enum:bool WebCore::StorageAccessPromptWasShown promptWasShown) Async
-    RequestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain domainInNeedOfStorageAccess, uint64_t openerPageID, WebCore::RegistrableDomain openerDomain)
+    HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess) Async
+    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, WebCore::PageIdentifier pageID) -> (enum:bool WebCore::StorageAccessWasGranted wasGranted, enum:bool WebCore::StorageAccessPromptWasShown promptWasShown) Async
+    RequestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
 #endif
 
     AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
@@ -87,7 +87,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     SetWebProcessIdentifier(WebCore::ProcessIdentifier processIdentifier)
 
-    WebPageWasAdded(PAL::SessionID sessionID, uint64_t pageID, uint64_t oldPageID)
-    WebPageWasRemoved(PAL::SessionID sessionID, uint64_t pageID)
-    WebProcessSessionChanged(PAL::SessionID newSessionID, Vector<uint64_t> pages)
+    WebPageWasAdded(PAL::SessionID sessionID, WebCore::PageIdentifier pageID, WebCore::PageIdentifier oldPageID)
+    WebPageWasRemoved(PAL::SessionID sessionID, WebCore::PageIdentifier pageID)
+    WebProcessSessionChanged(PAL::SessionID newSessionID, Vector<WebCore::PageIdentifier> pages)
 }

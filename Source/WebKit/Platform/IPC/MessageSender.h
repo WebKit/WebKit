@@ -34,9 +34,9 @@ class MessageSender {
 public:
     virtual ~MessageSender();
 
-    template<typename U> bool send(const U& message)
+    template<typename U> bool send(const U& message, OptionSet<SendOption> sendOptions = { })
     {
-        return send(message, messageSenderDestinationID(), { });
+        return send(message, messageSenderDestinationID(), sendOptions);
     }
 
     template<typename U> bool send(const U& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
@@ -47,6 +47,12 @@ public:
         encoder->encode(message.arguments());
         
         return sendMessage(WTFMove(encoder), sendOptions);
+    }
+    
+    template<typename U, typename T>
+    bool send(const U& message, ObjectIdentifier<T> destinationID, OptionSet<SendOption> sendOptions = { })
+    {
+        return send<U>(message, destinationID.toUInt64(), sendOptions);
     }
 
     template<typename T>
@@ -65,8 +71,8 @@ public:
         return messageSenderConnection()->sendSync(WTFMove(message), WTFMove(reply), destinationID, timeout, sendSyncOptions);
     }
 
-    template<typename T, typename... Args>
-    void sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& completionHandler)
+    template<typename T, typename C>
+    void sendWithAsyncReply(T&& message, C&& completionHandler)
     {
         messageSenderConnection()->sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID());
     }

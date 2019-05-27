@@ -97,7 +97,7 @@ void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& titl
 {
     uint64_t globalNotificationID = generateGlobalNotificationID();
     auto notification = WebNotification::create(title, body, iconURL, tag, lang, dir, originString, globalNotificationID);
-    std::pair<uint64_t, uint64_t> notificationIDPair = std::make_pair(webPage->pageID(), pageNotificationID);
+    std::pair<PageIdentifier, uint64_t> notificationIDPair = std::make_pair(webPage->pageID(), pageNotificationID);
     m_globalNotificationMap.set(globalNotificationID, notificationIDPair);
     m_notifications.set(notificationIDPair, std::make_pair(globalNotificationID, notification.copyRef()));
     m_provider->show(*webPage, notification.get());
@@ -119,12 +119,12 @@ void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, 
     }
 }
 
-static bool pageIDsMatch(uint64_t pageID, uint64_t, uint64_t desiredPageID, const Vector<uint64_t>&)
+static bool pageIDsMatch(PageIdentifier pageID, uint64_t, PageIdentifier desiredPageID, const Vector<uint64_t>&)
 {
     return pageID == desiredPageID;
 }
 
-static bool pageAndNotificationIDsMatch(uint64_t pageID, uint64_t pageNotificationID, uint64_t desiredPageID, const Vector<uint64_t>& desiredPageNotificationIDs)
+static bool pageAndNotificationIDsMatch(PageIdentifier pageID, uint64_t pageNotificationID, PageIdentifier desiredPageID, const Vector<uint64_t>& desiredPageNotificationIDs)
 {
     return pageID == desiredPageID && desiredPageNotificationIDs.contains(pageNotificationID);
 }
@@ -141,13 +141,13 @@ void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, cons
 
 void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<uint64_t>& pageNotificationIDs, NotificationFilterFunction filterFunction)
 {
-    uint64_t targetPageID = webPage->pageID();
+    auto targetPageID = webPage->pageID();
 
     Vector<uint64_t> globalNotificationIDs;
     globalNotificationIDs.reserveCapacity(m_globalNotificationMap.size());
 
     for (auto it = m_notifications.begin(), end = m_notifications.end(); it != end; ++it) {
-        uint64_t webPageID = it->key.first;
+        auto webPageID = it->key.first;
         uint64_t pageNotificationID = it->key.second;
         if (!filterFunction(webPageID, pageNotificationID, targetPageID, pageNotificationIDs))
             continue;
@@ -170,7 +170,7 @@ void WebNotificationManagerProxy::providerDidShowNotification(uint64_t globalNot
     if (it == m_globalNotificationMap.end())
         return;
 
-    uint64_t webPageID = it->value.first;
+    auto webPageID = it->value.first;
     WebPageProxy* webPage = WebProcessProxy::webPage(webPageID);
     if (!webPage)
         return;
@@ -185,7 +185,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNo
     if (it == m_globalNotificationMap.end())
         return;
     
-    uint64_t webPageID = it->value.first;
+    auto webPageID = it->value.first;
     WebPageProxy* webPage = WebProcessProxy::webPage(webPageID);
     if (!webPage)
         return;

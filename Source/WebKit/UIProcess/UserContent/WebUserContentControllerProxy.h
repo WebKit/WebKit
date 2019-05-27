@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "UserContentControllerIdentifier.h"
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
@@ -110,7 +111,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(IPC::Connection&, uint64_t pageID, const FrameInfoData&, uint64_t messageHandlerID, const IPC::DataReference&);
+    void didPostMessage(IPC::Connection&, WebCore::PageIdentifier, const FrameInfoData&, uint64_t messageHandlerID, const IPC::DataReference&);
 
     void addUserContentWorldUse(API::UserContentWorld&);
     void removeUserContentWorldUses(API::UserContentWorld&, unsigned numberOfUsesToRemove);

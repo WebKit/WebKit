@@ -1155,7 +1155,7 @@ void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID ses
     completionHandler();
 }
 
-void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, uint64_t pageID)
+void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebCore::PageIdentifier pageID)
 {
     ASSERT(!navigationDataTransfer.isEmpty());
 
@@ -1961,7 +1961,7 @@ void NetworkProcess::setAllowsAnySSLCertificateForWebSocket(bool allows, Complet
     completionHandler();
 }
 
-void NetworkProcess::logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, ShouldSample shouldSample)
+void NetworkProcess::logDiagnosticMessage(PageIdentifier webPageID, const String& message, const String& description, ShouldSample shouldSample)
 {
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
@@ -1969,7 +1969,7 @@ void NetworkProcess::logDiagnosticMessage(uint64_t webPageID, const String& mess
     parentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessage(webPageID, message, description, ShouldSample::No), 0);
 }
 
-void NetworkProcess::logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, DiagnosticLoggingResultType result, ShouldSample shouldSample)
+void NetworkProcess::logDiagnosticMessageWithResult(PageIdentifier webPageID, const String& message, const String& description, DiagnosticLoggingResultType result, ShouldSample shouldSample)
 {
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
@@ -1977,7 +1977,7 @@ void NetworkProcess::logDiagnosticMessageWithResult(uint64_t webPageID, const St
     parentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithResult(webPageID, message, description, result, ShouldSample::No), 0);
 }
 
-void NetworkProcess::logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
+void NetworkProcess::logDiagnosticMessageWithValue(PageIdentifier webPageID, const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
 {
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
@@ -2626,7 +2626,7 @@ void NetworkProcess::removeKeptAliveLoad(NetworkResourceLoader& loader)
         session->removeKeptAliveLoad(loader);
 }
 
-void NetworkProcess::webPageWasAdded(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t pageID, uint64_t oldPageID)
+void NetworkProcess::webPageWasAdded(IPC::Connection& connection, PAL::SessionID sessionID, PageIdentifier pageID, PageIdentifier oldPageID)
 {
     if (!pageID || !oldPageID) {
         LOG_ERROR("Cannot add page with invalid id");
@@ -2645,13 +2645,13 @@ void NetworkProcess::webPageWasAdded(IPC::Connection& connection, PAL::SessionID
         return sessionID;
     });
 
-    storageManager.createSessionStorageNamespace(pageID, std::numeric_limits<unsigned>::max());
-    storageManager.addAllowedSessionStorageNamespaceConnection(pageID, connection);
+    storageManager.createSessionStorageNamespace(pageID.toUInt64(), std::numeric_limits<unsigned>::max());
+    storageManager.addAllowedSessionStorageNamespaceConnection(pageID.toUInt64(), connection);
     if (pageID != oldPageID)
-        storageManager.cloneSessionStorageNamespace(oldPageID, pageID);
+        storageManager.cloneSessionStorageNamespace(oldPageID.toUInt64(), pageID.toUInt64());
 }
 
-void NetworkProcess::webPageWasRemoved(IPC::Connection& connection, PAL::SessionID sessionID, uint64_t pageID)
+void NetworkProcess::webPageWasRemoved(IPC::Connection& connection, PAL::SessionID sessionID, PageIdentifier pageID)
 {
     if (!pageID) {
         LOG_ERROR("Cannot remove page with invalid id");
@@ -2664,8 +2664,8 @@ void NetworkProcess::webPageWasRemoved(IPC::Connection& connection, PAL::Session
         return;
 
     auto& storageManager = session->storageManager();
-    storageManager.removeAllowedSessionStorageNamespaceConnection(pageID, connection);
-    storageManager.destroySessionStorageNamespace(pageID);
+    storageManager.removeAllowedSessionStorageNamespaceConnection(pageID.toUInt64(), connection);
+    storageManager.destroySessionStorageNamespace(pageID.toUInt64());
 }
 
 void NetworkProcess::webProcessWasDisconnected(IPC::Connection& connection)
@@ -2681,7 +2681,7 @@ void NetworkProcess::webProcessWasDisconnected(IPC::Connection& connection)
     networkSession(sessionID)->storageManager().processDidCloseConnection(connection);
 }
 
-void NetworkProcess::webProcessSessionChanged(IPC::Connection& connection, PAL::SessionID newSessionID, const Vector<uint64_t>& pageIDs)
+void NetworkProcess::webProcessSessionChanged(IPC::Connection& connection, PAL::SessionID newSessionID, const Vector<PageIdentifier>& pageIDs)
 {
     auto connectionID = connection.uniqueID();
     ASSERT(m_sessionByConnection.contains(connectionID));

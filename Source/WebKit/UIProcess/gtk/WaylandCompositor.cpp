@@ -380,7 +380,7 @@ static const struct wl_webkitgtk_interface webkitgtkInterface = {
             return;
 
         auto* compositor = static_cast<WaylandCompositor*>(wl_resource_get_user_data(resource));
-        compositor->bindSurfaceToWebPage(surface, pageID);
+        compositor->bindSurfaceToWebPage(surface, makeObjectIdentifier<PageIdentifierType>(pageID));
     }
 };
 
@@ -547,7 +547,7 @@ bool WaylandCompositor::getTexture(WebPageProxy& webPage, unsigned& texture, Int
     return false;
 }
 
-void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface, uint64_t pageID)
+void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface, WebCore::PageIdentifier pageID)
 {
     WebPageProxy* webPage = nullptr;
     for (auto* page : m_pageMap.keys()) {

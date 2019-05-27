@@ -89,7 +89,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
-        if (auto* webPage = WebProcess::singleton().webPage(decoder.destinationID()))
+        if (auto* webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->didReceiveWebPageMessage(connection, decoder);
         return;
     }
@@ -149,7 +149,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(decoder.destinationID()))
+        if (auto webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->paymentCoordinator()->didReceiveMessage(connection, decoder);
         return;
     }
@@ -171,7 +171,7 @@ void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(decoder.destinationID()))
+        if (auto webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return;
     }

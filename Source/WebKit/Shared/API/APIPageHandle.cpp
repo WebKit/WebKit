@@ -31,17 +31,17 @@
 
 namespace API {
 
-Ref<PageHandle> PageHandle::create(uint64_t pageID)
+Ref<PageHandle> PageHandle::create(WebCore::PageIdentifier pageID)
 {
     return adoptRef(*new PageHandle(pageID, false));
 }
 
-Ref<PageHandle> PageHandle::createAutoconverting(uint64_t pageID)
+Ref<PageHandle> PageHandle::createAutoconverting(WebCore::PageIdentifier pageID)
 {
     return adoptRef(*new PageHandle(pageID, true));
 }
 
-PageHandle::PageHandle(uint64_t pageID, bool isAutoconverting)
+PageHandle::PageHandle(WebCore::PageIdentifier pageID, bool isAutoconverting)
     : m_pageID(pageID)
     , m_isAutoconverting(isAutoconverting)
 {
@@ -59,15 +59,16 @@ void PageHandle::encode(IPC::Encoder& encoder) const
 
 bool PageHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
-    uint64_t pageID;
-    if (!decoder.decode(pageID))
+    Optional<WebCore::PageIdentifier> pageID;
+    decoder >> pageID;
+    if (!pageID)
         return false;
 
     bool isAutoconverting;
     if (!decoder.decode(isAutoconverting))
         return false;
 
-    result = isAutoconverting ? createAutoconverting(pageID) : create(pageID);
+    result = isAutoconverting ? createAutoconverting(*pageID) : create(*pageID);
     return true;
 }
 

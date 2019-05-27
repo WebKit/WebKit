@@ -288,7 +288,7 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
 
-    uint64_t newPageID = 0;
+    Optional<PageIdentifier> newPageID;
     Optional<WebPageCreationParameters> parameters;
     if (!webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->pageID(), request.resourceRequest(), windowFeatures, navigationActionData), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page.pageID()))
         return nullptr;
@@ -299,8 +299,8 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
     if (parameters->sessionID == m_page.sessionID())
         parameters->oldPageID = m_page.pageID();
 
-    webProcess.createWebPage(newPageID, WTFMove(*parameters));
-    return webProcess.webPage(newPageID)->corePage();
+    webProcess.createWebPage(*newPageID, WTFMove(*parameters));
+    return webProcess.webPage(*newPageID)->corePage();
 }
 
 void WebChromeClient::show()
@@ -1322,12 +1322,12 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, uint64_t, CompletionHandler<void(bool)>&& completionHandler)
+void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, PageIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_page.hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, WTFMove(completionHandler));
 }
 
-void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, uint64_t, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
+void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, uint64_t frameID, PageIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&& completionHandler)
 {
     m_page.requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, WTFMove(completionHandler));
 }

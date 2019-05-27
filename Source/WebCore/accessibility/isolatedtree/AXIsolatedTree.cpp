@@ -67,7 +67,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create()
     return adoptRef(*new AXIsolatedTree());
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::initializePageTreeForID(uint64_t pageID, AXObjectCache& cache)
+Ref<AXIsolatedTree> AXIsolatedTree::initializePageTreeForID(PageIdentifier pageID, AXObjectCache& cache)
 {
     RELEASE_ASSERT(isMainThread());
     auto tree = cache->generateIsolatedAccessibilityTree();
@@ -87,7 +87,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
     return treeIDCache().get(treeID);
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(uint64_t pageID)
+Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(PageIdentifier pageID)
 {
     LockHolder locker(s_cacheLock);
 
@@ -97,7 +97,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(uint64_t pageID)
     return newTree;
 }
 
-RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(uint64_t pageID)
+RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 {
     LockHolder locker(s_cacheLock);
 

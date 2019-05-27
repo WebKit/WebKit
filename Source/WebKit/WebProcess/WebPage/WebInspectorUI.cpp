@@ -58,7 +58,7 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 #endif
 }
 
-void WebInspectorUI::establishConnection(uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
+void WebInspectorUI::establishConnection(PageIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
 {
     m_inspectedPageIdentifier = inspectedPageIdentifier;
     m_frontendAPIDispatcher.reset();
@@ -167,7 +167,7 @@ void WebInspectorUI::closeWindow()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
 
-    m_inspectedPageIdentifier = 0;
+    m_inspectedPageIdentifier = { };
     m_underTest = false;
 }
 

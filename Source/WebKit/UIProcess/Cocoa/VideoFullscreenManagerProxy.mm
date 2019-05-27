@@ -620,43 +620,43 @@ void VideoFullscreenManagerProxy::preparedToExitFullscreen(uint64_t contextId)
 
 void VideoFullscreenManagerProxy::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
-    m_page->send(Messages::VideoFullscreenManager::RequestFullscreenMode(contextId, mode, finishedWithMedia), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::RequestFullscreenMode(contextId, mode, finishedWithMedia));
 }
 
 void VideoFullscreenManagerProxy::requestUpdateInlineRect(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::RequestUpdateInlineRect(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::RequestUpdateInlineRect(contextId));
 }
 
 void VideoFullscreenManagerProxy::requestVideoContentLayer(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::RequestVideoContentLayer(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::RequestVideoContentLayer(contextId));
 }
 
 void VideoFullscreenManagerProxy::returnVideoContentLayer(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::ReturnVideoContentLayer(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::ReturnVideoContentLayer(contextId));
 }
 
 void VideoFullscreenManagerProxy::didSetupFullscreen(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::DidSetupFullscreen(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::DidSetupFullscreen(contextId));
 }
 
 void VideoFullscreenManagerProxy::willExitFullscreen(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::WillExitFullscreen(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::WillExitFullscreen(contextId));
 }
 
 void VideoFullscreenManagerProxy::didExitFullscreen(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::DidExitFullscreen(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::DidExitFullscreen(contextId));
     m_page->didExitFullscreen();
 }
 
 void VideoFullscreenManagerProxy::didEnterFullscreen(uint64_t contextId)
 {
-    m_page->send(Messages::VideoFullscreenManager::DidEnterFullscreen(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::DidEnterFullscreen(contextId));
     m_page->didEnterFullscreen();
 }
 
@@ -670,7 +670,7 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(uint64_t contextId)
     [CATransaction flush];
     [model->layerHostView() removeFromSuperview];
     model->setLayerHostView(nullptr);
-    m_page->send(Messages::VideoFullscreenManager::DidCleanupFullscreen(contextId), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::DidCleanupFullscreen(contextId));
 
     interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
     removeClientForContext(contextId);
@@ -688,25 +688,25 @@ void VideoFullscreenManagerProxy::setVideoLayerFrame(uint64_t contextId, WebCore
         mach_port_name_t fencePort = fenceSendRight.leakSendRight();
 #endif
 
-        m_page->send(Messages::VideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)), m_page->pageID());
+        m_page->send(Messages::VideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)));
     }
 }
 
 void VideoFullscreenManagerProxy::setVideoLayerGravity(uint64_t contextId, WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
-    m_page->send(Messages::VideoFullscreenManager::SetVideoLayerGravityEnum(contextId, (unsigned)gravity), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::SetVideoLayerGravityEnum(contextId, (unsigned)gravity));
 }
 
 void VideoFullscreenManagerProxy::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, mode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
-    m_page->send(Messages::VideoFullscreenManager::FullscreenModeChanged(contextId, mode), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::FullscreenModeChanged(contextId, mode));
 }
 
 void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId)
 {
     bool isViewVisible = m_page->isViewVisible();
-    m_page->send(Messages::VideoFullscreenManager::FullscreenMayReturnToInline(contextId, isViewVisible), m_page->pageID());
+    m_page->send(Messages::VideoFullscreenManager::FullscreenMayReturnToInline(contextId, isViewVisible));
 }
 
 #endif

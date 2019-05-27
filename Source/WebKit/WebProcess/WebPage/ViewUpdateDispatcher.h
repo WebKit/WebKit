@@ -29,6 +29,7 @@
 #include "Connection.h"
 
 #include "VisibleContentRectUpdateInfo.h"
+#include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
@@ -47,7 +48,7 @@ private:
     // IPC::Connection::WorkQueueMessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void visibleContentRectUpdate(uint64_t pageID, const VisibleContentRectUpdateInfo&);
+    void visibleContentRectUpdate(WebCore::PageIdentifier, const VisibleContentRectUpdateInfo&);
 
     void dispatchVisibleContentRectUpdate();
 
@@ -58,7 +59,7 @@ private:
 
     Ref<WorkQueue> m_queue;
     Lock m_dataMutex;
-    HashMap<uint64_t, UpdateData> m_latestUpdate;
+    HashMap<WebCore::PageIdentifier, UpdateData> m_latestUpdate;
 };
 
 } // namespace WebKit

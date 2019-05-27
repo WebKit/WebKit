@@ -209,7 +209,7 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 {
 }
 
-Optional<uint64_t> WebFrameLoaderClient::pageID() const
+Optional<PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     return WTF::nullopt;
 }

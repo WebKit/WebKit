@@ -205,6 +205,7 @@ def forward_declarations_and_headers(receiver):
         'String',
         'WebCore::DocumentIdentifier',
         'WebCore::FetchIdentifier',
+        'WebCore::PageIdentifier',
         'WebCore::PointerID',
         'WebCore::ProcessIdentifier',
         'WebCore::ServiceWorkerIdentifier',

@@ -26,13 +26,15 @@
 #ifndef WKAccessibilityWebPageObjectBase_h
 #define WKAccessibilityWebPageObjectBase_h
 
+#include <WebCore/PageIdentifier.h>
+
 namespace WebKit {
 class WebPage;
 }
 
 @interface WKAccessibilityWebPageObjectBase : NSObject {
     WebKit::WebPage* m_page;
-    uint64_t m_pageID;
+    WebCore::PageIdentifier m_pageID;
     id m_parent;
     bool m_hasMainFramePlugin;
 }

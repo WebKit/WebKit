@@ -39,6 +39,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebSQLiteDatabaseTracker.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #if PLATFORM(MAC)
 #include <WebCore/ScreenProperties.h>
@@ -145,9 +146,9 @@ public:
 
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 
-    WebPage* webPage(uint64_t pageID) const;
-    void createWebPage(uint64_t pageID, WebPageCreationParameters&&);
-    void removeWebPage(PAL::SessionID, uint64_t pageID);
+    WebPage* webPage(WebCore::PageIdentifier) const;
+    void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
+    void removeWebPage(PAL::SessionID, WebCore::PageIdentifier);
     WebPage* focusedWebPage() const;
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
@@ -199,8 +200,8 @@ public:
 
     void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
 
-    void pageDidEnterWindow(uint64_t pageID);
-    void pageWillLeaveWindow(uint64_t pageID);
+    void pageDidEnterWindow(WebCore::PageIdentifier);
+    void pageWillLeaveWindow(WebCore::PageIdentifier);
 
     void nonVisibleProcessCleanupTimerFired();
 
@@ -219,7 +220,7 @@ public:
 
     void updateActivePages();
     void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
-    void pageActivityStateDidChange(uint64_t pageID, OptionSet<WebCore::ActivityState::Flag> changed);
+    void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState::Flag> changed);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 
@@ -359,7 +360,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore&, PAL::SessionID);
+    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&, PAL::SessionID);
     void registerServiceWorkerClients();
 #endif
 
@@ -460,7 +461,7 @@ private:
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
-    HashMap<uint64_t, RefPtr<WebPage>> m_pageMap;
+    HashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;
     HashMap<uint64_t, RefPtr<WebPageGroupProxy>> m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
 
@@ -514,7 +515,7 @@ private:
 
     bool m_processIsSuspended { false };
 
-    HashSet<uint64_t> m_pagesInWindows;
+    HashSet<WebCore::PageIdentifier> m_pagesInWindows;
     WebCore::Timer m_nonVisibleProcessCleanupTimer;
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;

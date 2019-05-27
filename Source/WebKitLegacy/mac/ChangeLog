@@ -1,3 +1,14 @@
+2019-05-27  Chris Dumez  <cdumez@apple.com>
+
+        Use a strongly-typed identifier for pages
+        https://bugs.webkit.org/show_bug.cgi?id=198206
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::pageID const):
+
 2019-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dropped text, attachments, and images should animate into place

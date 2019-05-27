@@ -1,3 +1,13 @@
+2019-05-27  Chris Dumez  <cdumez@apple.com>
+
+        Use a strongly-typed identifier for pages
+        https://bugs.webkit.org/show_bug.cgi?id=198206
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::operator<<):
+
 2019-05-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use target oriented design for bmalloc

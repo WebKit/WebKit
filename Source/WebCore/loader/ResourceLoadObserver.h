@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CanvasActivityRecord.h"
+#include "PageIdentifier.h"
 #include "ResourceLoadStatistics.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -73,7 +74,7 @@ public:
     WEBCORE_EXPORT String statisticsForURL(const URL&);
 
     WEBCORE_EXPORT void setStatisticsUpdatedCallback(WTF::Function<void(Vector<ResourceLoadStatistics>&&)>&&);
-    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(PAL::SessionID, const RegistrableDomain&, uint64_t, const RegistrableDomain&)>&&);
+    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)>&&);
     WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&)>&&);
     WEBCORE_EXPORT void setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
     WEBCORE_EXPORT void setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
@@ -94,13 +95,13 @@ private:
     Vector<ResourceLoadStatistics> takeStatistics();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void requestStorageAccessUnderOpener(PAL::SessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument);
+    void requestStorageAccessUnderOpener(PAL::SessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument);
 #endif
 
     HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;
     Function<void(Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
-    Function<void(PAL::SessionID, const RegistrableDomain&, uint64_t, const RegistrableDomain&)> m_requestStorageAccessUnderOpenerCallback;
+    Function<void(PAL::SessionID, const RegistrableDomain&, PageIdentifier, const RegistrableDomain&)> m_requestStorageAccessUnderOpenerCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&)> m_logUserInteractionNotificationCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logWebSocketLoadingNotificationCallback;
     Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logSubresourceLoadingNotificationCallback;

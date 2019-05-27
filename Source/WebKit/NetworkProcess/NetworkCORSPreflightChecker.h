@@ -49,7 +49,7 @@ public:
         String referrer;
         String userAgent;
         PAL::SessionID sessionID;
-        uint64_t pageID;
+        WebCore::PageIdentifier pageID;
         uint64_t frameID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
     };

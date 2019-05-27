@@ -66,7 +66,7 @@ IPC::Connection* WebPaymentCoordinatorProxy::messageSenderConnection() const
 
 uint64_t WebPaymentCoordinatorProxy::messageSenderDestinationID() const
 {
-    return *m_destinationID;
+    return m_destinationID->toUInt64();
 }
 
 void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&& reply)
@@ -84,7 +84,7 @@ void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifi
     platformOpenPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-void WebPaymentCoordinatorProxy::showPaymentUI(uint64_t destinationID, PAL::SessionID sessionID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, PAL::SessionID sessionID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto& coordinator = activePaymentCoordinatorProxy())
         coordinator->didCancelPaymentSession();

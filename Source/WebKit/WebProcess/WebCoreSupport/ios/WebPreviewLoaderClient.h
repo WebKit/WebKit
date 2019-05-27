@@ -35,16 +35,16 @@ class WebFrame;
 
 class WebPreviewLoaderClient final : public WebCore::PreviewLoaderClient {
 public:
-    static Ref<WebPreviewLoaderClient> create(const String& fileName, const String& uti, uint64_t pageID)
+    static Ref<WebPreviewLoaderClient> create(const String& fileName, const String& uti, WebCore::PageIdentifier pageID)
     {
         return adoptRef(*new WebPreviewLoaderClient(fileName, uti, pageID));
     }
     ~WebPreviewLoaderClient();
 
-    static void didReceivePassword(const String&, uint64_t pageID);
+    static void didReceivePassword(const String&, WebCore::PageIdentifier);
 
 private:
-    WebPreviewLoaderClient(const String& fileName, const String& uti, uint64_t pageID);
+    WebPreviewLoaderClient(const String& fileName, const String& uti, WebCore::PageIdentifier);
     void didReceiveDataArray(CFArrayRef) override;
     void didFinishLoading() override;
     void didFail() override;
@@ -53,7 +53,7 @@ private:
 
     const String m_fileName;
     const String m_uti;
-    const uint64_t m_pageID;
+    const WebCore::PageIdentifier m_pageID;
     QuickLookDocumentData m_data;
 };
 

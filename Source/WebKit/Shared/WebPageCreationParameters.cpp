@@ -53,7 +53,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << userAgent;
     encoder << itemStates;
     encoder << sessionID;
-    encoder << userContentControllerID.toUInt64();
+    encoder << userContentControllerID;
     encoder << visitedLinkTableID;
     encoder << websiteDataStoreID;
     encoder << canRunBeforeUnloadConfirmPanel;
@@ -193,11 +193,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.sessionID))
         return WTF::nullopt;
 
-    Optional<uint64_t> userContentControllerIdentifier;
+    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
         return WTF::nullopt;
-    parameters.userContentControllerID = makeObjectIdentifier<UserContentControllerIdentifierType>(*userContentControllerIdentifier);
+    parameters.userContentControllerID = *userContentControllerIdentifier;
 
     if (!decoder.decode(parameters.visitedLinkTableID))
         return WTF::nullopt;
@@ -392,7 +392,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.backgroundColor = WTFMove(*backgroundColor);
 
-    Optional<Optional<uint64_t>> oldPageID;
+    Optional<Optional<PageIdentifier>> oldPageID;
     decoder >> oldPageID;
     if (!oldPageID)
         return WTF::nullopt;

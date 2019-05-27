@@ -60,7 +60,7 @@ void ResourceLoadObserver::setStatisticsUpdatedCallback(WTF::Function<void(Vecto
     m_notificationCallback = WTFMove(notificationCallback);
 }
 
-void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain)>&& callback)
+void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, const RegistrableDomain& openerDomain)>&& callback)
 {
     ASSERT(!m_requestStorageAccessUnderOpenerCallback);
     m_requestStorageAccessUnderOpenerCallback = WTFMove(callback);
@@ -234,7 +234,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void ResourceLoadObserver::requestStorageAccessUnderOpener(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument)
+void ResourceLoadObserver::requestStorageAccessUnderOpener(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument)
 {
     auto openerUrl = openerDocument.url();
     RegistrableDomain openerDomain { openerUrl };

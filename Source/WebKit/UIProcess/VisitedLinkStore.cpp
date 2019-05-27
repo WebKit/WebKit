@@ -109,7 +109,7 @@ void VisitedLinkStore::webProcessDidCloseConnection(WebProcessProxy&, IPC::Conne
     // FIXME: Implement.
 }
 
-void VisitedLinkStore::addVisitedLinkHashFromPage(uint64_t pageID, SharedStringHash linkHash)
+void VisitedLinkStore::addVisitedLinkHashFromPage(PageIdentifier pageID, SharedStringHash linkHash)
 {
     if (auto* webPageProxy = WebProcessProxy::webPage(pageID)) {
         if (!webPageProxy->addsVisitedLinks())

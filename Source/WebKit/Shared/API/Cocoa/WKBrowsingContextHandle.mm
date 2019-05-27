@@ -28,7 +28,7 @@
 
 @implementation WKBrowsingContextHandle
 
-- (id)_initWithPageID:(uint64_t)pageID
+- (id)_initWithPageID:(WebCore::PageIdentifier)pageID
 {
     if (!(self = [super init]))
         return nil;
@@ -40,7 +40,7 @@
 
 - (NSUInteger)hash
 {
-    return _pageID;
+    return _pageID.toUInt64();
 }
 
 - (BOOL)isEqual:(id)object
@@ -53,7 +53,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeInt64:_pageID forKey:@"pageID"];
+    [coder encodeInt64:_pageID.toUInt64() forKey:@"pageID"];
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -61,7 +61,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _pageID = [coder decodeInt64ForKey:@"pageID"];
+    _pageID = makeObjectIdentifier<WebCore::PageIdentifierType>([coder decodeInt64ForKey:@"pageID"]);
 
     return self;
 }

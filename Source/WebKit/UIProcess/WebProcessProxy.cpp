@@ -110,10 +110,9 @@ WebProcessProxy* WebProcessProxy::processForIdentifier(ProcessIdentifier identif
     return allProcesses().get(identifier);
 }
 
-uint64_t WebProcessProxy::generatePageID()
+PageIdentifier WebProcessProxy::generatePageID()
 {
-    static uint64_t uniquePageID;
-    return ++uniquePageID;
+    return PageIdentifier::generate();
 }
 
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
@@ -330,7 +329,7 @@ void WebProcessProxy::shutDown()
     m_processPool->disconnectProcess(this);
 }
 
-WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
+WebPageProxy* WebProcessProxy::webPage(PageIdentifier pageID)
 {
     return globalPageMap().get(pageID);
 }
@@ -363,7 +362,7 @@ void WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Object* message
 
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
-    uint64_t pageID = generatePageID();
+    auto pageID = generatePageID();
     Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTFMove(pageConfiguration));
 
     addExistingWebPage(webPage.get(), BeginsUsingDataStore::Yes);
@@ -415,10 +414,10 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     maybeShutDown();
 }
 
-void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, uint64_t pageID)
+void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, PageIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(&visitedLinkStore, [] {
-        return HashSet<uint64_t> { };
+        return HashSet<PageIdentifier> { };
     }).iterator->value;
 
     ASSERT(!users.contains(pageID));
@@ -428,7 +427,7 @@ void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore
         visitedLinkStore.addProcess(*this);
 }
 
-void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, uint64_t pageID)
+void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, PageIdentifier pageID)
 {
     auto it = m_visitedLinkStoresWithUsers.find(&visitedLinkStore);
     if (it == m_visitedLinkStoresWithUsers.end())
@@ -541,7 +540,7 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-bool WebProcessProxy::hasProvisionalPageWithID(uint64_t pageID) const
+bool WebProcessProxy::hasProvisionalPageWithID(PageIdentifier pageID) const
 {
     for (auto* provisionalPage : m_provisionalPages) {
         if (provisionalPage->page().pageID() == pageID)

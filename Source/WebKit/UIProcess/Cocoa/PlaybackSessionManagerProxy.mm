@@ -527,94 +527,94 @@ void PlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t con
 
 void PlaybackSessionManagerProxy::play(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::Play(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::Play(contextId));
 }
 
 void PlaybackSessionManagerProxy::pause(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::Pause(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::Pause(contextId));
 }
 
 void PlaybackSessionManagerProxy::togglePlayState(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::TogglePlayState(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::TogglePlayState(contextId));
 }
 
 void PlaybackSessionManagerProxy::beginScrubbing(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::BeginScrubbing(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::BeginScrubbing(contextId));
 }
 
 void PlaybackSessionManagerProxy::endScrubbing(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::EndScrubbing(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::EndScrubbing(contextId));
 }
 
 void PlaybackSessionManagerProxy::seekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter)
 {
-    m_page->send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter));
 }
 
 void PlaybackSessionManagerProxy::fastSeek(uint64_t contextId, double time)
 {
-    m_page->send(Messages::PlaybackSessionManager::FastSeek(contextId, time), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::FastSeek(contextId, time));
 }
 
 void PlaybackSessionManagerProxy::beginScanningForward(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::BeginScanningForward(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::BeginScanningForward(contextId));
 }
 
 void PlaybackSessionManagerProxy::beginScanningBackward(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::BeginScanningBackward(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::BeginScanningBackward(contextId));
 }
 
 void PlaybackSessionManagerProxy::endScanning(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::EndScanning(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::EndScanning(contextId));
 }
 
 void PlaybackSessionManagerProxy::selectAudioMediaOption(uint64_t contextId, uint64_t index)
 {
-    m_page->send(Messages::PlaybackSessionManager::SelectAudioMediaOption(contextId, index), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SelectAudioMediaOption(contextId, index));
 }
 
 void PlaybackSessionManagerProxy::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
 {
-    m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index));
 }
 
 void PlaybackSessionManagerProxy::togglePictureInPicture(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId));
 }
 
 void PlaybackSessionManagerProxy::toggleMuted(uint64_t contextId)
 {
-    m_page->send(Messages::PlaybackSessionManager::ToggleMuted(contextId), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::ToggleMuted(contextId));
 }
 
 void PlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
 {
-    m_page->send(Messages::PlaybackSessionManager::SetMuted(contextId, muted), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SetMuted(contextId, muted));
 }
 
 void PlaybackSessionManagerProxy::setVolume(uint64_t contextId, double volume)
 {
-    m_page->send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SetVolume(contextId, volume));
 }
 
 void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(uint64_t contextId, bool value)
 {
     if (m_page)
-        m_page->send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value), m_page->pageID());
+        m_page->send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value));
 }
 
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
     if (m_controlsManagerContextId)
-        m_page->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), m_page->pageID());
+        m_page->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId));
 }
 
 PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerInterface()

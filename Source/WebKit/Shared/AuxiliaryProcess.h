@@ -62,6 +62,18 @@ public:
     void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
     void removeMessageReceiver(IPC::StringReference messageReceiverName);
     void removeMessageReceiver(IPC::MessageReceiver&);
+    
+    template <typename T>
+    void addMessageReceiver(IPC::StringReference messageReceiverName, ObjectIdentifier<T> destinationID, IPC::MessageReceiver& receiver)
+    {
+        addMessageReceiver(messageReceiverName, destinationID.toUInt64(), receiver);
+    }
+    
+    template <typename T>
+    void removeMessageReceiver(IPC::StringReference messageReceiverName, ObjectIdentifier<T> destinationID)
+    {
+        removeMessageReceiver(messageReceiverName, destinationID.toUInt64());
+    }
 
     void setProcessSuppressionEnabled(bool);
 

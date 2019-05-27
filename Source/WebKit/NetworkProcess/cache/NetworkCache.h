@@ -28,6 +28,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/OptionSet.h>
@@ -84,7 +85,7 @@ enum class UseDecision {
     NoDueToExpiredRedirect
 };
 
-using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>;
+using GlobalFrameID = std::pair<WebCore::PageIdentifier, uint64_t /*webFrameID*/>;
 
 class Cache : public RefCounted<Cache> {
 public:

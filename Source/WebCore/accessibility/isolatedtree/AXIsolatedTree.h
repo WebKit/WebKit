@@ -28,6 +28,7 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #include "AXIsolatedTreeNode.h"
+#include "PageIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -43,9 +44,9 @@ public:
     static Ref<AXIsolatedTree> create();
     virtual ~AXIsolatedTree();
 
-    static Ref<AXIsolatedTree> createTreeForPageID(uint64_t pageID);
-    WEBCORE_EXPORT static Ref<AXIsolatedTree> initializePageTreeForID(uint64_t pageID, AXObjectCache&);
-    WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(uint64_t pageID);
+    static Ref<AXIsolatedTree> createTreeForPageID(PageIdentifier);
+    WEBCORE_EXPORT static Ref<AXIsolatedTree> initializePageTreeForID(PageIdentifier, AXObjectCache&);
+    WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
 
     WEBCORE_EXPORT RefPtr<AXIsolatedTreeNode> rootNode();
@@ -70,7 +71,7 @@ private:
     AXIsolatedTree();
 
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache();
-    static HashMap<uint64_t, Ref<AXIsolatedTree>>& treePageCache();
+    static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
 
     // Only access on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedTreeNode>> m_readerThreadNodeMap;

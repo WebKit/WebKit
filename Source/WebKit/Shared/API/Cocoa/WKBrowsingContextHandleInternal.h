@@ -24,11 +24,12 @@
  */
 
 #import "WKBrowsingContextHandle.h"
+#import <WebCore/PageIdentifier.h>
 
 @interface WKBrowsingContextHandle ()
 
-@property (nonatomic, readonly, getter = _pageID) uint64_t pageID;
+@property (nonatomic, readonly, getter=_pageID) WebCore::PageIdentifier pageID;
 
-- (id)_initWithPageID:(uint64_t)pageID;
+- (id)_initWithPageID:(WebCore::PageIdentifier)pageID;
 
 @end

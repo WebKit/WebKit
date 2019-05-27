@@ -7770,7 +7770,7 @@ Logger& Document::logger()
     return *m_logger;
 }
     
-Optional<uint64_t> Document::pageID() const
+Optional<PageIdentifier> Document::pageID() const
 {
     return m_frame->loader().client().pageID();
 }

@@ -42,6 +42,7 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBServer.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -137,8 +138,6 @@ public:
     using NavigatedToDomain = WebCore::RegistrableDomain;
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
-    using OpenerPageID = uint64_t;
-    using PageID = uint64_t;
     using FrameID = uint64_t;
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
@@ -191,9 +190,9 @@ public:
     void resume();
 
     // Diagnostic messages logging.
-    void logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, WebCore::ShouldSample);
-    void logDiagnosticMessageWithResult(uint64_t webPageID, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
-    void logDiagnosticMessageWithValue(uint64_t webPageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
+    void logDiagnosticMessage(WebCore::PageIdentifier, const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithResult(WebCore::PageIdentifier, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValue(WebCore::PageIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
@@ -259,7 +258,7 @@ public:
     void setTopFrameUniqueRedirectTo(PAL::SessionID, const TopFrameDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectFrom(PAL::SessionID, const TopFrameDomain&, const RedirectedFromDomain&, CompletionHandler<void()>&&);
     void registrableDomainsWithWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, uint64_t pageID);
+    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebCore::PageIdentifier);
     void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
@@ -272,10 +271,10 @@ public:
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 
-    void webPageWasAdded(IPC::Connection&, PAL::SessionID, uint64_t pageID, uint64_t oldPageID);
-    void webPageWasRemoved(IPC::Connection&, PAL::SessionID, uint64_t pageID);
+    void webPageWasAdded(IPC::Connection&, PAL::SessionID, WebCore::PageIdentifier, WebCore::PageIdentifier);
+    void webPageWasRemoved(IPC::Connection&, PAL::SessionID, WebCore::PageIdentifier);
     void webProcessWasDisconnected(IPC::Connection&);
-    void webProcessSessionChanged(IPC::Connection&, PAL::SessionID, const Vector<uint64_t>&);
+    void webProcessSessionChanged(IPC::Connection&, PAL::SessionID, const Vector<WebCore::PageIdentifier>&);
     void getLocalStorageOriginDetails(PAL::SessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)

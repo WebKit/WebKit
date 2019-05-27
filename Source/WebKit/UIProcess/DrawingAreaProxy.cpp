@@ -48,12 +48,12 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPagePr
     , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
 #endif
 {
-    process.addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
+    process.addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier, *this);
 }
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
-    process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier.toUInt64());
+    process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier);
 }
 
 bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollDelta)

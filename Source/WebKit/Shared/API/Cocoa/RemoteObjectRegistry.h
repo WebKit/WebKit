@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "ProcessThrottler.h"
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Function.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
@@ -73,7 +74,7 @@ private:
     Function<void()> m_launchInitialProcessIfNecessary;
     HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
     bool m_isRegisteredAsMessageReceiver { false };
-    uint64_t m_messageReceiverID { 0 };
+    WebCore::PageIdentifier m_messageReceiverID;
 };
 
 } // namespace WebKit

@@ -311,7 +311,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, c
 
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
-    WebPage* webPage = WebProcess::singleton().webPage(m_storageNamespaceID);
+    WebPage* webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(m_storageNamespaceID));
     if (!webPage)
         return;
 

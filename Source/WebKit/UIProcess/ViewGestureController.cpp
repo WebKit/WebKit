@@ -66,10 +66,10 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
-static HashMap<uint64_t, ViewGestureController*>& viewGestureControllersForAllPages()
+static HashMap<PageIdentifier, ViewGestureController*>& viewGestureControllersForAllPages()
 {
     // The key in this map is the associated page ID.
-    static NeverDestroyed<HashMap<uint64_t, ViewGestureController*>> viewGestureControllers;
+    static NeverDestroyed<HashMap<PageIdentifier, ViewGestureController*>> viewGestureControllers;
     return viewGestureControllers.get();
 }
 
@@ -116,7 +116,7 @@ void ViewGestureController::connectToProcess()
     m_isConnectedToProcess = true;
 }
 
-ViewGestureController* ViewGestureController::controllerForGesture(uint64_t pageID, ViewGestureController::GestureID gestureID)
+ViewGestureController* ViewGestureController::controllerForGesture(PageIdentifier pageID, ViewGestureController::GestureID gestureID)
 {
     auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
     if (gestureControllerIter == viewGestureControllersForAllPages().end())
@@ -547,7 +547,7 @@ void ViewGestureController::forceRepaintIfNeeded()
 
     m_hasOutstandingRepaintRequest = true;
 
-    uint64_t pageID = m_webPageProxy.pageID();
+    auto pageID = m_webPageProxy.pageID();
     GestureID gestureID = m_currentGestureID;
     m_webPageProxy.forceRepaint(VoidCallback::create([pageID, gestureID] (CallbackBase::Error error) {
         if (auto gestureController = controllerForGesture(pageID, gestureID))

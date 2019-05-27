@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,11 @@
 
 #pragma once
 
-#include "PageIdentifier.h"
-#include <wtf/Optional.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-// Frame identifier that is unique across all WebContent processes.
-struct GlobalFrameIdentifier {
-    PageIdentifier pageID;
-    uint64_t frameID;
+enum PageIdentifierType { };
+using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GlobalFrameIdentifier> decode(Decoder&);
-};
-
-template<class Encoder>
-void GlobalFrameIdentifier::encode(Encoder& encoder) const
-{
-    encoder << pageID << frameID;
 }
-
-template<class Decoder>
-Optional<GlobalFrameIdentifier> GlobalFrameIdentifier::decode(Decoder& decoder)
-{
-    Optional<PageIdentifier> pageID;
-    decoder >> pageID;
-    if (!pageID)
-        return WTF::nullopt;
-
-    Optional<uint64_t> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return WTF::nullopt;
-
-    return { { WTFMove(*pageID), WTFMove(*frameID) } };
-}
-
-} // namespace WebCore

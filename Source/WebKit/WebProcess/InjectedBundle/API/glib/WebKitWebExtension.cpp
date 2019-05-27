@@ -224,7 +224,7 @@ WebKitWebPage* webkit_web_extension_get_page(WebKitWebExtension* extension, guin
     WebKitWebExtensionPrivate* priv = extension->priv;
     WebPageMap::const_iterator end = priv->pages.end();
     for (WebPageMap::const_iterator it = priv->pages.begin(); it != end; ++it)
-        if (it->key->pageID() == pageID)
+        if (it->key->pageID().toUInt64() == pageID)
             return it->value.get();
 
     return 0;

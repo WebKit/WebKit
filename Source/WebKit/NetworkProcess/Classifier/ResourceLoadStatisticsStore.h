@@ -90,8 +90,6 @@ public:
     using NavigatedToDomain = WebCore::RegistrableDomain;
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
-    using OpenerPageID = uint64_t;
-    using PageID = uint64_t;
     using FrameID = uint64_t;
     
     virtual ~ResourceLoadStatisticsStore();
@@ -110,7 +108,7 @@ public:
     virtual void syncStorageIfNeeded() = 0;
     virtual void syncStorageImmediately() = 0;
 
-    virtual void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, OpenerPageID, OpenerDomain&&) = 0;
+    virtual void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&) = 0;
     void removeAllStorageAccess(CompletionHandler<void()>&&);
 
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
@@ -161,9 +159,9 @@ public:
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
     void setPrevalentResourceForDebugMode(const RegistrableDomain&);
 
-    virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&) = 0;
-    virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
-    virtual void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) = 0;
+    virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
+    virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
+    virtual void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) = 0;
 
     virtual void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame) = 0;
     virtual void logUserInteraction(const TopFrameDomain&) = 0;

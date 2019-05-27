@@ -21,11 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> EventDispatcher {
-    WheelEvent(uint64_t pageID, WebKit::WebWheelEvent event, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
+    WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 #if ENABLE(IOS_TOUCH_EVENTS)
-    TouchEvent(uint64_t pageID, WebKit::WebTouchEvent event)
+    TouchEvent(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event)
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    GestureEvent(uint64_t pageID, WebKit::WebGestureEvent event)
+    GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event)
 #endif
 }

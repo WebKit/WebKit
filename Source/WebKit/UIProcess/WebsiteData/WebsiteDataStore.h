@@ -33,6 +33,7 @@
 #include "WebsiteDataStoreConfiguration.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <pal/SessionID.h>
@@ -135,7 +136,7 @@ public:
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
     void logTestingEvent(const String&);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
-    void getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&&);
+    void getAllStorageAccessEntries(WebCore::PageIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
