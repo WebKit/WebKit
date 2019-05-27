@@ -983,6 +983,7 @@
 		33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		35C74FDB228A1EF6000C21A0 /* CSSGridIntegerRepeatValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 35C74FD7228A19A6000C21A0 /* CSSGridIntegerRepeatValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3717D7E817ECC591003C276D /* extract-localizable-strings.pl in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */; };
 		371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 371E65CB13661EDC00BEEDB0 /* PageSerializer.h */; };
 		371F4FFC0D25E7F300ECE0D5 /* FontRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4FFA0D25E7F300ECE0D5 /* FontRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7100,6 +7101,8 @@
 		33503C9F10179AD7003B47E1 /* JSNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotification.cpp; sourceTree = "<group>"; };
 		33503CA010179AD7003B47E1 /* JSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotification.h; sourceTree = "<group>"; };
 		33503CC61017A1B1003B47E1 /* Notification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Notification.cpp; sourceTree = "<group>"; };
+		35C74FD3228A1912000C21A0 /* CSSGridIntegerRepeatValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridIntegerRepeatValue.cpp; sourceTree = "<group>"; };
+		35C74FD7228A19A6000C21A0 /* CSSGridIntegerRepeatValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSGridIntegerRepeatValue.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
 		37119A7920CCB610002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = "extract-localizable-strings.pl"; path = "Scripts/extract-localizable-strings.pl"; sourceTree = "<group>"; };
@@ -26591,6 +26594,8 @@
 				BC53C6910DA591140021EB5D /* CSSGradientValue.h */,
 				E110032E1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.cpp */,
 				E110032F1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h */,
+				35C74FD3228A1912000C21A0 /* CSSGridIntegerRepeatValue.cpp */,
+				35C74FD7228A19A6000C21A0 /* CSSGridIntegerRepeatValue.h */,
 				CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */,
 				CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */,
 				CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */,
@@ -28656,6 +28661,7 @@
 				BC02A63C0E09A9CF004B6D2B /* CSSFunctionValue.h in Headers */,
 				BC53C6920DA591140021EB5D /* CSSGradientValue.h in Headers */,
 				E11003311C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h in Headers */,
+				35C74FDB228A1EF6000C21A0 /* CSSGridIntegerRepeatValue.h in Headers */,
 				CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */,
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */,
 				FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */,

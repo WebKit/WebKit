@@ -288,6 +288,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
     css/CSSFontFamily.h
+    css/CSSGridIntegerRepeatValue.h
     css/CSSGroupingRule.h
     css/CSSImportRule.h
     css/CSSLineBoxContainValue.h

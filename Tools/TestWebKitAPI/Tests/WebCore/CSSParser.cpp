@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <WebCore/CSSGridIntegerRepeatValue.h>
 #include <WebCore/CSSParser.h>
 #include <WebCore/CSSValueList.h>
 #include <WebCore/StyleProperties.h>
@@ -39,6 +40,11 @@ static unsigned computeNumberOfTracks(CSSValueList& valueList)
     for (const auto& value : valueList) {
         if (value->isGridLineNamesValue())
             continue;
+        if (is<CSSGridIntegerRepeatValue>(value)) {
+            auto& repeatValue = downcast<CSSGridIntegerRepeatValue>(value.get());
+            numberOfTracks += repeatValue.repetitions() * computeNumberOfTracks(repeatValue);
+            continue;
+        }
         ++numberOfTracks;
     }
     return numberOfTracks;

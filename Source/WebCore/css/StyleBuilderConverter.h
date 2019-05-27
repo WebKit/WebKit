@@ -34,6 +34,7 @@
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
+#include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
@@ -989,12 +990,16 @@ inline bool StyleBuilderConverter::createGridTrackList(const CSSValue& value, Tr
         return false;
 
     unsigned currentNamedGridLine = 0;
-    for (auto& currentValue : downcast<CSSValueList>(value)) {
-        if (is<CSSGridLineNamesValue>(currentValue)) {
-            createGridLineNamesList(currentValue.get(), currentNamedGridLine, tracksData.m_namedGridLines, tracksData.m_orderedNamedGridLines);
-            continue;
+    auto handleLineNameOrTrackSize = [&](const CSSValue& currentValue) {
+        if (is<CSSGridLineNamesValue>(currentValue))
+            createGridLineNamesList(currentValue, currentNamedGridLine, tracksData.m_namedGridLines, tracksData.m_orderedNamedGridLines);
+        else {
+            ++currentNamedGridLine;
+            tracksData.m_trackSizes.append(createGridTrackSize(currentValue, styleResolver));
         }
+    };
 
+    for (auto& currentValue : downcast<CSSValueList>(value)) {
         if (is<CSSGridAutoRepeatValue>(currentValue)) {
             ASSERT(tracksData.m_autoRepeatTrackSizes.isEmpty());
             unsigned autoRepeatIndex = 0;
@@ -1013,8 +1018,16 @@ inline bool StyleBuilderConverter::createGridTrackList(const CSSValue& value, Tr
             continue;
         }
 
-        ++currentNamedGridLine;
-        tracksData.m_trackSizes.append(createGridTrackSize(currentValue, styleResolver));
+        if (is<CSSGridIntegerRepeatValue>(currentValue)) {
+            size_t repetitions = downcast<CSSGridIntegerRepeatValue>(currentValue.get()).repetitions();
+            for (size_t i = 0; i < repetitions; ++i) {
+                for (auto& integerRepeatValue : downcast<CSSValueList>(currentValue.get()))
+                    handleLineNameOrTrackSize(integerRepeatValue);
+            }
+            continue;
+        }
+
+        handleLineNameOrTrackSize(currentValue);
     }
 
     // The parser should have rejected any <track-list> without any <track-size> as
@@ -1099,6 +1112,7 @@ inline Vector<GridTrackSize> StyleBuilderConverter::convertGridTrackSizeList(Sty
     for (auto& currValue : valueList) {
         ASSERT(!currValue->isGridLineNamesValue());
         ASSERT(!currValue->isGridAutoRepeatValue());
+        ASSERT(!currValue->isGridIntegerRepeatValue());
         trackSizes.uncheckedAppend(convertGridTrackSize(styleResolver, currValue));
     }
     return trackSizes;

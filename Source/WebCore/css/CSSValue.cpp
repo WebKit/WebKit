@@ -65,6 +65,7 @@
 #include "CSSVariableReferenceValue.h"
 
 #include "CSSGridAutoRepeatValue.h"
+#include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 
@@ -188,6 +189,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSRevertValue>(*this, other);
         case GridAutoRepeatClass:
             return compareCSSValues<CSSGridAutoRepeatValue>(*this, other);
+        case GridIntegerRepeatClass:
+            return compareCSSValues<CSSGridIntegerRepeatValue>(*this, other);
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
         case GridTemplateAreasClass:
@@ -288,6 +291,8 @@ String CSSValue::cssText() const
         return downcast<CSSRevertValue>(*this).customCSSText();
     case GridAutoRepeatClass:
         return downcast<CSSGridAutoRepeatValue>(*this).customCSSText();
+    case GridIntegerRepeatClass:
+        return downcast<CSSGridIntegerRepeatValue>(*this).customCSSText();
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
     case GridTemplateAreasClass:
@@ -398,6 +403,9 @@ void CSSValue::destroy()
         return;
     case GridAutoRepeatClass:
         delete downcast<CSSGridAutoRepeatValue>(this);
+        return;
+    case GridIntegerRepeatClass:
+        delete downcast<CSSGridIntegerRepeatValue>(this);
         return;
     case GridLineNamesClass:
         delete downcast<CSSGridLineNamesValue>(this);

@@ -1,3 +1,15 @@
+2019-05-27  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Preserve repeat() notation when serializing declared values
+        https://bugs.webkit.org/show_bug.cgi?id=197840
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Adapt CSSPropertyParserTest to CSSGridIntegerRepeatValue.
+
+        * TestWebKitAPI/Tests/WebCore/CSSParser.cpp:
+        (TestWebKitAPI::computeNumberOfTracks):
+
 2019-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dropped text, attachments, and images should animate into place

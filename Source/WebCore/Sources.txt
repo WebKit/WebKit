@@ -672,6 +672,7 @@ css/CSSFontVariationValue.cpp
 css/CSSFunctionValue.cpp
 css/CSSGradientValue.cpp
 css/CSSGridAutoRepeatValue.cpp
+css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineNamesValue.cpp
 css/CSSGridTemplateAreasValue.cpp
 css/CSSGroupingRule.cpp

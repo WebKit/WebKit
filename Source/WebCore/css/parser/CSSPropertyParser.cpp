@@ -47,6 +47,7 @@
 #include "CSSFontStyleValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
+#include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -3404,10 +3405,10 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
     else {
         // We clamp the repetitions to a multiple of the repeat() track list's size, while staying below the max grid size.
         repetitions = std::min(repetitions, GridPosition::max() / numberOfTracks);
-        for (size_t i = 0; i < repetitions; ++i) {
-            for (size_t j = 0; j < repeatedValues->length(); ++j)
-                list.append(*repeatedValues->itemWithoutBoundsCheck(j));
-        }
+        RefPtr<CSSValueList> integerRepeatedValues = CSSGridIntegerRepeatValue::create(repetitions);
+        for (size_t i = 0; i < repeatedValues->length(); ++i)
+            integerRepeatedValues->append(*repeatedValues->itemWithoutBoundsCheck(i));
+        list.append(integerRepeatedValues.releaseNonNull());
     }
     return true;
 }

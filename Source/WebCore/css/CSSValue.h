@@ -111,6 +111,7 @@ public:
 #endif
     bool isContentDistributionValue() const { return m_classType == CSSContentDistributionClass; }
     bool isGridAutoRepeatValue() const { return m_classType == GridAutoRepeatClass; }
+    bool isGridIntegerRepeatValue() const { return m_classType == GridIntegerRepeatClass; }
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
@@ -200,6 +201,7 @@ protected:
         ImageSetClass,
         GridLineNamesClass,
         GridAutoRepeatClass,
+        GridIntegerRepeatClass,
         // Do not append non-list class types here.
     };
 
