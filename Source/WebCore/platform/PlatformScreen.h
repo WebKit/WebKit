@@ -127,8 +127,8 @@ WEBCORE_EXPORT float screenScaleFactor(UIScreen * = nullptr);
 bool screenHasTouchDevice();
 bool screenIsTouchPrimaryInputDevice();
 #else
-bool screenHasTouchDevice() { return true; }
-bool screenIsTouchPrimaryInputDevice() { return true; }
+constexpr bool screenHasTouchDevice() { return true; }
+constexpr bool screenIsTouchPrimaryInputDevice() { return true; }
 #endif
 #endif
 
