@@ -1,5 +1,11 @@
 2019-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.1 release
+
+        * gtk/NEWS: Add release notes for 2.25.1.
+
+2019-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK distcheck
 
         Remove symbols that are not longer present in the library.
