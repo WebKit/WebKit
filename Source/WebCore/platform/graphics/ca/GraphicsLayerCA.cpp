@@ -304,6 +304,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
     case Type::Normal:
     case Type::PageTiledBacking:
     case Type::ScrollContainer:
+    case Type::ScrolledContents:
         return true;
     case Type::Shape:
 #if PLATFORM(COCOA)
@@ -415,6 +416,7 @@ void GraphicsLayerCA::initialize(Type layerType)
     PlatformCALayer::LayerType platformLayerType;
     switch (layerType) {
     case Type::Normal:
+    case Type::ScrolledContents:
         platformLayerType = PlatformCALayer::LayerType::LayerTypeWebLayer;
         break;
     case Type::PageTiledBacking:
@@ -1448,6 +1450,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
         tiledBacking()->adjustTileCoverageRect(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
         break;
     case Type::Normal:
+    case Type::ScrolledContents:
         if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
             coverageRect.unite(adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, rects.visibleRect, m_sizeAtLastCoverageRectUpdate, m_size));
         break;

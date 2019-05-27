@@ -79,6 +79,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
     case Type::Normal:
     case Type::PageTiledBacking:
     case Type::ScrollContainer:
+    case Type::ScrolledContents:
         return true;
     case Type::Shape:
         return false;

@@ -240,6 +240,7 @@ public:
         Normal,
         PageTiledBacking,
         ScrollContainer,
+        ScrolledContents,
         Shape
     };
 
