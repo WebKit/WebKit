@@ -81,6 +81,7 @@
 #include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/UserStyleSheet.h>
+#include <WebCore/VelocityData.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
 #include <pal/SessionID.h>
@@ -923,6 +924,36 @@ bool ArgumentCoder<ViewportAttributes>::decode(Decoder& decoder, ViewportAttribu
     return SimpleArgumentCoder<ViewportAttributes>::decode(decoder, viewportAttributes);
 }
 
+void ArgumentCoder<VelocityData>::encode(Encoder& encoder, const VelocityData& velocityData)
+{
+    encoder << velocityData.horizontalVelocity << velocityData.verticalVelocity << velocityData.scaleChangeRate << velocityData.lastUpdateTime;
+}
+
+bool ArgumentCoder<VelocityData>::decode(Decoder& decoder, VelocityData& velocityData)
+{
+    float horizontalVelocity;
+    if (!decoder.decode(horizontalVelocity))
+        return false;
+
+    float verticalVelocity;
+    if (!decoder.decode(verticalVelocity))
+        return false;
+
+    float scaleChangeRate;
+    if (!decoder.decode(scaleChangeRate))
+        return false;
+
+    MonotonicTime lastUpdateTime;
+    if (!decoder.decode(lastUpdateTime))
+        return false;
+
+    velocityData.horizontalVelocity = horizontalVelocity;
+    velocityData.verticalVelocity = verticalVelocity;
+    velocityData.scaleChangeRate = scaleChangeRate;
+    velocityData.lastUpdateTime = lastUpdateTime;
+
+    return true;
+}
 
 void ArgumentCoder<MimeClassInfo>::encode(Encoder& encoder, const MimeClassInfo& mimeClassInfo)
 {

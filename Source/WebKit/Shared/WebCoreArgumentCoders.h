@@ -125,6 +125,7 @@ struct TextIndicatorData;
 #if ENABLE(POINTER_EVENTS)
 struct TouchActionData;
 #endif
+struct VelocityData;
 struct ViewportAttributes;
 struct WindowFeatures;
     
@@ -332,6 +333,11 @@ template<> struct ArgumentCoder<WebCore::Length> {
 template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
     static void encode(Encoder&, const WebCore::ViewportAttributes&);
     static bool decode(Decoder&, WebCore::ViewportAttributes&);
+};
+
+template<> struct ArgumentCoder<WebCore::VelocityData> {
+    static void encode(Encoder&, const WebCore::VelocityData&);
+    static bool decode(Decoder&, WebCore::VelocityData&);
 };
 
 template<> struct ArgumentCoder<WebCore::MimeClassInfo> {

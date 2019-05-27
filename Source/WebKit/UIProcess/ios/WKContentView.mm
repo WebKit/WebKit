@@ -60,102 +60,11 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
+#import <WebCore/VelocityData.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/TextStream.h>
 
-
-namespace WebKit {
-using namespace WebCore;
-using namespace WebKit;
-
-class HistoricalVelocityData {
-public:
-    struct VelocityData {
-        VelocityData()
-            : horizontalVelocity(0)
-            , verticalVelocity(0)
-            , scaleChangeRate(0)
-        {
-        }
-
-        VelocityData(double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
-            : horizontalVelocity(horizontalVelocity)
-            , verticalVelocity(verticalVelocity)
-            , scaleChangeRate(scaleChangeRate)
-        {
-        }
-
-        double horizontalVelocity;
-        double verticalVelocity;
-        double scaleChangeRate;
-    };
-
-    HistoricalVelocityData()
-        : m_historySize(0)
-        , m_latestDataIndex(0)
-    {
-    }
-
-    VelocityData velocityForNewData(CGPoint newPosition, double scale, MonotonicTime timestamp)
-    {
-        // Due to all the source of rect update, the input is very noisy. To smooth the output, we accumulate all changes
-        // within 1 frame as a single update. No speed computation is ever done on data within the same frame.
-        const Seconds filteringThreshold(1.0 / 60);
-
-        VelocityData velocityData;
-        if (m_historySize > 0) {
-            unsigned oldestDataIndex;
-            unsigned distanceToLastHistoricalData = m_historySize - 1;
-            if (distanceToLastHistoricalData <= m_latestDataIndex)
-                oldestDataIndex = m_latestDataIndex - distanceToLastHistoricalData;
-            else
-                oldestDataIndex = m_historySize - (distanceToLastHistoricalData - m_latestDataIndex);
-
-            Seconds timeDelta = timestamp - m_history[oldestDataIndex].timestamp;
-            if (timeDelta > filteringThreshold) {
-                Data& oldestData = m_history[oldestDataIndex];
-                velocityData = VelocityData((newPosition.x - oldestData.position.x) / timeDelta.seconds(), (newPosition.y - oldestData.position.y) / timeDelta.seconds(), (scale - oldestData.scale) / timeDelta.seconds());
-            }
-        }
-
-        Seconds timeSinceLastAppend = timestamp - m_lastAppendTimestamp;
-        if (timeSinceLastAppend > filteringThreshold)
-            append(newPosition, scale, timestamp);
-        else
-            m_history[m_latestDataIndex] = { timestamp, newPosition, scale };
-        return velocityData;
-    }
-
-    void clear() { m_historySize = 0; }
-
-private:
-    void append(CGPoint newPosition, double scale, MonotonicTime timestamp)
-    {
-        m_latestDataIndex = (m_latestDataIndex + 1) % maxHistoryDepth;
-        m_history[m_latestDataIndex] = { timestamp, newPosition, scale };
-
-        unsigned size = m_historySize + 1;
-        if (size <= maxHistoryDepth)
-            m_historySize = size;
-
-        m_lastAppendTimestamp = timestamp;
-    }
-
-
-    static const unsigned maxHistoryDepth = 3;
-
-    unsigned m_historySize;
-    unsigned m_latestDataIndex;
-    MonotonicTime m_lastAppendTimestamp;
-
-    struct Data {
-        MonotonicTime timestamp;
-        CGPoint position;
-        double scale;
-    } m_history[maxHistoryDepth];
-};
-} // namespace WebKit
 
 @interface WKInspectorIndicationView : UIView
 @end
@@ -223,7 +132,7 @@ private:
     RetainPtr<_UILayerHostView> _visibilityPropagationView;
 #endif
 
-    WebKit::HistoricalVelocityData _historicalKinematicData;
+    WebCore::HistoricalVelocityData _historicalKinematicData;
 
     RetainPtr<NSUndoManager> _undoManager;
     RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
@@ -463,11 +372,13 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         return;
 
     MonotonicTime timestamp = MonotonicTime::now();
-    WebKit::HistoricalVelocityData::VelocityData velocityData;
+    WebCore::VelocityData velocityData;
     if (!isStableState)
         velocityData = _historicalKinematicData.velocityForNewData(visibleContentRect.origin, zoomScale, timestamp);
-    else
+    else {
         _historicalKinematicData.clear();
+        velocityData = { 0, 0, 0, timestamp };
+    }
 
     WebKit::RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
 
@@ -489,10 +400,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         isChangingObscuredInsetsInteractively,
         _webView._allowsViewportShrinkToFit,
         enclosedInScrollableAncestorView,
-        timestamp,
-        velocityData.horizontalVelocity,
-        velocityData.verticalVelocity,
-        velocityData.scaleChangeRate,
+        velocityData,
         downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());

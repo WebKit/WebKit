@@ -32,6 +32,7 @@
 #include "PlatformCALayerClient.h"
 #include "TiledBacking.h"
 #include "Timer.h"
+#include "VelocityData.h"
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>

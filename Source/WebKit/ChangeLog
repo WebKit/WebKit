@@ -1,3 +1,45 @@
+2019-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Move VelocityData to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=198261
+
+        Reviewed by Antti Koivisto.
+
+        Move VelocityData and HistoricalVelocityData to WebCore for future use in overflow scroll.
+
+        VisibleContentRectUpdateInfo can now store a VelocityData (its timestamp is used as
+        the timetamp for the entire update).
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode const):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::scrollVelocity const):
+        (WebKit::VisibleContentRectUpdateInfo::enclosedInScrollableAncestorView const):
+        (WebKit::VisibleContentRectUpdateInfo::timestamp const):
+        (WebKit::operator==):
+        (WebKit::VisibleContentRectUpdateInfo::horizontalVelocity const): Deleted.
+        (WebKit::VisibleContentRectUpdateInfo::verticalVelocity const): Deleted.
+        (WebKit::VisibleContentRectUpdateInfo::scaleChangeRate const): Deleted.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<VelocityData>::encode):
+        (IPC::ArgumentCoder<VelocityData>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (WebKit::HistoricalVelocityData::VelocityData::VelocityData): Deleted.
+        (WebKit::HistoricalVelocityData::HistoricalVelocityData): Deleted.
+        (WebKit::HistoricalVelocityData::velocityForNewData): Deleted.
+        (WebKit::HistoricalVelocityData::clear): Deleted.
+        (WebKit::HistoricalVelocityData::append): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::adjustVelocityDataForBoundedScale):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2019-05-26  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Downgrade document.referrer to the referrer's eTLD+1 if the page was navigated to with a prevalent resource referrer containing link decoration

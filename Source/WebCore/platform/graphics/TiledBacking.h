@@ -41,32 +41,13 @@ class FloatSize;
 class IntRect;
 class IntSize;
 class PlatformCALayer;
+struct VelocityData;
 
 enum ScrollingModeIndication {
     SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication,
     SynchronousScrollingBecauseOfStyleIndication,
     SynchronousScrollingBecauseOfEventHandlersIndication,
     AsyncScrollingIndication
-};
-
-struct VelocityData  {
-    double horizontalVelocity;
-    double verticalVelocity;
-    double scaleChangeRate;
-    MonotonicTime lastUpdateTime;
-    
-    VelocityData(double horizontal = 0, double vertical = 0, double scaleChange = 0, MonotonicTime updateTime = MonotonicTime())
-        : horizontalVelocity(horizontal)
-        , verticalVelocity(vertical)
-        , scaleChangeRate(scaleChange)
-        , lastUpdateTime(updateTime)
-    {
-    }
-    
-    bool velocityOrScaleIsChanging() const
-    {
-        return horizontalVelocity || verticalVelocity || scaleChangeRate;
-    }
 };
 
 class TiledBacking {

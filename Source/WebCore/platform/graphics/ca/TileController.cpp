@@ -34,6 +34,7 @@
 #include "Region.h"
 #include "TileCoverageMap.h"
 #include "TileGrid.h"
+#include "VelocityData.h"
 #include <utility>
 #include <wtf/MainThread.h>
 #include <wtf/text/TextStream.h>
@@ -428,6 +429,7 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
     if (!m_velocity.horizontalVelocity && !m_velocity.verticalVelocity) {
         if (m_velocity.scaleChangeRate > 0) {
             coverageRect = visibleRect;
+            LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " computeTileCoverageRect - zooming, coverage is visible rect " << coverageRect);
             return;
         }
         futureRect.setWidth(futureRect.width() + horizontalMargin);
@@ -448,8 +450,9 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
     if (futureRect.y() < 0)
         futureRect.setY(0);
 
+    LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " computeTileCoverageRect - coverage " << coverageRect << " expanded to " << unionRect(coverageRect, futureRect) << " velocity " << m_velocity);
+
     coverageRect.unite(futureRect);
-    return;
 #else
     UNUSED_PARAM(contentsScale);
 

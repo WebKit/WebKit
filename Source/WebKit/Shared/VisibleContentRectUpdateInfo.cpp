@@ -43,12 +43,9 @@ void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << m_customFixedPositionRect;
     encoder << m_obscuredInsets;
     encoder << m_unobscuredSafeAreaInsets;
+    encoder << m_scrollVelocity;
     encoder << m_lastLayerTreeTransactionID;
     encoder << m_scale;
-    encoder << m_timestamp;
-    encoder << m_horizontalVelocity;
-    encoder << m_verticalVelocity;
-    encoder << m_scaleChangeRate;
     encoder << m_inStableState;
     encoder << m_isFirstUpdateForNewViewSize;
     encoder << m_isChangingObscuredInsetsInteractively;
@@ -74,17 +71,11 @@ bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentR
         return false;
     if (!decoder.decode(result.m_unobscuredSafeAreaInsets))
         return false;
+    if (!decoder.decode(result.m_scrollVelocity))
+        return false;
     if (!decoder.decode(result.m_lastLayerTreeTransactionID))
         return false;
     if (!decoder.decode(result.m_scale))
-        return false;
-    if (!decoder.decode(result.m_timestamp))
-        return false;
-    if (!decoder.decode(result.m_horizontalVelocity))
-        return false;
-    if (!decoder.decode(result.m_verticalVelocity))
-        return false;
-    if (!decoder.decode(result.m_scaleChangeRate))
         return false;
     if (!decoder.decode(result.m_inStableState))
         return false;
@@ -132,14 +123,8 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
     if (info.enclosedInScrollableAncestorView())
         ts.dumpProperty("enclosedInScrollableAncestorView", info.enclosedInScrollableAncestorView());
 
-    ts.dumpProperty("timestamp", info.timestamp().secondsSinceEpoch().value());
     ts.dumpProperty("allowShrinkToFit", info.allowShrinkToFit());
-    if (info.horizontalVelocity())
-        ts.dumpProperty("horizontalVelocity", info.horizontalVelocity());
-    if (info.verticalVelocity())
-        ts.dumpProperty("verticalVelocity", info.verticalVelocity());
-    if (info.scaleChangeRate())
-        ts.dumpProperty("scaleChangeRate", info.scaleChangeRate());
+    ts.dumpProperty("scrollVelocity", info.scrollVelocity());
 
     return ts;
 }
