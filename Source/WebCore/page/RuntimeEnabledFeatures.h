@@ -347,6 +347,8 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     bool mouseEventsSimulationEnabled() const { return m_mouseEventsSimulationEnabled; }
     void setMouseEventsSimulationEnabled(bool isEnabled) { m_mouseEventsSimulationEnabled = isEnabled; }
+    bool touchEventsEnabled() const;
+    void setTouchEventsEnabled(bool isEnabled) { m_touchEventsEnabled = isEnabled; }
 #endif
     
     bool referrerPolicyAttributeEnabled() const { return m_referrerPolicyAttributeEnabled; }
@@ -531,6 +533,7 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_mouseEventsSimulationEnabled { false };
+    Optional<bool> m_touchEventsEnabled;
 #endif
 
     bool m_isITPDatabaseEnabled { false };

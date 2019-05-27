@@ -33,6 +33,7 @@
 #include "RuntimeEnabledFeatures.h"
 
 #include "MediaPlayer.h"
+#include "PlatformScreen.h"
 #include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -62,5 +63,12 @@ bool RuntimeEnabledFeatures::spectreGadgetsEnabled() const
 {
     return JSC::Options::enableSpectreGadgets();
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool RuntimeEnabledFeatures::touchEventsEnabled() const
+{
+    return m_touchEventsEnabled.valueOr(screenHasTouchDevice());
+}
+#endif
 
 } // namespace WebCore

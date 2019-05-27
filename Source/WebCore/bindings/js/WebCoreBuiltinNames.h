@@ -276,6 +276,11 @@ namespace WebCore {
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
     macro(openDatabase) \
+    macro(ontouchcancel) \
+    macro(ontouchend) \
+    macro(ontouchmove) \
+    macro(ontouchstart) \
+    macro(ontouchforcechange) \
     macro(onvrdisplayactivate) \
     macro(onvrdisplayblur) \
     macro(onvrdisplayconnect) \

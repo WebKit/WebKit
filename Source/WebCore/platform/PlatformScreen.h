@@ -122,4 +122,14 @@ WEBCORE_EXPORT float screenScaleFactor(UIScreen * = nullptr);
 
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+bool screenHasTouchDevice();
+bool screenIsTouchPrimaryInputDevice();
+#else
+bool screenHasTouchDevice() { return true; }
+bool screenIsTouchPrimaryInputDevice() { return true; }
+#endif
+#endif
+
 } // namespace WebCore
