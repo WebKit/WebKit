@@ -37,6 +37,7 @@
 #include "VelocityData.h"
 #include <utility>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(IOSURFACE)
@@ -45,7 +46,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "TileControllerMemoryHandlerIOS.h"
-#include <wtf/MemoryPressureHandler.h>
 #endif
 
 namespace WebCore {
@@ -386,22 +386,81 @@ static FloatRect expandRectWithinRect(const FloatRect& rect, const FloatSize& ne
 }
 #endif
 
-void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& visibleRect, float contentsScale) const
+FloatRect TileController::adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) const
+{
+    // If the old visible rect is empty, we have no information about how the visible area is changing
+    // (maybe the layer was just created), so don't attempt to expand. Also don't attempt to expand
+    // if the size changed or the rects don't overlap.
+    if (previousVisibleRect.isEmpty() || sizeChanged  || !currentVisibleRect.intersects(previousVisibleRect))
+        return unionRect(coverageRect, currentVisibleRect);
+
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return unionRect(coverageRect, currentVisibleRect);
+
+    const float paddingMultiplier = 2;
+
+    float leftEdgeDelta = paddingMultiplier * (currentVisibleRect.x() - previousVisibleRect.x());
+    float rightEdgeDelta = paddingMultiplier * (currentVisibleRect.maxX() - previousVisibleRect.maxX());
+
+    float topEdgeDelta = paddingMultiplier * (currentVisibleRect.y() - previousVisibleRect.y());
+    float bottomEdgeDelta = paddingMultiplier * (currentVisibleRect.maxY() - previousVisibleRect.maxY());
+    
+    FloatRect expandedRect = currentVisibleRect;
+
+    // More exposed on left side.
+    if (leftEdgeDelta < 0) {
+        float newLeft = expandedRect.x() + leftEdgeDelta;
+        // Pad to the left, but don't reduce padding that's already in the backing store (since we're still exposing to the left).
+        if (newLeft < previousVisibleRect.x())
+            expandedRect.shiftXEdgeTo(newLeft);
+        else
+            expandedRect.shiftXEdgeTo(previousVisibleRect.x());
+    }
+
+    // More exposed on right.
+    if (rightEdgeDelta > 0) {
+        float newRight = expandedRect.maxX() + rightEdgeDelta;
+        // Pad to the right, but don't reduce padding that's already in the backing store (since we're still exposing to the right).
+        if (newRight > previousVisibleRect.maxX())
+            expandedRect.setWidth(newRight - expandedRect.x());
+        else
+            expandedRect.setWidth(previousVisibleRect.maxX() - expandedRect.x());
+    }
+
+    // More exposed at top.
+    if (topEdgeDelta < 0) {
+        float newTop = expandedRect.y() + topEdgeDelta;
+        if (newTop < previousVisibleRect.y())
+            expandedRect.shiftYEdgeTo(newTop);
+        else
+            expandedRect.shiftYEdgeTo(previousVisibleRect.y());
+    }
+
+    // More exposed on bottom.
+    if (bottomEdgeDelta > 0) {
+        float newBottom = expandedRect.maxY() + bottomEdgeDelta;
+        if (newBottom > previousVisibleRect.maxY())
+            expandedRect.setHeight(newBottom - expandedRect.y());
+        else
+            expandedRect.setHeight(previousVisibleRect.maxY() - expandedRect.y());
+    }
+    
+    expandedRect.intersect(boundsWithoutMargin());
+    return unionRect(coverageRect, expandedRect);
+}
+
+FloatRect TileController::adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& visibleRect, float contentsScale) const
 {
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
-    if (!m_isInWindow) {
-        coverageRect = visibleRect;
-        return;
-    }
+    if (!m_isInWindow)
+        return visibleRect;
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: unify the iOS and Mac code.
     UNUSED_PARAM(previousVisibleRect);
     
-    if (m_tileCoverage == CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        coverageRect = visibleRect;
-        return;
-    }
+    if (m_tileCoverage == CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return visibleRect;
 
     double horizontalMargin = kDefaultTileSize / contentsScale;
     double verticalMargin = kDefaultTileSize / contentsScale;
@@ -428,9 +487,8 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
 
     if (!m_velocity.horizontalVelocity && !m_velocity.verticalVelocity) {
         if (m_velocity.scaleChangeRate > 0) {
-            coverageRect = visibleRect;
             LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " computeTileCoverageRect - zooming, coverage is visible rect " << coverageRect);
-            return;
+            return visibleRect;
         }
         futureRect.setWidth(futureRect.width() + horizontalMargin);
         futureRect.setHeight(futureRect.height() + verticalMargin);
@@ -452,7 +510,7 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
 
     LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " computeTileCoverageRect - coverage " << coverageRect << " expanded to " << unionRect(coverageRect, futureRect) << " velocity " << m_velocity);
 
-    coverageRect.unite(futureRect);
+    return unionRect(coverageRect, futureRect);
 #else
     UNUSED_PARAM(contentsScale);
 
@@ -479,7 +537,7 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
     
     FloatRect coverage = expandRectWithinRect(visibleRect, coverageSize, coverageBounds);
     LOG_WITH_STREAM(Tiling, stream << "TileController::computeTileCoverageRect newSize=" << newSize << " mode " << m_tileCoverage << " expanded to " << coverageSize << " bounds with margin " << coverageBounds << " coverage " << coverage);
-    coverageRect.unite(coverage);
+    return unionRect(coverageRect, coverage);
 #endif
 }
 

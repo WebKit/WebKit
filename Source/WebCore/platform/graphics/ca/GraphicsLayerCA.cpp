@@ -1443,16 +1443,14 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
 {
     FloatRect coverageRect = rects.coverageRect;
 
-    // FIXME: TileController's computeTileCoverageRect() code should move here, and we should unify these different
-    // ways of computing coverage.
     switch (type()) {
     case Type::PageTiledBacking:
-        tiledBacking()->adjustTileCoverageRect(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
+        coverageRect = tiledBacking()->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
         break;
     case Type::Normal:
     case Type::ScrolledContents:
         if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-            coverageRect.unite(adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, rects.visibleRect, m_sizeAtLastCoverageRectUpdate, m_size));
+            coverageRect = tiledBacking()->adjustTileCoverageRect(coverageRect, oldVisibleRect, rects.visibleRect, size() != m_sizeAtLastCoverageRectUpdate);
         break;
     default:
         break;
@@ -2497,70 +2495,6 @@ void GraphicsLayerCA::updateDebugIndicators()
         for (auto& layer : m_layerClones->contentsLayerClones.values())
             setLayerDebugBorder(*layer, contentsLayerBorderColor, contentsLayerBorderWidth);
     }
-}
-
-FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBacking, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize)
-{
-    // If the old visible rect is empty, we have no information about how the visible area is changing
-    // (maybe the layer was just created), so don't attempt to expand. Also don't attempt to expand
-    // if the size changed or the rects don't overlap.
-    if (oldVisibleRect.isEmpty() || newSize != oldSize || !newVisibleRect.intersects(oldVisibleRect))
-        return newVisibleRect;
-
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
-        return newVisibleRect;
-
-    const float paddingMultiplier = 2;
-
-    float leftEdgeDelta = paddingMultiplier * (newVisibleRect.x() - oldVisibleRect.x());
-    float rightEdgeDelta = paddingMultiplier * (newVisibleRect.maxX() - oldVisibleRect.maxX());
-
-    float topEdgeDelta = paddingMultiplier * (newVisibleRect.y() - oldVisibleRect.y());
-    float bottomEdgeDelta = paddingMultiplier * (newVisibleRect.maxY() - oldVisibleRect.maxY());
-    
-    FloatRect existingTileBackingRect = tiledBacking->visibleRect();
-    FloatRect expandedRect = newVisibleRect;
-
-    // More exposed on left side.
-    if (leftEdgeDelta < 0) {
-        float newLeft = expandedRect.x() + leftEdgeDelta;
-        // Pad to the left, but don't reduce padding that's already in the backing store (since we're still exposing to the left).
-        if (newLeft < existingTileBackingRect.x())
-            expandedRect.shiftXEdgeTo(newLeft);
-        else
-            expandedRect.shiftXEdgeTo(existingTileBackingRect.x());
-    }
-
-    // More exposed on right.
-    if (rightEdgeDelta > 0) {
-        float newRight = expandedRect.maxX() + rightEdgeDelta;
-        // Pad to the right, but don't reduce padding that's already in the backing store (since we're still exposing to the right).
-        if (newRight > existingTileBackingRect.maxX())
-            expandedRect.setWidth(newRight - expandedRect.x());
-        else
-            expandedRect.setWidth(existingTileBackingRect.maxX() - expandedRect.x());
-    }
-
-    // More exposed at top.
-    if (topEdgeDelta < 0) {
-        float newTop = expandedRect.y() + topEdgeDelta;
-        if (newTop < existingTileBackingRect.y())
-            expandedRect.shiftYEdgeTo(newTop);
-        else
-            expandedRect.shiftYEdgeTo(existingTileBackingRect.y());
-    }
-
-    // More exposed on bottom.
-    if (bottomEdgeDelta > 0) {
-        float newBottom = expandedRect.maxY() + bottomEdgeDelta;
-        if (newBottom > existingTileBackingRect.maxY())
-            expandedRect.setHeight(newBottom - expandedRect.y());
-        else
-            expandedRect.setHeight(existingTileBackingRect.maxY() - expandedRect.y());
-    }
-    
-    expandedRect.intersect(tiledBacking->boundsWithoutMargin());
-    return expandedRect;
 }
 
 void GraphicsLayerCA::updateTiles()
