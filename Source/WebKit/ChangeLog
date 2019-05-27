@@ -2,6 +2,13 @@
 
         Unreviewed Win Cairo build fix after r245796.
 
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getAllStorageAccessEntries):
+
+2019-05-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Win Cairo build fix after r245796.
+
         * Shared/WebPageCreationParameters.cpp:
         (WebKit::WebPageCreationParameters::decode):
 
