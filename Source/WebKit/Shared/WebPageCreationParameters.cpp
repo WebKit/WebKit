@@ -392,7 +392,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.backgroundColor = WTFMove(*backgroundColor);
 
-    Optional<Optional<PageIdentifier>> oldPageID;
+    Optional<Optional<WebCore::PageIdentifier>> oldPageID;
     decoder >> oldPageID;
     if (!oldPageID)
         return WTF::nullopt;
