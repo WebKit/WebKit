@@ -543,9 +543,9 @@ void InlineFormattingContext::LineLayout::closeLine(Line& line) const
         if (firstInlineRunForLayoutBox) {
             // Setup display box for the associated layout box.
             displayBox.setTopLeft(inlineRun.logicalTopLeft());
-            displayBox.setContentBoxWidth(inlineRun.logicalWidth());
+            displayBox.setContentBoxWidth(lineItem->isCollapsed ? LayoutUnit() : inlineRun.logicalWidth());
             displayBox.setContentBoxHeight(inlineRun.logicalHeight());
-        } else {
+        } else if (!lineItem->isCollapsed) {
             // FIXME fix it for multirun/multiline.
             displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + inlineRun.logicalWidth());
         }
