@@ -1,3 +1,20 @@
+2019-05-27  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Fix opensource build of testapi
+        https://bugs.webkit.org/show_bug.cgi?id=198256
+
+        Reviewed by Alexey Proskuryakov.
+
+        In r245564, we added custom entitlements to testapi to allow caching
+        bytecode in data vaults, but we should only use the entitlements for
+        internal builds. Otherwises, testapi gets killed on launch. Also fix the
+        formatting for the errors added in the same patch, according to comments
+        in the bug after the patch had already landed.
+
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+        * Configurations/ToolExecutable.xcconfig:
+
 2019-05-25  Tadeu Zagallo  <tzagallo@apple.com>
 
         JITOperations getByVal should mark negative array indices as out-of-bounds

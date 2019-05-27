@@ -77,25 +77,25 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     if (auto metadata = FileSystem::fileMetadata(systemPath)) {
         if (metadata->type != FileMetadata::Type::File) {
-            createError([NSString stringWithFormat:@"Cache path `%s` already exists and is not a file", systemPath.utf8().data()], error);
+            createError([NSString stringWithFormat:@"Cache path `%@` already exists and is not a file", static_cast<NSString *>(systemPath)], error);
             return false;
         }
     }
 
     String directory = FileSystem::directoryName(systemPath);
     if (directory.isNull()) {
-        createError([NSString stringWithFormat:@"Cache path `%s` does not contain in a valid directory", systemPath.utf8().data()], error);
+        createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", static_cast<NSString *>(systemPath)], error);
         return false;
     }
 
     if (!FileSystem::fileIsDirectory(directory, FileSystem::ShouldFollowSymbolicLinks::No)) {
-        createError([NSString stringWithFormat:@"Cache directory `%s` is not a directory or does not exist", directory.utf8().data()], error);
+        createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", static_cast<NSString *>(directory)], error);
         return false;
     }
 
 #if USE(APPLE_INTERNAL_SDK)
     if (rootless_check_datavault_flag(FileSystem::fileSystemRepresentation(directory).data(), nullptr)) {
-        createError([NSString stringWithFormat:@"Cache directory `%s` is not a data vault", directory.utf8().data()], error);
+        createError([NSString stringWithFormat:@"Cache directory `%@` is not a data vault", static_cast<NSString *>(directory)], error);
         return false;
     }
 #endif
