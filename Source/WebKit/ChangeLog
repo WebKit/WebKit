@@ -1,3 +1,11 @@
+2019-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK distcheck
+
+        Remove symbols that are not longer present in the library.
+
+        * webkitglib-symbols.map:
+
 2019-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         Move VelocityData to WebCore

@@ -429,6 +429,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/mac/WebAccessibilityObjectWrapperBase.h
     accessibility/mac/WebAccessibilityObjectWrapperMac.h
 
+    bridge/objc/WebScriptObject.h
+    bridge/objc/WebScriptObjectPrivate.h
+
     editing/cocoa/DataDetection.h
     editing/cocoa/HTMLConverter.h
 

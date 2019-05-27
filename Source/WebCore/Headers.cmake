@@ -254,9 +254,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     bridge/jsc/BridgeJSC.h
 
-    bridge/objc/WebScriptObject.h
-    bridge/objc/WebScriptObjectPrivate.h
-
     contentextensions/CombinedFiltersAlphabet.h
     contentextensions/CombinedURLFilters.h
     contentextensions/CompiledContentExtension.h
