@@ -383,7 +383,7 @@ bool IsSameCodec(const std::string& name1,
     return false;
   // For every format besides H264 and VP9, comparing names is enough.
   if (absl::EqualsIgnoreCase(name1, kH264CodecName))
-    return webrtc::H264::IsSameH264Profile(params1, params2);
+    return webrtc::H264::IsSameH264Profile(params1, params2) && IsSameH264PacketizationMode(params1, params2);
   if (absl::EqualsIgnoreCase(name1, kVp9CodecName))
     return webrtc::IsSameVP9Profile(params1, params2);
   return true;

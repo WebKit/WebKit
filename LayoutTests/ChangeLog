@@ -1,3 +1,14 @@
+2019-05-28  Youenn Fablet  <youenn@apple.com>
+
+        createAnswer() SDP Rejected by setLocalDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=195930
+        <rdar://problem/49030489>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/h264-packetization-mode-expected.txt: Added.
+        * webrtc/h264-packetization-mode.html: Added.
+
 2019-05-28  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r245475.
