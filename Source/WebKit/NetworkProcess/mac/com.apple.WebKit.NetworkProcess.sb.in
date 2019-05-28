@@ -43,9 +43,7 @@
 
 (deny iokit-get-properties)
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 || PLATFORM(IOSMAC)
 (deny mach-lookup (xpc-service-name-prefix ""))
-#endif
 
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
@@ -57,10 +55,8 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 || PLATFORM(IOSMAC)
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
-#endif
 
 ;; Remove when <rdar://problem/29646094> is fixed.
 (define (HEX-pattern-match-generator pattern-descriptor)
@@ -152,9 +148,7 @@
     (global-name "com.apple.FileCoordination")
     (global-name "com.apple.PowerManagement.control")
     (global-name "com.apple.SystemConfiguration.configd")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 || PLATFORM(IOSMAC)
     (global-name "com.apple.analyticsd")
-#endif
     (global-name "com.apple.cookied")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
     (global-name "com.apple.cfnetwork.cfnetworkagent")

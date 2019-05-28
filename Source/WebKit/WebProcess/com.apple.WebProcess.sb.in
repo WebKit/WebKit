@@ -25,9 +25,6 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-(import "system.sb")
-#else
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
@@ -88,17 +85,10 @@
        file-ioctl
     (literal "/dev/dtracehelper"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-(allow network-outbound
-    (literal "/private/var/run/asl_input")
-    (literal "/private/var/run/syslog"))
-#endif
-
 ;;; Allow creation of core dumps.
 (allow file-write-create
     (require-all (prefix "/cores/")
         (vnode-type REGULAR-FILE)))
-
 
 ;;; Allow IPC to standard system agents.
 (allow ipc-posix-shm-read*
@@ -155,7 +145,6 @@
 ;;;
 ;;; End rules originally copied from 'system.sb'
 ;;;
-#endif
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
@@ -399,7 +388,6 @@
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
 )
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
     (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
@@ -411,7 +399,6 @@
     (xpc-service-name "com.apple.hiservices-xpcservice")
     (xpc-service-name "com.apple.print.normalizerd")
 )
-#endif
 
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
@@ -608,10 +595,8 @@
 #endif
        (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.SystemConfiguration.configd")
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
        (global-name "com.apple.analyticsd")
        (global-name "com.apple.audio.AudioComponentRegistrar")
-#endif
        (global-name "com.apple.assertiond.processassertionconnection")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
        (global-name "com.apple.audio.audiohald")
@@ -687,9 +672,6 @@
 (system-graphics)
 
 ;; Networking
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-(system-network)
-#endif
 (allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
        ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
@@ -699,10 +681,8 @@
        (literal "/private/var/run/syslog")
        (remote tcp))
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
-#endif
 
 ;; Network Extensions / VPN helper.
 (allow mach-lookup
@@ -714,10 +694,6 @@
 (allow mach-lookup
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.notification_center"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
-(allow network-outbound
-       (remote udp))
-#endif
 #endif
 
 (if (defined? 'vnode-type)
@@ -760,11 +736,9 @@
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
     ; <rdar://problem/35509194>
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     (global-name "com.apple.coremedia.routediscoverer.xpc")
     (global-name "com.apple.coremedia.routingcontext.xpc")
     (global-name "com.apple.coremedia.volumecontroller.xpc")
-#endif
 )
 
 ;; Data Detectors
