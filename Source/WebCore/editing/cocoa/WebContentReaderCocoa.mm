@@ -690,7 +690,7 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, Optional<FloatSize> preferredSize)
+static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path)
 {
     auto document = makeRef(*frame.document());
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -718,10 +718,6 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
         auto image = HTMLImageElement::create(document);
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
         image->setAttachmentElement(WTFMove(attachment));
-        if (preferredSize) {
-            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(preferredSize->width()));
-            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(preferredSize->height()));
-        }
         return image;
     }
 
@@ -729,7 +725,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
     return attachment;
 }
 
-static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, const String& contentType, const String& name, Optional<FloatSize> preferredSize)
+static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, const String& contentType, const String& name)
 {
     auto document = makeRef(*frame.document());
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -756,10 +752,6 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
         auto image = HTMLImageElement::create(document);
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(Blob::create(buffer, WTFMove(typeForAttachmentElement)), WTFMove(fileName))));
         image->setAttachmentElement(WTFMove(attachment));
-        if (preferredSize) {
-            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(preferredSize->width()));
-            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(preferredSize->height()));
-        }
         return image;
     }
 
@@ -769,9 +761,9 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-bool WebContentReader::readFilePath(const String& path, Optional<FloatSize> preferredPresentationSize)
+bool WebContentReader::readFilePaths(const Vector<String>& paths)
 {
-    if (path.isEmpty() || !frame.document())
+    if (paths.isEmpty() || !frame.document())
         return false;
 
     auto& document = *frame.document();
@@ -779,20 +771,11 @@ bool WebContentReader::readFilePath(const String& path, Optional<FloatSize> pref
         fragment = document.createDocumentFragment();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
-        fragment->appendChild(attachmentForFilePath(frame, path, preferredPresentationSize));
+    if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
+        for (auto& path : paths)
+            fragment->appendChild(attachmentForFilePath(frame, path));
+    }
 #endif
-
-    return true;
-}
-
-bool WebContentReader::readFilePaths(const Vector<String>& paths)
-{
-    if (paths.isEmpty() || !frame.document())
-        return false;
-
-    for (auto& path : paths)
-        readFilePath(path);
 
     return true;
 }
@@ -828,7 +811,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     return true;
 }
 
-bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize)
+bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, const String& name)
 {
     if (buffer.isEmpty())
         return false;
@@ -844,7 +827,7 @@ bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, 
         fragment = document->createDocumentFragment();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    fragment->appendChild(attachmentForData(frame, buffer, type, name, preferredPresentationSize));
+    fragment->appendChild(attachmentForData(frame, buffer, type, name));
 #else
     UNUSED_PARAM(type);
     UNUSED_PARAM(name);
