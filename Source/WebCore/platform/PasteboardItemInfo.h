@@ -42,7 +42,6 @@ struct PasteboardItemInfo {
     Vector<String> contentTypesForFileUpload;
     Vector<String> contentTypesByFidelity;
     String suggestedFileName;
-    Optional<FloatSize> preferredPresentationSize;
     bool isNonTextType { false };
     bool containsFileURLAndFileUploadContent { false };
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };
@@ -98,7 +97,7 @@ struct PasteboardItemInfo {
 template<class Encoder>
 void PasteboardItemInfo::encode(Encoder& encoder) const
 {
-    encoder << pathsForFileUpload << contentTypesForFileUpload << contentTypesByFidelity << suggestedFileName << preferredPresentationSize << isNonTextType << containsFileURLAndFileUploadContent;
+    encoder << pathsForFileUpload << contentTypesForFileUpload << contentTypesByFidelity << suggestedFileName << isNonTextType << containsFileURLAndFileUploadContent;
     encoder.encodeEnum(preferredPresentationStyle);
 }
 
@@ -116,9 +115,6 @@ Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
         return WTF::nullopt;
 
     if (!decoder.decode(result.suggestedFileName))
-        return WTF::nullopt;
-
-    if (!decoder.decode(result.preferredPresentationSize))
         return WTF::nullopt;
 
     if (!decoder.decode(result.isNonTextType))

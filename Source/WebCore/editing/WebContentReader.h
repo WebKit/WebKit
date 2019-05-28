@@ -76,7 +76,7 @@ private:
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readImage(Ref<SharedBuffer>&&, const String& type, Optional<FloatSize> preferredPresentationSize = { }) override;
+    bool readImage(Ref<SharedBuffer>&&, const String& type) override;
     bool readURL(const URL&, const String& title) override;
     bool readDataBuffer(SharedBuffer&, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize = { }) override;
 #endif
@@ -100,7 +100,7 @@ private:
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readImage(Ref<SharedBuffer>&&, const String&, Optional<FloatSize> = { }) override { return false; }
+    bool readImage(Ref<SharedBuffer>&&, const String&) override { return false; }
     bool readURL(const URL&, const String&) override { return false; }
     bool readDataBuffer(SharedBuffer&, const String&, const String&, Optional<FloatSize> = { }) override { return false; }
 #endif

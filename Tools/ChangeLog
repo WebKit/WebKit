@@ -1,5 +1,9 @@
 2019-05-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Revert r245637. rdar://problem/35205373
+
+2019-05-27  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r245803. rdar://problem/51145977
 
     [iOS] Dropping in an editable element should result in a ranged selection

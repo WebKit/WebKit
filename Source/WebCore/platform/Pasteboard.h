@@ -141,7 +141,7 @@ public:
     virtual bool readHTML(const String&) = 0;
     virtual bool readRTFD(SharedBuffer&) = 0;
     virtual bool readRTF(SharedBuffer&) = 0;
-    virtual bool readImage(Ref<SharedBuffer>&&, const String& type, Optional<FloatSize> preferredPresentationSize = { }) = 0;
+    virtual bool readImage(Ref<SharedBuffer>&&, const String& type) = 0;
     virtual bool readURL(const URL&, const String& title) = 0;
     virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize = { }) = 0;
 #endif
@@ -289,7 +289,7 @@ private:
         DidNotReadType,
         PasteboardWasChangedExternally
     };
-    ReaderResult readPasteboardWebContentDataForType(PasteboardWebContentReader&, PasteboardStrategy&, NSString *type, const PasteboardItemInfo&, int itemIndex);
+    ReaderResult readPasteboardWebContentDataForType(PasteboardWebContentReader&, PasteboardStrategy&, NSString *type, int itemIndex);
 #endif
 
 #if PLATFORM(WIN)
