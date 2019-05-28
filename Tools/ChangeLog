@@ -1,5 +1,33 @@
 2019-05-28  David Xiong  <w_xiong@apple.com>
 
+        webkitpy: Switch run-webkit-tests to tailspin
+        https://bugs.webkit.org/show_bug.cgi?id=198144
+        <rdar://problem/32463212>
+
+        Reviewed by Jonathan Bedard.
+
+        Changes run-webkit-tests to run tailspin on test time out
+        rather than spindump, and edited tests to look for tailspin logs
+        instead.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.sample_process): Replaced spindump with tailspin (+ symbolication)
+        (DarwinPort):
+        (DarwinPort.tailspin_file_path):
+        (DarwinTest.spindump_file_path): Deleted.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_tailspin): Changed spindump test (below) to test for tailspin instead
+        (DarwinTest.test_spindump): Deleted.
+        (DarwinTest.test_spindump.logging_run_command): Deleted.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_tailspin): Changed spindump tests (inc. below) to test for tailspin instead
+        (IOSDeviceTest.test_sample_process.logging_run_command):
+        (IOSDeviceTest.test_sample_process_exception.throwing_run_command):
+        (IOSDeviceTest.test_spindump): Deleted.
+        (IOSDeviceTest.test_spindump.logging_run_command): Deleted.
+
+2019-05-28  David Xiong  <w_xiong@apple.com>
+
         webkitpy: Using sudo on iOS device during timeout spindumps 
         https://bugs.webkit.org/show_bug.cgi?id=198142
 

@@ -45,21 +45,23 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         with self.assertRaises(RuntimeError):
             port.path_to_crash_logs()
 
-    def test_spindump(self):
+    def test_tailspin(self):
         def logging_run_command(args):
             print(args)
 
         port = self.make_port()
-        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'] = 'Spindump file'
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'] = 'Temporary tailspin output file'
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'] = 'Symbolocated tailspin file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/sbin/spindump', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-spindump.txt']\n"
+        expected_stdout = "['/usr/bin/tailspin', 'save', '-n', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt']\n['/usr/sbin/spindump', '-i', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt', '-file', '/__im_tmp/tmp_0_/test-42-tailspin.txt']\n"
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
-        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-spindump.txt'], 'Spindump file')
-        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'])
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], 'Symbolocated tailspin file')
+        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'])
+        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'])
 
     def test_sample_process(self):
         def logging_run_command(args):
-            if args[0] == '/usr/sbin/spindump':
+            if args[0] == '/usr/bin/tailspin':
                 return 1
             print(args)
             return 0
@@ -74,7 +76,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 
     def test_sample_process_exception(self):
         def throwing_run_command(args):
-            if args[0] == '/usr/sbin/spindump':
+            if args[0] == '/usr/bin/tailspin':
                 return 1
             raise ScriptError('MOCK script error')
 

@@ -160,18 +160,31 @@ class DarwinPort(ApplePort):
     def sample_process(self, name, pid, target_host=None):
         host = target_host or self.host
         tempdir = host.filesystem.mkdtemp()
+        temp_tailspin_file_path = host.filesystem.join(str(tempdir), "{0}-{1}-tailspin-temp.txt".format(name, pid))
         command = [
-            '/usr/sbin/spindump',
-            pid,
-            10,
-            10,
-            '-file',
-            DarwinPort.spindump_file_path(host, name, pid, str(tempdir)),
+            '/usr/bin/tailspin',
+            'save',
+            '-n',
+            temp_tailspin_file_path,
         ]
         if host.platform.is_mac():
             command = ['/usr/bin/sudo', '-n'] + command
+
         exit_status = host.executive.run_command(command, return_exit_code=True)
-        if exit_status:
+        if not exit_status:  # Symbolicate tailspin log using spindump
+            try:
+                host.executive.run_command([
+                    '/usr/sbin/spindump',
+                    '-i',
+                    temp_tailspin_file_path,
+                    '-file',
+                    DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
+                ])
+                host.filesystem.move_to_base_host(DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
+                                                  DarwinPort.tailspin_file_path(self.host, name, pid, self.results_directory()))
+            except IOError as e:
+                _log.warning('Unable to symbolicate tailspin log of process:' + str(e))
+        else:  # Tailspin failed, run sample instead
             try:
                 host.executive.run_command([
                     '/usr/bin/sample',
@@ -185,9 +198,6 @@ class DarwinPort(ApplePort):
                                                   DarwinPort.sample_file_path(self.host, name, pid, self.results_directory()))
             except ScriptError as e:
                 _log.warning('Unable to sample process:' + str(e))
-        else:
-            host.filesystem.move_to_base_host(DarwinPort.spindump_file_path(host, name, pid, str(tempdir)),
-                                              DarwinPort.spindump_file_path(self.host, name, pid, self.results_directory()))
         host.filesystem.rmtree(str(tempdir))
 
     @staticmethod
@@ -195,8 +205,8 @@ class DarwinPort(ApplePort):
         return host.filesystem.join(directory, "{0}-{1}-sample.txt".format(name, pid))
 
     @staticmethod
-    def spindump_file_path(host, name, pid, directory):
-        return host.filesystem.join(directory, "{0}-{1}-spindump.txt".format(name, pid))
+    def tailspin_file_path(host, name, pid, directory):
+        return host.filesystem.join(directory, "{0}-{1}-tailspin.txt".format(name, pid))
 
     def look_for_new_samples(self, unresponsive_processes, start_time):
         sample_files = {}
