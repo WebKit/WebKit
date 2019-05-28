@@ -338,13 +338,20 @@ typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
     UIScrollViewIndicatorInsetAdjustmentNever
 };
 
+typedef enum {
+    UIAxisNeither = 0,
+    UIAxisHorizontal = 1 << 0,
+    UIAxisVertical = 1 << 1,
+    UIAxisBoth = (UIAxisHorizontal | UIAxisVertical),
+} UIAxis;
+
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration;
 - (double)_horizontalVelocity;
 - (double)_verticalVelocity;
-- (void)_flashScrollIndicatorsPersistingPreviousFlashes;
+- (void)_flashScrollIndicatorsForAxes:(UIAxis)axes persistingPreviousFlashes:(BOOL)persisting;
 @property (nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
 @property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;
 @property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;
