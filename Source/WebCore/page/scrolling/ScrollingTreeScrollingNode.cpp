@@ -188,7 +188,7 @@ bool ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch(const Floa
     return position == m_currentScrollPosition;
 }
 
-void ScrollingTreeScrollingNode::applyLayerPositions(const FloatRect&, FloatSize&)
+void ScrollingTreeScrollingNode::applyLayerPositions()
 {
     repositionScrollingLayers();
     repositionRelatedLayers();

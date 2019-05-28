@@ -47,7 +47,7 @@ private:
     ScrollingTreeFixedNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void applyLayerPositions(const FloatRect&, FloatSize&) override;
+    void applyLayerPositions() override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 

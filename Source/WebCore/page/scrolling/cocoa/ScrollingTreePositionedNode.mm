@@ -76,10 +76,8 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
         scrollingTree().positionedNodesWithRelatedOverflow().add(scrollingNodeID());
 }
 
-void ScrollingTreePositionedNode::applyLayerPositions(const FloatRect&, FloatSize& cumulativeDelta)
+void ScrollingTreePositionedNode::applyLayerPositions()
 {
-    // Note that we ignore cumulativeDelta because it will contain the delta for ancestor scrollers,
-    // but not non-ancestor ones, so it's simpler to just recompute from the scrollers we know about here.
     FloatSize scrollOffsetSinceLastCommit;
     for (auto nodeID : m_relatedOverflowScrollingNodes) {
         if (auto* node = scrollingTree().nodeForID(nodeID)) {
@@ -100,17 +98,14 @@ void ScrollingTreePositionedNode::applyLayerPositions(const FloatRect&, FloatSiz
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << scrollOffsetSinceLastCommit << " moving layer to " << layerPosition);
 
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
-
-    // FIXME: Should our scroller deltas propagate to descendants?
-    cumulativeDelta = layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 
-void ScrollingTreePositionedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
+void ScrollingTreePositionedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode)
 {
     if (!m_relatedOverflowScrollingNodes.contains(changedNode.scrollingNodeID()))
         return;
 
-    applyLayerPositions(layoutViewport, cumulativeDelta);
+    applyLayerPositions();
 }
 
 void ScrollingTreePositionedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

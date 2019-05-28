@@ -264,23 +264,18 @@ void ScrollingTree::applyLayerPositions()
 
     LOG(Scrolling, "\nScrollingTree %p applyLayerPositions", this);
 
-    applyLayerPositionsRecursive(*m_rootNode, { }, { });
+    applyLayerPositionsRecursive(*m_rootNode);
 
     LOG(Scrolling, "ScrollingTree %p applyLayerPositions - done\n", this);
 }
 
-void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& currNode, FloatRect layoutViewport, FloatSize cumulativeDelta)
+void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& currNode)
 {
-    if (is<ScrollingTreeFrameScrollingNode>(currNode)) {
-        layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(currNode).layoutViewport();
-        cumulativeDelta = { };
-    }
-
-    currNode.applyLayerPositions(layoutViewport, cumulativeDelta);
+    currNode.applyLayerPositions();
 
     if (auto children = currNode.children()) {
         for (auto& child : *children)
-            applyLayerPositionsRecursive(*child, layoutViewport, cumulativeDelta);
+            applyLayerPositionsRecursive(*child);
     }
 }
 
@@ -296,41 +291,31 @@ void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScr
 {
     Vector<ScrollingNodeID> additionalUpdateRoots;
     
-    FloatSize deltaFromLastCommittedScrollPosition;
-    FloatRect currentFrameLayoutViewport;
-    if (is<ScrollingTreeFrameScrollingNode>(changedNode))
-        currentFrameLayoutViewport = downcast<ScrollingTreeFrameScrollingNode>(changedNode).layoutViewport();
-    else if (is<ScrollingTreeOverflowScrollingNode>(changedNode)) {
-        deltaFromLastCommittedScrollPosition = changedNode.lastCommittedScrollPosition() - changedNode.currentScrollPosition();
-
-        if (auto* frameScrollingNode = changedNode.enclosingFrameNodeIncludingSelf())
-            currentFrameLayoutViewport = frameScrollingNode->layoutViewport();
-        
+    if (is<ScrollingTreeOverflowScrollingNode>(changedNode))
         additionalUpdateRoots = overflowRelatedNodes().get(changedNode.scrollingNodeID());
-    }
 
-    notifyRelatedNodesRecursive(changedNode, changedNode, currentFrameLayoutViewport, deltaFromLastCommittedScrollPosition);
+    notifyRelatedNodesRecursive(changedNode, changedNode);
     
     for (auto positionedNodeID : additionalUpdateRoots) {
         auto* positionedNode = nodeForID(positionedNodeID);
         if (positionedNode)
-            notifyRelatedNodesRecursive(changedNode, *positionedNode, currentFrameLayoutViewport, deltaFromLastCommittedScrollPosition);
+            notifyRelatedNodesRecursive(changedNode, *positionedNode);
     }
 }
 
-void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize cumulativeDelta)
+void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode)
 {
-    currNode.relatedNodeScrollPositionDidChange(changedNode, layoutViewport, cumulativeDelta);
+    currNode.relatedNodeScrollPositionDidChange(changedNode);
 
     if (!currNode.children())
         return;
-    
+
     for (auto& child : *currNode.children()) {
         // Never need to cross frame boundaries, since scroll layer adjustments are isolated to each document.
         if (is<ScrollingTreeFrameScrollingNode>(child))
             continue;
 
-        notifyRelatedNodesRecursive(changedNode, *child, layoutViewport, cumulativeDelta);
+        notifyRelatedNodesRecursive(changedNode, *child);
     }
 }
 

@@ -1,3 +1,15 @@
+2019-05-28  Antti Koivisto  <antti@apple.com>
+
+        [async scrolling] Fixed positioning inside stacking context overflow scroll is jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=198292
+
+        Reviewed by Darin Adler.
+
+        * scrollingcoordinator/ios/fixed-in-stacking-context-overflow-scroll-2-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-in-stacking-context-overflow-scroll-2.html: Added.
+        * scrollingcoordinator/ios/fixed-in-stacking-context-overflow-scroll-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-in-stacking-context-overflow-scroll.html: Added.
+
 2019-05-27  Takashi Komori  <Takashi.Komori@sony.com>
 
         [CURL] Fix crashing SocketStreamHandle.

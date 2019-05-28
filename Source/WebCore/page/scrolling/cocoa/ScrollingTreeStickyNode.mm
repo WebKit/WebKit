@@ -65,7 +65,7 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
         m_constraints = stickyStateNode.viewportConstraints();
 }
 
-void ScrollingTreeStickyNode::applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
+void ScrollingTreeStickyNode::applyLayerPositions()
 {
     FloatRect constrainingRect;
 
@@ -73,16 +73,15 @@ void ScrollingTreeStickyNode::applyLayerPositions(const FloatRect& layoutViewpor
     if (is<ScrollingTreeOverflowScrollingNode>(enclosingScrollingNode))
         constrainingRect = FloatRect(downcast<ScrollingTreeOverflowScrollingNode>(*enclosingScrollingNode).currentScrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
     else if (is<ScrollingTreeFrameScrollingNode>(enclosingScrollingNode))
-        constrainingRect = layoutViewport;
+        constrainingRect = downcast<ScrollingTreeFrameScrollingNode>(enclosingScrollingNode)->layoutViewport();
     else
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: new viewport " << layoutViewport << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout());
-
     FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect) - m_constraints.alignmentOffset();
-    [m_layer _web_setLayerTopLeftPosition:layerPosition];
 
-    cumulativeDelta += layerPosition - m_constraints.layerPositionAtLastLayout();
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " constrainingRect " << constrainingRect << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
+
+    [m_layer _web_setLayerTopLeftPosition:layerPosition];
 }
 
 void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

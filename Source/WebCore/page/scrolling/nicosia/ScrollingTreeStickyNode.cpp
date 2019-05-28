@@ -54,7 +54,7 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
 {
 }
 
-void ScrollingTreeStickyNode::applyLayerPositions(const FloatRect&, FloatSize&)
+void ScrollingTreeStickyNode::applyLayerPositions()
 {
 }
 

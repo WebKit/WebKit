@@ -57,7 +57,7 @@ void ScrollingTreeFrameHostingNode::commitStateBeforeChildren(const ScrollingSta
         m_parentRelativeScrollableRect = frameHostingStateNode.parentRelativeScrollableRect();
 }
 
-void ScrollingTreeFrameHostingNode::applyLayerPositions(const FloatRect&, FloatSize&)
+void ScrollingTreeFrameHostingNode::applyLayerPositions()
 {
 }
 

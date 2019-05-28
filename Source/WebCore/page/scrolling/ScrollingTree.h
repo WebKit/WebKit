@@ -165,9 +165,9 @@ private:
     using OrphanScrollingNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     void updateTreeFromStateNode(const ScrollingStateNode*, OrphanScrollingNodeMap&, HashSet<ScrollingNodeID>& unvisitedNodes);
 
-    void applyLayerPositionsRecursive(ScrollingTreeNode&, FloatRect layoutViewport, FloatSize cumulativeDelta);
+    void applyLayerPositionsRecursive(ScrollingTreeNode&);
 
-    void notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize cumulativeDelta);
+    void notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode);
 
     Lock m_treeMutex; // Protects the scrolling tree.
 

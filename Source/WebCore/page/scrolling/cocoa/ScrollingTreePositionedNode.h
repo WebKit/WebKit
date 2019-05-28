@@ -50,9 +50,9 @@ private:
     ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+    void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode) override;
 
-    void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+    void applyLayerPositions() override;
 
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 

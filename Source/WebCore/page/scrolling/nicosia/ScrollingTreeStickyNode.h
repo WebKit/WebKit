@@ -42,7 +42,7 @@ private:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+    void applyLayerPositions() override;
 
 };
 
