@@ -2860,6 +2860,9 @@ void Page::didChangeMainDocument()
 #if ENABLE(WEB_RTC)
     m_rtcController.reset(m_shouldEnableICECandidateFilteringByDefault);
 #endif
+#if ENABLE(POINTER_EVENTS)
+    m_pointerCaptureController->reset();
+#endif
 }
 
 RenderingUpdateScheduler& Page::renderingUpdateScheduler()

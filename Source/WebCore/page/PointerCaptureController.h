@@ -44,6 +44,7 @@ public:
     ExceptionOr<void> setPointerCapture(Element*, PointerID);
     ExceptionOr<void> releasePointerCapture(Element*, PointerID);
     bool hasPointerCapture(Element*, PointerID);
+    void reset();
 
     void pointerLockWasApplied();
     void elementWasRemoved(Element&);

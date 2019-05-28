@@ -44,11 +44,7 @@ namespace WebCore {
 PointerCaptureController::PointerCaptureController(Page& page)
     : m_page(page)
 {
-#if !ENABLE(TOUCH_EVENTS)
-    CapturingData capturingData;
-    capturingData.pointerType = PointerEvent::mousePointerType();
-    m_activePointerIdsToCapturingData.set(mousePointerID, capturingData);
-#endif
+    reset();
 }
 
 ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturingTarget, PointerID pointerId)
@@ -144,6 +140,16 @@ void PointerCaptureController::elementWasRemoved(Element& element)
             return;
         }
     }
+}
+
+void PointerCaptureController::reset()
+{
+    m_activePointerIdsToCapturingData.clear();
+#if !ENABLE(TOUCH_EVENTS)
+    CapturingData capturingData;
+    capturingData.pointerType = PointerEvent::mousePointerType();
+    m_activePointerIdsToCapturingData.set(mousePointerID, capturingData);
+#endif
 }
 
 void PointerCaptureController::touchWithIdentifierWasRemoved(PointerID pointerId)
