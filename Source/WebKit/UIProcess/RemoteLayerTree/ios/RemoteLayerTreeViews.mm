@@ -98,7 +98,7 @@ OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const Web
     if (viewsAtPoint.isEmpty())
         return { WebCore::TouchAction::Auto };
 
-    UIView *hitView;
+    UIView *hitView = nil;
     for (auto *view : WTF::makeReversedRange(viewsAtPoint)) {
         if ([view isKindOfClass:[WKCompositingView class]]) {
             hitView = view;
