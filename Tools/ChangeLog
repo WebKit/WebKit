@@ -1,3 +1,24 @@
+2019-05-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Limit run-benchmark http server to specific interface.
+        https://bugs.webkit.org/show_bug.cgi?id=198247
+
+        Reviewed by Ryosuke Niwa.
+
+        Add '--interface' option to 'twisted_http_server.py'.
+        'SimpleHTTPServerDriver' should specify interface for http server.
+        Update regex that determines http server port from 'lsof' output to support ipv6 address.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        Added '--interface' argument.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        Limited http server to a specific interfce.
+        Added '-P' option to 'lsof' invocation to inhibits the conversion of port numbers to port name so script won't
+        fail if it's listening on a 'well-known' port.
+        Abstracted '_check_http_server_is_running' to allow potential child class to have its own implementation.
+        (SimpleHTTPServerDriver.serve): Updated regex that determines http server port from 'lsof' output to support ipv6 address.
+        (SimpleHTTPServerDriver.kill_server): Added null check for 'self._server_process'.
+
 2019-05-28  David Xiong  <w_xiong@apple.com>
 
         webkitpy: Switch run-webkit-tests to tailspin

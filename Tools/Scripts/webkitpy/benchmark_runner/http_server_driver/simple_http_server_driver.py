@@ -30,7 +30,10 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     def serve(self, web_root):
         _log.info('Launching an http server')
         http_server_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "http_server/twisted_http_server.py")
-        self._server_process = subprocess.Popen(["python", http_server_path, web_root], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        interface_args = []
+        if self._ip:
+            interface_args.extend(['--interface', self._ip])
+        self._server_process = subprocess.Popen(["python", http_server_path, web_root] + interface_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         max_attempt = 5
         interval = 0.5
@@ -51,8 +54,8 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         except ImportError:
             for attempt in xrange(max_attempt):
                 try:
-                    output = subprocess.check_output(['/usr/sbin/lsof', '-a', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
-                    self._server_port = int(re.search('TCP \*:(\d+) \(LISTEN\)', output).group(1))
+                    output = subprocess.check_output(['/usr/sbin/lsof', '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
+                    self._server_port = int(re.search('TCP .*:(\d+) \(LISTEN\)', output).group(1))
                     if self._server_port:
                         _log.info('HTTP Server is serving at port: %d', self._server_port)
                         break
@@ -63,7 +66,10 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
                 interval *= 2
             else:
                 raise Exception("Cannot listen to server, max tries exceeded")
+        self._wait_for_http_server()
 
+    def _wait_for_http_server(self):
+        max_attempt = 5
         # Wait for server to be up completely before exiting
         for attempt in xrange(max_attempt):
             try:
@@ -71,7 +77,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
                 return
             except Exception as error:
                 _log.info('Server not running yet: %s' % error)
-                time.sleep(interval)
+                time.sleep(1)
         raise Exception('Server not running, max tries exceeded: %s' % error)
 
     def base_url(self):
@@ -84,6 +90,8 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     def kill_server(self):
         try:
+            if not self._server_process:
+                return
             if self._server_process.poll() is None:
                 self._server_process.terminate()
         except OSError as error:
