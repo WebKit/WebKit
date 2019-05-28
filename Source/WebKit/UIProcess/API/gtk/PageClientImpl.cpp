@@ -552,4 +552,11 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
     return false;
 }
 
+#if USE(WPE_RENDERER)
+IPC::Attachment PageClientImpl::hostFileDescriptor()
+{
+    return webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+#endif
+
 } // namespace WebKit

@@ -86,6 +86,7 @@ WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyph
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC ON)
 
 # Private options specific to the GTK+ port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
@@ -103,6 +104,8 @@ WEBKIT_OPTION_DEPEND(ENABLE_PLUGIN_PROCESS_GTK2 ENABLE_X11_TARGET)
 WEBKIT_OPTION_DEPEND(ENABLE_WEBGL ENABLE_OPENGL)
 WEBKIT_OPTION_DEPEND(USE_REDIRECTED_XCOMPOSITE_WINDOW ENABLE_OPENGL)
 WEBKIT_OPTION_DEPEND(USE_REDIRECTED_XCOMPOSITE_WINDOW ENABLE_X11_TARGET)
+WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER ENABLE_WAYLAND_TARGET)
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 if (DEVELOPER_MODE)
@@ -198,6 +201,18 @@ SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 
 set(glib_components gio gio-unix gobject gthread gmodule)
 find_package(GLIB 2.36 REQUIRED COMPONENTS ${glib_components})
+
+if (USE_WPE_RENDERER)
+    find_package(WPE 1.3.0)
+    if (NOT WPE_FOUND)
+        message(FATAL_ERROR "libwpe is required for USE_WPE_RENDERER")
+    endif ()
+
+    find_package(WPEBackend-fdo 1.3.0)
+    if (NOT WPEBACKEND_FDO_FOUND)
+        message(FATAL_ERROR "WPEBackend-fdo is required for USE_WPE_RENDERER")
+    endif ()
+endif ()
 
 if (ENABLE_XSLT)
     find_package(LibXslt 1.1.7 REQUIRED)

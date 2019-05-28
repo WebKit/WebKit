@@ -36,6 +36,12 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 
+if (USE_WPE_RENDERER)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/libwpe"
+    )
+endif ()
+
 list(APPEND WebCorePlatformGTK_SOURCES
     editing/gtk/EditorGtk.cpp
 
@@ -120,6 +126,12 @@ list(APPEND WebCore_LIBRARIES
     ${ZLIB_LIBRARIES}
 )
 
+if (USE_WPE_RENDERER)
+    list(APPEND WebCore_LIBRARIES
+        ${WPE_LIBRARIES}
+    )
+endif ()
+
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
@@ -131,6 +143,12 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${UPOWERGLIB_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
 )
+
+if (USE_WPE_RENDERER)
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${WPE_INCLUDE_DIRS}
+    )
+endif ()
 
 if (USE_OPENGL_ES)
     list(APPEND WebCore_SOURCES

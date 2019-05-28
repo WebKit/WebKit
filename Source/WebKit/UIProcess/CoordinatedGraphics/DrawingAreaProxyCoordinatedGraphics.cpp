@@ -35,15 +35,11 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
+#include <WebCore/PlatformDisplay.h>
 #include <WebCore/Region.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
-#endif
-
-#if PLATFORM(WAYLAND)
-#include "WaylandCompositor.h"
-#include <WebCore/PlatformDisplay.h>
 #endif
 
 #if USE(GLIB_EVENT_LOOP)

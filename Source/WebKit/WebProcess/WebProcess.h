@@ -63,6 +63,10 @@
 #include "ProcessTaskStateObserver.h"
 #endif
 
+#if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
+#include <WebCore/PlatformDisplayLibWPE.h>
+#endif
+
 namespace API {
 class Object;
 }
@@ -552,6 +556,11 @@ private:
 #if PLATFORM(WAYLAND)
     std::unique_ptr<WaylandCompositorDisplay> m_waylandCompositorDisplay;
 #endif
+
+#if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
+    std::unique_ptr<WebCore::PlatformDisplayLibWPE> m_wpeDisplay;
+#endif
+
     bool m_hasSuspendedPageProxy { false };
     bool m_isSuspending { false };
 

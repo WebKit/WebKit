@@ -182,7 +182,9 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowTy
     if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
         surface = createWindowSurfaceWayland(display, config, window);
 #endif
-#elif PLATFORM(WPE)
+#endif
+
+#if USE(WPE_RENDERER)
     if (platformDisplay.type() == PlatformDisplay::Type::WPE)
         surface = createWindowSurfaceWPE(display, config, window);
 #else
@@ -279,7 +281,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(GLNativeWindowType win
         if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
             context = createWaylandContext(platformDisplay, eglSharingContext);
 #endif
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
         if (platformDisplay.type() == PlatformDisplay::Type::WPE)
             context = createWPEContext(platformDisplay, eglSharingContext);
 #endif
@@ -316,7 +318,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay
         if (platformDisplay.type() == PlatformDisplay::Type::Wayland)
             context = createWaylandContext(platformDisplay);
 #endif
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
         if (platformDisplay.type() == PlatformDisplay::Type::WPE)
             context = createWPEContext(platformDisplay);
 #endif
@@ -359,7 +361,7 @@ GLContextEGL::~GLContextEGL()
 #if PLATFORM(WAYLAND)
     destroyWaylandWindow();
 #endif
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     destroyWPETarget();
 #endif
 }

@@ -151,7 +151,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << useOverlayScrollbars;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     encoder << isServiceWorkerProcess;
     encoder << hostClientFileDescriptor;
     encoder << implementationLibraryName;
@@ -371,7 +371,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     if (!decoder.decode(parameters.isServiceWorkerProcess))
         return false;
     if (!decoder.decode(parameters.hostClientFileDescriptor))

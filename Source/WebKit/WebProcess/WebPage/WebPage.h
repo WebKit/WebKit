@@ -1155,7 +1155,7 @@ public:
     void didFinishLoadingApplicationManifest(uint64_t, const Optional<WebCore::ApplicationManifest>&);
 #endif
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     int releaseHostFileDescriptor() { return m_hostFileDescriptor.releaseFileDescriptor(); }
 #endif
 
@@ -1917,7 +1917,7 @@ private:
     const String m_overrideContentSecurityPolicy;
     const Optional<double> m_cpuLimit;
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     IPC::Attachment m_hostFileDescriptor;
 #endif
 

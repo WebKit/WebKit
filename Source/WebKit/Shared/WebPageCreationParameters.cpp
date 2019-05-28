@@ -103,7 +103,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << smartInsertDeleteEnabled;
     encoder << additionalSupportedImageTypes;
 #endif
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     encoder << hostFileDescriptor;
 #endif
     encoder << appleMailPaginationQuirkEnabled;
@@ -302,7 +302,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     if (!decoder.decode(parameters.hostFileDescriptor))
         return WTF::nullopt;
 #endif

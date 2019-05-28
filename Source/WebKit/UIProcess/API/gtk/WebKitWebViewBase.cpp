@@ -1459,9 +1459,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     WebProcessPool* processPool = configuration->processPool();
     priv->pageProxy = processPool->createWebPage(*priv->pageClient, WTFMove(configuration));
-    priv->pageProxy->initializeWebPage();
-
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
+    priv->pageProxy->initializeWebPage();
 
     priv->inputMethodFilter.setPage(priv->pageProxy.get());
 
@@ -1829,3 +1828,12 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, con
     completionHandler(emptyString());
 #endif
 }
+
+#if USE(WPE_RENDERER)
+int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase* webkitWebViewBase)
+{
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        return webkitWebViewBase->priv->acceleratedBackingStore->renderHostFileDescriptor();
+    return -1;
+}
+#endif

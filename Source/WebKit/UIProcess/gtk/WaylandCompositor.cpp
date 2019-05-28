@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WaylandCompositor.h"
 
-#if PLATFORM(WAYLAND) && USE(EGL)
+#if PLATFORM(WAYLAND) && USE(EGL) && !USE(WPE_RENDERER)
 
 #include "WebKitWaylandServerProtocol.h"
 #include <EGL/egl.h>
@@ -576,4 +576,4 @@ void WaylandCompositor::unregisterWebPage(WebPageProxy& webPage)
 
 } // namespace WebKit
 
-#endif // PLATFORM(WAYLAND) && USE(EGL)
+#endif // PLATFORM(WAYLAND) && USE(EGL) && !USE(WPE_RENDERER)

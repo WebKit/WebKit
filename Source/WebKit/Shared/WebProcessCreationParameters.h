@@ -189,7 +189,7 @@ struct WebProcessCreationParameters {
     bool useOverlayScrollbars { true };
 #endif
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     bool isServiceWorkerProcess { false };
     IPC::Attachment hostClientFileDescriptor;
     CString implementationLibraryName;

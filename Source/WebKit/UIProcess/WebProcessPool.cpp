@@ -117,11 +117,6 @@
 #include "MemoryPressureMonitor.h"
 #endif
 
-#if PLATFORM(WAYLAND)
-#include "WaylandCompositor.h"
-#include <WebCore/PlatformDisplay.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include "VersionChecks.h"
 #endif
@@ -977,11 +972,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if OS(LINUX)
     parameters.shouldEnableMemoryPressureReliefLogging = true;
-#endif
-
-#if PLATFORM(WAYLAND) && USE(EGL)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        parameters.waylandCompositorDisplayName = WaylandCompositor::singleton().displayName();
 #endif
 
 #if ENABLE(MEDIA_STREAM)

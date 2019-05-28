@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AcceleratedSurfaceLibWPE.h"
 
+#if USE(WPE_RENDERER)
+
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayLibWPE.h>
 #include <wpe/wpe-egl.h>
@@ -65,7 +67,7 @@ void AcceleratedSurfaceLibWPE::initialize()
         nullptr
     };
     wpe_renderer_backend_egl_target_set_client(m_backend, &s_client, this);
-    wpe_renderer_backend_egl_target_initialize(m_backend, downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()).backend(),
+    wpe_renderer_backend_egl_target_initialize(m_backend, downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplayForCompositing()).backend(),
         std::max(1, m_size.width()), std::max(1, m_size.height()));
 }
 
@@ -111,3 +113,4 @@ void AcceleratedSurfaceLibWPE::didRenderFrame()
 
 } // namespace WebKit
 
+#endif // USE(WPE_RENDERER)

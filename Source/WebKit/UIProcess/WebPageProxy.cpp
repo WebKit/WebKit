@@ -7182,7 +7182,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.overrideContentSecurityPolicy = m_overrideContentSecurityPolicy;
     parameters.cpuLimit = m_cpuLimit;
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     parameters.hostFileDescriptor = pageClient().hostFileDescriptor();
 #endif
 

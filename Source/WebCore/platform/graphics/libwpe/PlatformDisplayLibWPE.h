@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(LIBWPE)
+#if USE(WPE_RENDERER)
 
 #include "PlatformDisplay.h"
 
@@ -55,4 +55,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayLibWPE, WPE)
 
-#endif // USE(LIBWPE)
+#endif // USE(WPE_RENDERER)

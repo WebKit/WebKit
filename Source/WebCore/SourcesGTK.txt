@@ -67,12 +67,15 @@ platform/graphics/GraphicsContext3DPrivate.cpp
 platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 
 platform/graphics/egl/GLContextEGL.cpp
+platform/graphics/egl/GLContextEGLLibWPE.cpp
 platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
 platform/graphics/egl/GLContextEGLX11.cpp @no-unify
 
 platform/graphics/glx/GLContextGLX.cpp
 
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+
+platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
 platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
 platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp

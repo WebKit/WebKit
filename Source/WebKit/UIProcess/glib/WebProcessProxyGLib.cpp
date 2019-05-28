@@ -26,9 +26,6 @@
 #include "config.h"
 #include "WebProcessProxy.h"
 
-#if PLATFORM(WAYLAND) && USE(EGL)
-#include "WaylandCompositor.h"
-#endif
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/PlatformDisplay.h>
@@ -47,15 +44,6 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     launchOptions.extraInitializationData.set("applicationCacheDirectory", websiteDataStore().resolvedApplicationCacheDirectory());
 
     launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
-
-#if PLATFORM(WAYLAND) && USE(EGL)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
-        String displayName = WaylandCompositor::singleton().displayName();
-        String runtimeDir(g_get_user_runtime_dir());
-        String waylandSocket = FileSystem::pathByAppendingComponent(runtimeDir, displayName);
-        launchOptions.extraInitializationData.set("waylandSocket", waylandSocket);
-    }
-#endif
 }
 
 };

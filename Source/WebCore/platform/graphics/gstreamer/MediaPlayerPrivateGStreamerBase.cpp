@@ -102,7 +102,9 @@
 
 #if PLATFORM(WAYLAND)
 #include "PlatformDisplayWayland.h"
-#elif PLATFORM(WPE)
+#endif
+
+#if USE(WPE_RENDERER)
 #include "PlatformDisplayLibWPE.h"
 #endif
 
@@ -448,7 +450,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
         }
 #endif
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
         ASSERT(is<PlatformDisplayLibWPE>(sharedDisplay));
         GST_DEBUG_OBJECT(pipeline(), "Creating WPE shared EGL display");
         if (shouldAdoptRef)

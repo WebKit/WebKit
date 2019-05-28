@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
 
 #include "AcceleratedSurface.h"
 
@@ -44,7 +44,14 @@ public:
     uint64_t window() const override;
     uint64_t surfaceID() const override;
     void clientResize(const WebCore::IntSize&) override;
-    bool shouldPaintMirrored() const override { return false; }
+    bool shouldPaintMirrored() const override
+    {
+#if PLATFORM(GTK)
+        return true;
+#else
+        return false;
+#endif
+    }
 
     void initialize() override;
     void finalize() override;
@@ -59,4 +66,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(WPE)
+#endif // USE(WPE_RENDERER)

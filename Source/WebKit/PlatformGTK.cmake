@@ -428,6 +428,16 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
+if (USE_WPE_RENDERER)
+    list(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
+    )
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+        ${WPE_INCLUDE_DIRS}
+        ${WPEBACKEND_FDO_INCLUDE_DIRS}
+    )
+endif ()
+
 if (USE_LIBNOTIFY)
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBNOTIFY_INCLUDE_DIRS}
@@ -463,6 +473,13 @@ list(APPEND WebKit_LIBRARIES
 
 # WebCore should be specifed before and after WebCorePlatformGTK
 list(APPEND WebKit_LIBRARIES PRIVATE WebCore)
+
+if (USE_WPE_RENDERER)
+    list(APPEND WebKit_LIBRARIES
+      ${WPE_LIBRARIES}
+      ${WPEBACKEND_FDO_LIBRARIES}
+    )
+endif ()
 
 if (LIBNOTIFY_FOUND)
 list(APPEND WebKit_LIBRARIES

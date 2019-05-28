@@ -90,8 +90,10 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
 #endif
 
 #if USE(GLX)
-    if (auto glxContext = GLContextGLX::createContext(windowHandle, display))
-        return glxContext;
+    if (display.type() == PlatformDisplay::Type::X11) {
+        if (auto glxContext = GLContextGLX::createContext(windowHandle, display))
+            return glxContext;
+    }
 #endif
 #if USE(EGL)
     if (auto eglContext = GLContextEGL::createContext(windowHandle, display))

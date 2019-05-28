@@ -26,12 +26,19 @@
 #include "config.h"
 #include "HardwareAccelerationManager.h"
 
-#include "WaylandCompositor.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 #include <WebCore/PlatformDisplayX11.h>
+#endif
+
+#if PLATFORM(WAYLAND)
+#if USE(WPE_RENDERER)
+#include <wpe/fdo-egl.h>
+#else
+#include "WaylandCompositor.h"
+#endif
 #endif
 
 namespace WebKit {
@@ -71,10 +78,17 @@ HardwareAccelerationManager::HardwareAccelerationManager()
 
 #if PLATFORM(WAYLAND) && USE(EGL)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
+#if USE(WPE_RENDERER)
+        if (!wpe_fdo_initialize_for_egl_display(PlatformDisplay::sharedDisplay().eglDisplay())) {
+            m_canUseHardwareAcceleration = false;
+            return;
+        }
+#else
         if (!WaylandCompositor::singleton().isRunning()) {
             m_canUseHardwareAcceleration = false;
             return;
         }
+#endif
     }
 #endif
 

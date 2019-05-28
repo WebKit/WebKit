@@ -1,3 +1,75 @@
+2019-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use WPEBackend-fdo for accelerating compositing in Wayland instead of the nested compositor
+        https://bugs.webkit.org/show_bug.cgi?id=197944
+
+        Reviewed by Michael Catanzaro.
+
+        The WPEBackend-fdo implementation is quite similar to our Wayland nested compositor, but more efficient (using
+        linux dmabuf, resource caching, etc.). This allows us to share even more code with WPE port too.
+
+        * PlatformGTK.cmake:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::forceRepaint): WPE doesn't support force repaint yet.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const): Use USE(WPE_RENDERER) instead of PLATFORM(WPE).
+        (WebKit::WebPageCreationParameters::decode): Ditto.
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Ditto.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h:
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::hostFileDescriptor): Implement it when using WPE just calling webkitWebViewBaseRenderHostFileDescriptor().
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage): Initialize the web page after the accelerated backing store is created, since
+        it's used now during intialization.
+        (webkitWebViewBaseRenderHostFileDescriptor): Return AcceleratedBackingStore::renderHostFileDescriptor()
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Use USE(WPE_RENDERER) instead of PLATFORM(WPE).
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess): Remove wayland display name initialization.
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Initialize wayland display name when not using WPE here
+        now. In case of using WPE, initialize hostClientFileDescriptor and implementationLibraryName.
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions): Remove unused wayland socket command line process parameter.
+        * UIProcess/gtk/AcceleratedBackingStore.h:
+        (WebKit::AcceleratedBackingStore::renderHostFileDescriptor): Return -1 by default.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::create): When using WPE call wpe_fdo_initialize_for_egl_display() and
+        check we have the required extensions.
+        (WebKit::AcceleratedBackingStoreWayland::AcceleratedBackingStoreWayland): When using WPE initialize the view backend.
+        (WebKit::AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland): When using WPE release the EGL images
+        still in use and the view texture.
+        (WebKit::AcceleratedBackingStoreWayland::renderHostFileDescriptor): Call wpe_view_backend_get_renderer_host_fd().
+        (WebKit::AcceleratedBackingStoreWayland::displayBuffer): Create the view texture if needed, save the pending
+        image and schedule a redraw.
+        (WebKit::AcceleratedBackingStoreWayland::paint): When using WPE commit the pending image and use it as target of
+        the view texture.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager): When using WPE disable hardware acceleration
+        if wpe_fdo_initialize_for_egl_display() fails.
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        * UIProcess/gtk/WaylandCompositor.h:
+        * WebProcess/WebPage/AcceleratedSurface.cpp:
+        (WebKit::AcceleratedSurface::create): Create an AcceleratedSurfaceLibWPE for GTK port when using WPE and shared
+        display is Wayland.
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp:
+        (WebKit::AcceleratedSurfaceLibWPE::initialize): Use the shared display for compositing instead of shared display.
+        * WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Initialize the wpe display when using WPE.
+
 2019-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dropping in an editable element should result in a ranged selection

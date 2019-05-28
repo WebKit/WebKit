@@ -420,6 +420,8 @@ WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
+WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp
+
 WebProcess/glib/WebProcessGLib.cpp
 
 WebProcess/gtk/WaylandCompositorDisplay.cpp

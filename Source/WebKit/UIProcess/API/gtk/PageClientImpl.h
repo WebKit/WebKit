@@ -164,6 +164,10 @@ private:
 
     bool effectiveAppearanceIsDark() const override;
 
+#if USE(WPE_RENDERER)
+    IPC::Attachment hostFileDescriptor() override;
+#endif
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

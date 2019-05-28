@@ -54,7 +54,7 @@ public:
 #if PLATFORM(WIN)
         Windows,
 #endif
-#if USE(LIBWPE)
+#if USE(WPE_RENDERER)
         WPE,
 #endif
     };
