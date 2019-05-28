@@ -59,7 +59,8 @@ private:
     private:
         LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
         void initializeLine(Line&, LayoutUnit lineLogicalTop, LayoutUnit widthConstraint) const;
-        void closeLine(Line&) const;
+        unsigned createInlineRunsForLine(Line&, unsigned firstInlineItemIndex) const;
+        void processInlineRuns(Line&) const;
         void commitInlineItemToLine(Line&, const InlineItem&) const;
         void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
         void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;

@@ -336,6 +336,7 @@ struct UncommittedContent {
 
     Vector<InlineItem*> inlineItems() { return m_inlineItems; }
     bool isEmpty() const { return m_inlineItems.isEmpty(); }
+    unsigned size() const { return m_inlineItems.size(); }
     LayoutUnit width() const { return m_width; }
 
 private:
@@ -398,65 +399,80 @@ void InlineFormattingContext::LineLayout::initializeLine(Line& line, LayoutUnit 
     line.reset({ lineLogicalLeft, lineLogicalTop }, availableWidth, mimimumLineHeight, baselineOffset);
 }
 
-void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) const
+unsigned InlineFormattingContext::LineLayout::createInlineRunsForLine(Line& line, unsigned startInlineItemIndex) const
 {
     auto floatingContext = FloatingContext { m_floatingState };
-    Line line(layoutState());
-    initializeLine(line, layoutState().displayBoxForLayoutBox(m_formattingRoot).contentBoxTop(), widthConstraint);
+    Optional<unsigned> lastCommittedIndex;
 
     UncommittedContent uncommittedContent;
     auto commitPendingContent = [&] {
+        if (uncommittedContent.isEmpty())
+            return;
+
+        lastCommittedIndex = lastCommittedIndex.valueOr(startInlineItemIndex) + uncommittedContent.size();
         for (auto* uncommitted : uncommittedContent.inlineItems())
             commitInlineItemToLine(line, *uncommitted);
         uncommittedContent.reset();
     };
 
-    auto closeCurrentAndInitializeNewLine = [&] {
-        closeLine(line);
-        initializeLine(line, line.logicalBottom(), widthConstraint);
-    };
-
     LineBreaker lineBreaker(layoutState());
+    // Iterate through the inline content and place the inline boxes on the current line.
     auto& inlineContent = m_formattingState.inlineItems();
-    for (auto& inlineItem : inlineContent) {
-        // Iterate through the inline content and try to put the inline boxes on the current line.
+    for (auto inlineItemIndex = startInlineItemIndex; inlineItemIndex < inlineContent.size(); ++inlineItemIndex) {
+        auto& inlineItem = inlineContent[inlineItemIndex];
         if (inlineItem->isHardLineBreak()) {
+            uncommittedContent.add(*inlineItem);
             commitPendingContent();
-            commitInlineItemToLine(line, *inlineItem);
-            closeCurrentAndInitializeNewLine();
-        } else {
-            auto availableWidth = line.availableWidth() - uncommittedContent.width();
-            auto currentLogicalRight = line.contentLogicalRight() + uncommittedContent.width();
-            // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
-            auto breakingContext = lineBreaker.breakingContext(*inlineItem, { availableWidth, currentLogicalRight, line.trailingTrimmableWidth(), !line.hasContent() });
-            if (breakingContext.isAtBreakingOpportunity)
-                commitPendingContent();
-
-            if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Break) {
-                ASSERT_NOT_IMPLEMENTED_YET();
-                continue;
-            }
-
-            if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap)
-                closeCurrentAndInitializeNewLine();
-
-            if (inlineItem->isFloat())
-                handleFloat(line, floatingContext, *inlineItem);
-            else {
-                if (breakingContext.isAtBreakingOpportunity)
-                    commitInlineItemToLine(line, *inlineItem);
-                else
-                    uncommittedContent.add(*inlineItem);
-            }
+            return *lastCommittedIndex;
         }
+        auto availableWidth = line.availableWidth() - uncommittedContent.width();
+        auto currentLogicalRight = line.contentLogicalRight() + uncommittedContent.width();
+        // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
+        auto breakingContext = lineBreaker.breakingContext(*inlineItem, { availableWidth, currentLogicalRight, line.trailingTrimmableWidth(), !line.hasContent() });
+        if (breakingContext.isAtBreakingOpportunity)
+            commitPendingContent();
+
+        // Content does not fit the current line.
+        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap)
+            return *lastCommittedIndex;
+
+        // Partial content stays on the current line. 
+        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Break) {
+            ASSERT(inlineItem->isText());
+
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return *lastCommittedIndex;
+        }
+
+        if (inlineItem->isFloat()) {
+            handleFloat(line, floatingContext, *inlineItem);
+            continue;
+        }
+
+        uncommittedContent.add(*inlineItem);
+        if (breakingContext.isAtBreakingOpportunity)
+            commitPendingContent();
     }
-    // Process remaining uncommitted content.
-    if (!uncommittedContent.isEmpty()) {
-        if (line.availableWidth() < uncommittedContent.width())
-            closeCurrentAndInitializeNewLine();
-        commitPendingContent();
+    commitPendingContent();
+    return *lastCommittedIndex;
+}
+
+void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) const
+{
+    ASSERT(!m_formattingState.inlineItems().isEmpty());
+
+    Line line(layoutState());
+    initializeLine(line, layoutState().displayBoxForLayoutBox(m_formattingRoot).contentBoxTop(), widthConstraint);
+
+    unsigned startInlineItemIndex = 0;
+    while (true) {
+        auto nextInlineItemIndex = createInlineRunsForLine(line, startInlineItemIndex);
+        processInlineRuns(line);
+        if (nextInlineItemIndex == m_formattingState.inlineItems().size())
+            break;
+        startInlineItemIndex = nextInlineItemIndex;
+        initializeLine(line, line.logicalBottom(), widthConstraint);
     }
-    closeLine(line);
 }
 
 LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUnit widthConstraint) const
@@ -487,7 +503,7 @@ LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUni
     return std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
 }
 
-void InlineFormattingContext::LineLayout::closeLine(Line& line) const
+void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
 {
     auto& lineItems = line.close();
     if (lineItems.isEmpty()) {

@@ -98,20 +98,20 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     while (currentPosition < text.length()) {
         // Soft linebreak?
         if (isSoftLineBreak(text[currentPosition], preserveNewline)) {
-            inlineContent.add(std::make_unique<InlineTextItem>(inlineBox, currentPosition, 1, true, false));
+            inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, currentPosition, 1, true, false));
             ++currentPosition;
             continue;
         }
         if (isWhitespaceCharacter(text[currentPosition], preserveNewline)) {
             auto length = moveToNextNonWhitespacePosition(text, currentPosition, preserveNewline);
             auto isCollapsed = collapseWhiteSpace && length > 1;
-            inlineContent.add(std::make_unique<InlineTextItem>(inlineBox, currentPosition, length, true, isCollapsed));
+            inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, currentPosition, length, true, isCollapsed));
             currentPosition += length;
             continue;
         }
 
         auto length = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-        inlineContent.add(std::make_unique<InlineTextItem>(inlineBox, currentPosition, length, false, false));
+        inlineContent.append(std::make_unique<InlineTextItem>(inlineBox, currentPosition, length, false, false));
         currentPosition += length;
     }
 }

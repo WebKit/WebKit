@@ -38,7 +38,7 @@ namespace WebCore {
 namespace Layout {
 
 // Temp
-using InlineItems = ListHashSet<std::unique_ptr<InlineItem>>;
+using InlineItems = Vector<std::unique_ptr<InlineItem>>;
 using InlineRuns = Vector<std::unique_ptr<Display::Run>>;
 using LineBoxes = Vector<LineBox>;
 // InlineFormattingState holds the state for a particular inline formatting context tree.
@@ -54,7 +54,7 @@ public:
     InlineRuns& inlineRuns() { return m_inlineRuns; }
     LineBoxes& lineBoxes() { return m_lineBoxes; }
 
-    void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.add(WTFMove(inlineItem)); }
+    void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
     void addInlineRun(std::unique_ptr<Display::Run>&& inlineRun) { m_inlineRuns.append(WTFMove(inlineRun)); }
     void addLineBox(LineBox lineBox) { m_lineBoxes.append(lineBox); }
 
