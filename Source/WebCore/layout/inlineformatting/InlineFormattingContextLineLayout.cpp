@@ -363,11 +363,10 @@ InlineFormattingContext::LineLayout::LineLayout(const InlineFormattingContext& i
 {
 }
 
-void InlineFormattingContext::LineLayout::initializeLine(Line& line, LayoutUnit lineLogicalTop) const
+void InlineFormattingContext::LineLayout::initializeLine(Line& line, LayoutUnit lineLogicalTop, LayoutUnit availableWidth) const
 {
     auto& formattingRootDisplayBox = layoutState().displayBoxForLayoutBox(m_formattingRoot);
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
-    auto availableWidth = formattingRootDisplayBox.contentBoxWidth();
 
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     if (!m_floatingState.isEmpty()) {
@@ -399,11 +398,11 @@ void InlineFormattingContext::LineLayout::initializeLine(Line& line, LayoutUnit 
     line.reset({ lineLogicalLeft, lineLogicalTop }, availableWidth, mimimumLineHeight, baselineOffset);
 }
 
-void InlineFormattingContext::LineLayout::layout() const
+void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) const
 {
     auto floatingContext = FloatingContext { m_floatingState };
     Line line(layoutState());
-    initializeLine(line, layoutState().displayBoxForLayoutBox(m_formattingRoot).contentBoxTop());
+    initializeLine(line, layoutState().displayBoxForLayoutBox(m_formattingRoot).contentBoxTop(), widthConstraint);
 
     UncommittedContent uncommittedContent;
     auto commitPendingContent = [&] {
@@ -412,15 +411,19 @@ void InlineFormattingContext::LineLayout::layout() const
         uncommittedContent.reset();
     };
 
+    auto closeCurrentAndInitializeNewLine = [&] {
+        closeLine(line);
+        initializeLine(line, line.logicalBottom(), widthConstraint);
+    };
+
     LineBreaker lineBreaker(layoutState());
     auto& inlineContent = m_formattingState.inlineItems();
     for (auto& inlineItem : inlineContent) {
         // Iterate through the inline content and try to put the inline boxes on the current line.
         if (inlineItem->isHardLineBreak()) {
-            // Close the current line then create and immediately close another one.
             commitPendingContent();
             commitInlineItemToLine(line, *inlineItem);
-            closeLine(line);
+            closeCurrentAndInitializeNewLine();
         } else {
             auto availableWidth = line.availableWidth() - uncommittedContent.width();
             auto currentLogicalRight = line.contentLogicalRight() + uncommittedContent.width();
@@ -435,7 +438,7 @@ void InlineFormattingContext::LineLayout::layout() const
             }
 
             if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap)
-                closeLine(line);
+                closeCurrentAndInitializeNewLine();
 
             if (inlineItem->isFloat())
                 handleFloat(line, floatingContext, *inlineItem);
@@ -450,10 +453,38 @@ void InlineFormattingContext::LineLayout::layout() const
     // Process remaining uncommitted content.
     if (!uncommittedContent.isEmpty()) {
         if (line.availableWidth() < uncommittedContent.width())
-            closeLine(line);
+            closeCurrentAndInitializeNewLine();
         commitPendingContent();
     }
     closeLine(line);
+}
+
+LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUnit widthConstraint) const
+{
+    // FIXME: Consider running it through layout().
+    LayoutUnit maximumLineWidth;
+    LayoutUnit lineLogicalRight;
+    LayoutUnit trimmableTrailingWidth;
+
+    LineBreaker lineBreaker(layoutState());
+    auto& inlineContent = m_formattingState.inlineItems();
+    for (auto& inlineItem : inlineContent) {
+        auto breakingContext = lineBreaker.breakingContext(*inlineItem, { widthConstraint, lineLogicalRight, !lineLogicalRight });
+        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap) {
+            maximumLineWidth = std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
+            trimmableTrailingWidth = { };
+            lineLogicalRight = { };
+        }
+        if (isTrimmableContent(*inlineItem)) {
+            // Skip leading whitespace.
+            if (!lineLogicalRight)
+                continue;
+            trimmableTrailingWidth += inlineItem->width();
+        } else
+            trimmableTrailingWidth = { };
+        lineLogicalRight += inlineItem->width();
+    }
+    return std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
 }
 
 void InlineFormattingContext::LineLayout::closeLine(Line& line) const
@@ -556,7 +587,6 @@ void InlineFormattingContext::LineLayout::closeLine(Line& line) const
     m_formattingState.addLineBox({ lineBox });
     if (line.hasContent())
         alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, line.availableWidth());
-    initializeLine(line, line.logicalBottom());
 }
 
 void InlineFormattingContext::LineLayout::handleFloat(Line& line, const FloatingContext& floatingContext, const InlineItem& floatItem) const

@@ -71,7 +71,8 @@ void InlineFormattingContext::layout() const
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto& root = downcast<Container>(this->root());
-    auto usedValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(root).contentBoxWidth() };
+    auto availableWidth = layoutState().displayBoxForLayoutBox(root).contentBoxWidth();
+    auto usedValues = UsedHorizontalValues { availableWidth };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
     // Compute width/height for non-text content and margin/border/padding for inline containers.
     while (layoutBox) {
@@ -93,7 +94,7 @@ void InlineFormattingContext::layout() const
     formattingState().inlineRuns().clear();
 
     collectInlineContent();
-    LineLayout(*this).layout();
+    LineLayout(*this).layout(availableWidth);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root << ")");
 }
 
@@ -139,20 +140,7 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
             auto intrinsicWidths = layoutState.formattingStateForBox(*formattingRoot).intrinsicWidthConstraints(*formattingRoot);
             layoutState.displayBoxForLayoutBox(*formattingRoot).setContentBoxWidth(availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum);
         }
-        LayoutUnit maxContentLogicalRight;
-        LayoutUnit lineLogicalRight;
-
-        LineBreaker lineBreaker(layoutState);
-        auto& inlineContent = formattingState().inlineItems();
-        for (auto& inlineItem : inlineContent) {
-            auto breakingContext = lineBreaker.breakingContext(*inlineItem, { availableWidth, lineLogicalRight, !lineLogicalRight });
-            if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap)
-                lineLogicalRight = 0;
-            lineLogicalRight += inlineItem->width();
-
-            maxContentLogicalRight = std::max(maxContentLogicalRight, lineLogicalRight);
-        }
-        return maxContentLogicalRight;
+        return LineLayout(*this).computedIntrinsicWidth(availableWidth);
     };
 
     auto intrinsicWidthConstraints = Geometry::constrainByMinMaxWidth(root, { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) });

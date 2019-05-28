@@ -53,11 +53,12 @@ private:
     class LineLayout {
     public:
         LineLayout(const InlineFormattingContext&);
-        void layout() const;
+        void layout(LayoutUnit widthConstraint) const;
+        LayoutUnit computedIntrinsicWidth(LayoutUnit widthConstraint) const;
 
     private:
         LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-        void initializeLine(Line&, LayoutUnit lineLogicalTop) const;
+        void initializeLine(Line&, LayoutUnit lineLogicalTop, LayoutUnit widthConstraint) const;
         void closeLine(Line&) const;
         void commitInlineItemToLine(Line&, const InlineItem&) const;
         void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
