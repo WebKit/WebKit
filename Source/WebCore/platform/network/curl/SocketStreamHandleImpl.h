@@ -34,9 +34,10 @@
 #include "CurlContext.h"
 #include "SocketStreamHandle.h"
 #include <pal/SessionID.h>
+#include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Seconds.h>
 #include <wtf/StreamBuffer.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueArray.h>
@@ -67,15 +68,20 @@ private:
     void handleError(CURLcode);
     void stopThread();
 
-    static const size_t kWriteBufferSize = 4 * 1024;
+    void callOnWorkerThread(Function<void()>&&);
+    void executeTasks();
+
     static const size_t kReadBufferSize = 4 * 1024;
 
     RefPtr<const StorageSessionProvider> m_storageSessionProvider;
     RefPtr<Thread> m_workerThread;
     std::atomic<bool> m_running { true };
 
-    std::atomic<size_t> m_writeBufferSize { 0 };
-    size_t m_writeBufferOffset;
+    MessageQueue<Function<void()>> m_taskQueue;
+
+    bool m_hasPendingWriteData { false };
+    size_t m_writeBufferSize { 0 };
+    size_t m_writeBufferOffset { 0 };
     UniqueArray<uint8_t> m_writeBuffer;
 
     StreamBuffer<uint8_t, 1024 * 1024> m_buffer;

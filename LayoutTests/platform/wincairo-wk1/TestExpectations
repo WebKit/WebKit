@@ -293,6 +293,8 @@ webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Fail
 
 # Failures on WebKit Legacy
 
+webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
+
 # Cookie policy only supported in WK2.
 http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]

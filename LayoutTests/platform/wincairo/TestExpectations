@@ -976,7 +976,6 @@ http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/workers/worker-reload.html [ Timeout Pass ]
 
 http/tests/workers/service [ Skip ]
