@@ -1,3 +1,0 @@
-
-PASS Makes sure that preloaded resources with a type attribute trigger the onload event 
-

@@ -165,10 +165,6 @@ static LinkHeader::LinkParameterName paramterNameFromString(String name)
         return LinkHeader::LinkParameterHreflang;
     if (equalLettersIgnoringASCIICase(name, "as"))
         return LinkHeader::LinkParameterAs;
-    if (equalLettersIgnoringASCIICase(name, "imagesrcset"))
-        return LinkHeader::LinkParameterImageSrcSet;
-    if (equalLettersIgnoringASCIICase(name, "imagesizes"))
-        return LinkHeader::LinkParameterImageSizes;
     return LinkHeader::LinkParameterUnknown;
 }
 
@@ -268,33 +264,27 @@ static bool parseParameterValue(CharacterType*& position, CharacterType* const e
     return !hasQuotes || completeQuotes;
 }
 
-void LinkHeader::setValue(LinkParameterName name, String&& value)
+void LinkHeader::setValue(LinkParameterName name, String value)
 {
     switch (name) {
     case LinkParameterRel:
         if (!m_rel)
-            m_rel = WTFMove(value);
+            m_rel = value;
         break;
     case LinkParameterAnchor:
         m_isValid = false;
         break;
     case LinkParameterCrossOrigin:
-        m_crossOrigin = WTFMove(value);
+        m_crossOrigin = value;
         break;
     case LinkParameterAs:
-        m_as = WTFMove(value);
+        m_as = value;
         break;
     case LinkParameterType:
-        m_mimeType = WTFMove(value);
+        m_mimeType = value;
         break;
     case LinkParameterMedia:
-        m_media = WTFMove(value);
-        break;
-    case LinkParameterImageSrcSet:
-        m_imageSrcSet = WTFMove(value);
-        break;
-    case LinkParameterImageSizes:
-        m_imageSizes = WTFMove(value);
+        m_media = value;
         break;
     case LinkParameterTitle:
     case LinkParameterRev:
@@ -346,7 +336,7 @@ LinkHeader::LinkHeader(CharacterType*& position, CharacterType* const end)
             return;
         }
 
-        setValue(parameterName, WTFMove(parameterValue));
+        setValue(parameterName, parameterValue);
     }
     findNextHeader(position, end);
 }

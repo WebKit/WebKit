@@ -35,8 +35,6 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded] attribute DOMString as;
     [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString imageSrcset;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString imageSizes;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;

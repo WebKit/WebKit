@@ -41,10 +41,7 @@ public:
     const String& mimeType() const { return m_mimeType; }
     const String& media() const { return m_media; }
     const String& crossOrigin() const { return m_crossOrigin; }
-    const String& imageSrcSet() const { return m_imageSrcSet; }
-    const String& imageSizes() const { return m_imageSizes; }
     bool valid() const { return m_isValid; }
-    bool isViewportDependent() const { return !media().isEmpty() || !imageSrcSet().isEmpty() || !imageSizes().isEmpty(); }
 
     enum LinkParameterName {
         LinkParameterRel,
@@ -58,12 +55,10 @@ public:
         LinkParameterUnknown,
         LinkParameterCrossOrigin,
         LinkParameterAs,
-        LinkParameterImageSrcSet,
-        LinkParameterImageSizes,
     };
 
 private:
-    void setValue(LinkParameterName, String&& value);
+    void setValue(LinkParameterName, String value);
 
     String m_url;
     String m_rel;
@@ -71,8 +66,6 @@ private:
     String m_mimeType;
     String m_media;
     String m_crossOrigin;
-    String m_imageSrcSet;
-    String m_imageSizes;
     bool m_isValid { true };
 };
 

@@ -1,3 +1,0 @@
-
-PASS Makes sure that a dynamically added preload with imagesrcset works 
-

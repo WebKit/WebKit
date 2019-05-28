@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 26: <link rel=preload> must have a valid `as` value
-CONSOLE MESSAGE: line 28: <link rel=preload> must have a valid `as` value
-
-PASS Makes sure that preloaded resources trigger the onload event 
-
