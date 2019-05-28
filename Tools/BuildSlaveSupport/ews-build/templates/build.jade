@@ -32,15 +32,6 @@
                 tr(ng-repeat="(name, value) in worker.workerinfo")
                   td.text-left {{ name }}
                   td.text-right {{ value }}
-          uib-tab(heading="Responsible Users")
-            ul.list-group
-                li.list-group-item(ng-repeat="(author, email) in responsibles")
-                    .change-avatar
-                        img(ng-src="avatar?email={{email}}")
-                    a(ng-href="mailto:{{email}}")
-                        | {{ author }}
-          uib-tab(heading="Changes")
-              changelist(changes="changes")
           uib-tab(heading="Debug")
               h4
                   a(ui-sref="buildrequest({buildrequest:buildrequest.buildrequestid})")

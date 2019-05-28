@@ -1,3 +1,12 @@
+2019-05-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Remove unused buildbot tabs
+        https://bugs.webkit.org/show_bug.cgi?id=198108
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/templates/build.jade: Removed unused 'Changes' and 'Responsible Users' tabs.
+
 2019-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use WPEBackend-fdo for accelerating compositing in Wayland instead of the nested compositor
