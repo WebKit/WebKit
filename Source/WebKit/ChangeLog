@@ -1,3 +1,11 @@
+2019-05-28  Alex Christensen  <achristensen@webkit.org>
+
+        Build Fix.
+
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController IGNORE_WARNINGS_END]):
+        (-[WKImagePreviewViewController previewActionItems]): Deleted.
+
 2019-05-28  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(r245795): causing internal testers to exit early after 50 crashes.

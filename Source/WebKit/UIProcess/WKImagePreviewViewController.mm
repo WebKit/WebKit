@@ -103,7 +103,9 @@ static CGSize _scaleSizeWithinSize(CGSize source, CGSize destination)
 }
 
 #if HAVE(LINK_PREVIEW)
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSArray<UIPreviewAction *> *)previewActionItems
+IGNORE_WARNINGS_END
 {
     NSMutableArray<UIPreviewAction *> *previewActions = [NSMutableArray array];
     for (_WKElementAction *imageAction in _imageActions.get()) {
