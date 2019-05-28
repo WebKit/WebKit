@@ -824,6 +824,7 @@ void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPositio
 
 void WebPage::didConcludeDrop()
 {
+    m_rangeForDropSnapshot = nullptr;
     m_pendingImageElementsForDropSnapshot.clear();
 }
 
@@ -836,9 +837,9 @@ void WebPage::didConcludeEditDrag()
     m_pendingImageElementsForDropSnapshot.clear();
 
     bool waitingForAnyImageToLoad = false;
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-    if (auto range = frame.selection().selection().toNormalizedRange()) {
-        for (TextIterator iterator(range.get()); !iterator.atEnd(); iterator.advance()) {
+    auto frame = makeRef(m_page->focusController().focusedOrMainFrame());
+    if (auto selectionRange = frame->selection().selection().toNormalizedRange()) {
+        for (TextIterator iterator(selectionRange.get()); !iterator.atEnd(); iterator.advance()) {
             auto* node = iterator.node();
             if (!is<HTMLImageElement>(node))
                 continue;
@@ -850,6 +851,10 @@ void WebPage::didConcludeEditDrag()
                 waitingForAnyImageToLoad = true;
             }
         }
+        auto collapsedRange = Range::create(selectionRange->ownerDocument(), selectionRange->endPosition(), selectionRange->endPosition());
+        frame->selection().setSelectedRange(collapsedRange.ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
+
+        m_rangeForDropSnapshot = WTFMove(selectionRange);
     }
 
     if (!waitingForAnyImageToLoad)
@@ -871,8 +876,7 @@ void WebPage::computeAndSendEditDragSnapshot()
 {
     Optional<TextIndicatorData> textIndicatorData;
     static auto defaultTextIndicatorOptionsForEditDrag = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor| TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-    if (auto range = frame.selection().selection().toNormalizedRange()) {
+    if (auto range = std::exchange(m_rangeForDropSnapshot, nullptr)) {
         if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
     }
