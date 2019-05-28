@@ -1,3 +1,21 @@
+2019-05-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, revert r242070 due to Membuster regression
+        https://bugs.webkit.org/show_bug.cgi?id=195013
+
+        Membuster shows ~0.3% regression.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::runBeginPhase):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachSlotVisitor):
+        (JSC::Heap::numberOfSlotVisitors): Deleted.
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::didVisitSomething const):
+        * heap/SlotVisitor.h:
+
 2019-05-27  Tadeu Zagallo  <tzagallo@apple.com>
 
         Fix opensource build of testapi
