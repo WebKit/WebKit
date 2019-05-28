@@ -1,3 +1,17 @@
+2019-05-28  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Unflake imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse.html
+        https://bugs.webkit.org/show_bug.cgi?id=197008
+
+        Reviewed by Jon Lee.
+
+        We raised an issue on the WPT test which was testing the event timestamp in an invalid manner (see https://github.com/w3c/pointerevents/issues/284
+        and https://github.com/web-platform-tests/wpt/issues/170160). As a result this test now passes reliably, so we can update the expected out and
+        the TestExpectations.
+
+        * web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse.html:
+
 2019-05-27  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Preserve repeat() notation when serializing declared values
