@@ -1,3 +1,28 @@
+2019-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dropping in an editable element should result in a ranged selection
+        https://bugs.webkit.org/show_bug.cgi?id=198267
+        <rdar://problem/51145977>
+
+        Reviewed by Tim Horton.
+
+        Adjust some existing API tests that currently check for selection rects after a drop. Instead of checking for
+        visible selection rects, simply check for the start caret rect, as determined by WKContentView's
+        -selectionRange.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        (makeCGRectValue): Deleted.
+        (checkSelectionRectsWithLogging): Deleted.
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+
+        Replace finalSelectionRects with finalSelectionStartRect.
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator runFrom:to:additionalItemRequestLocations:]):
+        (-[DragAndDropSimulator finalSelectionRects]): Deleted.
+
 2019-05-27  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Preserve repeat() notation when serializing declared values

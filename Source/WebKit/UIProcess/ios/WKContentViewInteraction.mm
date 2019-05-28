@@ -5074,11 +5074,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
             if (userIsInteracting)
                 return YES;
 
-#if ENABLE(DRAG_SUPPORT)
-            if (_dragDropInteractionState.isPerformingDrop())
-                return YES;
-#endif
-
             if (self.isFirstResponder || _becomingFirstResponder) {
                 // When the software keyboard is being used to enter an url, only the focus activity state is changing.
                 // In this case, auto focus on the page being navigated to should be disabled, unless a hardware

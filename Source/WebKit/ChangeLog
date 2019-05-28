@@ -1,3 +1,41 @@
+2019-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dropping in an editable element should result in a ranged selection
+        https://bugs.webkit.org/show_bug.cgi?id=198267
+        <rdar://problem/51145977>
+
+        Reviewed by Tim Horton.
+
+        When drag and drop was first implemented for iOS in iOS 11, selection behavior when dropping into editable
+        elements matched that of macOS, by leaving the inserted content selected after performing the drop. However, in
+        other parts of the platform (e.g. Notes), both the keyboard and selection views are not shown after a drop.
+
+        Instead of matching macOS behavior, WebKit on iOS should match the rest of the platform. This is a little
+        tricky, since we use the selection range after a drop to create a TextIndicator snapshot when creating a drag
+        preview. To resolve this, we refactor some of the logic introduced in r245778 to remember the DOM range to
+        snapshot before collapsing the range to the end of the inserted content.
+
+        Tested by adjusting some existing API tests.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
+        Remove some logic that currently presents the keyboard while the user is performing a drop that focuses an
+        editable element.
+
+        * WebProcess/WebPage/WebPage.h:
+
+        Add a member variable to keep track of which range should be snapshotted when generating a drop preview.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeDrop):
+        (WebKit::WebPage::didConcludeEditDrag):
+
+        Collapse the selection range to the end after an edit drag (i.e., a drop in an editable area that inserted
+        content).
+
+        (WebKit::WebPage::computeAndSendEditDragSnapshot):
+
 2019-05-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed Win Cairo build fix after r245796.

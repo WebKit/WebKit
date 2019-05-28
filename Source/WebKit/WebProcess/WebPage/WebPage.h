@@ -1780,6 +1780,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
     HashSet<RefPtr<WebCore::HTMLImageElement>> m_pendingImageElementsForDropSnapshot;
+    RefPtr<WebCore::Range> m_rangeForDropSnapshot;
 #endif
 
     bool m_cachedMainFrameIsPinnedToLeftSide { true };

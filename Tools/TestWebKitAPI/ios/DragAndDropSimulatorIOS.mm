@@ -303,7 +303,7 @@ IGNORE_WARNINGS_END
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<NSArray> _externalItemProviders;
     RetainPtr<NSArray> _sourceItemProviders;
-    RetainPtr<NSArray> _finalSelectionRects;
+    CGRect _finalSelectionStartRect;
     CGPoint _startLocation;
     CGPoint _endLocation;
     CGRect _lastKnownDragCaretRect;
@@ -381,7 +381,7 @@ IGNORE_WARNINGS_END
     _observedEventNames = adoptNS([[NSMutableArray alloc] init]);
     _insertedAttachments = adoptNS([[NSMutableArray alloc] init]);
     _removedAttachments = adoptNS([[NSMutableArray alloc] init]);
-    _finalSelectionRects = @[ ];
+    _finalSelectionStartRect = CGRectNull;
     _dragSession = nil;
     _dropSession = nil;
     _lastKnownDropProposal = nil;
@@ -463,14 +463,12 @@ IGNORE_WARNINGS_END
     Util::run(&_isDoneWithCurrentRun);
     Util::run(&_isDoneWaitingForDelayedDropPreviews);
     [_webView clearMessageHandlers:dragAndDropEventNames()];
-    _finalSelectionRects = [_webView selectionRectsAfterPresentationUpdate];
+    [_webView waitForNextPresentationUpdate];
+
+    auto contentView = [_webView textInputContentView];
+    _finalSelectionStartRect = [contentView caretRectForPosition:contentView.selectedTextRange.start];
 
     [defaultCenter removeObserver:self];
-}
-
-- (NSArray *)finalSelectionRects
-{
-    return _finalSelectionRects.get();
 }
 
 - (void)_concludeDropAndPerformOperationIfNecessary
