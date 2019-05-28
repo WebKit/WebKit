@@ -97,8 +97,10 @@ localizedStrings["Additions"] = "Additions";
 localizedStrings["Address"] = "Address";
 localizedStrings["All"] = "All";
 localizedStrings["All Changes"] = "All Changes";
+/* Break (pause) on all exceptions */
 localizedStrings["All Exceptions"] = "All Exceptions";
 localizedStrings["All Layers"] = "All Layers";
+/* A submenu item of 'Break on' that breaks (pauses) before all network requests */
 localizedStrings["All Requests"] = "All Requests";
 localizedStrings["All Resources"] = "All Resources";
 localizedStrings["All Storage"] = "All Storage";
@@ -127,12 +129,14 @@ localizedStrings["Area"] = "Area";
 localizedStrings["Assertion"] = "Assertion";
 localizedStrings["Assertion Failed"] = "Assertion Failed";
 localizedStrings["Assertion Failed: %s"] = "Assertion Failed: %s";
+/* Break (pause) when console.assert() fails */
 localizedStrings["Assertion Failures"] = "Assertion Failures";
 localizedStrings["Assertion with message: %s"] = "Assertion with message: %s";
 localizedStrings["Assertive"] = "Assertive";
 localizedStrings["Associated Data"] = "Associated Data";
 localizedStrings["Async audits are not supported."] = "Async audits are not supported.";
 localizedStrings["Attribute"] = "Attribute";
+/* A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified */
 localizedStrings["Attribute Modified"] = "Attribute Modified";
 localizedStrings["Attributes"] = "Attributes";
 localizedStrings["Audit"] = "Audit";
@@ -196,6 +200,7 @@ localizedStrings["Canvas %d"] = "Canvas %d";
 localizedStrings["Canvas %s"] = "Canvas %s";
 localizedStrings["Canvas Element"] = "Canvas Element";
 localizedStrings["Canvases"] = "Canvases";
+/* Capture screenshot of the selected DOM node */
 localizedStrings["Capture Screenshot"] = "Capture Screenshot";
 localizedStrings["Capturing"] = "Capturing";
 /* Context menu label for whether searches should be case sensitive. */
@@ -209,6 +214,7 @@ localizedStrings["Changes"] = "Changes";
 localizedStrings["Character Data"] = "Character Data";
 localizedStrings["Charge \u201C%s\u201D to Callers"] = "Charge \u201C%s\u201D to Callers";
 localizedStrings["Checked"] = "Checked";
+/* A submenu item of 'Add' to append DOM nodes to the selected DOM node */
 localizedStrings["Child"] = "Child";
 localizedStrings["Child Layers"] = "Child Layers";
 localizedStrings["Child added to "] = "Child added to ";
@@ -243,7 +249,8 @@ localizedStrings["Collect garbage"] = "Collect garbage";
 localizedStrings["Comment"] = "Comment";
 localizedStrings["Compare snapshots"] = "Compare snapshots";
 localizedStrings["Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording"] = "Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording";
-localizedStrings["Composite"] = "Composite";
+/* Composite phase timeline records, where graphic layers are combined */
+localizedStrings["Composite @ Timeline record"] = "Composite";
 localizedStrings["Composited"] = "Composited";
 localizedStrings["Compressed"] = "Compressed";
 localizedStrings["Compression"] = "Compression";
@@ -464,7 +471,9 @@ localizedStrings["Extra Scripts"] = "Extra Scripts";
 localizedStrings["Fade unexecuted code"] = "Fade unexecuted code";
 localizedStrings["Failed to upgrade"] = "Failed to upgrade";
 localizedStrings["Failure status code"] = "Failure status code";
+/* Resource loaded via 'fetch' method */
 localizedStrings["Fetch"] = "Fetch";
+/* Resources loaded via 'fetch' method */
 localizedStrings["Fetches"] = "Fetches";
 localizedStrings["File or Resource"] = "File or Resource";
 localizedStrings["Filename"] = "Filename";
@@ -481,7 +490,9 @@ localizedStrings["Fonts"] = "Fonts";
 localizedStrings["Force Dark Appearance"] = "Force Dark Appearance";
 localizedStrings["Force Light Appearance"] = "Force Light Appearance";
 localizedStrings["Force Print Media Styles"] = "Force Print Media Styles";
+/* Layout phase records that were imperative (forced) */
 localizedStrings["Forced Layout"] = "Forced Layout";
+/* A context menu item to force (override) a DOM node's pseudo-classes */
 localizedStrings["Forced Pseudo-Classes"] = "Forced Pseudo-Classes";
 localizedStrings["Format: HSL"] = "Format: HSL";
 localizedStrings["Format: HSLA"] = "Format: HSLA";
@@ -571,6 +582,7 @@ localizedStrings["Index Key \u2014 %s"] = "Index Key \u2014 %s";
 localizedStrings["Indexed Databases"] = "Indexed Databases";
 localizedStrings["Info: "] = "Info: ";
 localizedStrings["Infos"] = "Infos";
+/* A section of CSS rules matching an ancestor DOM node */
 localizedStrings["Inherited From"] = "Inherited From";
 localizedStrings["Initial State"] = "Initial State";
 localizedStrings["Initial Velocity"] = "Initial Velocity";
@@ -599,8 +611,9 @@ localizedStrings["Layer Count: %d"] = "Layer Count: %d";
 localizedStrings["Layer Info"] = "Layer Info";
 localizedStrings["Layers"] = "Layers";
 localizedStrings["Layers:"] = "Layers:";
-localizedStrings["Layout"] = "Layout";
 localizedStrings["Layout & Rendering"] = "Layout & Rendering";
+/* Layout phase timeline records */
+localizedStrings["Layout @ Timeline record"] = "Layout";
 localizedStrings["Layout Invalidated"] = "Layout Invalidated";
 localizedStrings["Line %d"] = "Line %d";
 localizedStrings["Line %d:%d"] = "Line %d:%d";
@@ -618,10 +631,12 @@ localizedStrings["Local Variables"] = "Local Variables";
 localizedStrings["Located at %s"] = "Located at %s";
 localizedStrings["Location"] = "Location";
 localizedStrings["Log Canvas Context"] = "Log Canvas Context";
+/* Log (print) DOM element to Console */
 localizedStrings["Log Element"] = "Log Element";
 localizedStrings["Log Frame Text"] = "Log Frame Text";
 localizedStrings["Log Frame Value"] = "Log Frame Value";
 localizedStrings["Log Message"] = "Log Message";
+/* Log (print) DOM node to Console */
 localizedStrings["Log Node"] = "Log Node";
 localizedStrings["Log Symbol"] = "Log Symbol";
 localizedStrings["Log Value"] = "Log Value";
@@ -665,6 +680,7 @@ localizedStrings["Network Issue"] = "Network Issue";
 localizedStrings["Network Requests"] = "Network Requests";
 localizedStrings["Network Requests:"] = "Network Requests:";
 localizedStrings["New Tab"] = "New Tab";
+/* A submenu item of 'Add' to add DOM nodes after the selected DOM node */
 localizedStrings["Next Sibling"] = "Next Sibling";
 localizedStrings["No"] = "No";
 localizedStrings["No Accessibility Information"] = "No Accessibility Information";
@@ -705,6 +721,7 @@ localizedStrings["No request, served from the memory cache."] = "No request, ser
 localizedStrings["No response cookies."] = "No response cookies.";
 localizedStrings["No response headers"] = "No response headers";
 localizedStrings["Node"] = "Node";
+/* A submenu item of 'Break On' that breaks (pauses) before DOM node is removed */
 localizedStrings["Node Removed"] = "Node Removed";
 localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
@@ -744,8 +761,11 @@ localizedStrings["Page"] = "Page";
 localizedStrings["Page Issue"] = "Page Issue";
 localizedStrings["Page navigated at %s"] = "Page navigated at %s";
 localizedStrings["Page reloaded at %s"] = "Page reloaded at %s";
-localizedStrings["Paint"] = "Paint";
+/* Paint (render) phase timeline records */
+localizedStrings["Paint @ Timeline record"] = "Paint";
 localizedStrings["Paints"] = "Paints";
+/* A count of how many times an element was painted (rendered) */
+localizedStrings["Paints @ Column title"] = "Paints";
 localizedStrings["Parent"] = "Parent";
 localizedStrings["Partial Garbage Collection"] = "Partial Garbage Collection";
 localizedStrings["Passive"] = "Passive";
@@ -775,6 +795,7 @@ localizedStrings["Press %s to stop editing"] = "Press %s to stop editing";
 localizedStrings["Pressed"] = "Pressed";
 localizedStrings["Pretty print"] = "Pretty print";
 localizedStrings["Preview"] = "Preview";
+/* A submenu item of 'Add' to add DOM nodes before the selected DOM node */
 localizedStrings["Previous Sibling"] = "Previous Sibling";
 localizedStrings["Primary Key"] = "Primary Key";
 localizedStrings["Primary Key \u2014 %s"] = "Primary Key \u2014 %s";
@@ -862,9 +883,11 @@ localizedStrings["Return type for anonymous function"] = "Return type for anonym
 localizedStrings["Return type for function: %s"] = "Return type for function: %s";
 localizedStrings["Return value is not an object, string, or boolean"] = "Return value is not an object, string, or boolean";
 localizedStrings["Reveal Breakpoint"] = "Reveal Breakpoint";
+/* Open Elements tab and select this node in DOM tree */
 localizedStrings["Reveal in DOM Tree"] = "Reveal in DOM Tree";
 localizedStrings["Reveal in Debugger Tab"] = "Reveal in Debugger Tab";
 localizedStrings["Reveal in Elements Tab"] = "Reveal in Elements Tab";
+/* Open Layers tab and select the layer corresponding to this node */
 localizedStrings["Reveal in Layers Tab"] = "Reveal in Layers Tab";
 localizedStrings["Reveal in Network Tab"] = "Reveal in Network Tab";
 localizedStrings["Reveal in Original Resource"] = "Reveal in Original Resource";
@@ -893,7 +916,8 @@ localizedStrings["Script Element %d"] = "Script Element %d";
 localizedStrings["Script Entries:"] = "Script Entries:";
 localizedStrings["Script Evaluated"] = "Script Evaluated";
 localizedStrings["Scripts"] = "Scripts";
-localizedStrings["Scroll Into View"] = "Scroll Into View";
+/* Scroll selected DOM node into view on the inspected web page */
+localizedStrings["Scroll into View"] = "Scroll into View";
 localizedStrings["Search"] = "Search";
 localizedStrings["Search Again"] = "Search Again";
 localizedStrings["Search Resource Content"] = "Search Resource Content";
@@ -908,10 +932,12 @@ localizedStrings["Select baseline snapshot"] = "Select baseline snapshot";
 localizedStrings["Select comparison snapshot"] = "Select comparison snapshot";
 localizedStrings["Selected"] = "Selected";
 localizedStrings["Selected Canvas Context"] = "Selected Canvas Context";
+/* Selected DOM element */
 localizedStrings["Selected Element"] = "Selected Element";
 localizedStrings["Selected Frame"] = "Selected Frame";
 localizedStrings["Selected Item"] = "Selected Item";
 localizedStrings["Selected Items"] = "Selected Items";
+/* Selected DOM node */
 localizedStrings["Selected Node"] = "Selected Node";
 localizedStrings["Selected Symbol"] = "Selected Symbol";
 localizedStrings["Selected Value"] = "Selected Value";
@@ -1013,6 +1039,7 @@ localizedStrings["Stop recording canvas actions"] = "Stop recording canvas actio
 localizedStrings["Stop recording once page loads"] = "Stop recording once page loads";
 localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u201D audit";
 localizedStrings["Storage"] = "Storage";
+/* CSS properties defined via HTML style attribute */
 localizedStrings["Style Attribute"] = "Style Attribute";
 localizedStrings["Style Resolution"] = "Style Resolution";
 localizedStrings["Style rule"] = "Style rule";
@@ -1025,12 +1052,14 @@ localizedStrings["Styles:"] = "Styles:";
 localizedStrings["Stylesheet"] = "Stylesheet";
 localizedStrings["Stylesheets"] = "Stylesheets";
 localizedStrings["Subject"] = "Subject";
+/* A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified */
 localizedStrings["Subtree Modified"] = "Subtree Modified";
 localizedStrings["Summary"] = "Summary";
 localizedStrings["TCP"] = "TCP";
 localizedStrings["TIFF"] = "TIFF";
 localizedStrings["Tab width:"] = "Tab width:";
 localizedStrings["Tabs"] = "Tabs";
+/* A submenu item of 'Edit' to change DOM element's tag name */
 localizedStrings["Tag"] = "Tag";
 localizedStrings["Take snapshot"] = "Take snapshot";
 localizedStrings["Target"] = "Target";
@@ -1093,6 +1122,7 @@ localizedStrings["Total: %s"] = "Total: %s";
 localizedStrings["Totals:"] = "Totals:";
 localizedStrings["Trace"] = "Trace";
 localizedStrings["Trace: %s"] = "Trace: %s";
+/* Amount of data sent over the network for a single resource */
 localizedStrings["Transfer Size"] = "Transfer Size";
 localizedStrings["Transferred"] = "Transferred";
 localizedStrings["Triggered Breakpoint"] = "Triggered Breakpoint";
@@ -1107,6 +1137,7 @@ localizedStrings["URL Breakpoint\u2026"] = "URL Breakpoint\u2026";
 localizedStrings["Unable to determine path to property from root"] = "Unable to determine path to property from root";
 localizedStrings["Unable to parse as JSON: %s"] = "Unable to parse as JSON: %s";
 localizedStrings["Unable to show certificate for \u201C%s\u201D"] = "Unable to show certificate for \u201C%s\u201D";
+/* Break (pause) on uncaught (unhandled) exceptions */
 localizedStrings["Uncaught Exceptions"] = "Uncaught Exceptions";
 localizedStrings["Undefined custom element"] = "Undefined custom element";
 localizedStrings["Unique"] = "Unique";

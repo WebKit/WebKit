@@ -1,3 +1,18 @@
+2019-05-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Provide UIString descriptions to improve localizations
+        https://bugs.webkit.org/show_bug.cgi?id=195132
+        <rdar://problem/48457817>
+
+        Reviewed by Devin Rousso.
+
+        Allow WI.UIString to take:
+        - WI.UIString(string, key, comment)
+        - WI.UIString(string, comment)
+        - WI.UIString(string)
+
+        * Scripts/extract-localizable-js-strings:
+
 2019-05-25  Dewei Zhu  <dewei_zhu@apple.com>
 
         Limit run-benchmark http server to specific interface.

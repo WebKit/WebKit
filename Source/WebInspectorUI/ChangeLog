@@ -1,3 +1,58 @@
+2019-05-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Provide UIString descriptions to improve localizations
+        https://bugs.webkit.org/show_bug.cgi?id=195132
+        <rdar://problem/48457817>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/LoadLocalizedStrings.js:
+        (WI.UIString):
+        (WI.repeatedUIString.timelineRecordLayout):
+        (WI.repeatedUIString.timelineRecordPaint):
+        (WI.repeatedUIString.timelineRecordComposite):
+        (WI.repeatedUIString.allExceptions):
+        (WI.repeatedUIString.uncaughtExceptions):
+        (WI.repeatedUIString.assertionFailures):
+        (WI.repeatedUIString.allRequests):
+        (WI.repeatedUIString.fetch):
+        (WI.repeatedUIString.revealInDOMTree):
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        (WI.LayoutTimelineRecord.displayNameForEventType):
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WI.RenderingFrameTimelineRecord.displayNameForTaskType):
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.displayNameForType):
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView.prototype.layout):
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.displayNameForSampleType):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement.displayNameForType):
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement.prototype.populateContextMenu):
+        (WI.DOMNodeTreeElement):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointMouseDown):
+        (WI.DebuggerSidebarPanel):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WI.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.shortDisplayNameForResourceType):
+        (WI.NetworkTableContentView.prototype.initialLayout):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCreateBreakpointMouseDown):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderSelector):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+
 2019-05-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Overlay: don't show setting for showing rulers/guides during element selection if it's not supported
