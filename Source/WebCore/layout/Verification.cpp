@@ -108,16 +108,19 @@ static bool checkForMatchingNonTextRuns(const Display::Run& inlineRun, const Web
 {
     return areEssentiallyEqual(inlineBox.logicalLeft(), inlineRun.logicalLeft())
         && areEssentiallyEqual(inlineBox.logicalRight(), inlineRun.logicalRight())
-        && areEssentiallyEqual(inlineBox.logicalHeight(), inlineRun.logicalHeight());
+        && areEssentiallyEqual(inlineBox.logicalTop(), inlineRun.logicalTop())
+        && areEssentiallyEqual(inlineBox.logicalBottom(), inlineRun.logicalBottom());
 }
+
 
 static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const InlineTextBox& inlineTextBox)
 {
     return areEssentiallyEqual(inlineTextBox.logicalLeft(), inlineRun.logicalLeft())
         && areEssentiallyEqual(inlineTextBox.logicalRight(), inlineRun.logicalRight())
+        && areEssentiallyEqual(inlineTextBox.logicalTop(), inlineRun.logicalTop())
+        && areEssentiallyEqual(inlineTextBox.logicalBottom(), inlineRun.logicalBottom())
         && inlineTextBox.start() == inlineRun.textContext()->start()
-        && (inlineTextBox.end() + 1) == inlineRun.textContext()->end()
-        && areEssentiallyEqual(inlineTextBox.logicalHeight(), inlineRun.logicalHeight());
+        && (inlineTextBox.end() + 1) == inlineRun.textContext()->end();
 }
 
 static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
@@ -275,7 +278,7 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
         return mismtachingGeometry;
 
     auto& container = downcast<Container>(layoutBox);
-    auto* childBox = container.firstChild();
+    auto* childLayoutBox = container.firstChild();
     auto* childRenderer = renderer.firstChild();
 
     while (childRenderer) {
@@ -284,23 +287,27 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
             continue;
         }
 
-        if (!childBox) {
+        if (!childLayoutBox) {
             stream  << "Trees are out of sync!";
             stream.nextLine();
             return true;
         }
 
-        if (is<RenderBlockFlow>(*childRenderer) && childBox->establishesInlineFormattingContext()) {
+        if (is<RenderBlockFlow>(*childRenderer) && childLayoutBox->establishesInlineFormattingContext()) {
             ASSERT(childRenderer->childrenInline());
+            auto mismtachingGeometry = outputMismatchingBlockBoxInformationIfNeeded(stream, context, downcast<RenderBox>(*childRenderer), *childLayoutBox);
+            if (mismtachingGeometry)
+                return true;
+
             auto& blockFlow = downcast<RenderBlockFlow>(*childRenderer);
-            auto& formattingRoot = downcast<Container>(*childBox);
+            auto& formattingRoot = downcast<Container>(*childLayoutBox);
             mismtachingGeometry |= blockFlow.lineLayoutPath() == RenderBlockFlow::SimpleLinesPath ? outputMismatchingSimpleLineInformationIfNeeded(stream, context, blockFlow, formattingRoot) : outputMismatchingComplexLineInformationIfNeeded(stream, context, blockFlow, formattingRoot);
         } else {
-            auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childBox);
+            auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childLayoutBox);
             mismtachingGeometry |= mismatchingSubtreeGeometry;
         }
 
-        childBox = childBox->nextSibling();
+        childLayoutBox = childLayoutBox->nextSibling();
         childRenderer = childRenderer->nextSibling();
     }
 
