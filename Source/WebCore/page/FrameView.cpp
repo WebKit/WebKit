@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -3468,6 +3468,8 @@ void FrameView::autoSizeIfEnabled()
     auto& documentRenderer = downcast<RenderElement>(*firstChild);
     documentRenderer.mutableStyle().setMaxWidth(Length(m_autoSizeConstraint.width(), Fixed));
     resize(m_autoSizeConstraint.width(), m_autoSizeConstraint.height());
+
+    Ref<FrameView> protectedThis(*this);
     document->updateStyleIfNeeded();
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -4866,8 +4868,11 @@ void FrameView::resetTrackedRepaints()
 
 String FrameView::trackedRepaintRectsAsText() const
 {
-    if (frame().document())
-        frame().document()->updateLayout();
+    Frame& frame = this->frame();
+    Ref<Frame> protector(frame);
+
+    if (auto* document = frame.document())
+        document->updateLayout();
 
     TextStream ts;
     if (!m_trackedRepaintRects.isEmpty()) {

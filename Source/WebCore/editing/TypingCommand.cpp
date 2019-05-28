@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -551,6 +551,8 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
 
     applyCommandToComposite(WTFMove(command), endingSelection());
 
+    Frame& frame = this->frame();
+    Ref<Frame> protector(frame);
     typingAddedToOpenCommand(InsertText);
 }
 
@@ -563,6 +565,9 @@ void TypingCommand::insertLineBreak()
         return;
 
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
+
+    Frame& frame = this->frame();
+    Ref<Frame> protector(frame);
     typingAddedToOpenCommand(InsertLineBreak);
 }
 
@@ -583,6 +588,9 @@ void TypingCommand::insertParagraphSeparator()
         return;
 
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditAction::TypingInsertParagraph));
+
+    Frame& frame = this->frame();
+    Ref<Frame> protector(frame);
     typingAddedToOpenCommand(InsertParagraphSeparator);
 }
 
@@ -607,6 +615,9 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
     }
         
     applyCommandToComposite(BreakBlockquoteCommand::create(document()));
+
+    Frame& frame = this->frame();
+    Ref<Frame> protector(frame);
     typingAddedToOpenCommand(InsertParagraphSeparatorInQuotedContent);
 }
 

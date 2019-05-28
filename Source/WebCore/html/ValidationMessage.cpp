@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -187,7 +188,14 @@ void ValidationMessage::buildBubbleTree()
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     shadowRoot.appendChild(*m_bubble);
+
+    auto weakElement = makeWeakPtr(*m_element);
+
     document.updateLayout();
+
+    if (!weakElement || !m_element->renderer())
+        return;
+
     adjustBubblePosition(m_element->renderer()->absoluteBoundingBoxRect(), m_bubble.get());
 
     auto clipper = HTMLDivElement::create(document);

@@ -1,3 +1,21 @@
+2019-05-28  Brent Fulgham  <bfulgham@apple.com>
+        Protect frames during style and layout changes
+        https://bugs.webkit.org/show_bug.cgi?id=198047
+        <rdar://problem/50954082>
+
+        Reviewed by Zalan Bujtas.
+
+        Be more careful about the scope and lifetime of objects that participate in layout or
+        style updates. If a method decides a layout or style update is needed, it needs to
+        confirm that the elements it was operating on are still valid and needed in the
+        current operation.
+
+        * DOM/DOM.mm:
+        (-[DOMRange renderedImageForcingBlackText:renderedImageForcingBlackText:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView selectionImageForcingBlackText:selectionImageForcingBlackText:]):
+
 2019-05-27  Chris Dumez  <cdumez@apple.com>
 
         Use a strongly-typed identifier for pages

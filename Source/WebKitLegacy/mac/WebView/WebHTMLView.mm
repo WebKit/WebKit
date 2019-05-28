@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2199,6 +2199,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
+
+    Ref<Frame> protectedCoreFrame(*coreFrame);
 
     TextIndicatorData textIndicator;
     auto dragImage = createDragImageForSelection(*coreFrame, textIndicator);
@@ -6959,6 +6961,8 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
+
+    Ref<Frame> protectedCoreFrame(*coreFrame);
 
 #if PLATFORM(IOS_FAMILY)
     return selectionImage(coreFrame, forceBlackText);
