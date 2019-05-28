@@ -1811,8 +1811,6 @@ webkit.org/b/196512 [ Mojave+ ] fast/text/complex-initial-advance.html [ ImageOn
 
 webkit.org/b/196517 imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html [ Skip ]
 
-webkit.org/b/196875 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
-
 webkit.org/b/177663 media/W3C/video/events/event_progress_manual.html [ Pass Failure ]
 
 # Skip iOS-specific Pointer Events WPT tests.

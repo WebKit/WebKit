@@ -1,3 +1,27 @@
+2019-05-28  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r244182): inspector/canvas/recording-webgl-snapshots.html became flaky on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=196875
+        <rdar://problem/49873252>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Remove the `frameLimit` configuration on these tests, as they're short enough that when
+        running in debug, the timing between the `InspectorCanvasAgent` automatically stopping the
+        recording and the test page's `LastFrame` event (which will manually stop the recording) is
+        too close and can result in a race condition.
+
+        Instead, just wait for the test page to say "done" (`LastFrame`) before stopping the
+        recording, ensuring that the full "flow" of the recording is under the control of the test.
+
+        This isn't an issue when using Web Inspector "normally" (e.g. not in a test), because the
+        frontend UI will "ignore" these types of errors, not to mention it would be much harder for
+        a person to get the timing just right to even encounter this situation.
+
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl2-snapshots.html:
+        * platform/mac/TestExpectations:
+
 2019-05-28  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unflake imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse.html
