@@ -1,19 +1,20 @@
 function foo(arr, index) {
-    for (let i = 0; i < 1e2; i++) {
+    arr[index] = index;
+
+    for (let j = 0; j < 1e2; j++) {
         let x = {};
         x.x = arr;
     }
-
-    return arr[index];
 }
 noInline(foo);
 
 const arr = new Array(10).fill({});
+let result = 0;
 for (let i = 0; i < 1e6; i++) {
-    foo(arr, i % arr.length);
+    result += foo(arr, i % arr.length);
 }
 for (let i = 0; i < 1e6; i++) {
-    foo(arr, i % arr.length);
+    result += foo(arr, i % arr.length);
     if (!(i % arr.length))
-        foo(arr, -1);
+        result += foo(arr, -1);
 }

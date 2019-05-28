@@ -1,3 +1,18 @@
+2019-05-28  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JITOperations putByVal should mark negative array indices as out-of-bounds
+        https://bugs.webkit.org/show_bug.cgi?id=198271
+
+        Reviewed by Saam Barati.
+
+        Similar to what was done to getByVal in r245769, we should also mark put_by_val as out-of-bounds
+        when we exit from DFG for putting to a negative index. This avoids the same scenario where we keep
+        recompiling a CodeBlock with DFG and exiting at the same bytecode.
+
+        This is a 3.7x improvement in the microbenchmark being added: put-by-val-negative-array-index.js.
+
+        * jit/JITOperations.cpp:
+
 2019-05-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, revert r242070 due to Membuster regression

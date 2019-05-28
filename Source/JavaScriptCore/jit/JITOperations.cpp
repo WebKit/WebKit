@@ -653,6 +653,10 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
         scope.release();
         baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
         return;
+    } else if (subscript.isInt32()) {
+        byValInfo->tookSlowPath = true;
+        if (baseValue.isObject())
+            byValInfo->arrayProfile->setOutOfBounds();
     }
 
     auto property = subscript.toPropertyKey(callFrame);
