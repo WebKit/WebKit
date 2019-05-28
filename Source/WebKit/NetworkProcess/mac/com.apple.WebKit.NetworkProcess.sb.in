@@ -1,4 +1,4 @@
-; Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+; Copyright (C) 2013-2019 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@
 
 (deny iokit-get-properties)
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 || PLATFORM(IOSMAC)
 (deny mach-lookup (xpc-service-name-prefix ""))
 #endif
 
@@ -57,7 +57,7 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 || PLATFORM(IOSMAC)
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 #endif
@@ -152,7 +152,7 @@
     (global-name "com.apple.FileCoordination")
     (global-name "com.apple.PowerManagement.control")
     (global-name "com.apple.SystemConfiguration.configd")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 || PLATFORM(IOSMAC)
     (global-name "com.apple.analyticsd")
 #endif
     (global-name "com.apple.cookied")

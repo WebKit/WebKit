@@ -1,3 +1,17 @@
+2019-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Update sandbox rules for more News use cases
+        https://bugs.webkit.org/show_bug.cgi?id=198236
+        <rdar://problem/50054027>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update the WebContent and Network process sandboxes so that News has the same set of allowed
+        service access as regular WebKit views.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use WPEBackend-fdo for accelerating compositing in Wayland instead of the nested compositor
