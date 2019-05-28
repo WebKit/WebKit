@@ -228,9 +228,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         parenContextSize = WTF::roundUpToMultipleOf<sizeof(uintptr_t)>(parenContextSize);
 
-        // Check that the paren context is a reasonable size.
-        if (parenContextSize > VM::patternContextBufferSize)
-            m_abortExecution.append(jump());
+        if (parenContextSize > VM::patternContextBufferSize) {
+            m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
+            return;
+        }
 
         Jump emptyFreeList = branchTestPtr(Zero, freelistRegister);
         move(freelistRegister, parenContextPointer);
@@ -3935,8 +3936,13 @@ public:
         initCallFrame();
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-        if (m_containsNestedSubpatterns)
+        if (m_containsNestedSubpatterns) {
             initParenContextFreeList();
+            if (m_failureReason) {
+                codeBlock.setFallBackWithFailureReason(*m_failureReason);
+                return;
+            }
+        }
 #endif
         
         if (m_pattern.m_saveInitialStartValue) {
