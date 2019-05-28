@@ -168,7 +168,7 @@ class DarwinPort(ApplePort):
             '-file',
             DarwinPort.spindump_file_path(host, name, pid, str(tempdir)),
         ]
-        if self.host.platform.is_mac():
+        if host.platform.is_mac():
             command = ['/usr/bin/sudo', '-n'] + command
         exit_status = host.executive.run_command(command, return_exit_code=True)
         if exit_status:

@@ -1,3 +1,13 @@
+2019-05-28  David Xiong  <w_xiong@apple.com>
+
+        webkitpy: Using sudo on iOS device during timeout spindumps 
+        https://bugs.webkit.org/show_bug.cgi?id=198142
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.sample_process): Check target host instead of source host for sudo command.
+
 2019-05-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Remove unused buildbot tabs
