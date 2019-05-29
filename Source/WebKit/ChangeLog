@@ -1,3 +1,17 @@
+2019-05-29  Youenn Fablet  <youenn@apple.com>
+
+        UserMediaCaptureManagerProxy::SourceProxy should directly have access to its IPC connection
+        https://bugs.webkit.org/show_bug.cgi?id=198335
+
+        Reviewed by Eric Carlson.
+
+        Previously, SourceProxy was getting its IPC connection by going through its manager, then its process proxy.
+        As some calls can be done from a background thread, it is safer to directly make SourceProxy own a Ref of its IPC connection.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+
 2019-05-28  Geoffrey Garen  <ggaren@apple.com>
 
         WeakPtr breaks vtables when upcasting to base classes
