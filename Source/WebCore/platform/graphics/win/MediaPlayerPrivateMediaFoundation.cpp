@@ -2894,6 +2894,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFS
                 D3DSURFACE_DESC desc;
                 if (SUCCEEDED(surface->GetDesc(&desc)))
                     format = desc.Format;
+                m_memSurface.clear();
                 hr = m_device->CreateOffscreenPlainSurface(width, height, format, D3DPOOL_SYSTEMMEM, &m_memSurface, nullptr);
                 m_width = width;
                 m_height = height;
