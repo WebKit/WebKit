@@ -1,3 +1,15 @@
+2019-05-29  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] The WebContent process needs proper entitlement to do secure drawing
+        https://bugs.webkit.org/show_bug.cgi?id=198343
+        <rdar://problem/50671257>
+
+        Reviewed by Tim Horton.
+
+        The WebContent process needs proper entitlement to do secure drawing on iOS.
+
+        * Configurations/WebContent-iOS.entitlements:
+
 2019-05-29  Youenn Fablet  <youenn@apple.com>
 
         UserMediaCaptureManager should remove a source from its map once the source is ended

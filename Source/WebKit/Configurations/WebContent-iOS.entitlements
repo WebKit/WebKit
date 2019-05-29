@@ -33,5 +33,7 @@
 	<true/>
 	<key>com.apple.QuartzCore.webkit-end-points</key>
 	<true/>
+	<key>com.apple.QuartzCore.secure-mode</key>
+	<true/>
 </dict>
 </plist>
