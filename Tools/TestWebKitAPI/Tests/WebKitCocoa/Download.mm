@@ -879,7 +879,7 @@ void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToFo
     [[NSFileManager defaultManager] removeItemAtURL:[NSURL fileURLWithPath:destination.get() isDirectory:NO] error:nil];
 }
 
-TEST(_WKDownload, DownloadMonitorCancel)
+TEST(_WKDownload, DISABLED_DownloadMonitorCancel)
 {
     downloadAtRate(0.5, 120); // Should cancel in ~0.5 seconds
     downloadAtRate(1.5, 120); // Should cancel in ~2.5 seconds
