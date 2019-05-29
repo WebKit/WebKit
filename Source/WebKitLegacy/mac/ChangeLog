@@ -1,3 +1,14 @@
+2019-05-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal watchOS build
+        https://bugs.webkit.org/show_bug.cgi?id=198344
+        <rdar://problem/51128965>
+
+        Reviewed by Geoff Garen.
+
+        * Misc/WebDownload.h:
+        Fix watchOS like we did iosmac in r245596
+
 2019-05-28  Brent Fulgham  <bfulgham@apple.com>
         Protect frames during style and layout changes
         https://bugs.webkit.org/show_bug.cgi?id=198047
