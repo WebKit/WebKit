@@ -1329,7 +1329,7 @@
     {
         "name": "Web Authentication",
         "status": {
-            "status": "In Development"
+            "status": "Supported In Preview"
         },
         "url": "https://w3c.github.io/webauthn/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=181943",
