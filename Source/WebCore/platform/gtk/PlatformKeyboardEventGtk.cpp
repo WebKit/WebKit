@@ -1330,7 +1330,7 @@ static PlatformEvent::Type eventTypeForGdkKeyEvent(GdkEventKey* event)
 static OptionSet<PlatformEvent::Modifier> modifiersForGdkKeyEvent(GdkEventKey* event)
 {
     OptionSet<PlatformEvent::Modifier> modifiers;
-    if (event->state & GDK_SHIFT_MASK || event->keyval == GDK_3270_BackTab)
+    if (event->state & GDK_SHIFT_MASK || event->keyval == GDK_KEY_3270_BackTab)
         modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event->state & GDK_CONTROL_MASK)
         modifiers.add(PlatformEvent::Modifier::ControlKey);
