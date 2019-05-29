@@ -1,3 +1,14 @@
+2019-05-29  Antti Koivisto  <antti@apple.com>
+
+        Scrolling node ordering wrong when a layer has both positioning and fixed/sticky node
+        https://bugs.webkit.org/show_bug.cgi?id=198329
+
+        Reviewed by Darin Adler.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/sticky-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/sticky-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/sticky-in-overflow.html: Added.
+
 2019-05-28  Yacine Bandou  <yacine.bandou@softathome.com>
 
         [MSE][GStreamer] update the readyState correctly in MediaPlayerPrivateGStreamerMSE

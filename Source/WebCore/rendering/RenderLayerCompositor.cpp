@@ -4211,6 +4211,14 @@ ScrollingNodeID RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLa
     ScrollingTreeState childTreeState;
     ScrollingTreeState* currentTreeState = &treeState;
 
+    // If there's a positioning node, it's the parent scrolling node for fixed/sticky/scrolling/frame hosting.
+    if (roles.contains(ScrollCoordinationRole::Positioning)) {
+        newNodeID = updateScrollingNodeForPositioningRole(layer, *currentTreeState, changes);
+        childTreeState.parentNodeID = newNodeID;
+        currentTreeState = &childTreeState;
+    } else
+        detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::Positioning);
+
     // If is fixed or sticky, it's the parent scrolling node for scrolling/frame hosting.
     if (roles.contains(ScrollCoordinationRole::ViewportConstrained)) {
         newNodeID = updateScrollingNodeForViewportConstrainedRole(layer, *currentTreeState, changes);
@@ -4219,14 +4227,6 @@ ScrollingNodeID RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLa
         currentTreeState = &childTreeState;
     } else
         detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::ViewportConstrained);
-
-    // If there's a positioning node, it's the parent scrolling node for scrolling/frame hosting.
-    if (roles.contains(ScrollCoordinationRole::Positioning)) {
-        newNodeID = updateScrollingNodeForPositioningRole(layer, *currentTreeState, changes);
-        childTreeState.parentNodeID = newNodeID;
-        currentTreeState = &childTreeState;
-    } else
-        detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::Positioning);
 
     if (roles.contains(ScrollCoordinationRole::Scrolling))
         newNodeID = updateScrollingNodeForScrollingRole(layer, *currentTreeState, changes);
