@@ -1,3 +1,16 @@
+2019-05-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] WebPage::positionInformation() may set InteractionInformationAtPosition.isImage to true but leave image unset
+        https://bugs.webkit.org/show_bug.cgi?id=198202
+
+        Reviewed by Tim Horton.
+
+        The new test ensures InteractionInformationAtPosition::isImage will not
+        be to true for a broken image.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+
 2019-05-29  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style reports false-positive build/include_order warning in WTF C++ source files

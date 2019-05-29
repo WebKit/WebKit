@@ -114,7 +114,26 @@ TEST(WebKit, RequestActivatedElementInfoForBlank)
     
     TestWebKitAPI::Util::run(&finished);
 }
+
+TEST(WebKit, RequestActivatedElementInfoForBrokenImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style = 'margin: 0px;'><img  src='missing.gif' height='100' width='100'></body></html>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
     
+    __block bool finished = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
+        
+        EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeUnspecified);
+        EXPECT_EQ(elementInfo.boundingRect.size.width, 100);
+        EXPECT_EQ(elementInfo.boundingRect.size.height, 100);
+        
+        finished = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WebKit, RequestActivatedElementInfoWithNestedSynchronousUpdates)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

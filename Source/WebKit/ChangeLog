@@ -1,3 +1,33 @@
+2019-05-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] WebPage::positionInformation() may set InteractionInformationAtPosition.isImage to true but leave image unset
+        https://bugs.webkit.org/show_bug.cgi?id=198202
+
+        Reviewed by Tim Horton.
+
+        r192037 added the flags isLink and isImage to InteractionInformationAtPosition.
+        It also made WebPage::positionInformation() set isImage to true but before 
+        ensuring there is a valid image at the position.
+
+        Safari WebKit additions assumes if isImage is true then the image has to
+        hold a valid ShareableBitmap pointer. Since WebPage::positionInformation()
+        is the only place that sets isImage, the fix is to set isImage to true
+        only  after passing all the image validation checks.
+
+        Since WebPage::positionInformation() is a little bit difficult to read
+        (182 lines), It was re-factored by splitting it to static functions. 
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::focusedElementPositionInformation):
+        (WebKit::linkIndicatorPositionInformation):
+        (WebKit::dataDetectorLinkPositionInformation):
+        (WebKit::imagePositionInformation):
+        (WebKit::boundsPositionInformation):
+        (WebKit::elementPositionInformation):
+        (WebKit::selectionPositionInformation):
+        (WebKit::textInteractionPositionInformation):
+        (WebKit::WebPage::positionInformation):
+
 2019-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         WeakPtr breaks vtables when upcasting to base classes

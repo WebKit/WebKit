@@ -2497,6 +2497,203 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
     if (auto reply = WTFMove(m_pendingSynchronousPositionInformationReply))
         reply(WTFMove(information));
 }
+    
+static void focusedElementPositionInformation(WebPage& page, Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    const Frame& frame = page.corePage()->focusController().focusedOrMainFrame();
+    if (!frame.editor().hasComposition())
+        return;
+
+    const uint32_t kHitAreaWidth = 66;
+    const uint32_t kHitAreaHeight = 66;
+    FrameView& view = *frame.view();
+    IntPoint adjustedPoint(view.rootViewToContents(request.point));
+    IntPoint constrainedPoint = constrainPoint(adjustedPoint, frame, focusedElement);
+    VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
+
+    RefPtr<Range> compositionRange = frame.editor().compositionRange();
+    if (position < compositionRange->startPosition())
+        position = compositionRange->startPosition();
+    else if (position > compositionRange->endPosition())
+        position = compositionRange->endPosition();
+    IntRect caretRect = view.contentsToRootView(position.absoluteCaretBounds());
+    float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - request.point.x());
+    float deltaYFromTheTop = abs(caretRect.y() - request.point.y());
+    float deltaYFromTheBottom = abs(caretRect.y() + caretRect.height() - request.point.y());
+
+    info.isNearMarkedText = !(deltaX > kHitAreaWidth || deltaYFromTheTop > kHitAreaHeight || deltaYFromTheBottom > kHitAreaHeight);
+}
+
+static void linkIndicatorPositionInformation(WebPage& page, Element& element, Element& linkElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    if (!request.includeLinkIndicator)
+        return;
+
+    auto linkRange = rangeOfContents(linkElement);
+    float deviceScaleFactor = page.corePage()->deviceScaleFactor();
+    const float marginInPoints = 4;
+
+    auto textIndicator = TextIndicator::createWithRange(linkRange.get(),
+        TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds |
+        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection,
+        TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
+        
+    if (textIndicator)
+        info.linkIndicator = textIndicator->data();
+}
+    
+#if ENABLE(DATA_DETECTION)
+static void dataDetectorLinkPositionInformation(Element& element, InteractionInformationAtPosition& info)
+{
+    if (!DataDetection::isDataDetectorLink(element))
+        return;
+    
+    info.isDataDetectorLink = true;
+    const int dataDetectionExtendedContextLength = 350;
+    info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(element);
+    info.dataDetectorResults = element.document().frame()->dataDetectionResults();
+
+    if (!DataDetection::requiresExtendedContext(element))
+        return;
+    
+    auto linkRange = Range::create(element.document());
+    linkRange->selectNodeContents(element);
+    info.textBefore = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->startPosition(),
+        dataDetectionExtendedContextLength, DirectionBackward).get(), TextIteratorDefaultBehavior, true);
+    info.textAfter = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->endPosition(),
+        dataDetectionExtendedContextLength, DirectionForward).get(), TextIteratorDefaultBehavior, true);
+}
+#endif
+
+static void imagePositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    auto& renderImage = downcast<RenderImage>(*(element.renderer()));
+    if (!renderImage.cachedImage() || renderImage.cachedImage()->errorOccurred())
+        return;
+
+    auto* image = renderImage.cachedImage()->imageForRenderer(&renderImage);
+    if (!image || image->width() <= 1 || image->height() <= 1)
+        return;
+
+    info.isImage = true;
+    info.imageURL = element.document().completeURL(renderImage.cachedImage()->url());
+    info.isAnimatedImage = image->isAnimated();
+
+    if (!request.includeSnapshot)
+        return;
+
+    FloatSize screenSizeInPixels = screenSize();
+    screenSizeInPixels.scale(page.corePage()->deviceScaleFactor());
+    FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
+    FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
+    // FIXME: Only select ExtendedColor on images known to need wide gamut
+    ShareableBitmap::Configuration bitmapConfiguration;
+    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(page.corePage()->mainFrame().view());
+
+    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration);
+    if (!sharedBitmap)
+        return;
+
+    auto graphicsContext = sharedBitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return;
+
+    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
+    info.image = sharedBitmap;
+}
+
+static void boundsPositionInformation(RenderElement& renderer, InteractionInformationAtPosition& info)
+{
+    if (renderer.isRenderImage())
+        info.bounds = downcast<RenderImage>(renderer).absoluteContentQuad().enclosingBoundingBox();
+    else
+        info.bounds = renderer.absoluteBoundingBoxRect();
+
+    if (!renderer.document().frame()->isMainFrame()) {
+        FrameView *view = renderer.document().frame()->view();
+        info.bounds = view->contentsToRootView(info.bounds);
+    }
+}
+
+static void elementPositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    Element* linkElement = nullptr;
+    if (element.renderer() && element.renderer()->isRenderImage())
+        linkElement = containingLinkElement(&element);
+    else if (element.isLink())
+        linkElement = &element;
+
+    info.isElement = true;
+    info.idAttribute = element.getIdAttribute();
+
+    info.title = element.attributeWithoutSynchronization(HTMLNames::titleAttr).string();
+    if (linkElement && info.title.isEmpty())
+        info.title = element.innerText();
+    if (element.renderer())
+        info.touchCalloutEnabled = element.renderer()->style().touchCalloutEnabled();
+
+    if (linkElement) {
+        info.isLink = true;
+        info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
+
+        linkIndicatorPositionInformation(page, element, *linkElement, request, info);
+#if ENABLE(DATA_DETECTION)
+        dataDetectorLinkPositionInformation(element, info);
+#endif
+    }
+
+    if (auto* renderer = element.renderer()) {
+        if (renderer->isRenderImage())
+            imagePositionInformation(page, element, request, info);
+        boundsPositionInformation(*renderer, info);
+    }
+}
+    
+static void selectionPositionInformation(WebPage& page, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
+    Node* hitNode = result.innerNode();
+
+    // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
+    if (!hitNode || !hitNode->renderer())
+        return;
+
+    RenderObject* renderer = hitNode->renderer();
+    if (!request.readonly)
+        page.corePage()->focusController().setFocusedFrame(result.innerNodeFrame());
+
+    info.bounds = renderer->absoluteBoundingBoxRect(true);
+    // We don't want to select blocks that are larger than 97% of the visible area of the document.
+    if (is<HTMLAttachmentElement>(*hitNode)) {
+        info.isAttachment = true;
+        const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
+        info.title = attachment.attachmentTitle();
+        if (attachment.file())
+            info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
+    } else {
+        info.isSelectable = renderer->style().userSelect() != UserSelect::None;
+        if (info.isSelectable && !hitNode->isTextNode())
+            info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
+    }
+
+#if PLATFORM(IOSMAC)
+    bool isInsideFixedPosition;
+    VisiblePosition caretPosition(renderer->positionForPoint(request.point, nullptr));
+    info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
+#endif
+}
+
+#if ENABLE(DATALIST_ELEMENT)
+static void textInteractionPositionInformation(WebPage& page, const HTMLInputElement& input, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    if (!input.list())
+        return;
+
+    HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    if (result.innerNode() == input.dataListButtonElement())
+        info.preventTextInteraction = true;
+}
+#endif
 
 InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)
 {
@@ -2507,176 +2704,36 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     Node* hitNode = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
 
     info.nodeAtPositionIsFocusedElement = hitNode == m_focusedElement;
-    if (m_focusedElement) {
-        const Frame& frame = m_page->focusController().focusedOrMainFrame();
-        if (frame.editor().hasComposition()) {
-            const uint32_t kHitAreaWidth = 66;
-            const uint32_t kHitAreaHeight = 66;
-            FrameView& view = *frame.view();
-            IntPoint adjustedPoint(view.rootViewToContents(request.point));
-            IntPoint constrainedPoint = m_focusedElement ? constrainPoint(adjustedPoint, frame, *m_focusedElement) : adjustedPoint;
-            VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
+    info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
 
-            RefPtr<Range> compositionRange = frame.editor().compositionRange();
-            if (position < compositionRange->startPosition())
-                position = compositionRange->startPosition();
-            else if (position > compositionRange->endPosition())
-                position = compositionRange->endPosition();
-            IntRect caretRect = view.contentsToRootView(position.absoluteCaretBounds());
-            float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - request.point.x());
-            float deltaYFromTheTop = abs(caretRect.y() - request.point.y());
-            float deltaYFromTheBottom = abs(caretRect.y() + caretRect.height() - request.point.y());
-
-            info.isNearMarkedText = !(deltaX > kHitAreaWidth || deltaYFromTheTop > kHitAreaHeight || deltaYFromTheBottom > kHitAreaHeight);
-        }
-    }
-    bool elementIsLinkOrImage = false;
-    if (hitNode) {
-        Element* element = is<Element>(*hitNode) ? downcast<Element>(hitNode) : nullptr;
-        if (element) {
-            info.isElement = true;
-            info.idAttribute = element->getIdAttribute();
-            Element* linkElement = nullptr;
-            if (element->renderer() && element->renderer()->isRenderImage()) {
-                elementIsLinkOrImage = true;
-                linkElement = containingLinkElement(element);
-            } else if (element->isLink()) {
-                linkElement = element;
-                elementIsLinkOrImage = true;
-            }
-
-            if (elementIsLinkOrImage) {
-                if (linkElement) {
-                    info.isLink = true;
-
-                    if (request.includeSnapshot) {
-                        // Ensure that the image contains at most 600K pixels, so that it is not too big.
-                        if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
-                            info.image = &snapshot->bitmap();
-                    }
-
-                    if (request.includeLinkIndicator) {
-                        auto linkRange = rangeOfContents(*linkElement);
-                        float deviceScaleFactor = corePage()->deviceScaleFactor();
-                        const float marginInPoints = 4;
-
-                        auto textIndicator = TextIndicator::createWithRange(linkRange.get(), TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
-                            TextIndicatorOptionIncludeMarginIfRangeMatchesSelection, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
-
-                        if (textIndicator)
-                            info.linkIndicator = textIndicator->data();
-                    }
-
-#if ENABLE(DATA_DETECTION)
-                    info.isDataDetectorLink = DataDetection::isDataDetectorLink(*element);
-                    if (info.isDataDetectorLink) {
-                        const int dataDetectionExtendedContextLength = 350;
-                        info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(*element);
-                        info.dataDetectorResults = element->document().frame()->dataDetectionResults();
-                        if (DataDetection::requiresExtendedContext(*element)) {
-                            auto linkRange = Range::create(element->document());
-                            linkRange->selectNodeContents(*element);
-                            info.textBefore = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->startPosition(), dataDetectionExtendedContextLength, DirectionBackward).get(), TextIteratorDefaultBehavior, true);
-                            info.textAfter = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->endPosition(), dataDetectionExtendedContextLength, DirectionForward).get(), TextIteratorDefaultBehavior, true);
-                        }
-                    }
+#if ENABLE(DATA_INTERACTION)
+    info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
 #endif
-                }
-                if (element->renderer() && element->renderer()->isRenderImage()) {
-                    info.isImage = true;
-                    auto& renderImage = downcast<RenderImage>(*(element->renderer()));
-                    if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
-                        if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
-                            if (image->width() > 1 && image->height() > 1) {
-                                info.imageURL = element->document().completeURL(renderImage.cachedImage()->url());
-                                info.isAnimatedImage = image->isAnimated();
 
-                                if (request.includeSnapshot) {
-                                    FloatSize screenSizeInPixels = screenSize();
-                                    screenSizeInPixels.scale(corePage()->deviceScaleFactor());
-                                    FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
-                                    FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
-                                    // FIXME: Only select ExtendedColor on images known to need wide gamut
-                                    ShareableBitmap::Configuration bitmapConfiguration;
-                                    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(m_page->mainFrame().view());
-                                    if (auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration)) {
-                                        auto graphicsContext = sharedBitmap->createGraphicsContext();
-                                        graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
-                                        info.image = sharedBitmap;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (linkElement)
-                info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
-            info.title = element->attributeWithoutSynchronization(HTMLNames::titleAttr).string();
-            if (linkElement && info.title.isEmpty())
-                info.title = element->innerText();
-            if (element->renderer())
-                info.touchCalloutEnabled = element->renderer()->style().touchCalloutEnabled();
+    if (m_focusedElement)
+        focusedElementPositionInformation(*this, *m_focusedElement, request, info);
 
-            if (RenderElement* renderer = element->renderer()) {
-                if (renderer->isRenderImage())
-                    info.bounds = downcast<RenderImage>(*renderer).absoluteContentQuad().enclosingBoundingBox();
-                else
-                    info.bounds = renderer->absoluteBoundingBoxRect();
+    if (is<Element>(hitNode)) {
+        Element& element = downcast<Element>(*hitNode);
+        elementPositionInformation(*this, element, request, info);
 
-                if (!renderer->document().frame()->isMainFrame()) {
-                    FrameView *view = renderer->document().frame()->view();
-                    info.bounds = view->contentsToRootView(info.bounds);
-                }
-            }
+        if (info.isLink && !info.isImage && request.includeSnapshot) {
+            // Ensure that the image contains at most 600K pixels, so that it is not too big.
+            if (RefPtr<WebImage> snapshot = snapshotNode(element, SnapshotOptionsShareable, 600 * 1024))
+                info.image = &snapshot->bitmap();
         }
     }
 
-    if (!elementIsLinkOrImage) {
-        HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
-        hitNode = result.innerNode();
-        // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
-        if (hitNode && hitNode->renderer()) {
-            RenderObject* renderer = hitNode->renderer();
-            if (!request.readonly)
-                m_page->focusController().setFocusedFrame(result.innerNodeFrame());
-            info.bounds = renderer->absoluteBoundingBoxRect(true);
-            // We don't want to select blocks that are larger than 97% of the visible area of the document.
-            if (is<HTMLAttachmentElement>(*hitNode)) {
-                info.isAttachment = true;
-                const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
-                info.title = attachment.attachmentTitle();
-                if (attachment.file())
-                    info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
-            } else {
-                info.isSelectable = renderer->style().userSelect() != UserSelect::None;
-                if (info.isSelectable && !hitNode->isTextNode())
-                    info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
-            }
-#if PLATFORM(IOSMAC)
-            bool isInsideFixedPosition;
-            VisiblePosition caretPosition(renderer->positionForPoint(request.point, nullptr));
-            info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
-#endif
-        }
-    }
+    if (!(info.isLink || info.isImage))
+        selectionPositionInformation(*this, request, info);
 
     // Prevent the callout bar from showing when tapping on the datalist button.
 #if ENABLE(DATALIST_ELEMENT)
     if (is<HTMLInputElement>(hitNode)) {
         const HTMLInputElement& input = downcast<HTMLInputElement>(*hitNode);
-        if (input.list()) {
-            HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active);
-            if (result.innerNode() == input.dataListButtonElement())
-                info.preventTextInteraction = true;
-        }
+        textInteractionPositionInformation(*this, input, request, info);
     }
 #endif
-
-#if ENABLE(DATA_INTERACTION)
-    info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
-#endif
-    info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
 
     return info;
 }
