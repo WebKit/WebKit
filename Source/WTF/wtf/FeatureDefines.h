@@ -184,7 +184,7 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 #if !defined(HAVE_UISCENE)
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 130000) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 60000)
 #define HAVE_UISCENE 1
 #endif
 #endif
