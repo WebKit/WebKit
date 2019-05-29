@@ -1,3 +1,21 @@
+2019-05-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] REGRESSION(r245186) Crash in NetworkCache::IOChannel::read in http/tests/IndexedDB some tests
+        https://bugs.webkit.org/show_bug.cgi?id=197941
+
+        Reviewed by Don Olmstead.
+
+        http/tests/IndexedDB some tests were crashing in
+        NetworkCache::IOChannel::read in order to allocate a buffer with
+        std::numeric_limits<size_t>::max() as the size.
+
+        IOChannel::read should check the file size, and calculate the read
+        size.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::read): Limit the read buffer
+        size by calling FileSystem::getFileSize.
+
 2019-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         Fix sandbox violation when using QuickLook on iOS

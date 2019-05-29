@@ -74,9 +74,17 @@ static inline void runTaskInQueue(Function<void()>&& task, WorkQueue* queue)
 void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void(Data&, int error)>&& completionHandler)
 {
     runTaskInQueue([this, protectedThis = makeRef(*this), offset, size, completionHandler = WTFMove(completionHandler)] {
-        Vector<uint8_t> buffer(size);
+        long long fileSize;
+        if (!FileSystem::getFileSize(m_fileDescriptor, fileSize) || fileSize > std::numeric_limits<size_t>::max()) {
+            Data data;
+            completionHandler(data, -1);
+            return;
+        }
+        size_t readSize = fileSize;
+        readSize = std::min(size, readSize);
+        Vector<uint8_t> buffer(readSize);
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::readFromFile(m_fileDescriptor, reinterpret_cast<char*>(buffer.data()), size);
+        int err = FileSystem::readFromFile(m_fileDescriptor, reinterpret_cast<char*>(buffer.data()), readSize);
         err = err < 0 ? err : 0;
         auto data = Data(WTFMove(buffer));
         completionHandler(data, err);
