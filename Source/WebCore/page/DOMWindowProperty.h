@@ -35,7 +35,7 @@ class Frame;
 class DOMWindowProperty {
 public:
     Frame* frame() const;
-    DOMWindow* window() const { return m_window.get(); }
+    DOMWindow* window() const;
 
 protected:
     explicit DOMWindowProperty(DOMWindow*);

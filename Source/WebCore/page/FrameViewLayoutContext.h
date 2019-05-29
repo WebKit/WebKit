@@ -27,7 +27,6 @@
 
 #include "LayoutUnit.h"
 #include "Timer.h"
-
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -82,7 +81,7 @@ public:
 
     unsigned layoutCount() const { return m_layoutCount; }
 
-    RenderElement* subtreeLayoutRoot() const { return m_subtreeLayoutRoot.get(); }
+    RenderElement* subtreeLayoutRoot() const;
     void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot.clear(); }
     void convertSubtreeLayoutToFullLayout();
 

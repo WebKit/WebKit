@@ -175,13 +175,10 @@ private:
     void flush(AVSampleBufferAudioRenderer *);
     ALLOW_NEW_API_WITHOUT_GUARDS_END
 
-    WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
-
     Vector<RefPtr<VideoTrackPrivateMediaSourceAVFObjC>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateMediaSourceAVFObjC>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
 
-    WeakPtrFactory<SourceBufferPrivateAVFObjC> m_weakFactory;
     WeakPtrFactory<SourceBufferPrivateAVFObjC> m_appendWeakFactory;
 
     RetainPtr<AVStreamDataParser> m_parser;

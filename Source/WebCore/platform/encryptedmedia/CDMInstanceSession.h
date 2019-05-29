@@ -39,7 +39,7 @@ namespace WebCore {
 
 class SharedBuffer;
 
-class CDMInstanceSessionClient {
+class CDMInstanceSessionClient : public CanMakeWeakPtr<CDMInstanceSessionClient> {
 public:
     virtual ~CDMInstanceSessionClient() = default;
 

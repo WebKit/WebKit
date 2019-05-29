@@ -119,7 +119,7 @@ public:
     void incrementSuspendedPageCount();
     void decrementSuspendedPageCount();
 
-    WebProcessPool& processPool() const { ASSERT(m_processPool); return *m_processPool.get(); }
+    WebProcessPool& processPool() const;
 
     WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.valueOr(WebCore::RegistrableDomain { }); }
     void setIsInProcessCache(bool);

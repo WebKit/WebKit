@@ -47,7 +47,7 @@ public:
     CSSParserMode mode() const { return m_context.mode; }
 
     const CSSParserContext& context() const { return m_context; }
-    StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
+    StyleSheetContents* styleSheet() const;
 
     Ref<ImmutableStyleProperties> parseDeclaration(const CSSParserTokenRange&);
     void parseRuleList(const CSSParserTokenRange&, Vector<RefPtr<StyleRuleBase>>&);

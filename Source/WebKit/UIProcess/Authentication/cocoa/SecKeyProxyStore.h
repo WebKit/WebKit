@@ -39,7 +39,7 @@ class Credential;
 
 namespace WebKit {
 
-class SecKeyProxyStore : public RefCounted<SecKeyProxyStore> {
+class SecKeyProxyStore : public RefCounted<SecKeyProxyStore>, public CanMakeWeakPtr<SecKeyProxyStore> {
 public:
     static Ref<SecKeyProxyStore> create() { return adoptRef(* new SecKeyProxyStore()); }
 
@@ -47,12 +47,10 @@ public:
     bool isInitialized() const { return !!m_secKeyProxy; }
 
     auto* get() const { return m_secKeyProxy.get(); }
-    auto& weakPtrFactory() const { return m_weakPtrFactory; }
 
 private:
     SecKeyProxyStore() = default;
 
-    WeakPtrFactory<SecKeyProxyStore> m_weakPtrFactory;
     RetainPtr<SecKeyProxy> m_secKeyProxy;
 };
 

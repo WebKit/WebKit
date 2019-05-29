@@ -39,6 +39,11 @@ CSSDeferredParser::CSSDeferredParser(const CSSParserContext& context, const Stri
 {
 }
 
+StyleSheetContents* CSSDeferredParser::styleSheet() const
+{
+    return m_styleSheet.get();
+}
+
 Ref<ImmutableStyleProperties> CSSDeferredParser::parseDeclaration(const CSSParserTokenRange& range)
 {
     return CSSParserImpl::parseDeferredDeclaration(range, m_context, m_styleSheet.get());

@@ -1016,6 +1016,11 @@ void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()
         m_networkSession->notifyResourceLoadStatisticsProcessed();
 }
 
+NetworkSession* WebResourceLoadStatisticsStore::networkSession()
+{
+    return m_networkSession.get();
+}
+
 void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domainsToRemoveWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

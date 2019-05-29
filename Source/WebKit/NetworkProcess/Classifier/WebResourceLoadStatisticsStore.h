@@ -175,7 +175,7 @@ public:
 
     void notifyResourceLoadStatisticsProcessed();
 
-    NetworkSession* networkSession() { return m_networkSession.get(); }
+    NetworkSession* networkSession();
 
     void sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample) const;
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const;

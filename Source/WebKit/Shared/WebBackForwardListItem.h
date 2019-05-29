@@ -75,7 +75,7 @@ public:
     void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_itemState.snapshot = WTFMove(snapshot); }
 #endif
     void setSuspendedPage(SuspendedPageProxy*);
-    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
+    SuspendedPageProxy* suspendedPage() const;
 
 #if !LOG_DISABLED
     const char* loggingString();

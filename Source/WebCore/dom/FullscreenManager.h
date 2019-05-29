@@ -79,7 +79,7 @@ public:
     WEBCORE_EXPORT void didExitFullscreen();
 
     void setFullscreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
-    RenderFullScreen* fullscreenRenderer() const { return m_fullscreenRenderer.get(); }
+    RenderFullScreen* fullscreenRenderer() const;
 
     void dispatchFullscreenChangeEvents();
     bool fullscreenIsAllowedForElement(Element&) const;

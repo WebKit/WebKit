@@ -150,7 +150,7 @@ public:
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
     Ref<FontFace> wrapper();
     void setWrapper(FontFace&);
-    FontFace* existingWrapper() { return m_wrapper.get(); }
+    FontFace* existingWrapper();
 
     struct FontLoadTiming {
         Seconds blockPeriod;
