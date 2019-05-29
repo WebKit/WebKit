@@ -122,8 +122,8 @@ public:
     int rightMarginWidth() const final;
     TileCoverage tileCoverage() const final { return m_tileCoverage; }
 
-    FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) const final;
-    FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const final;
+    FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) final;
+    FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) final;
 
     bool scrollingPerformanceLoggingEnabled() const final { return m_scrollingPerformanceLoggingEnabled; }
 
@@ -190,7 +190,13 @@ private:
 
     void notePendingTileSizeChange();
     void tileSizeChangeTimerFired();
-    
+
+#if !PLATFORM(IOS_FAMILY)
+    FloatRect adjustTileCoverageForDesktopPageScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& visibleRect) const;
+#endif
+
+    FloatRect adjustTileCoverageWithScrollingVelocity(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& visibleRect, float contentsScale) const;
+
     IntRect boundsForSize(const FloatSize&) const;
 
     PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
@@ -205,6 +211,8 @@ private:
     std::unique_ptr<TileGrid> m_tileGrid;
     std::unique_ptr<TileGrid> m_zoomedOutTileGrid;
 
+    std::unique_ptr<HistoricalVelocityData> m_historicalVelocityData; // Used when we track velocity internally.
+
     FloatRect m_visibleRect; // Only used for scroll performance logging.
     Optional<FloatRect> m_layoutViewportRect; // Only used by the tiled scrolling indicator.
     FloatRect m_coverageRect;
@@ -214,7 +222,7 @@ private:
     DeferrableOneShotTimer m_tileSizeChangeTimer;
 
     TileCoverage m_tileCoverage { CoverageForVisibleArea };
-    
+
     VelocityData m_velocity;
 
     int m_marginSize { kDefaultTileSize };
@@ -236,6 +244,7 @@ private:
     bool m_hasTilesWithTemporaryScaleFactor { false }; // Used to make low-res tiles when zooming.
     bool m_inLiveResize { false };
     bool m_tileSizeLocked { false };
+    bool m_haveExternalVelocityData { false };
     bool m_isTileSizeUpdateDelayDisabledForTesting { false };
 
     Color m_tileDebugBorderColor;

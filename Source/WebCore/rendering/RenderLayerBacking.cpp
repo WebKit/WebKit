@@ -355,14 +355,13 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
     return m_graphicsLayer->tiledBacking();
 }
 
-static TiledBacking::TileCoverage computePageTiledBackingCoverage(RenderLayerBacking* backing)
+static TiledBacking::TileCoverage computePageTiledBackingCoverage(const RenderLayer& layer)
 {
-    // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
-    auto& frameView = backing->owningLayer().renderer().view().frameView();
-
     // If the page is non-visible, don't incur the cost of keeping extra tiles for scrolling.
-    if (!backing->owningLayer().page().isVisible())
+    if (!layer.page().isVisible())
         return TiledBacking::CoverageForVisibleArea;
+
+    auto& frameView = layer.renderer().view().frameView();
 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
     bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
@@ -377,13 +376,39 @@ static TiledBacking::TileCoverage computePageTiledBackingCoverage(RenderLayerBac
     return tileCoverage;
 }
 
+static TiledBacking::TileCoverage computeOverflowTiledBackingCoverage(const RenderLayer& layer)
+{
+    // If the page is non-visible, don't incur the cost of keeping extra tiles for scrolling.
+    if (!layer.page().isVisible())
+        return TiledBacking::CoverageForVisibleArea;
+    
+    auto& frameView = layer.renderer().view().frameView();
+
+    TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
+    bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
+    if (!useMinimalTilesDuringLiveResize) {
+        if (layer.hasScrollableHorizontalOverflow())
+            tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
+
+        if (layer.hasScrollableVerticalOverflow())
+            tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
+    }
+    return tileCoverage;
+}
+
 void RenderLayerBacking::adjustTiledBackingCoverage()
 {
-    if (!m_isFrameLayerWithTiledBacking)
-        return;
+    if (m_isFrameLayerWithTiledBacking) {
+        auto tileCoverage = computePageTiledBackingCoverage(m_owningLayer);
+        tiledBacking()->setTileCoverage(tileCoverage);
+    }
 
-    TiledBacking::TileCoverage tileCoverage = computePageTiledBackingCoverage(this);
-    tiledBacking()->setTileCoverage(tileCoverage);
+    if (m_owningLayer.hasCompositedScrollableOverflow() && m_scrolledContentsLayer) {
+        if (auto* tiledBacking = m_scrolledContentsLayer->tiledBacking()) {
+            auto tileCoverage = computeOverflowTiledBackingCoverage(m_owningLayer);
+            tiledBacking->setTileCoverage(tileCoverage);
+        }
+    }
 }
 
 void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom)
@@ -1258,6 +1283,8 @@ void RenderLayerBacking::updateGeometry()
             m_foregroundLayer->setSize(m_scrolledContentsLayer->size());
             m_foregroundLayer->setOffsetFromRenderer(m_scrolledContentsLayer->offsetFromRenderer() - toLayoutSize(m_scrolledContentsLayer->scrollOffset()));
         }
+        
+        adjustTiledBackingCoverage();
     }
 
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.

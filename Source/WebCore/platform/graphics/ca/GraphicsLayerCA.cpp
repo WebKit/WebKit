@@ -1447,9 +1447,12 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     case Type::PageTiledBacking:
         coverageRect = tiledBacking()->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
         break;
-    case Type::Normal:
     case Type::ScrolledContents:
-        if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
+        if (m_layer->usesTiledBackingLayer())
+            coverageRect = tiledBacking()->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
+        break;
+    case Type::Normal:
+        if (m_layer->usesTiledBackingLayer())
             coverageRect = tiledBacking()->adjustTileCoverageRect(coverageRect, oldVisibleRect, rects.visibleRect, size() != m_sizeAtLastCoverageRectUpdate);
         break;
     default:

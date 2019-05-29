@@ -450,6 +450,8 @@ public:
     void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
 
     bool scrollsOverflow() const;
+    bool hasScrollableHorizontalOverflow() const;
+    bool hasScrollableVerticalOverflow() const;
     bool hasScrollbars() const { return m_hBar || m_vBar; }
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
@@ -1066,8 +1068,6 @@ private:
     void computeScrollDimensions();
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
-    bool hasScrollableHorizontalOverflow() const;
-    bool hasScrollableVerticalOverflow() const;
 
     bool showsOverflowControls() const;
 

@@ -99,6 +99,8 @@ public:
 
     bool usesTiledBackingLayer() const { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
 
+    bool isPageTiledBackingLayer() const { return layerType() == LayerTypePageTiledBackingLayer; }
+
     PlatformCALayerClient* owner() const { return m_owner; }
     virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
 

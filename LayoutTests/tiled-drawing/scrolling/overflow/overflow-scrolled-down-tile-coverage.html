@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        #scroller {
+            margin: 50px;
+            height: 512px;
+            width: 400px;
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+        
+        .contents {
+			height: 3000px;
+            background-image: repeating-linear-gradient(white, silver 400px);
+        }
+
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+		
+		function startTest()
+		{
+			requestAnimationFrame(() => {
+				scroller.scrollTop = 2000;
+
+				requestAnimationFrame(() => {
+					scroller.scrollTop = 1800;
+
+		            document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+		                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+					
+					if (window.testRunner)
+						testRunner.notifyDone();
+				});
+			});
+		}
+
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+
+    <div id="scroller">
+        <div class="contents">
+        </div>
+    </div>
+
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

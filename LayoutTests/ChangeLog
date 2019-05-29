@@ -1,3 +1,18 @@
+2019-05-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Use scroll-velocity-based tile coverage for overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=198294
+        rdar://problem/48942184
+
+        Reviewed by Tim Horton.
+
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage-expected.txt: Added.
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage.html: Added.
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage-expected.txt: Added.
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html: Added.
+        * tiled-drawing/scrolling/overflow/overflow-tile-coverage-expected.txt: Added.
+        * tiled-drawing/scrolling/overflow/overflow-tile-coverage.html: Added.
+
 2019-05-28  Youenn Fablet  <youenn@apple.com>
 
         createAnswer() SDP Rejected by setLocalDescription()

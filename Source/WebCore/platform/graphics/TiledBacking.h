@@ -95,8 +95,8 @@ public:
     virtual void setTileCoverage(TileCoverage) = 0;
     virtual TileCoverage tileCoverage() const = 0;
 
-    virtual FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) const = 0;
-    virtual FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const = 0;
+    virtual FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) = 0;
+    virtual FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) = 0;
 
     virtual void willStartLiveResize() = 0;
     virtual void didEndLiveResize() = 0;
