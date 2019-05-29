@@ -54,14 +54,14 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     static displayNameForSampleType(type)
     {
         switch (type) {
-        case WI.CPUTimelineView.SampleType.Script:
-            return WI.UIString("Script");
-        case WI.CPUTimelineView.SampleType.Layout:
+        case CPUTimelineView.SampleType.Script:
+            return WI.UIString("JavaScript");
+        case CPUTimelineView.SampleType.Layout:
             return WI.repeatedUIString.timelineRecordLayout();
-        case WI.CPUTimelineView.SampleType.Paint:
+        case CPUTimelineView.SampleType.Paint:
             return WI.repeatedUIString.timelineRecordPaint();
-        case WI.CPUTimelineView.SampleType.Style:
-            return WI.UIString("Style Resolution");
+        case CPUTimelineView.SampleType.Style:
+            return WI.UIString("Styles");
         }
         console.error("Unknown sample type", type);
     }
@@ -211,10 +211,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._breakdownLegendElement = breakdownChartContainerElement.appendChild(document.createElement("div"));
         this._breakdownLegendElement.classList.add("legend");
 
-        this._breakdownLegendScriptElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Script);
-        this._breakdownLegendLayoutElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Layout);
-        this._breakdownLegendPaintElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Paint);
-        this._breakdownLegendStyleElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Style);
+        this._breakdownLegendScriptElement = appendLegendRow(this._breakdownLegendElement, CPUTimelineView.SampleType.JavaScript);
+        this._breakdownLegendLayoutElement = appendLegendRow(this._breakdownLegendElement, CPUTimelineView.SampleType.Layout);
+        this._breakdownLegendPaintElement = appendLegendRow(this._breakdownLegendElement, CPUTimelineView.SampleType.Paint);
+        this._breakdownLegendStyleElement = appendLegendRow(this._breakdownLegendElement, CPUTimelineView.SampleType.Style);
 
         let dividerElement = overviewElement.appendChild(document.createElement("div"));
         dividerElement.classList.add("divider");
@@ -1300,19 +1300,19 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         }
 
         markRecordEntries(scriptRecords, (record) => {
-            return WI.CPUTimelineView.SampleType.Script;
+            return CPUTimelineView.SampleType.JavaScript;
         });
 
         markRecordEntries(layoutRecords, (record) => {
             switch (record.eventType) {
             case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
-                return WI.CPUTimelineView.SampleType.Style;
+                return CPUTimelineView.SampleType.Style;
             case WI.LayoutTimelineRecord.EventType.ForcedLayout:
             case WI.LayoutTimelineRecord.EventType.Layout:
-                return WI.CPUTimelineView.SampleType.Layout;
+                return CPUTimelineView.SampleType.Layout;
             case WI.LayoutTimelineRecord.EventType.Paint:
             case WI.LayoutTimelineRecord.EventType.Composite:
-                return WI.CPUTimelineView.SampleType.Paint;
+                return CPUTimelineView.SampleType.Paint;
             }
         });
 
@@ -1326,16 +1326,16 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             case undefined:
                 samplesIdle++;
                 break;
-            case WI.CPUTimelineView.SampleType.Script:
+            case CPUTimelineView.SampleType.JavaScript:
                 samplesScript++;
                 break;
-            case WI.CPUTimelineView.SampleType.Layout:
+            case CPUTimelineView.SampleType.Layout:
                 samplesLayout++;
                 break;
-            case WI.CPUTimelineView.SampleType.Paint:
+            case CPUTimelineView.SampleType.Paint:
                 samplesPaint++;
                 break;
-            case WI.CPUTimelineView.SampleType.Style:
+            case CPUTimelineView.SampleType.Style:
                 samplesStyle++;
                 break;
             }
@@ -1822,7 +1822,7 @@ WI.CPUTimelineView.LayoutReason = {
 
 // NOTE: UI follows this order.
 WI.CPUTimelineView.SampleType = {
-    Script: "sample-type-script",
+    JavaScript: "sample-type-javascript",
     Layout: "sample-type-layout",
     Paint: "sample-type-paint",
     Style: "sample-type-style",

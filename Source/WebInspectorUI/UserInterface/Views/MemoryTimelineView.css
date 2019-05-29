@@ -27,12 +27,6 @@ body .timeline-view.memory {
     overflow: scroll;
 }
 
-.timeline-view.memory > .content > .overview {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-}
-
 .timeline-view.memory > .content .subtitle {
     font-family: -webkit-system-font, sans-serif;
     font-size: 14px;
@@ -68,6 +62,9 @@ body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler {
 .timeline-view.memory > .content > .overview {
     display: flex;
     justify-content: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .timeline-view.memory > .content > .overview > .chart {

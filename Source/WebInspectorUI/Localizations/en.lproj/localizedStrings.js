@@ -1041,7 +1041,6 @@ localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u
 localizedStrings["Storage"] = "Storage";
 /* CSS properties defined via HTML style attribute */
 localizedStrings["Style Attribute"] = "Style Attribute";
-localizedStrings["Style Resolution"] = "Style Resolution";
 localizedStrings["Style rule"] = "Style rule";
 localizedStrings["Styles"] = "Styles";
 localizedStrings["Styles Invalidated"] = "Styles Invalidated";

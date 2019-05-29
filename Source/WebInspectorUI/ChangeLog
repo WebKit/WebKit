@@ -1,3 +1,35 @@
+2019-05-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: spacing around pie chart is different between CPU and Memory
+        https://bugs.webkit.org/show_bug.cgi?id=198299
+
+        Reviewed by Matt Baker.
+
+        "Style Resolution" is a much longer string than any of the legend strings in the Memory
+        timeline, and causes the CPU timeline legend to shift as a result.
+
+        Rename "Script" to "JavaScript" and "Style Resolution" to "Styles" so that the strings are
+        roughly the same length between the CPU and Memory timelines, meaning that they will appear
+        in the same spot with similar sizing.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.displayNameForSampleType):
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype._computeStatisticsData):
+        Drive-by: remove the `WI` prefix from all `CPUTimelineView.SampleType` since it's within the
+        same class.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-javascript): Added.
+        (.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-script): Deleted.
+        Drive-by: move the `.overview` rules lower to be in the same area as the `.overview *` rules.
+
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .overview):
+        Drive-by: remove duplicate CSS rule.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-05-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Provide UIString descriptions to improve localizations

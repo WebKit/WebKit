@@ -27,17 +27,6 @@ body .timeline-view.cpu {
     overflow: scroll;
 }
 
-.timeline-view.cpu > .content > .overview {
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-}
-
-.timeline-view.cpu > .content > .overview:not(:last-child) {
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-}
-
 .timeline-view.cpu > .content .subtitle {
     font-family: -webkit-system-font, sans-serif;
     font-size: 14px;
@@ -95,6 +84,17 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     background-color: var(--background-color-content);
 }
 
+.timeline-view.cpu > .content > .overview {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.timeline-view.cpu > .content > .overview:not(:last-child) {
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
 .timeline-view.cpu > .content > .overview > .chart {
     width: 420px;
     text-align: center;
@@ -149,7 +149,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
     -webkit-margin-end: 8px;
 }
 
-.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-script {
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-javascript {
     border: 1px solid var(--cpu-script-stroke-color);
     background-color: var(--cpu-script-fill-color);
 }
