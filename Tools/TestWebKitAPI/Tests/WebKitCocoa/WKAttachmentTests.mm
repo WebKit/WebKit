@@ -410,6 +410,24 @@ static void runTestWithTemporaryFolder(void(^runTest)(NSURL *folderURL))
     }
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+static void runTestWithTemporaryImageFile(NSString *fileName, void(^runTest)(NSURL *fileURL))
+{
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    auto temporaryFilePath = retainPtr([NSTemporaryDirectory() stringByAppendingPathComponent:fileName]);
+    auto temporaryFileURL = retainPtr([NSURL fileURLWithPath:temporaryFilePath.get()]);
+    [defaultManager removeItemAtURL:temporaryFileURL.get() error:nil];
+    [testImageData() writeToFile:temporaryFilePath.get() atomically:YES];
+    @try {
+        runTest(temporaryFileURL.get());
+    } @finally {
+        [defaultManager removeItemAtURL:temporaryFileURL.get() error:nil];
+    }
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 static void simulateFolderDragWithURL(DragAndDropSimulator *simulator, NSURL *folderURL)
 {
 #if PLATFORM(MAC)
@@ -788,8 +806,13 @@ TEST(WKAttachmentTests, DropFolderAsAttachmentAndMoveByDragging)
 
         TestWKWebView *webView = [simulator webView];
         auto attachment = retainPtr([simulator insertedAttachments].firstObject);
+#if PLATFORM(IOS_FAMILY)
+        NSString *expectedType = (__bridge NSString *)kUTTypeFolder;
+#else
+        NSString *expectedType = (__bridge NSString *)kUTTypeDirectory;
+#endif
         EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
-        EXPECT_WK_STREQ((__bridge NSString *)kUTTypeDirectory, [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(expectedType, [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
         EXPECT_WK_STREQ(folderURL.lastPathComponent, [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
 
         NSFileWrapper *image = [attachment info].fileWrapper.fileWrappers[@"image.png"];
@@ -1704,9 +1727,9 @@ TEST(WKAttachmentTestsIOS, InsertDroppedRichAndPlainTextFilesAsAttachments)
 
     [webView expectElementCount:2 querySelector:@"ATTACHMENT"];
     EXPECT_WK_STREQ("hello.rtf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
-    EXPECT_WK_STREQ("text/rtf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
+    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeFlatRTFD, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
     EXPECT_WK_STREQ("world.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
-    EXPECT_WK_STREQ("text/plain", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
+    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeUTF8PlainText, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
 }
 
 TEST(WKAttachmentTestsIOS, InsertDroppedZipArchiveAsAttachment)
@@ -1763,7 +1786,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
     [webView expectElementTagsInOrder:@[ @"ATTACHMENT", @"A", @"ATTACHMENT" ]];
 
     EXPECT_WK_STREQ("first.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
-    EXPECT_WK_STREQ("text/plain", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
+    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeUTF8PlainText, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
     EXPECT_WK_STREQ([appleURL absoluteString], [webView valueOfAttribute:@"href" forQuerySelector:@"a"]);
     EXPECT_WK_STREQ("second.pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
     EXPECT_WK_STREQ("application/pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
@@ -1964,6 +1987,32 @@ TEST(WKAttachmentTestsIOS, InsertPastedFilesAsAttachments)
     [pdfAttachment expectRequestedDataToBe:testPDFData()];
     [textAttachment expectRequestedDataToBe:[@"helloworld" dataUsingEncoding:NSUTF8StringEncoding]];
     EXPECT_TRUE([webView canPerformAction:@selector(paste:) withSender:nil]);
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedImageWithNonImageFileExtension)
+{
+    runTestWithTemporaryImageFile(@"image.hello", ^(NSURL *fileURL) {
+        auto item = adoptNS([[NSItemProvider alloc] init]);
+        [item setSuggestedName:@"image.hello"];
+        [item registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG fileOptions:NSItemProviderFileOptionOpenInPlace visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(void (^callback)(NSURL *, BOOL, NSError *))
+        {
+            callback(fileURL, YES, nil);
+            return nil;
+        }];
+
+        auto webView = webViewForTestingAttachments();
+        auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+        [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
+        [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+
+        EXPECT_EQ(1U, [dragAndDropSimulator insertedAttachments].count);
+        _WKAttachment *attachment = [dragAndDropSimulator insertedAttachments].firstObject;
+        _WKAttachmentInfo *info = attachment.info;
+        EXPECT_WK_STREQ("image/png", info.contentType);
+        EXPECT_WK_STREQ("image.hello", info.filePath.lastPathComponent);
+        EXPECT_WK_STREQ("image.hello", info.name);
+        [webView expectElementCount:1 querySelector:@"IMG"];
+    });
 }
 
 #if HAVE(PENCILKIT)

@@ -1,3 +1,21 @@
+2019-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Respect NSItemProvider's registered types when dropping files that are loaded in-place
+        https://bugs.webkit.org/show_bug.cgi?id=198315
+        <rdar://problem/51183762>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test to verify that when dropping a file that is loaded in-place with a file extension that is
+        not a .png (but was registered to the item provider as "public.png"), the resulting attachment is contained in
+        an image element, and the resulting attachment info indicates that the dropped attachment is a png file.
+
+        Additionally, rebaseline some existing tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (runTestWithTemporaryImageFile):
+        (TestWebKitAPI::TEST):
+
 2019-05-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         GCHeapInspector should accept weird filename

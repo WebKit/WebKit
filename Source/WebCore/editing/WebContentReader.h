@@ -71,7 +71,7 @@ public:
 private:
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
-    bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }) override;
+    bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }, const String& contentType = { }) override;
     bool readFilePaths(const Vector<String>&) override;
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
@@ -95,7 +95,7 @@ public:
 private:
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
-    bool readFilePath(const String&, Optional<FloatSize> = { }) override { return false; }
+    bool readFilePath(const String&, Optional<FloatSize> = { }, const String& = { }) override { return false; }
     bool readFilePaths(const Vector<String>&) override { return false; }
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;

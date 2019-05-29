@@ -136,7 +136,7 @@ public:
 
 #if PLATFORM(COCOA)
     virtual bool readWebArchive(SharedBuffer&) = 0;
-    virtual bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }) = 0;
+    virtual bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }, const String& contentType = { }) = 0;
     virtual bool readFilePaths(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
     virtual bool readRTFD(SharedBuffer&) = 0;
