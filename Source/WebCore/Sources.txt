@@ -1349,6 +1349,7 @@ layout/inlineformatting/InlineFormattingContextGeometry.cpp
 layout/inlineformatting/InlineFormattingContextLineLayout.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
+layout/inlineformatting/InlineLine.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp

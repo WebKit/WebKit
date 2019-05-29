@@ -89,6 +89,14 @@ LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, unsi
     return width;
 }
 
+bool TextUtil::isTrimmableContent(const InlineItem& inlineItem)
+{
+    if (!is<InlineTextItem>(inlineItem))
+        return false;
+    auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+    return inlineTextItem.isWhitespace() && inlineTextItem.style().collapseWhiteSpace();
+}
+
 }
 }
 #endif

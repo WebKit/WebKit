@@ -36,6 +36,7 @@ class TextUtil {
 public:
     static LayoutUnit width(const InlineBox&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
     static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
+    static bool isTrimmableContent(const InlineItem&);
 
 private:
     static LayoutUnit fixedPitchWidth(String, const RenderStyle&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
