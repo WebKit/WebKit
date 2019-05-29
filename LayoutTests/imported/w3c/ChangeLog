@@ -1,3 +1,15 @@
+2019-05-29  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] toElement and fromElement should be null
+        https://bugs.webkit.org/show_bug.cgi?id=198338
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions now that we return the correct values for toElement and fromElement.
+
+        * web-platform-tests/pointerevents/pointerevent_pointerenter_does_not_bubble-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_pointerleave_does_not_bubble-expected.txt:
+
 2019-05-28  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r245475.

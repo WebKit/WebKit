@@ -43,12 +43,11 @@ PASS  mouse pointerleave.detail value is 0.
 PASS  mouse pointerleave.fromElement attribute exists 
 PASS  mouse pointerleave.fromElement is readonly 
 PASS  mouse pointerleave.fromElement IDL type object (JS type was object) 
-FAIL  mouse pointerleave.fromElement value is null. assert_equals: fromElement attribute value expected null but got Element node <html><head>
-        <title>Pointer Event: The pointerlea...
+PASS  mouse pointerleave.fromElement value is null. 
 PASS  mouse pointerleave.toElement attribute exists 
 PASS  mouse pointerleave.toElement is readonly 
 PASS  mouse pointerleave.toElement IDL type object (JS type was object) 
-FAIL  mouse pointerleave.toElement value is null. assert_equals: toElement attribute value expected null but got Element node <div id="target0"></div>
+PASS  mouse pointerleave.toElement value is null. 
 PASS  mouse pointerleave.pressure value is valid 
 PASS  mouse pointerleave properties for pointerType = mouse 
 

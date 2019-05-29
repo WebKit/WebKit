@@ -75,8 +75,8 @@ public:
     double force() const { return m_force; }
     void setForce(double force) { m_force = force; }
 
-    WEBCORE_EXPORT RefPtr<Node> toElement() const;
-    WEBCORE_EXPORT RefPtr<Node> fromElement() const;
+    WEBCORE_EXPORT virtual RefPtr<Node> toElement() const;
+    WEBCORE_EXPORT virtual RefPtr<Node> fromElement() const;
 
     DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : nullptr; }
 

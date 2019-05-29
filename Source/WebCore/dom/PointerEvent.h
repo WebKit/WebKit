@@ -28,6 +28,7 @@
 #if ENABLE(POINTER_EVENTS)
 
 #include "MouseEvent.h"
+#include "Node.h"
 #include "PointerID.h"
 #include <wtf/text/WTFString.h>
 
@@ -100,6 +101,14 @@ public:
     bool isPrimary() const { return m_isPrimary; }
 
     bool isPointerEvent() const final { return true; }
+
+    // https://w3c.github.io/pointerevents/#attributes-and-default-actions
+    // Many user agents expose non-standard attributes fromElement and toElement in MouseEvents to
+    // support legacy content. In those user agents, the values of those (inherited) attributes in
+    // PointerEvents must be null to encourage the use of the standardized alternates (i.e. target
+    // and relatedTarget).
+    RefPtr<Node> toElement() const final { return nullptr; }
+    RefPtr<Node> fromElement() const final { return nullptr; }
 
     EventInterface eventInterface() const override;
 
