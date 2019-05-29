@@ -25,6 +25,8 @@
 
 // Compile with: xcrun clang++ -o HashSetDFGReplay Source/WTF/benchmarks/HashSetDFGReplay.cpp -O2 -W -ISource/WTF -ISource/WTF/benchmarks -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++11 -fvisibility=hidden -DNDEBUG=1
 
+#include "config.h"
+
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 #include <wtf/WallTime.h>

@@ -26,11 +26,11 @@
  */
 
 #include "config.h"
+#include <wtf/ParallelJobsGeneric.h>
 
 #if ENABLE(THREADING_GENERIC)
 
 #include <wtf/NumberOfCores.h>
-#include <wtf/ParallelJobs.h>
 
 namespace WTF {
 

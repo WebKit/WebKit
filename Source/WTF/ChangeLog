@@ -1,3 +1,18 @@
+2019-05-29  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up a few #include statements in WTF
+        <https://webkit.org/b/198351>
+
+        Reviewed by Alex Christensen.
+
+        * benchmarks/HashSetDFGReplay.cpp:
+        - Add missing "config.h" include.
+        * wtf/ParallelJobsGeneric.cpp:
+        - Replace include of ParallelJobs.h with
+          ParallelJobsGeneric.h.
+        * wtf/StackBounds.cpp:
+        - Fix include ordering of StackBounds.h.
+
 2019-05-29  Keith Rollin  <krollin@apple.com>
 
         Followup to r245267 and r245272: fix even more deprecated uses of -[UIApplication interfaceOrientation]
