@@ -446,7 +446,10 @@ function loadResults(dataString, filename)
 
 function filenameForPath(filepath)
 {
-    return filepath.match(/([^\/]+)(?=\.\w+$)/)[0];
+    var matched = filepath.match(/([^\/]+)(?=\.\w+$)/);
+    if (matched)
+        return matched[0];
+    return filepath;
 }
 
 function hideDescription()

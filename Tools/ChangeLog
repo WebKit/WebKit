@@ -1,3 +1,15 @@
+2019-05-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        GCHeapInspector should accept weird filename
+        https://bugs.webkit.org/show_bug.cgi?id=198314
+
+        Reviewed by Simon Fraser.
+
+        GCHeapInspector filenameForPath should have a fallback path if regexp does not match against the given path.
+
+        * GCHeapInspector/script/interface.js:
+        (filenameForPath):
+
 2019-05-28  Eric Carlson  <eric.carlson@apple.com>
 
         [MacOS] Filter GVA warning logged to stdout
