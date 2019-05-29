@@ -185,15 +185,6 @@ void MediaPlayerPrivateMediaFoundation::cancelLoad()
     notImplemented();
 }
 
-void MediaPlayerPrivateMediaFoundation::prepareToPlay()
-{
-    // We call startSession() to start buffering video data.
-    // When we have received enough data, we pause, so that we don't actually start the playback.
-    ASSERT(m_paused);
-    ASSERT(!m_preparingToPlay);
-    m_preparingToPlay = startSession();
-}
-
 void MediaPlayerPrivateMediaFoundation::play()
 {
     m_paused = !startSession();
@@ -914,7 +905,11 @@ void MediaPlayerPrivateMediaFoundation::onTopologySet()
     }
 
     // It is expected that we start buffering data from the network now.
-    prepareToPlay();
+    // We call startSession() to start buffering video data.
+    // When we have received enough data, we pause, so that we don't actually start the playback.
+    ASSERT(m_paused);
+    ASSERT(!m_preparingToPlay);
+    m_preparingToPlay = startSession();
 }
 
 void MediaPlayerPrivateMediaFoundation::onBufferingStarted()
