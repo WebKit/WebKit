@@ -195,11 +195,9 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+    m_swConnectionsByIdentifier.clear();
     for (auto& connection : m_swConnectionsBySession.values())
         connection->connectionToServerLost();
-    
-    m_swConnectionsByIdentifier.clear();
-    m_swConnectionsBySession.clear();
 #endif
 }
 
@@ -262,14 +260,22 @@ WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSess
 WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnectionForSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
-    return *m_swConnectionsBySession.ensure(sessionID, [&] {
-        auto connection = WebSWClientConnection::create(m_connection, sessionID);
-        
-        auto result = m_swConnectionsByIdentifier.add(connection->serverConnectionIdentifier(), connection.ptr());
-        ASSERT_UNUSED(result, result.isNewEntry);
-        
-        return connection;
+    return *m_swConnectionsBySession.ensure(sessionID, [sessionID] {
+        return WebSWClientConnection::create(sessionID);
     }).iterator->value;
 }
+
+SWServerConnectionIdentifier NetworkProcessConnection::initializeSWClientConnection(WebSWClientConnection& connection)
+{
+    SWServerConnectionIdentifier identifier;
+    bool result = m_connection->sendSync(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection(connection.sessionID()), Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection::Reply(identifier), 0);
+    ASSERT_UNUSED(result, result);
+
+    ASSERT(!m_swConnectionsByIdentifier.contains(identifier));
+    m_swConnectionsByIdentifier.add(identifier, &connection);
+
+    return identifier;
+}
+
 #endif
 } // namespace WebKit

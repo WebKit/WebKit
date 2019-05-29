@@ -611,7 +611,7 @@ private:
     Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
     struct TemporaryServiceWorkerClient {
         DocumentIdentifier documentIdentifier;
-        Ref<SWClientConnection> serviceWorkerConnection;
+        PAL::SessionID sessionID;
     };
     Optional<TemporaryServiceWorkerClient> m_temporaryServiceWorkerClient;
 #endif

@@ -1815,18 +1815,20 @@ void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
 
     m_temporaryServiceWorkerClient = TemporaryServiceWorkerClient {
         DocumentIdentifier::generate(),
-        *ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(m_frame->page()->sessionID())
+        m_frame->page()->sessionID()
     };
 
+    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_temporaryServiceWorkerClient->sessionID);
+
     // FIXME: Compute ServiceWorkerClientFrameType appropriately.
-    ServiceWorkerClientData data { { m_temporaryServiceWorkerClient->serviceWorkerConnection->serverConnectionIdentifier(), m_temporaryServiceWorkerClient->documentIdentifier }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
+    ServiceWorkerClientData data { { serviceWorkerConnection.serverConnectionIdentifier(), m_temporaryServiceWorkerClient->documentIdentifier }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
 
     RefPtr<SecurityOrigin> topOrigin;
     if (m_frame->isMainFrame())
         topOrigin = SecurityOrigin::create(url);
     else
         topOrigin = &m_frame->mainFrame().document()->topOrigin();
-    m_temporaryServiceWorkerClient->serviceWorkerConnection->registerServiceWorkerClient(*topOrigin, WTFMove(data), m_serviceWorkerRegistrationData->identifier, m_frame->loader().userAgent(url));
+    serviceWorkerConnection.registerServiceWorkerClient(*topOrigin, WTFMove(data), m_serviceWorkerRegistrationData->identifier, m_frame->loader().userAgent(url));
 #else
     UNUSED_PARAM(url);
 #endif
@@ -1838,7 +1840,8 @@ void DocumentLoader::unregisterTemporaryServiceWorkerClient()
     if (!m_temporaryServiceWorkerClient)
         return;
 
-    m_temporaryServiceWorkerClient->serviceWorkerConnection->unregisterServiceWorkerClient(m_temporaryServiceWorkerClient->documentIdentifier);
+    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_temporaryServiceWorkerClient->sessionID);
+    serviceWorkerConnection.unregisterServiceWorkerClient(m_temporaryServiceWorkerClient->documentIdentifier);
     m_temporaryServiceWorkerClient = WTF::nullopt;
 #endif
 }

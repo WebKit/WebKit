@@ -47,12 +47,12 @@ namespace WebKit {
 class WebSWOriginTable;
 class WebServiceWorkerProvider;
 
-class WebSWClientConnection final : public WebCore::SWClientConnection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWClientConnection final : public WebCore::SWClientConnection, private IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    static Ref<WebSWClientConnection> create(IPC::Connection& connection, PAL::SessionID sessionID) { return adoptRef(*new WebSWClientConnection { connection, sessionID }); }
+    static Ref<WebSWClientConnection> create(PAL::SessionID sessionID) { return adoptRef(*new WebSWClientConnection { sessionID }); }
     ~WebSWClientConnection();
 
-    WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final { return m_identifier; }
+    WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final;
 
     void addServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
@@ -69,8 +69,12 @@ public:
 
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
 
+    PAL::SessionID sessionID() const { return m_sessionID; }
+
 private:
-    WebSWClientConnection(IPC::Connection&, PAL::SessionID);
+    explicit WebSWClientConnection(PAL::SessionID);
+
+    void initializeConnectionIfNeeded();
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
@@ -94,16 +98,18 @@ private:
 
     void runOrDelayTaskForImport(WTF::Function<void()>&& task);
 
-    IPC::Connection* messageSenderConnection() const final { return m_connection.ptr(); }
+    IPC::Connection* messageSenderConnection() const final { return m_connection.get(); }
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
     void setSWOriginTableIsImported();
 
+    template<typename U> void ensureConnectionAndSend(const U& message);
+
     PAL::SessionID m_sessionID;
     WebCore::SWServerConnectionIdentifier m_identifier;
 
-    Ref<IPC::Connection> m_connection;
+    RefPtr<IPC::Connection> m_connection;
     UniqueRef<WebSWOriginTable> m_swOriginTable;
 
     uint64_t m_previousCallbackIdentifier { 0 };

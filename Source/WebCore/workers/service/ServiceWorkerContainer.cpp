@@ -575,12 +575,6 @@ void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)
     m_jobMap.remove(job.identifier());
 }
 
-SWServerConnectionIdentifier ServiceWorkerContainer::connectionIdentifier()
-{
-    ASSERT(m_swConnection);
-    return m_swConnection->serverConnectionIdentifier();
-}
-
 const char* ServiceWorkerContainer::activeDOMObjectName() const
 {
     return "ServiceWorkerContainer";

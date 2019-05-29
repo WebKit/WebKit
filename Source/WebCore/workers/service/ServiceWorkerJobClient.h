@@ -51,8 +51,6 @@ public:
     virtual void startScriptFetchForJob(ServiceWorkerJob&, FetchOptions::Cache) = 0;
     virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy) = 0;
     virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, Exception&&) = 0;
-
-    virtual SWServerConnectionIdentifier connectionIdentifier() = 0;
 };
 
 } // namespace WebCore

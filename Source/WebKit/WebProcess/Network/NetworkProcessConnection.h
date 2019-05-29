@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "ShareableResource.h"
 #include "WebIDBConnectionToServer.h"
+#include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -74,6 +75,8 @@ public:
 #if ENABLE(SERVICE_WORKER)
     WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
     WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
+
+    WebCore::SWServerConnectionIdentifier initializeSWClientConnection(WebSWClientConnection&);
 #endif
 
 private:

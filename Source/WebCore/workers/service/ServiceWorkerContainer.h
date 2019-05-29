@@ -103,7 +103,6 @@ private:
     void didFinishGetRegistrationRequest(uint64_t requestIdentifier, Optional<ServiceWorkerRegistrationData>&&);
     void didFinishGetRegistrationsRequest(uint64_t requestIdentifier, Vector<ServiceWorkerRegistrationData>&&);
 
-    SWServerConnectionIdentifier connectionIdentifier() final;
     DocumentOrWorkerIdentifier contextIdentifier() final;
 
     SWClientConnection& ensureSWClientConnection();
