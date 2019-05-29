@@ -3723,44 +3723,12 @@ static inline float textMultiplier(RenderObject& renderer, float specifiedSize)
     return std::max((1.0f / log10f(specifiedSize) * coefficient), 1.0f);
 }
 
-static inline float idempotentTextSize(float specifiedSize, float pageScale)
-{
-    // This describes a piecewise curve when the page scale is 2/3.
-    FloatPoint points[] = { {0.0f, 0.0f}, {6.0f, 12.0f}, {12.0f, 18.0f} };
-
-    // When the page scale is 1, the curve should be the identity.
-    // Linearly interpolate between the curve above and identity based on the page scale.
-    // Beware that depending on the specific values picked in the curve, this interpolation might change the shape of the curve for very small pageScales.
-    pageScale = std::min(std::max(pageScale, 0.5f), 1.0f);
-    auto scalePoint = [&](FloatPoint point) {
-        float fraction = 3.0f - 3.0f * pageScale;
-        point.setY(point.x() + (point.y() - point.x()) * fraction);
-        return point;
-    };
-
-    if (specifiedSize <= 0)
-        return 0;
-
-    float result = scalePoint(points[WTF_ARRAY_LENGTH(points) - 1]).y();
-    for (size_t i = 1; i < WTF_ARRAY_LENGTH(points); ++i) {
-        if (points[i].x() < specifiedSize)
-            continue;
-        auto leftPoint = scalePoint(points[i - 1]);
-        auto rightPoint = scalePoint(points[i]);
-        float fraction = (specifiedSize - leftPoint.x()) / (rightPoint.x() - leftPoint.x());
-        result = leftPoint.y() + fraction * (rightPoint.y() - leftPoint.y());
-        break;
-    }
-
-    return std::max(result, specifiedSize);
-}
-
-void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth, float pageScale, bool idempotentMode)
+void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
 {
     LOG(TextAutosizing, "RenderBlockFlow %p adjustComputedFontSizes, size=%f visibleWidth=%f, width()=%f. Bailing: %d", this, size, visibleWidth, width().toFloat(), visibleWidth >= width());
 
     // Don't do any work if the block is smaller than the visible area.
-    if (!idempotentMode && visibleWidth >= width())
+    if (visibleWidth >= width())
         return;
     
     unsigned lineCount;
@@ -3798,7 +3766,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth, fl
         auto& fontDescription = oldStyle.fontDescription();
         float specifiedSize = fontDescription.specifiedSize();
         float scaledSize = roundf(specifiedSize * scale);
-        if (idempotentMode || (scaledSize > 0 && scaledSize < minFontSize)) {
+        if (scaledSize > 0 && scaledSize < minFontSize) {
             // Record the width of the block and the line count the first time we resize text and use it from then on for text resizing.
             // This makes text resizing consistent even if the block's width or line count changes (which can be caused by text resizing itself 5159915).
             if (m_lineCountForTextAutosizing == NOT_SET)
@@ -3806,14 +3774,8 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth, fl
             if (m_widthForTextAutosizing == -1)
                 m_widthForTextAutosizing = actualWidth;
 
-            float candidateNewSize;
-            if (idempotentMode) {
-                float lineTextSize = idempotentTextSize(specifiedSize, pageScale);
-                candidateNewSize = roundf(lineTextSize);
-            } else {
-                float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text, specifiedSize) : textMultiplier(text, specifiedSize);
-                candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
-            }
+            float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text, specifiedSize) : textMultiplier(text, specifiedSize);
+            float candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
 
             if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
                 document().textAutoSizing().addTextNode(*text.textNode(), candidateNewSize);

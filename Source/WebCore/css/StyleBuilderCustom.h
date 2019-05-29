@@ -669,7 +669,7 @@ static inline float computeBaseSpecifiedFontSize(const Document& document, const
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
     result *= style.effectiveZoom();
-    if (percentageAutosizingEnabled)
+    if (percentageAutosizingEnabled && !document.settings().textAutosizingUsesIdempotentMode())
         result *= style.textSizeAdjust().multiplier();
     return result;
 }
@@ -701,7 +701,7 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
         }
     }
 
-    if (percentageAutosizingEnabled)
+    if (percentageAutosizingEnabled && !document.settings().textAutosizingUsesIdempotentMode())
         return style.textSizeAdjust().multiplier();
     return 1;
 }

@@ -6228,6 +6228,14 @@
             },
             "status": "non-standard"
         },
+        "-internal-text-autosizing-status": {
+            "inherited": true,
+            "codegen-properties": {
+                "skip-builder": true,
+                "enable-if": "ENABLE_TEXT_AUTOSIZING"
+            },
+            "status": "non-standard"
+        },
         "-webkit-text-emphasis": {
             "inherited": true,
             "codegen-properties": {

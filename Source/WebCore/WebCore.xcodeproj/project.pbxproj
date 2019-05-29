@@ -6437,6 +6437,7 @@
 		1CECB3BB21F511AA00F44542 /* WHLSLEntryPointScaffolding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLEntryPointScaffolding.h; sourceTree = "<group>"; };
 		1CECB3C621F59C8700F44542 /* WHLSLNativeTypeWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLNativeTypeWriter.cpp; sourceTree = "<group>"; };
 		1CECB3C721F59C8700F44542 /* WHLSLNativeTypeWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNativeTypeWriter.h; sourceTree = "<group>"; };
+		1CF0BFD42298706800ED2074 /* TextSizeAdjustment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextSizeAdjustment.cpp; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
 		1DC553FF211BA841004B780E /* ShareData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShareData.idl; sourceTree = "<group>"; };
@@ -24930,6 +24931,7 @@
 				BC2274760E8366E200E7F975 /* SVGRenderStyleDefs.cpp */,
 				BC2274770E8366E200E7F975 /* SVGRenderStyleDefs.h */,
 				1CB6B4F8217B83930093B9CD /* TextDecorationThickness.h */,
+				1CF0BFD42298706800ED2074 /* TextSizeAdjustment.cpp */,
 				448B1B780F3A2F9B0047A9E2 /* TextSizeAdjustment.h */,
 				1CB6B4FB217B83940093B9CD /* TextUnderlineOffset.h */,
 				0F15ED591B7EC7C500EDDFEB /* WillChangeData.cpp */,

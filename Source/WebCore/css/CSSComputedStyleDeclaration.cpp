@@ -2785,6 +2785,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
 
     switch (propertyID) {
         case CSSPropertyInvalid:
+#if ENABLE(TEXT_AUTOSIZING)
+        case CSSPropertyInternalTextAutosizingStatus:
+#endif
             break;
 
         case CSSPropertyBackgroundColor:

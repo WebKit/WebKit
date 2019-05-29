@@ -874,6 +874,29 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
 }
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+static bool hasTextChildren(const Element& element)
+{
+    for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
+        if (is<Text>(child))
+            return true;
+    }
+    return false;
+}
+
+void StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const Element* element)
+{
+    auto newAutosizeStatus = AutosizeStatus::updateStatus(style);
+    auto pageScale = document().page() ? document().page()->initialScale() : 1.0f;
+    if (settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() && element && !newAutosizeStatus.shouldSkipSubtree() && !style.textSizeAdjust().isNone() && hasTextChildren(*element) && pageScale != 1.0f) {
+        auto fontDescription = style.fontDescription();
+        fontDescription.setComputedSize(AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), pageScale));
+        style.setFontDescription(WTFMove(fontDescription));
+        style.fontCascade().update(&document().fontSelector());
+    }
+}
+#endif
+
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
 {
     // If the composed tree parent has display:contents, the parent box style will be different from the parent style.
@@ -1122,6 +1145,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
 #if ENABLE(POINTER_EVENTS)
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, parentStyle.effectiveTouchActions()));
+#endif
+
+#if ENABLE(TEXT_AUTOSIZING)
+    adjustRenderStyleForTextAutosizing(style, element);
 #endif
 
     if (element)
@@ -1820,7 +1847,8 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
 #if ENABLE(TEXT_AUTOSIZING)
 void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
 {
-    if (style->textSizeAdjust().isAuto())
+    ASSERT(style);
+    if (style->textSizeAdjust().isAuto() || (settings().textAutosizingUsesIdempotentMode() && !style->textSizeAdjust().isNone()))
         return;
 
     auto newFontDescription = style->fontDescription();

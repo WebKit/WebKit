@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.6666">
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="background: green;"><span id="target" style="font-size: 12px;">Test</span></div>
+<div style="background: green; overflow: auto;"><span id="target2" style="float: right; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target3" style="display: inline-block; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span style="display: inline-block; font-size: 12px;"><span id="target4">Test</span></span></div>
+<div style="background: green;"><span id="target5" style="position: absolute; left: 0px; top: 0px; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target6" style="display: none; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="comparison" style="font-size: 12px;">Test<span>Test<span>Test<span id="target7">Test</span></span></span></span></div>
+<div style="background: green;"><span id="target8" style="font-size: 12px; -webkit-text-size-adjust: 100%">Test</span></div>
+<script>
+let result;
+function check(name, shouldGetAutosized) {
+    let target = document.getElementById(name);
+    target.offsetWidth;
+    result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+    if (shouldGetAutosized)
+        shouldBeGreaterThanOrEqual("result", "13");
+    else
+        shouldBe("result", "12");
+}
+check("target", true);
+check("target2", true);
+check("target3", false);
+check("target4", false);
+check("target5", false);
+check("target6", false);
+
+let target = document.getElementById("target7");
+target.offsetWidth;
+let comparison = document.getElementById("comparison");
+comparison.offsetWidth;
+result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+let result2 = Number.parseInt(window.getComputedStyle(comparison).getPropertyValue("font-size"));
+shouldBeGreaterThanOrEqual("result", "result2");
+
+check("target8", true);
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

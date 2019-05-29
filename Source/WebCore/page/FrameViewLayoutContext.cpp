@@ -491,9 +491,9 @@ bool FrameViewLayoutContext::canPerformLayout() const
 void FrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 {
     auto& settings = layoutRoot.settings();
-    if (!settings.textAutosizingEnabled() || renderView()->printing())
-        return;
     bool idempotentMode = settings.textAutosizingUsesIdempotentMode();
+    if (!settings.textAutosizingEnabled() || idempotentMode || renderView()->printing())
+        return;
     auto minimumZoomFontSize = settings.minimumZoomFontSize();
     if (!idempotentMode && !minimumZoomFontSize)
         return;

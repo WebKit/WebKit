@@ -1,3 +1,23 @@
+2019-05-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move idempotent text autosizing to StyleTreeResolver
+        https://bugs.webkit.org/show_bug.cgi?id=197808
+        <rdar://problem/50283983>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text-autosizing/ios/idempotentmode/css-exposure-expected.txt: Added.
+        * fast/text-autosizing/ios/idempotentmode/css-exposure.html: Added.
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-skip-expected.html: Added.
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-skip.html: Added.
+        * platform/ipad/fast/text-autosizing/text-size-adjust-inline-style-expected.html: Removed.
+        * platform/ipad/fast/text-autosizing/text-size-adjust-inline-style.html: Removed.
+        We're intentionally not honoring percentages, because this is the most common way that
+        text autosizing is disabled (by setting it to 100%) on the Web today. However, Web authors
+        that have done this did it without knowing the full extent of the behavior change, and 
+        the new idempotent text autosizing code path seems to be a progression in most cases
+        we've seen.
+
 2019-05-28  Simon Fraser  <simon.fraser@apple.com>
 
         Use scroll-velocity-based tile coverage for overflow:scroll

@@ -2125,8 +2125,6 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
         }
         return RenderObject::FixedHeight;
     }
-    if (renderer.document().settings().textAutosizingUsesIdempotentMode() && style.maxHeight().type() == Fixed && is<RenderBlock>(renderer) && style.maxHeight().value() <= downcast<RenderBlock>(renderer).layoutOverflowRect().maxY())
-        return RenderObject::FixedHeight;
     return RenderObject::FlexibleHeight;
 }
 
@@ -2136,12 +2134,9 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
     if (!document)
         return;
 
-    auto pageScale = document->page() ? document->page()->initialScale() : 1.0f;
-
     Vector<int> depthStack;
     int currentDepth = 0;
     int newFixedDepth = 0;
-    auto idempotentMode = document->settings().textAutosizingUsesIdempotentMode();
 
     // We don't apply autosizing to nodes with fixed height normally.
     // But we apply it to nodes which are located deep enough
@@ -2154,8 +2149,8 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (is<RenderBlockFlow>(*descendent) && !descendent->isListItem() && (idempotentMode || !stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            downcast<RenderBlockFlow>(*descendent).adjustComputedFontSizes(size, visibleWidth, pageScale, idempotentMode);
+        if (is<RenderBlockFlow>(*descendent) && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            downcast<RenderBlockFlow>(*descendent).adjustComputedFontSizes(size, visibleWidth);
         newFixedDepth = 0;
     }
 
@@ -2176,7 +2171,6 @@ void RenderElement::resetTextAutosizing()
     Vector<int> depthStack;
     int currentDepth = 0;
     int newFixedDepth = 0;
-    auto idempotentMode = document->settings().textAutosizingUsesIdempotentMode();
 
     for (RenderObject* descendent = traverseNext(this, includeNonFixedHeight, currentDepth, newFixedDepth); descendent; descendent = descendent->traverseNext(this, includeNonFixedHeight, currentDepth, newFixedDepth)) {
         while (depthStack.size() > 0 && currentDepth <= depthStack[depthStack.size() - 1])
@@ -2185,7 +2179,7 @@ void RenderElement::resetTextAutosizing()
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (is<RenderBlockFlow>(*descendent) && !descendent->isListItem() && (idempotentMode || !stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+        if (is<RenderBlockFlow>(*descendent) && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
             downcast<RenderBlockFlow>(*descendent).resetComputedFontSize();
         newFixedDepth = 0;
     }

@@ -165,6 +165,9 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
     m_inheritedFlags.insideDefaultButton = false;
     m_inheritedFlags.writingMode = initialWritingMode();
+#if ENABLE(TEXT_AUTOSIZING)
+    m_inheritedFlags.autosizeStatus = 0;
+#endif
 
     m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(initialDisplay());
     m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(initialDisplay());
@@ -487,6 +490,16 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
         && m_nonInheritedFlags.position == other.m_nonInheritedFlags.position
         && m_nonInheritedFlags.floating == other.m_nonInheritedFlags.floating
         && m_rareNonInheritedData->textOverflow == other.m_rareNonInheritedData->textOverflow;
+}
+
+AutosizeStatus RenderStyle::autosizeStatus() const
+{
+    return OptionSet<AutosizeStatus::Fields>::fromRaw(m_inheritedFlags.autosizeStatus);
+}
+
+void RenderStyle::setAutosizeStatus(AutosizeStatus autosizeStatus)
+{
+    m_inheritedFlags.autosizeStatus = autosizeStatus.fields().toRaw();
 }
 
 #endif // ENABLE(TEXT_AUTOSIZING)

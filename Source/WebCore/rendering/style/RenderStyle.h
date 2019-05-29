@@ -744,6 +744,7 @@ public:
 
 #if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust() const { return m_rareInheritedData->textSizeAdjust; }
+    AutosizeStatus autosizeStatus() const;
 #endif
 
     TextSecurity textSecurity() const { return static_cast<TextSecurity>(m_rareInheritedData->textSecurity); }
@@ -1258,6 +1259,7 @@ public:
 
 #if ENABLE(TEXT_AUTOSIZING)
     void setTextSizeAdjust(TextSizeAdjustment adjustment) { SET_VAR(m_rareInheritedData, textSizeAdjust, adjustment); }
+    void setAutosizeStatus(AutosizeStatus);
 #endif
 
     void setTextSecurity(TextSecurity security) { SET_VAR(m_rareInheritedData, textSecurity, static_cast<unsigned>(security)); }
@@ -1845,6 +1847,11 @@ private:
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
         // 48 bits
+
+#if ENABLE(TEXT_AUTOSIZING)
+        unsigned autosizeStatus : 4;
+#endif
+        // 52 bits
     };
 
     // This constructor is used to implement the replace operation.

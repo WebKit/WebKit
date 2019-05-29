@@ -2144,6 +2144,7 @@ rendering/style/StyleScrollSnapPoints.cpp
 rendering/style/StyleSurroundData.cpp
 rendering/style/StyleTransformData.cpp
 rendering/style/StyleVisualData.cpp
+rendering/style/TextSizeAdjustment.cpp
 rendering/style/WillChangeData.cpp
 
 rendering/svg/RenderSVGBlock.cpp
