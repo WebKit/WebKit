@@ -897,7 +897,7 @@ void Checker::visit(AST::DereferenceExpression& dereferenceExpression)
         return;
     }
 
-    assignType(dereferenceExpression, pointerType->clone(), AST::LeftValue { pointerType->addressSpace() });
+    assignType(dereferenceExpression, pointerType->elementType().clone(), AST::LeftValue { pointerType->addressSpace() });
 }
 
 void Checker::visit(AST::MakePointerExpression& makePointerExpression)

@@ -1,3 +1,13 @@
+2019-05-28  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Type of dereference is the type of the thing we point to, not a pointer to that type
+        https://bugs.webkit.org/show_bug.cgi?id=198321
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl-dereference-pointer-should-type-check-expected.html: Added.
+        * webgpu/whlsl-dereference-pointer-should-type-check.html: Added.
+
 2019-05-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move idempotent text autosizing to StyleTreeResolver
