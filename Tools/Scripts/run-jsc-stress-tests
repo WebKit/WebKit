@@ -1081,7 +1081,7 @@ def runWebAssembly
         run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
         run("wasm-no-air", "-m", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
-        run("wasm-collect-continuously", "-m", "--collectContinuously=true", *FTL_OPTIONS)
+        run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--collectContinuouslyPeriodMS=1.3", *FTL_OPTIONS)
     end
 end
 
@@ -1099,7 +1099,7 @@ def runWebAssemblySuite
         run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
         run("wasm-no-air", "-m", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
-        run("wasm-collect-continuously", "-m", "--collectContinuously=true", *FTL_OPTIONS)
+        run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--collectContinuouslyPeriodMS=1.3", *FTL_OPTIONS)
     end
 end
 
@@ -1119,7 +1119,7 @@ def runWebAssemblyEmscripten(mode)
         run("wasm-no-call-ic", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
         run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
         run("wasm-no-air", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
-        run("wasm-collect-continuously", "--collectContinuously=true", *FTL_OPTIONS)
+        run("wasm-collect-continuously", "--collectContinuously=true", "--collectContinuouslyPeriodMS=1.3", *FTL_OPTIONS)
     end
 end
 
@@ -1145,7 +1145,7 @@ def runWebAssemblySpecTest(mode)
       runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
       runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
       runWithOutputHandler("wasm-no-air", noisyOutputHandler, "../spec-harness.js", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, "../spec-harness.js", "--collectContinuously=true", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, "../spec-harness.js", "--collectContinuously=true", "--collectContinuouslyPeriodMS=1.3", *FTL_OPTIONS)
     end
 end
 

@@ -1,3 +1,15 @@
+2019-05-28  Justin Michaud  <justin_michaud@apple.com>
+
+        Attempt to fix JSC test timeouts after adding collectContinuously to WASM tests.
+        https://bugs.webkit.org/show_bug.cgi?id=198322
+
+        Reviewed by Saam Barati.
+
+        Increases the collection period from 1 to slightly higher to try to speed up the tests. Any higher and
+        the test runner does not detect the bug that required the memset in Wasm::Instance::Instance().
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Respect NSItemProvider's registered types when dropping files that are loaded in-place
