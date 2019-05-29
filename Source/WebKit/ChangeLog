@@ -1,3 +1,13 @@
+2019-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix sandbox violation when using QuickLook on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=198312
+        <rdar://problem/51134351>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-05-28  Tim Horton  <timothy_horton@apple.com>
 
         Horizontal scrollbar flashes after scrolling vertically with keyboard
