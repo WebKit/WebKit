@@ -48,7 +48,7 @@ public:
     void deref() { derefFormAssociatedElement(); }
 
     static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
-    WEBCORE_EXPORT HTMLFormElement* form() const;
+    HTMLFormElement* form() const { return m_form.get(); }
     ValidityState* validity();
 
     virtual bool isFormControlElement() const = 0;

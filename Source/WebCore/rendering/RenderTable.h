@@ -152,9 +152,9 @@ public:
         m_columnPos[index] = position;
     }
 
-    RenderTableSection* header() const;
-    RenderTableSection* footer() const;
-    RenderTableSection* firstBody() const;
+    RenderTableSection* header() const { return m_head.get(); }
+    RenderTableSection* footer() const { return m_foot.get(); }
+    RenderTableSection* firstBody() const { return m_firstBody.get(); }
 
     // This function returns 0 if the table has no section.
     RenderTableSection* topSection() const;
@@ -369,6 +369,16 @@ private:
     mutable LayoutUnit m_columnOffsetHeight;
     bool m_inRecursiveSectionMovedWithPagination { false };
 };
+
+inline RenderTableSection* RenderTable::topSection() const
+{
+    ASSERT(!needsSectionRecalc());
+    if (m_head)
+        return m_head.get();
+    if (m_firstBody)
+        return m_firstBody.get();
+    return m_foot.get();
+}
 
 inline bool isDirectionSame(const RenderBox* tableItem, const RenderBox* otherTableItem) { return tableItem && otherTableItem ? tableItem->style().direction() == otherTableItem->style().direction() : true; }
 

@@ -159,11 +159,6 @@ void RenderBlockFlow::willBeDestroyed()
     RenderBox::willBeDestroyed();
 }
 
-RenderMultiColumnFlow* RenderBlockFlow::multiColumnFlowSlowCase() const
-{
-    return rareBlockFlowData()->m_multiColumnFlow.get();
-}
-
 RenderBlockFlow* RenderBlockFlow::previousSiblingWithOverhangingFloats(bool& parentHasFloats) const
 {
     // Attempt to locate a previous sibling with overhanging floats. We skip any elements that are

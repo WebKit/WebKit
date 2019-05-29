@@ -33,11 +33,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(UndoItem);
 
-UndoManager* UndoItem::undoManager() const
-{
-    return m_undoManager.get();
-}
-
 void UndoItem::setUndoManager(UndoManager* undoManager)
 {
     m_undoManager = makeWeakPtr(undoManager);

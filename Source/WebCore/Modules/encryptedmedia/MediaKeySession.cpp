@@ -94,7 +94,7 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, WeakPtr<MediaK
     UNUSED_PARAM(m_closed);
     UNUSED_PARAM(m_uninitialized);
 
-    m_instanceSession->setClient(makeWeakPtr(*this));
+    m_instanceSession->setClient(m_cdmInstanceSessionClientWeakPtrFactory.createWeakPtr(*this));
 }
 
 MediaKeySession::~MediaKeySession()

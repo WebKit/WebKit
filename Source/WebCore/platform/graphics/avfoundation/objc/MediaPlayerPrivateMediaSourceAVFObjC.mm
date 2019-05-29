@@ -52,7 +52,6 @@
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/WeakPtr.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -88,10 +87,10 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
 static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
 {
     MediaPlayerPrivateMediaSourceAVFObjC* player = (MediaPlayerPrivateMediaSourceAVFObjC*)const_cast<void*>(listener);
-    callOnMainThread([weakThis = makeWeakPtr(player)] {
+    callOnMainThread([weakThis = player->createWeakPtr()] {
         if (!weakThis)
             return;
-        weakThis->effectiveRateChanged();
+        weakThis.get()->effectiveRateChanged();
     });
 }
 
@@ -121,7 +120,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
 
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
-    __block auto weakThis = makeWeakPtr(*this);
+    __block auto weakThis = createWeakPtr();
     m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
 #if LOG_DISABLED
         UNUSED_PARAM(time);
@@ -287,7 +286,7 @@ PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    callOnMainThread([weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([weakThis = createWeakPtr()] {
         if (!weakThis)
             return;
         weakThis.get()->playInternal();
@@ -308,7 +307,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    callOnMainThread([weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([weakThis = createWeakPtr()] {
         if (!weakThis)
             return;
         weakThis.get()->pauseInternal();
@@ -408,6 +407,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& ti
     INFO_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
 
     m_seeking = true;
+    auto weakThis = createWeakPtr();
     m_pendingSeek = std::make_unique<PendingSeek>(time, negativeThreshold, positiveThreshold);
 
     if (m_seekTimer.isActive())
@@ -858,13 +858,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
         return;
 
     MediaTime duration = m_mediaSourcePrivate->duration();
+    auto weakThis = createWeakPtr();
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(duration)]];
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     DEBUG_LOG(logSiteIdentifier, duration);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = makeWeakPtr(*this), duration, logSiteIdentifier, this] {
+    m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis, duration, logSiteIdentifier, this] {
         if (!weakThis)
             return;
 
@@ -953,11 +954,6 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
     return m_streamSession.get();
 }
 #endif
-
-CDMSessionMediaSourceAVFObjC* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
-{
-    return m_session.get();
-}
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* session)
 {

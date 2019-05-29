@@ -59,8 +59,7 @@ class WebCoreDecompressionSession;
 
 
 class MediaPlayerPrivateMediaSourceAVFObjC
-    : public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
-    , public MediaPlayerPrivateInterface
+    : public MediaPlayerPrivateInterface
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -122,7 +121,7 @@ public:
     AVStreamSession *streamSession();
 #endif
     void setCDMSession(LegacyCDMSession*) override;
-    CDMSessionMediaSourceAVFObjC* cdmSession() const;
+    CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session.get(); }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -147,6 +146,8 @@ public:
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     bool shouldCheckHardwareSupport() const;
+
+    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -281,6 +282,7 @@ private:
     std::unique_ptr<PendingSeek> m_pendingSeek;
 
     MediaPlayer* m_player;
+    WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_weakPtrFactory;
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_sizeChangeObserverWeakPtrFactory;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;

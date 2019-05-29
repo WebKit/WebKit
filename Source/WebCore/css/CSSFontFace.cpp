@@ -122,11 +122,6 @@ bool CSSFontFace::setFamilies(CSSValue& family)
     return true;
 }
 
-FontFace* CSSFontFace::existingWrapper()
-{
-    return m_wrapper.get();
-}
-
 static FontSelectionRange calculateWeightRange(CSSValue& value)
 {
     if (value.isValueList()) {

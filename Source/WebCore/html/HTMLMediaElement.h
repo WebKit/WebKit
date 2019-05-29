@@ -149,9 +149,6 @@ class HTMLMediaElement
 {
     WTF_MAKE_ISO_ALLOCATED(HTMLMediaElement);
 public:
-    typedef HTMLElement::WeakValueType WeakValueType;
-    using HTMLElement::weakPtrFactory;
-
     RefPtr<MediaPlayer> player() const { return m_player; }
 
     virtual bool isVideo() const { return false; }
@@ -577,6 +574,8 @@ public:
     WEBCORE_EXPORT void willExitFullscreen();
 
     enum class AutoplayEventPlaybackState { None, PreventedAutoplay, StartedWithUserGesture, StartedWithoutUserGesture };
+
+    using HTMLElement::weakPtrFactory;
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);

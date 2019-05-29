@@ -359,14 +359,14 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     : MediaPlayerPrivateAVFoundation(player)
     , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
-    , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
+    , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:m_weakPtrFactory.createWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
-    , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
+    , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:m_weakPtrFactory.createWeakPtr(*this)]))
 #endif
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
-    , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
+    , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:m_weakPtrFactory.createWeakPtr(*this)]))
 #endif
     , m_currentTextTrack(0)
     , m_cachedRate(0)
@@ -387,7 +387,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 {
-    weakPtrFactory().revokeAll();
+    m_weakPtrFactory.revokeAll();
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];

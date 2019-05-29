@@ -347,6 +347,7 @@ class Document
     , public TreeScope
     , public ScriptExecutionContext
     , public FontSelectorClient
+    , public CanMakeWeakPtr<Document>
     , public FrameDestructionObserver
     , public Supplementable<Document>
     , public Logger::Observer {

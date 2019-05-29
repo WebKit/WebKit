@@ -1513,12 +1513,6 @@ void WebProcessProxy::decrementSuspendedPageCount()
         send(Messages::WebProcess::SetHasSuspendedPageProxy(false), 0);
 }
 
-WebProcessPool& WebProcessProxy::processPool() const
-{
-    ASSERT(m_processPool);
-    return *m_processPool.get();
-}
-
 #if PLATFORM(WATCHOS)
 
 void WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput()

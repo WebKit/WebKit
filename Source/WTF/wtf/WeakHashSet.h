@@ -32,18 +32,10 @@
 
 namespace WTF {
 
-template<> struct HashTraits<Ref<WeakReference>> : RefHashTraits<WeakReference> {
-    static const bool hasIsReleasedWeakValueFunction = true;
-    static bool isReleasedWeakValue(const Ref<WeakReference>& value)
-    {
-        return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value.get();
-    }
-};
-
 template <typename T>
 class WeakHashSet {
 public:
-    typedef HashSet<Ref<WeakReference>> WeakReferenceSet;
+    typedef HashSet<Ref<WeakReference<T>>> WeakReferenceSet;
 
     class WeakHashSetConstIterator : public std::iterator<std::forward_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
     private:
@@ -54,7 +46,7 @@ public:
         }
 
     public:
-        T* get() const { return m_position->get().template get<T, typename T::WeakValueType>(); }
+        T* get() const { return m_position->get().get(); }
         T& operator*() const { return *get(); }
         T* operator->() const { return get(); }
 
@@ -68,7 +60,7 @@ public:
 
         void skipEmptyBuckets()
         {
-            while (m_position != m_endPosition && !get())
+            while (m_position != m_endPosition && !m_position->get().get())
                 ++m_position;
         }
 
@@ -104,33 +96,42 @@ public:
     template <typename U>
     bool remove(const U& value)
     {
-        auto& weakReference = value.weakPtrFactory().m_ref;
-        if (!weakReference || !*weakReference)
+        auto* weakReference = weak_reference_downcast<T>(value.weakPtrFactory().m_ref.get());
+        if (!weakReference)
             return false;
-        return m_set.remove(*weakReference);
+        return m_set.remove(weakReference);
     }
 
     template <typename U>
     bool contains(const U& value) const
     {
-        auto& weakReference = value.weakPtrFactory().m_ref;
-        if (!weakReference || !*weakReference)
+        auto* weakReference = weak_reference_downcast<T>(value.weakPtrFactory().m_ref.get());
+        if (!weakReference)
             return false;
-        return m_set.contains(*weakReference);
+        return m_set.contains(weakReference);
     }
 
     unsigned capacity() const { return m_set.capacity(); }
 
-    bool computesEmpty() const { return begin() == end(); }
+    bool computesEmpty() const
+    {
+        if (m_set.isEmpty())
+            return true;
+        for (auto& value : m_set) {
+            if (value->get())
+                return false;
+        }
+        return true;
+    }
 
     bool hasNullReferences() const
     {
-        return WTF::anyOf(m_set, [] (auto& value) { return !value.get(); });
+        return WTF::anyOf(m_set, [] (auto& value) { return !value->get(); });
     }
 
     unsigned computeSize() const
     {
-        const_cast<WeakReferenceSet&>(m_set).removeIf([] (auto& value) { return !value.get(); });
+        const_cast<WeakReferenceSet&>(m_set).removeIf([] (auto& value) { return !value->get(); });
         return m_set.size();
     }
 
@@ -142,6 +143,14 @@ public:
 
 private:
     WeakReferenceSet m_set;
+};
+
+template<typename T> struct HashTraits<Ref<WeakReference<T>>> : RefHashTraits<WeakReference<T>> {
+    static const bool hasIsReleasedWeakValueFunction = true;
+    static bool isReleasedWeakValue(const Ref<WeakReference<T>>& value)
+    {
+        return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value.get().get();
+    }
 };
 
 } // namespace WTF

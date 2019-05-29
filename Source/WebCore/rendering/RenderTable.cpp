@@ -96,31 +96,6 @@ RenderTable::RenderTable(Document& document, RenderStyle&& style)
 
 RenderTable::~RenderTable() = default;
 
-RenderTableSection* RenderTable::header() const
-{
-    return m_head.get();
-}
-
-RenderTableSection* RenderTable::footer() const
-{
-    return m_foot.get();
-}
-
-RenderTableSection* RenderTable::firstBody() const
-{
-    return m_firstBody.get();
-}
-
-RenderTableSection* RenderTable::topSection() const
-{
-    ASSERT(!needsSectionRecalc());
-    if (m_head)
-        return m_head.get();
-    if (m_firstBody)
-        return m_firstBody.get();
-    return m_foot.get();
-}
-
 void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);

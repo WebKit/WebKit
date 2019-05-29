@@ -465,8 +465,8 @@ Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePr
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
     : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
-    , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:makeWeakPtr(*this)]))
-    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:makeWeakPtr(*this)]))
+    , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
+    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:createWeakPtr()]))
     , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
     , m_mediaSource(parent)
     , m_mapID(nextMapID())
@@ -884,7 +884,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
         ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!m_audioRenderers.contains(trackID)) {
             renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
-            auto weakThis = makeWeakPtr(*this);
+            auto weakThis = createWeakPtr();
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 if (weakThis)
                     weakThis->didBecomeReadyForMoreSamples(trackID);
@@ -920,7 +920,8 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
         }
 
         if (m_hdcpError) {
-            callOnMainThread([weakThis = makeWeakPtr(*this)] {
+            WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
+            callOnMainThread([weakThis] {
                 if (!weakThis || !weakThis->m_session || !weakThis->m_hdcpError)
                     return;
 
@@ -1064,7 +1065,7 @@ void SourceBufferPrivateAVFObjC::flushVideo()
 
     if (m_decompressionSession) {
         m_decompressionSession->flush();
-        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = makeWeakPtr(*this)] {
+        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = createWeakPtr()] {
             if (weakThis && weakThis->m_mediaSource)
                 weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
         });
@@ -1137,7 +1138,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
 #endif
             } else {
                 [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-                [m_displayLayer prerollDecodeWithCompletionHandler:[weakThis = makeWeakPtr(*this)] (BOOL success) mutable {
+                [m_displayLayer prerollDecodeWithCompletionHandler:[weakThis = createWeakPtr()] (BOOL success) mutable {
                     if (!success || !weakThis)
                         return;
 
@@ -1236,14 +1237,14 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const Atomi
             });
         }
         if (m_displayLayer) {
-            auto weakThis = makeWeakPtr(*this);
+            auto weakThis = createWeakPtr();
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
                 if (weakThis)
                     weakThis->didBecomeReadyForMoreSamples(trackID);
             }];
         }
     } else if (m_audioRenderers.contains(trackID)) {
-        auto weakThis = makeWeakPtr(*this);
+        auto weakThis = createWeakPtr();
         [m_audioRenderers.get(trackID) requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
             if (weakThis)
                 weakThis->didBecomeReadyForMoreSamples(trackID);
@@ -1277,7 +1278,7 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
     m_displayLayer = layer;
 
     if (m_displayLayer) {
-        auto weakThis = makeWeakPtr(*this);
+        auto weakThis = createWeakPtr();
         [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
             if (weakThis)
                 weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
@@ -1305,11 +1306,12 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
     if (!m_decompressionSession)
         return;
 
-    m_decompressionSession->requestMediaDataWhenReady([weakThis = makeWeakPtr(*this)] {
+    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = createWeakPtr();
+    m_decompressionSession->requestMediaDataWhenReady([weakThis] {
         if (weakThis)
             weakThis->didBecomeReadyForMoreSamples(weakThis->m_enabledVideoTrackID);
     });
-    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = makeWeakPtr(*this)] {
+    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = createWeakPtr()] {
         if (weakThis && weakThis->m_mediaSource)
             weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
     });

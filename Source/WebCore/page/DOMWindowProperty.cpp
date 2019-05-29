@@ -42,9 +42,4 @@ Frame* DOMWindowProperty::frame() const
     return m_window ? m_window->frame() : nullptr;
 }
 
-DOMWindow* DOMWindowProperty::window() const
-{
-    return m_window.get();
-}
-
 }

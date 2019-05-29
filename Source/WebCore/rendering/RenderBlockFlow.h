@@ -264,8 +264,7 @@ public:
     }
     void layoutLineGridBox();
 
-    RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? multiColumnFlowSlowCase() : nullptr; }
-    RenderMultiColumnFlow* multiColumnFlowSlowCase() const;
+    RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlow.get() : nullptr; }
     void setMultiColumnFlow(RenderMultiColumnFlow&);
     void clearMultiColumnFlow();
     bool willCreateColumns(Optional<unsigned> desiredColumnCount = WTF::nullopt) const;
