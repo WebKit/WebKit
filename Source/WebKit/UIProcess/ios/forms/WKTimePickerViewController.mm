@@ -29,7 +29,6 @@
 #if PLATFORM(WATCHOS)
 
 #import <ClockKitUI/CLKUIWheelsOfTimeView.h>
-#import <ClockKitUI/ClockKitUI.h>
 #import <PepperUICore/PUICQuickboardViewController.h>
 #import <PepperUICore/PUICQuickboardViewController_Private.h>
 #import <UIKit/UIResponder_Private.h>
