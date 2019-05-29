@@ -38,9 +38,10 @@ class SQLiteDatabase;
 class CrossThreadTaskHandler {
 public:
     WTF_EXPORT_PRIVATE virtual ~CrossThreadTaskHandler();
+    enum class AutodrainedPoolForRunLoop { DoNotUse, Use };
 
 protected:
-    WTF_EXPORT_PRIVATE CrossThreadTaskHandler(const char* threadName);
+    WTF_EXPORT_PRIVATE CrossThreadTaskHandler(const char* threadName, AutodrainedPoolForRunLoop = AutodrainedPoolForRunLoop::DoNotUse);
 
     WTF_EXPORT_PRIVATE void postTask(CrossThreadTask&&);
     WTF_EXPORT_PRIVATE void postTaskReply(CrossThreadTask&&);
@@ -50,6 +51,8 @@ protected:
 private:
     void handleTaskRepliesOnMainThread();
     void taskRunLoop();
+
+    AutodrainedPoolForRunLoop m_useAutodrainedPool { AutodrainedPoolForRunLoop::DoNotUse };
 
     Lock m_taskThreadCreationLock;
     Lock m_mainThreadReplyLock;

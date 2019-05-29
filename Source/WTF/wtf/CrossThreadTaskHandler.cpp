@@ -26,9 +26,12 @@
 #include "config.h"
 #include <wtf/CrossThreadTaskHandler.h>
 
+#include <wtf/AutodrainedPool.h>
+
 namespace WTF {
 
-CrossThreadTaskHandler::CrossThreadTaskHandler(const char* threadName)
+CrossThreadTaskHandler::CrossThreadTaskHandler(const char* threadName, AutodrainedPoolForRunLoop useAutodrainedPool)
+    : m_useAutodrainedPool(useAutodrainedPool)
 {
     ASSERT(isMainThread());
     Locker<Lock> locker(m_taskThreadCreationLock);
@@ -69,7 +72,11 @@ void CrossThreadTaskHandler::taskRunLoop()
     }
 
     while (!m_taskQueue.isKilled()) {
-        m_taskQueue.waitForMessage().performTask();
+        {
+            std::unique_ptr<AutodrainedPool> autodrainedPool = (m_useAutodrainedPool == AutodrainedPoolForRunLoop::Use) ? std::make_unique<AutodrainedPool>() : nullptr;
+
+            m_taskQueue.waitForMessage().performTask();
+        }
 
         Locker<Lock> shouldSuspendLocker(m_shouldSuspendLock);
         while (m_shouldSuspend) {

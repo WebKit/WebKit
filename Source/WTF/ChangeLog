@@ -1,3 +1,26 @@
+2019-05-29  David Kilzer  <ddkilzer@apple.com>
+
+        IndexedDatabase Server thread in com.apple.WebKit.Networking process leaks objects into an autoreleasePool that's never cleared
+        <https://webkit.org/b/198346>
+        <rdar://problem/50895658>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::CrossThreadTaskHandler):
+        - Add optional second argument to enable use of an
+          AutodrainedPool when running the runloop.
+        (WTF::CrossThreadTaskHandler::taskRunLoop):
+        - Create an AutodrainedPool if requested when
+          CrossThreadTaskHandler was created.
+        * wtf/CrossThreadTaskHandler.h:
+        (WTF::CrossThreadTaskHandler::AutodrainedPoolForRunLoop):
+        - Add enum class for enabling an AutodrainedPool for
+          CrossThreadTaskHandler::taskRunLoop().
+        (WTF::CrossThreadTaskHandler::CrossThreadTaskHandler):
+        - Add optional second argument to enable use of an
+          AutodrainedPool when running the runloop.
+
 2019-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         WeakPtr breaks vtables when upcasting to base classes

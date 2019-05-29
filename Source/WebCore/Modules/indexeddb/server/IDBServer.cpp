@@ -57,7 +57,7 @@ Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databas
 }
 
 IDBServer::IDBServer(PAL::SessionID sessionID, IDBBackingStoreTemporaryFileHandler& fileHandler, QuotaManagerGetter&& quotaManagerGetter)
-    : CrossThreadTaskHandler("IndexedDatabase Server")
+    : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
     , m_sessionID(sessionID)
     , m_backingStoreTemporaryFileHandler(fileHandler)
     , m_quotaManagerGetter(WTFMove(quotaManagerGetter))
@@ -65,7 +65,7 @@ IDBServer::IDBServer(PAL::SessionID sessionID, IDBBackingStoreTemporaryFileHandl
 }
 
 IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler, QuotaManagerGetter&& quotaManagerGetter)
-    : CrossThreadTaskHandler("IndexedDatabase Server")
+    : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
     , m_sessionID(sessionID)
     , m_databaseDirectoryPath(databaseDirectoryPath)
     , m_backingStoreTemporaryFileHandler(fileHandler)
