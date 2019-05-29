@@ -1177,6 +1177,7 @@ void VideoFullscreenInterfaceAVKit::setInlineRect(const IntRect& inlineRect, boo
         doExitFullscreen();
 }
 
+#if !PLATFORM(WATCHOS)
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/VideoFullscreenInterfaceAVKitAdditions.mm>
 #else
@@ -1184,6 +1185,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 {
     return adoptNS([PAL::allocUIWindowInstance() initWithFrame:[[PAL::getUIScreenClass() mainScreen] bounds]]);
 }
+#endif
 #endif
 
 void VideoFullscreenInterfaceAVKit::doSetup()
