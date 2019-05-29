@@ -1,3 +1,17 @@
+2019-05-29  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style reports false-positive build/include_order warning in WTF C++ source files
+        <https://webkit.org/b/198349>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_classify_include): Don't return early for <wtf/Header.h>
+        includes.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_primary_header): Add tests for
+        <wtf/Header.h> includes.
+
 2019-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         WeakPtr breaks vtables when upcasting to base classes

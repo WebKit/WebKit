@@ -3031,7 +3031,7 @@ def _classify_include(filename, include, is_system, include_state):
     """
 
     # If it is a system header we know it is classified as _OTHER_HEADER.
-    if is_system and not include.startswith('public/'):
+    if is_system and not include.startswith('public/') and not include.startswith('wtf/'):
         return _OTHER_HEADER
 
     # If the include is named config.h then this is WebCore/config.h.

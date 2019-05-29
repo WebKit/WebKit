@@ -3129,8 +3129,10 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '\n'
                                          '#include "bar.h"\n',
                                          '')
+
         # Pretend that header files exist.
         os.path.isfile = lambda filename: True
+
         # Missing include for existing primary header -> error.
         self.assert_language_rules_check('foo.cpp',
                                          '#include "config.h"\n'
@@ -3139,12 +3141,14 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          'Found other header before a header this file implements. '
                                          'Should be: config.h, primary header, blank line, and then '
                                          'alphabetically sorted.  [build/include_order] [4]')
+
         # *SoftLink.cpp files should not include their headers -> no error.
         self.assert_language_rules_check('FooSoftLink.cpp',
                                          '#include "config.h"\n'
                                          '\n'
                                          '#include <wtf/SoftLinking.h>\n',
                                          '')
+
         # Having include for existing primary header -> no error.
         self.assert_language_rules_check('foo.cpp',
                                          '#include "config.h"\n'
@@ -3152,6 +3156,27 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '\n'
                                          '#include "bar.h"\n',
                                          '')
+
+        # Having include for existing WTF primary header -> no error.
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include <wtf/foo.h>\n'
+                                         '\n'
+                                         '#include <wtf/bar.h>\n',
+                                         '')
+
+        # WTF primary header included out of order -> error.
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include <wtf/bar.h>\n'
+                                         '\n'
+                                         '#include <wtf/foo.h>\n',
+                                         ['Found other header before a header this file implements. '
+                                          'Should be: config.h, primary header, blank line, and then '
+                                          'alphabetically sorted.  [build/include_order] [4]',
+                                          'Found header this file implements after other header. '
+                                          'Should be: config.h, primary header, blank line, and then '
+                                          'alphabetically sorted.  [build/include_order] [4]'])
 
         os.path.isfile = self.os_path_isfile_orig
 
