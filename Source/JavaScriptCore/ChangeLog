@@ -1,3 +1,24 @@
+2019-05-28  Dean Jackson  <dino@apple.com>
+
+        Implement Promise.allSettled
+        https://bugs.webkit.org/show_bug.cgi?id=197600
+        <rdar://problem/50483885>
+
+        Reviewed by Keith Miller.
+
+        Implement Promise.allSettled
+        https://github.com/tc39/proposal-promise-allSettled/
+
+        Shipping in Firefox since version 68.
+        Shipping in V8 since https://chromium.googlesource.com/v8/v8.git/+/1f6d27e8df819b448712dface6ad367fb8de426b
+
+        * builtins/PromiseConstructor.js:
+        (allSettled.newResolveRejectElements.resolveElement):
+        (allSettled.newResolveRejectElements.rejectElement):
+        (allSettled.newResolveRejectElements):
+        (allSettled): Added.
+        * runtime/JSPromiseConstructor.cpp: Add ref to allSettled.
+
 2019-05-28  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Properly handle RegExp's that require large ParenContext space

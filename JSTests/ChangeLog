@@ -1,3 +1,17 @@
+2019-05-28  Dean Jackson  <dino@apple.com>
+
+        Implement Promise.allSettled
+        https://bugs.webkit.org/show_bug.cgi?id=197600
+        <rdar://problem/50483885>
+
+        Reviewed by Keith Miller.
+
+        Start testing Promise.allSettled. We pass most of the tests.
+        The ones that fail are similar to the Promise.all tests we already fail.
+
+        * test262/config.yaml: Remove Promise.allSettled from skipped tests.
+        * test262/expectations.yaml: Add new expectations for allSettled tests.
+
 2019-05-28  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Properly handle RegExp's that require large ParenContext space

@@ -57,6 +57,7 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &Base::s_info, &pro
   reject          JSBuiltin             DontEnum|Function 1
   race            JSBuiltin             DontEnum|Function 1
   all             JSBuiltin             DontEnum|Function 1
+  allSettled      JSBuiltin             DontEnum|Function 1
 @end
 */
 

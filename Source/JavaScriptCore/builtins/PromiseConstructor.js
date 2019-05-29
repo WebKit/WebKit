@@ -75,6 +75,86 @@ function all(iterable)
     return promiseCapability.@promise;
 }
 
+function allSettled(iterable)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("|this| is not a object");
+
+    var promiseCapability = @newPromiseCapability(this);
+
+    var values = [];
+    var remainingElementsCount = 1;
+    var index = 0;
+
+    function newResolveRejectElements(index)
+    {
+        var alreadyCalled = false;
+
+        var resolveElement = function @resolve(x)
+        {
+            if (alreadyCalled)
+                return @undefined;
+            alreadyCalled = true;
+
+            var obj = {
+                status: "fulfilled",
+                value: x
+            };
+
+            @putByValDirect(values, index, obj);
+
+            --remainingElementsCount;
+            if (remainingElementsCount === 0)
+                return promiseCapability.@resolve.@call(@undefined, values);
+
+            return @undefined;
+        };
+
+        var rejectElement = function @reject(x)
+        {
+            if (alreadyCalled)
+                return @undefined;
+            alreadyCalled = true;
+
+            var obj = {
+                status: "rejected",
+                reason: x
+            };
+
+            @putByValDirect(values, index, obj);
+
+            --remainingElementsCount;
+            if (remainingElementsCount === 0)
+                return promiseCapability.@resolve.@call(@undefined, values);
+
+            return @undefined;
+        };
+
+        return [resolveElement, rejectElement];
+    }
+
+    try {
+        for (var value of iterable) {
+            @putByValDirect(values, index, @undefined);
+            var nextPromise = this.resolve(value);
+            var [resolveElement, rejectElement] = newResolveRejectElements(index);
+            ++remainingElementsCount;
+            nextPromise.then(resolveElement, rejectElement);
+            ++index;
+        }
+
+        --remainingElementsCount;
+        if (remainingElementsCount === 0)
+            promiseCapability.@resolve.@call(@undefined, values);
+    } catch (error) {
+        promiseCapability.@reject.@call(@undefined, error);
+    }
+
+    return promiseCapability.@promise;
+}
+
 function race(iterable)
 {
     "use strict";
