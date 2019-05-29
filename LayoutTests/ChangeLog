@@ -1,3 +1,16 @@
+2019-05-28  Yacine Bandou  <yacine.bandou@softathome.com>
+
+        [MSE][GStreamer] update the readyState correctly in MediaPlayerPrivateGStreamerMSE
+        https://bugs.webkit.org/show_bug.cgi?id=197834
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a new test that checks if the MediaElement receives the "canplaythrough"
+        event when the media content is entirely injected to MSE sourceBuffer.
+
+        * media/media-source/media-source-canplaythrough-event-expected.txt: Added.
+        * media/media-source/media-source-canplaythrough-event.html: Added.
+
 2019-05-28  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Type of dereference is the type of the thing we point to, not a pointer to that type
