@@ -195,10 +195,11 @@ void MockHidConnection::feedReports()
         Vector<uint8_t> payload;
         payload.reserveInitialCapacity(kHidInitResponseSize);
         payload.appendVector(m_nonce);
+        size_t writePosition = payload.size();
         if (stagesMatch() && m_configuration.hid->error == Mock::Error::WrongNonce)
             payload[0]--;
         payload.grow(kHidInitResponseSize);
-        cryptographicallyRandomValues(payload.data() + payload.size(), CtapChannelIdSize);
+        cryptographicallyRandomValues(payload.data() + writePosition, CtapChannelIdSize);
         auto channel = kHidBroadcastChannel;
         if (stagesMatch() && m_configuration.hid->error == Mock::Error::WrongChannelId)
             channel--;

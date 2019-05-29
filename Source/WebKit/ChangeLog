@@ -1,3 +1,20 @@
+2019-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct flaky WebAuthN test cases
+        https://bugs.webkit.org/show_bug.cgi?id=198308
+        <rdar://problem/48677219>
+
+        Reviewed by David Kilzer.
+
+        Correct offset math in the MockHidConnection implementation. The write position of
+        the payload buffer was computed using the value of 'size()', which is set to the full
+        capacity of the vector after a 'grow()' operation.
+
+        Tests: http/wpt/webauthn
+
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::feedReports): 
+
 2019-05-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] REGRESSION(r245186) Crash in NetworkCache::IOChannel::read in http/tests/IndexedDB some tests
