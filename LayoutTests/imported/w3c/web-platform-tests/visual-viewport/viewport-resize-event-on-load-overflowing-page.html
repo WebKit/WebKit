@@ -26,9 +26,15 @@
                 });
 
                 window.addEventListener('load', function() {
-                  requestAnimationFrame(function() {
-                    requestAnimationFrame(
-                        t.step_func_done(function() {
+                    var count = 0;
+                    requestAnimationFrame(function step() {
+                        // Wait for two RenderingUpdates before checking the value of numViewResizes.
+                        if (count++ < 2) {
+                            requestAnimationFrame(step);
+                            return;
+                        }
+
+                        requestAnimationFrame(t.step_func_done(function() {
                             var isOverlay = calculateScrollbarThickness() == 0;
                             assert_equals(numViewResizes, isOverlay ? 0 : 1);
                         }));

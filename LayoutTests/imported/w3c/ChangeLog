@@ -1,3 +1,20 @@
+2019-05-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244182) [Mac WK2] Layout Test imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=197286
+
+        Reviewed by Simon Fraser.
+
+        This is a time sensitive test. It expects to receive a resize event within
+        two frames after the page load. Scheduling the page update through the 
+        RenderingUpdate made updating the page for the first time happens not 
+        immediately after the page load but after an additional frame.
+
+        So we need to wait for this additional frame before checking whether the
+        'resize' event was fired.
+
+        * web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html:
+
 2019-05-29  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] toElement and fromElement should be null

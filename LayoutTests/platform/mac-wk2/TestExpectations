@@ -942,8 +942,6 @@ webkit.org/b/197285 http/tests/resourceLoadStatistics/prune-statistics.html [ Pa
 
 webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass Failure ]
 
-webkit.org/b/197286 imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html [ Pass Failure ]
-
 webkit.org/b/197425 [ Mojave Debug ] scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame.html [ Pass Failure ]
 
 webkit.org/b/197662 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Pass Failure ]
