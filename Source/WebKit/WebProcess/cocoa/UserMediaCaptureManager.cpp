@@ -256,59 +256,63 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
     auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label() }, WTFMove(hashSalt), id, *this));
     source->setSettings(WTFMove(settings));
-    m_sources.set(id, source.copyRef());
+    m_sources.add(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));
 }
 
 void UserMediaCaptureManager::sourceStopped(uint64_t id)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->stop();
+    if (auto source = m_sources.get(id)) {
+        source->stop();
+        sourceEnded(id);
+    }
 }
 
 void UserMediaCaptureManager::captureFailed(uint64_t id)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->captureFailed();
+    if (auto source = m_sources.get(id)) {
+        source->captureFailed();
+        sourceEnded(id);
+    }
 }
 
 void UserMediaCaptureManager::sourceMutedChanged(uint64_t id, bool muted)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->setMuted(muted);
+    if (auto source = m_sources.get(id))
+        source->setMuted(muted);
 }
 
 void UserMediaCaptureManager::sourceSettingsChanged(uint64_t id, const RealtimeMediaSourceSettings& settings)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->setSettings(RealtimeMediaSourceSettings(settings));
+    if (auto source = m_sources.get(id))
+        source->setSettings(RealtimeMediaSourceSettings(settings));
 }
 
 void UserMediaCaptureManager::storageChanged(uint64_t id, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->setStorage(handle, description, numberOfFrames);
+    if (auto source = m_sources.get(id))
+        source->setStorage(handle, description, numberOfFrames);
 }
 
 void UserMediaCaptureManager::ringBufferFrameBoundsChanged(uint64_t id, uint64_t startFrame, uint64_t endFrame)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->setRingBufferFrameBounds(startFrame, endFrame);
+    if (auto source = m_sources.get(id))
+        source->setRingBufferFrameBounds(startFrame, endFrame);
 }
 
 void UserMediaCaptureManager::audioSamplesAvailable(uint64_t id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 {
-    ASSERT(m_sources.contains(id));
-    auto& source = *m_sources.get(id);
-    source.setRingBufferFrameBounds(startFrame, endFrame);
-    source.audioSamplesAvailable(time, numberOfFrames);
+    if (auto source = m_sources.get(id)) {
+        source->setRingBufferFrameBounds(startFrame, endFrame);
+        source->audioSamplesAvailable(time, numberOfFrames);
+    }
 }
 
 #if HAVE(IOSURFACE)
 void UserMediaCaptureManager::remoteVideoSampleAvailable(uint64_t id, RemoteVideoSample&& sample)
 {
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->remoteVideoSampleAvailable(WTFMove(sample));
+    if (auto source = m_sources.get(id))
+        source->remoteVideoSampleAvailable(WTFMove(sample));
 }
 #else
 NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable(uint64_t, RemoteVideoSample&&)
@@ -347,20 +351,19 @@ void UserMediaCaptureManager::applyConstraints(uint64_t id, const WebCore::Media
 void UserMediaCaptureManager::sourceEnded(uint64_t id)
 {
     m_process.send(Messages::UserMediaCaptureManagerProxy::End(id), 0);
+    m_sources.remove(id);
 }
 
 void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCore::RealtimeMediaSourceSettings& settings)
 {
-    ASSERT(m_sources.contains(id));
-    auto& source = *m_sources.get(id);
-    source.applyConstraintsSucceeded(settings);
+    if (auto source = m_sources.get(id))
+        source->applyConstraintsSucceeded(settings);
 }
 
 void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, String&& failedConstraint, String&& message)
 {
-    ASSERT(m_sources.contains(id));
-    auto& source = *m_sources.get(id);
-    source.applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
+    if (auto source = m_sources.get(id))
+        source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
 }
 
 }

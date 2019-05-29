@@ -1,5 +1,33 @@
 2019-05-29  Youenn Fablet  <youenn@apple.com>
 
+        UserMediaCaptureManager should remove a source from its map once the source is ended
+        https://bugs.webkit.org/show_bug.cgi?id=198337
+
+        Reviewed by Eric Carlson.
+
+        When the source is stopped, for instance using MediaStreamTrack.stop,
+        remove the source from UserMediaCaptureManager sources map.
+        This makes sure the map will not grow over time.
+        Add an if check to ensure that the source is still there before processing an incoming IPC call.
+
+        When UIProcess tells us the capture is finished (typically capture failed), remove the entry on WebProcess side as well.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::sourceStopped):
+        (WebKit::UserMediaCaptureManager::captureFailed):
+        (WebKit::UserMediaCaptureManager::sourceMutedChanged):
+        (WebKit::UserMediaCaptureManager::sourceSettingsChanged):
+        (WebKit::UserMediaCaptureManager::storageChanged):
+        (WebKit::UserMediaCaptureManager::ringBufferFrameBoundsChanged):
+        (WebKit::UserMediaCaptureManager::audioSamplesAvailable):
+        (WebKit::UserMediaCaptureManager::remoteVideoSampleAvailable):
+        (WebKit::UserMediaCaptureManager::sourceEnded):
+        (WebKit::UserMediaCaptureManager::applyConstraintsSucceeded):
+        (WebKit::UserMediaCaptureManager::applyConstraintsFailed):
+
+2019-05-29  Youenn Fablet  <youenn@apple.com>
+
         UserMediaCaptureManagerProxy::SourceProxy should directly have access to its IPC connection
         https://bugs.webkit.org/show_bug.cgi?id=198335
 
