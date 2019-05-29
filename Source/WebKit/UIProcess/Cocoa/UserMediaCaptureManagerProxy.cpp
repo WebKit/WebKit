@@ -177,17 +177,15 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
 void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
 {
     MESSAGE_CHECK_CONTEXTID(id);
-    auto iter = m_proxies.find(id);
-    if (iter != m_proxies.end())
-        iter->value->source().start();
+    if (auto* proxy = m_proxies.get(id))
+        proxy->source().start();
 }
 
 void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
 {
     MESSAGE_CHECK_CONTEXTID(id);
-    auto iter = m_proxies.find(id);
-    if (iter != m_proxies.end())
-        iter->value->source().stop();
+    if (auto* proxy = m_proxies.get(id))
+        proxy->source().stop();
 }
 
 void UserMediaCaptureManagerProxy::end(uint64_t id)
@@ -200,28 +198,26 @@ void UserMediaCaptureManagerProxy::capabilities(uint64_t id, CompletionHandler<v
 {
     MESSAGE_CHECK_CONTEXTID(id);
     WebCore::RealtimeMediaSourceCapabilities capabilities;
-    auto iter = m_proxies.find(id);
-    if (iter != m_proxies.end())
-        capabilities = iter->value->source().capabilities();
+    if (auto* proxy = m_proxies.get(id))
+        capabilities = proxy->source().capabilities();
     completionHandler(WTFMove(capabilities));
 }
 
 void UserMediaCaptureManagerProxy::setMuted(uint64_t id, bool muted)
 {
     MESSAGE_CHECK_CONTEXTID(id);
-    auto iter = m_proxies.find(id);
-    if (iter != m_proxies.end())
-        iter->value->source().setMuted(muted);
+    if (auto* proxy = m_proxies.get(id))
+        proxy->source().setMuted(muted);
 }
 
 void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)
 {
     MESSAGE_CHECK_CONTEXTID(id);
-    auto iter = m_proxies.find(id);
-    if (iter == m_proxies.end())
+    auto* proxy = m_proxies.get(id);
+    if (!proxy)
         return;
 
-    auto& source = iter->value->source();
+    auto& source = proxy->source();
     auto result = source.applyConstraints(constraints);
     if (!result)
         m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, source.settings()), 0);
