@@ -119,6 +119,11 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
     return currentAssociatedForm;
 }
 
+HTMLFormElement* FormAssociatedElement::form() const
+{
+    return m_form.get();
+}
+
 void FormAssociatedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     ASSERT(m_form);

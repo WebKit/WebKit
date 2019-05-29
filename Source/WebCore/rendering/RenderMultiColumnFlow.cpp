@@ -107,6 +107,11 @@ RenderBox* RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(const Rend
     return nullptr;
 }
 
+RenderMultiColumnSpannerPlaceholder* RenderMultiColumnFlow::findColumnSpannerPlaceholder(RenderBox* spanner) const
+{
+    return m_spannerMap->get(spanner).get();
+}
+
 void RenderMultiColumnFlow::layout()
 {
     ASSERT(!m_inLayout);

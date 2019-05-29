@@ -1,3 +1,29 @@
+2019-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        WeakPtr breaks vtables when upcasting to base classes
+        https://bugs.webkit.org/show_bug.cgi?id=188799
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp: Adopt the new macro API instead
+        of template specialization for observing weak references.
+
+        (TestWebKitAPI::Int::Int):
+        (TestWebKitAPI::Int::operator int const):
+        (TestWebKitAPI::Int::operator== const): Use a class for integer tests
+        because WeakPtr doesn't naturally support pointing to non-class objects
+        now.
+
+        (TestWebKitAPI::Base::foo):
+        (TestWebKitAPI::Derived::foo): Inherit from CanMakeWeakPtr to enable
+        deduction of the weak pointer type.
+
+        (TestWebKitAPI::TEST): Updated to use Int.
+
+        (TestWebKitAPI::Base::weakPtrFactory const): Deleted.
+        (WTF::WeakReference<TestWebKitAPI::Base>::WeakReference): Deleted.
+        (WTF::WeakReference<TestWebKitAPI::Base>::~WeakReference): Deleted.
+
 2019-05-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245857.

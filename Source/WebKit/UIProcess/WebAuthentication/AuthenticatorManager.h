@@ -49,6 +49,7 @@ public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
 
     using AuthenticatorTransportService::Observer::weakPtrFactory;
+    typedef AuthenticatorTransportService::Observer::WeakValueType WeakValueType;
 
     AuthenticatorManager();
     virtual ~AuthenticatorManager() = default;

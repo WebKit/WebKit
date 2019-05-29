@@ -24,6 +24,7 @@
 #include "WebFrameProxy.h"
 #include "WebKitURIRequest.h"
 #include "WebKitWebResourcePrivate.h"
+#include "WebPageProxy.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>

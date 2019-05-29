@@ -25,16 +25,31 @@
 
 #include "config.h"
 
+static unsigned s_baseWeakReferences = 0;
+
+#define DID_CREATE_WEAK_REFERENCE(p) do { \
+    ++s_baseWeakReferences; \
+} while (0);
+
+#define WILL_DESTROY_WEAK_REFERENCE(p) do { \
+    --s_baseWeakReferences; \
+} while (0);
+
 #include "Test.h"
 #include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
-static unsigned s_baseWeakReferences = 0;
-
 namespace TestWebKitAPI {
 
-class Base {
+struct Int : public CanMakeWeakPtr<Int> {
+    Int(int i) : m_i(i) { }
+    operator int() const { return m_i; }
+    bool operator==(const Int& other) const { return m_i == other.m_i; }
+    int m_i;
+};
+
+class Base : public CanMakeWeakPtr<Base> {
 public:
     Base() { }
 
@@ -43,15 +58,14 @@ public:
         return 0;
     }
 
-    auto& weakPtrFactory() const { return m_weakPtrFactory; }
-
-private:
-    WeakPtrFactory<Base> m_weakPtrFactory;
+    int dummy; // Prevent empty base class optimization, to make testing more interesting.
 };
 
 class Derived : public Base {
 public:
     Derived() { }
+
+    virtual ~Derived() { } // Force a pointer fixup when casting Base <-> Derived
 
     int foo()
     {
@@ -61,31 +75,15 @@ public:
 
 }
 
-namespace WTF {
-
-template<>
-WeakReference<TestWebKitAPI::Base>::WeakReference(TestWebKitAPI::Base* ptr)
-    : m_ptr(ptr)
-{
-    ++s_baseWeakReferences;
-}
-template<>
-WeakReference<TestWebKitAPI::Base>::~WeakReference()
-{
-    --s_baseWeakReferences;
-}
-
-}
-
 namespace TestWebKitAPI {
 
 TEST(WTF_WeakPtr, Basic)
 {
-    int dummy = 5;
-    WeakPtrFactory<int>* factory = new WeakPtrFactory<int>();
-    WeakPtr<int> weakPtr1 = factory->createWeakPtr(dummy);
-    WeakPtr<int> weakPtr2 = factory->createWeakPtr(dummy);
-    WeakPtr<int> weakPtr3 = factory->createWeakPtr(dummy);
+    Int dummy(5);
+    WeakPtrFactory<Int>* factory = new WeakPtrFactory<Int>();
+    WeakPtr<Int> weakPtr1 = factory->createWeakPtr(dummy);
+    WeakPtr<Int> weakPtr2 = factory->createWeakPtr(dummy);
+    WeakPtr<Int> weakPtr3 = factory->createWeakPtr(dummy);
     EXPECT_EQ(weakPtr1.get(), &dummy);
     EXPECT_EQ(weakPtr2.get(), &dummy);
     EXPECT_EQ(weakPtr3.get(), &dummy);
@@ -106,10 +104,10 @@ TEST(WTF_WeakPtr, Basic)
 
 TEST(WTF_WeakPtr, Assignment)
 {
-    int dummy = 5;
-    WeakPtr<int> weakPtr;
+    Int dummy(5);
+    WeakPtr<Int> weakPtr;
     {
-        WeakPtrFactory<int> factory;
+        WeakPtrFactory<Int> factory;
         EXPECT_NULL(weakPtr.get());
         weakPtr = factory.createWeakPtr(dummy);
         EXPECT_EQ(weakPtr.get(), &dummy);
@@ -119,12 +117,12 @@ TEST(WTF_WeakPtr, Assignment)
 
 TEST(WTF_WeakPtr, MultipleFactories)
 {
-    int dummy1 = 5;
-    int dummy2 = 7;
-    WeakPtrFactory<int>* factory1 = new WeakPtrFactory<int>();
-    WeakPtrFactory<int>* factory2 = new WeakPtrFactory<int>();
-    WeakPtr<int> weakPtr1 = factory1->createWeakPtr(dummy1);
-    WeakPtr<int> weakPtr2 = factory2->createWeakPtr(dummy2);
+    Int dummy1(5);
+    Int dummy2(7);
+    WeakPtrFactory<Int>* factory1 = new WeakPtrFactory<Int>();
+    WeakPtrFactory<Int>* factory2 = new WeakPtrFactory<Int>();
+    WeakPtr<Int> weakPtr1 = factory1->createWeakPtr(dummy1);
+    WeakPtr<Int> weakPtr2 = factory2->createWeakPtr(dummy2);
     EXPECT_EQ(weakPtr1.get(), &dummy1);
     EXPECT_EQ(weakPtr2.get(), &dummy2);
     EXPECT_TRUE(weakPtr1 != weakPtr2);
@@ -139,11 +137,11 @@ TEST(WTF_WeakPtr, MultipleFactories)
 
 TEST(WTF_WeakPtr, RevokeAll)
 {
-    int dummy = 5;
-    WeakPtrFactory<int> factory;
-    WeakPtr<int> weakPtr1 = factory.createWeakPtr(dummy);
-    WeakPtr<int> weakPtr2 = factory.createWeakPtr(dummy);
-    WeakPtr<int> weakPtr3 = factory.createWeakPtr(dummy);
+    Int dummy(5);
+    WeakPtrFactory<Int> factory;
+    WeakPtr<Int> weakPtr1 = factory.createWeakPtr(dummy);
+    WeakPtr<Int> weakPtr2 = factory.createWeakPtr(dummy);
+    WeakPtr<Int> weakPtr3 = factory.createWeakPtr(dummy);
     EXPECT_EQ(weakPtr1.get(), &dummy);
     EXPECT_EQ(weakPtr2.get(), &dummy);
     EXPECT_EQ(weakPtr3.get(), &dummy);
@@ -153,7 +151,7 @@ TEST(WTF_WeakPtr, RevokeAll)
     EXPECT_NULL(weakPtr3.get());
 }
 
-struct Foo {
+struct Foo : public CanMakeWeakPtr<Foo> {
     void bar() { };
 };
 
@@ -185,13 +183,13 @@ TEST(WTF_WeakPtr, Operators)
 
 TEST(WTF_WeakPtr, Forget)
 {
-    int dummy = 5;
-    int dummy2 = 7;
+    Int dummy(5);
+    Int dummy2(7);
 
-    WeakPtrFactory<int> outerFactory;
-    WeakPtr<int> weakPtr1, weakPtr2, weakPtr3, weakPtr4;
+    WeakPtrFactory<Int> outerFactory;
+    WeakPtr<Int> weakPtr1, weakPtr2, weakPtr3, weakPtr4;
     {
-        WeakPtrFactory<int> innerFactory;
+        WeakPtrFactory<Int> innerFactory;
         weakPtr1 = innerFactory.createWeakPtr(dummy);
         weakPtr2 = innerFactory.createWeakPtr(dummy);
         weakPtr3 = innerFactory.createWeakPtr(dummy);
@@ -217,7 +215,7 @@ TEST(WTF_WeakPtr, Forget)
         EXPECT_EQ(weakPtr2.get(), &dummy);
         EXPECT_EQ(weakPtr4.get(), &dummy);
 
-        WeakPtr<int> weakPtr5 = weakPtr2;
+        WeakPtr<Int> weakPtr5 = weakPtr2;
         EXPECT_EQ(weakPtr2.get(), &dummy);
         EXPECT_EQ(weakPtr5.get(), &dummy);
         weakPtr5.clear();
@@ -233,16 +231,16 @@ TEST(WTF_WeakPtr, Forget)
     EXPECT_NULL(weakPtr2.get());
     EXPECT_EQ(weakPtr4.get(), &dummy2);
 
-    WeakPtr<int> weakPtr5 = weakPtr4;
+    WeakPtr<Int> weakPtr5 = weakPtr4;
     EXPECT_EQ(weakPtr4.get(), &dummy2);
     EXPECT_EQ(weakPtr5.get(), &dummy2);
     weakPtr5.clear();
     EXPECT_NULL(weakPtr5.get());
-    WeakPtr<int> weakPtr6 = weakPtr5;
+    WeakPtr<Int> weakPtr6 = weakPtr5;
     EXPECT_NULL(weakPtr6.get());
     EXPECT_EQ(weakPtr5.get(), weakPtr6.get());
 
-    WeakPtr<int> weakPtr7 = outerFactory.createWeakPtr(dummy2);
+    WeakPtr<Int> weakPtr7 = outerFactory.createWeakPtr(dummy2);
     EXPECT_EQ(weakPtr7.get(), &dummy2);
     weakPtr7 = nullptr;
     EXPECT_NULL(weakPtr7.get());
@@ -250,8 +248,8 @@ TEST(WTF_WeakPtr, Forget)
 
 TEST(WTF_WeakPtr, Downcasting)
 {
-    int dummy0 = 0;
-    int dummy1 = 1;
+    int dummy0(0);
+    int dummy1(1);
 
     WeakPtr<Base> baseWeakPtr;
     WeakPtr<Derived> derivedWeakPtr;

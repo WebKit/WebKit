@@ -1,3 +1,33 @@
+2019-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        WeakPtr breaks vtables when upcasting to base classes
+        https://bugs.webkit.org/show_bug.cgi?id=188799
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::networkSession):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::suspendedPage const):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::suspendedPage const): Deleted. Moved
+        functions out of line to avoid #include explosion for .get().
+
+        * UIProcess/Authentication/cocoa/SecKeyProxyStore.h:
+        (WebKit::SecKeyProxyStore::get const):
+        (WebKit::SecKeyProxyStore::weakPtrFactory const): Deleted. Adopted
+        CanMakeWeakPtr.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebProcessProxy.cpp: It takes an extra using declaration
+        to disambiguate multiple CanMakeWeakPtr base classes now.
+
+        (WebKit::WebProcessProxy::processPool const):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::processPool const): Deleted. Moved
+        functions out of line to avoid #include explosion for .get().
+
 2019-05-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245857.

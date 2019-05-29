@@ -42,6 +42,11 @@ void Widget::init(PlatformWidget widget)
         retainPlatformWidget();
 }
 
+ScrollView* Widget::parent() const
+{
+    return m_parent.get();
+}
+
 void Widget::setParent(ScrollView* view)
 {
     ASSERT(!view || !m_parent);

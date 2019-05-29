@@ -458,6 +458,11 @@ void FrameViewLayoutContext::layoutTimerFired()
     layout();
 }
 
+RenderElement* FrameViewLayoutContext::subtreeLayoutRoot() const
+{
+    return m_subtreeLayoutRoot.get();
+}
+
 void FrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
 {
     ASSERT(subtreeLayoutRoot());

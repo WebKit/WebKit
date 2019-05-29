@@ -168,6 +168,11 @@ void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy* page)
     m_suspendedPage = makeWeakPtr(page);
 }
 
+SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
+{
+    return m_suspendedPage.get();
+}
+
 void WebBackForwardListItem::removeSuspendedPageFromProcessPool()
 {
     if (!m_suspendedPage)
