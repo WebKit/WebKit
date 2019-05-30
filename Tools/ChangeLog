@@ -1,3 +1,19 @@
+2019-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove some logic to suppress the text selection assistant during drop
+        https://bugs.webkit.org/show_bug.cgi?id=198354
+
+        Reviewed by Tim Horton.
+
+        Adjust some API tests that currently check whether or not the selection assistant was suppressed during drop.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+
 2019-05-29  Sihui Liu  <sihui_liu@apple.com>
 
         WKWebsiteDataStore API fails to fetch web storage data for non-persistent data store

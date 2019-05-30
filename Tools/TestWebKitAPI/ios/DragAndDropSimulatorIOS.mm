@@ -323,7 +323,6 @@ IGNORE_WARNINGS_END
     bool _isDoneWaitingForDelayedDropPreviews;
     DragAndDropPhase _phase;
 
-    BOOL _suppressedSelectionCommandsDuringDrop;
     RetainPtr<UIDropProposal> _lastKnownDropProposal;
 
     BlockPtr<BOOL(_WKActivatedElementInfo *)> _showCustomActionSheetBlock;
@@ -373,7 +372,6 @@ IGNORE_WARNINGS_END
 
 - (void)_resetSimulatedState
 {
-    _suppressedSelectionCommandsDuringDrop = NO;
     _phase = DragAndDropPhaseBeginning;
     _currentProgress = 0;
     _isDoneWithCurrentRun = false;
@@ -763,8 +761,6 @@ IGNORE_WARNINGS_END
 
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<NSItemProvider *> *)itemProviders
 {
-    _suppressedSelectionCommandsDuringDrop = [_webView textInputContentView]._shouldSuppressSelectionCommands;
-
     if (self.dropCompletionBlock)
         self.dropCompletionBlock(handled, itemProviders);
 

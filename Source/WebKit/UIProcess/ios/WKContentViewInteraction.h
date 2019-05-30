@@ -165,8 +165,7 @@ namespace WebKit {
 enum SuppressSelectionAssistantReason : uint8_t {
     EditableRootIsTransparentOrFullyClipped = 1 << 0,
     FocusedElementIsTooSmall = 1 << 1,
-    DropAnimationIsRunning = 1 << 2,
-    InteractionIsHappening = 1 << 3
+    InteractionIsHappening = 1 << 2
 };
 
 struct WKSelectionDrawingInfo {
