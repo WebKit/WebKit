@@ -215,9 +215,9 @@ class DarwinPort(ApplePort):
             if self._filesystem.isfile(sample_file):
                 sample_files[test_name] = sample_file
             else:
-                spindump_file = DarwinPort.spindump_file_path(self.host, process_name, pid, self.results_directory())
-                if self._filesystem.isfile(spindump_file):
-                    sample_files[test_name] = spindump_file
+                tailspin_file = DarwinPort.tailspin_file_path(self.host, process_name, pid, self.results_directory())
+                if self._filesystem.isfile(tailspin_file):
+                    sample_files[test_name] = tailspin_file
         return sample_files
 
     def _path_to_image_diff(self):
