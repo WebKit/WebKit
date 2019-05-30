@@ -1,0 +1,15 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.setMediaSessionRestrictions("videoaudio", "suspendedunderlockplaybackrestricted"))
+RUN(internals.applicationDidEnterBackground(true))
+EVENT(pause)
+RUN(internals.applicationWillEnterForeground(true))
+EVENT(playing)
+RUN(internals.setIsPlayingToAutomotiveHeadUnit(true))
+RUN(internals.applicationDidEnterBackground(true))
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

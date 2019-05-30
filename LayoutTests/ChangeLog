@@ -1,3 +1,14 @@
+2019-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Video playback in Safari should continue when CarPlay is plugged in
+        https://bugs.webkit.org/show_bug.cgi?id=198345
+        <rdar://problem/45505750>
+
+        Reviewed by Eric Carlson.
+
+        * media/video-isplayingtoautomotiveheadunit-expected.txt: Added.
+        * media/video-isplayingtoautomotiveheadunit.html: Added.
+
 2019-05-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r244182) [Mac WK2] Layout Test imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html is a flaky failure
