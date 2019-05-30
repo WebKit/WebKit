@@ -58,6 +58,8 @@ public:
 
     void processDidCloseConnection(IPC::Connection&);
     void waitUntilWritesFinished();
+    void suspend(CompletionHandler<void()>&&);
+    void resume();
 
     void getSessionStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
     void deleteSessionStorageOrigins(Function<void()>&& completionHandler);
@@ -113,6 +115,15 @@ private:
 
     HashMap<WebCore::SecurityOriginData, Ref<WebCore::StorageMap>> m_ephemeralStorage;
     bool m_isEphemeral { false };
+
+    enum class State {
+        Running,
+        WillSuspend,
+        Suspended
+    };
+    State m_state;
+    Lock m_stateLock;
+    Condition m_stateChangeCondition;
 };
 
 } // namespace WebKit

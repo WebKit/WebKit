@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+
+var startValue = window.localStorage.getItem('key');
+window.webkit.messageHandlers.testHandler.postMessage(startValue);
+
+var tries = 10;
+var intervalID = setInterval(()=> {
+    var newValue = window.localStorage.getItem('key');
+    if (newValue != startValue || tries == 0) {
+        window.webkit.messageHandlers.testHandler.postMessage(newValue);
+        clearInterval(intervalID);
+    }
+    --tries;
+}, 100);
+
+</script>

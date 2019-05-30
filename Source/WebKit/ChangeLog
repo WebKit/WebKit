@@ -1,3 +1,24 @@
+2019-05-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Stop StorageManager when network process is ready to suspend
+        https://bugs.webkit.org/show_bug.cgi?id=198201
+        <rdar://problem/49683172>
+
+        Reviewed by Youenn Fablet.
+
+        To avoid local storage database operations that can hold lock to database files, suspend thread of
+        StorageManager when network process is about to suspend.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::~NetworkSession):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::suspend):
+        (WebKit::StorageManager::resume):
+        * NetworkProcess/WebStorage/StorageManager.h:
+
 2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Missing caret when focusing an editable field if the selection was set when WKWebView wasn't first responder

@@ -2038,6 +2038,9 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
     for (auto& server : m_swServers.values())
         server->startSuspension([delayedTaskCounter] { });
 #endif
+
+    for (auto& session : m_networkSessions)
+        session.value->storageManager().suspend([delayedTaskCounter] { });
 }
 
 void NetworkProcess::processWillSuspendImminently()
@@ -2106,6 +2109,9 @@ void NetworkProcess::resume()
     for (auto& server : m_idbServers.values())
         server->resume();
 #endif
+
+    for (auto& session : m_networkSessions)
+        session.value->storageManager().resume();
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)

@@ -944,6 +944,43 @@ void StorageManager::waitUntilWritesFinished()
     semaphore.wait();
 }
 
+void StorageManager::suspend(CompletionHandler<void()>&& completionHandler)
+{
+    if (m_isEphemeral)
+        return;
+
+    Locker<Lock> stateLocker(m_stateLock);
+    if (m_state != State::Running)
+        return;
+    m_state = State::WillSuspend;
+
+    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+        Locker<Lock> stateLocker(m_stateLock);
+        ASSERT(m_state != State::Suspended);
+
+        completionHandler();
+
+        if (m_state != State::WillSuspend)
+            return;
+        m_state = State::Suspended;
+        while (m_state == State::Suspended)
+            m_stateChangeCondition.wait(m_stateLock);
+        ASSERT(m_state == State::Running);
+    });
+}
+
+void StorageManager::resume()
+{
+    if (m_isEphemeral)
+        return;
+
+    Locker<Lock> stateLocker(m_stateLock);
+    auto previousState = m_state;
+    m_state = State::Running;
+    if (previousState == State::Suspended)
+        m_stateChangeCondition.notifyOne();
+}
+
 StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64_t storageMapID) const
 {
     std::pair<IPC::Connection::UniqueID, uint64_t> connectionAndStorageMapIDPair(connection.uniqueID(), storageMapID);
