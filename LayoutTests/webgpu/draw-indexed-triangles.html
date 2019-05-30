@@ -71,22 +71,19 @@ function createIndexBuffer(device) {
     return buffer;
 }
 
-function createInputStateDescriptor() {
+function createVertexInputDescriptor() {
     return {
         indexFormat: "uint32",
-        attributes: [{
-            shaderLocation: 0,
-            inputSlot: 0,
-            format: "float4"
-        }, {
-            shaderLocation: 1,
-            inputSlot: 0,
-            offset: 4 * 4,
-            format: "float"
-        }],
-        inputs: [{
-            inputSlot: 0,
-            stride: 4 * 5
+        vertexBuffers: [{
+            stride: 4 * 5,
+            attributeSet: [{
+                format: "float4",
+                shaderLocation: 0
+            }, {
+                offset: 4 * 4,
+                format: "float",
+                shaderLocation: 1
+            }]
         }]
     };
 }
@@ -99,7 +96,7 @@ async function test() {
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const vertexBuffer = createVertexBuffer(device);
     const indexBuffer = createIndexBuffer(device);
-    const pipeline = createBasicPipeline(shaderModule, device, null, null, createInputStateDescriptor(), null, "triangle-list");
+    const pipeline = createBasicPipeline(shaderModule, device, null, null, createVertexInputDescriptor(), null, "triangle-list");
     const commandEncoder = device.createCommandEncoder();
     const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
 

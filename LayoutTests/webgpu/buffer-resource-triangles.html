@@ -132,16 +132,14 @@ async function test() {
     const green = createFloat4Buffer(device, 0, 1, bufferPromises);
 
     // Create vertex input state.
-    const inputState = {
+    const vertexInput = {
         indexFormat: "uint32",
-        attributes: [{
-            shaderLocation: 0,
-            inputSlot: 0,
-            format: "float4"
-        }],
-        inputs: [{
-            inputSlot: 0,
-            stride: vertexSize
+        vertexBuffers: [{
+            stride: vertexSize,
+            attributeSet: [{
+                format: "float4",
+                shaderLocation: 0
+            }]
         }]
     };
 
@@ -159,7 +157,7 @@ async function test() {
 
     // GPUPipelineLayout and GPURenderPipeline
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [leftTriangleBGLayout, rightTriangleBGLayout] });
-    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, inputState, null, "triangle-list");
+    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, vertexInput, null, "triangle-list");
 
     // GPUBufferBindings
     const bindingUL = createBufferBinding(upperLeft);

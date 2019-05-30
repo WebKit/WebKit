@@ -44,5 +44,5 @@
     required GPUPrimitiveTopology primitiveTopology;
     required sequence<GPUColorStateDescriptor> colorStates;
     GPUDepthStencilStateDescriptor? depthStencilState = null;
-    required GPUInputStateDescriptor inputState;
+    required GPUVertexInputDescriptor vertexInput;
 };

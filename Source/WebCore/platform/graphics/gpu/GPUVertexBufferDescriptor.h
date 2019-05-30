@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,21 +28,19 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUVertexAttributeDescriptor.h"
-#include "GPUVertexInputDescriptor.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-enum class GPUIndexFormat {
-    Uint16,
-    Uint32,
+enum class GPUInputStepMode {
+    Vertex,
+    Instance,
 };
 
-struct GPUInputStateDescriptor {
-    Optional<GPUIndexFormat> indexFormat;
-
-    Vector<GPUVertexAttributeDescriptor> attributes;
-    Vector<GPUVertexInputDescriptor> inputs;
+struct GPUVertexBufferDescriptor {
+    uint64_t stride;
+    GPUInputStepMode stepMode;
+    Vector<GPUVertexAttributeDescriptor> attributeSet;
 };
 
 } // namespace WebCore

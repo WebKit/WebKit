@@ -29,9 +29,9 @@
 
 #include "GPUColorStateDescriptor.h"
 #include "GPUDepthStencilStateDescriptor.h"
-#include "GPUInputStateDescriptor.h"
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUPipelineStageDescriptor.h"
+#include "GPUVertexInputDescriptor.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
@@ -49,7 +49,7 @@ struct GPURenderPipelineDescriptorBase {
     GPUPrimitiveTopology primitiveTopology;
     Vector<GPUColorStateDescriptor> colorStates;
     Optional<GPUDepthStencilStateDescriptor> depthStencilState;
-    GPUInputStateDescriptor inputState;
+    GPUVertexInputDescriptor vertexInput;
 };
 
 struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {

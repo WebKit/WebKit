@@ -41,19 +41,19 @@ async function start() {
     const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWriteBits.ALL
     const depthStencilState = null;
 
-    const attribute0 = {shaderLocation: 0, inputSlot: 0, format: "float4", offset: 0};
-    const attribute1 = {shaderLocation: 1, inputSlot: 0, format: "float", offset: 16};
+    const attribute0 = {shaderLocation: 0, format: "float4", offset: 0};
+    const attribute1 = {shaderLocation: 1, format: "float", offset: 16};
     const attributes = [attribute0, attribute1];
-    const input0 = {inputSlot: 0, stride: 20 };
+    const input0 = {stride: 20, attributeSet: attributes};
     const inputs = [input0];
-    const inputState = {indexFormat: "uint32", attributes, inputs};
+    const vertexInput = {vertexBuffers: inputs};
 
     const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "uniform-buffer"}]};
     const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
     const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
     const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
 
-    const renderPipelineDescriptor = {vertexStage, fragmentStage, primitiveTopology, rasterizationState, colorStates, depthStencilState, inputState, sampleCount: 1, layout: pipelineLayout};
+    const renderPipelineDescriptor = {vertexStage, fragmentStage, primitiveTopology, rasterizationState, colorStates, depthStencilState, vertexInput, sampleCount: 1, layout: pipelineLayout};
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
 
     const vertexBuffer0Descriptor = {size: Float32Array.BYTES_PER_ELEMENT * 5 * 4, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE};

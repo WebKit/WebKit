@@ -2747,7 +2747,6 @@ JSGPUBufferUsage.cpp
 JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
 JSGPUExtent3D.cpp
-JSGPUInputStateDescriptor.cpp
 JSGPULoadOp.cpp
 JSGPUOrigin3D.cpp
 JSGPURequestAdapterOptions.cpp
@@ -2758,6 +2757,7 @@ JSGPUTextureDescriptor.cpp
 JSGPUTextureFormat.cpp
 JSGPUTextureUsage.cpp
 JSGPUVertexAttributeDescriptor.cpp
+JSGPUVertexBufferDescriptor.cpp
 JSGPUVertexInputDescriptor.cpp
 JSGainNode.cpp
 JSGeolocation.cpp

@@ -40,8 +40,7 @@ typedef unsigned long long u64;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUVertexAttributeDescriptor {
-    required u32 shaderLocation;
-    required u32 inputSlot;
     u64 offset = 0;
     required GPUVertexFormat format;
+    required u32 shaderLocation;
 };

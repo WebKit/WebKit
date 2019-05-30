@@ -1,3 +1,28 @@
+2019-05-30  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Vertex Buffers/Input State API updates
+        https://bugs.webkit.org/show_bug.cgi?id=194258
+        <rdar://problem/47806127>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update WebGPU tests for the new vertex buffer attributes model.
+
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/draw-indexed-triangles.html:
+        * webgpu/js/webgpu-functions.js:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/whlsl-arbitrary-vertex-attribute-locations.html:
+        * webgpu/whlsl-dereference-pointer-should-type-check.html:
+        * webgpu/whlsl-dont-crash-parsing-enum.html:
+        * webgpu/whlsl-dot-expressions.html:
+        * webgpu/whlsl-nested-dot-expression-rvalue.html:
+        * webgpu/whlsl.html:
+
 2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Missing caret when focusing an editable field if the selection was set when WKWebView wasn't first responder

@@ -342,6 +342,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUTextureDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureFormat.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexAttributeDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUVertexBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUVertexInputDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/NavigatorGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt

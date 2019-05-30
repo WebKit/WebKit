@@ -55,26 +55,24 @@ fragment float4 fragment_main(VertexOut v [[stage_in]], const device TextureSamp
 }
 `
 
-function createInputStateDescriptor() {
-    return {
-        indexFormat: "uint32",
-        attributes: [{
-            shaderLocation: positionAttributeNum,
-            inputSlot: positionBufferIndex,
-            format: "float4"
-        }, {
-            shaderLocation: texCoordsAttributeNum,
-            inputSlot: texCoordsBufferIndex,
-            format: "float2"
-        }],
-        inputs: [{
-            inputSlot: positionBufferIndex,
-            stride: 4 * 4
-        }, {
-            inputSlot: texCoordsBufferIndex,
-            stride: 4 * 2
+function createVertexInputDescriptor() {
+    var bufferDescriptors = [];
+    bufferDescriptors[positionBufferIndex] = {
+        stride: 4 * 4,
+        attributeSet: [{
+            format: "float4",
+            shaderLocation: positionAttributeNum
         }]
-    }
+    };
+    bufferDescriptors[texCoordsBufferIndex] = {
+        stride: 4 * 2,
+        attributeSet: [{
+            format: "float2",
+            shaderLocation: texCoordsAttributeNum
+        }]
+    };
+
+    return { vertexBuffers: bufferDescriptors };
 }
 
 async function test() {
@@ -104,7 +102,7 @@ async function test() {
     const textureCoordBuffer = device.createBuffer({ size: texCoordsArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
     textureCoordBuffer.setSubData(0, texCoordsArray.buffer);
 
-    const inputStateDescriptor = createInputStateDescriptor();
+    const vertexInputDescriptor = createVertexInputDescriptor();
 
     // Load texture image
     const image = new Image();
@@ -177,7 +175,7 @@ async function test() {
     const bindGroup = device.createBindGroup(bindGroupDescriptor);
 
     // Pipeline and render
-    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, inputStateDescriptor);
+    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, vertexInputDescriptor);
     const commandEncoder = device.createCommandEncoder();
 
     const bufferCopyView = {

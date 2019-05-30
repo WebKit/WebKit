@@ -37,6 +37,7 @@
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/HashSet.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Optional.h>
 
@@ -145,158 +146,6 @@ static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat form
     }
 }
 
-static Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
-{
-    WHLSL::Layout result;
-    if (layout.bindGroupLayouts().size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
-    for (size_t i = 0; i < layout.bindGroupLayouts().size(); ++i) {
-        const auto& bindGroupLayout = layout.bindGroupLayouts()[i];
-        WHLSL::BindGroup bindGroup;
-        bindGroup.name = static_cast<unsigned>(i);
-        for (const auto& keyValuePair : bindGroupLayout->bindingsMap()) {
-            const auto& gpuBindGroupLayoutBinding = keyValuePair.value;
-            WHLSL::Binding binding;
-            binding.visibility = convertShaderStageFlags(gpuBindGroupLayoutBinding.visibility);
-            if (auto bindingType = convertBindingType(gpuBindGroupLayoutBinding.type))
-                binding.bindingType = *bindingType;
-            else
-                return WTF::nullopt;
-            if (gpuBindGroupLayoutBinding.binding > std::numeric_limits<unsigned>::max())
-                return WTF::nullopt;
-            binding.name = static_cast<unsigned>(gpuBindGroupLayoutBinding.binding);
-            bindGroup.bindings.append(WTFMove(binding));
-        }
-        result.append(WTFMove(bindGroup));
-    }
-    return result;
-}
-
-static Optional<WHLSL::RenderPipelineDescriptor> convertRenderPipelineDescriptor(const GPURenderPipelineDescriptor& descriptor)
-{
-    WHLSL::RenderPipelineDescriptor whlslDescriptor;
-    if (descriptor.inputState.attributes.size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
-    if (descriptor.colorStates.size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
-
-    for (size_t i = 0; i < descriptor.inputState.attributes.size(); ++i)
-        whlslDescriptor.vertexAttributes.append({ convertVertexFormat(descriptor.inputState.attributes[i].format), descriptor.inputState.attributes[i].shaderLocation, static_cast<unsigned>(i) });
-
-    for (size_t i = 0; i < descriptor.colorStates.size(); ++i) {
-        if (auto format = convertTextureFormat(descriptor.colorStates[i].format))
-            whlslDescriptor.attachmentsStateDescriptor.attachmentDescriptors.append({*format, static_cast<unsigned>(i)});
-        else
-            return WTF::nullopt;
-    }
-
-    // FIXME: depthStencilAttachmentDescriptor isn't implemented yet.
-
-    if (descriptor.layout) {
-        if (auto layout = convertLayout(*descriptor.layout))
-            whlslDescriptor.layout = WTFMove(*layout);
-        else
-            return WTF::nullopt;
-    }
-    whlslDescriptor.vertexEntryPointName = descriptor.vertexStage.entryPoint;
-    if (descriptor.fragmentStage)
-        whlslDescriptor.fragmentEntryPointName = descriptor.fragmentStage->entryPoint;
-    return whlslDescriptor;
-}
-
-static bool trySetMetalFunctionsForPipelineDescriptor(const char* const functionName, MTLLibrary *vertexMetalLibrary, MTLLibrary *fragmentMetalLibrary, MTLRenderPipelineDescriptor *mtlDescriptor, const String& vertexEntryPointName, const String& fragmentEntryPointName)
-{
-#if LOG_DISABLED
-    UNUSED_PARAM(functionName);
-#endif
-
-    {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-        // Metal requires a vertex shader in all render pipelines.
-        if (!vertexMetalLibrary) {
-            LOG(WebGPU, "%s: MTLLibrary for vertex stage does not exist!", functionName);
-            return false;
-        }
-
-        auto function = adoptNS([vertexMetalLibrary newFunctionWithName:vertexEntryPointName]);
-        if (!function) {
-            LOG(WebGPU, "%s: Cannot create vertex MTLFunction \"%s\"!", functionName, vertexEntryPointName.utf8().data());
-            return false;
-        }
-
-        [mtlDescriptor setVertexFunction:function.get()];
-
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
-
-    {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-        // However, fragment shaders are optional.
-        if (!fragmentMetalLibrary)
-            return true;
-
-        auto function = adoptNS([fragmentMetalLibrary newFunctionWithName:fragmentEntryPointName]);
-
-        if (!function) {
-            LOG(WebGPU, "%s: Cannot create fragment MTLFunction \"%s\"!", functionName, fragmentEntryPointName.utf8().data());
-            return false;
-        }
-
-        [mtlDescriptor setFragmentFunction:function.get()];
-        return true;
-
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
-
-    return false;
-}
-
-static bool trySetWHLSLFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor, String whlslSource, const GPUDevice& device)
-{
-    auto whlslDescriptor = convertRenderPipelineDescriptor(descriptor);
-    if (!whlslDescriptor)
-        return false;
-
-    auto result = WHLSL::prepare(whlslSource, *whlslDescriptor);
-    if (!result)
-        return false;
-
-    WTFLogAlways("Metal Source: %s", result->metalSource.utf8().data());
-
-    NSError *error = nil;
-    auto library = adoptNS([device.platformDevice() newLibraryWithSource:result->metalSource options:nil error:&error]);
-    ASSERT(library);
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Once we zero-fill variables, there should be no warnings, so we should be able to ASSERT(!error) here.
-
-    return trySetMetalFunctionsForPipelineDescriptor(functionName, library.get(), library.get(), mtlDescriptor, result->mangledVertexEntryPointName, result->mangledFragmentEntryPointName);
-}
-
-static bool trySetFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
-{
-    const auto& vertexStage = descriptor.vertexStage;
-    const auto& fragmentStage = descriptor.fragmentStage;
-
-    const auto& whlslSource = vertexStage.module->whlslSource();
-    if (!whlslSource.isNull()) {
-        if (!fragmentStage || vertexStage.module.ptr() == fragmentStage->module.ptr()) {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195446 Allow WHLSL shaders to come from different programs.
-            return trySetWHLSLFunctionsForPipelineDescriptor(functionName, mtlDescriptor, descriptor, whlslSource, device);
-        }
-    }
-
-    auto vertexLibrary = vertexStage.module->platformShaderModule();
-    MTLLibrary *fragmentLibrary = nil;
-    String fragmentEntryPoint;
-    if (fragmentStage) {
-        fragmentLibrary = fragmentStage->module->platformShaderModule();
-        fragmentEntryPoint = fragmentStage->entryPoint;
-    }
-
-    return trySetMetalFunctionsForPipelineDescriptor(functionName, vertexLibrary, fragmentLibrary, mtlDescriptor, vertexStage.entryPoint, fragmentEntryPoint);
-}
-
 static MTLVertexFormat mtlVertexFormatForGPUVertexFormat(GPUVertexFormat format)
 {
     switch (format) {
@@ -325,62 +174,79 @@ static MTLVertexStepFunction mtlStepFunctionForGPUInputStepMode(GPUInputStepMode
     ASSERT_NOT_REACHED();
 }
 
-static bool trySetInputStateForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPUInputStateDescriptor& descriptor)
+// FIXME: Move this into GPULimits when that is implemented properly.
+constexpr unsigned maxVertexAttributes = 16;
+
+static bool trySetVertexInput(const char* const functionName, const GPUVertexInputDescriptor& descriptor, MTLRenderPipelineDescriptor *mtlDescriptor, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
-    auto mtlVertexDescriptor = adoptNS([MTLVertexDescriptor new]);
+    const auto& buffers = descriptor.vertexBuffers;
 
-    const auto& attributes = descriptor.attributes;
-
-    auto attributeArray = retainPtr(mtlVertexDescriptor.get().attributes);
-
-    for (size_t i = 0; i < attributes.size(); ++i) {
-        auto location = static_cast<unsigned>(i);
-        // Maximum number of vertex attributes to be supported by Web GPU.
-        if (location >= 16) {
-            LOG(WebGPU, "%s: Invalid shaderLocation %u for vertex attribute!", functionName, location);
-            return false;
-        }
-        if (attributes[i].inputSlot >= maxVertexBuffers) {
-            LOG(WebGPU, "%s: Invalid inputSlot %u for vertex attribute %u!", functionName, attributes[i].inputSlot, location);
-            return false;
-        }
-        // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
-        // FIXME: Ensure offset < buffer's stride + format's data size.
-        NSUInteger attributeOffset = 0;
-        if (!WTF::convertSafely(attributes[i].offset, attributeOffset)) {
-            LOG(WebGPU, "%s: Buffer offset for vertex attribute %u is too large!", functionName, location);
-            return false;
-        }
-
-        auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:location]);
-        [mtlAttributeDesc setFormat:mtlVertexFormatForGPUVertexFormat(attributes[i].format)];
-        [mtlAttributeDesc setOffset:attributeOffset];
-        [mtlAttributeDesc setBufferIndex:WHLSL::Metal::calculateVertexBufferIndex(attributes[i].inputSlot)];
+    if (buffers.size() > maxVertexBuffers) {
+        LOG(WebGPU, "%s: Too many vertex input buffers!", functionName);
+        return false;
     }
 
-    const auto& inputs = descriptor.inputs;
+    auto mtlVertexDescriptor = adoptNS([MTLVertexDescriptor new]);
 
     auto layoutArray = retainPtr(mtlVertexDescriptor.get().layouts);
+    auto attributeArray = retainPtr(mtlVertexDescriptor.get().attributes);
 
-    for (size_t j = 0; j < inputs.size(); ++j) {
-        auto slot = inputs[j].inputSlot;
-        if (slot >= maxVertexBuffers) {
-            LOG(WebGPU, "%s: Invalid inputSlot %d for vertex buffer!", functionName, slot);
+    // Attribute shaderLocations must be uniquely flat-mapped to [0, {max number of vertex attributes}].
+    unsigned attributeIndex = 0;
+    HashSet<unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> locations;
+
+    for (size_t index = 0; index < buffers.size(); ++index) {
+        if (!buffers[index])
+            continue;
+
+        const auto& attributes = buffers[index]->attributeSet;
+
+        if (attributes.size() + attributeIndex > maxVertexAttributes) {
+            LOG(WebGPU, "%s: Too many vertex attributes!", functionName);
             return false;
         }
+
         NSUInteger inputStride = 0;
-        if (!WTF::convertSafely(inputs[j].stride, inputStride)) {
-            LOG(WebGPU, "%s: Stride for vertex buffer slot %d is too large!", functionName, slot);
+        if (!WTF::convertSafely(buffers[index]->stride, inputStride)) {
+            LOG(WebGPU, "%s: Stride for vertex input buffer %u is too large!", functionName, index);
             return false;
         }
 
-        auto convertedSlot = WHLSL::Metal::calculateVertexBufferIndex(slot);
-        auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedSlot]);
-        [mtlLayoutDesc setStepFunction:mtlStepFunctionForGPUInputStepMode(inputs[j].stepMode)];
+        auto convertedBufferIndex = WHLSL::Metal::calculateVertexBufferIndex(index);
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedBufferIndex]);
+        [mtlLayoutDesc setStepFunction:mtlStepFunctionForGPUInputStepMode(buffers[index]->stepMode)];
         [mtlLayoutDesc setStride:inputStride];
+        END_BLOCK_OBJC_EXCEPTIONS;
+
+        for (const auto& attribute : attributes) {
+            if (!locations.add(attribute.shaderLocation).isNewEntry) {
+                LOG(WebGPU, "%s: Duplicate shaderLocation %u for vertex attribute!", functionName, attribute.shaderLocation);
+                return false;
+            }
+
+            NSUInteger offset = 0;
+            if (!WTF::convertSafely(attribute.offset, offset)) {
+                LOG(WebGPU, "%s: Buffer offset for vertex attribute %u is too large!", functionName, attribute.shaderLocation);
+                return false;
+            }
+
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:attributeIndex]);
+            [mtlAttributeDesc setFormat:mtlVertexFormatForGPUVertexFormat(attribute.format)];
+            [mtlAttributeDesc setOffset:offset];
+            [mtlAttributeDesc setBufferIndex:convertedBufferIndex];
+            END_BLOCK_OBJC_EXCEPTIONS;
+
+            if (whlslDescriptor)
+                whlslDescriptor->vertexAttributes.append({ convertVertexFormat(attribute.format), attribute.shaderLocation, attributeIndex });
+
+            ++attributeIndex;
+        }
     }
 
     [mtlDescriptor setVertexDescriptor:mtlVertexDescriptor.get()];
@@ -460,8 +326,19 @@ static MTLBlendFactor mtlBlendFactorForGPUBlendFactor(GPUBlendFactor factor)
     ASSERT_NOT_REACHED();
 }
 
-static void setColorStatesForColorAttachmentArray(MTLRenderPipelineColorAttachmentDescriptorArray* array, const Vector<GPUColorStateDescriptor>& colorStates)
+static bool trySetColorStates(const char* const functionName, const Vector<GPUColorStateDescriptor>& colorStates, MTLRenderPipelineColorAttachmentDescriptorArray* array, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+    // FIXME: Replace with maximum number of color attachments per render pass from GPULimits.
+    if (colorStates.size() > 4) {
+        LOG(WebGPU, "%s: Invalid number of GPUColorStateDescriptors!", functionName);
+        return false;
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     for (unsigned i = 0; i < colorStates.size(); ++i) {
         auto& state = colorStates[i];
         auto descriptor = retainPtr([array objectAtIndexedSubscript:i]);
@@ -474,10 +351,146 @@ static void setColorStatesForColorAttachmentArray(MTLRenderPipelineColorAttachme
         [descriptor setDestinationRGBBlendFactor:mtlBlendFactorForGPUBlendFactor(state.colorBlend.dstFactor)];
         [descriptor setSourceAlphaBlendFactor:mtlBlendFactorForGPUBlendFactor(state.alphaBlend.srcFactor)];
         [descriptor setSourceRGBBlendFactor:mtlBlendFactorForGPUBlendFactor(state.colorBlend.srcFactor)];
+
+        if (whlslDescriptor) {
+            if (auto format = convertTextureFormat(state.format))
+                whlslDescriptor->attachmentsStateDescriptor.attachmentDescriptors.append({*format, i});
+            else {
+                LOG(WebGPU, "%s: Invalid texture format for color attachment %u!", functionName, i);
+                return false;
+            }
+        }
     }
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return true;
 }
 
-static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const char* const functionName, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
+static Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
+{
+    WHLSL::Layout result;
+    if (layout.bindGroupLayouts().size() > std::numeric_limits<unsigned>::max())
+        return WTF::nullopt;
+    for (size_t i = 0; i < layout.bindGroupLayouts().size(); ++i) {
+        const auto& bindGroupLayout = layout.bindGroupLayouts()[i];
+        WHLSL::BindGroup bindGroup;
+        bindGroup.name = static_cast<unsigned>(i);
+        for (const auto& keyValuePair : bindGroupLayout->bindingsMap()) {
+            const auto& gpuBindGroupLayoutBinding = keyValuePair.value;
+            WHLSL::Binding binding;
+            binding.visibility = convertShaderStageFlags(gpuBindGroupLayoutBinding.visibility);
+            if (auto bindingType = convertBindingType(gpuBindGroupLayoutBinding.type))
+                binding.bindingType = *bindingType;
+            else
+                return WTF::nullopt;
+            if (gpuBindGroupLayoutBinding.binding > std::numeric_limits<unsigned>::max())
+                return WTF::nullopt;
+            binding.name = static_cast<unsigned>(gpuBindGroupLayoutBinding.binding);
+            bindGroup.bindings.append(WTFMove(binding));
+        }
+        result.append(WTFMove(bindGroup));
+    }
+    return result;
+}
+
+static bool trySetMetalFunctions(const char* const functionName, MTLLibrary *vertexMetalLibrary, MTLLibrary *fragmentMetalLibrary, MTLRenderPipelineDescriptor *mtlDescriptor, const String& vertexEntryPointName, const String& fragmentEntryPointName)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+
+    {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+        // Metal requires a vertex shader in all render pipelines.
+        if (!vertexMetalLibrary) {
+            LOG(WebGPU, "%s: MTLLibrary for vertex stage does not exist!", functionName);
+            return false;
+        }
+
+        auto function = adoptNS([vertexMetalLibrary newFunctionWithName:vertexEntryPointName]);
+        if (!function) {
+            LOG(WebGPU, "%s: Cannot create vertex MTLFunction \"%s\"!", functionName, vertexEntryPointName.utf8().data());
+            return false;
+        }
+
+        [mtlDescriptor setVertexFunction:function.get()];
+
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+
+    {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+        // However, fragment shaders are optional.
+        if (!fragmentMetalLibrary)
+            return true;
+
+        auto function = adoptNS([fragmentMetalLibrary newFunctionWithName:fragmentEntryPointName]);
+
+        if (!function) {
+            LOG(WebGPU, "%s: Cannot create fragment MTLFunction \"%s\"!", functionName, fragmentEntryPointName.utf8().data());
+            return false;
+        }
+
+        [mtlDescriptor setFragmentFunction:function.get()];
+        return true;
+
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+
+    return false;
+}
+
+static bool trySetFunctions(const char* const functionName, const GPUPipelineStageDescriptor& vertexStage, const Optional<GPUPipelineStageDescriptor>& fragmentStage, const GPUDevice& device, MTLRenderPipelineDescriptor* mtlDescriptor, Optional<WHLSL::RenderPipelineDescriptor>& whlslDescriptor)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+    RetainPtr<MTLLibrary> vertexLibrary, fragmentLibrary;
+    String vertexEntryPoint, fragmentEntryPoint;
+
+    if (whlslDescriptor) {
+        // WHLSL functions are compiled to MSL first.
+        String whlslSource = vertexStage.module->whlslSource();
+        ASSERT(!whlslSource.isNull());
+
+        whlslDescriptor->vertexEntryPointName = vertexStage.entryPoint;
+        if (fragmentStage)
+            whlslDescriptor->fragmentEntryPointName = fragmentStage->entryPoint;
+
+        auto whlslCompileResult = WHLSL::prepare(whlslSource, *whlslDescriptor);
+        if (!whlslCompileResult)
+            return false;
+
+        WTFLogAlways("Metal Source: %s", whlslCompileResult->metalSource.utf8().data());
+
+        NSError *error = nil;
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        vertexLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource options:nil error:&error]);
+        END_BLOCK_OBJC_EXCEPTIONS;
+
+        ASSERT(vertexLibrary);
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Once we zero-fill variables, there should be no warnings, so we should be able to ASSERT(!error) here.
+
+        fragmentLibrary = vertexLibrary;
+        vertexEntryPoint = whlslCompileResult->mangledVertexEntryPointName;
+        fragmentEntryPoint = whlslCompileResult->mangledFragmentEntryPointName;
+    } else {
+        vertexLibrary = vertexStage.module->platformShaderModule();
+        vertexEntryPoint = vertexStage.entryPoint;
+        if (fragmentStage) {
+            fragmentLibrary = fragmentStage->module->platformShaderModule();
+            fragmentEntryPoint = fragmentStage->entryPoint;
+        }
+    }
+
+    return trySetMetalFunctions(functionName, vertexLibrary.get(), fragmentLibrary.get(), mtlDescriptor, vertexEntryPoint, fragmentEntryPoint);
+}
+
+static RetainPtr<MTLRenderPipelineDescriptor> convertRenderPipelineDescriptor(const char* const functionName, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
 {
     RetainPtr<MTLRenderPipelineDescriptor> mtlDescriptor;
 
@@ -492,17 +505,43 @@ static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const c
         return nullptr;
     }
 
-    bool didSetFunctions = false, didSetInputState = false;
+    // Determine if shader source is in WHLSL or MSL.
+    const auto& vertexStage = descriptor.vertexStage;
+    const auto& fragmentStage = descriptor.fragmentStage;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195446 Allow WHLSL shaders to come from different programs.
+    bool isWhlsl = !vertexStage.module->whlslSource().isNull() && (!fragmentStage || vertexStage.module.ptr() == fragmentStage->module.ptr());
 
-    didSetFunctions = trySetFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor, device);
-    didSetInputState = trySetInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor.inputState);
-    setColorStatesForColorAttachmentArray(mtlDescriptor.get().colorAttachments, descriptor.colorStates);
+    // Set data for the Metal pipeline descriptor (and WHLSL's, if needed).
+    Optional<WHLSL::RenderPipelineDescriptor> whlslDescriptor;
+    if (isWhlsl)
+        whlslDescriptor = WHLSL::RenderPipelineDescriptor();
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    if (!trySetVertexInput(functionName, descriptor.vertexInput, mtlDescriptor.get(), whlslDescriptor))
+        return nullptr;
 
-    if (!didSetFunctions || !didSetInputState)
+    if (!trySetColorStates(functionName, descriptor.colorStates, mtlDescriptor.get().colorAttachments, whlslDescriptor))
+        return nullptr;
+
+    if (descriptor.layout && whlslDescriptor) {
+        if (auto layout = convertLayout(*descriptor.layout))
+            whlslDescriptor->layout = WTFMove(*layout);
+        else {
+            LOG(WebGPU, "%s: Error converting GPUPipelineLayout!", functionName);
+            return nullptr;
+        }
+    }
+
+    if (!trySetFunctions(functionName, vertexStage, fragmentStage, device, mtlDescriptor.get(), whlslDescriptor))
+        return nullptr;
+
+    return mtlDescriptor;
+}
+
+static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const char* const functionName, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
+{
+    auto mtlDescriptor = convertRenderPipelineDescriptor(functionName, descriptor, device);
+    if (!mtlDescriptor)
         return nullptr;
 
     RetainPtr<MTLRenderPipelineState> pipeline;
@@ -533,11 +572,13 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::tryCreate(const GPUDevice& device, 
     if (descriptor.depthStencilState && !(depthStencil = tryCreateMtlDepthStencilState(functionName, *descriptor.depthStencilState, device)))
         return nullptr;
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198387 depthStencilAttachmentDescriptor isn't implemented yet for WHLSL compiler.
+
     auto pipeline = tryCreateMtlRenderPipelineState(functionName, descriptor, device);
     if (!pipeline)
         return nullptr;
 
-    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), descriptor.primitiveTopology, descriptor.inputState.indexFormat));
+    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), descriptor.primitiveTopology, descriptor.vertexInput.indexFormat));
 }
 
 GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPUPrimitiveTopology topology, Optional<GPUIndexFormat> format)

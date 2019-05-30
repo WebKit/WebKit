@@ -42,25 +42,22 @@ fragment float4 fragment_main(VertexOut v [[stage_in]])
 }
 `
 
-function createInputStateDescriptor() {
+function createVertexInputDescriptor() {
     return {
         indexFormat: "uint32",
-        attributes: [{
-            shaderLocation: 0,
-            inputSlot: 0,
-            format: "float2"
+        vertexBuffers: [{
+            stride: 4 * 2,
+            attributeSet: [{
+                format: "float2",
+                shaderLocation: 0
+            }]
         }, {
-            shaderLocation: 1,
-            inputSlot: 1,
-            format: "float3"
-        }],
-        inputs: [{
-            inputSlot: 0,
-            stride: 4 * 2
-        }, {
-            inputSlot: 1,
             stride: 4 * 3,
-            stepMode: "instance"
+            stepMode: "instance",
+            attributeSet: [{
+                format: "float3",
+                shaderLocation: 1
+            }]
         }]
     }
 }
@@ -88,8 +85,8 @@ async function test() {
     const swapChain = createBasicSwapChain(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
-    const inputStateDescriptor = createInputStateDescriptor();
-    const pipeline = createBasicPipeline(shaderModule, device, null, null, inputStateDescriptor);
+    const vertexInputDescriptor = createVertexInputDescriptor();
+    const pipeline = createBasicPipeline(shaderModule, device, null, null, vertexInputDescriptor);
 
     const upperLeftBuffer = createAndSetVertexBuffer(device, [-1, 1, -1, -1, 0, 1]);
     const middleBuffer = createAndSetVertexBuffer(device, [0, 1, -1, -1, 1, -1]);

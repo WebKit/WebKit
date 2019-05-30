@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,20 @@
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
 typedef unsigned long u32;
+typedef unsigned long long u64;
 
 [
-    ImplementedAs=GPUIndexFormat
-] enum GPUIndexFormat {
-    "uint16",
-    "uint32"
+    ImplementedAs=GPUInputStepMode
+] enum GPUInputStepMode {
+    "vertex",
+    "instance"
 };
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
-] dictionary GPUInputStateDescriptor {
-    GPUIndexFormat? indexFormat;
-
-    required sequence<GPUVertexAttributeDescriptor> attributes;
-    required sequence<GPUVertexInputDescriptor> inputs;
+] dictionary GPUVertexBufferDescriptor {
+    required u64 stride;
+    GPUInputStepMode stepMode = "vertex";
+    sequence<GPUVertexAttributeDescriptor> attributeSet;
 };

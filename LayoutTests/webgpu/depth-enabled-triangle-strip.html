@@ -62,17 +62,15 @@ function createVertexBuffer(device) {
     return buffer;
 }
 
-function createInputStateDescriptor() {
+function createVertexInputDescriptor() {
     return {
         indexFormat: "uint32",
-        attributes: [{
-            shaderLocation: 0,
-            inputSlot: 0,
-            format: "float4"
-        }],
-        inputs: [{
-            inputSlot: 0,
-            stride: 4 * 4
+        vertexBuffers: [{
+            stride: 4 * 4,
+            attributeSet: [{
+                format: "float4",
+                shaderLocation: 0
+            }]
         }]
     }
 }
@@ -84,9 +82,9 @@ async function test() {
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const vertexBuffer = createVertexBuffer(device);
-    const inputStateDescriptor = createInputStateDescriptor();
+    const vertexInputDescriptor = createVertexInputDescriptor();
     const depthStateDescriptor = createBasicDepthStateDescriptor();
-    const pipeline = createBasicPipeline(shaderModule, device, null, null, inputStateDescriptor, depthStateDescriptor);
+    const pipeline = createBasicPipeline(shaderModule, device, null, null, vertexInputDescriptor, depthStateDescriptor);
     const commandEncoder = device.createCommandEncoder();
 
     const basicAttachment = {

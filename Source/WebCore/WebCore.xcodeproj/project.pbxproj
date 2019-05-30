@@ -14028,12 +14028,12 @@
 		D0D8648E21B70676003C983C /* WebGPUBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBuffer.idl; sourceTree = "<group>"; };
 		D0D8649121B760C4003C983C /* GPUBufferMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUBufferMetal.mm; sourceTree = "<group>"; };
 		D0D8649221B760F2003C983C /* GPUBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBuffer.h; sourceTree = "<group>"; };
-		D0D8649421BA173D003C983C /* GPUInputStateDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUInputStateDescriptor.idl; sourceTree = "<group>"; };
+		D0D8649421BA173D003C983C /* GPUVertexInputDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUVertexInputDescriptor.idl; sourceTree = "<group>"; };
 		D0D8649621BA18F4003C983C /* GPUVertexAttributeDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUVertexAttributeDescriptor.idl; sourceTree = "<group>"; };
-		D0D8649821BA19A7003C983C /* GPUVertexInputDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUVertexInputDescriptor.idl; sourceTree = "<group>"; };
-		D0D8649921BA1B1F003C983C /* GPUInputStateDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUInputStateDescriptor.h; sourceTree = "<group>"; };
+		D0D8649821BA19A7003C983C /* GPUVertexBufferDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUVertexBufferDescriptor.idl; sourceTree = "<group>"; };
+		D0D8649921BA1B1F003C983C /* GPUVertexInputDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUVertexInputDescriptor.h; sourceTree = "<group>"; };
 		D0D8649B21BA1C2D003C983C /* GPUVertexAttributeDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUVertexAttributeDescriptor.h; sourceTree = "<group>"; };
-		D0D8649C21BA1CE8003C983C /* GPUVertexInputDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUVertexInputDescriptor.h; sourceTree = "<group>"; };
+		D0D8649C21BA1CE8003C983C /* GPUVertexBufferDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUVertexBufferDescriptor.h; sourceTree = "<group>"; };
 		D0DA0BE4217930E2007FE2AC /* WebGPUSwapChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChain.h; sourceTree = "<group>"; };
 		D0DA0BE5217930E2007FE2AC /* WebGPUSwapChain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChain.cpp; sourceTree = "<group>"; };
 		D0DA0BE6217930E2007FE2AC /* WebGPUSwapChain.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSwapChain.idl; sourceTree = "<group>"; };
@@ -18265,7 +18265,6 @@
 				312FF8BF21A4C2F100EB199D /* GPUDevice.cpp */,
 				312FF8BE21A4C2F100EB199D /* GPUDevice.h */,
 				D026F47D220A2AC600AC5F49 /* GPUExtent3D.h */,
-				D0D8649921BA1B1F003C983C /* GPUInputStateDescriptor.h */,
 				D0F7559F2203BA1400118058 /* GPULimits.h */,
 				D08AA02F220D0BD50058C502 /* GPULoadOp.h */,
 				312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */,
@@ -18294,7 +18293,8 @@
 				D026F485220A477200AC5F49 /* GPUTextureUsage.h */,
 				D06EF552220BA26A0018724E /* GPUUtils.h */,
 				D0D8649B21BA1C2D003C983C /* GPUVertexAttributeDescriptor.h */,
-				D0D8649C21BA1CE8003C983C /* GPUVertexInputDescriptor.h */,
+				D0D8649C21BA1CE8003C983C /* GPUVertexBufferDescriptor.h */,
+				D0D8649921BA1B1F003C983C /* GPUVertexInputDescriptor.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
 				498770D81242C535002226BA /* Texture.h */,
 				498770D91242C535002226BA /* TilingData.cpp */,
@@ -25847,7 +25847,6 @@
 				D03C849E21FFCF000002227F /* GPUCompareFunction.idl */,
 				D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */,
 				D026F480220A2B7000AC5F49 /* GPUExtent3D.idl */,
-				D0D8649421BA173D003C983C /* GPUInputStateDescriptor.idl */,
 				D08AA02D220D0B9C0058C502 /* GPULoadOp.idl */,
 				D0CCA94922299F97006979B6 /* GPUOrigin3D.h */,
 				D0CCA94A22299F97006979B6 /* GPUOrigin3D.idl */,
@@ -25860,7 +25859,8 @@
 				D0EACFAE219E30FD000FA75C /* GPUTextureFormat.idl */,
 				D026F483220A472F00AC5F49 /* GPUTextureUsage.idl */,
 				D0D8649621BA18F4003C983C /* GPUVertexAttributeDescriptor.idl */,
-				D0D8649821BA19A7003C983C /* GPUVertexInputDescriptor.idl */,
+				D0D8649821BA19A7003C983C /* GPUVertexBufferDescriptor.idl */,
+				D0D8649421BA173D003C983C /* GPUVertexInputDescriptor.idl */,
 				D00487ED2274281300EED7D9 /* NavigatorGPU.cpp */,
 				D00487EE2274281400EED7D9 /* NavigatorGPU.h */,
 				D00487EB2274281200EED7D9 /* NavigatorGPU.idl */,

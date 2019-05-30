@@ -25,20 +25,18 @@
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
 typedef unsigned long u32;
-typedef unsigned long long u64;
 
 [
-    ImplementedAs=GPUInputStepMode
-] enum GPUInputStepMode {
-    "vertex",
-    "instance"
+    ImplementedAs=GPUIndexFormat
+] enum GPUIndexFormat {
+    "uint16",
+    "uint32"
 };
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUVertexInputDescriptor {
-    required u32 inputSlot;
-    required u64 stride;
-    GPUInputStepMode stepMode = "vertex";
+    GPUIndexFormat indexFormat = "uint32";
+    required sequence<GPUVertexBufferDescriptor?> vertexBuffers;
 };

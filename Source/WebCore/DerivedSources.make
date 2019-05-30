@@ -388,7 +388,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
     $(WebCore)/Modules/webgpu/GPULoadOp.idl \
-    $(WebCore)/Modules/webgpu/GPUInputStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/webgpu/GPUSamplerDescriptor.idl \
@@ -398,6 +397,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
     $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
     $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUVertexBufferDescriptor.idl \
 	$(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
     $(WebCore)/Modules/webgpu/NavigatorGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPU.idl \

@@ -30,7 +30,7 @@ function createBasicDepthTexture(canvas, device) {
     });
 }
 
-function createBasicPipeline(shaderModule, device, colorStates, pipelineLayout, inputStateDescriptor, depthStateDescriptor, primitiveTopology = "triangle-strip") {
+function createBasicPipeline(shaderModule, device, colorStates, pipelineLayout, vertexInputDescriptor, depthStateDescriptor, primitiveTopology = "triangle-strip") {
     const vertexStageDescriptor = {
         module: shaderModule,
         entryPoint: "vertex_main" 
@@ -49,15 +49,15 @@ function createBasicPipeline(shaderModule, device, colorStates, pipelineLayout, 
         }];
     }
 
-    if (!inputStateDescriptor)
-        inputStateDescriptor = { attributes: [], inputs: [] };
+    if (!vertexInputDescriptor)
+        vertexInputDescriptor = { vertexBuffers: [] };
 
     const pipelineDescriptor = {
         vertexStage: vertexStageDescriptor,
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: primitiveTopology,
         colorStates: colorStates,
-        inputState: inputStateDescriptor
+        vertexInput: vertexInputDescriptor
     };
 
     if (pipelineLayout)

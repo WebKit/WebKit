@@ -27,17 +27,19 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUVertexBufferDescriptor.h"
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-enum class GPUInputStepMode {
-    Vertex,
-    Instance,
+enum class GPUIndexFormat {
+    Uint16,
+    Uint32,
 };
 
 struct GPUVertexInputDescriptor {
-    unsigned inputSlot;
-    uint64_t stride;
-    GPUInputStepMode stepMode;
+    GPUIndexFormat indexFormat;
+    Vector<Optional<GPUVertexBufferDescriptor>> vertexBuffers;
 };
 
 } // namespace WebCore

@@ -56,20 +56,18 @@ async function test() {
         colorBlend: { dstFactor: "one" }
     }];
 
-    const inputStateDescriptor = {
+    const vertexInputDescriptor = {
         indexFormat: "uint32",
-        attributes: [{
-            shaderLocation: positionAttributeNum,
-            inputSlot: 0,
-            format: "float4"
-        }],
-        inputs: [{
-            inputSlot: 0,
-            stride: 4 * 4
+        vertexBuffers: [{
+            stride: 4 * 4,
+            attributeSet: [{
+                format: "float4",
+                shaderLocation: positionAttributeNum
+            }]
         }]
     };
 
-    const pipeline = createBasicPipeline(shaderModule, device, colorStates, null, inputStateDescriptor);
+    const pipeline = createBasicPipeline(shaderModule, device, colorStates, null, vertexInputDescriptor);
 
     const vertexData = new Float32Array([
         -1, 1, 0, 1,

@@ -633,6 +633,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexBufferDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexBufferDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexInputDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexInputDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGainNode.cpp
