@@ -1,3 +1,44 @@
+2019-05-30  Keith Miller  <keith_miller@apple.com>
+
+        IsoHeaps don't notice uncommitted VA becoming the first eligible.
+        https://bugs.webkit.org/show_bug.cgi?id=198301
+
+        Reviewed by Yusuke Suzuki.
+
+        IsoDirectory has a firstEligible member that is used as an
+        optimization to help find the first fit. However if the scavenger
+        decommitted a page before firstEligible then we wouldn't move
+        firstEligible. Thus, if no space is ever freed below firstEligible
+        we will never reused the decommitted memory (e.g. if the VA page
+        is decommitted). The fix is to make IsoDirectory::didDecommit move
+        the firstEligible page back if the decommitted page is smaller
+        than the current firstEligible. As such, this patch renames
+        firstEligible to firstEligibleOrDecommitted.
+
+        Also, this patch changes gigacageEnabledForProcess to check if the
+        process starts with Test rather than just test as TestWTF does.
+
+        Lastly, unbeknownst to me IsoHeaps are dependent on gigacage, so
+        by removing gigacage from arm64 I accidentally disabled
+        IsoHeaps...
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        (bmalloc::passedNumPages>::didDecommit):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::takeFirstEligible):
+        (bmalloc::IsoHeapImpl<Config>::didBecomeEligibleOrDecommited):
+        (bmalloc::IsoHeapImpl<Config>::didCommit):
+        (bmalloc::IsoHeapImpl<Config>::didBecomeEligible): Deleted.
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::determineMallocFallbackState):
+        * bmalloc/ProcessCheck.mm:
+        (bmalloc::gigacageEnabledForProcess):
+
 2019-05-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use target oriented design for bmalloc

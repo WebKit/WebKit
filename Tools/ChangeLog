@@ -1,3 +1,16 @@
+2019-05-30  Keith Miller  <keith_miller@apple.com>
+
+        IsoHeaps don't notice uncommitted VA becoming the first eligible.
+        https://bugs.webkit.org/show_bug.cgi?id=198301
+
+        Reviewed by Yusuke Suzuki.
+
+        Move testbmalloc.cpp to TestWTF so it runs in automation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/bmalloc/IsoHeap.cpp: Renamed from Source/bmalloc/test/testbmalloc.cpp.
+        (TEST):
+
 2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DragAndDropTests.DataTransferExposePlainTextWithFileURLAsFile API test is failing
