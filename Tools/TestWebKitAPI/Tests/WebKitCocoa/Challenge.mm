@@ -29,6 +29,7 @@
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 

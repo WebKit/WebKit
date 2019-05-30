@@ -1,3 +1,21 @@
+2019-05-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r245880. rdar://problem/50625279
+
+    Build fix for branch.
+    <rdar://problem/50625279>
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@245880 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-29  Alex Christensen  <achristensen@webkit.org>
+
+            Build fix for branch.
+            <rdar://problem/50625279>
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+
 2019-05-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, attempt to fix the TestWebKitAPI build.
