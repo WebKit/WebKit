@@ -1,3 +1,27 @@
+2019-05-30  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Third-party extensions using WKWebView are unable to render anything
+        https://bugs.webkit.org/show_bug.cgi?id=198359
+        <rdar://problem/51105015>
+
+        Reviewed by Brent Fulgham and Geoff Garen.
+
+        Third-party extensions using WKWebView are unable to render anything because we do not get notified
+        when the extension's visibility changes. Because we do not recognize the extension showing the
+        WebView to be foreground, we do not take a process assertion on behalf of the child processes and
+        they get suspended before they get a chance to render anything.
+
+        The root of the issue is that WebKit was relying on BKSApplicationStateMonitor.handler to get
+        notified when the extension's state switches between foreground and background. However, the handler
+        never gets called unless the extension has an appropriate entitlement.
+
+        To address the issue, we now use the same logic for extensions and we do for view services.
+        I have verified that the _UIViewServiceHostDidEnterBackgroundNotification / _UIViewServiceHostWillEnterForegroundNotification
+        notifications get sent to the extensions (even third-party). We also properly detect MobileSafari as
+        host application and are able to get MobileSafari's foreground state accurately.
+
+        * UIProcess/ApplicationStateTracker.mm:
+
 2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rare crash under `WebPage::shouldIgnoreMetaViewport const` when shrinking to fit content
