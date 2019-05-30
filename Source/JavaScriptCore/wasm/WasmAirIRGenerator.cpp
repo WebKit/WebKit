@@ -879,6 +879,9 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
         auto local = tmpForType(type);
         m_locals.uncheckedAppend(local);
         switch (type) {
+        case Type::Anyref:
+            append(Move, Arg::imm(JSValue::encode(jsNull())), local);
+            break;
         case Type::I32:
         case Type::I64: {
             append(Xor64, local, local);

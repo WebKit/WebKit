@@ -1,3 +1,15 @@
+2019-05-30  Justin Michaud  <justin_michaud@apple.com>
+
+        oss-fuzz: jsc: Issue 15016: jsc: Abrt in JSC::Wasm::AirIRGenerator::addLocal (15016)
+        https://bugs.webkit.org/show_bug.cgi?id=198355
+
+        Reviewed by Saam Barati.
+
+        Fix missing anyref case in addLocal.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addLocal):
+
 2019-05-29  Don Olmstead  <don.olmstead@sony.com>
 
         Remove ENABLE definitions from WebKit config files

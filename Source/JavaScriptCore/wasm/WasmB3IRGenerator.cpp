@@ -534,7 +534,8 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
         m_locals.uncheckedAppend(local);
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), 0, Origin()));
+        auto val = type == Anyref ? JSValue::encode(jsNull()) : 0;
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
     }
     return { };
 }
