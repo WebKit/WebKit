@@ -214,7 +214,7 @@ void MediaSessionManageriOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIs
     }
 
     if (!canLoadAVSystemController_CarPlayIsConnectedAttribute()) {
-        setIsPlayingToAutomotiveHeadUnit(false)
+        setIsPlayingToAutomotiveHeadUnit(false);
         return;
     }
 
