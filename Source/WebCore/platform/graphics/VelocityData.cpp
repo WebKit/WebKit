@@ -30,6 +30,45 @@
 
 namespace WebCore {
 
+VelocityData HistoricalVelocityData::velocityForNewData(FloatPoint newPosition, double scale, MonotonicTime timestamp)
+{
+    auto append = [&](FloatPoint newPosition, double scale, MonotonicTime timestamp)
+    {
+        m_latestDataIndex = (m_latestDataIndex + 1) % maxHistoryDepth;
+        m_positionHistory[m_latestDataIndex] = { timestamp, newPosition, scale };
+        m_historySize = std::min(m_historySize + 1, maxHistoryDepth);
+        m_lastAppendTimestamp = timestamp;
+    };
+
+    // Due to all the source of rect update, the input is very noisy. To smooth the output, we accumulate all changes
+    // within 1 frame as a single update. No speed computation is ever done on data within the same frame.
+    const Seconds filteringThreshold(1.0 / 60);
+
+    VelocityData velocityData;
+    if (m_historySize > 0) {
+        unsigned oldestDataIndex;
+        unsigned distanceToLastHistoricalData = m_historySize - 1;
+        if (distanceToLastHistoricalData <= m_latestDataIndex)
+            oldestDataIndex = m_latestDataIndex - distanceToLastHistoricalData;
+        else
+            oldestDataIndex = m_historySize - (distanceToLastHistoricalData - m_latestDataIndex);
+
+        Seconds timeDelta = timestamp - m_positionHistory[oldestDataIndex].timestamp;
+        if (timeDelta > filteringThreshold) {
+            Data& oldestData = m_positionHistory[oldestDataIndex];
+            velocityData = VelocityData((newPosition.x() - oldestData.position.x()) / timeDelta.seconds(), (newPosition.y() - oldestData.position.y()) / timeDelta.seconds(), (scale - oldestData.scale) / timeDelta.seconds(), timestamp);
+        }
+    }
+
+    Seconds timeSinceLastAppend = timestamp - m_lastAppendTimestamp;
+    if (timeSinceLastAppend > filteringThreshold)
+        append(newPosition, scale, timestamp);
+    else
+        m_positionHistory[m_latestDataIndex] = { timestamp, newPosition, scale };
+
+    return velocityData;
+}
+
 TextStream& operator<<(TextStream& ts, const VelocityData& velocityData)
 {
     ts.dumpProperty("timestamp", velocityData.lastUpdateTime.secondsSinceEpoch().value());
