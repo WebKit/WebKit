@@ -107,7 +107,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
 
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document() && document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
     
 bool AudioContext::isSampleRateRangeGood(float sampleRate)
 {
@@ -180,6 +180,7 @@ void AudioContext::constructCommon()
     
     m_listener = AudioListener::create();
 
+    ASSERT(document());
     if (document()->audioPlaybackRequiresUserGesture())
         addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
     else
@@ -329,6 +330,7 @@ void AudioContext::stop()
         return;
     m_isStopScheduled = true;
 
+    ASSERT(document());
     document()->updateIsPlayingMedia();
 
     m_eventQueue->close();
@@ -350,7 +352,6 @@ const char* AudioContext::activeDOMObjectName() const
 
 Document* AudioContext::document() const
 {
-    ASSERT(m_scriptExecutionContext);
     return downcast<Document>(m_scriptExecutionContext);
 }
 
@@ -382,7 +383,7 @@ bool AudioContext::isSuspended() const
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
-    if (mediaState() == MediaProducer::IsPlayingAudio || m_isStopScheduled)
+    if (!document() || mediaState() == MediaProducer::IsPlayingAudio || m_isStopScheduled)
         return;
 
     if (document()->hidden()) {
@@ -1083,6 +1084,9 @@ void AudioContext::nodeWillBeginPlayback()
 
 bool AudioContext::willBeginPlayback()
 {
+    if (!document())
+        return false;
+
     if (userGestureRequiredForAudioStart()) {
         if (!processingUserGestureForMedia() && !document()->isCapturing()) {
             ALWAYS_LOG(LOGIDENTIFIER, "returning false, not processing user gesture or capturing");
@@ -1109,6 +1113,9 @@ bool AudioContext::willBeginPlayback()
 
 bool AudioContext::willPausePlayback()
 {
+    if (!document())
+        return false;
+
     if (userGestureRequiredForAudioStart()) {
         if (!processingUserGestureForMedia())
             return false;
@@ -1154,7 +1161,7 @@ MediaProducer::MediaStateFlags AudioContext::mediaState() const
 
 void AudioContext::pageMutedStateDidChange()
 {
-    if (m_destinationNode && document()->page())
+    if (m_destinationNode && document() && document()->page())
         m_destinationNode->setMuted(document()->page()->isAudioMuted());
 }
 
