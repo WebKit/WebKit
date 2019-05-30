@@ -2224,6 +2224,9 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sh
 webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
 webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
 
+# Enable "phone number linkifying" test for iOS
+fast/dom/linkify-phone-numbers.html [ Pass ]
+
 # Enable "aria-current" test for iOS
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
 

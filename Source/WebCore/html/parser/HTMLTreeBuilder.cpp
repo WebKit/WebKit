@@ -2258,6 +2258,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
 static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
 {
     return node.isLink()
+        || node.hasTagName(aTag)
         || node.hasTagName(scriptTag)
         || is<HTMLFormControlElement>(node)
         || node.hasTagName(styleTag)

@@ -3101,3 +3101,6 @@ webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-uploa
 webkit.org/b/157743 imported/w3c/web-platform-tests/resize-observer/eventloop.html [ Pass Failure ]
 
 webkit.org/b/198103 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime.html [ Pass Failure ]
+
+# iOS only
+fast/dom/linkify-phone-numbers.html [ ImageOnlyFailure ]
