@@ -3292,6 +3292,9 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
 
 void WebPage::scheduleShrinkToFitContent()
 {
+    if (m_isClosed)
+        return;
+
     m_shrinkToFitContentTimer.restart();
 }
 
@@ -3303,6 +3306,9 @@ void WebPage::shrinkToFitContentTimerFired()
 
 bool WebPage::immediatelyShrinkToFitContent()
 {
+    if (m_isClosed)
+        return false;
+
     if (!shouldIgnoreMetaViewport())
         return false;
 

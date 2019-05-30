@@ -1,3 +1,19 @@
+2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rare crash under `WebPage::shouldIgnoreMetaViewport const` when shrinking to fit content
+        https://bugs.webkit.org/show_bug.cgi?id=198374
+        <rdar://problem/51261348>
+
+        Reviewed by Tim Horton.
+
+        This is a speculative fix for the crash; what appears to be happening is that the shrink-to-fit-content timer
+        is somehow being scheduled after the page has already been closed. We can probably fix this by bailing when
+        scheduling shrink-to-fit-content if m_isClosed is true.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::scheduleShrinkToFitContent):
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+
 2019-05-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r245881.
