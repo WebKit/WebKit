@@ -1,3 +1,17 @@
+2019-05-30  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Skip additional tests on PlayStation
+        https://bugs.webkit.org/show_bug.cgi?id=198352
+
+        Reviewed by Don Olmstead.
+
+        Skip pow test on PlayStation due to behavior difference in standard library.
+        Skip incremental marking test due to OOM on PlayStation systems.
+
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+        * stress/math-pow-with-constants.js:
+        * stress/pow-with-constants.js:
+
 2019-05-28  Dean Jackson  <dino@apple.com>
 
         Implement Promise.allSettled

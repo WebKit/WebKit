@@ -1,3 +1,6 @@
+// FIXME: unskip when playstation's pow() matches other platforms
+//@ skip if $hostOS == "playstation"
+
 function exponentIsZero(x) {
     return x ** 0;
 }
