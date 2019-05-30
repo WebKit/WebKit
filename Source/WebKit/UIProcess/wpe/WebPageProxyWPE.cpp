@@ -30,7 +30,10 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/UserAgent.h>
+
+#if USE(ATK)
 #include <atk/atk.h>
+#endif
 
 namespace WebKit {
 

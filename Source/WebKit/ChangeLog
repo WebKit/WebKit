@@ -1,3 +1,9 @@
+2019-05-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE without a11y support build fix.
+
+        * UIProcess/wpe/WebPageProxyWPE.cpp: Include atk headers only when enabled.
+
 2019-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove some logic to suppress the text selection assistant during drop
