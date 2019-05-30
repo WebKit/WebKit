@@ -1921,7 +1921,10 @@ TEST(DragAndDropTests, DataTransferExposePlainTextWithFileURLAsFile)
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
     EXPECT_WK_STREQ("(FILE, text/plain)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
-    EXPECT_WK_STREQ("('text.txt', text/plain)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+
+    NSString *filesOutput = [webView stringByEvaluatingJavaScript:@"files.textContent"];
+    EXPECT_TRUE([filesOutput containsString:@"text/plain)"]);
+    EXPECT_TRUE([filesOutput containsString:@".txt', "]);
 }
 
 TEST(DragAndDropTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
