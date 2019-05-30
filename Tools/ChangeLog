@@ -1,3 +1,10 @@
+2019-05-29  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix for branch.
+        <rdar://problem/50625279>
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+
 2019-05-29  Justin Michaud  <justin_michaud@apple.com>
 
         Attempt to fix JSC test timeouts after adding collectContinuously to WASM tests.

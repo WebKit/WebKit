@@ -30,6 +30,7 @@
 #import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WebKit.h>
