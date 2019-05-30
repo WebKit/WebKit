@@ -77,7 +77,7 @@ Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocal
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
-    return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota, StorageNamespaceImpl::IsEphemeral::Yes);
+    return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota);
 }
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota)

@@ -41,9 +41,7 @@ class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
     static Ref<StorageNamespaceImpl> createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
     static Ref<StorageNamespaceImpl> createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
-
-    enum class IsEphemeral : bool { No, Yes };
-    static Ref<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes, IsEphemeral isEphemeral);
+    static Ref<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
     static Ref<StorageNamespaceImpl> createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes);
 
     virtual ~StorageNamespaceImpl();
