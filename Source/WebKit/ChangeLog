@@ -1,5 +1,25 @@
 2019-05-30  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] UIProcess' background task expiration handler may get called after the app is foreground again
+        https://bugs.webkit.org/show_bug.cgi?id=198380
+        <rdar://problem/49762471>
+
+        Reviewed by Geoffrey Garen.
+
+        UIProcess' background task expiration handler may get called after the app is foreground again. When
+        this happens, we already have a foreground assertion on behalf of the WebContent process, and the view
+        is visible. We would send the WillSuspendImminently IPC to the WebContent process, which would freeze
+        its layers, even though it is visible on screen.
+
+        To address the issue, we now check if the app is visible in the expiration handler. If it is visible,
+        we do not notify clients of imminent suspension. Instead, we end the background task right away and
+        call _updateBackgroundTask asynchronously to start a new background task if necessary.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+
+2019-05-30  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Third-party extensions using WKWebView are unable to render anything
         https://bugs.webkit.org/show_bug.cgi?id=198359
         <rdar://problem/51105015>
