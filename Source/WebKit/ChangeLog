@@ -1,3 +1,45 @@
+2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Missing caret when focusing an editable field if the selection was set when WKWebView wasn't first responder
+        https://bugs.webkit.org/show_bug.cgi?id=198356
+        <rdar://problem/50798593>
+
+        Reviewed by Tim Horton.
+
+        In this bug, the DOM selection is initially set by script in a web view that is not the first responder. Then,
+        either the user begins editing by tapping somewhere such that the selection does not change, or an editable
+        element is programmatically focused and the client allows programmatic focus to show the keyboard. This is
+        because the selection clipping rect used by the UI process when computing the bounds of the caret view is empty,
+        causing the entire caret to be clipped.
+
+        This is due to two related issues: first, no updated editor state is sent to the UI process after the element is
+        focused, if the selection has not also changed. This means that while the selection geometry is sent over to the
+        UI process, the selection clipping rect (a member of the EditorState's PostLayoutData called
+        "focusedElementRect") becomes stale in the UI process, since the there was no focused element when the
+        previously computed editor state was sent to the UI process. To fix this, we schedule a full editor state update
+        when an element is focused, to ensure that the selection is eventually updated in the UI process.
+
+        Secondly, even once the editor state update is sent to the UI process, we will actually avoid updating any text
+        selection views, since there is no change in WKSelectionDrawingInfo, which currently consists of a selection
+        type, and either a caret rect or a list of selection rects. However, since selection drawing is also affected by
+        the selection clipping rect, it seems reasonable to add the selection clipping rect to the drawing info, and
+        trigger a selection update if this selection clipping rect has changed.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (WebKit::WKSelectionDrawingInfo::WKSelectionDrawingInfo):
+
+        Add selectionClippingRect to WKSelectionDrawingInfo, and check against it when comparing two drawing infos.
+
+        (WebKit::operator==):
+        (WebKit::operator<<):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidFocus):
+
+        Schedule an editor state update when focusing an element. In many cases, an editor state update has already been
+        scheduled when focusing an element, so this becomes a no-op; however, in this scenario, it delivers updated
+        selection clipping rects (i.e. the focused element rect) and other updated information to the UI process.
+
 2019-05-30  David Quesada  <david_quesada@apple.com>
 
         REGRESSION (r245756) [Mac] 2 TestWebKitAPI.DownloadProgress* and TestWebKitAPI._WKDownload.DownloadMonitorCancel are flaky timeouts

@@ -175,6 +175,7 @@ struct WKSelectionDrawingInfo {
     SelectionType type;
     WebCore::IntRect caretRect;
     Vector<WebCore::SelectionRect> selectionRects;
+    WebCore::IntRect selectionClipRect;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WKSelectionDrawingInfo&);

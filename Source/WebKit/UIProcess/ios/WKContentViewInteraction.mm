@@ -195,6 +195,7 @@ WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
     auto& postLayoutData = editorState.postLayoutData();
     caretRect = postLayoutData.caretRectAtEnd;
     selectionRects = postLayoutData.selectionRects;
+    selectionClipRect = postLayoutData.focusedElementRect;
 }
 
 inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
@@ -214,6 +215,9 @@ inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawing
                 return false;
         }
     }
+
+    if (a.type != WKSelectionDrawingInfo::SelectionType::None && a.selectionClipRect != b.selectionClipRect)
+        return false;
 
     return true;
 }
@@ -240,6 +244,7 @@ TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
     stream.dumpProperty("type", info.type);
     stream.dumpProperty("caret rect", info.caretRect);
     stream.dumpProperty("selection rects", info.selectionRects);
+    stream.dumpProperty("selection clip rect", info.selectionClipRect);
     return stream;
 }
 

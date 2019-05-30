@@ -1,3 +1,16 @@
+2019-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Missing caret when focusing an editable field if the selection was set when WKWebView wasn't first responder
+        https://bugs.webkit.org/show_bug.cgi?id=198356
+        <rdar://problem/50798593>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to exercise this scenario.
+
+        * editing/selection/ios/caret-when-focusing-editable-element-with-selection-expected.txt: Added.
+        * editing/selection/ios/caret-when-focusing-editable-element-with-selection.html: Added.
+
 2019-05-30  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Do not linkify telephone numbers inside <a> elements.
