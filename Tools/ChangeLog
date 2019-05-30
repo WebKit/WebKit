@@ -1,3 +1,14 @@
+2019-05-30  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Update configuration to share bots across queues
+        https://bugs.webkit.org/show_bug.cgi?id=198370
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Share bots across builder and API tester queues.
+        Also use ews119 instead of ews120 for mac API tests, as ews120 seems to have some issues as
+        noted in https://bugs.webkit.org/show_bug.cgi?id=197571#c1
+
 2019-05-30  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Switch run-webkit-tests to tailspin (Follow-up fix)

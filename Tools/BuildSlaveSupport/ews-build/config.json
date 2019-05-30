@@ -302,7 +302,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-ios-sim-ews"],
-      "workernames": ["ews152", "ews154"]
+      "workernames": ["ews152", "ews154", "ews156", "ews157"]
     },
     {
       "name": "iOS-12-Simulator-WK2-Tests-EWS",
@@ -321,7 +321,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-mac-ews"],
-      "workernames": ["ews118", "ews119", "ews120"]
+      "workernames": ["ews118", "ews119", "ews120", "ews150"]
     },
     {
       "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
@@ -426,7 +426,7 @@
       "shortname": "api-mac",
       "factory": "APITestsFactory",
       "platform": "*",
-      "workernames": ["ews120", "ews150", "ews153", "ews155"]
+      "workernames": ["ews119", "ews150", "ews153", "ews155"]
     }
   ],
   "schedulers": [
