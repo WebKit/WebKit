@@ -1,3 +1,15 @@
+2019-05-30  Tadeu Zagallo  <tzagallo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement op_wide16 / op_wide32 and introduce 16bit version bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=197979
+
+        Reviewed by Filip Pizlo.
+
+        * stress/16bit-code.js: Added.
+        (shouldBe):
+        * stress/32bit-code.js: Added.
+        (shouldBe):
+
 2019-05-30  Justin Michaud  <justin_michaud@apple.com>
 
         oss-fuzz: jsc: Issue 15016: jsc: Abrt in JSC::Wasm::AirIRGenerator::addLocal (15016)

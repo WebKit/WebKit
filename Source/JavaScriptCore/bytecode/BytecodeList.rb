@@ -82,7 +82,8 @@ begin_section :Bytecodes,
     asm_prefix: "llint_",
     op_prefix: "op_"
 
-op :wide
+op :wide16
+op :wide32
 
 op :enter
 
@@ -1140,6 +1141,17 @@ op :llint_cloop_did_return_from_js_20
 op :llint_cloop_did_return_from_js_21
 op :llint_cloop_did_return_from_js_22
 op :llint_cloop_did_return_from_js_23
+op :llint_cloop_did_return_from_js_24
+op :llint_cloop_did_return_from_js_25
+op :llint_cloop_did_return_from_js_26
+op :llint_cloop_did_return_from_js_27
+op :llint_cloop_did_return_from_js_28
+op :llint_cloop_did_return_from_js_29
+op :llint_cloop_did_return_from_js_30
+op :llint_cloop_did_return_from_js_31
+op :llint_cloop_did_return_from_js_32
+op :llint_cloop_did_return_from_js_33
+op :llint_cloop_did_return_from_js_34
 
 end_section :CLoopHelpers
 

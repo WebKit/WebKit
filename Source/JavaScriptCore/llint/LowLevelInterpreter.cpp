@@ -249,12 +249,14 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     // are at play.
     if (UNLIKELY(isInitializationPass)) {
         Opcode* opcodeMap = LLInt::opcodeMap();
-        Opcode* opcodeMapWide = LLInt::opcodeMapWide();
+        Opcode* opcodeMapWide16 = LLInt::opcodeMapWide16();
+        Opcode* opcodeMapWide32 = LLInt::opcodeMapWide32();
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
         #define OPCODE_ENTRY(__opcode, length) \
             opcodeMap[__opcode] = bitwise_cast<void*>(&&__opcode); \
-            opcodeMapWide[__opcode] = bitwise_cast<void*>(&&__opcode##_wide);
+            opcodeMapWide16[__opcode] = bitwise_cast<void*>(&&__opcode##_wide16); \
+            opcodeMapWide32[__opcode] = bitwise_cast<void*>(&&__opcode##_wide32);
 
         #define LLINT_OPCODE_ENTRY(__opcode, length) \
             opcodeMap[__opcode] = bitwise_cast<void*>(&&__opcode);
@@ -263,7 +265,8 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         //   narrow opcodes don't need any mapping and wide opcodes just need to add numOpcodeIDs
         #define OPCODE_ENTRY(__opcode, length) \
             opcodeMap[__opcode] = __opcode; \
-            opcodeMapWide[__opcode] = static_cast<OpcodeID>(__opcode##_wide);
+            opcodeMapWide16[__opcode] = static_cast<OpcodeID>(__opcode##_wide16); \
+            opcodeMapWide32[__opcode] = static_cast<OpcodeID>(__opcode##_wide32);
 
         #define LLINT_OPCODE_ENTRY(__opcode, length) \
             opcodeMap[__opcode] = __opcode;
@@ -285,7 +288,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     }
 
     // Define the pseudo registers used by the LLINT C Loop backend:
-    ASSERT(sizeof(CLoopRegister) == sizeof(intptr_t));
+    static_assert(sizeof(CLoopRegister) == sizeof(intptr_t));
 
     // The CLoop llint backend is initially based on the ARMv7 backend, and
     // then further enhanced with a few instructions from the x86 backend to

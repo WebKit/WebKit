@@ -108,7 +108,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     UNUSED_PARAM(pc);
     
     switch (opcodeID) {
-    case op_wide:
+    case op_wide16:
+    case op_wide32:
         RELEASE_ASSERT_NOT_REACHED();
     case op_enter:
     case op_to_this:

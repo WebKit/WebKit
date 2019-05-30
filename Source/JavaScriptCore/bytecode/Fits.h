@@ -51,123 +51,127 @@ struct Fits;
 // Implicit conversion for types of the same size
 template<typename T, OpcodeSize size>
 struct Fits<T, size, std::enable_if_t<sizeof(T) == size, std::true_type>> {
+    using TargetType = typename TypeBySize<size>::unsignedType;
+
     static bool check(T) { return true; }
 
-    static typename TypeBySize<size>::type convert(T t) { return bitwise_cast<typename TypeBySize<size>::type>(t); }
+    static TargetType convert(T t) { return bitwise_cast<TargetType>(t); }
 
-    template<class T1 = T, OpcodeSize size1 = size, typename = std::enable_if_t<!std::is_same<T1, typename TypeBySize<size1>::type>::value, std::true_type>>
-    static T1 convert(typename TypeBySize<size1>::type t) { return bitwise_cast<T1>(t); }
+    template<class T1 = T, OpcodeSize size1 = size, typename = std::enable_if_t<!std::is_same<T1, TargetType>::value, std::true_type>>
+    static T1 convert(TargetType t) { return bitwise_cast<T1>(t); }
 };
 
 template<typename T, OpcodeSize size>
-struct Fits<T, size, std::enable_if_t<sizeof(T) < size, std::true_type>> {
-    static bool check(T) { return true; }
+struct Fits<T, size, std::enable_if_t<std::is_integral<T>::value && sizeof(T) != size && !std::is_same<bool, T>::value, std::true_type>> {
+    using TargetType = std::conditional_t<std::is_unsigned<T>::value, typename TypeBySize<size>::unsignedType, typename TypeBySize<size>::signedType>;
 
-    static typename TypeBySize<size>::type convert(T t) { return static_cast<typename TypeBySize<size>::type>(t); }
+    static bool check(T t)
+    {
+        return t >= std::numeric_limits<TargetType>::min() && t <= std::numeric_limits<TargetType>::max();
+    }
 
-    template<class T1 = T, OpcodeSize size1 = size, typename = std::enable_if_t<!std::is_same<T1, typename TypeBySize<size1>::type>::value, std::true_type>>
-    static T1 convert(typename TypeBySize<size1>::type t) { return static_cast<T1>(t); }
+    static TargetType convert(T t)
+    {
+        ASSERT(check(t));
+        return static_cast<TargetType>(t);
+    }
+
+    template<class T1 = T, OpcodeSize size1 = size, typename TargetType1 = TargetType, typename = std::enable_if_t<!std::is_same<T1, TargetType1>::value, std::true_type>>
+    static T1 convert(TargetType1 t) { return static_cast<T1>(t); }
 };
 
-template<>
-struct Fits<uint32_t, OpcodeSize::Narrow> {
-    static bool check(unsigned u) { return u <= UINT8_MAX; }
+template<OpcodeSize size>
+struct Fits<bool, size, std::enable_if_t<size != sizeof(bool), std::true_type>> : public Fits<uint8_t, size> {
+    using Base = Fits<uint8_t, size>;
 
-    static uint8_t convert(unsigned u)
-    {
-        ASSERT(check(u));
-        return static_cast<uint8_t>(u);
-    }
-    static unsigned convert(uint8_t u)
-    {
-        return u;
-    }
-};
+    static bool check(bool e) { return Base::check(static_cast<uint8_t>(e)); }
 
-template<>
-struct Fits<int, OpcodeSize::Narrow> {
-    static bool check(int i)
+    static typename Base::TargetType convert(bool e)
     {
-        return i >= INT8_MIN && i <= INT8_MAX;
+        return Base::convert(static_cast<uint8_t>(e));
     }
 
-    static uint8_t convert(int i)
+    static bool convert(typename Base::TargetType e)
     {
-        ASSERT(check(i));
-        return static_cast<uint8_t>(i);
-    }
-
-    static int convert(uint8_t i)
-    {
-        return static_cast<int8_t>(i);
+        return Base::convert(e);
     }
 };
 
+template<OpcodeSize size>
+struct FirstConstant;
+
 template<>
-struct Fits<VirtualRegister, OpcodeSize::Narrow> {
+struct FirstConstant<OpcodeSize::Narrow> {
+    static constexpr int index = FirstConstantRegisterIndex8;
+};
+
+template<>
+struct FirstConstant<OpcodeSize::Wide16> {
+    static constexpr int index = FirstConstantRegisterIndex16;
+};
+
+template<OpcodeSize size>
+struct Fits<VirtualRegister, size, std::enable_if_t<size != OpcodeSize::Wide32, std::true_type>> {
+    // Narrow:
     // -128..-1  local variables
     //    0..15  arguments
     //   16..127 constants
-    static constexpr int s_firstConstantIndex = 16;
+    //
+    // Wide16:
+    // -2**15..-1  local variables
+    //      0..64  arguments
+    //     64..2**15-1 constants
+
+    using TargetType = typename TypeBySize<size>::signedType;
+
+    static constexpr int s_firstConstantIndex = FirstConstant<size>::index;
     static bool check(VirtualRegister r)
     {
         if (r.isConstant())
-            return (s_firstConstantIndex + r.toConstantIndex()) <= INT8_MAX;
-        return r.offset() >= INT8_MIN && r.offset() < s_firstConstantIndex;
+            return (s_firstConstantIndex + r.toConstantIndex()) <= std::numeric_limits<TargetType>::max();
+        return r.offset() >= std::numeric_limits<TargetType>::min() && r.offset() < s_firstConstantIndex;
     }
 
-    static uint8_t convert(VirtualRegister r)
+    static TargetType convert(VirtualRegister r)
     {
         ASSERT(check(r));
         if (r.isConstant())
-            return static_cast<int8_t>(s_firstConstantIndex + r.toConstantIndex());
-        return static_cast<int8_t>(r.offset());
+            return static_cast<TargetType>(s_firstConstantIndex + r.toConstantIndex());
+        return static_cast<TargetType>(r.offset());
     }
 
-    static VirtualRegister convert(uint8_t u)
+    static VirtualRegister convert(TargetType u)
     {
-        int i = static_cast<int>(static_cast<int8_t>(u));
+        int i = static_cast<int>(static_cast<TargetType>(u));
         if (i >= s_firstConstantIndex)
             return VirtualRegister { (i - s_firstConstantIndex) + FirstConstantRegisterIndex };
         return VirtualRegister { i };
     }
 };
 
-template<>
-struct Fits<SymbolTableOrScopeDepth, OpcodeSize::Narrow> {
-    static bool check(SymbolTableOrScopeDepth u)
+template<OpcodeSize size>
+struct Fits<SymbolTableOrScopeDepth, size, std::enable_if_t<size != OpcodeSize::Wide32, std::true_type>> : public Fits<unsigned, size> {
+    static_assert(sizeof(SymbolTableOrScopeDepth) == sizeof(unsigned));
+    using TargetType = typename TypeBySize<size>::unsignedType;
+    using Base = Fits<unsigned, size>;
+
+    static bool check(SymbolTableOrScopeDepth u) { return Base::check(u.raw()); }
+
+    static TargetType convert(SymbolTableOrScopeDepth u)
     {
-        return u.raw() <= UINT8_MAX;
+        return Base::convert(u.raw());
     }
 
-    static uint8_t convert(SymbolTableOrScopeDepth u)
+    static SymbolTableOrScopeDepth convert(TargetType u)
     {
-        ASSERT(check(u));
-        return static_cast<uint8_t>(u.raw());
-    }
-
-    static SymbolTableOrScopeDepth convert(uint8_t u)
-    {
-        return SymbolTableOrScopeDepth::raw(u);
+        return SymbolTableOrScopeDepth::raw(Base::convert(u));
     }
 };
 
-template<>
-struct Fits<Special::Pointer, OpcodeSize::Narrow> : Fits<int, OpcodeSize::Narrow> {
-    using Base = Fits<int, OpcodeSize::Narrow>;
-    static bool check(Special::Pointer sp) { return Base::check(static_cast<int>(sp)); }
-    static uint8_t convert(Special::Pointer sp)
-    {
-        return Base::convert(static_cast<int>(sp));
-    }
-    static Special::Pointer convert(uint8_t sp)
-    {
-        return static_cast<Special::Pointer>(Base::convert(sp));
-    }
-};
+template<OpcodeSize size>
+struct Fits<GetPutInfo, size, std::enable_if_t<size != OpcodeSize::Wide32, std::true_type>> {
+    using TargetType = typename TypeBySize<size>::unsignedType;
 
-template<>
-struct Fits<GetPutInfo, OpcodeSize::Narrow> {
     // 13 Resolve Types
     // 3 Initialization Modes
     // 2 Resolve Modes
@@ -197,7 +201,7 @@ struct Fits<GetPutInfo, OpcodeSize::Narrow> {
         return resolveType < s_resolveTypeMax && initializationMode < s_initializationModeMax && resolveMode < s_resolveModeMax;
     }
 
-    static uint8_t convert(GetPutInfo gpi)
+    static TargetType convert(GetPutInfo gpi)
     {
         ASSERT(check(gpi));
         auto resolveType = static_cast<uint8_t>(gpi.resolveType());
@@ -206,7 +210,7 @@ struct Fits<GetPutInfo, OpcodeSize::Narrow> {
         return (resolveType << 3) | (initializationMode << 1) | resolveMode;
     }
 
-    static GetPutInfo convert(uint8_t gpi)
+    static GetPutInfo convert(TargetType gpi)
     {
         auto resolveType = static_cast<ResolveType>((gpi & s_resolveTypeBits) >> 3);
         auto initializationMode = static_cast<InitializationMode>((gpi & s_initializationModeBits) >> 1);
@@ -215,108 +219,79 @@ struct Fits<GetPutInfo, OpcodeSize::Narrow> {
     }
 };
 
-template<>
-struct Fits<DebugHookType, OpcodeSize::Narrow> : Fits<int, OpcodeSize::Narrow> {
-    using Base = Fits<int, OpcodeSize::Narrow>;
-    static bool check(DebugHookType dht) { return Base::check(static_cast<int>(dht)); }
-    static uint8_t convert(DebugHookType dht)
-    {
-        return Base::convert(static_cast<int>(dht));
-    }
-    static DebugHookType convert(uint8_t dht)
-    {
-        return static_cast<DebugHookType>(Base::convert(dht));
-    }
-};
+template<typename E, OpcodeSize size>
+struct Fits<E, size, std::enable_if_t<sizeof(E) != size && std::is_enum<E>::value, std::true_type>> : public Fits<std::underlying_type_t<E>, size> {
+    using Base = Fits<std::underlying_type_t<E>, size>;
 
-template<>
-struct Fits<ProfileTypeBytecodeFlag, OpcodeSize::Narrow> : Fits<int, OpcodeSize::Narrow> {
-    using Base = Fits<int, OpcodeSize::Narrow>;
-    static bool check(ProfileTypeBytecodeFlag ptbf) { return Base::check(static_cast<int>(ptbf)); }
-    static uint8_t convert(ProfileTypeBytecodeFlag ptbf)
-    {
-        return Base::convert(static_cast<int>(ptbf));
-    }
-    static ProfileTypeBytecodeFlag convert(uint8_t ptbf)
-    {
-        return static_cast<ProfileTypeBytecodeFlag>(Base::convert(ptbf));
-    }
-};
+    static bool check(E e) { return Base::check(static_cast<std::underlying_type_t<E>>(e)); }
 
-template<>
-struct Fits<ResolveType, OpcodeSize::Narrow> : Fits<int, OpcodeSize::Narrow> {
-    using Base = Fits<int, OpcodeSize::Narrow>;
-    static bool check(ResolveType rt) { return Base::check(static_cast<int>(rt)); }
-    static uint8_t convert(ResolveType rt)
+    static typename Base::TargetType convert(E e)
     {
-        return Base::convert(static_cast<int>(rt));
+        return Base::convert(static_cast<std::underlying_type_t<E>>(e));
     }
 
-    static ResolveType convert(uint8_t rt)
+    static E convert(typename Base::TargetType e)
     {
-        return static_cast<ResolveType>(Base::convert(rt));
-    }
-};
-
-template<>
-struct Fits<OperandTypes, OpcodeSize::Narrow> {
-    // a pair of (ResultType::Type, ResultType::Type) - try to fit each type into 4 bits
-    // additionally, encode unknown types as 0 rather than the | of all types
-    static constexpr int s_maxType = 0x10;
-
-    static bool check(OperandTypes types)
-    {
-        auto first = types.first().bits();
-        auto second = types.second().bits();
-        if (first == ResultType::unknownType().bits())
-            first = 0;
-        if (second == ResultType::unknownType().bits())
-            second = 0;
-        return first < s_maxType && second < s_maxType;
-    }
-
-    static uint8_t convert(OperandTypes types)
-    {
-        ASSERT(check(types));
-        auto first = types.first().bits();
-        auto second = types.second().bits();
-        if (first == ResultType::unknownType().bits())
-            first = 0;
-        if (second == ResultType::unknownType().bits())
-            second = 0;
-        return (first << 4) | second;
-    }
-
-    static OperandTypes convert(uint8_t types)
-    {
-        auto first = (types & (0xf << 4)) >> 4;
-        auto second = (types & 0xf);
-        if (!first)
-            first = ResultType::unknownType().bits();
-        if (!second)
-            second = ResultType::unknownType().bits();
-        return OperandTypes(ResultType(first), ResultType(second));
-    }
-};
-
-template<>
-struct Fits<PutByIdFlags, OpcodeSize::Narrow> : Fits<int, OpcodeSize::Narrow> {
-    // only ever encoded in the bytecode stream as 0 or 1, so the trivial encoding should be good enough
-    using Base = Fits<int, OpcodeSize::Narrow>;
-    static bool check(PutByIdFlags flags) { return Base::check(static_cast<int>(flags)); }
-    static uint8_t convert(PutByIdFlags flags)
-    {
-        return Base::convert(static_cast<int>(flags));
-    }
-
-    static PutByIdFlags convert(uint8_t flags)
-    {
-        return static_cast<PutByIdFlags>(Base::convert(flags));
+        return static_cast<E>(Base::convert(e));
     }
 };
 
 template<OpcodeSize size>
-struct Fits<BoundLabel, size> : Fits<int, size> {
+struct Fits<OperandTypes, size, std::enable_if_t<sizeof(OperandTypes) != size, std::true_type>> {
+    static_assert(sizeof(OperandTypes) == sizeof(uint16_t));
+    using TargetType = typename TypeBySize<size>::unsignedType;
+
+    // a pair of (ResultType::Type, ResultType::Type) - try to fit each type into 4 bits
+    // additionally, encode unknown types as 0 rather than the | of all types
+    static constexpr unsigned typeWidth = 4;
+    static constexpr unsigned maxType = (1 << typeWidth) - 1;
+
+    static bool check(OperandTypes types)
+    {
+        if (size == OpcodeSize::Narrow) {
+            auto first = types.first().bits();
+            auto second = types.second().bits();
+            if (first == ResultType::unknownType().bits())
+                first = 0;
+            if (second == ResultType::unknownType().bits())
+                second = 0;
+            return first <= maxType && second <= maxType;
+        }
+        return true;
+    }
+
+    static TargetType convert(OperandTypes types)
+    {
+        if (size == OpcodeSize::Narrow) {
+            ASSERT(check(types));
+            auto first = types.first().bits();
+            auto second = types.second().bits();
+            if (first == ResultType::unknownType().bits())
+                first = 0;
+            if (second == ResultType::unknownType().bits())
+                second = 0;
+            return (first << typeWidth) | second;
+        }
+        return static_cast<TargetType>(types.bits());
+    }
+
+    static OperandTypes convert(TargetType types)
+    {
+        if (size == OpcodeSize::Narrow) {
+            auto first = types >> typeWidth;
+            auto second = types & maxType;
+            if (!first)
+                first = ResultType::unknownType().bits();
+            if (!second)
+                second = ResultType::unknownType().bits();
+            return OperandTypes(ResultType(first), ResultType(second));
+        }
+        return OperandTypes::fromBits(static_cast<uint16_t>(types));
+    }
+};
+
+template<OpcodeSize size>
+struct Fits<BoundLabel, size> : public Fits<int, size> {
     // This is a bit hacky: we need to delay computing jump targets, since we
     // might have to emit `nop`s to align the instructions stream. Additionally,
     // we have to compute the target before we start writing to the instruction
@@ -330,12 +305,12 @@ struct Fits<BoundLabel, size> : Fits<int, size> {
         return Base::check(label.saveTarget());
     }
 
-    static typename TypeBySize<size>::type convert(BoundLabel& label)
+    static typename Base::TargetType convert(BoundLabel& label)
     {
         return Base::convert(label.commitTarget());
     }
 
-    static BoundLabel convert(typename TypeBySize<size>::type target)
+    static BoundLabel convert(typename Base::TargetType target)
     {
         return BoundLabel(Base::convert(target));
     }

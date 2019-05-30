@@ -66,8 +66,12 @@ const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 
 #if ENABLE(C_LOOP) && !HAVE(COMPUTED_GOTO)
 
-#define OPCODE_ID_ENUM(opcode, length) opcode##_wide = numOpcodeIDs + opcode,
-    enum OpcodeIDWide : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
+#define OPCODE_ID_ENUM(opcode, length) opcode##_wide16 = numOpcodeIDs + opcode,
+    enum OpcodeIDWide16 : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
+#undef OPCODE_ID_ENUM
+
+#define OPCODE_ID_ENUM(opcode, length) opcode##_wide32 = numOpcodeIDs * 2 + opcode,
+    enum OpcodeIDWide32 : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
 #undef OPCODE_ID_ENUM
 #endif
 

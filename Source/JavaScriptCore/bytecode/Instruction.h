@@ -45,14 +45,16 @@ private:
         OpcodeID opcodeID() const { return static_cast<OpcodeID>(m_opcode); }
 
     private:
-        typename TypeBySize<Width>::type m_opcode;
+        typename TypeBySize<Width>::unsignedType m_opcode;
     };
 
 public:
     OpcodeID opcodeID() const
     {
-        if (isWide())
-            return wide()->opcodeID();
+        if (isWide32())
+            return wide32()->opcodeID();
+        if (isWide16())
+            return wide16()->opcodeID();
         return narrow()->opcodeID();
     }
 
@@ -61,16 +63,35 @@ public:
         return opcodeNames[opcodeID()];
     }
 
-    bool isWide() const
+    bool isWide16() const
     {
-        return narrow()->opcodeID() == op_wide;
+        return narrow()->opcodeID() == op_wide16;
+    }
+
+    bool isWide32() const
+    {
+        return narrow()->opcodeID() == op_wide32;
+    }
+
+    bool hasMetadata() const
+    {
+        return opcodeID() < NUMBER_OF_BYTECODE_WITH_METADATA;
+    }
+
+    int sizeShiftAmount() const
+    {
+        if (isWide32())
+            return 2;
+        if (isWide16())
+            return 1;
+        return 0;
     }
 
     size_t size() const
     {
-        auto wide = isWide();
-        auto padding = wide ? 1 : 0;
-        auto size = wide ? 4 : 1;
+        auto sizeShiftAmount = this->sizeShiftAmount();
+        auto padding = sizeShiftAmount ? 1 : 0;
+        auto size = 1 << sizeShiftAmount;
         return opcodeLengths[opcodeID()] * size + padding;
     }
 
@@ -106,11 +127,18 @@ public:
         return reinterpret_cast<const Impl<OpcodeSize::Narrow>*>(this);
     }
 
-    const Impl<OpcodeSize::Wide>* wide() const
+    const Impl<OpcodeSize::Wide16>* wide16() const
     {
 
-        ASSERT(isWide());
-        return reinterpret_cast<const Impl<OpcodeSize::Wide>*>(bitwise_cast<uintptr_t>(this) + 1);
+        ASSERT(isWide16());
+        return reinterpret_cast<const Impl<OpcodeSize::Wide16>*>(bitwise_cast<uintptr_t>(this) + 1);
+    }
+
+    const Impl<OpcodeSize::Wide32>* wide32() const
+    {
+
+        ASSERT(isWide32());
+        return reinterpret_cast<const Impl<OpcodeSize::Wide32>*>(bitwise_cast<uintptr_t>(this) + 1);
     }
 };
 

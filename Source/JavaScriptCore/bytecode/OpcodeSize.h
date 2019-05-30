@@ -29,7 +29,8 @@ namespace JSC {
 
 enum OpcodeSize {
     Narrow = 1,
-    Wide = 4,
+    Wide16 = 2,
+    Wide32 = 4,
 };
 
 template<OpcodeSize>
@@ -37,12 +38,20 @@ struct TypeBySize;
 
 template<>
 struct TypeBySize<OpcodeSize::Narrow> {
-    using type = uint8_t;
+    using signedType = int8_t;
+    using unsignedType = uint8_t;
 };
 
 template<>
-struct TypeBySize<OpcodeSize::Wide> {
-    using type = uint32_t;
+struct TypeBySize<OpcodeSize::Wide16> {
+    using signedType = int16_t;
+    using unsignedType = uint16_t;
+};
+
+template<>
+struct TypeBySize<OpcodeSize::Wide32> {
+    using signedType = int32_t;
+    using unsignedType = uint32_t;
 };
 
 template<OpcodeSize>
@@ -54,7 +63,12 @@ struct PaddingBySize<OpcodeSize::Narrow> {
 };
 
 template<>
-struct PaddingBySize<OpcodeSize::Wide> {
+struct PaddingBySize<OpcodeSize::Wide16> {
+    static constexpr uint8_t value = 1;
+};
+
+template<>
+struct PaddingBySize<OpcodeSize::Wide32> {
     static constexpr uint8_t value = 1;
 };
 

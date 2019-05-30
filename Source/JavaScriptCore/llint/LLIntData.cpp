@@ -49,10 +49,11 @@ namespace LLInt {
 
 uint8_t Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
 Opcode g_opcodeMap[numOpcodeIDs] = { };
-Opcode g_opcodeMapWide[numOpcodeIDs] = { };
+Opcode g_opcodeMapWide16[numOpcodeIDs] = { };
+Opcode g_opcodeMapWide32[numOpcodeIDs] = { };
 
 #if !ENABLE(C_LOOP)
-extern "C" void llint_entry(void*, void*);
+extern "C" void llint_entry(void*, void*, void*);
 #endif
 
 void initialize()
@@ -61,11 +62,12 @@ void initialize()
     CLoop::initialize();
 
 #else // !ENABLE(C_LOOP)
-    llint_entry(&g_opcodeMap, &g_opcodeMapWide);
+    llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         g_opcodeMap[i] = tagCodePtr(g_opcodeMap[i], BytecodePtrTag);
-        g_opcodeMapWide[i] = tagCodePtr(g_opcodeMapWide[i], BytecodePtrTag);
+        g_opcodeMapWide16[i] = tagCodePtr(g_opcodeMapWide16[i], BytecodePtrTag);
+        g_opcodeMapWide32[i] = tagCodePtr(g_opcodeMapWide32[i], BytecodePtrTag);
     }
 
     ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);

@@ -32,7 +32,8 @@ class Opcode
 
     module Size
         Narrow = "OpcodeSize::Narrow"
-        Wide = "OpcodeSize::Wide"
+        Wide16 = "OpcodeSize::Wide16"
+        Wide32 = "OpcodeSize::Wide32"
     end
 
     @@id = 0
@@ -74,6 +75,12 @@ class Opcode
         @args.map(&:create_param).unshift("").join(", ")
     end
 
+    def typed_reference_args
+        return if @args.nil?
+
+        @args.map(&:create_reference_param).unshift("").join(", ")
+    end
+
     def untyped_args
         return if @args.nil?
 
@@ -81,7 +88,7 @@ class Opcode
     end
 
     def map_fields_with_size(prefix, size, &block)
-        args = [Argument.new("opcodeID", :unsigned, 0)]
+        args = [Argument.new("opcodeID", :OpcodeID, 0)]
         args += @args.dup if @args
         unless @metadata.empty?
             args << @metadata.emitter_local
@@ -108,21 +115,27 @@ EOF
     end
 
     def emitter
-        op_wide = Argument.new("op_wide", :unsigned, 0)
+        op_wide16 = Argument.new("op_wide16", :OpcodeID, 0)
+        op_wide32 = Argument.new("op_wide32", :OpcodeID, 0)
         metadata_param = @metadata.empty? ? "" : ", #{@metadata.emitter_local.create_param}"
         metadata_arg = @metadata.empty? ? "" : ", #{@metadata.emitter_local.name}"
         <<-EOF.chomp
     static void emit(BytecodeGenerator* gen#{typed_args})
     {
-        #{@metadata.create_emitter_local}
-        emit<OpcodeSize::Narrow, NoAssert, true>(gen#{untyped_args}#{metadata_arg})
-            || emit<OpcodeSize::Wide, Assert, true>(gen#{untyped_args}#{metadata_arg});
+        emitWithSmallestSizeRequirement<OpcodeSize::Narrow>(gen#{untyped_args});
     }
 #{%{
     template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
     static bool emit(BytecodeGenerator* gen#{typed_args})
     {#{@metadata.create_emitter_local}
         return emit<size, shouldAssert>(gen#{untyped_args}#{metadata_arg});
+    }
+
+    template<OpcodeSize size>
+    static bool checkWithoutMetadataID(BytecodeGenerator* gen#{typed_args})
+    {
+        decltype(gen->addMetadataFor(opcodeID)) __metadataID { };
+        return checkImpl<size>(gen#{untyped_args}#{metadata_arg});
     }
 } unless @metadata.empty?}
     template<OpcodeSize size, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
@@ -134,18 +147,51 @@ EOF
         return didEmit;
     }
 
+    template<OpcodeSize size>
+    static void emitWithSmallestSizeRequirement(BytecodeGenerator* gen#{typed_args})
+    {
+        #{@metadata.create_emitter_local}
+        if (static_cast<unsigned>(size) <= static_cast<unsigned>(OpcodeSize::Narrow)) {
+            if (emit<OpcodeSize::Narrow, NoAssert, true>(gen#{untyped_args}#{metadata_arg}))
+                return;
+        }
+        if (static_cast<unsigned>(size) <= static_cast<unsigned>(OpcodeSize::Wide16)) {
+            if (emit<OpcodeSize::Wide16, NoAssert, true>(gen#{untyped_args}#{metadata_arg}))
+                return;
+        }
+        emit<OpcodeSize::Wide32, Assert, true>(gen#{untyped_args}#{metadata_arg});
+    }
+
 private:
+    template<OpcodeSize size>
+    static bool checkImpl(BytecodeGenerator* gen#{typed_reference_args}#{metadata_param})
+    {
+        UNUSED_PARAM(gen);
+#if OS(WINDOWS) && ENABLE(C_LOOP)
+        // FIXME: Disable wide16 optimization for Windows CLoop
+        // https://bugs.webkit.org/show_bug.cgi?id=198283
+        if (size == OpcodeSize::Wide16)
+            return false;
+#endif
+        return #{map_fields_with_size("", "size", &:fits_check).join "\n            && "}
+            && (size == OpcodeSize::Wide16 ? #{op_wide16.fits_check(Size::Narrow)} : true)
+            && (size == OpcodeSize::Wide32 ? #{op_wide32.fits_check(Size::Narrow)} : true);
+    }
+
     template<OpcodeSize size, bool recordOpcode>
     static bool emitImpl(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
-        if (size == OpcodeSize::Wide)
-            gen->alignWideOpcode();
-        if (#{map_fields_with_size("", "size", &:fits_check).join "\n            && "}
-            && (size == OpcodeSize::Wide ? #{op_wide.fits_check(Size::Narrow)} : true)) {
+        if (size == OpcodeSize::Wide16)
+            gen->alignWideOpcode16();
+        else if (size == OpcodeSize::Wide32)
+            gen->alignWideOpcode32();
+        if (checkImpl<size>(gen#{untyped_args}#{metadata_arg})) {
             if (recordOpcode)
                 gen->recordOpcode(opcodeID);
-            if (size == OpcodeSize::Wide)
-                #{op_wide.fits_write Size::Narrow}
+            if (size == OpcodeSize::Wide16)
+                #{op_wide16.fits_write Size::Narrow}
+            else if (size == OpcodeSize::Wide32)
+                #{op_wide32.fits_write Size::Narrow}
 #{map_fields_with_size("            ", "size", &:fits_write).join "\n"}
             return true;
         }
@@ -159,9 +205,9 @@ EOF
     def dumper
         <<-EOF
     template<typename Block>
-    void dump(BytecodeDumper<Block>* dumper, InstructionStream::Offset __location, bool __isWide)
+    void dump(BytecodeDumper<Block>* dumper, InstructionStream::Offset __location, int __sizeShiftAmount)
     {
-        dumper->printLocationAndOp(__location, &"*#{@name}"[!__isWide]);
+        dumper->printLocationAndOp(__location, &"**#{@name}"[2 - __sizeShiftAmount]);
 #{print_args { |arg|
 <<-EOF.chomp
         dumper->dumpOperand(#{arg.field_name}, #{arg.index == 1});
@@ -182,19 +228,26 @@ EOF
         ASSERT_UNUSED(stream, stream[0] == opcodeID);
     }
 
+    #{capitalized_name}(const uint16_t* stream)
+        #{init.call("OpcodeSize::Wide16")}
+    {
+        ASSERT_UNUSED(stream, stream[0] == opcodeID);
+    }
+
+
     #{capitalized_name}(const uint32_t* stream)
-        #{init.call("OpcodeSize::Wide")}
+        #{init.call("OpcodeSize::Wide32")}
     {
         ASSERT_UNUSED(stream, stream[0] == opcodeID);
     }
 
     static #{capitalized_name} decode(const uint8_t* stream)
     {
-        if (*stream != op_wide)
-            return { stream };
-
-        auto wideStream = bitwise_cast<const uint32_t*>(stream + 1);
-        return { wideStream };
+        if (*stream == op_wide32) 
+            return { bitwise_cast<const uint32_t*>(stream + 1) };
+        if (*stream == op_wide16) 
+            return { bitwise_cast<const uint16_t*>(stream + 1) };
+        return { stream };
     }
 EOF
     end
@@ -219,8 +272,12 @@ EOF
         "setEntryAddress(#{id}, _#{full_name})"
     end
 
-    def set_entry_address_wide(id)
-        "setEntryAddressWide(#{id}, _#{full_name}_wide)"
+    def set_entry_address_wide16(id)
+        "setEntryAddressWide16(#{id}, _#{full_name}_wide16)"
+    end
+
+    def set_entry_address_wide32(id)
+        "setEntryAddressWide32(#{id}, _#{full_name}_wide32)"
     end
 
     def struct_indices
@@ -253,7 +310,7 @@ static void dumpBytecode(BytecodeDumper<Block>* dumper, InstructionStream::Offse
 #{opcodes.map { |op|
         <<-EOF.chomp
     case #{op.name}:
-        __instruction->as<#{op.capitalized_name}>().dump(dumper, __location, __instruction->isWide());
+        __instruction->as<#{op.capitalized_name}>().dump(dumper, __location, __instruction->sizeShiftAmount());
         break;
 EOF
     }.join "\n"}

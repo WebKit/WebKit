@@ -112,9 +112,13 @@ EOF
         EOF
     end
 
+    def emitter_local_name
+        "__metadataID"
+    end
+
     def emitter_local
         unless @@emitter_local
-            @@emitter_local = Argument.new("__metadataID", :unsigned, -1)
+            @@emitter_local = Argument.new(emitter_local_name, :unsigned, -1)
         end
 
         return @@emitter_local

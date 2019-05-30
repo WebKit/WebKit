@@ -68,7 +68,8 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     };
 
     switch (opcodeID) {
-    case op_wide:
+    case op_wide16:
+    case op_wide32:
         RELEASE_ASSERT_NOT_REACHED();
 
     // No uses.
@@ -289,7 +290,8 @@ template<typename Block, typename Functor>
 void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
 {
     switch (opcodeID) {
-    case op_wide:
+    case op_wide16:
+    case op_wide32:
         RELEASE_ASSERT_NOT_REACHED();
 
     // These don't define anything.

@@ -445,9 +445,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 const UnlinkedHandlerInfo& unlinkedHandler = unlinkedCodeBlock->exceptionHandler(i);
                 HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
 #if ENABLE(JIT)
-                MacroAssemblerCodePtr<BytecodePtrTag> codePtr = instructions().at(unlinkedHandler.target)->isWide()
-                    ? LLInt::getWideCodePtr<BytecodePtrTag>(op_catch)
-                    : LLInt::getCodePtr<BytecodePtrTag>(op_catch);
+                auto instruction = instructions().at(unlinkedHandler.target);
+                MacroAssemblerCodePtr<BytecodePtrTag> codePtr;
+                if (instruction->isWide32())
+                    codePtr = LLInt::getWide32CodePtr<BytecodePtrTag>(op_catch);
+                else if (instruction->isWide16())
+                    codePtr = LLInt::getWide16CodePtr<BytecodePtrTag>(op_catch);
+                else
+                    codePtr = LLInt::getCodePtr<BytecodePtrTag>(op_catch);
                 handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(codePtr.retagged<ExceptionHandlerPtrTag>()));
 #else
                 handler.initialize(unlinkedHandler);

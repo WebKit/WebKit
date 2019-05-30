@@ -939,17 +939,17 @@ class Instruction
             else
                 $asm.puts "movzx #{x86LoadOperands(:byte, :int)}"
             end
-        when "loadbs"
+        when "loadbsi"
             if !isIntelSyntax
                 $asm.puts "movsbl #{x86LoadOperands(:byte, :int)}"
             else
                 $asm.puts "movsx #{x86LoadOperands(:byte, :int)}"
             end
-        when "loadbsp"
+        when "loadbsq"
             if !isIntelSyntax
-                $asm.puts "movsb#{x86Suffix(:ptr)} #{x86LoadOperands(:byte, :ptr)}"
+                $asm.puts "movsbq #{x86LoadOperands(:byte, :quad)}"
             else
-                $asm.puts "movsx #{x86LoadOperands(:byte, :ptr)}"
+                $asm.puts "movsx #{x86LoadOperands(:byte, :quad)}"
             end
         when "loadh"
             if !isIntelSyntax
@@ -957,11 +957,17 @@ class Instruction
             else
                 $asm.puts "movzx #{x86LoadOperands(:half, :int)}"
             end
-        when "loadhs"
+        when "loadhsi"
             if !isIntelSyntax
                 $asm.puts "movswl #{x86LoadOperands(:half, :int)}"
             else
                 $asm.puts "movsx #{x86LoadOperands(:half, :int)}"
+            end
+        when "loadhsq"
+            if !isIntelSyntax
+                $asm.puts "movswq #{x86LoadOperands(:half, :quad)}"
+            else
+                $asm.puts "movsx #{x86LoadOperands(:half, :quad)}"
             end
         when "storeb"
             $asm.puts "mov#{x86Suffix(:byte)} #{x86Operands(:byte, :byte)}"

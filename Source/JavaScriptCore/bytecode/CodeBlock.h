@@ -145,6 +145,8 @@ public:
     void dumpAssumingJITType(PrintStream&, JITType) const;
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
+    MetadataTable* metadataTable() const { return m_metadata.get(); }
+
     int numParameters() const { return m_numParameters; }
     void setNumParameters(int newValue);
 

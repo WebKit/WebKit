@@ -100,7 +100,10 @@ class Section
               out.write("#define #{opcode.name}_value_string \"#{opcode.id}\"\n")
           }
           opcodes.each { |opcode|
-              out.write("#define #{opcode.name}_wide_value_string \"#{num_opcodes + opcode.id}\"\n")
+              out.write("#define #{opcode.name}_wide16_value_string \"#{num_opcodes + opcode.id}\"\n")
+          }
+          opcodes.each { |opcode|
+              out.write("#define #{opcode.name}_wide32_value_string \"#{num_opcodes * 2 + opcode.id}\"\n")
           }
       end
       out.string

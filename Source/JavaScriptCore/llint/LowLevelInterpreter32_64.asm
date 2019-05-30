@@ -29,9 +29,15 @@ macro nextInstruction()
     jmp [t1, t0, 4], BytecodePtrTag
 end
 
-macro nextInstructionWide()
+macro nextInstructionWide16()
+    loadh 1[PC], t0
+    leap _g_opcodeMapWide16, t1
+    jmp [t1, t0, 4], BytecodePtrTag
+end
+
+macro nextInstructionWide32()
     loadi 1[PC], t0
-    leap _g_opcodeMapWide, t1
+    leap _g_opcodeMapWide32, t1
     jmp [t1, t0, 4], BytecodePtrTag
 end
 
@@ -40,14 +46,22 @@ macro getuOperandNarrow(opcodeStruct, fieldName, dst)
 end
 
 macro getOperandNarrow(opcodeStruct, fieldName, dst)
-    loadbsp constexpr %opcodeStruct%_%fieldName%_index[PC], dst
+    loadbsi constexpr %opcodeStruct%_%fieldName%_index[PC], dst
 end
 
-macro getuOperandWide(opcodeStruct, fieldName, dst)
+macro getuOperandWide16(opcodeStruct, fieldName, dst)
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + 1[PC], dst
+end
+
+macro getOperandWide16(opcodeStruct, fieldName, dst)
+    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + 1[PC], dst
+end
+
+macro getuOperandWide32(opcodeStruct, fieldName, dst)
     loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + 1[PC], dst
 end
 
-macro getOperandWide(opcodeStruct, fieldName, dst)
+macro getOperandWide32(opcodeStruct, fieldName, dst)
     loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + 1[PC], dst
 end
 
@@ -96,7 +110,7 @@ macro cCall2(function)
         push a0
         call function
         addp 16, sp
-    elsif C_LOOP
+    elsif C_LOOP or C_LOOP_WIN
         cloopCallSlowPath function, a0, a1
     else
         error
@@ -104,7 +118,7 @@ macro cCall2(function)
 end
 
 macro cCall2Void(function)
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         cloopCallSlowPathVoid function, a0, a1
     else
         cCall2(function)
@@ -121,7 +135,7 @@ macro cCall4(function)
         push a0
         call function
         addp 16, sp
-    elsif C_LOOP
+    elsif C_LOOP or C_LOOP_WIN
         error
     else
         error
@@ -190,7 +204,7 @@ macro doVMEntry(makeCall)
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         bpaeq t3, VM::m_cloopStackLimit[vm], .stackHeightOK
         move entry, t4
         move vm, t5
@@ -308,7 +322,7 @@ end
 macro makeJavaScriptCall(entry, temp, unused)
     addp CallerFrameAndPCSize, sp
     checkStackPointerAlignment(temp, 0xbad0dc02)
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
     else
         call entry
@@ -320,7 +334,7 @@ end
 macro makeHostFunctionCall(entry, temp1, temp2)
     move entry, temp1
     storep cfr, [sp]
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         move sp, a0
         storep lr, PtrSize[sp]
         cloopCallNative temp1
@@ -447,7 +461,7 @@ end
 # Index, tag, and payload must be different registers. Index is not
 # changed.
 macro loadConstantOrVariable(size, index, tag, payload)
-    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide, macro (FirstConstantRegisterIndex)
+    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide16, FirstConstantRegisterIndexWide32, macro (FirstConstantRegisterIndex)
         bigteq index, FirstConstantRegisterIndex, .constant
         loadi TagOffset[cfr, index, 8], tag
         loadi PayloadOffset[cfr, index, 8], payload
@@ -463,7 +477,7 @@ macro loadConstantOrVariable(size, index, tag, payload)
 end
 
 macro loadConstantOrVariableTag(size, index, tag)
-    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide, macro (FirstConstantRegisterIndex)
+    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide16, FirstConstantRegisterIndexWide32, macro (FirstConstantRegisterIndex)
         bigteq index, FirstConstantRegisterIndex, .constant
         loadi TagOffset[cfr, index, 8], tag
         jmp .done
@@ -478,7 +492,7 @@ end
 
 # Index and payload may be the same register. Index may be clobbered.
 macro loadConstantOrVariable2Reg(size, index, tag, payload)
-    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide, macro (FirstConstantRegisterIndex)
+    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide16, FirstConstantRegisterIndexWide32, macro (FirstConstantRegisterIndex)
         bigteq index, FirstConstantRegisterIndex, .constant
         loadi TagOffset[cfr, index, 8], tag
         loadi PayloadOffset[cfr, index, 8], payload
@@ -496,7 +510,7 @@ macro loadConstantOrVariable2Reg(size, index, tag, payload)
 end
 
 macro loadConstantOrVariablePayloadTagCustom(size, index, tagCheck, payload)
-    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide, macro (FirstConstantRegisterIndex)
+    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide16, FirstConstantRegisterIndexWide32, macro (FirstConstantRegisterIndex)
         bigteq index, FirstConstantRegisterIndex, .constant
         tagCheck(TagOffset[cfr, index, 8])
         loadi PayloadOffset[cfr, index, 8], payload
@@ -1982,7 +1996,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t3
         loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
-    elsif ARMv7 or C_LOOP or MIPS
+    elsif ARMv7 or C_LOOP or C_LOOP_WIN or MIPS
         if MIPS
         # calling convention says to save stack space for 4 first registers in
         # all cases. To match our 16-byte alignment, that means we need to
@@ -1999,7 +2013,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadi Callee + PayloadOffset[cfr], t1
         loadp JSFunction::m_executable[t1], t1
         checkStackPointerAlignment(t3, 0xdead0001)
-        if C_LOOP
+        if C_LOOP or C_LOOP_WIN
             cloopCallNative executableOffsetToFunction[t1]
         else
             call executableOffsetToFunction[t1]
@@ -2049,7 +2063,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
         andp MarkedBlockMask, t3
         loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
-    elsif ARMv7 or C_LOOP or MIPS
+    elsif ARMv7 or C_LOOP or C_LOOP_WIN or MIPS
         subp 8, sp # align stack pointer
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1
@@ -2058,7 +2072,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
         move cfr, a0
         loadi Callee + PayloadOffset[cfr], t1
         checkStackPointerAlignment(t3, 0xdead0001)
-        if C_LOOP
+        if C_LOOP or C_LOOP_WIN
             cloopCallNative offsetOfFunction[t1]
         else
             call offsetOfFunction[t1]

@@ -193,22 +193,26 @@ template<class Block>
 void BytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& instructions, PrintStream& out, const ICStatusMap& statusMap)
 {
     size_t instructionCount = 0;
-    size_t wideInstructionCount = 0;
+    size_t wide16InstructionCount = 0;
+    size_t wide32InstructionCount = 0;
     size_t instructionWithMetadataCount = 0;
 
     for (const auto& instruction : instructions) {
-        if (instruction->isWide())
-            ++wideInstructionCount;
-        if (instruction->opcodeID() < NUMBER_OF_BYTECODE_WITH_METADATA)
+        if (instruction->isWide16())
+            ++wide16InstructionCount;
+        else if (instruction->isWide32())
+            ++wide32InstructionCount;
+        if (instruction->hasMetadata())
             ++instructionWithMetadataCount;
         ++instructionCount;
     }
 
     out.print(*block);
     out.printf(
-        ": %lu instructions (%lu wide instructions, %lu instructions with metadata); %lu bytes (%lu metadata bytes); %d parameter(s); %d callee register(s); %d variable(s)",
+        ": %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions, %lu instructions with metadata); %lu bytes (%lu metadata bytes); %d parameter(s); %d callee register(s); %d variable(s)",
         static_cast<unsigned long>(instructionCount),
-        static_cast<unsigned long>(wideInstructionCount),
+        static_cast<unsigned long>(wide16InstructionCount),
+        static_cast<unsigned long>(wide32InstructionCount),
         static_cast<unsigned long>(instructionWithMetadataCount),
         static_cast<unsigned long>(instructions.sizeInBytes() + block->metadataSizeInBytes()),
         static_cast<unsigned long>(block->metadataSizeInBytes()),

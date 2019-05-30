@@ -1339,10 +1339,18 @@ void BytecodeGenerator::recordOpcode(OpcodeID opcodeID)
     m_lastOpcodeID = opcodeID;
 }
 
-void BytecodeGenerator::alignWideOpcode()
+void BytecodeGenerator::alignWideOpcode16()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
-    while ((m_writer.position() + 1) % OpcodeSize::Wide)
+    while ((m_writer.position() + 1) % OpcodeSize::Wide16)
+        OpNop::emit<OpcodeSize::Narrow>(this);
+#endif
+}
+
+void BytecodeGenerator::alignWideOpcode32()
+{
+#if CPU(NEEDS_ALIGNED_ACCESS)
+    while ((m_writer.position() + 1) % OpcodeSize::Wide32)
         OpNop::emit<OpcodeSize::Narrow>(this);
 #endif
 }
@@ -2721,13 +2729,20 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 
         if (context.isIndexedForInContext()) {
             auto& indexedContext = context.asIndexedForInContext();
-            OpGetByVal::emit<OpcodeSize::Wide>(this, kill(dst), base, indexedContext.index());
+            kill(dst);
+            if (OpGetByVal::checkWithoutMetadataID<OpcodeSize::Narrow>(this, dst, base, property))
+                OpGetByVal::emitWithSmallestSizeRequirement<OpcodeSize::Narrow>(this, dst, base, indexedContext.index());
+            else if (OpGetByVal::checkWithoutMetadataID<OpcodeSize::Wide16>(this, dst, base, property))
+                OpGetByVal::emitWithSmallestSizeRequirement<OpcodeSize::Wide16>(this, dst, base, indexedContext.index());
+            else
+                OpGetByVal::emit<OpcodeSize::Wide32>(this, dst, base, indexedContext.index());
             indexedContext.addGetInst(m_lastInstruction.offset(), property->index());
             return dst;
         }
 
+        // We cannot do the above optimization here since OpGetDirectPname => OpGetByVal conversion involves different metadata ID allocation.
         StructureForInContext& structureContext = context.asStructureForInContext();
-        OpGetDirectPname::emit<OpcodeSize::Wide>(this, kill(dst), base, property, structureContext.index(), structureContext.enumerator());
+        OpGetDirectPname::emit<OpcodeSize::Wide32>(this, kill(dst), base, property, structureContext.index(), structureContext.enumerator());
 
         structureContext.addGetInst(m_lastInstruction.offset(), property->index());
         return dst;
@@ -4480,7 +4495,7 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGeneratorFun
 #if CPU(NEEDS_ALIGNED_ACCESS)
     // conservatively align for the bytecode rewriter: it will delete this yield and
     // append a fragment, so we make sure that the start of the fragments is aligned
-    while (m_writer.position() % OpcodeSize::Wide)
+    while (m_writer.position() % OpcodeSize::Wide32)
         OpNop::emit<OpcodeSize::Narrow>(this);
 #endif
     OpYield::emit(this, generatorFrameRegister(), yieldPointIndex, argument);
@@ -4983,7 +4998,7 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
         int propertyRegIndex = std::get<1>(instTuple);
         auto instruction = generator.m_writer.ref(instIndex);
         auto end = instIndex + instruction->size();
-        ASSERT(instruction->isWide());
+        ASSERT(instruction->isWide32());
 
         generator.m_writer.seek(instIndex);
 
@@ -4996,7 +5011,7 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
         // 1. dst stays the same.
         // 2. base stays the same.
         // 3. property gets switched to the original property.
-        OpGetByVal::emit<OpcodeSize::Wide>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
+        OpGetByVal::emit<OpcodeSize::Wide32>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
 
         // 4. nop out the remaining bytes
         while (generator.m_writer.position() < end)
@@ -5018,8 +5033,6 @@ void IndexedForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlo
     for (const auto& instPair : m_getInsts) {
         unsigned instIndex = instPair.first;
         int propertyRegIndex = instPair.second;
-        // FIXME: we should not have to force this get_by_val to be wide, just guarantee that propertyRegIndex fits
-        // https://bugs.webkit.org/show_bug.cgi?id=190929
         generator.m_writer.ref(instIndex)->cast<OpGetByVal>()->setProperty(VirtualRegister(propertyRegIndex), []() {
             ASSERT_NOT_REACHED();
             return VirtualRegister();

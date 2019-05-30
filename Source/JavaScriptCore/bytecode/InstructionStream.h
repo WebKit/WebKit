@@ -210,6 +210,20 @@ public:
             m_position++;
         }
     }
+
+    void write(uint16_t h)
+    {
+        ASSERT(!m_finalized);
+        uint8_t bytes[2];
+        std::memcpy(bytes, &h, sizeof(h));
+
+        // Though not always obvious, we don't have to invert the order of the
+        // bytes written here for CPU(BIG_ENDIAN). This is because the incoming
+        // i value is already ordered in big endian on CPU(BIG_EDNDIAN) platforms.
+        write(bytes[0]);
+        write(bytes[1]);
+    }
+
     void write(uint32_t i)
     {
         ASSERT(!m_finalized);

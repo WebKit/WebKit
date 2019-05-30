@@ -1,3 +1,131 @@
+2019-05-30  Tadeu Zagallo  <tzagallo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement op_wide16 / op_wide32 and introduce 16bit version bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=197979
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces 16bit bytecode size. Previously, we had two versions of bytecodes, 8bit and 32bit. However,
+        in Gmail, we found that a lot of bytecodes get 32bit because they do not fit in 8bit. 8bit is very small and large
+        function easily emits a lot of 32bit bytecodes because of large VirtualRegister number etc. But they almost always
+        fit in 16bit. If we can have 16bit version of bytecode, we can make most of the current 32bit bytecodes 16bit and
+        save memory.
+
+        We rename rename op_wide to op_wide32 and introduce op_wide16. The mechanism is similar to old op_wide. When we
+        get op_wide16, the following bytecode data is 16bit, and we execute 16bit version of bytecode in LLInt.
+
+        We also disable this op_wide16 feature in Windows CLoop, which is used in AppleWin port. When the code size of
+        CLoop::execute increases, MSVC starts generating CLoop::execute function with very large stack allocation
+        requirement. Even before introducing this 16bit bytecode, CLoop::execute in AppleWin takes almost 100KB stack
+        height. After introducing this, it becomes 160KB. While the semantics of the function is correctly compiled,
+        such a large stack allocation is not essentially necessary, and this leads to stack overflow errors quite easily,
+        and tests fail with AppleWin port because it starts throwing stack overflow range error in various places.
+        In this patch, for now, we just disable op_wide16 feature for AppleWin so that CLoop::execute takes 100KB
+        stack allocation because this patch is not focusing on fixing AppleWin's CLoop issue. We introduce a new backend
+        type for LLInt, "C_LOOP_WIN". "C_LOOP_WIN" do not generate wide16 version of code to reduce the code size of
+        CLoop::execute. In the future, we should investigate whether this MSVC issue is fixed in Visual Studio 2019.
+        Or we should consider always enabling ASM LLInt for Windows.
+
+        This patch improves Gmail by 7MB at least.
+
+        * CMakeLists.txt:
+        * bytecode/BytecodeConventions.h:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBlock):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeRewriter.h:
+        (JSC::BytecodeRewriter::Fragment::align):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::metadataTable const):
+        * bytecode/Fits.h:
+        * bytecode/Instruction.h:
+        (JSC::Instruction::opcodeID const):
+        (JSC::Instruction::isWide16 const):
+        (JSC::Instruction::isWide32 const):
+        (JSC::Instruction::hasMetadata const):
+        (JSC::Instruction::sizeShiftAmount const):
+        (JSC::Instruction::size const):
+        (JSC::Instruction::wide16 const):
+        (JSC::Instruction::wide32 const):
+        (JSC::Instruction::isWide const): Deleted.
+        (JSC::Instruction::wide const): Deleted.
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStreamWriter::write):
+        * bytecode/Opcode.h:
+        * bytecode/OpcodeSize.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::alignWideOpcode16):
+        (JSC::BytecodeGenerator::alignWideOpcode32):
+        (JSC::BytecodeGenerator::emitGetByVal): Previously, we always emit 32bit op_get_by_val for bytecodes in `for-in` context because
+        its operand can be replaced to the other VirtualRegister later. But if we know that replacing VirtualRegister can fit in 8bit / 16bit
+        a-priori, we should not emit 32bit version. We expose OpXXX::checkWithoutMetadataID to check whether we could potentially compact
+        the bytecode for the given operands.
+
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::StructureForInContext::finalize):
+        (JSC::BytecodeGenerator::alignWideOpcode): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::write):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * generator/Argument.rb:
+        * generator/DSL.rb:
+        * generator/Metadata.rb:
+        * generator/Opcode.rb: A little bit weird but checkImpl's argument must be reference. We are relying on that BoundLabel is once modified in
+        this check phase, and the modified BoundLabel will be used when emitting the code. If checkImpl copies the passed BoundLabel, this modification
+        will be discarded in this checkImpl function and make the code generation broken.
+
+        * generator/Section.rb:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::opcodeMapWide16):
+        (JSC::LLInt::opcodeMapWide32):
+        (JSC::LLInt::getOpcodeWide16):
+        (JSC::LLInt::getOpcodeWide32):
+        (JSC::LLInt::getWide16CodePtr):
+        (JSC::LLInt::getWide32CodePtr):
+        (JSC::LLInt::opcodeMapWide): Deleted.
+        (JSC::LLInt::getOpcodeWide): Deleted.
+        (JSC::LLInt::getWideCodePtr): Deleted.
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/arm64.rb:
+        * offlineasm/asm.rb:
+        * offlineasm/backends.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/mips.rb:
+        * offlineasm/x86.rb: Load operation with sign extension should also have the extended size information. For example, loadbs should be
+        converted to loadbsi for 32bit sign extension (and loadbsq for 64bit sign extension). And use loadbsq / loadhsq for loading VirtualRegister
+        information in LowLevelInterpreter64 since they will be used for pointer arithmetic and they are using machine register width.
+
+        * parser/ResultType.h:
+        (JSC::OperandTypes::OperandTypes):
+        (JSC::OperandTypes::first const):
+        (JSC::OperandTypes::second const):
+        (JSC::OperandTypes::bits):
+        (JSC::OperandTypes::fromBits):
+        (): Deleted.
+        (JSC::OperandTypes::toInt): Deleted.
+        (JSC::OperandTypes::fromInt): Deleted.
+        We reduce sizeof(OperandTypes) from unsigned to uint16_t, which guarantees that OperandTypes always fit in 16bit bytecode.
+
 2019-05-30  Justin Michaud  <justin_michaud@apple.com>
 
         oss-fuzz: jsc: Issue 15016: jsc: Abrt in JSC::Wasm::AirIRGenerator::addLocal (15016)

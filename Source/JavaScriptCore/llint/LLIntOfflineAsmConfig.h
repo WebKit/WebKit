@@ -30,7 +30,13 @@
 #include <wtf/Gigacage.h>
 
 #if ENABLE(C_LOOP)
+#if !OS(WINDOWS)
 #define OFFLINE_ASM_C_LOOP 1
+#define OFFLINE_ASM_C_LOOP_WIN 0
+#else
+#define OFFLINE_ASM_C_LOOP 0
+#define OFFLINE_ASM_C_LOOP_WIN 1
+#endif
 #define OFFLINE_ASM_X86 0
 #define OFFLINE_ASM_X86_WIN 0
 #define OFFLINE_ASM_ARMv7 0
@@ -45,6 +51,7 @@
 #else // ENABLE(C_LOOP)
 
 #define OFFLINE_ASM_C_LOOP 0
+#define OFFLINE_ASM_C_LOOP_WIN 0
 
 #if CPU(X86) && !COMPILER(MSVC)
 #define OFFLINE_ASM_X86 1

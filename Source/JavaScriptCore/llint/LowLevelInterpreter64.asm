@@ -30,9 +30,15 @@ macro nextInstruction()
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
-macro nextInstructionWide()
+macro nextInstructionWide16()
+    loadh 1[PB, PC, 1], t0
+    leap _g_opcodeMapWide16, t1
+    jmp [t1, t0, PtrSize], BytecodePtrTag
+end
+
+macro nextInstructionWide32()
     loadi 1[PB, PC, 1], t0
-    leap _g_opcodeMapWide, t1
+    leap _g_opcodeMapWide32, t1
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
@@ -41,14 +47,22 @@ macro getuOperandNarrow(opcodeStruct, fieldName, dst)
 end
 
 macro getOperandNarrow(opcodeStruct, fieldName, dst)
-    loadbsp constexpr %opcodeStruct%_%fieldName%_index[PB, PC, 1], dst
+    loadbsq constexpr %opcodeStruct%_%fieldName%_index[PB, PC, 1], dst
 end
 
-macro getuOperandWide(opcodeStruct, fieldName, dst)
+macro getuOperandWide16(opcodeStruct, fieldName, dst)
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + 1[PB, PC, 1], dst
+end
+
+macro getOperandWide16(opcodeStruct, fieldName, dst)
+    loadhsq constexpr %opcodeStruct%_%fieldName%_index * 2 + 1[PB, PC, 1], dst
+end
+
+macro getuOperandWide32(opcodeStruct, fieldName, dst)
     loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + 1[PB, PC, 1], dst
 end
 
-macro getOperandWide(opcodeStruct, fieldName, dst)
+macro getOperandWide32(opcodeStruct, fieldName, dst)
     loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + 1[PB, PC, 1], dst
 end
 
@@ -109,7 +123,7 @@ macro cCall2(function)
         addp 48, sp
         move 8[r0], r1
         move [r0], r0
-    elsif C_LOOP
+    elsif C_LOOP or C_LOOP_WIN
         cloopCallSlowPath function, a0, a1
     else
         error
@@ -117,7 +131,7 @@ macro cCall2(function)
 end
 
 macro cCall2Void(function)
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         cloopCallSlowPathVoid function, a0, a1
     elsif X86_64_WIN
         # Note: we cannot use the cCall2 macro for Win64 in this case,
@@ -179,7 +193,7 @@ macro doVMEntry(makeCall)
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         bpaeq t3, VM::m_cloopStackLimit[vm], .stackHeightOK
         move entry, t4
         move vm, t5
@@ -285,7 +299,7 @@ end
 
 macro makeJavaScriptCall(entry, temp, unused)
     addp 16, sp
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
     else
         call entry, JSEntryPtrTag
@@ -297,7 +311,7 @@ macro makeHostFunctionCall(entry, temp, unused)
     move entry, temp
     storep cfr, [sp]
     move sp, a0
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         storep lr, 8[sp]
         cloopCallNative temp
     elsif X86_64_WIN
@@ -409,7 +423,7 @@ macro checkSwitchToJITForLoop()
 end
 
 macro uncage(basePtr, mask, ptr, scratchOrLength)
-    if GIGACAGE_ENABLED and not C_LOOP
+    if GIGACAGE_ENABLED and not (C_LOOP or C_LOOP_WIN)
         loadp basePtr, scratchOrLength
         btpz scratchOrLength, .done
         andp mask, ptr
@@ -450,19 +464,30 @@ macro loadConstantOrVariable(size, index, value)
     .done:
     end
 
-    macro loadWide()
-        bpgteq index, FirstConstantRegisterIndexWide, .constant
+    macro loadWide16()
+        bpgteq index, FirstConstantRegisterIndexWide16, .constant
         loadq [cfr, index, 8], value
         jmp .done
     .constant:
         loadp CodeBlock[cfr], value
         loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
-        subp FirstConstantRegisterIndexWide, index
+        loadq -(FirstConstantRegisterIndexWide16 * 8)[value, index, 8], value
+    .done:
+    end
+
+    macro loadWide32()
+        bpgteq index, FirstConstantRegisterIndexWide32, .constant
+        loadq [cfr, index, 8], value
+        jmp .done
+    .constant:
+        loadp CodeBlock[cfr], value
+        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        subp FirstConstantRegisterIndexWide32, index
         loadq [value, index, 8], value
     .done:
     end
 
-    size(loadNarrow, loadWide, macro (load) load() end)
+    size(loadNarrow, loadWide16, loadWide32, macro (load) load() end)
 end
 
 macro loadConstantOrVariableInt32(size, index, value, slow)
@@ -1518,7 +1543,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bia t2, Int8ArrayType - FirstTypedArrayType, .opGetByValUint8ArrayOrUint8ClampedArray
 
     # We have Int8ArrayType.
-    loadbs [t3, t1], t0
+    loadbsi [t3, t1], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint8ArrayOrUint8ClampedArray:
@@ -1538,7 +1563,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     bia t2, Int16ArrayType - FirstTypedArrayType, .opGetByValUint16Array
 
     # We have Int16ArrayType.
-    loadhs [t3, t1, 2], t0
+    loadhsi [t3, t1, 2], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint16Array:
@@ -2060,14 +2085,14 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     andp MarkedBlockMask, t0, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     storep cfr, VM::topCallFrame[t1]
-    if ARM64 or ARM64E or C_LOOP
+    if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
         storep lr, ReturnPC[cfr]
     end
     move cfr, a0
     loadp Callee[cfr], t1
     loadp JSFunction::m_executable[t1], t1
     checkStackPointerAlignment(t3, 0xdead0001)
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         cloopCallNative executableOffsetToFunction[t1]
     else
         if X86_64_WIN
@@ -2100,13 +2125,13 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     andp MarkedBlockMask, t0, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     storep cfr, VM::topCallFrame[t1]
-    if ARM64 or ARM64E or C_LOOP
+    if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
         storep lr, ReturnPC[cfr]
     end
     move cfr, a0
     loadp Callee[cfr], t1
     checkStackPointerAlignment(t3, 0xdead0001)
-    if C_LOOP
+    if C_LOOP or C_LOOP_WIN
         cloopCallNative offsetOfFunction[t1]
     else
         if X86_64_WIN

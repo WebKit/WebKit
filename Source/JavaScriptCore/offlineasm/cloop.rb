@@ -656,16 +656,18 @@ class Instruction
             $asm.putc "#{operands[1].intptrMemRef} = #{operands[0].clValue(:intptr)};"
         when "loadb"
             $asm.putc "#{operands[1].clLValue(:intptr)} = #{operands[0].uint8MemRef};"
-        when "loadbs"
-            $asm.putc "#{operands[1].clLValue(:intptr)} = (uint32_t)(#{operands[0].int8MemRef});"
-        when "loadbsp"
-            $asm.putc "#{operands[1].clLValue(:intptr)} = #{operands[0].int8MemRef};"
+        when "loadbsi"
+            $asm.putc "#{operands[1].clLValue(:uint32)} = (uint32_t)((int32_t)#{operands[0].int8MemRef});"
+        when "loadbsq"
+            $asm.putc "#{operands[1].clLValue(:uint64)} = (int64_t)#{operands[0].int8MemRef};"
         when "storeb"
             $asm.putc "#{operands[1].uint8MemRef} = #{operands[0].clValue(:int8)};"
         when "loadh"
             $asm.putc "#{operands[1].clLValue(:intptr)} = #{operands[0].uint16MemRef};"
-        when "loadhs"
-            $asm.putc "#{operands[1].clLValue(:intptr)} = (uint32_t)(#{operands[0].int16MemRef});"
+        when "loadhsi"
+            $asm.putc "#{operands[1].clLValue(:uint32)} = (uint32_t)((int32_t)#{operands[0].int16MemRef});"
+        when "loadhsq"
+            $asm.putc "#{operands[1].clLValue(:uint64)} = (int64_t)#{operands[0].int16MemRef};"
         when "storeh"
             $asm.putc "*#{operands[1].uint16MemRef} = #{operands[0].clValue(:int16)};"
         when "loadd"
@@ -1154,6 +1156,10 @@ class Instruction
         else
             lowerDefault
         end
+    end
+
+    def lowerC_LOOP_WIN
+        lowerC_LOOP
     end
 
     def recordMetaDataC_LOOP

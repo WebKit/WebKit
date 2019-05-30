@@ -144,7 +144,7 @@ EOF
         GeneratedFile::create(init_asm_filename, bytecode_list) do |template|
             template.multiline_comment = nil
             template.line_comment = "#"
-            template.body = (opcodes.map.with_index(&:set_entry_address) + opcodes.map.with_index(&:set_entry_address_wide)) .join("\n")
+            template.body = (opcodes.map.with_index(&:set_entry_address) + opcodes.map.with_index(&:set_entry_address_wide16) + opcodes.map.with_index(&:set_entry_address_wide32)) .join("\n")
         end
     end
 

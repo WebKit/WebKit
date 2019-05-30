@@ -161,7 +161,7 @@ public:
         {
 #if CPU(NEEDS_ALIGNED_ACCESS)
             m_bytecodeGenerator.withWriter(m_writer, [&] {
-                while (m_bytecodeGenerator.instructions().size() % OpcodeSize::Wide)
+                while (m_bytecodeGenerator.instructions().size() % OpcodeSize::Wide32)
                     OpNop::emit<OpcodeSize::Narrow>(&m_bytecodeGenerator);
             });
 #endif

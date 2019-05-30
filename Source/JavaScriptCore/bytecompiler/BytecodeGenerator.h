@@ -1162,8 +1162,13 @@ namespace JSC {
         RegisterID* emitThrowExpressionTooDeepException();
 
         void write(uint8_t byte) { m_writer.write(byte); }
+        void write(uint16_t h) { m_writer.write(h); }
         void write(uint32_t i) { m_writer.write(i); }
-        void alignWideOpcode();
+        void write(int8_t byte) { m_writer.write(static_cast<uint8_t>(byte)); }
+        void write(int16_t h) { m_writer.write(static_cast<uint16_t>(h)); }
+        void write(int32_t i) { m_writer.write(static_cast<uint32_t>(i)); }
+        void alignWideOpcode16();
+        void alignWideOpcode32();
 
         class PreservedTDZStack {
         private:
