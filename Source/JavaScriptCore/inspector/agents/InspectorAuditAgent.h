@@ -63,7 +63,7 @@ protected:
 
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
-    virtual void populateAuditObject(JSC::ExecState*, JSC::Strong<JSC::JSObject>& /* auditObject */) { };
+    virtual void populateAuditObject(JSC::ExecState*, JSC::Strong<JSC::JSObject>& auditObject);
 
     virtual void muteConsole() { };
     virtual void unmuteConsole() { };

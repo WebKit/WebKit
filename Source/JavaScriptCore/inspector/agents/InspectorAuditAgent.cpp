@@ -130,4 +130,15 @@ bool InspectorAuditAgent::hasActiveAudit() const
     return !!m_injectedWebInspectorAuditValue;
 }
 
+void InspectorAuditAgent::populateAuditObject(JSC::ExecState* execState, JSC::Strong<JSC::JSObject>& auditObject)
+{
+    ASSERT(execState);
+    if (!execState)
+        return;
+
+    JSC::JSLockHolder lock(execState);
+
+    auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "Version"), JSC::JSValue(Inspector::Protocol::Audit::VERSION));
+}
+
 } // namespace Inspector
