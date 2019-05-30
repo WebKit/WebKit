@@ -1,3 +1,56 @@
+2019-05-30  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION (r245756) [Mac] 2 TestWebKitAPI.DownloadProgress* and TestWebKitAPI._WKDownload.DownloadMonitorCancel are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=198298
+        rdar://problem/51182393
+
+        Reviewed by Alexey Proskuryakov.
+
+        When canceling a download, there has always been a race condition between:
+
+         (A) the execution of Download::didCancel() within the block passed to
+             -[NSURLSessionDownloadTask cancelByProducingResumeData:] within
+             Download::platformCancelNetworkLoad(), and
+
+         (B) the invocation of -[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]
+
+        If A happens before B, the block calls didCancel() on the download, which reports the
+        cancellation to the UI process and tears down the download. When B happens, WKNetworkSessionDelegate
+        gracefully handles the fact that the Download has been removed from the map, and nothing
+        else happens. Life is good.
+
+        If B happens before A, -URLSession:task:didCompleteWithError: invokes Download::didFail(),
+        which reports a download failure (*not* a cancellation) to the UI process and tears down
+        the Download and DownloadProxy. On release builds, this can leave the tests waiting for a
+        cancellation until they time out. When A happens, the block calls Download::didCancel().
+        This messages the UI process, which results in a debug assertion failure from an unhandled
+        message since the DownloadProxy was torn down when the failure was reported. Meanwhile,
+        the network process hits a debug assertion in DownloadManager::downloadFinished() when
+        trying to remove the Download *again*.
+
+        r245756 made the bad case (B before A) more likely by adding a delay before didCancel()
+        is called.
+
+        Make this race condition impossible by eliminating the didCancel() from the cancellation
+        block, and instead relying on -URLSession:task:didCompleteWithError: to report the
+        download as canceled. This also effectively coalesces calls to platformCancelNetworkLoad(),
+        which, if called multiple times before CFNetwork reports that the download was canceled,
+        could cause multiple calls to didCancel(), resulting in the same assertion failures seen
+        in the B-before-A case.
+
+        No new tests, as recreating this race condition in the test scenario would require
+        additional machinery, and is no longer even possible since we don't depend on the calling
+        of the cancellation handler in order to report the Download as canceled.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::cancel):
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::wasCanceled const):
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::platformCancelNetworkLoad):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+
 2019-05-30  Chris Dumez  <cdumez@apple.com>
 
         [iOS] UIProcess' background task expiration handler may get called after the app is foreground again

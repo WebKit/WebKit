@@ -92,6 +92,7 @@ public:
     void didCancel(const IPC::DataReference& resumeData);
 
     bool isAlwaysOnLoggingAllowed() const;
+    bool wasCanceled() const { return m_wasCanceled; }
 
     void applicationDidEnterBackground() { m_monitor.applicationDidEnterBackground(); }
     void applicationWillEnterForeground() { m_monitor.applicationWillEnterForeground(); }
@@ -119,6 +120,7 @@ private:
 #endif
     PAL::SessionID m_sessionID;
     String m_suggestedName;
+    bool m_wasCanceled { false };
     bool m_hasReceivedData { false };
     DownloadMonitor m_monitor { *this };
 };

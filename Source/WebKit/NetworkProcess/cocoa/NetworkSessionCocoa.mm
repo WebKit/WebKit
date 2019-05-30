@@ -623,14 +623,22 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             if (auto* download = _session->networkProcess().downloadManager().download(downloadID)) {
                 NSData *resumeData = nil;
                 if (id userInfo = error.userInfo) {
-                    if ([userInfo isKindOfClass:[NSDictionary class]])
+                    if ([userInfo isKindOfClass:[NSDictionary class]]) {
                         resumeData = userInfo[@"NSURLSessionDownloadTaskResumeData"];
+                        if (resumeData && ![resumeData isKindOfClass:[NSData class]]) {
+                            RELEASE_LOG(NetworkSession, "Download task %llu finished with resume data of wrong class: %s", (unsigned long long)task.taskIdentifier, NSStringFromClass([resumeData class]).UTF8String);
+                            ASSERT_NOT_REACHED();
+                            resumeData = nil;
+                        }
+                    }
                 }
-                
-                if (resumeData && [resumeData isKindOfClass:[NSData class]])
-                    download->didFail(error, { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length });
+
+                auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
+
+                if (download->wasCanceled())
+                    download->didCancel(resumeDataReference);
                 else
-                    download->didFail(error, { });
+                    download->didFail(error, resumeDataReference);
             }
         }
     }

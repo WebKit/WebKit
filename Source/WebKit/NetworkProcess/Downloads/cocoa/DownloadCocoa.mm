@@ -80,13 +80,13 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
 void Download::platformCancelNetworkLoad()
 {
     ASSERT(m_downloadTask);
+
+    // The download's resume data is accessed in the network session delegate
+    // method -URLSession:task:didCompleteWithError: instead of inside this block,
+    // to avoid race conditions between the two. Calling -cancel is not sufficient
+    // here because CFNetwork won't provide the resume data unless we ask for it.
     [m_downloadTask cancelByProducingResumeData:^(NSData *resumeData) {
-        callOnMainThread([this, resumeData = retainPtr(resumeData)] {
-            if (resumeData && resumeData.get().bytes && resumeData.get().length)
-                didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>(resumeData.get().bytes), resumeData.get().length));
-            else
-                didCancel({ });
-        });
+        UNUSED_PARAM(resumeData);
     }];
 }
 

@@ -1,3 +1,16 @@
+2019-05-30  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION (r245756) [Mac] 2 TestWebKitAPI.DownloadProgress* and TestWebKitAPI._WKDownload.DownloadMonitorCancel are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=198298
+        rdar://problem/51182393
+
+        Reviewed by Alexey Proskuryakov.
+
+        Re-enable _WKDownload.DownloadMonitorCancel, which should no longer time out with this fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::TEST):
+
 2019-05-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r245881.

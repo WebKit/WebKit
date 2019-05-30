@@ -86,6 +86,7 @@ Download::~Download()
 
 void Download::cancel()
 {
+    m_wasCanceled = true;
     if (m_download) {
         m_download->cancel();
         didCancel({ });
