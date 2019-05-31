@@ -31,7 +31,19 @@
 namespace WebCore {
 namespace Layout {
 
-Line::LineItem::LineItem(Display::Run inlineRun, const InlineItem& inlineItem, bool isCollapsed, bool canBeExtended)
+bool Line::Content::isVisuallyEmpty() const
+{
+    // Return true for empty inline containers like <span></span>.
+    for (auto& run : m_runs) {
+        if (run->inlineItem.isContainerStart() || run->inlineItem.isContainerEnd())
+            continue;
+        if (!run->isCollapsed)
+            return false;
+    }
+    return true;
+}
+
+Line::Content::Run::Run(Display::Run inlineRun, const InlineItem& inlineItem, bool isCollapsed, bool canBeExtended)
     : inlineRun(inlineRun)
     , inlineItem(inlineItem)
     , isCollapsed(isCollapsed)
@@ -52,19 +64,21 @@ void Line::reset(const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUn
 
     m_contentLogicalWidth = { };
 
-    m_lineItems.clear();
+    m_content = { };
+
     m_trimmableContent.clear();
 }
 
-const Line::LineItems& Line::close()
+const Line::Content& Line::close()
 {
     removeTrailingTrimmableContent();
     // Convert inline run geometry from relative to the baseline to relative to logical top.
-    for (auto& lineItem : m_lineItems) {
-        auto adjustedLogicalTop = lineItem->inlineRun.logicalTop() + m_logicalHeight.height + m_logicalTopLeft.y();
-        lineItem->inlineRun.setLogicalTop(adjustedLogicalTop);
+    for (auto& run : m_content.runs()) {
+        auto adjustedLogicalTop = run->inlineRun.logicalTop() + m_logicalHeight.height + m_logicalTopLeft.y();
+        run->inlineRun.setLogicalTop(adjustedLogicalTop);
     }
-    return m_lineItems;
+    m_content.setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
+    return m_content;
 }
 
 void Line::removeTrailingTrimmableContent()
@@ -86,8 +100,8 @@ void Line::moveLogicalLeft(LayoutUnit delta)
     // Shrink the line and move the items.
     m_logicalTopLeft.move(delta, 0);
     m_lineLogicalWidth -= delta;
-    for (auto& lineItem : m_lineItems)
-        lineItem->inlineRun.moveHorizontally(delta);
+    for (auto& run : m_content.runs())
+        run->inlineRun.moveHorizontally(delta);
 }
 
 void Line::moveLogicalRight(LayoutUnit delta)
@@ -104,23 +118,9 @@ LayoutUnit Line::trailingTrimmableWidth() const
     return trimmableWidth;
 }
 
-bool Line::hasContent() const
-{
-    // Return false for empty containers like <span></span>.
-    if (m_lineItems.isEmpty())
-        return false;
-    for (auto& lineItem : m_lineItems) {
-        if (lineItem->inlineItem.isContainerStart() || lineItem->inlineItem.isContainerEnd())
-            continue;
-        if (!lineItem->isCollapsed)
-            return true;
-    }
-    return false;
-}
-
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
-    m_lineItems.append(std::make_unique<LineItem>(Display::Run { logicalRect }, inlineItem, false, false));
+    m_content.runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
     m_contentLogicalWidth += inlineItem.width();
 }
 
@@ -165,11 +165,12 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSiz
         if (!isTrimmable)
             return false;
         // Leading whitespace.
-        if (m_lineItems.isEmpty())
+        auto& runs = m_content.runs();
+        if (runs.isEmpty())
             return true;
         // Check if the last item is trimmable as well.
-        for (int index = m_lineItems.size() - 1; index >= 0; --index) {
-            auto& inlineItem = m_lineItems[index]->inlineItem;
+        for (int index = runs.size() - 1; index >= 0; --index) {
+            auto& inlineItem = runs[index]->inlineItem;
             if (inlineItem.isBox())
                 return false;
             if (inlineItem.isText())
@@ -186,11 +187,11 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSiz
     auto textContext = Display::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
     auto displayRun = Display::Run(logicalRect, textContext);
 
-    auto lineItem = std::make_unique<LineItem>(displayRun, inlineItem, isCompletelyCollapsed, canBeExtended);
+    auto lineItem = std::make_unique<Content::Run>(displayRun, inlineItem, isCompletelyCollapsed, canBeExtended);
     if (isTrimmable)
         m_trimmableContent.add(lineItem.get());
 
-    m_lineItems.append(WTFMove(lineItem));
+    m_content.runs().append(WTFMove(lineItem));
     m_contentLogicalWidth += isCompletelyCollapsed ? LayoutUnit() : runSize.width();
 }
 
@@ -218,7 +219,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutSize r
     auto horizontalMargin = displayBox.horizontalMargin();
     auto logicalRect = Display::Rect { logicalTop, contentLogicalRight() + horizontalMargin.start, runSize.width(), runSize.height() };
 
-    m_lineItems.append(std::make_unique<LineItem>(Display::Run { logicalRect }, inlineItem, false, false));
+    m_content.runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
     m_contentLogicalWidth += (runSize.width() + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
@@ -233,7 +234,7 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
 {
     auto ascent = inlineItem.layoutBox().style().fontMetrics().ascent();
     auto logicalRect = Display::Rect { -ascent, contentLogicalRight(), { }, logicalHeight() };
-    m_lineItems.append(std::make_unique<LineItem>(Display::Run { logicalRect }, inlineItem, false, false));
+    m_content.runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
 }
 
 Line::UsedHeightAndDepth Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)

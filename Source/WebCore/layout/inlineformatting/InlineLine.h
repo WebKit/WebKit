@@ -39,18 +39,40 @@ public:
 
     void reset(const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumLineHeight, LayoutUnit baselineOffset);
 
-    struct LineItem {
-        LineItem(Display::Run, const InlineItem&, bool isCollapsed, bool canBeExtended);
+    class Content {
+    public:
+        struct Run {
+            Run(Display::Run, const InlineItem&, bool isCollapsed, bool canBeExtended);
 
-        // Relative to the baseline.
-        Display::Run inlineRun;
-        const InlineItem& inlineItem;
-        bool isCollapsed { false };
-        bool canBeExtended { false };
+            // Relative to the baseline.
+            Display::Run inlineRun;
+            const InlineItem& inlineItem;
+            bool isCollapsed { false };
+            bool canBeExtended { false };
+        };
+        using Runs = Vector<std::unique_ptr<Run>>;
+        const Runs& runs() const { return m_runs; }
+        bool isEmpty() const { return m_runs.isEmpty(); }
+        // Not in painting sense though.
+        bool isVisuallyEmpty() const;
+
+        LayoutUnit logicalTop() const { return m_logicalRect.top(); }
+        LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
+        LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
+        LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
+        LayoutUnit logicalWidth() const { return m_logicalRect.width(); }
+        LayoutUnit logicalHeight() const { return m_logicalRect.height(); }
+
+    private:
+        friend class Line;
+
+        void setLogicalRect(const Display::Rect& logicalRect) { m_logicalRect = logicalRect; }
+        Runs& runs() { return m_runs; }
+
+        Display::Rect m_logicalRect;
+        Runs m_runs;
     };
-
-    using LineItems = Vector<std::unique_ptr<LineItem>>;
-    const LineItems& close();
+    const Content& close();
 
     void appendTextContent(const InlineTextItem&, LayoutSize);
     void appendNonReplacedInlineBox(const InlineItem&, LayoutSize);
@@ -59,7 +81,7 @@ public:
     void appendInlineContainerEnd(const InlineItem&);
     void appendHardLineBreak(const InlineItem&);
 
-    bool hasContent() const;
+    bool hasContent() const { return !m_content.isVisuallyEmpty(); }
 
     LayoutUnit trailingTrimmableWidth() const;
 
@@ -67,16 +89,9 @@ public:
     void moveLogicalRight(LayoutUnit);
 
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
-    
     LayoutUnit contentLogicalRight() const { return logicalLeft() + contentLogicalWidth(); }
-    LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-
     LayoutUnit logicalTop() const { return m_logicalTopLeft.y(); }
-    LayoutUnit logicalLeft() const { return m_logicalTopLeft.x(); }
-    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
     LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
-    LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    LayoutUnit logicalHeight() const { return m_logicalHeight.height + m_logicalHeight.depth; }
 
     struct UsedHeightAndDepth {
         LayoutUnit height;
@@ -85,12 +100,20 @@ public:
     static UsedHeightAndDepth halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
 private:
+    LayoutUnit logicalLeft() const { return m_logicalTopLeft.x(); }
+    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
+
+    LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
+    LayoutUnit logicalHeight() const { return m_logicalHeight.height + m_logicalHeight.depth; }
+
+    LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
+
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void removeTrailingTrimmableContent();
 
     const LayoutState& m_layoutState;
-    LineItems m_lineItems;
-    ListHashSet<LineItem*> m_trimmableContent;
+    Content m_content;
+    ListHashSet<Content::Run*> m_trimmableContent;
 
     LayoutPoint m_logicalTopLeft;
     LayoutUnit m_contentLogicalWidth;

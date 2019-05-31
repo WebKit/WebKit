@@ -216,10 +216,10 @@ LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUni
 
 void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
 {
-    auto& lineItems = line.close();
-    if (lineItems.isEmpty()) {
+    auto& lineContent = line.close();
+    if (lineContent.isEmpty()) {
         // Spec tells us to create a zero height, empty line box.
-        auto lineBox = Display::Rect { line.logicalTop(), line.logicalLeft(), 0 , 0 };
+        auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , 0 };
         m_formattingState.addLineBox({ lineBox });
         return;
     }
@@ -230,13 +230,14 @@ void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
     // A line box is always tall enough for all of the boxes it contains.
 
     // Ignore the initial strut.
-    auto lineBox = Display::Rect { line.logicalTop(), line.logicalLeft(), 0 , line.hasContent() ? line.logicalHeight() : LayoutUnit { } };
+    auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , !lineContent.isVisuallyEmpty() ? lineContent.logicalHeight() : LayoutUnit { } };
     // Create final display runs.
-    for (unsigned index = 0; index < lineItems.size(); ++index) {
-        auto& lineItem = lineItems.at(index);
+    auto& lineRuns = lineContent.runs();
+    for (unsigned index = 0; index < lineRuns.size(); ++index) {
+        auto& lineRun = lineRuns.at(index);
 
-        auto& inlineItem = lineItem->inlineItem;
-        auto& inlineRun = lineItem->inlineRun;
+        auto& inlineItem = lineRun->inlineItem;
+        auto& inlineRun = lineRun->inlineRun;
         auto& layoutBox = inlineItem.layoutBox();
         auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
@@ -284,11 +285,11 @@ void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
 
         // Text content. Try to join multiple text runs when possible.
         ASSERT(inlineRun.textContext());        
-        const Line::LineItem* previousLineItem = !index ? nullptr : lineItems[index - 1].get();
-        if (!lineItem->isCollapsed) {
+        const Line::Content::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
+        if (!lineRun->isCollapsed) {
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            auto previousRunCanBeExtended = previousLineItem ? previousLineItem->canBeExtended : false;
-            auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineItem->inlineItem.layoutBox();
+            auto previousRunCanBeExtended = previousLineRun ? previousLineRun->canBeExtended : false;
+            auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineRun->inlineItem.layoutBox();
             if (requiresNewRun)
                 m_formattingState.addInlineRun(std::make_unique<Display::Run>(inlineRun));
             else {
@@ -299,20 +300,20 @@ void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
             lineBox.expandHorizontally(inlineRun.logicalWidth());
         }
         // FIXME take content breaking into account when part of the layout box is on the previous line.
-        auto firstInlineRunForLayoutBox = !previousLineItem || &previousLineItem->inlineItem.layoutBox() != &layoutBox;
+        auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->inlineItem.layoutBox() != &layoutBox;
         if (firstInlineRunForLayoutBox) {
             // Setup display box for the associated layout box.
             displayBox.setTopLeft(inlineRun.logicalTopLeft());
-            displayBox.setContentBoxWidth(lineItem->isCollapsed ? LayoutUnit() : inlineRun.logicalWidth());
+            displayBox.setContentBoxWidth(lineRun->isCollapsed ? LayoutUnit() : inlineRun.logicalWidth());
             displayBox.setContentBoxHeight(inlineRun.logicalHeight());
-        } else if (!lineItem->isCollapsed) {
+        } else if (!lineRun->isCollapsed) {
             // FIXME fix it for multirun/multiline.
             displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + inlineRun.logicalWidth());
         }
     }
     // FIXME linebox needs to be ajusted after content alignment.
     m_formattingState.addLineBox({ lineBox });
-    if (line.hasContent())
+    if (!lineContent.isVisuallyEmpty())
         alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, line.availableWidth());
 }
 
