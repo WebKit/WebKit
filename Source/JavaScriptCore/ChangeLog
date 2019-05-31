@@ -1,3 +1,68 @@
+2019-05-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r243237. rdar://problem/51264876
+
+    JSC test crash: stress/dont-strength-reduce-regexp-with-compile-error.js.default
+    https://bugs.webkit.org/show_bug.cgi?id=195906
+    
+    Reviewed by Mark Lam.
+    
+    The problem here as that we may successfully parsed a RegExp without running out of stack,
+    but later run out of stack when trying to JIT compile the same expression.
+    
+    Added a check for available stack space when we call into one of the parenthesis compilation
+    functions that recurse.  When we don't have enough stack space to recurse, we fail the JIT
+    compilation and let the interpreter handle the expression.
+    
+    From code inspection of the YARR interpreter it has the same issue, but I couldn't cause a failure.
+    Filed a new bug and added a FIXME comment for the Interpreter to have similar checks.
+    Given that we can reproduce a failure, this is sufficient for now.
+    
+    This change is covered by the previously added failing test,
+    JSTests/stress/dont-strength-reduce-regexp-with-compile-error.js.
+    
+    * yarr/YarrInterpreter.cpp:
+    (JSC::Yarr::Interpreter::interpret):
+    * yarr/YarrJIT.cpp:
+    (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+    (JSC::Yarr::YarrGenerator::opCompileParentheticalAssertion):
+    (JSC::Yarr::YarrGenerator::opCompileBody):
+    (JSC::Yarr::dumpCompileFailure):
+    * yarr/YarrJIT.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243237 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-20  Michael Saboff  <msaboff@apple.com>
+
+            JSC test crash: stress/dont-strength-reduce-regexp-with-compile-error.js.default
+            https://bugs.webkit.org/show_bug.cgi?id=195906
+
+            Reviewed by Mark Lam.
+
+            The problem here as that we may successfully parsed a RegExp without running out of stack,
+            but later run out of stack when trying to JIT compile the same expression.
+
+            Added a check for available stack space when we call into one of the parenthesis compilation
+            functions that recurse.  When we don't have enough stack space to recurse, we fail the JIT
+            compilation and let the interpreter handle the expression.
+
+            From code inspection of the YARR interpreter it has the same issue, but I couldn't cause a failure.
+            Filed a new bug and added a FIXME comment for the Interpreter to have similar checks.
+            Given that we can reproduce a failure, this is sufficient for now.
+
+            This change is covered by the previously added failing test,
+            JSTests/stress/dont-strength-reduce-regexp-with-compile-error.js.
+
+            * yarr/YarrInterpreter.cpp:
+            (JSC::Yarr::Interpreter::interpret):
+            * yarr/YarrJIT.cpp:
+            (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+            (JSC::Yarr::YarrGenerator::opCompileParentheticalAssertion):
+            (JSC::Yarr::YarrGenerator::opCompileBody):
+            (JSC::Yarr::dumpCompileFailure):
+            * yarr/YarrJIT.h:
+
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245593. rdar://problem/51264876

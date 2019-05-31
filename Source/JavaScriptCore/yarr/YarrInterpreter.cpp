@@ -1608,6 +1608,8 @@ public:
 
     unsigned interpret()
     {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195970
+        // [Yarr Interpreter] The interpreter doesn't have checks for stack overflow due to deep recursion
         if (!input.isAvailableInput(0))
             return offsetNoMatch;
 
