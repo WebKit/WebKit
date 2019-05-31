@@ -66,6 +66,7 @@ private:
     bool paint(cairo_t*, const WebCore::IntRect&) override;
     bool makeContextCurrent() override;
 #if USE(WPE_RENDERER)
+    void update(const LayerTreeContext&) override;
     int renderHostFileDescriptor() override;
 #endif
 
@@ -78,6 +79,7 @@ private:
 
 #if USE(WPE_RENDERER)
     struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
+    uint64_t m_surfaceID { 0 };
     unsigned m_viewTexture { 0 };
     struct wpe_fdo_egl_exported_image* m_committedImage { nullptr };
     struct wpe_fdo_egl_exported_image* m_pendingImage { nullptr };

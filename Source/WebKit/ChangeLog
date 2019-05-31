@@ -1,5 +1,23 @@
 2019-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WPERenderer: ensure we complete the last frame when leaving AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=198372
+
+        Reviewed by Michael Catanzaro.
+
+        It can happen that we leave AC mode after a new image is received from the web process but before it's
+        committed. It can also happen that we receive a new image from the web process right after we have left AC
+        mode. In both cases we need to complete the frame to ensure we don't leave the wayland compositor waiting
+        forever for a frame to be completed.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::update): Complete any pending image when a new surface is used.
+        (WebKit::AcceleratedBackingStoreWayland::displayBuffer): Complete the given image and return early if we already
+        left AC mode.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+
+2019-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [CoordinatedGraphics] WPERenderer: do not release the host file descritor when initializing the render target
         https://bugs.webkit.org/show_bug.cgi?id=198371
 

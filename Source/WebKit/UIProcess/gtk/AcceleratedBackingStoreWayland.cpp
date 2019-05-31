@@ -28,6 +28,7 @@
 
 #if PLATFORM(WAYLAND) && USE(EGL)
 
+#include "LayerTreeContext.h"
 #include "WebPageProxy.h"
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and eglplatform.h, included by egl.h, checks that to decide whether it's Wayland platform.
@@ -181,6 +182,19 @@ bool AcceleratedBackingStoreWayland::makeContextCurrent()
 }
 
 #if USE(WPE_RENDERER)
+void AcceleratedBackingStoreWayland::update(const LayerTreeContext& context)
+{
+    if (m_surfaceID == context.contextID)
+        return;
+
+    m_surfaceID = context.contextID;
+    if (m_pendingImage) {
+        wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_pendingImage);
+        m_pendingImage = nullptr;
+    }
+}
+
 int AcceleratedBackingStoreWayland::renderHostFileDescriptor()
 {
     return wpe_view_backend_get_renderer_host_fd(wpe_view_backend_exportable_fdo_get_view_backend(m_exportable));
@@ -188,6 +202,12 @@ int AcceleratedBackingStoreWayland::renderHostFileDescriptor()
 
 void AcceleratedBackingStoreWayland::displayBuffer(struct wpe_fdo_egl_exported_image* image)
 {
+    if (!m_surfaceID) {
+        wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, image);
+        return;
+    }
+
     if (!m_viewTexture) {
         if (!makeContextCurrent())
             return;
