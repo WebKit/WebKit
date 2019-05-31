@@ -1,3 +1,19 @@
+2019-05-28  Dewei Zhu  <dewei_zhu@apple.com>
+
+        run-benchmark should report an error if the argument to --build-directory is bogus
+        https://bugs.webkit.org/show_bug.cgi?id=198316
+
+        Reviewed by Ryosuke Niwa.
+
+        'run-benchmark' should not fallback to system safari when browser or browser build path is
+        specified but not valid.
+        Add a run-time check to ensure at least one of the resource from build directory is opened by
+        Safari when build directory is specified.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url): Raise an exception when browser or browser build path is
+        specified but not valid.
+
 2019-05-31  Tim Horton  <timothy_horton@apple.com>
 
         Optionally respect device management restrictions when loading from the network
