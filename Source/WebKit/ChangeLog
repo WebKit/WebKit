@@ -1,5 +1,41 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Apply patch. rdar://problem/50857668
+
+    2019-05-30  Chris Dumez  <cdumez@apple.com>
+
+            TestWebKitAPI.ProcessSwap.UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession is failing on safari-607-branch
+            <rdar://problem/49980530>
+
+            Reviewed by Brady Eidson.
+
+            On the safari-607-branch banch, we need to send a WebProcess::AddWebsiteDataStore() IPC to the WebContent
+            process before it does any load for a non-default data store. If we fail to do so then the WebContent
+            process will fall back to using the default session for the loads.
+
+            This is what was happening for this API test. The cookie was getting set for session 2 but then it
+            would later try to read the cookie from session 1 (default one) after the process swap, and would
+            thus fail to get the cookie it expected.
+
+            The issue was that we would send the WebProcess::AddWebsiteDataStore() IPC too late, when committing
+            the provisional process (in WebPageProxy::swapToWebProcess()). By this point, the provisional load
+            would have already started in the provisional process and used the wrong session. To address the issue,
+            we now send the WebProcess::AddWebsiteDataStore() IPC as soon as we create the ProvisionalPageProxy.
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::sendPageDataStore):
+            (WebKit::WebProcessProxy::addProvisionalPageProxy):
+            (WebKit::WebProcessProxy::removeProvisionalPageProxy):
+            (WebKit::WebProcessProxy::addExistingWebPage):
+            (WebKit::WebProcessProxy::removeWebPage):
+            (WebKit::WebProcessProxy::destroyDataStoreIfUnused):
+            (WebKit::WebProcessProxy::hasPageUsingSession const):
+            * UIProcess/WebProcessProxy.h:
+            (WebKit::WebProcessProxy::addProvisionalPageProxy): Deleted.
+            (WebKit::WebProcessProxy::removeProvisionalPageProxy): Deleted.
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245284. rdar://problem/51264857
 
     Protect current WebFrame during form submission
