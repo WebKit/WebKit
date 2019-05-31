@@ -139,6 +139,7 @@ endif ()
 # By default, only the highest-level libraries, WebKitLegacy and WebKit, are
 # shared, because properly building shared libraries that depend on each other
 # can be tricky. Override these in Options*.cmake for your port as needed.
+set(bmalloc_LIBRARY_TYPE STATIC)
 set(WTF_LIBRARY_TYPE STATIC)
 set(JavaScriptCore_LIBRARY_TYPE STATIC)
 set(PAL_LIBRARY_TYPE STATIC)

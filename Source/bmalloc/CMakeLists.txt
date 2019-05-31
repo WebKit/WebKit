@@ -141,30 +141,27 @@ set(bmalloc_LIBRARIES
     ${CMAKE_DL_LIBS}
 )
 
+set(bmalloc_INTERFACE_LIBRARIES bmalloc)
+set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
+set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
+
+set(mbmalloc_LIBRARIES bmalloc)
+
+WEBKIT_FRAMEWORK_DECLARE(bmalloc)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
-WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
-
-add_library(bmalloc STATIC ${bmalloc_SOURCES})
-target_include_directories(bmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
-target_include_directories(bmalloc INTERFACE "$<BUILD_INTERFACE:${bmalloc_FRAMEWORK_HEADERS_DIR}>")
-target_link_libraries(bmalloc ${bmalloc_LIBRARIES})
-set_target_properties(bmalloc PROPERTIES COMPILE_DEFINITIONS "BUILDING_bmalloc")
 
 WEBKIT_COPY_FILES(bmalloc_CopyHeaders
     DESTINATION ${bmalloc_FRAMEWORK_HEADERS_DIR}
     FILES ${bmalloc_PUBLIC_HEADERS}
 )
 
-add_library(bmalloc_PostBuild INTERFACE)
-target_link_libraries(bmalloc_PostBuild INTERFACE bmalloc)
-add_dependencies(bmalloc_PostBuild bmalloc_CopyHeaders)
-
-add_library(WebKit::bmalloc ALIAS bmalloc_PostBuild)
+WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
+WEBKIT_FRAMEWORK(bmalloc)
+WEBKIT_FRAMEWORK_TARGET(bmalloc)
 
 if (DEVELOPER_MODE)
     add_library(mbmalloc SHARED bmalloc/mbmalloc.cpp)
     target_include_directories(mbmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
-    target_link_libraries(mbmalloc bmalloc ${CMAKE_THREAD_LIBS_INIT} ${bmalloc_LIBRARIES})
+    target_link_libraries(mbmalloc ${CMAKE_THREAD_LIBS_INIT} ${mbmalloc_LIBRARIES} ${bmalloc_LIBRARIES})
     set_target_properties(mbmalloc PROPERTIES COMPILE_DEFINITIONS "BUILDING_mbmalloc")
 endif ()
