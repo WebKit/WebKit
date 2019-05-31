@@ -3394,6 +3394,7 @@ legacy-animation-engine/animations/animation-delay-changed.html [ Skip ]
 js/dom/create-lots-of-workers.html [ Crash ]
 # Timeouts tracked in webkit.org/b/160447.
 accessibility/set-selected-text-range-contenteditable.html [ Skip ]
+accessibility/set-selected-text-range-after-newline.html [ Skip ]
 crypto/crypto-key-algorithm-gc.html [ Skip ]
 crypto/crypto-key-usages-gc.html [ Skip ]
 editing/deleting/delete-emoji.html [ Skip ]

@@ -2742,8 +2742,6 @@ IGNORE_WARNINGS_END
         }
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]) {
             PlainTextRange textRange = m_object->selectedTextRange();
-            if (textRange.isNull())
-                return [NSValue valueWithRange:NSMakeRange(0, 0)];
             return [NSValue valueWithRange:NSMakeRange(textRange.start, textRange.length)];
         }
         // TODO: Get actual visible range. <rdar://problem/4712101>

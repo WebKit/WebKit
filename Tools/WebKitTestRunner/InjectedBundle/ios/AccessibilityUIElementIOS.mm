@@ -55,6 +55,9 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)selectionRangeString;
 - (CGPoint)accessibilityClickPoint;
 - (void)accessibilityModifySelection:(WebCore::TextGranularity)granularity increase:(BOOL)increase;
+- (NSRange)_accessibilitySelectedTextRange;
+- (void)_accessibilitySetSelectedTextRange:(NSRange)range;
+- (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string;
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
 - (CGFloat)_accessibilityMinValue;
 - (CGFloat)_accessibilityMaxValue;
@@ -836,7 +839,9 @@ void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int w
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
 {
-    return createEmptyJSString();
+    NSRange range = [m_element _accessibilitySelectedTextRange];
+    NSMutableString *rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+    return [rangeDescription createJSStringRef];
 }
 
 bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
@@ -846,7 +851,8 @@ bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarker
 
 bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
-    return false;
+    [m_element _accessibilitySetSelectedTextRange:NSMakeRange(location, length)];
+    return true;
 }
 
 void AccessibilityUIElement::increment()
@@ -1145,9 +1151,9 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds
     return nullptr;
 }
     
-bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+bool AccessibilityUIElement::replaceTextInRange(JSStringRef string, int location, int length)
 {
-    return false;
+    return [m_element accessibilityReplaceRange:NSMakeRange(location, length) withText:[NSString stringWithJSStringRef:string]];
 }
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)

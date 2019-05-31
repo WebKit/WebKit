@@ -1621,9 +1621,10 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         textControl.setSelectionRange(range.start, range.start + range.length);
     } else {
-        ASSERT(node());
-        VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(*node(), range.start);
-        VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(*node(), range.start + range.length);
+        auto node = this->node();
+        ASSERT(node);
+        VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(*node, range.start);
+        VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(*node, range.start + range.length);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
     

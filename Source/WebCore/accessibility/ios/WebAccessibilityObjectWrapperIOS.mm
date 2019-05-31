@@ -2497,11 +2497,13 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [self _stringFromStartMarker:startMarker toEndMarker:endMarker attributed:attributed];
 }
 
-
-// A convenience method for getting the text of a NSRange. Currently used only by DRT.
+// A convenience method for getting the text of a NSRange.
 - (NSString *)stringForRange:(NSRange)range
 {
-    return [self _stringForRange:range attributed:NO];
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    return m_object->stringForRange([self _convertToDOMRange:range]);
 }
 
 - (NSAttributedString *)attributedStringForRange:(NSRange)range
@@ -2525,11 +2527,11 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     if (![self _prepareAccessibilityCall] || !m_object->isTextControl())
         return NSMakeRange(NSNotFound, 0);
-    
+
     PlainTextRange textRange = m_object->selectedTextRange();
     if (textRange.isNull())
         return NSMakeRange(NSNotFound, 0);
-    return NSMakeRange(textRange.start, textRange.length);    
+    return NSMakeRange(textRange.start, textRange.length);
 }
 
 - (void)_accessibilitySetSelectedTextRange:(NSRange)range
@@ -2538,6 +2540,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return;
     
     m_object->setSelectedTextRange(PlainTextRange(range.location, range.length));
+}
+
+- (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return m_object->replaceTextInRange(string, PlainTextRange(range));
 }
 
 // A convenience method for getting the accessibility objects of a NSRange. Currently used only by DRT.

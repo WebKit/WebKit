@@ -1,3 +1,19 @@
+2019-05-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Inserting a newline in contenteditable causes two characters to be added instead of one
+        https://bugs.webkit.org/show_bug.cgi?id=197894
+        <rdar://problem/49700998>
+
+        Reviewed by Wenson Hsieh and Chris Fleizach.
+
+        iOS implementation of several AccessibilityUIElement methods to execute
+        LayoutTests.
+ 
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::setSelectedTextRange):
+        (WTR::AccessibilityUIElement::replaceTextInRange):
+
 2019-05-30  Keith Miller  <keith_miller@apple.com>
 
         IsoHeaps don't notice uncommitted VA becoming the first eligible.

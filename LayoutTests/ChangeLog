@@ -1,3 +1,18 @@
+2019-05-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Inserting a newline in contenteditable causes two characters to be added instead of one
+        https://bugs.webkit.org/show_bug.cgi?id=197894
+        <rdar://problem/49700998>
+
+        Reviewed by Wenson Hsieh and Chris Fleizach.
+
+        * accessibility/ios-simulator/set-selected-text-range-after-newline-expected.txt: Added.
+        * accessibility/ios-simulator/set-selected-text-range-after-newline.html: Added.
+        * accessibility/ios-simulator/text-marker-list-item-expected.txt:
+        * accessibility/set-selected-text-range-after-newline-expected.txt: Added.
+        * accessibility/set-selected-text-range-after-newline.html: Added.
+        * platform/win/TestExpectations:
+
 2019-05-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: tests are unable to get the current Audit version
