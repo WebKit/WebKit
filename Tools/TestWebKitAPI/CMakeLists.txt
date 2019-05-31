@@ -102,15 +102,12 @@ set(TestWTF_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${TESTWEBKITAPI_DIR}
     ${THIRDPARTY_DIR}/gtest/include
-    ${WTF_FRAMEWORK_HEADERS_DIR}
 )
 
 set(TestWTF_LIBRARIES
-    WTF
+    WebKit::WTF
     gtest
 )
-
-set(TestWTF_DEPENDENCIES WTFFrameworkHeaders)
 
 WEBKIT_EXECUTABLE_DECLARE(TestWTF)
 
@@ -156,7 +153,6 @@ if (ENABLE_WEBCORE)
         ${THIRDPARTY_DIR}/gtest/include
         ${PAL_FRAMEWORK_HEADERS_DIR}
         ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-        ${WTF_FRAMEWORK_HEADERS_DIR}
     )
 
     set(TestWebCore_DEPENDENCIES WebCorePrivateFrameworkHeaders)
@@ -181,7 +177,6 @@ if (ENABLE_WEBKIT_LEGACY)
         ${THIRDPARTY_DIR}/gtest/include
         ${PAL_FRAMEWORK_HEADERS_DIR}
         ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-        ${WTF_FRAMEWORK_HEADERS_DIR}
         ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
     )
 
@@ -253,7 +248,6 @@ if (ENABLE_WEBKIT)
         ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
         ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
         ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-        ${WTF_FRAMEWORK_HEADERS_DIR}
         ${WebKit_FRAMEWORK_HEADERS_DIR}
     )
 

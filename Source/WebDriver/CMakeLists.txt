@@ -6,7 +6,6 @@ set(WebDriver_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WEBDRIVER_DIR}"
     "${DERIVED_SOURCES_WEBDRIVER_DIR}"
-    "${WTF_FRAMEWORK_HEADERS_DIR}"
 )
 
 set(WebDriver_SOURCES
@@ -19,7 +18,7 @@ set(WebDriver_SOURCES
 )
 
 set(WebDriver_LIBRARIES
-    WTF
+    WebKit::WTF
 )
 
 set(WebDriver_SCRIPTS

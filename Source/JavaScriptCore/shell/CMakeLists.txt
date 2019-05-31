@@ -8,8 +8,7 @@ endif ()
 
 set(jsc_LIBRARIES
     ${CMAKE_DL_LIBS}
-    JavaScriptCore${DEBUG_SUFFIX}
-    WTF${DEBUG_SUFFIX}
+    JavaScriptCore
 )
 
 set(jsc_PRIVATE_INCLUDE_DIRECTORIES

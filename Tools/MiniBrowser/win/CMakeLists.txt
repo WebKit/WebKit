@@ -1,5 +1,4 @@
 set(MiniBrowser_INCLUDE_DIRECTORIES
-    ${WTF_FRAMEWORK_HEADERS_DIR}
     ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
     ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     ${PAL_FRAMEWORK_HEADERS_DIR}
@@ -28,7 +27,7 @@ set(MiniBrowser_SOURCES
 
 set(MiniBrowser_LIBRARIES
     DbgHelp
-    WTF
+    WebKit::WTF
     WebKitLegacy
     WebKitLegacyGUID
     comctl32

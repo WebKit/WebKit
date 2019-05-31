@@ -1,3 +1,14 @@
+2019-05-31  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WTF target
+        https://bugs.webkit.org/show_bug.cgi?id=198400
+
+        Reviewed by Konstantin Tokarev.
+
+        Use the WebKit::WTF target.
+
+        * WebKitQuartzCoreAdditions/CMakeLists.txt:
+
 2019-05-30  Simon Fraser  <simon.fraser@apple.com>
 
         Use an OptionSet<> for GraphicsLayerPaintingPhase

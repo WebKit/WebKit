@@ -1,3 +1,22 @@
+2019-05-31  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WTF target
+        https://bugs.webkit.org/show_bug.cgi?id=198400
+
+        Reviewed by Konstantin Tokarev.
+
+        Use the WebKit::WTF target.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/PlatformWin.cmake:
+        * MiniBrowser/win/CMakeLists.txt:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * WebKitTestRunner/PlatformGTK.cmake:
+        * WebKitTestRunner/PlatformWin.cmake:
+
 2019-05-31  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (Safari 12): SafariForWebkitDevelopment won't load any pages on Mojave, nightly builds broken

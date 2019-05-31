@@ -7,7 +7,6 @@ list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
 )
 
 set(JavaScriptCore_INCLUDE_DIRECTORIES
-    "${WTF_FRAMEWORK_HEADERS_DIR}"
     "${JavaScriptCore_FRAMEWORK_HEADERS_DIR}"
 )
 
@@ -116,7 +115,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
 )
 
 set(JavaScriptCore_LIBRARIES
-    WTF${DEBUG_SUFFIX}
+    WebKit::WTF
 )
 
 if (USE_CAPSTONE)
@@ -290,9 +289,9 @@ add_executable(LLIntOffsetsExtractor
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
-target_link_libraries(LLIntSettingsExtractor WTF)
+target_link_libraries(LLIntSettingsExtractor WebKit::WTF)
 add_dependencies(LLIntSettingsExtractor JavaScriptCoreFrameworkHeaders)
-target_link_libraries(LLIntOffsetsExtractor WTF)
+target_link_libraries(LLIntOffsetsExtractor WebKit::WTF)
 add_dependencies(LLIntOffsetsExtractor JavaScriptCoreFrameworkHeaders)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than

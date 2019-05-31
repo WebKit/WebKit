@@ -68,7 +68,6 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
-    WTF
     WebKitLegacy
     shlwapi
 )

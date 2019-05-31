@@ -108,7 +108,7 @@ if (ENABLE_WEBKIT_LEGACY)
     list(APPEND TestWebKitLegacy_DEFINITIONS ${webcore_DEFINITIONS})
 
     list(APPEND TestWebKitLegacy_LIBRARIES
-        WTF
+        WebKit::WTF
     )
 
     list(APPEND TestWebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
