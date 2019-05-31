@@ -172,6 +172,7 @@ Shared/ios/NativeWebKeyboardEventIOS.mm
 Shared/ios/NativeWebMouseEventIOS.mm
 Shared/ios/NativeWebTouchEventIOS.mm
 Shared/ios/QuickLookDocumentData.cpp
+Shared/ios/WebAutocorrectionData.mm
 Shared/ios/WebIconUtilities.mm
 Shared/ios/WebIOSEventFactory.mm
 Shared/ios/WebPlatformTouchPointIOS.cpp

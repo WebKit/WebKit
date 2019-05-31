@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AutoCorrectionCallback_h
-#define AutoCorrectionCallback_h
+#import "config.h"
+#import "WebAutocorrectionData.h"
 
-#include "APIError.h"
-#include "GenericCallback.h"
-#include "WKAPICast.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+#if PLATFORM(IOS_FAMILY)
+
+#import "ArgumentCodersCocoa.h"
+#import "Decoder.h"
+#import "Encoder.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/FloatRect.h>
 
 namespace WebKit {
+using namespace WebCore;
 
-struct WebAutocorrectionContext;
+void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
+{
+    encoder << textRects;
+    IPC::encode(encoder, font.get());
+}
 
-typedef GenericCallback<const Vector<WebCore::FloatRect>&, const String&, double, uint64_t> AutocorrectionDataCallback;
-typedef GenericCallback<const WebAutocorrectionContext&> AutocorrectionContextCallback;
-typedef GenericCallback<const String&, const String&, const String&> SelectionContextCallback;
+Optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
+{
+    Optional<Vector<FloatRect>> textRects;
+    decoder >> textRects;
+    if (!textRects)
+        return WTF::nullopt;
+
+    RetainPtr<UIFont> font;
+    if (!IPC::decode(decoder, font, @[ UIFont.class ]))
+        return WTF::nullopt;
+
+    return {{ *textRects, font }};
+}
 
 } // namespace WebKit
 
-#endif // AutoCorrectionCallback_h
+#endif // PLATFORM(IOS_FAMILY)

@@ -83,6 +83,7 @@ WTF_EXTERN_C_END
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
 - (BOOL)_shouldSuppressSelectionCommands;
 - (NSDictionary *)_autofillContext;
+- (UIFont *)fontForCaretSelection;
 @end
 
 @interface UIWebFormAccessory : UIInputView
@@ -142,6 +143,15 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 @end
 
+@interface UIWKAutocorrectionRects : NSObject
+@property (nonatomic) CGRect firstRect;
+@property (nonatomic) CGRect lastRect;
+@end
+
+@protocol UIWKInteractionViewProtocol
+- (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
+@end
+
 #endif
 
 #if __has_include(<UIKit/UITextAutofillSuggestion.h>)
@@ -175,7 +185,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 + (BOOL)isInHardwareKeyboardMode;
 @end
 
-@protocol UIWKInteractionViewProtocol_Staging_49236384
+@protocol UIWKInteractionViewProtocol_Staging_49236384 <UIWKInteractionViewProtocol>
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 @end
 

@@ -181,9 +181,7 @@ struct WKSelectionDrawingInfo {
 WTF::TextStream& operator<<(WTF::TextStream&, const WKSelectionDrawingInfo&);
 
 struct WKAutoCorrectionData {
-    String fontName;
-    CGFloat fontSize;
-    uint64_t fontTraits;
+    RetainPtr<UIFont> font;
     CGRect textFirstRect;
     CGRect textLastRect;
 };

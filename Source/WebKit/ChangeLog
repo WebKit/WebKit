@@ -1,3 +1,61 @@
+2019-05-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Autocorrection menu font is Times New Roman when using font-family: UICTFontTextStyle*
+        https://bugs.webkit.org/show_bug.cgi?id=198427
+        <rdar://problem/50031825>
+
+        Reviewed by Tim Horton.
+
+        When UICTFontTextStyle* is specified as the font-family in an editable element, text in autocorrection bubbles
+        always uses Times New Roman font. This is because we send a font family name, font size, and font attributes to
+        the UI process when computing autocorrection data for UIKit, and then assemble this information into a UIFont
+        object via +[UIFont fontWithFamilyName:traits:size:]. However, in the case where UICTFontTextStyle* is specified
+        as the font-family in CSS, the font family that we send to the UI process ends up being ".AppleSystemUIFont",
+        which +fontWithFamilyName:traits:size: fails to map to the system font as intended.
+
+        To fix this, we propagate font information to the UI process by encoding the UIFont itself via IPC, which
+        serializes the font descriptor, and then deserializes into a UIFont in the UI process. This allows the system
+        font to be returned in -fontForCaretSelection, which is invoked by UIKit when determining the font for the
+        autocorrection bubble. See below for more details.
+
+        Test: AutocorrectionTests.FontAtCaretWhenUsingUICTFontTextStyle
+
+        * Shared/ios/WebAutocorrectionData.h: Copied from Source/WebKit/UIProcess/AutoCorrectionCallback.h.
+        * Shared/ios/WebAutocorrectionData.mm: Renamed from Source/WebKit/UIProcess/AutoCorrectionCallback.h.
+        (WebKit::WebAutocorrectionData::encode const):
+        (WebKit::WebAutocorrectionData::decode):
+
+        Introduce WebAutocorrectionData, a struct containing information used to show autocorrection UI on iOS (i.e.
+        highlights and the bubble). This consists of a list of rects, along with a UIFont.
+
+        * SourcesCocoa.txt:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Refactor requestAutocorrectionData to request a WebAutocorrectionData instead, and also use the new async IPC
+        reply mechanism.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKContentView fontForCaretSelection]):
+
+        Grab the UIFont directly from the WebAutocorrectionData. Also, address a FIXME by scaling the font size by the
+        content scale.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestAutocorrectionData):
+        (WebKit::WebPageProxy::autocorrectionDataCallback): Deleted.
+        (WebKit::WebPageProxy::autocorrectionContextCallback): Deleted.
+
+        Remove some IPC callbacks that are now unused.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAutocorrectionData):
+
 2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Reveal the focused element when it's immediately above software keyboard

@@ -65,6 +65,7 @@
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebAutocorrectionContext.h"
+#import "WebAutocorrectionData.h"
 #import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
@@ -3529,9 +3530,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    _page->requestAutocorrectionData(input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& rects, auto& fontName, double fontSize, uint64_t traits, auto) {
+    _page->requestAutocorrectionData(input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto data) {
         CGRect firstRect;
         CGRect lastRect;
+        auto& rects = data.textRects;
         if (rects.isEmpty()) {
             firstRect = CGRectZero;
             lastRect = CGRectZero;
@@ -3540,9 +3542,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             lastRect = rects.last();
         }
 
-        view->_autocorrectionData.fontName = fontName;
-        view->_autocorrectionData.fontSize = fontSize;
-        view->_autocorrectionData.fontTraits = traits;
+        view->_autocorrectionData.font = data.font;
         view->_autocorrectionData.textFirstRect = firstRect;
         view->_autocorrectionData.textLastRect = lastRect;
 
@@ -4900,11 +4900,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (UIFont *)fontForCaretSelection
 {
-    CGFloat zoomScale = 1.0;    // FIXME: retrieve the actual document scale factor.
-    CGFloat scaledSize = _autocorrectionData.fontSize;
-    if (CGFAbs(zoomScale - 1.0) > FLT_EPSILON)
-        scaledSize *= zoomScale;
-    return [UIFont fontWithFamilyName:_autocorrectionData.fontName traits:(UIFontTrait)_autocorrectionData.fontTraits size:scaledSize];
+    UIFont *font = _autocorrectionData.font.get();
+    double zoomScale = self._contentZoomScale;
+    return std::abs(zoomScale - 1) > FLT_EPSILON ? [font fontWithSize:font.pointSize * zoomScale] : font;
 }
 
 - (BOOL)hasSelection

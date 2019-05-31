@@ -1,3 +1,21 @@
+2019-05-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Autocorrection menu font is Times New Roman when using font-family: UICTFontTextStyle*
+        https://bugs.webkit.org/show_bug.cgi?id=198427
+        <rdar://problem/50031825>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that -fontForCaretSelection returns the system font when using UICTFontTextStyle
+        in an editable web view.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm: Added.
+        (-[TestWKWebView autocorrectionRectsForString:]):
+        (checkCGRectIsEqualToCGRectWithLogging):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-05-31  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: WebKit.InteractionDeadlockAfterCrash and SynchronousTimeoutTests.UnresponsivePageDoesNotCausePositionInformationToHangUI API tests are failing

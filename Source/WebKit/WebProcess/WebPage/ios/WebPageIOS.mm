@@ -50,6 +50,7 @@
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import "WebAutocorrectionContext.h"
+#import "WebAutocorrectionData.h"
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -2244,22 +2245,22 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
     frame.editor().setIgnoreSelectionChanges(false);
 }
 
-void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CallbackID callbackID)
+void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    auto& frame = m_page->focusController().focusedOrMainFrame();
     if (!frame.selection().isCaret()) {
-        send(Messages::WebPageProxy::AutocorrectionDataCallback(Vector<FloatRect>(), String(), 0, 0, callbackID));
+        reply({ });
         return;
     }
 
     VisiblePosition position = frame.selection().selection().start();
-    RefPtr<Range> range = wordRangeFromPosition(position);
+    auto range = wordRangeFromPosition(position);
     if (!range) {
-        send(Messages::WebPageProxy::AutocorrectionDataCallback(Vector<FloatRect>(), String(), 0, 0, callbackID));
+        reply({ });
         return;
     }
 
-    String textForRange = plainTextReplacingNoBreakSpace(range.get());
+    auto textForRange = plainTextReplacingNoBreakSpace(range.get());
     const unsigned maxSearchAttempts = 5;
     for (size_t i = 0;  i < maxSearchAttempts && textForRange != textForAutocorrection; ++i)
     {
@@ -2286,10 +2287,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Cal
     if (auto* coreFont = frame.editor().fontForSelection(multipleFonts))
         font = coreFont->getCTFont();
 
-    CGFloat fontSize = CTFontGetSize(font);
-    uint64_t fontTraits = CTFontGetSymbolicTraits(font);
-    RetainPtr<NSString> fontName = adoptNS((NSString *)CTFontCopyFamilyName(font));
-    send(Messages::WebPageProxy::AutocorrectionDataCallback(rectsForText, fontName.get(), fontSize, fontTraits, callbackID));
+    reply({ WTFMove(rectsForText), (__bridge UIFont *)font });
 }
 
 void WebPage::applyAutocorrection(const String& correction, const String& originalText, CallbackID callbackID)

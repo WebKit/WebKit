@@ -52,6 +52,7 @@
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebAutocorrectionContext.h"
+#import "WebAutocorrectionData.h"
 #import "WebPageMessages.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -160,17 +161,6 @@ void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touc
     callback->performCallbackWithReturnValue(point, touches, flags);
 }
 
-void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& rects, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<AutocorrectionDataCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(rects, fontName, fontSize, fontTraits);
-}
-
 void WebPageProxy::selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<SelectionContextCallback>(callbackID);
@@ -180,17 +170,6 @@ void WebPageProxy::selectionContextCallback(const String& selectedText, const St
     }
 
     callback->performCallbackWithReturnValue(selectedText, beforeText, afterText);
-}
-
-void WebPageProxy::autocorrectionContextCallback(const WebAutocorrectionContext& context, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<AutocorrectionContextCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(context);
 }
 
 void WebPageProxy::selectionRectsCallback(const Vector<WebCore::SelectionRect>& selectionRects, CallbackID callbackID)
@@ -464,15 +443,13 @@ void WebPageProxy::replaceSelectedText(const String& oldText, const String& newT
     m_process->send(Messages::WebPage::ReplaceSelectedText(oldText, newText), m_pageID);
 }
 
-void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, WTF::Function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& callback)
 {
     if (!hasRunningProcess()) {
-        callbackFunction(Vector<WebCore::FloatRect>(), String(), 0, 0, CallbackBase::Error::Unknown);
+        callback({ });
         return;
     }
-
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), WTFMove(callback), m_pageID);
 }
 
 void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)

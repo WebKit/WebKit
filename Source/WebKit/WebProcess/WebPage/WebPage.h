@@ -264,6 +264,7 @@ struct InteractionInformationRequest;
 struct LoadParameters;
 struct PrintInfo;
 struct TextInputContext;
+struct WebAutocorrectionData;
 struct WebAutocorrectionContext;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
@@ -657,7 +658,7 @@ public:
     void requestDictationContext(CallbackID);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
-    void requestAutocorrectionData(const String& textForAutocorrection, CallbackID);
+    void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply);
     void applyAutocorrection(const String& correction, const String& originalText, CallbackID);
     void syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&&);
     void requestAutocorrectionContext();

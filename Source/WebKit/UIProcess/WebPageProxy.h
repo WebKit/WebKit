@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include "AutoCorrectionCallback.h"
 #include "Connection.h"
 #include "ContextMenuContextData.h"
 #include "DownloadID.h"
@@ -291,6 +290,7 @@ struct LoadParameters;
 struct PlatformPopupMenuData;
 struct PrintInfo;
 struct TextInputContext;
+struct WebAutocorrectionData;
 struct WebPopupItem;
 struct URLSchemeTaskParameters;
 
@@ -307,6 +307,7 @@ typedef GenericCallback<EditingRange> EditingRangeCallback;
 typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<API::SerializedScriptValue*, bool, const WebCore::ExceptionDetails&> ScriptValueCallback;
 typedef GenericCallback<const WebCore::FontAttributes&> FontAttributesCallback;
+typedef GenericCallback<const String&, const String&, const String&> SelectionContextCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
@@ -678,7 +679,7 @@ public:
     void beginSelectionInDirection(WebCore::SelectionDirection, WTF::Function<void (uint64_t, CallbackBase::Error)>&&);
     void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
-    void requestAutocorrectionData(const String& textForAutocorrection, WTF::Function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>&&);
+    void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&&);
     void applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText);
     void requestAutocorrectionContext();
@@ -1869,8 +1870,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void gestureCallback(const WebCore::IntPoint&, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID);
     void touchesCallback(const WebCore::IntPoint&, uint32_t touches, uint32_t flags, CallbackID);
-    void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID);
-    void autocorrectionContextCallback(const WebAutocorrectionContext&, CallbackID);
     void selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
