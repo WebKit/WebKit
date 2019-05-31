@@ -191,6 +191,10 @@ void TestController::runModal(PlatformWebView* view)
 //    [[UIApplication sharedApplication] runModalForWindow:window];
 }
 
+void TestController::abortModal()
+{
+}
+
 const char* TestController::platformLibraryPathForTesting()
 {
     return [[@"~/Library/Application Support/WebKitTestRunner" stringByExpandingTildeInPath] UTF8String];

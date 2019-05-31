@@ -197,6 +197,11 @@ void TestController::runModal(PlatformWebView*)
     notImplemented();
 }
 
+void TestController::abortModal()
+{
+    notImplemented();
+}
+
 WKContextRef TestController::platformContext()
 {
     return m_context.get();

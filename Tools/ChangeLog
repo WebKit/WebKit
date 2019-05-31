@@ -1,3 +1,70 @@
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/50753927
+
+    Add test coverage for <rdar://problem/49731231> https://bugs.webkit.org/show_bug.cgi?id=196730 <rdar://problem/49731231>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Tools:
+    
+    Add support for testRunner.abortModal() in macOS's WebKitTestRunner in order
+    to match DumpRenderTree.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::abortModal):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::runModal):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+    * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+    (WTR::TestController::abortModal):
+    * WebKitTestRunner/ios/TestControllerIOS.mm:
+    (WTR::TestController::abortModal):
+    * WebKitTestRunner/mac/TestControllerMac.mm:
+    (WTR::TestController::abortModal):
+    * WebKitTestRunner/win/TestControllerWin.cpp:
+    (WTR::TestController::abortModal):
+    
+    LayoutTests:
+    
+    * http/tests/security/showModalDialog-sync-cross-origin-page-load-expected.txt: Added.
+    * http/tests/security/showModalDialog-sync-cross-origin-page-load.html: Added.
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@244898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-02  Chris Dumez  <cdumez@apple.com>
+
+            Add test coverage for <rdar://problem/49731231>
+            https://bugs.webkit.org/show_bug.cgi?id=196730
+            <rdar://problem/49731231>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add support for testRunner.abortModal() in macOS's WebKitTestRunner in order
+            to match DumpRenderTree.
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::abortModal):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::runModal):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+            * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+            (WTR::TestController::abortModal):
+            * WebKitTestRunner/ios/TestControllerIOS.mm:
+            (WTR::TestController::abortModal):
+            * WebKitTestRunner/mac/TestControllerMac.mm:
+            (WTR::TestController::abortModal):
+            * WebKitTestRunner/win/TestControllerWin.cpp:
+            (WTR::TestController::abortModal):
+
 2019-05-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r245880. rdar://problem/50625279

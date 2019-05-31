@@ -278,6 +278,8 @@ public:
     UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
 #endif
 
+    void abortModal();
+
     bool isDoingMediaCapture() const;
 
 private:
