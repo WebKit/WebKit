@@ -1211,6 +1211,9 @@ TEST_F(WTF_URLParser, ParserFailures)
     shouldFail("://:0/", "about:blank");
     shouldFail("about~");
     shouldFail("//C:asdf/foo/bar", "file:///tmp/mock/path");
+    shouldFail("wss://[c::]abc/");
+    shouldFail("abc://[c::]:abc/");
+    shouldFail("abc://[c::]01");
     shouldFail("http://[1234::ab#]");
     shouldFail("http://[1234::ab/]");
     shouldFail("http://[1234::ab?]");

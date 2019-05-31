@@ -2650,13 +2650,11 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             serializeIPv6(address.value());
             if (!ipv6End.atEnd()) {
                 advance(ipv6End);
-                if (!ipv6End.atEnd() && *ipv6End == ':') {
-                    m_url.m_hostEnd = currentPosition(ipv6End);
-                    return parsePort(ipv6End);
-                }
                 m_url.m_hostEnd = currentPosition(ipv6End);
+                if (!ipv6End.atEnd() && *ipv6End == ':')
+                    return parsePort(ipv6End);
                 m_url.m_portLength = 0;
-                return true;
+                return ipv6End.atEnd();
             }
             m_url.m_hostEnd = currentPosition(ipv6End);
             return true;

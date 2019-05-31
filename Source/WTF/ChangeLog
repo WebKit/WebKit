@@ -1,3 +1,16 @@
+2019-05-31  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser::parseHostAndPort should not allow non-port characters after an ipv6 host
+        https://bugs.webkit.org/show_bug.cgi?id=198428
+        <rdar://problem/51209196>
+
+        Reviewed by Tim Horton.
+
+        This matches Chrome and Firefox.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parseHostAndPort):
+
 2019-05-31  Tim Horton  <timothy_horton@apple.com>
 
         Optionally respect device management restrictions when loading from the network
