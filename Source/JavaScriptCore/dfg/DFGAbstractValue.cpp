@@ -344,7 +344,7 @@ void AbstractValue::filterValueByType()
     if (!m_value)
         return;
 
-    if (validateTypeAcceptingBoxedInt52(m_value))
+    if (validateType(m_value))
         return;
 
     // We assume that the constant value can produce a narrower type at
