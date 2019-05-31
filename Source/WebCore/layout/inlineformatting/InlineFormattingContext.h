@@ -58,9 +58,22 @@ private:
 
     private:
         LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-        std::unique_ptr<Line> createLine(LayoutUnit lineLogicalTop, LayoutUnit widthConstraint) const;
-        unsigned createInlineRunsForLine(Line&, unsigned firstInlineItemIndex) const;
-        void processInlineRuns(const Line::Content&, LayoutUnit availableWidth) const;
+
+        struct LineContent {
+            Optional<unsigned> lastInlineItemIndex;
+            std::unique_ptr<Line::Content> runs;
+        };
+
+        struct LineInput {
+            LineInput(LayoutUnit logicalTop, LayoutUnit availableLogicalWidth, unsigned firstInlineItemIndex, const InlineItems&);
+
+            LayoutUnit logicalTop;
+            LayoutUnit availableLogicalWidth;
+            unsigned firstInlineItemIndex { 0 };
+            const InlineItems& inlineItems;
+        };
+        LineContent placeInlineItems(const LineInput&) const;
+        void createDisplayRuns(const Line::Content&, LayoutUnit widthConstraint) const;
         void commitInlineItemToLine(Line&, const InlineItem&) const;
         void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
         void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;
