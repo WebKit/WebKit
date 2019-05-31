@@ -470,7 +470,7 @@ inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::u
     LayoutUnit logicalRight = m_renderer->logicalRightForFloat(floatingObject);
     if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
         ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(*m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
-        if (!shapeDeltas.lineOverlapsShape())
+        if (!shapeDeltas.isValid() || !shapeDeltas.lineOverlapsShape())
             return false;
 
         logicalRight += shapeDeltas.rightMarginBoxDelta();
@@ -489,7 +489,7 @@ inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::
     LayoutUnit logicalLeft = m_renderer->logicalLeftForFloat(floatingObject);
     if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
         ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(*m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
-        if (!shapeDeltas.lineOverlapsShape())
+        if (!shapeDeltas.isValid() || !shapeDeltas.lineOverlapsShape())
             return false;
 
         logicalLeft += shapeDeltas.leftMarginBoxDelta();

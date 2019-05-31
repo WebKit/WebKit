@@ -1,5 +1,54 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245361. rdar://problem/51264842
+
+    Do not create a shape object outside of the layout context
+    https://bugs.webkit.org/show_bug.cgi?id=197926
+    <rdar://problem/50627858>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    ShapeOutside objects are used to compute line constrains during layout (in a strict sense, they are part of the layout context and should only be mutated during layout).
+    If we don't create one during layout, we probably don't need to know its geometry during paint (or any other non-layout activity) either.
+    
+    Test: fast/block/float/float-with-shape-outside-crash.html
+    
+    * rendering/FloatingObjects.cpp:
+    (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded):
+    (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded):
+    * rendering/shapes/ShapeOutsideInfo.cpp:
+    (WebCore::ShapeOutsideInfo::computeDeltasForContainingBlockLine):
+    
+    LayoutTests:
+    
+    * fast/block/float/float-with-shape-outside-crash-expected.txt: Added.
+    * fast/block/float/float-with-shape-outside-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245361 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-15  Zalan Bujtas  <zalan@apple.com>
+
+            Do not create a shape object outside of the layout context
+            https://bugs.webkit.org/show_bug.cgi?id=197926
+            <rdar://problem/50627858>
+
+            Reviewed by Simon Fraser.
+
+            ShapeOutside objects are used to compute line constrains during layout (in a strict sense, they are part of the layout context and should only be mutated during layout).
+            If we don't create one during layout, we probably don't need to know its geometry during paint (or any other non-layout activity) either.
+
+            Test: fast/block/float/float-with-shape-outside-crash.html
+
+            * rendering/FloatingObjects.cpp:
+            (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded):
+            (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded):
+            * rendering/shapes/ShapeOutsideInfo.cpp:
+            (WebCore::ShapeOutsideInfo::computeDeltasForContainingBlockLine):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245300. rdar://problem/51264763
 
     Do not try to issue repaint while the render tree is being destroyed.
