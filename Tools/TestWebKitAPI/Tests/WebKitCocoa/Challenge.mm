@@ -33,7 +33,7 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && WK_API_ENABLED
 
 static std::pair<RetainPtr<NSURLCredential>, RetainPtr<NSString>> credentialWithIdentityAndKeychainPath()
 {

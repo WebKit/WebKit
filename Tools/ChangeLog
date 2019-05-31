@@ -1,3 +1,11 @@
+2019-05-31  Alex Christensen  <achristensen@webkit.org>
+
+        Fix i386 build on safari-607-branch
+        <rdar://problem/50625279>
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        We need to check WK_API_ENABLED on the branch.
+
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/50753927
