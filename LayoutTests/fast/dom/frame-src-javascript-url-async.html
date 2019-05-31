@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks that setting an iframe's src attribute to a javascript URL runs the javascript asynchronously");
+jsTestIsAsync = true;
+
+let messages = "";
+const expectedMessageCount = 4;
+function log(msg)
+{
+    messages += msg;
+    if (messages.length == expectedMessageCount) {
+        shouldBeEqualToString("messages", "1234");
+        shouldBe("frame1.contentWindow", "initialFrame1Window");
+        shouldBe("frame1.contentDocument", "initialFrame1Document");
+        shouldBe("frame2.contentWindow", "initialFrame2Window");
+        shouldBe("frame2.contentDocument", "initialFrame2Document");
+        shouldBe("frame3.contentWindow", "initialFrame3Window");
+        // Firefox 66 and Chrome 74 disagree here, we match Chrome.
+        shouldNotBe("frame3.contentDocument", "initialFrame3Document");
+        setTimeout(() => {
+            shouldBe("frame3.contentWindow", "initialFrame3Window");
+            shouldNotBe("frame3.contentDocument", "initialFrame3Document");
+            shouldBeEqualToString("frame3.contentDocument.documentElement.textContent", "1");
+            finishJSTest();
+        }), 0;
+    }
+}
+</script>
+<iframe id="frame1" src="javascript:parent.log('3')"></iframe>
+<iframe id="frame2"></iframe>
+<iframe id="frame3" src="javascript:'1'"></iframe>
+<script>
+frame1 = document.getElementById("frame1");
+frame2 = document.getElementById("frame2");
+frame3 = document.getElementById("frame3");
+initialFrame1Window = frame1.contentWindow;
+initialFrame1Document = frame1.contentDocument;
+initialFrame2Window = frame2.contentWindow;
+initialFrame2Document = frame2.contentDocument;
+initialFrame3Window = frame3.contentWindow;
+initialFrame3Document = frame3.contentDocument;
+log('1');
+frame2.src = "javascript:parent.log('4')";
+shouldBe("frame2.contentWindow", "initialFrame2Window");
+shouldBe("frame2.contentDocument", "initialFrame2Document");
+log('2');
+</script>
+</body>
+</html>

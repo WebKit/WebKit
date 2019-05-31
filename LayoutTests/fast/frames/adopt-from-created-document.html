@@ -8,10 +8,10 @@ var doc = document.implementation.createDocument('http://www.w3.org/1999/xhtml',
 alert(2);
 var ifr = doc.createElement('iframe');
 alert(3);
-ifr.setAttribute('src', 'javascript:alert(6)');
+ifr.setAttribute('src', 'javascript:alert(7)');
 alert(4);
 var adopted = document.adoptNode(ifr)
 alert(5);
 document.body.appendChild(adopted);
-alert(7);
+alert(6);
 </script>

@@ -20,9 +20,12 @@ try {
 }
 shouldBeFalse('caughtException');
 
+var subframe2 = document.createElement("iframe");
+document.body.appendChild(subframe2);
+
 // Compile-time exception.
 try {
-    subframe.src = 'javascript:<html></html>';
+    subframe2.src = 'javascript:<html></html>';
 } catch(e) {
     caughtException = true;
 }

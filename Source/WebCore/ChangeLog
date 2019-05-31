@@ -1,3 +1,110 @@
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r244892. rdar://problem/50753927
+
+    Setting a frame's src to a javascript URL should not run it synchronously
+    https://bugs.webkit.org/show_bug.cgi?id=197466
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    When an iframe's src attribute is set to a javascript URL, whether when parsing
+    or later on via JS, we now execute the URL's JavaScript asynchronously. We used
+    to execute it synchronously, which was a source of bugs and also did not match
+    other browsers.
+    
+    I have verified that our new behavior is aligned with both Firefox and Chrome.
+    
+    Note that for backward-compatibility and interoperability with Blink
+    (https://bugs.chromium.org/p/chromium/issues/detail?id=923585), the
+    "javascript:''" URL will still run synchronously. We should consider dropping
+    this quirk at some point.
+    
+    Test: fast/dom/frame-src-javascript-url-async.html
+    
+    * loader/NavigationScheduler.cpp:
+    (WebCore::ScheduledLocationChange::ScheduledLocationChange):
+    (WebCore::ScheduledLocationChange::~ScheduledLocationChange):
+    (WebCore::NavigationScheduler::scheduleLocationChange):
+    * loader/NavigationScheduler.h:
+    (WebCore::NavigationScheduler::scheduleLocationChange):
+    * loader/SubframeLoader.cpp:
+    (WebCore::SubframeLoader::requestFrame):
+    
+    LayoutTests:
+    
+    * fast/dom/frame-src-javascript-url-async-expected.txt: Added.
+    * fast/dom/frame-src-javascript-url-async.html: Added.
+    Add layout test coverage for the fact that the javascript URL is executed asynchronously
+    whether set during parsing or later via JS. Also makes sure that executing the javascript
+    URL asynchronously does not replace the frame's window. This test passes in both Chrome
+    and Firefox.
+    
+    * imported/blink/fast/frames/navigation-in-pagehide.html:
+    Re-sync this test from the Blink repository.
+    
+    * fast/dom/Element/id-in-frameset-expected.txt:
+    * fast/dom/Element/id-in-frameset.html:
+    * fast/dom/insertedIntoDocument-iframe-expected.txt:
+    * fast/dom/javascript-url-exception-isolation-expected.txt:
+    * fast/dom/javascript-url-exception-isolation.html:
+    * fast/dom/no-assert-for-malformed-js-url-attribute-expected.txt:
+    * fast/dom/resources/javascript-url-crash-function-iframe.html:
+    * fast/frames/adopt-from-created-document.html:
+    * fast/frames/out-of-document-iframe-has-child-frame.html:
+    * fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html:
+    * fast/loader/javascript-url-iframe-remove-on-navigate.html:
+    * fast/loader/unload-mutation-crash.html:
+    * fast/parser/resources/set-parent-to-javascript-url.html:
+    * fast/parser/xml-error-adopted.xml:
+    * http/tests/navigation/lockedhistory-iframe-expected.txt:
+    * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-allowed-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+    * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html:
+    * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html:
+    * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-from-javscript-url.html:
+    * imported/blink/loader/iframe-sync-loads-expected.txt:
+    * js/dom/call-base-resolution.html:
+    * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe-expected.txt:
+    Update / Rebaseline existing tests to reflect behavior change. I ran those tests in Firefox and Chrome to confirm that our behavior
+    is indeed aligned.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244892 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-02  Chris Dumez  <cdumez@apple.com>
+
+            Setting a frame's src to a javascript URL should not run it synchronously
+            https://bugs.webkit.org/show_bug.cgi?id=197466
+
+            Reviewed by Darin Adler.
+
+            When an iframe's src attribute is set to a javascript URL, whether when parsing
+            or later on via JS, we now execute the URL's JavaScript asynchronously. We used
+            to execute it synchronously, which was a source of bugs and also did not match
+            other browsers.
+
+            I have verified that our new behavior is aligned with both Firefox and Chrome.
+
+            Note that for backward-compatibility and interoperability with Blink
+            (https://bugs.chromium.org/p/chromium/issues/detail?id=923585), the
+            "javascript:''" URL will still run synchronously. We should consider dropping
+            this quirk at some point.
+
+            Test: fast/dom/frame-src-javascript-url-async.html
+
+            * loader/NavigationScheduler.cpp:
+            (WebCore::ScheduledLocationChange::ScheduledLocationChange):
+            (WebCore::ScheduledLocationChange::~ScheduledLocationChange):
+            (WebCore::NavigationScheduler::scheduleLocationChange):
+            * loader/NavigationScheduler.h:
+            (WebCore::NavigationScheduler::scheduleLocationChange):
+            * loader/SubframeLoader.cpp:
+            (WebCore::SubframeLoader::requestFrame):
+
 2019-05-17  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/50871594
