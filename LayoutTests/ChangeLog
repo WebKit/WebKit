@@ -8,6 +8,18 @@
         * webgpu/whlsl-store-to-property-updates-properly-expected.html: Added.
         * webgpu/whlsl-store-to-property-updates-properly.html: Added.
 
+2019-05-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scrolling] Flashes of missing layer backing store when scrolling an overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198363
+
+        Reviewed by Tim Horton.
+
+        Reset results.
+
+        * fast/scrolling/ios/reconcile-layer-position-recursive-expected.txt:
+        * tiled-drawing/tiled-backing-in-window-expected.txt:
+
 2019-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245946.

@@ -576,6 +576,8 @@ public:
     // for example to allocate new tiles.
     virtual bool visibleRectChangeRequiresFlush(const FloatRect& /* clipRect */) const { return false; }
 
+    static FloatRect adjustCoverageRectForMovement(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect);
+
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
     WEBCORE_EXPORT String layerTreeAsText(LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;

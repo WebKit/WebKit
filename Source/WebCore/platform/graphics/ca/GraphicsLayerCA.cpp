@@ -1450,6 +1450,10 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     case Type::ScrolledContents:
         if (m_layer->usesTiledBackingLayer())
             coverageRect = tiledBacking()->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
+        else {
+            // Even if we don't have tiled backing, we want to expand coverage so that contained layers get attached backing store.
+            coverageRect = adjustCoverageRectForMovement(coverageRect, oldVisibleRect, rects.visibleRect);
+        }
         break;
     case Type::Normal:
         if (m_layer->usesTiledBackingLayer())
