@@ -1,5 +1,46 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245664. rdar://problem/51264774
+
+    Subselectors not searched when determining property whitelist for selector
+    https://bugs.webkit.org/show_bug.cgi?id=198147
+    <rdar://problem/50405208>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    This can cause marker elements get style they shouldn't.
+    
+    Test: fast/lists/marker-style-subselector-whitelist.html
+    
+    * css/RuleSet.cpp:
+    (WebCore::determinePropertyWhitelistType):
+    
+    Check subselectors too.
+    
+    LayoutTests:
+    
+    * fast/lists/marker-style-subselector-whitelist-expected.txt: Added.
+    * fast/lists/marker-style-subselector-whitelist.html: Added.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245664 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-22  Antti Koivisto  <antti@apple.com>
+
+            Subselectors not searched when determining property whitelist for selector
+            https://bugs.webkit.org/show_bug.cgi?id=198147
+            <rdar://problem/50405208>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/lists/marker-style-subselector-whitelist-expected.txt: Added.
+            * fast/lists/marker-style-subselector-whitelist.html: Added.
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245538. rdar://problem/50753927
 
     Fix security check in ScriptController::canAccessFromCurrentOrigin()
