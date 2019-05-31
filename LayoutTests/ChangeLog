@@ -1,3 +1,16 @@
+2019-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: CSS Changes: modifications aren't shared for rules that match multiple elements
+        https://bugs.webkit.org/show_bug.cgi?id=195264
+        <rdar://problem/48550023>
+
+        Reviewed by Devin Rousso.
+
+        Test arrays with repeating items for Array.diffArrays.
+
+        * inspector/unit-tests/array-utilities-expected.txt:
+        * inspector/unit-tests/array-utilities.html:
+
 2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Reveal the focused element when it's immediately above software keyboard
@@ -11,18 +24,16 @@
         * fast/scrolling/ios/reveal-focused-element-right-above-keyboard-on-ipad-expected.txt: Added.
         * fast/scrolling/ios/reveal-focused-element-right-above-keyboard-on-ipad.html: Added.
 
-2019-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
+2019-05-31  Simon Fraser  <simon.fraser@apple.com>
 
-        Web Inspector: CSS Changes: modifications aren't shared for rules that match multiple elements
-        https://bugs.webkit.org/show_bug.cgi?id=195264
-        <rdar://problem/48550023>
+        [Mac WK2 Debug] Layout Test scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=197425
 
-        Reviewed by Devin Rousso.
+        Unreviewed test gardening.
+        
+        Speculative fix for flakey test; trigger layout inside the subframe.
 
-        Test arrays with repeating items for Array.diffArrays.
-
-        * inspector/unit-tests/array-utilities-expected.txt:
-        * inspector/unit-tests/array-utilities.html:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame.html:
 
 2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 

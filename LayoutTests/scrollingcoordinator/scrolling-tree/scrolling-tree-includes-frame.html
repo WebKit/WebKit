@@ -11,8 +11,11 @@
           window.internals.settings.setAsyncFrameScrollingEnabled(true);
       function doTest()
       {
-          if (window.internals)
-              document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+          if (window.internals) {
+			  subframe.contentWindow.internals.scrollingStateTreeAsText(); // Trigger frame layout.
+              document.getElementById('scrollingTree').innerText = internals.scrollingStateTreeAsText() + "\n";
+          }
+
           if (window.testRunner)
               testRunner.notifyDone();
       }
@@ -31,7 +34,7 @@
     </style>
   </head>
   <body>
-    <iframe onload="doTest()" srcdoc="
+    <iframe id="subframe" onload="doTest()" srcdoc="
         <div style='width: 300px; height: 400px; background: gray;'></div>">
     </iframe>
     <pre id="scrollingTree"></pre>
