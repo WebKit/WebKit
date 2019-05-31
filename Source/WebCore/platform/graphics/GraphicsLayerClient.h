@@ -38,17 +38,15 @@ class IntPoint;
 class IntRect;
 class TransformationMatrix;
 
-enum GraphicsLayerPaintingPhaseFlags {
-    GraphicsLayerPaintBackground            = 1 << 0,
-    GraphicsLayerPaintForeground            = 1 << 1,
-    GraphicsLayerPaintMask                  = 1 << 2,
-    GraphicsLayerPaintClipPath              = 1 << 3,
-    GraphicsLayerPaintOverflowContents      = 1 << 4,
-    GraphicsLayerPaintCompositedScroll      = 1 << 5,
-    GraphicsLayerPaintChildClippingMask     = 1 << 6,
-    GraphicsLayerPaintAllWithOverflowClip   = GraphicsLayerPaintBackground | GraphicsLayerPaintForeground
+enum class GraphicsLayerPaintingPhase {
+    Background            = 1 << 0,
+    Foreground            = 1 << 1,
+    Mask                  = 1 << 2,
+    ClipPath              = 1 << 3,
+    OverflowContents      = 1 << 4,
+    CompositedScroll      = 1 << 5,
+    ChildClippingMask     = 1 << 6,
 };
-typedef uint8_t GraphicsLayerPaintingPhase;
 
 enum AnimatedPropertyID {
     AnimatedPropertyInvalid,
@@ -102,7 +100,7 @@ public:
     // Notification that this layer requires a flush before the next display refresh.
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& /* inClip */, GraphicsLayerPaintBehavior) { }
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, OptionSet<GraphicsLayerPaintingPhase>, const FloatRect& /* inClip */, GraphicsLayerPaintBehavior) { }
     virtual void didChangePlatformLayerForLayer(const GraphicsLayer*) { }
 
     // Provides current transform (taking transform-origin and animations into account). Input matrix has been

@@ -1709,7 +1709,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
             String layerName = m_owningLayer.name() + " (foreground)";
             m_foregroundLayer = createGraphicsLayer(layerName);
             m_foregroundLayer->setDrawsContent(true);
-            m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
+            m_foregroundLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::Foreground });
             layerChanged = true;
         }
     } else if (m_foregroundLayer) {
@@ -1735,7 +1735,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
             m_backgroundLayer = createGraphicsLayer(layerName);
             m_backgroundLayer->setDrawsContent(true);
             m_backgroundLayer->setAnchorPoint(FloatPoint3D());
-            m_backgroundLayer->setPaintingPhase(GraphicsLayerPaintBackground);
+            m_backgroundLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::Background });
             layerChanged = true;
         }
         
@@ -1771,17 +1771,17 @@ void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
 {
     bool layerChanged = false;
     if (hasMask || hasClipPath) {
-        GraphicsLayerPaintingPhase maskPhases = 0;
+        OptionSet<GraphicsLayerPaintingPhase> maskPhases;
         if (hasMask)
-            maskPhases = GraphicsLayerPaintMask;
+            maskPhases = GraphicsLayerPaintingPhase::Mask;
         
         if (hasClipPath) {
             // If we have a mask, we need to paint the combined clip-path and mask into the mask layer.
             if (hasMask || renderer().style().clipPath()->type() == ClipPathOperation::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
-                maskPhases |= GraphicsLayerPaintClipPath;
+                maskPhases.add(GraphicsLayerPaintingPhase::ClipPath);
         }
 
-        bool paintsContent = maskPhases;
+        bool paintsContent = !maskPhases.isEmpty();
         GraphicsLayer::Type requiredLayerType = paintsContent ? GraphicsLayer::Type::Normal : GraphicsLayer::Type::Shape;
         if (m_maskLayer && m_maskLayer->type() != requiredLayerType) {
             m_graphicsLayer->setMaskLayer(nullptr);
@@ -1825,7 +1825,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
             if (!m_childClippingMaskLayer) {
                 m_childClippingMaskLayer = createGraphicsLayer("child clipping mask");
                 m_childClippingMaskLayer->setDrawsContent(true);
-                m_childClippingMaskLayer->setPaintingPhase(GraphicsLayerPaintChildClippingMask);
+                m_childClippingMaskLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::ChildClippingMask });
                 clippingLayer()->setMaskLayer(m_childClippingMaskLayer.copyRef());
             }
         }
@@ -1856,10 +1856,10 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         m_scrolledContentsLayer->setDrawsContent(true);
         m_scrolledContentsLayer->setAnchorPoint({ });
 
-        GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;
+        OptionSet<GraphicsLayerPaintingPhase> paintPhases = { GraphicsLayerPaintingPhase::OverflowContents, GraphicsLayerPaintingPhase::CompositedScroll };
         if (!m_foregroundLayer)
-            paintPhase |= GraphicsLayerPaintForeground;
-        m_scrolledContentsLayer->setPaintingPhase(paintPhase);
+            paintPhases.add(GraphicsLayerPaintingPhase::Foreground);
+        m_scrolledContentsLayer->setPaintingPhase(paintPhases);
         m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);
     } else {
         compositor().willRemoveScrollingLayerWithBacking(m_owningLayer, *this);
@@ -1939,20 +1939,20 @@ void RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole(bool 
     m_graphicsLayer->setIsViewportConstrained(viewportCoordinated);
 }
 
-GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const
+OptionSet<GraphicsLayerPaintingPhase> RenderLayerBacking::paintingPhaseForPrimaryLayer() const
 {
-    unsigned phase = 0;
+    OptionSet<GraphicsLayerPaintingPhase> phases;
     if (!m_backgroundLayer)
-        phase |= GraphicsLayerPaintBackground;
+        phases.add(GraphicsLayerPaintingPhase::Background);
     if (!m_foregroundLayer)
-        phase |= GraphicsLayerPaintForeground;
+        phases.add(GraphicsLayerPaintingPhase::Foreground);
 
     if (m_scrolledContentsLayer) {
-        phase &= ~GraphicsLayerPaintForeground;
-        phase |= GraphicsLayerPaintCompositedScroll;
+        phases.remove(GraphicsLayerPaintingPhase::Foreground);
+        phases.add(GraphicsLayerPaintingPhase::CompositedScroll);
     }
 
-    return static_cast<GraphicsLayerPaintingPhase>(phase);
+    return phases;
 }
 
 float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
@@ -2646,9 +2646,9 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
-    OptionSet<PaintBehavior> paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
+    OptionSet<PaintBehavior> paintBehavior, OptionSet<GraphicsLayerPaintingPhase> paintingPhase)
 {
-    if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && paintingPhase != GraphicsLayerPaintChildClippingMask) {
+    if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && paintingPhase != OptionSet<GraphicsLayerPaintingPhase>(GraphicsLayerPaintingPhase::ChildClippingMask)) {
 #if !PLATFORM(IOS_FAMILY) && !OS(WINDOWS)
         // FIXME: Looks like the CALayer tree is out of sync with the GraphicsLayer heirarchy
         // when pages are restored from the PageCache.
@@ -2659,19 +2659,19 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     }
 
     OptionSet<RenderLayer::PaintLayerFlag> paintFlags;
-    if (paintingPhase & GraphicsLayerPaintBackground)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Background))
         paintFlags.add(RenderLayer::PaintLayerPaintingCompositingBackgroundPhase);
-    if (paintingPhase & GraphicsLayerPaintForeground)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Foreground))
         paintFlags.add(RenderLayer::PaintLayerPaintingCompositingForegroundPhase);
-    if (paintingPhase & GraphicsLayerPaintMask)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Mask))
         paintFlags.add(RenderLayer::PaintLayerPaintingCompositingMaskPhase);
-    if (paintingPhase & GraphicsLayerPaintClipPath)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::ClipPath))
         paintFlags.add(RenderLayer::PaintLayerPaintingCompositingClipPathPhase);
-    if (paintingPhase & GraphicsLayerPaintChildClippingMask)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::ChildClippingMask))
         paintFlags.add(RenderLayer::PaintLayerPaintingChildClippingMaskPhase);
-    if (paintingPhase & GraphicsLayerPaintOverflowContents)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
         paintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
-    if (paintingPhase & GraphicsLayerPaintCompositedScroll)
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll))
         paintFlags.add(RenderLayer::PaintLayerPaintingCompositingScrollingPhase);
 
     if (graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
@@ -2718,7 +2718,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
             RenderLayer::PaintLayerPaintingCompositingBackgroundPhase,
             RenderLayer::PaintLayerPaintingCompositingForegroundPhase };
 
-        if (paintingPhase & GraphicsLayerPaintOverflowContents)
+        if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerPaintingOverflowContents);
 
         for (auto& layerWeakPtr : m_backingSharingLayers)
@@ -2729,7 +2729,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, OptionSet<GraphicsLayerPaintingPhase> paintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -2754,7 +2754,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         || graphicsLayer == m_childClippingMaskLayer.get()
         || graphicsLayer == m_scrolledContentsLayer.get()) {
 
-        if (!(paintingPhase & GraphicsLayerPaintOverflowContents))
+        if (!paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.

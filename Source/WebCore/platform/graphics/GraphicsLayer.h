@@ -414,8 +414,8 @@ public:
 #endif
 
     // Some GraphicsLayers paint only the foreground or the background content
-    GraphicsLayerPaintingPhase paintingPhase() const { return m_paintingPhase; }
-    void setPaintingPhase(GraphicsLayerPaintingPhase phase) { m_paintingPhase = phase; }
+    OptionSet<GraphicsLayerPaintingPhase> paintingPhase() const { return m_paintingPhase; }
+    void setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase> phase) { m_paintingPhase = phase; }
 
     enum ShouldClipToLayer {
         DoNotClipToLayer,
@@ -691,7 +691,7 @@ protected:
 
     const Type m_type;
     CustomAppearance m_customAppearance { CustomAppearance::None };
-    GraphicsLayerPaintingPhase m_paintingPhase { GraphicsLayerPaintAllWithOverflowClip };
+    OptionSet<GraphicsLayerPaintingPhase> m_paintingPhase { GraphicsLayerPaintingPhase::Foreground, GraphicsLayerPaintingPhase::Background };
     CompositingCoordinatesOrientation m_contentsOrientation { CompositingCoordinatesOrientation::TopDown }; // affects orientation of layer contents
 
     bool m_beingDestroyed : 1;

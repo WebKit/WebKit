@@ -935,22 +935,22 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (behavior & LayerTreeAsTextIncludePaintingPhases && paintingPhase()) {
         ts << indent << "(paintingPhases\n";
         TextStream::IndentScope indentScope(ts);
-        if (paintingPhase() & GraphicsLayerPaintBackground)
+        if (paintingPhase().contains(GraphicsLayerPaintingPhase::Background))
             ts << indent << "GraphicsLayerPaintBackground\n";
 
-        if (paintingPhase() & GraphicsLayerPaintForeground)
+        if (paintingPhase().contains(GraphicsLayerPaintingPhase::Foreground))
             ts << indent << "GraphicsLayerPaintForeground\n";
 
-        if (paintingPhase() & GraphicsLayerPaintMask)
+        if (paintingPhase().contains(GraphicsLayerPaintingPhase::Mask))
             ts << indent << "GraphicsLayerPaintMask\n";
 
-        if (paintingPhase() & GraphicsLayerPaintChildClippingMask)
+        if (paintingPhase().contains(GraphicsLayerPaintingPhase::ChildClippingMask))
             ts << indent << "GraphicsLayerPaintChildClippingMask\n";
 
-        if (paintingPhase() & GraphicsLayerPaintOverflowContents)
+        if (paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             ts << indent << "GraphicsLayerPaintOverflowContents\n";
 
-        if (paintingPhase() & GraphicsLayerPaintCompositedScroll)
+        if (paintingPhase().contains(GraphicsLayerPaintingPhase::CompositedScroll))
             ts << indent << "GraphicsLayerPaintCompositedScroll\n";
 
         ts << indent << ")\n";
