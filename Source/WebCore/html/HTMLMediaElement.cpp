@@ -7715,10 +7715,6 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
             return true;
         }
-        if (PlatformMediaSessionManager::sharedManager().isPlayingToAutomotiveHeadUnit()) {
-            INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToAutomotiveHeadUnit() is true");
-            return true;
-        }
         if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
             return true;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -7728,10 +7724,6 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
     } else if (type == PlatformMediaSession::SuspendedUnderLock) {
         if (isPlayingToExternalTarget()) {
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
-            return true;
-        }
-        if (PlatformMediaSessionManager::sharedManager().isPlayingToAutomotiveHeadUnit()) {
-            INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToAutomotiveHeadUnit() is true");
             return true;
         }
     }

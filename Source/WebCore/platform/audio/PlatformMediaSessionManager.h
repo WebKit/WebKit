@@ -129,9 +129,6 @@ public:
 
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
 
-    WEBCORE_EXPORT void setIsPlayingToAutomotiveHeadUnit(bool);
-    bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; }
-
     void forEachMatchingSession(const Function<bool(const PlatformMediaSession&)>& predicate, const Function<void(PlatformMediaSession&)>& matchingCallback);
 
 protected:
@@ -191,7 +188,6 @@ private:
     mutable bool m_isApplicationInBackground { false };
     bool m_willIgnoreSystemInterruptions { false };
     bool m_processIsSuspended { false };
-    bool m_isPlayingToAutomotiveHeadUnit { false };
 
 #if USE(AUDIO_SESSION)
     bool m_becameActive { false };

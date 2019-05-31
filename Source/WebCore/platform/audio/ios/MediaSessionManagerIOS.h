@@ -47,8 +47,6 @@ public:
 
     void externalOutputDeviceAvailableDidChange();
     bool hasWirelessTargetsAvailable() override;
-    void carPlayServerDied();
-    void updateCarPlayIsConnected(Optional<bool>&&);
 
 private:
     friend class PlatformMediaSessionManager;

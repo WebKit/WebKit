@@ -492,7 +492,6 @@ void Internals::resetToConsistentState(Page& page)
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
     PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
 #endif
-    PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(false);
 #if HAVE(ACCESSIBILITY)
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
     AXObjectCache::disableAccessibility();
@@ -5066,11 +5065,6 @@ void Internals::testDictionaryLogging()
 void Internals::setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest& request, double interval)
 {
     request.setMaximumIntervalForUserGestureForwarding(interval);
-}
-
-void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
-{
-    PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(isPlaying);
 }
 
 } // namespace WebCore
