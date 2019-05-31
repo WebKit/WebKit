@@ -1,3 +1,17 @@
+2019-05-31  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (Safari 12): SafariForWebkitDevelopment won't load any pages on Mojave, nightly builds broken
+        https://bugs.webkit.org/show_bug.cgi?id=194808
+        <rdar://problem/48278497>
+
+        Reviewed by Darin Adler.
+
+        I verified that a daily build downloaded an run on Mojave does not work without this and works with this.
+
+        * WebKitArchiveSupport/run-webkit-archive:
+        (set_dyld_framework_path):
+        Also set XPC variants of needed environment variables.
+
 2019-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Build at-spi2-core without x11 support in jhbuild
