@@ -1123,7 +1123,7 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
     it.advance(index - 1);
 
     if (!it.atEnd() && it.text()[0] == '\n') {
-        // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
+        // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines.
         auto range = it.range();
         if (range->startPosition() == range->endPosition()) {
             it.advance(1);
