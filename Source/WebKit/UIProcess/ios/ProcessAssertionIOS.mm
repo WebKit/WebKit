@@ -150,17 +150,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         }
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - beginBackgroundTaskWithName", self);
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
-            RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d, applicationIsBackgrounded? %d).", RunLoop::isMain(), _applicationIsBackgrounded);
-            if (!_applicationIsBackgrounded) {
-                // We've received the invalidation warning after the app has become foreground again. In this case, we should not warn clients of imminent suspension.
-                // To be safe (avoid potential killing), we end the task right away and call _updateBackgroundTask asynchronously to start a new task if necessary.
-                [self _cancelPendingReleaseTask];
-                [self _releaseBackgroundTask];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self _updateBackgroundTask];
-                });
-                return;
-            }
+            RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
             // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
             if (RunLoop::isMain())
                 [self _notifyAssertionsOfImminentSuspension];
