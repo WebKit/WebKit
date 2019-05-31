@@ -1,3 +1,20 @@
+2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] Reveal the focused element when it's immediately above software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=198412
+
+        Reviewed by Wenson Hsieh.
+
+        When _zoomToRevealFocusedElement is called with forceScroll set to NO (happens when input type is none or drawing
+        or when the platform is iPad), we don't force scrolling to reveal the focused element when it's entirely visible.
+
+        This can be misleading in cases where there is more content right beneath it relevant for editing operations.
+        Zoom & scroll to reveal the focused element when the said element is within 50px of the software keyboard.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
 2019-05-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r245899.

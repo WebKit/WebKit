@@ -1,3 +1,16 @@
+2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] Reveal the focused element when it's immediately above software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=198412
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test. Note that this test always passes on non-iPad platforms either
+        before or after this patch as _zoomToRevealFocusedElement forces scrolling in that case.
+
+        * fast/scrolling/ios/reveal-focused-element-right-above-keyboard-on-ipad-expected.txt: Added.
+        * fast/scrolling/ios/reveal-focused-element-right-above-keyboard-on-ipad.html: Added.
+
 2019-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: CSS Changes: modifications aren't shared for rules that match multiple elements

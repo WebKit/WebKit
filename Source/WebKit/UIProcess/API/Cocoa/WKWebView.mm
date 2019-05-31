@@ -2327,13 +2327,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGSize visibleSize = visibleScrollViewBoundsInWebViewCoordinates.size;
 
     CGFloat visibleOffsetFromTop = 0;
+    CGFloat minimumDistanceFromKeyboardToTriggerScroll = 0;
     if (!CGRectIsEmpty(intersectionBetweenScrollViewAndFormAssistant)) {
         CGFloat heightVisibleAboveFormAssistant = CGRectGetMinY(intersectionBetweenScrollViewAndFormAssistant) - CGRectGetMinY(visibleScrollViewBoundsInWebViewCoordinates);
         CGFloat heightVisibleBelowFormAssistant = CGRectGetMaxY(visibleScrollViewBoundsInWebViewCoordinates) - CGRectGetMaxY(intersectionBetweenScrollViewAndFormAssistant);
 
-        if (heightVisibleAboveFormAssistant >= minimumHeightToShowContentAboveKeyboard || heightVisibleBelowFormAssistant < heightVisibleAboveFormAssistant)
+        if (heightVisibleAboveFormAssistant >= minimumHeightToShowContentAboveKeyboard || heightVisibleBelowFormAssistant < heightVisibleAboveFormAssistant) {
             visibleSize.height = heightVisibleAboveFormAssistant;
-        else {
+            minimumDistanceFromKeyboardToTriggerScroll = 50;
+        } else {
             visibleSize.height = heightVisibleBelowFormAssistant;
             visibleOffsetFromTop = CGRectGetMaxY(intersectionBetweenScrollViewAndFormAssistant) - CGRectGetMinY(visibleScrollViewBoundsInWebViewCoordinates);
         }
@@ -2372,6 +2374,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         currentlyVisibleRegionInWebViewCoordinates.origin = unobscuredScrollViewRectInWebViewCoordinates.origin;
         currentlyVisibleRegionInWebViewCoordinates.origin.y += visibleOffsetFromTop;
         currentlyVisibleRegionInWebViewCoordinates.size = visibleSize;
+        currentlyVisibleRegionInWebViewCoordinates.size.height -= minimumDistanceFromKeyboardToTriggerScroll;
 
         // Don't bother scrolling if the entire node is already visible, whether or not we got a selectionRect.
         if (CGRectContainsRect(currentlyVisibleRegionInWebViewCoordinates, [self convertRect:focusedElementRectInDocumentCoordinates fromView:_contentView.get()]))
