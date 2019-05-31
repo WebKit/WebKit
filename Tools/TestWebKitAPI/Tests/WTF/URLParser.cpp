@@ -230,6 +230,17 @@ TEST_F(WTF_URLParser, Basic)
     checkURL("about:blank", {"about", "", "", "", 0, "blank", "", "", "about:blank"});
     checkURL("about:blank?query", {"about", "", "", "", 0, "blank", "query", "", "about:blank?query"});
     checkURL("about:blank#fragment", {"about", "", "", "", 0, "blank", "", "fragment", "about:blank#fragment"});
+    checkURL("http://[0::0]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[0::]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[::]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[::0]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[::0:0]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[f::0:0]/", {"http", "", "", "[f::]", 0, "/", "", "", "http://[f::]/"});
+    checkURL("http://[f:0::f]/", {"http", "", "", "[f::f]", 0, "/", "", "", "http://[f::f]/"});
+    checkURL("http://[::0:ff]/", {"http", "", "", "[::ff]", 0, "/", "", "", "http://[::ff]/"});
+    checkURL("http://[::00:0:0:0]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[::0:00:0:0]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
+    checkURL("http://[::0:0.0.0.0]/", {"http", "", "", "[::]", 0, "/", "", "", "http://[::]/"});
     checkURL("http://[0:f::f:f:0:0]", {"http", "", "", "[0:f::f:f:0:0]", 0, "/", "", "", "http://[0:f::f:f:0:0]/"});
     checkURL("http://[0:f:0:0:f::]", {"http", "", "", "[0:f:0:0:f::]", 0, "/", "", "", "http://[0:f:0:0:f::]/"});
     checkURL("http://[::f:0:0:f:0:0]", {"http", "", "", "[::f:0:0:f:0:0]", 0, "/", "", "", "http://[::f:0:0:f:0:0]/"});
@@ -1228,6 +1239,7 @@ TEST_F(WTF_URLParser, ParserFailures)
     shouldFail("http://[a:b:c:d:e:f:127.0.-0.1]");
     shouldFail("asdf://space In\aHost");
     shouldFail("asdf://[0:0:0:0:a:b:c:d");
+    shouldFail("http://[::0:0.0.00000.0]/");
 }
 
 // These are in the spec but not in the web platform tests.
