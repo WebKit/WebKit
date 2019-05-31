@@ -12,7 +12,7 @@
       function doTest()
       {
           if (window.internals) {
-			  subframe.contentWindow.internals.scrollingStateTreeAsText(); // Trigger frame layout.
+              subframe.contentWindow.internals.scrollingStateTreeAsText(); // Trigger frame layout.
               document.getElementById('scrollingTree').innerText = internals.scrollingStateTreeAsText() + "\n";
           }
 
