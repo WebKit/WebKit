@@ -144,7 +144,12 @@ bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
 
 bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
+    auto weakRenderView = makeWeakPtr(this);
+
     document().updateLayout();
+
+    if (!weakRenderView)
+        return false;
     
 #if !ASSERT_DISABLED
     SetForScope<bool> hitTestRestorer { m_inHitTesting, true };
