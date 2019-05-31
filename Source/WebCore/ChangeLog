@@ -1,5 +1,56 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245509. rdar://problem/51264845
+
+    Wait to get frame until after layout has been run
+    https://bugs.webkit.org/show_bug.cgi?id=197999
+    <rdar://problem/50800345>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    The current frame can change when layout runs, so don't bother retrieving
+    the frame until the final layout pass is complete.
+    
+    Test: fast/dom/window-inner-width-crash.html
+    
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::innerHeight const): Move frame access past the
+    layout operation.
+    (WebCore::DOMWindow::innerWidth const): Ditto.
+    (WebCore::DOMWindow::scrollX const): Ditto.
+    (WebCore::DOMWindow::scrollY const): Ditto.
+    
+    LayoutTests:
+    
+    * fast/dom/window-inner-width-crash-expected.txt: Added.
+    * fast/dom/window-inner-width-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245509 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-19  Brent Fulgham  <bfulgham@apple.com>
+
+            Wait to get frame until after layout has been run
+            https://bugs.webkit.org/show_bug.cgi?id=197999
+            <rdar://problem/50800345>
+
+            Reviewed by Alex Christensen.
+
+            The current frame can change when layout runs, so don't bother retrieving
+            the frame until the final layout pass is complete.
+
+            Test: fast/dom/window-inner-width-crash.html
+
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::innerHeight const): Move frame access past the
+            layout operation.
+            (WebCore::DOMWindow::innerWidth const): Ditto.
+            (WebCore::DOMWindow::scrollX const): Ditto.
+            (WebCore::DOMWindow::scrollY const): Ditto.
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245464. rdar://problem/51264866
 
     Hardening: Prevent FrameLoader crash due to SetForScope
