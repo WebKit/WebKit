@@ -7648,7 +7648,7 @@ void Document::notifyMediaCaptureOfVisibilityChanged()
     if (!page())
         return;
 
-    RealtimeMediaSourceCenter::singleton().setVideoCapturePageState(hidden(), page()->isMediaCaptureMuted());
+    RealtimeMediaSourceCenter::singleton().setCapturePageState(hidden(), page()->isMediaCaptureMuted());
 #endif
 }
 

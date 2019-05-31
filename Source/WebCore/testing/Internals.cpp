@@ -532,6 +532,10 @@ void Internals::resetToConsistentState(Page& page)
     page.setFullscreenControlsHidden(false);
 
     MediaEngineConfigurationFactory::disableMock();
+
+#if ENABLE(MEDIA_STREAM)
+    RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(false);
+#endif
 }
 
 Internals::Internals(Document& document)
@@ -1502,6 +1506,10 @@ void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connecti
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+void Internals::setShouldInterruptAudioOnPageVisibilityChange(bool shouldInterrupt)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(shouldInterrupt);
+}
 
 void Internals::setMockMediaCaptureDevicesEnabled(bool enabled)
 {

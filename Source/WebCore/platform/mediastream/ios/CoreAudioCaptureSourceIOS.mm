@@ -126,6 +126,12 @@ CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
     return factory.get();
 }
 
+void CoreAudioCaptureSourceFactory::setAudioCapturePageState(bool interrupted, bool pageMuted)
+{
+    if (auto* activeSource = this->activeSource())
+        activeSource->setInterrupted(interrupted, pageMuted);
+}
+
 }
 
 #endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)

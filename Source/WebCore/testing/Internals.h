@@ -516,6 +516,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    void setShouldInterruptAudioOnPageVisibilityChange(bool);
     void setMockMediaCaptureDevicesEnabled(bool);
     void setMediaCaptureRequiresSecureConnection(bool);
     void setCustomPrivateRecorderCreator();
