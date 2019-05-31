@@ -1,3 +1,24 @@
+2019-05-31  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/50871594
+
+    2019-05-31  youenn fablet  <youennf@gmail.com>
+
+            REGRESSION(245357): Netflix, Hulu, Amazon, YouTube Rental video playback crash at com.apple.WebCore: WebCore::WebKitMediaKeys::setMediaElement
+            rdar://problem/50871594
+
+            Do not cast WeakPtr<MediaProducer> into WeakPtr<HTMLMediaElement>.
+            Instead, make HTMLMediaElement again a CanMakeWeakPtr<HTMLMediaElement>
+            and directly create WeakPtr<HTMLMediaElement>.
+
+            For MediaStreamTrack, rely on weakThis to know whether 'this' is still alive and use 'this' directly.
+
+            Manually tested.
+
+            * Modules/mediastream/MediaStreamTrack.cpp:
+            (WebCore::MediaStreamTrack::applyConstraints):
+            * html/HTMLMediaElement.h:
+
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/50801017
