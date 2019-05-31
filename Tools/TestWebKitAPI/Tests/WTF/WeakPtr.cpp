@@ -27,11 +27,11 @@
 
 static unsigned s_baseWeakReferences = 0;
 
-#define DID_CREATE_WEAK_REFERENCE(p) do { \
+#define DID_CREATE_WEAK_PTR_IMPL(p) do { \
     ++s_baseWeakReferences; \
 } while (0);
 
-#define WILL_DESTROY_WEAK_REFERENCE(p) do { \
+#define WILL_DESTROY_WEAK_PTR_IMPL(p) do { \
     --s_baseWeakReferences; \
 } while (0);
 

@@ -1,3 +1,84 @@
+2019-05-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Some WeakPtr cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=198390
+
+        Reviewed by Chris Dumez.
+
+        * wtf/WeakHashSet.h:
+        (WTF::HashTraits<Ref<WeakPtrImpl>>::isReleasedWeakValue):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::WeakHashSetConstIterator):
+        Updated for rename to WeakPtrImpl.
+
+        (WTF::WeakHashSet::WeakHashSetConstIterator::get const): Updated for new
+        get() interface. Also, switched to iterator operator* to help clarify
+        the double dereference here.
+
+        (WTF::WeakHashSet::add):
+        (WTF::WeakHashSet::remove):
+        (WTF::WeakHashSet::contains const):
+        (WTF::WeakHashSet::computeSize const):
+        (WTF::HashTraits<Ref<WeakReference>>::isReleasedWeakValue): Deleted.
+        Updated for rename to WeakPtrImpl.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrImpl::create):
+        (WTF::WeakPtrImpl::~WeakPtrImpl): Renamed WeakReference to WeakPtrImpl.
+        Now we don't need a comment explaining that this class is the backing
+        implementation of WeakPtr.
+
+        (WTF::WeakPtrImpl::get): Return the pointer type we stored, rather than
+        the pointer type requested by our client. It's a little too surprising
+        for a field to store one pointer type and load another.
+
+        (WTF::WeakPtrImpl::WeakPtrImpl): Fixed a theoretical type safety bug.
+        Make sure to store T::WeakValueType* instead of T*, since they might
+        not be the same pointer value. (In practice, T and T::WeakValueType*
+        are always the same type in this constructor because WeakPtrFactory
+        makes them so, but it's best not to depend on implementation details
+        across classes.)
+
+        (WTF::WeakPtr::get const): Updated for new get() interface.
+
+        (WTF::WeakPtr::operator bool const):
+        (WTF::WeakPtr::operator=):
+        (WTF::WeakPtr::clear):
+        (WTF::WeakPtr::WeakPtr): Updated for WeakPtrImpl rename.
+
+        (WTF::WeakPtrFactory::~WeakPtrFactory): Updated for WeakPtrImpl rename.
+
+        (WTF::WeakPtrFactory::createWeakPtr const): ASSERT that the passed-in
+        pointer is equal to the stored pointer. As a space optimization, we
+        require our client to remind us what we point to each time a weak
+        pointer is created -- but nothing guarantees that our client will do
+        this correctly.
+
+        (WTF::WeakPtrFactory::revokeAll): Updated for WeakPtrImpl rename.
+
+        (WTF::CanMakeWeakPtr::weakPtrFactory const):
+        (WTF::CanMakeWeakPtr::weakPtrFactory): Use idiomatic accessor naming.
+
+        (WTF::weak_ptr_impl_cast): Fixed a theoretical type safety bug.
+        Previously, if Base and Derived both inherited CanMakeWeakPtr, and
+        you casted WeakPtr<Base> to WeakPtr<Derived> (or vice versa), and
+        casting Base <-> Derived required pointer fixup, the previous
+        compile-time check would accept the cast, even though the stored pointer
+        would be wrong.
+
+        (WTF::WeakPtr<T>::WeakPtr):
+        (WTF::=):
+        (WTF::makeWeakPtr):
+        (WTF::WeakReference::create): Deleted.
+        (WTF::WeakReference::~WeakReference): Deleted.
+        (WTF::WeakReference::get const): Deleted.
+        (WTF::WeakReference::operator bool const): Deleted.
+        (WTF::WeakReference::clear): Deleted.
+        (WTF::WeakReference::WeakReference): Deleted.
+        (WTF::weak_reference_cast): Deleted. Updated for rename to WeakPtrImpl.
+
+        Don't export WeakPtrImpl because it's an implmenetation detail and
+        it shouldn't be easy to use outside WTF.
+
 2019-05-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::WTF target

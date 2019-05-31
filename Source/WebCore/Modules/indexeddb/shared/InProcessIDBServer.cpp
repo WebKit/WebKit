@@ -69,8 +69,8 @@ StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin
 
 static inline IDBServer::IDBServer::QuotaManagerGetter storageQuotaManagerGetter(InProcessIDBServer& server)
 {
-    return [&server, weakServer = makeWeakPtr(server)](PAL::SessionID, const auto& origin) {
-        return weakServer ? server.quotaManager(origin) : nullptr;
+    return [weakServer = makeWeakPtr(server)](PAL::SessionID, const auto& origin) {
+        return weakServer ? weakServer->quotaManager(origin) : nullptr;
     };
 }
 

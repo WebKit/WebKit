@@ -53,6 +53,9 @@ class IDBServer;
 
 class InProcessIDBServer final : public IDBClient::IDBConnectionToServerDelegate, public IDBServer::IDBConnectionToClientDelegate, public RefCounted<InProcessIDBServer>, public IDBServer::IDBBackingStoreTemporaryFileHandler {
 public:
+    using IDBClient::IDBConnectionToServerDelegate::weakPtrFactory;
+    typedef IDBClient::IDBConnectionToServerDelegate::WeakValueType WeakValueType;
+
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID);
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID, const String& databaseDirectoryPath);
 
@@ -123,8 +126,6 @@ public:
     void accessToTemporaryFileComplete(const String& path) override;
 
     StorageQuotaManager* quotaManager(const ClientOrigin&);
-
-    const WeakPtrFactory<IDBClient::IDBConnectionToServerDelegate>& weakPtrFactory() const { return IDBClient::IDBConnectionToServerDelegate::weakPtrFactory(); }
 
 private:
     explicit InProcessIDBServer(PAL::SessionID);
