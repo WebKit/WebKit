@@ -28,7 +28,7 @@
 #if WK_API_ENABLED
 
 #import <WebKit/WKWebProcessPlugIn.h>
-#import <WebKit/WKWebProcessPluginBrowserContextControllerPrivate.h>
+#import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface BundleRetainPagePlugIn : NSObject <WKWebProcessPlugIn>
