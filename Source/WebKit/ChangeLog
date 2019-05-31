@@ -1,3 +1,19 @@
+2019-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Main frame should be scrollable when pinch zoomed or software keyboard is up
+        https://bugs.webkit.org/show_bug.cgi?id=198244
+
+        Reviewed by Simon Fraser.
+
+        This is a follow up to r245006. Even when overflow: hidden is specified on the document body,
+        we still need to make it scrollable when the page is pinch zoomed or there is a content inset
+        e.g. for software keyboard. Otherwise, the user won't be able to get to the content that is
+        outside the visual viewport when pinch zoomed or the parts of the page that is not outside
+        the visual viewport due to the scrolling caused by the software keyboard being brought up.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+
 2019-05-30  Youenn Fablet  <youenn@apple.com>
 
         Add an option to mute audio capture automatically when page is not visible
