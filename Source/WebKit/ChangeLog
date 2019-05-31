@@ -1,3 +1,32 @@
+2019-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Network process crash when decoding SecItemResponseData
+        https://bugs.webkit.org/show_bug.cgi?id=198388
+        <rdar://problem/50408046>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+        When decoding the elements inside a CFArrayRef, if decoding was successful but
+        the CFTypeRef element is still null then skip it instead of trying to append it
+        to the array. A CFArray container is not allowed to contain null.
+        Some of our decoders for CFTypeRef types may not initialize the element even if
+        the decode() function returns true. For example, the decoders for CFArrayRef and
+        CFDictionaryRef return true if the encoded container was null but do not create
+        a container.
+
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::SecItemResponseData):
+        nit: The wrong parameter was being moved. This is more efficient.
+
+        (WebKit::SecItemResponseData::encode const):
+        nit: Drop unnecessary .get().
+
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::secItemRequest):
+        nit: Use nullptr instead of 0.
+
 2019-05-30  Sihui Liu  <sihui_liu@apple.com>
 
         Stop StorageManager when network process is ready to suspend

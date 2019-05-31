@@ -32,15 +32,15 @@
 namespace WebKit {
 
 SecItemResponseData::SecItemResponseData(OSStatus resultCode, RetainPtr<CFTypeRef>&& resultObject)
-    : m_resultObject(resultObject)
-    , m_resultCode(WTFMove(resultCode))
+    : m_resultObject(WTFMove(resultObject))
+    , m_resultCode(resultCode)
 {
 }
 
 void SecItemResponseData::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<int64_t>(m_resultCode);
-    encoder << static_cast<bool>(m_resultObject.get());
+    encoder << static_cast<bool>(m_resultObject);
     if (m_resultObject)
         IPC::encode(encoder, m_resultObject.get());
 }

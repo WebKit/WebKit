@@ -371,13 +371,16 @@ bool decode(Decoder& decoder, RetainPtr<CFArrayRef>& result)
     if (!decoder.decode(size))
         return false;
 
-    RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    auto array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
     for (size_t i = 0; i < size; ++i) {
         RetainPtr<CFTypeRef> element;
         if (!decode(decoder, element))
             return false;
 
+        if (!element)
+            continue;
+        
         CFArrayAppendValue(array.get(), element.get());
     }
 
