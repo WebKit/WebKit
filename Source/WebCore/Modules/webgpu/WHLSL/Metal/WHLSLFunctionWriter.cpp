@@ -457,15 +457,6 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
 
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)
 {
-    if (is<AST::DereferenceExpression>(assignmentExpression.left())) {
-        checkErrorAndVisit(downcast<AST::DereferenceExpression>(assignmentExpression.left()).pointer());
-        auto leftName = m_stack.takeLast();
-        checkErrorAndVisit(assignmentExpression.right());
-        auto rightName = m_stack.takeLast();
-        m_stringBuilder.append(makeString('*', leftName, " = ", rightName, ";\n"));
-        m_stack.append(rightName);
-        return;
-    }
     checkErrorAndVisit(assignmentExpression.left());
     auto leftName = m_stack.takeLast();
     checkErrorAndVisit(assignmentExpression.right());
@@ -510,7 +501,7 @@ void FunctionDefinitionWriter::visit(AST::DereferenceExpression& dereferenceExpr
     checkErrorAndVisit(dereferenceExpression.pointer());
     auto right = m_stack.takeLast();
     auto variableName = generateNextVariableName();
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), ' ', variableName, " = *", right, ";\n"));
+    m_stringBuilder.append(makeString(AST::toString(*dereferenceExpression.typeAnnotation().leftAddressSpace()), ' ', m_typeNamer.mangledNameForType(dereferenceExpression.resolvedType()), "& ", variableName, " = *", right, ";\n"));
     m_stack.append(variableName);
 }
 

@@ -1,3 +1,13 @@
+2019-05-31  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Make sure we properly emit code for "&*x"
+        https://bugs.webkit.org/show_bug.cgi?id=198198
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/whlsl-store-to-property-updates-properly-expected.html: Added.
+        * webgpu/whlsl-store-to-property-updates-properly.html: Added.
+
 2019-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245946.
