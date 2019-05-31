@@ -62,7 +62,7 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
         if (this.representedObject instanceof WI.AuditTestBase) {
             this.representedObject.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
-            this.representedObject.addEventListener(WI.AuditTestBase.Event.ResultCleared, this._handleTestResultCleared, this);
+            this.representedObject.addEventListener(WI.AuditTestBase.Event.ResultChanged, this._handleTestResultChanged, this);
 
             if (this.representedObject instanceof WI.AuditTestCase)
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestCaseScheduled, this);
@@ -281,7 +281,7 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
             this._updateTestGroupDisabled();
     }
 
-    _handleTestResultCleared(event)
+    _handleTestResultChanged(event)
     {
         this._updateStatus();
     }

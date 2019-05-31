@@ -126,125 +126,173 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
         async function parseResponse(response) {
             let remoteObject = WI.RemoteObject.fromPayload(response.result, WI.mainTarget);
-            if (response.wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error"))
+            if (response.wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error")) {
                 addError(remoteObject.description);
-            else if (remoteObject.type === "boolean")
+                return;
+            }
+
+            if (remoteObject.type === "boolean") {
                 setLevel(remoteObject.value ? WI.AuditTestCaseResult.Level.Pass : WI.AuditTestCaseResult.Level.Fail);
-            else if (remoteObject.type === "string")
+                return;
+            }
+
+            if (remoteObject.type === "string") {
                 setLevel(remoteObject.value.trim().toLowerCase());
-            else if (remoteObject.type === "object" && !remoteObject.subtype) {
-                const options = {
-                    ownProperties: true,
-                };
+                return;
+            }
 
-                let properties = await new Promise((resolve, reject) => remoteObject.getPropertyDescriptorsAsObject(resolve, options));
-
-                function checkResultProperty(key, type, subtype) {
-                    if (!(key in properties))
-                        return null;
-
-                    let property = properties[key].value;
-                    if (!property)
-                        return null;
-
-                    function addErrorForValueType(valueType) {
-                        let value = null;
-                        if (valueType === "object" || valueType === "array")
-                            value = WI.UIString("\u0022%s\u0022 must be an %s");
-                        else
-                            value = WI.UIString("\u0022%s\u0022 must be a %s");
-                        addError(value.format(key, valueType));
-                    }
-
-                    if (property.subtype !== subtype) {
-                        addErrorForValueType(subtype);
-                        return null;
-                    }
-
-                    if (property.type !== type) {
-                        addErrorForValueType(type);
-                        return null;
-                    }
-
-                    if (type === "boolean" || type === "string")
-                        return property.value;
-
-                    return property;
-                }
-
-                async function resultArrayForEach(key, callback) {
-                    let array = checkResultProperty(key, "object", "array");
-                    if (!array)
-                        return;
-
-                    // `getPropertyDescriptorsAsObject` returns an object, meaning that if we
-                    // want to iterate over `array` by index, we have to count.
-                    let asObject = await new Promise((resolve, reject) => array.getPropertyDescriptorsAsObject(resolve, options));
-                    for (let i = 0; i < array.size; ++i) {
-                        if (i in asObject)
-                            await callback(asObject[i]);
-                    }
-                }
-
-                let levelString = checkResultProperty("level", "string");
-                if (levelString)
-                    setLevel(levelString.trim().toLowerCase());
-
-                if (checkResultProperty("pass", "boolean"))
-                    setLevel(WI.AuditTestCaseResult.Level.Pass);
-                if (checkResultProperty("warn", "boolean"))
-                    setLevel(WI.AuditTestCaseResult.Level.Warn);
-                if (checkResultProperty("fail", "boolean"))
-                    setLevel(WI.AuditTestCaseResult.Level.Fail);
-                if (checkResultProperty("error", "boolean"))
-                    setLevel(WI.AuditTestCaseResult.Level.Error);
-                if (checkResultProperty("unsupported", "boolean"))
-                    setLevel(WI.AuditTestCaseResult.Level.Unsupported);
-
-                await resultArrayForEach("domNodes", async (item) => {
-                    if (!item || !item.value || item.value.type !== "object" || item.value.subtype !== "node") {
-                        addError(WI.UIString("All items in \u0022%s\u0022 must be valid DOM nodes").format(WI.unlocalizedString("domNodes")));
-                        return;
-                    }
-
-                    let domNodeId = await new Promise((resolve, reject) => item.value.pushNodeToFrontend(resolve));
-                    let domNode = WI.domManager.nodeForId(domNodeId);
-                    if (!domNode)
-                        return;
-
-                    if (!data.domNodes)
-                        data.domNodes = [];
-                    data.domNodes.push(WI.cssPath(domNode, {full: true}));
-
-                    if (!resolvedDOMNodes)
-                        resolvedDOMNodes = [];
-                    resolvedDOMNodes.push(domNode);
-                });
-
-                await resultArrayForEach("domAttributes", (item) => {
-                    if (!item || !item.value || item.value.type !== "string" || !item.value.value.length) {
-                        addError(WI.UIString("All items in \u0022%s\u0022 must be non-empty strings").format(WI.unlocalizedString("domAttributes")));
-                        return;
-                    }
-
-                    if (!data.domAttributes)
-                        data.domAttributes = [];
-                    data.domAttributes.push(item.value.value);
-                });
-
-                await resultArrayForEach("errors", (item) => {
-                    if (!item || !item.value || item.value.type !== "object" || item.value.subtype !== "error") {
-                        addError(WI.UIString("All items in \u0022%s\u0022 must be error objects").format(WI.unlocalizedString("errors")));
-                        return;
-                    }
-
-                    addError(item.value.description);
-                });
-
-                if (window.InspectorTest && properties.__test)
-                    data.__test = properties.__test.value;
-            } else
+            if (remoteObject.type !== "object" || remoteObject.subtype) {
                 addError(WI.UIString("Return value is not an object, string, or boolean"));
+                return;
+            }
+
+            const options = {
+                ownProperties: true,
+            };
+
+            function checkResultProperty(key, value, type, subtype) {
+                function addErrorForValueType(valueType) {
+                    let errorString = null;
+                    if (valueType === "object" || valueType === "array")
+                        errorString = WI.UIString("\u0022%s\u0022 must be an %s");
+                    else
+                        errorString = WI.UIString("\u0022%s\u0022 must be a %s");
+                    addError(errorString.format(key, valueType));
+                }
+
+                if (value.subtype !== subtype) {
+                    addErrorForValueType(subtype);
+                    return null;
+                }
+
+                if (value.type !== type) {
+                    addErrorForValueType(type);
+                    return null;
+                }
+
+                if (type === "boolean" || type === "string")
+                    return value.value;
+
+                return value;
+            }
+
+            async function resultArrayForEach(key, value, callback) {
+                let array = checkResultProperty(key, value, "object", "array");
+                if (!array)
+                    return;
+
+                // `getPropertyDescriptorsAsObject` returns an object, meaning that if we
+                // want to iterate over `array` by index, we have to count.
+                let asObject = await new Promise((resolve, reject) => array.getPropertyDescriptorsAsObject(resolve, options));
+                for (let i = 0; i < array.size; ++i) {
+                    if (i in asObject)
+                        await callback(asObject[i]);
+                }
+            }
+
+            let properties = await new Promise((resolve, reject) => remoteObject.getPropertyDescriptors(resolve, options));
+            for (let property of properties) {
+                let key = property.name;
+                if (key === "__proto__")
+                    continue;
+
+                let value = property.value;
+
+                switch (key) {
+                case "level": {
+                    let levelString = checkResultProperty(key, value, "string");
+                    if (levelString)
+                        setLevel(levelString.trim().toLowerCase());
+                    break;
+                }
+
+                case "pass":
+                    if (checkResultProperty(key, value, "boolean"))
+                        setLevel(WI.AuditTestCaseResult.Level.Pass);
+                    break;
+
+                case "warn":
+                    if (checkResultProperty(key, value, "boolean"))
+                        setLevel(WI.AuditTestCaseResult.Level.Warn);
+                    break;
+
+                case "fail":
+                    if (checkResultProperty(key, value, "boolean"))
+                        setLevel(WI.AuditTestCaseResult.Level.Fail);
+                    break;
+
+                case "error":
+                    if (checkResultProperty(key, value, "boolean"))
+                        setLevel(WI.AuditTestCaseResult.Level.Error);
+                    break;
+
+                case "unsupported":
+                    if (checkResultProperty(key, value, "boolean"))
+                        setLevel(WI.AuditTestCaseResult.Level.Unsupported);
+                    break;
+
+                case "domNodes":
+                    await resultArrayForEach(key, value, async (item) => {
+                        if (!item || !item.value || item.value.type !== "object" || item.value.subtype !== "node") {
+                            addError(WI.UIString("All items in \u0022%s\u0022 must be valid DOM nodes").format(WI.unlocalizedString("domNodes")));
+                            return;
+                        }
+
+                        let domNodeId = await new Promise((resolve, reject) => item.value.pushNodeToFrontend(resolve));
+                        let domNode = WI.domManager.nodeForId(domNodeId);
+                        if (!domNode)
+                            return;
+
+                        if (!data.domNodes)
+                            data.domNodes = [];
+                        data.domNodes.push(WI.cssPath(domNode, {full: true}));
+
+                        if (!resolvedDOMNodes)
+                            resolvedDOMNodes = [];
+                        resolvedDOMNodes.push(domNode);
+                    });
+                    break;
+
+                case "domAttributes":
+                    await resultArrayForEach(key, value, (item) => {
+                        if (!item || !item.value || item.value.type !== "string" || !item.value.value.length) {
+                            addError(WI.UIString("All items in \u0022%s\u0022 must be non-empty strings").format(WI.unlocalizedString("domAttributes")));
+                            return;
+                        }
+
+                        if (!data.domAttributes)
+                            data.domAttributes = [];
+                        data.domAttributes.push(item.value.value);
+                    });
+                    break;
+
+                case "errors":
+                    await resultArrayForEach(key, value, (item) => {
+                        if (!item || !item.value || item.value.type !== "object" || item.value.subtype !== "error") {
+                            addError(WI.UIString("All items in \u0022%s\u0022 must be error objects").format(WI.unlocalizedString("errors")));
+                            return;
+                        }
+
+                        addError(item.value.description);
+                    });
+                    break;
+
+                default:
+                    if (value.objectId) {
+                        try {
+                            function inspectedPage_stringify() {
+                                return JSON.stringify(this);
+                            }
+                            let stringifiedValue = await value.callFunction(inspectedPage_stringify);
+                            data[key] = JSON.parse(stringifiedValue.value);
+                        } catch {
+                            addError(WI.UIString("\u0022%s\u0022 is not JSON serializable").format(key));
+                        }
+                    } else
+                        data[key] = value.value;
+                    break;
+                }
+            }
         }
 
         let agentCommandFunction = null;
@@ -255,7 +303,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         } else {
             agentCommandFunction = RuntimeAgent.evaluate;
             agentCommandArguments.expression = `(function() { "use strict"; return eval(\`(${this._test.replace(/`/g, "\\`")})\`)(); })()`;
-            agentCommandArguments.objectGroup = "audit";
+            agentCommandArguments.objectGroup = WI.AuditTestCase.ObjectGroup;
             agentCommandArguments.doNotPauseOnExceptionsAndMuteConsole = true;
         }
 
@@ -295,6 +343,8 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         if (resolvedDOMNodes)
             options.resolvedDOMNodes = resolvedDOMNodes;
         this._result = new WI.AuditTestCaseResult(this.name, level, options);
+
+        this.dispatchEventToListeners(WI.AuditTestBase.Event.ResultChanged);
     }
 };
 

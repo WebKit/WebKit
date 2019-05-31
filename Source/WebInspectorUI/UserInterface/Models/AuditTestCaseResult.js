@@ -67,7 +67,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
             payload.data = {};
         } else {
             function checkArray(key) {
-                if (!payload.data[key])
+                if (!(key in payload.data))
                     return;
 
                 if (!Array.isArray(payload.data[key])) {
@@ -132,24 +132,27 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
 
         if (!isEmptyObject(payload.data)) {
             options.data = {};
-            if (payload.data.domNodes && payload.data.domNodes.length) {
-                if (window.DOMAgent && (!payload.metadata.url || payload.metadata.url === WI.networkManager.mainFrame.url)) {
-                    let documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
-                    options.resolvedDOMNodes = await Promise.all(payload.data.domNodes.map(async (domNodeString) => {
-                        let nodeId = 0;
-                        try {
-                            nodeId = await WI.domManager.querySelector(documentNode, domNodeString);
-                        } catch { }
-                        return WI.domManager.nodeForId(nodeId) || null;
-                    }));
+            for (let key in payload.data) {
+                if (key === "domNodes" || key === "domAttributes" || key === "errors") {
+                    if (!payload.data[key].length)
+                        continue;
                 }
 
-                options.data.domNodes = payload.data.domNodes;
+                if (key === "domNodes") {
+                    if (window.DOMAgent && (!payload.metadata.url || payload.metadata.url === WI.networkManager.mainFrame.url)) {
+                        let documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+                        options.resolvedDOMNodes = await Promise.all(payload.data.domNodes.map(async (domNodeString) => {
+                            let nodeId = 0;
+                            try {
+                                nodeId = await WI.domManager.querySelector(documentNode, domNodeString);
+                            } catch { }
+                            return WI.domManager.nodeForId(nodeId) || null;
+                        }));
+                    }
+                }
+
+                options.data[key] = payload.data[key];
             }
-            if (payload.data.domAttributes && payload.data.domAttributes.length)
-                options.data.domAttributes = payload.data.domAttributes;
-            if (payload.data.errors && payload.data.errors.length)
-                options.data.errors = payload.data.errors;
         }
 
         if (!isEmptyObject(payload.metadata)) {
@@ -210,13 +213,14 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
         json.level = this._level;
 
         let data = {};
-        if (this._data.domNodes && this._data.domNodes.length) {
-            data.domNodes = this._data.domNodes;
-            if (this._data.domAttributes && this._data.domAttributes.length)
-                data.domAttributes = this._data.domAttributes;
+        for (let key in this._data) {
+            if (key === "domNodes" || key === "domAttributes" || key === "errors") {
+                if (!this._data[key].length)
+                    continue;
+            }
+
+            data[key] = this._data[key];
         }
-        if (this._data.errors && this._data.errors.length)
-            data.errors = this._data.errors;
         if (!isEmptyObject(data))
             json.data = data;
 

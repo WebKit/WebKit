@@ -80,6 +80,19 @@ Object.defineProperty(Object, "shallowEqual",
     }
 });
 
+Object.defineProperty(Object, "filter",
+{
+    value(object, callback)
+    {
+        let filtered = {};
+        for (let key in object) {
+            if (callback(key, object[key]))
+                filtered[key] = object[key];
+        }
+        return filtered;
+    }
+});
+
 Object.defineProperty(Object.prototype, "valueForCaseInsensitiveKey",
 {
     value(key)

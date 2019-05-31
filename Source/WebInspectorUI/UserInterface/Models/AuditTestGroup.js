@@ -169,7 +169,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 
         return super.clearResult({
             ...options,
-            suppressResultClearedEvent: !cleared,
+            suppressResultChangedEvent: !cleared,
         });
     }
 
@@ -210,6 +210,8 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         this._result = new WI.AuditTestGroupResult(this.name, results, {
             description: this.description,
         });
+
+        this.dispatchEventToListeners(WI.AuditTestBase.Event.ResultChanged);
     }
 
     _handleTestCompleted(event)

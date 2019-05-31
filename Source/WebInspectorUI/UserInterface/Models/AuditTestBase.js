@@ -116,7 +116,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         } else {
             agentCommandFunction = RuntimeAgent.evaluate;
             agentCommandArguments.expression = `(function() { "use strict"; return eval(\`(${this._setup.replace(/`/g, "\\`")})\`)(); })()`;
-            agentCommandArguments.objectGroup = "audit";
+            agentCommandArguments.objectGroup = AuditTestBase.ObjectGroup;
             agentCommandArguments.doNotPauseOnExceptionsAndMuteConsole = true;
         }
 
@@ -191,8 +191,8 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
         this._result = null;
 
-        if (!options.suppressResultClearedEvent)
-            this.dispatchEventToListeners(WI.AuditTestBase.Event.ResultCleared);
+        if (!options.suppressResultChangedEvent)
+            this.dispatchEventToListeners(WI.AuditTestBase.Event.ResultChanged);
 
         return true;
     }
@@ -228,13 +228,15 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 };
 
 // Keep this in sync with Inspector::Protocol::Audit::VERSION.
-WI.AuditTestBase.Version = 2;
+WI.AuditTestBase.Version = 3;
+
+WI.AuditTestBase.ObjectGroup = "audit";
 
 WI.AuditTestBase.Event = {
     Completed: "audit-test-base-completed",
     DisabledChanged: "audit-test-base-disabled-changed",
     Progress: "audit-test-base-progress",
-    ResultCleared: "audit-test-base-result-cleared",
+    ResultChanged: "audit-test-base-result-changed",
     Scheduled: "audit-test-base-scheduled",
     Stopping: "audit-test-base-stopping",
 };

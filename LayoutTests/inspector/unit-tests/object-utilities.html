@@ -51,6 +51,29 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Object.filter",
+        test() {
+            const object = {a: 1, b: 2};
+
+            function checkKey(keys, expected) {
+                InspectorTest.expectShallowEqual(Object.filter(object, (key, value) => keys.includes(key)), expected, `filter should remove all entries where the key isn't in ${JSON.stringify(keys)}.`);
+            }
+            checkKey(["a", "b", "c"], {a: 1, b: 2});
+            checkKey(["a"], {a: 1});
+            checkKey(["b"], {b: 2});
+            checkKey(["c"], {});
+
+            function checkValue(values, expected) {
+                InspectorTest.expectShallowEqual(Object.filter(object, (key, value) => values.includes(value)), expected, `filter should remove all entries where the value isn't in ${JSON.stringify(values)}.`);
+            }
+            checkValue([1, 2, 3], {a: 1, b: 2});
+            checkValue([1], {a: 1});
+            checkValue([2], {b: 2});
+            checkValue([3], {});
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

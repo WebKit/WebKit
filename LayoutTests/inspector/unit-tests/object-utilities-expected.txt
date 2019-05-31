@@ -22,3 +22,13 @@ PASS: shallowEqual of objects with equal constructors should be true.
 PASS: shallowEqual of objects with different constructors should be false.
 PASS: shallowEqual of objects with different constructors should be false.
 
+-- Running test case: Object.filter
+PASS: filter should remove all entries where the key isn't in ["a","b","c"].
+PASS: filter should remove all entries where the key isn't in ["a"].
+PASS: filter should remove all entries where the key isn't in ["b"].
+PASS: filter should remove all entries where the key isn't in ["c"].
+PASS: filter should remove all entries where the value isn't in [1,2,3].
+PASS: filter should remove all entries where the value isn't in [1].
+PASS: filter should remove all entries where the value isn't in [2].
+PASS: filter should remove all entries where the value isn't in [3].
+

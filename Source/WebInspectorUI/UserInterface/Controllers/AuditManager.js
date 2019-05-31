@@ -891,8 +891,9 @@ WI.AuditManager = class AuditManager extends WI.Object
                 ], {description: WI.UIString("These are all of the different test result levels.")}),
                 new WI.AuditTestGroup(WI.UIString("Result Data"), [
                     new WI.AuditTestCase(`data-domNodes`, `function() { return {domNodes: [document.body], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM nodes are shown. It will pass with the <body> element.")}),
-                    new WI.AuditTestCase(`data-domAttributes`, `function() { return {domNodes: Array.from(document.querySelectorAll("[id]")), domAttributes: ["id"], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM nodes are shown. It will pass with all elements with an id attribute.")}),
+                    new WI.AuditTestCase(`data-domAttributes`, `function() { return {domNodes: Array.from(document.querySelectorAll("[id]")), domAttributes: ["id"], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM attributes are highlighted on any returned DOM nodes. It will pass with all elements with an id attribute.")}),
                     new WI.AuditTestCase(`data-errors`, `function() { throw Error("this error was thrown from inside the audit test code."); }`, {description: WI.UIString("This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way.")}),
+                    new WI.AuditTestCase(`data-custom`, `function() { return {level: "pass", a: 1, b: [2], c: {key: 3}}; }`, {description: WI.UIString("This is an example of how custom result data is shown.")}),
                 ], {description: WI.UIString("These are all of the different types of data that can be returned with the test result.")}),
             ], {description: WI.UIString("These tests serve as a demonstration of the functionality and structure of audits.")}),
             new WI.AuditTestGroup(WI.UIString("Accessibility"), [

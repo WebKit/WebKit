@@ -127,6 +127,10 @@
     top: -1px;
 }
 
+.content-view.audit-test-case > section table > tr > td + td {
+    width: 100%;
+}
+
 .content-view.audit-test-case > section .CodeMirror {
     width: 100%;
     height: auto;

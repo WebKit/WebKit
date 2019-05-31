@@ -1,3 +1,72 @@
+2019-05-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: there should be a default test for WebInspectorAudit.Resources functionality
+        https://bugs.webkit.org/show_bug.cgi?id=196710
+        <rdar://problem/49712348>
+
+        Reviewed by Joseph Pecoraro.
+
+        Previously, there was no way to return data from Audit that wasn't a DOM node, a DOM
+        attribute (which wasn't "shown" anywhere, as it would highlight that attribute on any
+        returned DOM nodes), or an error string.
+
+        In order for Audits to be more flexible with the types of things they test, there needs to
+        be a way for other types of data to be sent back and displayed in the Audit tab.
+
+        This patch makes it so that an Audit result can now contain other keys/values that are all
+        expected to be JSON serializable. It will take all of the non-"special" (e.g. "domNodes" or
+        "errors") keys/values and display them as object trees. This way, any JSON serializable data
+        can be sent with the result and be displayed in the Audit tab.
+
+        * UserInterface/Models/AuditTestBase.js:
+        (WI.AuditTestBase.prototype.async setup):
+        (WI.AuditTestBase.prototype.clearResult):
+        * UserInterface/Models/AuditTestGroup.js:
+        (WI.AuditTestCase.prototype.clearResult):
+        (WI.AuditTestCase.prototype._updateResult):
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.prototype.async run):
+        (WI.AuditTestCase.prototype.async run.async parseResponse):
+        (WI.AuditTestCase.prototype.async run.async parseResponse.checkResultProperty):
+        (WI.AuditTestCase.prototype.async run.async parseResponse.checkResultProperty.addErrorForValueType):
+        (WI.AuditTestCase.prototype.async run.async parseResponse.async resultArrayForEach):
+        (WI.AuditTestCase.prototype.async run.async parseResponse.inspectedPage_stringify): Added.
+        Rename `ResultCleared` to `ResultChanged` so that it can (semantically) be used whenever a
+        new result is set in addition to when an existing one is cleared. This is needed so that
+        `AuditTestCaseContentView` will refresh each time the result changes, instead of only in the
+        first `layout()` after the last result was cleared.
+
+        * UserInterface/Models/AuditTestCaseResult.js:
+        (WI.AuditTestCaseResult.async fromPayload):
+        (WI.AuditTestCaseResult.prototype.toJSON):
+        Drive-by: fix the check for optional `data` values to still warn if the value is `null`.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype._addDefaultTests):
+        Add a default test "Demo Audit > Result Data > data-custom" as an example how to write an
+        Audit that returns custom data, as well as how that custom data is shown in the Audit tab.
+
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.shown):
+        (WI.AuditTestContentView.prototype.handleResultChanged): Added.
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView):
+        (WI.AuditTestCaseContentView.prototype.layout):
+        (WI.AuditTestCaseContentView.prototype.handleResultChanged): Added.
+        Preserve the UI for each section across `layout()`s, so that expand/collapse states aren't
+        reset each time the user changes the selected Audit.
+
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view.audit-test-case > section table > tr > td + td): Added.
+        Drive-by: ensure that the "index" table column is never larger than it needs to be.
+
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.onattach):
+        (WI.AuditTreeElement.prototype._handleTestResultChanged): Added.
+        (WI.AuditTreeElement.prototype._handleTestResultCleared): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-05-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: spacing around pie chart is different between CPU and Memory

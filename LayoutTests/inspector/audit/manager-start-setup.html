@@ -7,11 +7,11 @@
 function test()
 {
     const auditTestString = (function() {
-        return {
-            level: "pass",
-            __test: WebInspectorAudit.__test,
-        };
-    }).toString();
+    return {
+        level: "pass",
+        test: WebInspectorAudit.test,
+    };
+}).toString();
 
     async function wrapTest(audit, expected, {getResultCallback} = {}) {
         WI.auditManager._addTest(audit);
@@ -22,7 +22,10 @@ function test()
 
         InspectorTest.assert(result.didPass, "The test should pass.");
         InspectorTest.assert(!result.data.errors, "There should be no errors.");
-        InspectorTest.expectEqual(result.data.__test.value, expected, `The setup function should have set __test to ${expected}.`);
+        if (result.data.errors)
+            InspectorTest.json(result.data.errors);
+
+        InspectorTest.expectEqual(result.data.test, expected, `The setup function should have set test to ${expected}.`);
 
         WI.auditManager.removeTest(audit);
     }
@@ -34,7 +37,7 @@ function test()
         description: "Check that the setup of an audit is actually run.",
         async test() {
             const setup = (function() {
-                WebInspectorAudit.__test = 42;
+                WebInspectorAudit.test = 42;
             }).toString();
 
             let audit = new WI.AuditTestCase("AuditManager.prototype.start.SyncSetup", auditTestString, {setup});
@@ -52,7 +55,7 @@ function test()
                     setTimeout(resolve, 10);
                 });
 
-                WebInspectorAudit.__test = 42;
+                WebInspectorAudit.test = 42;
             }).toString();
 
             let audit = new WI.AuditTestCase("AuditManager.prototype.start.AsyncSetup", auditTestString, {setup});
@@ -66,7 +69,7 @@ function test()
         description: "Check that the setup of a non-top-level audit is not run.",
         async test() {
             const setup = (function() {
-                WebInspectorAudit.__test = 42;
+                WebInspectorAudit.test = 42;
             }).toString();
 
             let audit = new WI.AuditTestGroup("AuditManager.prototype.start.SubLevelSetup.Group", [
@@ -86,15 +89,15 @@ function test()
         description: "Check that only the setup of top-level audits is run.",
         async test() {
             const setupA = (function() {
-                if (!WebInspectorAudit.__test)
-                    WebInspectorAudit.__test = "";
-                WebInspectorAudit.__test += "A";
+                if (!WebInspectorAudit.test)
+                    WebInspectorAudit.test = "";
+                WebInspectorAudit.test += "A";
             }).toString();
 
             const setupB = (function() {
-                if (!WebInspectorAudit.__test)
-                    WebInspectorAudit.__test = "";
-                WebInspectorAudit.__test += "B";
+                if (!WebInspectorAudit.test)
+                    WebInspectorAudit.test = "";
+                WebInspectorAudit.test += "B";
             }).toString();
 
             let audit = new WI.AuditTestGroup("AuditManager.prototype.start.OverriddenLevelSetup.Group", [
@@ -114,9 +117,9 @@ function test()
         description: "Test that a new WebInspectorAudit object is created for each setup call.",
         async test() {
             const setupA = (function() {
-                if (!WebInspectorAudit.__test)
-                    WebInspectorAudit.__test = "";
-                WebInspectorAudit.__test += "A";
+                if (!WebInspectorAudit.test)
+                    WebInspectorAudit.test = "";
+                WebInspectorAudit.test += "A";
             }).toString();
 
             let auditA = new WI.AuditTestCase("AuditManager.prototype.start.MultipleTopLevel.A", auditTestString, {setup: setupA});
@@ -124,9 +127,9 @@ function test()
             await wrapTest(auditA, "A");
 
             const setupB = (function() {
-                if (!WebInspectorAudit.__test)
-                    WebInspectorAudit.__test = "";
-                WebInspectorAudit.__test += "B";
+                if (!WebInspectorAudit.test)
+                    WebInspectorAudit.test = "";
+                WebInspectorAudit.test += "B";
             }).toString();
 
             let auditB = new WI.AuditTestCase("AuditManager.prototype.start.MultipleTopLevel.B", auditTestString, {setup: setupB});

@@ -32,6 +32,9 @@ WARN: Audit Warning: "validWithInvalidOptionals test result name" has a non-stri
 }
 
 -- Running test case: AuditTestCaseResult.fromPayload.validWithInvalidSubOptionals
+WARN: Audit Warning: "validWithInvalidSubOptionals test result name" has a non-array "data.domNodes" value
+WARN: Audit Warning: "validWithInvalidSubOptionals test result name" has a non-array "data.domAttributes" value
+WARN: Audit Warning: "validWithInvalidSubOptionals test result name" has a non-array "data.errors" value
 WARN: Audit Warning: "validWithInvalidSubOptionals test result name" has a non-object "metadata.startTimestamp" value
 WARN: Audit Warning: "validWithInvalidSubOptionals test result name" has a non-object "metadata.asyncTimestamp" value
 WARN: Audit Warning: "validWithInvalidSubOptionals test result name" has a non-object "metadata.endTimestamp" value
