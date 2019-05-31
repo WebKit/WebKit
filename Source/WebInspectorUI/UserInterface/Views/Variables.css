@@ -229,7 +229,6 @@ body.window-inactive * {
         --background-color-code: hsl(0, 0%, 21%);
 
         --gray-background-color: hsl(0, 0%, 50%);
-        --gray-foreground-color: hsl(0, 0%, 33%);
 
         --link-text-color: var(--text-color-secondary);
 

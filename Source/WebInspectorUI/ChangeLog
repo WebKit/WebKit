@@ -1,3 +1,15 @@
+2019-05-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: CPU: gray (?) and (x) should be white
+        https://bugs.webkit.org/show_bug.cgi?id=198394
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/Variables.css:
+        (@media (prefers-color-scheme: dark)):
+        Remove the dark mode override for `--gray-foreground-color`, as the default `white` is a
+        better contrast.
+
 2019-05-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: there should be a default test for WebInspectorAudit.Resources functionality
