@@ -191,11 +191,25 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::evictProcess(): Evicting process %i from WebProcess cache because it expired", this, process.processIdentifier());
 
     std::unique_ptr<CachedProcess> cachedProcess;
-    auto it = m_processesPerRegistrableDomain.find(process.registrableDomain());
-    if (it != m_processesPerRegistrableDomain.end() && &it->value->process() == &process) {
-        cachedProcess = WTFMove(it->value);
-        m_processesPerRegistrableDomain.remove(it);
+    auto registrableDomain = process.registrableDomain();
+    ASSERT(!registrableDomain.isEmpty());
+    if (registrableDomain.isEmpty()) {
+        for (auto it = m_processesPerRegistrableDomain.begin(); it != m_processesPerRegistrableDomain.end(); ++it) {
+            if (&it->value->process() == &process) {
+                cachedProcess = WTFMove(it->value);
+                m_processesPerRegistrableDomain.remove(it);
+                break;
+            }
+        }
     } else {
+        auto it = m_processesPerRegistrableDomain.find(registrableDomain);
+        if (it != m_processesPerRegistrableDomain.end() && &it->value->process() == &process) {
+            cachedProcess = WTFMove(it->value);
+            m_processesPerRegistrableDomain.remove(it);
+        }
+    }
+
+    if (!cachedProcess) {
         for (auto& pair : m_pendingAddRequests) {
             if (&pair.value->process() == &process) {
                 cachedProcess = WTFMove(pair.value);
@@ -204,6 +218,7 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
             }
         }
     }
+
     ASSERT(cachedProcess);
     if (!cachedProcess)
         return;

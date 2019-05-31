@@ -1003,7 +1003,7 @@ void WebProcessProxy::maybeShutDown()
 
 bool WebProcessProxy::canTerminateChildProcess()
 {
-    if (!m_pageMap.isEmpty() || m_processPool->hasSuspendedPageFor(*this) || !m_provisionalPages.isEmpty() || m_isInProcessCache)
+    if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.isEmpty() || m_isInProcessCache)
         return false;
 
     if (!m_processPool->shouldTerminate(this))

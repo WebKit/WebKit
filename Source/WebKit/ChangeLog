@@ -1,5 +1,33 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Apply patch. rdar://problem/51264847
+
+    2019-05-30  Chris Dumez  <cdumez@apple.com>
+
+            <rdar://problem/50435250> v2: CrashTracer: Crash in WebProcessCache::removeProcess
+
+            Reviewed by Geoff Garen.
+
+            * UIProcess/WebProcessCache.cpp:
+            (WebKit::WebProcessCache::removeProcess):
+            This code change is to avoid crashing if my speculative fix below does not work. If
+            WebProcessCache::removeProcess() gets called with a process whole registrable domain
+            is empty (or null), remove it the slow way from the HashMap instead of trying to look
+            up the bad registrable domain in the HashMap. This ensures we do no crash but still
+            remove the process we're supposed to evict.
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::canTerminateChildProcess):
+            This is a speculative fix for the crash which aligns the branch with trunk. There is
+            a period of time where a SuspendedPageProxy can exist for a given process but the
+            WebProcessPool is no longer aware of it. This is when we're about to use the
+            SuspendedPageProxy for a load. If WebProcessProxy::maybeShutDown() gets called during
+            this period of time, canTerminateChildProcess() would incorrectly return true and we
+            would cache the WebProcess even though it is about to do a load. The new code relies
+            on m_suspendedPageCount which is a lot more reliable than asking the process pool.
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Apply patch. rdar://problem/50857668
 
     2019-05-30  Chris Dumez  <cdumez@apple.com>
