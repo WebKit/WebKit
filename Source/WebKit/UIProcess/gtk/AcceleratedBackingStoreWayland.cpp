@@ -132,6 +132,7 @@ AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland()
         if (makeContextCurrent())
             glDeleteTextures(1, &m_viewTexture);
     }
+    wpe_view_backend_exportable_fdo_destroy(m_exportable);
 #else
     WaylandCompositor::singleton().unregisterWebPage(m_webPage);
 #endif
