@@ -32,48 +32,23 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-using namespace TestWebKitAPI;
-
-@interface NSObject ()
-
+@interface WKContentView ()
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
-
 @end
 
 namespace TestWebKitAPI {
-    
-static UIGestureRecognizer *recursiveFindHighlightLongPressRecognizer(UIView *view)
-{
-    for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
-        if ([recognizer isKindOfClass:NSClassFromString(@"_UIWebHighlightLongPressGestureRecognizer")])
-            return recognizer;
-    }
-    
-    for (UIView *subview in view.subviews) {
-        UIGestureRecognizer *recognizer = recursiveFindHighlightLongPressRecognizer(subview);
-        if (recognizer)
-            return recognizer;
-    }
-    
-    return nil;
-}
-    
+
 TEST(SynchronousTimeoutTests, UnresponsivePageDoesNotCausePositionInformationToHangUI)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
-    
-    UIGestureRecognizer *highlightLongPressRecognizer = recursiveFindHighlightLongPressRecognizer(webView.get());
-    UIView *interactionView = highlightLongPressRecognizer.view;
-    EXPECT_NOT_NULL(highlightLongPressRecognizer);
-    
+
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
     
     // The test passes if we can long press and still finish the test.
-    [interactionView hasSelectablePositionAtPoint:CGPointMake(100, 100)];
+    [[webView wkContentView] hasSelectablePositionAtPoint:CGPointMake(100, 100)];
 }
 
-    
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

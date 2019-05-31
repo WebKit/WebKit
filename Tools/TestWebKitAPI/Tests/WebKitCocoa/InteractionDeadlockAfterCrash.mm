@@ -33,46 +33,23 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-@interface NSObject ()
-
-- (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
-
-@end
-
 #if PLATFORM(IOS_FAMILY)
 
-static UIGestureRecognizer *recursiveFindHighlightLongPressRecognizer(UIView *view)
-{
-    for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
-        if ([recognizer isKindOfClass:NSClassFromString(@"_UIWebHighlightLongPressGestureRecognizer")])
-            return recognizer;
-    }
-
-    for (UIView *subview in view.subviews) {
-        UIGestureRecognizer *recognizer = recursiveFindHighlightLongPressRecognizer(subview);
-        if (recognizer)
-            return recognizer;
-    }
-
-    return nil;
-}
+@interface WKContentView ()
+- (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
+@end
 
 TEST(WebKit, InteractionDeadlockAfterCrash)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<WKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
 
     [webView loadHTMLString:@"test" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
 
-    UIGestureRecognizer *highlightLongPressRecognizer = recursiveFindHighlightLongPressRecognizer(webView.get());
-    UIView *interactionView = highlightLongPressRecognizer.view;
-    EXPECT_NOT_NULL(highlightLongPressRecognizer);
-
     // This will start an asynchronous interaction information update.
-    BOOL shouldBegin = [[highlightLongPressRecognizer delegate] gestureRecognizerShouldBegin:highlightLongPressRecognizer];
-    EXPECT_TRUE(shouldBegin);
+    [webView _simulateLongPressActionAtLocation:CGPointMake(50, 50)];
 
     [webView _killWebContentProcessAndResetState];
 
@@ -80,7 +57,7 @@ TEST(WebKit, InteractionDeadlockAfterCrash)
     [webView _test_waitForDidFinishNavigation];
 
     // This will synchronously ensure we have up-to-date interaction information.
-    [interactionView hasSelectablePositionAtPoint:CGPointZero];
+    [[webView wkContentView] hasSelectablePositionAtPoint:CGPointZero];
 }
 
 #endif

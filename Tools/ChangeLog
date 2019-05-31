@@ -1,3 +1,18 @@
+2019-05-31  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: WebKit.InteractionDeadlockAfterCrash and SynchronousTimeoutTests.UnresponsivePageDoesNotCausePositionInformationToHangUI API tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=198432
+        <rdar://problem/51266033>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InteractionDeadlockAfterCrash.mm:
+        (TEST):
+        (recursiveFindHighlightLongPressRecognizer): Deleted.
+        * TestWebKitAPI/Tests/ios/SynchronousTimeoutTests.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::recursiveFindHighlightLongPressRecognizer): Deleted.
+
 2019-05-31  Alex Christensen  <achristensen@webkit.org>
 
         URLParser::parseIPv6Host should properly parse 0's around compression
