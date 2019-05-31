@@ -1,0 +1,60 @@
+Scrolled contents
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (paintingPhases
+    GraphicsLayerPaintBackground
+    GraphicsLayerPaintForeground
+    )
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (paintingPhases
+        GraphicsLayerPaintBackground
+        GraphicsLayerPaintForeground
+        )
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 322.00 322.00)
+          (drawsContent 1)
+          (paintingPhases
+            GraphicsLayerPaintBackground
+            GraphicsLayerPaintCompositedScroll
+            )
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
+              (position 1.00 1.00)
+              (bounds 305.00 305.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=1 height=1)
+                  (anchor 0.00 0.00)
+                  (bounds 305.00 1020.00)
+                  (drawsContent 1)
+                  (paintingPhases
+                    GraphicsLayerPaintOverflowContents
+                    GraphicsLayerPaintCompositedScroll
+                    )
+                  (children 1
+                    (GraphicsLayer
+                      (offsetFromRenderer width=1 height=1)
+                      (bounds 305.00 1020.00)
+                      (drawsContent 1)
+                      (paintingPhases
+                        GraphicsLayerPaintForeground
+                        )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

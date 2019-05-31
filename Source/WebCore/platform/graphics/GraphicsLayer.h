@@ -415,7 +415,7 @@ public:
 
     // Some GraphicsLayers paint only the foreground or the background content
     OptionSet<GraphicsLayerPaintingPhase> paintingPhase() const { return m_paintingPhase; }
-    void setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase> phase) { m_paintingPhase = phase; }
+    void setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase>);
 
     enum ShouldClipToLayer {
         DoNotClipToLayer,

@@ -316,7 +316,7 @@ private:
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     bool updateForegroundLayer(bool needsForegroundLayer);
     bool updateBackgroundLayer(bool needsBackgroundLayer);
-    void updateMaskingLayer(bool hasMask, bool hasClipPath);
+    bool updateMaskingLayer(bool hasMask, bool hasClipPath);
     bool requiresHorizontalScrollbarLayer() const;
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
@@ -326,15 +326,12 @@ private:
     void setLocationOfScrolledContents(ScrollOffset, ScrollingLayerPositionAction);
 
     void updateChildClippingStrategy(bool needsDescendantsClippingLayer);
-
     void updateMaskingLayerGeometry();
-    
     void updateRootLayerConfiguration();
+    void updatePaintingPhases();
 
     void setBackgroundLayerPaintsFixedRootBackground(bool);
 
-    OptionSet<GraphicsLayerPaintingPhase> paintingPhaseForPrimaryLayer() const;
-    
     LayoutSize contentOffsetInCompositingLayer() const;
     // Result is transform origin in device pixels.
     FloatPoint3D computeTransformOriginForPainting(const LayoutRect& borderBox) const;

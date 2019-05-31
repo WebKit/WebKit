@@ -819,7 +819,8 @@ bool RenderLayerBacking::updateConfiguration()
             m_graphicsLayer->addChild(*flatteningLayer);
     }
 
-    updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath());
+    if (updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath()))
+        layerConfigChanged = true;
 
     updateChildClippingStrategy(needsDescendantsClippingLayer);
 
@@ -887,6 +888,9 @@ bool RenderLayerBacking::updateConfiguration()
             layerConfigChanged = true;
         }
     }
+
+    if (layerConfigChanged)
+        updatePaintingPhases();
 
     return layerConfigChanged;
 }
@@ -1709,18 +1713,12 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
             String layerName = m_owningLayer.name() + " (foreground)";
             m_foregroundLayer = createGraphicsLayer(layerName);
             m_foregroundLayer->setDrawsContent(true);
-            m_foregroundLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::Foreground });
             layerChanged = true;
         }
     } else if (m_foregroundLayer) {
         willDestroyLayer(m_foregroundLayer.get());
         GraphicsLayer::unparentAndClear(m_foregroundLayer);
         layerChanged = true;
-    }
-
-    if (layerChanged) {
-        m_graphicsLayer->setNeedsDisplay();
-        m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
     }
 
     return layerChanged;
@@ -1735,7 +1733,6 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
             m_backgroundLayer = createGraphicsLayer(layerName);
             m_backgroundLayer->setDrawsContent(true);
             m_backgroundLayer->setAnchorPoint(FloatPoint3D());
-            m_backgroundLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::Background });
             layerChanged = true;
         }
         
@@ -1759,15 +1756,12 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
             m_graphicsLayer->setAppliesPageScale(true);
         }
     }
-    
-    if (layerChanged)
-        m_graphicsLayer->setNeedsDisplay();
-    
+
     return layerChanged;
 }
 
 // Masking layer is used for masks or clip-path.
-void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
+bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
 {
     bool layerChanged = false;
     if (hasMask || hasClipPath) {
@@ -1805,8 +1799,7 @@ void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         layerChanged = true;
     }
 
-    if (layerChanged)
-        m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
+    return layerChanged;
 }
 
 void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippingLayer)
@@ -1846,8 +1839,9 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         return false;
 
     if (!m_scrollContainerLayer) {
-        // Outer layer which corresponds with the scroll view.
+        // Outer layer which corresponds with the scroll view. This never paints content.
         m_scrollContainerLayer = createGraphicsLayer("scroll container", GraphicsLayer::Type::ScrollContainer);
+        m_scrollContainerLayer->setPaintingPhase({ });
         m_scrollContainerLayer->setDrawsContent(false);
         m_scrollContainerLayer->setMasksToBounds(true);
 
@@ -1855,11 +1849,6 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         m_scrolledContentsLayer = createGraphicsLayer("scrolled contents", GraphicsLayer::Type::ScrolledContents);
         m_scrolledContentsLayer->setDrawsContent(true);
         m_scrolledContentsLayer->setAnchorPoint({ });
-
-        OptionSet<GraphicsLayerPaintingPhase> paintPhases = { GraphicsLayerPaintingPhase::OverflowContents, GraphicsLayerPaintingPhase::CompositedScroll };
-        if (!m_foregroundLayer)
-            paintPhases.add(GraphicsLayerPaintingPhase::Foreground);
-        m_scrolledContentsLayer->setPaintingPhase(paintPhases);
         m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);
     } else {
         compositor().willRemoveScrollingLayerWithBacking(m_owningLayer, *this);
@@ -1870,9 +1859,6 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
         GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
     }
-
-    m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
-    m_graphicsLayer->setNeedsDisplay(); // Because painting phases changed.
 
     if (m_scrollContainerLayer)
         compositor().didAddScrollingLayer(m_owningLayer);
@@ -1937,22 +1923,6 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
 void RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole(bool viewportCoordinated)
 {
     m_graphicsLayer->setIsViewportConstrained(viewportCoordinated);
-}
-
-OptionSet<GraphicsLayerPaintingPhase> RenderLayerBacking::paintingPhaseForPrimaryLayer() const
-{
-    OptionSet<GraphicsLayerPaintingPhase> phases;
-    if (!m_backgroundLayer)
-        phases.add(GraphicsLayerPaintingPhase::Background);
-    if (!m_foregroundLayer)
-        phases.add(GraphicsLayerPaintingPhase::Foreground);
-
-    if (m_scrolledContentsLayer) {
-        phases.remove(GraphicsLayerPaintingPhase::Foreground);
-        phases.add(GraphicsLayerPaintingPhase::CompositedScroll);
-    }
-
-    return phases;
 }
 
 float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
@@ -2121,6 +2091,35 @@ void RenderLayerBacking::updateRootLayerConfiguration()
         m_graphicsLayer->setBackgroundColor(backgroundColor);
         m_graphicsLayer->setContentsOpaque(!viewIsTransparent);
     }
+}
+
+void RenderLayerBacking::updatePaintingPhases()
+{
+    // Phases for m_childClippingMaskLayer and m_maskLayer are set elsewhere.
+    OptionSet<GraphicsLayerPaintingPhase> primaryLayerPhases = { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::Foreground };
+    
+    if (m_foregroundLayer) {
+        OptionSet<GraphicsLayerPaintingPhase> foregroundLayerPhases { GraphicsLayerPaintingPhase::Foreground };
+        m_foregroundLayer->setPaintingPhase(foregroundLayerPhases);
+        primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Foreground);
+    }
+
+    if (m_backgroundLayer) {
+        m_backgroundLayer->setPaintingPhase(GraphicsLayerPaintingPhase::Background);
+        primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Background);
+    }
+
+    if (m_scrolledContentsLayer) {
+        OptionSet<GraphicsLayerPaintingPhase> scrolledContentLayerPhases = { GraphicsLayerPaintingPhase::OverflowContents, GraphicsLayerPaintingPhase::CompositedScroll };
+        if (!m_foregroundLayer)
+            scrolledContentLayerPhases.add(GraphicsLayerPaintingPhase::Foreground);
+        m_scrolledContentsLayer->setPaintingPhase(scrolledContentLayerPhases);
+
+        primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Foreground);
+        primaryLayerPhases.add(GraphicsLayerPaintingPhase::CompositedScroll);
+    }
+
+    m_graphicsLayer->setPaintingPhase(primaryLayerPhases);
 }
 
 static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObject& renderer)

@@ -491,6 +491,15 @@ void GraphicsLayer::setBackgroundColor(const Color& color)
     m_backgroundColor = color;
 }
 
+void GraphicsLayer::setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase> phase)
+{
+    if (phase == m_paintingPhase)
+        return;
+
+    setNeedsDisplay();
+    m_paintingPhase = phase;
+}
+
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
     FloatSize offset = offsetFromRenderer() - toFloatSize(scrollOffset());
