@@ -96,7 +96,7 @@ public:
 
 private:
 #if PLATFORM(IOS_FAMILY)
-    void setVideoCapturePageState(bool interrupted, bool pageMuted)
+    void setVideoCapturePageState(bool interrupted, bool pageMuted) final
     {
         if (activeSource())
             activeSource()->setInterrupted(interrupted, pageMuted);
@@ -139,6 +139,13 @@ public:
         return MockRealtimeAudioSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
     }
 private:
+#if PLATFORM(IOS_FAMILY)
+    void setAudioCapturePageState(bool interrupted, bool pageMuted) final
+    {
+        if (activeSource())
+            activeSource()->setInterrupted(interrupted, pageMuted);
+    }
+#endif
     CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
 };
 

@@ -649,6 +649,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setInactiveMediaCaptureSteamRepromptIntervalInMinutes(interval);
 }
 
+- (BOOL)_interruptAudioOnPageVisibilityChangeEnabled
+{
+    return _preferences->interruptAudioOnPageVisibilityChangeEnabled();
+}
+
+- (void)_setInterruptAudioOnPageVisibilityChangeEnabled:(BOOL)enabled
+{
+    _preferences->setInterruptAudioOnPageVisibilityChangeEnabled(enabled);
+}
+
 - (BOOL)_enumeratingAllNetworkInterfacesEnabled
 {
     return _preferences->enumeratingAllNetworkInterfacesEnabled();

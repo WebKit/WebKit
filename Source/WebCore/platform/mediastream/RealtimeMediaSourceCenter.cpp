@@ -38,6 +38,7 @@
 #include "CaptureDeviceManager.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/SHA1.h>
 
 namespace WebCore {
@@ -262,8 +263,10 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
     validHandler(WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(deviceIdentifierHashSalt));
 }
 
-void RealtimeMediaSourceCenter::setVideoCapturePageState(bool interrupted, bool pageMuted)
+void RealtimeMediaSourceCenter::setCapturePageState(bool interrupted, bool pageMuted)
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().interruptAudioOnPageVisibilityChangeEnabled())
+        audioCaptureFactory().setAudioCapturePageState(interrupted, pageMuted);
     videoCaptureFactory().setVideoCapturePageState(interrupted, pageMuted);
 }
 
@@ -316,6 +319,13 @@ DisplayCaptureFactory& RealtimeMediaSourceCenter::displayCaptureFactory()
 {
     return m_displayCaptureFactoryOverride ? *m_displayCaptureFactoryOverride : defaultDisplayCaptureFactory();
 }
+
+#if !PLATFORM(COCOA)
+bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
+{
+    return false;
+}
+#endif
 
 } // namespace WebCore
 

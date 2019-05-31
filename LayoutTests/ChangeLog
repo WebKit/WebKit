@@ -1,3 +1,13 @@
+2019-05-30  Youenn Fablet  <youenn@apple.com>
+
+        Add an option to mute audio capture automatically when page is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=198307
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/mediastream/audio-muted-in-background-tab-expected.txt: Added.
+        * platform/ios/mediastream/audio-muted-in-background-tab.html: Added.
+
 2019-05-30  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Enforce variable lifetimes

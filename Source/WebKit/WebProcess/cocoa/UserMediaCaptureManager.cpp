@@ -366,6 +366,20 @@ void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, String&& faile
         source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
 }
 
+#if PLATFORM(IOS)
+void UserMediaCaptureManager::setAudioCapturePageState(bool interrupted, bool pageMuted)
+{
+    if (auto* activeSource = static_cast<AudioCaptureFactory*>(this)->activeSource())
+        activeSource->setInterrupted(interrupted, pageMuted);
+}
+
+void UserMediaCaptureManager::setVideoCapturePageState(bool interrupted, bool pageMuted)
+{
+    if (auto* activeSource = static_cast<VideoCaptureFactory*>(this)->activeSource())
+        activeSource->setInterrupted(interrupted, pageMuted);
+}
+#endif
+
 }
 
 #endif
