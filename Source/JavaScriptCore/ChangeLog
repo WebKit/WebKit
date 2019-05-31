@@ -1,5 +1,93 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245018. rdar://problem/51264878
+
+    tryCachePutByID should not crash if target offset changes
+    https://bugs.webkit.org/show_bug.cgi?id=197311
+    <rdar://problem/48033612>
+    
+    Reviewed by Filip Pizlo.
+    
+    JSTests:
+    
+    Add a series of tests related tryCachePutByID. Two of these tests used to crash and were fixed
+    by this patch: `cache-put-by-id-different-attributes.js` and `cache-put-by-id-different-offset.js`
+    
+    * stress/cache-put-by-id-delete-prototype.js: Added.
+    (A.prototype.set y):
+    (A):
+    (B.prototype.set y):
+    (B):
+    (C):
+    * stress/cache-put-by-id-different-__proto__.js: Added.
+    (A.prototype.set y):
+    (A):
+    (B1):
+    (B2.prototype.set y):
+    (B2):
+    (C):
+    (D):
+    * stress/cache-put-by-id-different-attributes.js: Added.
+    (Foo):
+    (set x):
+    * stress/cache-put-by-id-different-offset.js: Added.
+    (Foo):
+    (set x):
+    * stress/cache-put-by-id-insert-prototype.js: Added.
+    (A.prototype.set y):
+    (A):
+    (C):
+    * stress/cache-put-by-id-poly-proto.js: Added.
+    (Foo):
+    (set _):
+    (createBar.Bar):
+    (createBar):
+    
+    Source/JavaScriptCore:
+    
+    When tryCachePutID is called with a cacheable setter, if the target object where the setter was
+    found is still in the prototype chain and there's no poly protos in the chain, we use
+    generateConditionsForPrototypePropertyHit to validate that the target object remains the same.
+    It checks for the absence of the property in every object in the prototype chain from the base
+    down to the target object and checks that the property is still present in the target object. It
+    also bails if there are any uncacheable objects, proxies or dictionary objects in the prototype
+    chain. However, it does not consider two edge cases:
+    - It asserts that the property should still be at the same offset in the target object, but this
+    assertion does not hold if the setter deletes properties of the object and causes the structure
+    to be flattened after the deletion. Instead of asserting, we just use the updated offset.
+    - It does not check whether the new slot is also a setter, which leads to a crash in case it's not.
+    
+    * jit/Repatch.cpp:
+    (JSC::tryCachePutByID):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245018 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+            tryCachePutByID should not crash if target offset changes
+            https://bugs.webkit.org/show_bug.cgi?id=197311
+            <rdar://problem/48033612>
+
+            Reviewed by Filip Pizlo.
+
+            When tryCachePutID is called with a cacheable setter, if the target object where the setter was
+            found is still in the prototype chain and there's no poly protos in the chain, we use
+            generateConditionsForPrototypePropertyHit to validate that the target object remains the same.
+            It checks for the absence of the property in every object in the prototype chain from the base
+            down to the target object and checks that the property is still present in the target object. It
+            also bails if there are any uncacheable objects, proxies or dictionary objects in the prototype
+            chain. However, it does not consider two edge cases:
+            - It asserts that the property should still be at the same offset in the target object, but this
+            assertion does not hold if the setter deletes properties of the object and causes the structure
+            to be flattened after the deletion. Instead of asserting, we just use the updated offset.
+            - It does not check whether the new slot is also a setter, which leads to a crash in case it's not.
+
+            * jit/Repatch.cpp:
+            (JSC::tryCachePutByID):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r244950. rdar://problem/51265731
 
     TypedArrays should not store properties that are canonical numeric indices
