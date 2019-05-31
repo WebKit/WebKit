@@ -1,5 +1,37 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245464. rdar://problem/51264866
+
+    Hardening: Prevent FrameLoader crash due to SetForScope
+    https://bugs.webkit.org/show_bug.cgi?id=197458
+    <rdar://problem/50368338>
+    
+    Reviewed by Chris Dumez.
+    
+    Since SetForScope takes action during a function returns, it might cause
+    a crash if its scope is broader than the value it is resetting.
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::loadDifferentDocumentItem):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245464 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-17  Brent Fulgham  <bfulgham@apple.com>
+
+            Hardening: Prevent FrameLoader crash due to SetForScope
+            https://bugs.webkit.org/show_bug.cgi?id=197458
+            <rdar://problem/50368338>
+
+            Reviewed by Chris Dumez.
+
+            Since SetForScope takes action during a function returns, it might cause
+            a crash if its scope is broader than the value it is resetting.
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::loadDifferentDocumentItem):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245361. rdar://problem/51264842
 
     Do not create a shape object outside of the layout context

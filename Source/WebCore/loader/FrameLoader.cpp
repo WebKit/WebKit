@@ -3666,6 +3666,8 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 {
     RELEASE_LOG_IF_ALLOWED("loadDifferentDocumentItem: frame load started (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
 
+    Ref<Frame> protectedFrame(m_frame);
+
     // History items should not be reported to the parent.
     m_shouldReportResourceTimingToParentFrame = false;
 
