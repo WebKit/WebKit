@@ -322,6 +322,7 @@ Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp
 Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp
 Modules/webgpu/WHLSL/WHLSLNameContext.cpp
 Modules/webgpu/WHLSL/WHLSLNameResolver.cpp
+Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp
 Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp
 Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp
 Modules/webgpu/WHLSL/WHLSLVisitor.cpp

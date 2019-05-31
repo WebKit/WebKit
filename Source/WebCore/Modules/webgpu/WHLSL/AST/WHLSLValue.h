@@ -37,7 +37,8 @@ namespace AST {
 
 class Value : public Node {
 public:
-    Value()
+    Value(Lexer::Token&& origin)
+        : m_origin(WTFMove(origin))
     {
     }
 
@@ -49,7 +50,10 @@ public:
     Value& operator=(const Value&) = default;
     Value& operator=(Value&&) = default;
 
-private:
+    Lexer::Token origin() const { return m_origin; }
+
+protected:
+    Lexer::Token m_origin;
 };
 
 } // namespace AST

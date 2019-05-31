@@ -8336,6 +8336,9 @@
 		51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionStyleSheet.h; sourceTree = "<group>"; };
 		52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenInterfaceMac.mm; sourceTree = "<group>"; };
 		5215862C229377B7005925EF /* WHLSLAST.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLAST.h; sourceTree = "<group>"; };
+		522DA3D3229E1D390042D151 /* WHLSLGlobalVariableReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGlobalVariableReference.h; sourceTree = "<group>"; };
+		522E1A172297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLPreserveVariableLifetimes.cpp; sourceTree = "<group>"; };
+		522E1A192297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPreserveVariableLifetimes.h; sourceTree = "<group>"; };
 		526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
 		526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
@@ -17068,6 +17071,7 @@
 				C21BF70521CD89C700227979 /* WHLSLFunctionAttribute.h */,
 				C21BF6FD21CD89C000227979 /* WHLSLFunctionDeclaration.h */,
 				C21BF6F421CD89B300227979 /* WHLSLFunctionDefinition.h */,
+				522DA3D3229E1D390042D151 /* WHLSLGlobalVariableReference.h */,
 				C21BF6FF21CD89C200227979 /* WHLSLIfStatement.h */,
 				C21BF6F721CD89B900227979 /* WHLSLIndexExpression.h */,
 				C20F4F6621DFF2360070C45A /* WHLSLIntegerLiteral.cpp */,
@@ -25455,6 +25459,8 @@
 				C24A57AF21FAD53F004C6DD1 /* WHLSLPipelineDescriptor.h */,
 				C24A57BA21FEAFEA004C6DD1 /* WHLSLPrepare.cpp */,
 				C24A57BB21FEAFEA004C6DD1 /* WHLSLPrepare.h */,
+				522E1A172297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.cpp */,
+				522E1A192297D6D400E5D36A /* WHLSLPreserveVariableLifetimes.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
 				1CAA82F62242AE0500E84BBB /* WHLSLPropertyResolver.cpp */,
 				1CAA82F72242AE0500E84BBB /* WHLSLPropertyResolver.h */,

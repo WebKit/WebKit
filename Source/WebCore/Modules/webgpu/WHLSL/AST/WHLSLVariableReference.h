@@ -55,6 +55,7 @@ public:
     {
         VariableReference result(Lexer::Token(variableDeclaration.origin()));
         result.m_variable = &variableDeclaration;
+        result.m_name = variableDeclaration.name();
         return result;
     }
 

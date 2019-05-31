@@ -45,9 +45,10 @@ namespace WHLSL {
 namespace AST {
 
 class VariableDeclaration : public Value {
+    using Base = Value;
 public:
     VariableDeclaration(Lexer::Token&& origin, Qualifiers&& qualifiers, Optional<UniqueRef<UnnamedType>>&& type, String&& name, Optional<Semantic>&& semantic, Optional<UniqueRef<Expression>>&& initializer)
-        : m_origin(WTFMove(origin))
+        : Base(WTFMove(origin))
         , m_qualifiers(WTFMove(qualifiers))
         , m_type(WTFMove(type))
         , m_name(WTFMove(name))
@@ -61,7 +62,6 @@ public:
     VariableDeclaration(const VariableDeclaration&) = delete;
     VariableDeclaration(VariableDeclaration&&) = default;
 
-    const Lexer::Token& origin() const { return m_origin; }
     String& name() { return m_name; }
 
     const Optional<UniqueRef<UnnamedType>>& type() const { return m_type; } // Anonymous variables inside ReadModifyWriteExpressions have their type set by the type checker.
@@ -69,9 +69,9 @@ public:
     Optional<Semantic>& semantic() { return m_semantic; }
     Expression* initializer() { return m_initializer ? &*m_initializer : nullptr; }
     bool isAnonymous() const { return m_name.isNull(); }
+    Optional<UniqueRef<Expression>> takeInitializer() { return WTFMove(m_initializer); }
 
 private:
-    Lexer::Token m_origin;
     Qualifiers m_qualifiers;
     Optional<UniqueRef<UnnamedType>> m_type;
     String m_name;

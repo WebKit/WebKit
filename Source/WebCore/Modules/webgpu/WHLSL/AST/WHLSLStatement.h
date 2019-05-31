@@ -38,9 +38,10 @@ namespace WHLSL {
 namespace AST {
 
 class Statement : public Value {
+    using Base = Value;
 public:
     Statement(Lexer::Token&& origin)
-        : m_origin(WTFMove(origin))
+        : Base(WTFMove(origin))
     {
     }
 
@@ -58,14 +59,12 @@ public:
     virtual bool isForLoop() const { return false; }
     virtual bool isIfStatement() const { return false; }
     virtual bool isReturn() const { return false; }
+    virtual bool isStatementList() const { return false; }
     virtual bool isSwitchCase() const { return false; }
     virtual bool isSwitchStatement() const { return false; }
     virtual bool isTrap() const { return false; }
     virtual bool isVariableDeclarationsStatement() const { return false; }
     virtual bool isWhileLoop() const { return false; }
-
-private:
-    Lexer::Token m_origin;
 };
 
 using Statements = Vector<UniqueRef<Statement>>;

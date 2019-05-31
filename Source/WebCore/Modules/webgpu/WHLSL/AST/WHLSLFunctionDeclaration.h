@@ -76,6 +76,7 @@ public:
     VariableDeclarations& parameters() { return m_parameters; }
     Optional<Semantic>& semantic() { return m_semantic; }
     bool isOperator() const { return m_isOperator; }
+    Lexer::Token origin() { return m_origin; }
 
 private:
     Lexer::Token m_origin;

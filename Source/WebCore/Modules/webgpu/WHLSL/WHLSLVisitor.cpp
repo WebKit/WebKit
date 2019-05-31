@@ -300,6 +300,12 @@ void Visitor::visit(AST::Block& block)
         checkErrorAndVisit(statement);
 }
 
+void Visitor::visit(AST::StatementList& statementList)
+{
+    for (auto& statement : statementList.statements())
+        checkErrorAndVisit(statement);
+}
+
 void Visitor::visit(AST::Statement& statement)
 {
     if (is<AST::Block>(statement))
@@ -320,6 +326,8 @@ void Visitor::visit(AST::Statement& statement)
         checkErrorAndVisit(downcast<AST::IfStatement>(statement));
     else if (is<AST::Return>(statement))
         checkErrorAndVisit(downcast<AST::Return>(statement));
+    else if (is<AST::StatementList>(statement))
+        checkErrorAndVisit(downcast<AST::StatementList>(statement));
     else if (is<AST::SwitchCase>(statement))
         checkErrorAndVisit(downcast<AST::SwitchCase>(statement));
     else if (is<AST::SwitchStatement>(statement))
@@ -376,6 +384,8 @@ void Visitor::visit(AST::Expression& expression)
         checkErrorAndVisit(downcast<AST::NullLiteral>(expression));
     else if (is<AST::DotExpression>(expression))
         checkErrorAndVisit(downcast<AST::DotExpression>(expression));
+    else if (is<AST::GlobalVariableReference>(expression))
+        checkErrorAndVisit(downcast<AST::GlobalVariableReference>(expression));
     else if (is<AST::IndexExpression>(expression))
         checkErrorAndVisit(downcast<AST::IndexExpression>(expression));
     else if (is<AST::ReadModifyWriteExpression>(expression))
@@ -395,6 +405,11 @@ void Visitor::visit(AST::Expression& expression)
 void Visitor::visit(AST::DotExpression& dotExpression)
 {
     checkErrorAndVisit(static_cast<AST::PropertyAccessExpression&>(dotExpression));
+}
+
+void Visitor::visit(AST::GlobalVariableReference& globalVariableReference)
+{
+    checkErrorAndVisit(globalVariableReference.base());
 }
 
 void Visitor::visit(AST::IndexExpression& indexExpression)

@@ -372,6 +372,17 @@ void ASTDumper::visit(AST::Statement& statement)
     Base::visit(statement);
 }
 
+void ASTDumper::visit(AST::StatementList& statementList)
+{
+    bool once = false;
+    for (auto& statement : statementList.statements()) {
+        if (once)
+            m_out.print(";\n", m_indent);
+        once = true;
+        visit(statement);
+    }
+}
+
 void ASTDumper::visit(AST::Break&)
 {
     m_out.print("break");
@@ -439,6 +450,12 @@ void ASTDumper::visit(AST::DotExpression& dotExpression)
 {
     visit(static_cast<AST::PropertyAccessExpression&>(dotExpression));
     m_out.print(".", dotExpression.fieldName());
+}
+
+void ASTDumper::visit(AST::GlobalVariableReference& globalVariableReference)
+{
+    visit(globalVariableReference.base());
+    m_out.print("=>", globalVariableReference.structField().name());
 }
 
 void ASTDumper::visit(AST::IndexExpression& indexExpression)
@@ -529,7 +546,12 @@ void ASTDumper::visit(AST::VariableDeclaration& variableDeclaration)
         visit(*variableDeclaration.type());
         m_out.print(" ");
     }
-    m_out.print(variableDeclaration.name());
+
+    if (variableDeclaration.name().isEmpty())
+        m_out.print("$", RawPointer(&variableDeclaration));
+    else
+        m_out.print(variableDeclaration.name());
+
     if (variableDeclaration.semantic())
         visit(*variableDeclaration.semantic());
     if (variableDeclaration.initializer()) {

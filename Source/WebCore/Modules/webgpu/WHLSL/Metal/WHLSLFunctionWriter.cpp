@@ -29,44 +29,11 @@
 #if ENABLE(WEBGPU)
 
 #include "NotImplemented.h"
-#include "WHLSLArrayReferenceType.h"
-#include "WHLSLArrayType.h"
-#include "WHLSLAssignmentExpression.h"
-#include "WHLSLBooleanLiteral.h"
-#include "WHLSLBuiltInSemantic.h"
-#include "WHLSLCallExpression.h"
-#include "WHLSLCommaExpression.h"
-#include "WHLSLDereferenceExpression.h"
-#include "WHLSLDoWhileLoop.h"
-#include "WHLSLEffectfulExpressionStatement.h"
-#include "WHLSLEntryPointScaffolding.h"
-#include "WHLSLEntryPointType.h"
-#include "WHLSLFloatLiteral.h"
-#include "WHLSLForLoop.h"
-#include "WHLSLFunctionDeclaration.h"
-#include "WHLSLFunctionDefinition.h"
-#include "WHLSLIfStatement.h"
-#include "WHLSLIntegerLiteral.h"
-#include "WHLSLLogicalExpression.h"
-#include "WHLSLLogicalNotExpression.h"
-#include "WHLSLMakeArrayReferenceExpression.h"
-#include "WHLSLMakePointerExpression.h"
-#include "WHLSLNativeFunctionDeclaration.h"
+#include "WHLSLAST.h"
 #include "WHLSLNativeFunctionWriter.h"
-#include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLPointerType.h"
 #include "WHLSLProgram.h"
-#include "WHLSLReturn.h"
-#include "WHLSLSwitchCase.h"
-#include "WHLSLSwitchStatement.h"
-#include "WHLSLTernaryExpression.h"
 #include "WHLSLTypeNamer.h"
-#include "WHLSLUnsignedIntegerLiteral.h"
-#include "WHLSLVariableDeclaration.h"
-#include "WHLSLVariableDeclarationsStatement.h"
-#include "WHLSLVariableReference.h"
 #include "WHLSLVisitor.h"
-#include "WHLSLWhileLoop.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -156,6 +123,7 @@ protected:
     void visit(AST::EnumerationMemberLiteral&) override;
     void visit(AST::Expression&) override;
     void visit(AST::DotExpression&) override;
+    void visit(AST::GlobalVariableReference&) override;
     void visit(AST::IndexExpression&) override;
     void visit(AST::PropertyAccessExpression&) override;
     void visit(AST::VariableDeclaration&) override;
@@ -444,6 +412,15 @@ void FunctionDefinitionWriter::visit(AST::DotExpression&)
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
     notImplemented();
     m_stack.append("dummy");
+}
+
+void FunctionDefinitionWriter::visit(AST::GlobalVariableReference& globalVariableReference)
+{
+    auto variableName = generateNextVariableName();
+    auto mangledTypeName = m_typeNamer.mangledNameForType(globalVariableReference.resolvedType());
+    checkErrorAndVisit(globalVariableReference.base());
+    m_stringBuilder.append(makeString("thread ", mangledTypeName, "& ", variableName, " = ", m_stack.takeLast(), "->", m_typeNamer.mangledNameForStructureElement(globalVariableReference.structField()), ";\n"));
+    m_stack.append(variableName);
 }
 
 void FunctionDefinitionWriter::visit(AST::IndexExpression&)

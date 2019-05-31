@@ -132,7 +132,7 @@ void printInternal(PrintStream& out, const T& value)
 #define MAKE_PRINT_ADAPTOR(Name, Type, function) \
     class Name {                                 \
     public:                                      \
-        Name(const Type& value)                  \
+        Name(Type value)                         \
             : m_value(value)                     \
         {                                        \
         }                                        \

@@ -41,9 +41,10 @@ namespace WHLSL {
 namespace AST {
 
 class Expression : public Value {
+    using Base = Value;
 public:
     Expression(Lexer::Token&& origin)
-        : m_origin(WTFMove(origin))
+        : Base(WTFMove(origin))
     {
     }
 
@@ -54,8 +55,6 @@ public:
 
     Expression& operator=(const Expression&) = delete;
     Expression& operator=(Expression&&) = default;
-
-    const Lexer::Token& origin() const { return m_origin; }
 
     UnnamedType* maybeResolvedType() { return m_type ? &*m_type : nullptr; }
 
@@ -91,6 +90,7 @@ public:
     virtual bool isCommaExpression() const { return false; }
     virtual bool isDereferenceExpression() const { return false; }
     virtual bool isDotExpression() const { return false; }
+    virtual bool isGlobalVariableReference() const { return false; }
     virtual bool isFloatLiteral() const { return false; }
     virtual bool isIndexExpression() const { return false; }
     virtual bool isIntegerLiteral() const { return false; }
@@ -107,7 +107,6 @@ public:
     virtual bool isEnumerationMemberLiteral() const { return false; }
 
 private:
-    Lexer::Token m_origin;
     Optional<UniqueRef<UnnamedType>> m_type;
     Optional<TypeAnnotation> m_typeAnnotation;
 };

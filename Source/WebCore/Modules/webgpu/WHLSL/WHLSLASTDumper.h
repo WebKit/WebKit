@@ -44,7 +44,6 @@ public:
 
     String toString() { return m_out.toString(); }
 
-private:
     void visit(AST::UnnamedType&) override;
     void visit(AST::NamedType&) override;
     void visit(AST::TypeDefinition&) override;
@@ -82,12 +81,14 @@ private:
     void visit(AST::FunctionAttribute&) override;
     void visit(AST::NumThreadsFunctionAttribute&) override;
     void visit(AST::Block&) override;
+    void visit(AST::StatementList&) override;
     void visit(AST::Statement&) override;
     void visit(AST::Break&) override;
     void visit(AST::Continue&) override;
     void visit(AST::DoWhileLoop&) override;
     void visit(AST::Expression&) override;
     void visit(AST::DotExpression&) override;
+    void visit(AST::GlobalVariableReference&) override;
     void visit(AST::IndexExpression&) override;
     void visit(AST::PropertyAccessExpression&) override;
     void visit(AST::EffectfulExpressionStatement&) override;
@@ -113,6 +114,7 @@ private:
     void visit(AST::TernaryExpression&) override;
     void visit(AST::VariableReference&) override;
 
+private:
     struct Indent {
         Indent(ASTDumper& dumper)
             : m_scope(dumper.m_indent, dumper.m_indent + "   ")
@@ -128,16 +130,23 @@ private:
     String m_indent;
 };
 
-static ALWAYS_INLINE String toString(Program& program)
+template <typename T>
+ALWAYS_INLINE void dumpASTNode(PrintStream& out, T& value)
 {
     ASTDumper dumper;
-    dumper.visit(program);
-    return dumper.toString();
+    dumper.visit(value);
+    out.print(dumper.toString());
 }
+MAKE_PRINT_ADAPTOR(ExpressionDumper, AST::Expression&, dumpASTNode);
+MAKE_PRINT_ADAPTOR(StatementDumper, AST::Statement&, dumpASTNode);
+MAKE_PRINT_ADAPTOR(ProgramDumper, Program&, dumpASTNode);
+MAKE_PRINT_ADAPTOR(StructureDefinitionDumper, AST::StructureDefinition&, dumpASTNode);
+MAKE_PRINT_ADAPTOR(FunctionDefinitionDumper, AST::FunctionDefinition&, dumpASTNode);
+
 
 static ALWAYS_INLINE void dumpAST(Program& program)
 {
-    dataLogLn(toString(program));
+    dataLogLn(ProgramDumper(program));
 }
 
 } // namespace WHLSL

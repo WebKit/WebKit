@@ -37,6 +37,7 @@
 #include "WHLSLMetalCodeGenerator.h"
 #include "WHLSLNameResolver.h"
 #include "WHLSLParser.h"
+#include "WHLSLPreserveVariableLifetimes.h"
 #include "WHLSLProgram.h"
 #include "WHLSLPropertyResolver.h"
 #include "WHLSLRecursionChecker.h"
@@ -56,7 +57,9 @@ namespace WHLSL {
 
 static constexpr bool dumpASTBeforeEachPass = false;
 static constexpr bool dumpASTAfterParsing = false;
-static constexpr bool dumpASTAtEnd = false;
+static constexpr bool dumpASTAtEnd = true;
+static constexpr bool alwaysDumpPassFailures = false;
+static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
 
 static bool dumpASTIfNeeded(bool shouldDump, Program& program, const char* message)
 {
@@ -87,8 +90,11 @@ static bool dumpASTAtEndIfNeeded(Program& program)
 #define RUN_PASS(pass, ...) \
     do { \
         dumpASTBetweenEachPassIfNeeded(program, "AST before " # pass); \
-        if (!pass(__VA_ARGS__)) \
+        if (!pass(__VA_ARGS__)) { \
+            if (dumpPassFailure) \
+                dataLogLn("failed pass: " # pass); \
             return WTF::nullopt; \
+        } \
     } while (0)
     
 
@@ -123,6 +129,7 @@ static Optional<Program> prepareShared(String& whlslSource)
     RUN_PASS(checkStatementBehavior, program);
     RUN_PASS(checkRecursion, program);
     RUN_PASS(checkFunctionStages, program);
+    preserveVariableLifetimes(program);
 
     dumpASTAtEndIfNeeded(program);
 
