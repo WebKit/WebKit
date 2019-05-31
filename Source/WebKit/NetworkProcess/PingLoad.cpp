@@ -200,6 +200,12 @@ void PingLoad::cannotShowURL()
     didFinish(cannotShowURLError(ResourceRequest { currentURL() }));
 }
 
+void PingLoad::wasBlockedByRestrictions()
+{
+    RELEASE_LOG_IF_ALLOWED("wasBlockedByRestrictions");
+    didFinish(wasBlockedByRestrictionsError(ResourceRequest { currentURL() }));
+}
+
 void PingLoad::timeoutTimerFired()
 {
     RELEASE_LOG_IF_ALLOWED("timeoutTimerFired");

@@ -28,6 +28,7 @@
 
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationManager.h"
+#import "DeviceManagementSPI.h"
 #import "Download.h"
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
@@ -39,6 +40,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
 #import <wtf/ProcessPrivilege.h>
@@ -160,10 +162,11 @@ static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* tas
 #endif
 }
 
-NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, Optional<NetworkActivityTracker> networkActivityTracker)
+NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
     , m_frameID(frameID)
     , m_pageID(pageID)
+    , m_isForMainResourceNavigationForAnyFrame(dataTaskIsForMainResourceNavigationForAnyFrame)
 {
     if (m_scheduledFailureType != NoFailure)
         return;
@@ -489,6 +492,36 @@ void NetworkDataTaskCocoa::resume()
 {
     if (m_scheduledFailureType != NoFailure)
         m_failureTimer.startOneShot(0_s);
+
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    if (cocoaSession.deviceManagementRestrictionsEnabled() && m_isForMainResourceNavigationForAnyFrame) {
+        auto didDetermineDeviceRestrictionPolicyForURL = makeBlockPtr([this, protectedThis = makeRef(*this)](BOOL isBlocked) {
+            callOnMainThread([this, protectedThis = makeRef(*this), isBlocked] {
+                if (isBlocked) {
+                    scheduleFailure(RestrictedURLFailure);
+                    return;
+                }
+
+                [m_task resume];
+            });
+        });
+
+#if HAVE(DEVICE_MANAGEMENT)
+        if (cocoaSession.allLoadsBlockedByDeviceManagementRestrictionsForTesting())
+            didDetermineDeviceRestrictionPolicyForURL(true);
+        else {
+            RetainPtr<NSURL> urlToCheck = [m_task currentRequest].URL;
+            [cocoaSession.deviceManagementPolicyMonitor() requestPoliciesForWebsites:@[ urlToCheck.get() ] completionHandler:makeBlockPtr([didDetermineDeviceRestrictionPolicyForURL, urlToCheck] (NSDictionary<NSURL *, NSNumber *> *policies, NSError *error) {
+                bool isBlocked = error || policies[urlToCheck.get()].integerValue != DMFPolicyOK;
+                didDetermineDeviceRestrictionPolicyForURL(isBlocked);
+            }).get()];
+        }
+#else
+        didDetermineDeviceRestrictionPolicyForURL(cocoaSession.allLoadsBlockedByDeviceManagementRestrictionsForTesting());
+#endif
+        return;
+    }
+
     [m_task resume];
 }
 

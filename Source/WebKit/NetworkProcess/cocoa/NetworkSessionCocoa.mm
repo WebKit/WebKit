@@ -51,12 +51,15 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #endif
+
+#import "DeviceManagementSoftLink.h"
 
 using namespace WebKit;
 
@@ -721,7 +724,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         ASSERT(RunLoop::isMain());
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-        int statusCode = [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0;
+        int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
         if (statusCode != 304) {
             bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequest::Requester::Main;
             WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
@@ -989,6 +992,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     m_statelessSessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
     m_statelessSession = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 
+    m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
+    m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = parameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting;
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsDirectory;
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.shouldIncludeLocalhostInResourceLoadStatistics ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
@@ -1173,6 +1179,19 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(const WebCore::Authenticat
         completionHandler(disposition, credential);
     };
     networkDataTask->didReceiveChallenge(WTFMove(authenticationChallenge), WTFMove(challengeCompletionHandler));
+}
+
+DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
+{
+#if HAVE(DEVICE_MANAGEMENT)
+    ASSERT(m_deviceManagementRestrictionsEnabled);
+    if (!m_deviceManagementPolicyMonitor)
+        m_deviceManagementPolicyMonitor = adoptNS([allocDMFWebsitePolicyMonitorInstance() initWithPolicyChangeHandler:nil]);
+    return m_deviceManagementPolicyMonitor.get();
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+    return nil;
+#endif
 }
 
 }

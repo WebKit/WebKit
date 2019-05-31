@@ -39,6 +39,8 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
 {
     auto copy = WebsiteDataStoreConfiguration::create();
 
+    copy->m_isPersistent = this->m_isPersistent;
+
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
@@ -59,6 +61,8 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     copy->m_sourceApplicationSecondaryIdentifier = this->m_sourceApplicationSecondaryIdentifier;
     copy->m_httpProxy = this->m_httpProxy;
     copy->m_httpsProxy = this->m_httpsProxy;
+    copy->m_deviceManagementRestrictionsEnabled = this->m_deviceManagementRestrictionsEnabled;
+    copy->m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = this->m_allLoadsBlockedByDeviceManagementRestrictionsForTesting;
 
     return copy;
 }

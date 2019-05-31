@@ -65,6 +65,7 @@ public:
     virtual void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) = 0;
     virtual void wasBlocked() = 0;
     virtual void cannotShowURL() = 0;
+    virtual void wasBlockedByRestrictions() = 0;
 
     virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
 
@@ -134,7 +135,8 @@ protected:
     enum FailureType {
         NoFailure,
         BlockedFailure,
-        InvalidURLFailure
+        InvalidURLFailure,
+        RestrictedURLFailure
     };
     void failureTimerFired();
     void scheduleFailure(FailureType);

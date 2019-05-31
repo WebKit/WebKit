@@ -1,3 +1,115 @@
+2019-05-31  Tim Horton  <timothy_horton@apple.com>
+
+        Optionally respect device management restrictions when loading from the network
+        https://bugs.webkit.org/show_bug.cgi?id=198318
+        <rdar://problem/44263806>
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/Network-iOS.entitlements:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        Add some entitlements and sandbox holes required to talk to DeviceManagement.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::wasBlockedByRestrictions):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::wasBlockedByRestrictions):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::wasBlockedByRestrictions):
+        * NetworkProcess/PingLoad.h:
+        * Shared/WebErrors.cpp:
+        (WebKit::wasBlockedByRestrictionsError):
+        * Shared/WebErrors.h:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        (WebKit::NetworkDataTask::failureTimerFired):
+        * NetworkProcess/NetworkDataTask.h:
+        * Shared/API/APIError.h:
+        * Shared/API/c/WKErrorRef.cpp:
+        (WKErrorGetErrorCode):
+        * Shared/API/c/WKErrorRef.h:
+        Plumb a new error for loads that are blocked by device management restrictions.
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        Plumb a new bit that indicates whether a load is for the main resource of a frame.
+        We will only apply device management restrictions to main resources.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        Plumb a new bit indicating whether a network session should respect device mangement
+        restrictions.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::resume):
+        Defer resuming the load until we have a reply from DeviceManagement framework
+        about whether the URL should be blocked. If it is blocked, instead fail the load.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::deviceManagementPolicyMonitor):
+        Cache a single DMFWebsitePolicyMonitor instance per NetworkSession.
+        
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        The default data store is persistent; its configuration should reflect that.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setAllowsAnySSLCertificateForServiceWorker:]): Style.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        Make it possible to create a non-persistent WKWebsiteDataStore from a
+        configuration, and ensure that it does not have any persistent storage directories set.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration init]):
+        (-[_WKWebsiteDataStoreConfiguration initWithNonPersistentConfiguration]):
+        (-[_WKWebsiteDataStoreConfiguration isPersistent]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebStorageDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _setIndexedDBDatabaseDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebSQLDatabaseDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _setCookieStorageFile:]):
+        (-[_WKWebsiteDataStoreConfiguration _setResourceLoadStatisticsDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _setCacheStorageDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _setServiceWorkerRegistrationDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration deviceManagementRestrictionsEnabled]):
+        (-[_WKWebsiteDataStoreConfiguration setDeviceManagementRestrictionsEnabled:]):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::isPersistent const):
+        (WebKit::WebsiteDataStoreConfiguration::setPersistent):
+        (WebKit::WebsiteDataStoreConfiguration::perOriginStorageQuota const):
+        (WebKit::WebsiteDataStoreConfiguration::deviceManagementRestrictionsEnabled const):
+        (WebKit::WebsiteDataStoreConfiguration::setDeviceManagementRestrictionsEnabled):
+        (WebKit::WebsiteDataStoreConfiguration::perOriginStorageQuota): Deleted.
+        Make it possible to create a _WKWebsiteDataStoreConfiguration that will create a non-persistent
+        data store. Add a bit to _WKWebsiteDataStoreConfiguration that controls whether the network 
+        session will respect device management restrictions.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebKit/NetworkProcess/cocoa/DeviceManagementSoftLink.h:
+        * WebKit/NetworkProcess/cocoa/DeviceManagementSoftLink.mm:
+        * WebKit/Platform/spi/Cocoa/DeviceManagementSPI.h:
+        Add some soft-linking and SPI headers.
+
 2019-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245943.

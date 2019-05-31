@@ -229,22 +229,35 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!(self = [super init]))
         return nil;
 
-    auto config = API::WebsiteDataStore::defaultDataStoreConfiguration();
+    auto config = configuration.isPersistent ? API::WebsiteDataStore::defaultDataStoreConfiguration() : WebKit::WebsiteDataStoreConfiguration::create();
 
-    if (configuration._webStorageDirectory)
-        config->setLocalStorageDirectory(configuration._webStorageDirectory.path);
-    if (configuration._webSQLDatabaseDirectory)
-        config->setWebSQLDatabaseDirectory(configuration._webSQLDatabaseDirectory.path);
-    if (configuration._indexedDBDatabaseDirectory)
-        config->setIndexedDBDatabaseDirectory(configuration._indexedDBDatabaseDirectory.path);
-    if (configuration._cookieStorageFile)
-        config->setCookieStorageFile(configuration._cookieStorageFile.path);
-    if (configuration._resourceLoadStatisticsDirectory)
-        config->setResourceLoadStatisticsDirectory(configuration._resourceLoadStatisticsDirectory.path);
-    if (configuration._cacheStorageDirectory)
-        config->setCacheStorageDirectory(configuration._cacheStorageDirectory.path);
-    if (configuration._serviceWorkerRegistrationDirectory)
-        config->setServiceWorkerRegistrationDirectory(configuration._serviceWorkerRegistrationDirectory.path);
+    RELEASE_ASSERT(config->isPersistent() == configuration.isPersistent);
+
+    if (configuration.isPersistent) {
+        if (configuration._webStorageDirectory)
+            config->setLocalStorageDirectory(configuration._webStorageDirectory.path);
+        if (configuration._webSQLDatabaseDirectory)
+            config->setWebSQLDatabaseDirectory(configuration._webSQLDatabaseDirectory.path);
+        if (configuration._indexedDBDatabaseDirectory)
+            config->setIndexedDBDatabaseDirectory(configuration._indexedDBDatabaseDirectory.path);
+        if (configuration._cookieStorageFile)
+            config->setCookieStorageFile(configuration._cookieStorageFile.path);
+        if (configuration._resourceLoadStatisticsDirectory)
+            config->setResourceLoadStatisticsDirectory(configuration._resourceLoadStatisticsDirectory.path);
+        if (configuration._cacheStorageDirectory)
+            config->setCacheStorageDirectory(configuration._cacheStorageDirectory.path);
+        if (configuration._serviceWorkerRegistrationDirectory)
+            config->setServiceWorkerRegistrationDirectory(configuration._serviceWorkerRegistrationDirectory.path);
+    } else {
+        RELEASE_ASSERT(!configuration._webStorageDirectory);
+        RELEASE_ASSERT(!configuration._webSQLDatabaseDirectory);
+        RELEASE_ASSERT(!configuration._indexedDBDatabaseDirectory);
+        RELEASE_ASSERT(!configuration._cookieStorageFile);
+        RELEASE_ASSERT(!configuration._resourceLoadStatisticsDirectory);
+        RELEASE_ASSERT(!configuration._cacheStorageDirectory);
+        RELEASE_ASSERT(!configuration._serviceWorkerRegistrationDirectory);
+    }
+
     if (configuration.sourceApplicationBundleIdentifier)
         config->setSourceApplicationBundleIdentifier(configuration.sourceApplicationBundleIdentifier);
     if (configuration.sourceApplicationSecondaryIdentifier)
@@ -253,8 +266,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         config->setHTTPProxy(configuration.httpProxy);
     if (configuration.httpsProxy)
         config->setHTTPSProxy(configuration.httpsProxy);
+    config->setDeviceManagementRestrictionsEnabled(configuration.deviceManagementRestrictionsEnabled);
+    config->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(configuration.allLoadsBlockedByDeviceManagementRestrictionsForTesting);
 
-    API::Object::constructInWrapper<API::WebsiteDataStore>(self, WTFMove(config), PAL::SessionID::generatePersistentSessionID());
+    auto sessionID = configuration.isPersistent ? PAL::SessionID::generatePersistentSessionID() : PAL::SessionID::generateEphemeralSessionID();
+
+    API::Object::constructInWrapper<API::WebsiteDataStore>(self, WTFMove(config), sessionID);
 
     return self;
 }

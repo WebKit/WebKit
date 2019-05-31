@@ -50,7 +50,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if USE(CURL)
         , { }, { }
 #endif
-        , { }, { }, false, { }, { }, { }, { }, { }
+        , { }, { }, false, { }, { }, { }, { }, { }, { }, { }
     };
 }
 
@@ -84,7 +84,10 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << enableResourceLoadStatisticsDebugMode;
     encoder << resourceLoadStatisticsManualPrevalentResource;
 
-    encoder << localStorageDirectory <<  localStorageDirectoryExtensionHandle;
+    encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
+
+    encoder << deviceManagementRestrictionsEnabled;
+    encoder << allLoadsBlockedByDeviceManagementRestrictionsForTesting;
 }
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -208,6 +211,16 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!localStorageDirectoryExtensionHandle)
         return WTF::nullopt;
 
+    Optional<bool> deviceManagementRestrictionsEnabled;
+    decoder >> deviceManagementRestrictionsEnabled;
+    if (!deviceManagementRestrictionsEnabled)
+        return WTF::nullopt;
+
+    Optional<bool> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
+    decoder >> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
+    if (!allLoadsBlockedByDeviceManagementRestrictionsForTesting)
+        return WTF::nullopt;
+
     return {{
         sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -235,6 +248,8 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*enableResourceLoadStatistics)
         , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
         , WTFMove(*enableResourceLoadStatisticsDebugMode)
+        , WTFMove(*deviceManagementRestrictionsEnabled)
+        , WTFMove(*allLoadsBlockedByDeviceManagementRestrictionsForTesting)
         , WTFMove(*resourceLoadStatisticsManualPrevalentResource)
         , WTFMove(*localStorageDirectory)
         , WTFMove(*localStorageDirectoryExtensionHandle)

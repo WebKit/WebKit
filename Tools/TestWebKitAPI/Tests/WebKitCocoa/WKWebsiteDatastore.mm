@@ -33,6 +33,7 @@
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/text/WTFString.h>
 
 static bool readyToContinue;
@@ -302,6 +303,51 @@ TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, SettingNonPersistentDataStorePathsThrowsException)
+{
+    auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+
+    auto shouldThrowExceptionWhenUsed = [](Function<void(void)>&& modifier) {
+        @try {
+            modifier();
+            EXPECT_TRUE(false);
+        } @catch (NSException *exception) {
+            EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+        }
+    };
+
+    NSURL *fileURL = [NSURL fileURLWithPath:@"/tmp"];
+
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setWebStorageDirectory:fileURL];
+    });
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setIndexedDBDatabaseDirectory:fileURL];
+    });
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setWebSQLDatabaseDirectory:fileURL];
+    });
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setCookieStorageFile:fileURL];
+    });
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setResourceLoadStatisticsDirectory:fileURL];
+    });
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setCacheStorageDirectory:fileURL];
+    });
+    shouldThrowExceptionWhenUsed([&] {
+        [configuration _setServiceWorkerRegistrationDirectory:fileURL];
+    });
+
+    // These properties shouldn't throw exceptions when set on a non-persistent data store.
+    [configuration setDeviceManagementRestrictionsEnabled:YES];
+    [configuration setHTTPProxy:[NSURL URLWithString:@"http://www.apple.com/"]];
+    [configuration setHTTPSProxy:[NSURL URLWithString:@"https://www.apple.com/"]];
+    [configuration setSourceApplicationBundleIdentifier:@"com.apple.Safari"];
+    [configuration setSourceApplicationSecondaryIdentifier:@"com.apple.Safari"];
 }
 
 }

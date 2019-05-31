@@ -36,6 +36,33 @@ static void checkURLArgument(NSURL *url)
 
 @implementation _WKWebsiteDataStoreConfiguration
 
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _configuration->setPersistent(true);
+
+    return self;
+}
+
+- (instancetype)initNonPersistentConfiguration
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _configuration->setPersistent(false);
+
+    return self;
+}
+
+- (BOOL)isPersistent
+{
+    return _configuration->isPersistent();
+}
+
 - (NSURL *)_webStorageDirectory
 {
     return [NSURL fileURLWithPath:_configuration->webStorageDirectory() isDirectory:YES];
@@ -43,6 +70,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setWebStorageDirectory:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _webStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     _configuration->setWebStorageDirectory(url.path);
 }
@@ -54,6 +83,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setIndexedDBDatabaseDirectory:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _indexedDBDatabaseDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     _configuration->setIndexedDBDatabaseDirectory(url.path);
 }
@@ -65,6 +96,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setWebSQLDatabaseDirectory:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _webSQLDatabaseDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     _configuration->setWebSQLDatabaseDirectory(url.path);
 }
@@ -96,6 +129,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setCookieStorageFile:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _cookieStorageFile on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     if ([url hasDirectoryPath])
         [NSException raise:NSInvalidArgumentException format:@"The cookie storage path must point to a file, not a directory."];
@@ -110,6 +145,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setResourceLoadStatisticsDirectory:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _resourceLoadStatisticsDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     _configuration->setResourceLoadStatisticsDirectory(url.path);
 }
@@ -121,6 +158,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setCacheStorageDirectory:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _cacheStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     _configuration->setCacheStorageDirectory(url.path);
 }
@@ -132,6 +171,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)_setServiceWorkerRegistrationDirectory:(NSURL *)url
 {
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _serviceWorkerRegistrationDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
     checkURLArgument(url);
     _configuration->setServiceWorkerRegistrationDirectory(url.path);
 }
@@ -154,6 +195,26 @@ static void checkURLArgument(NSURL *url)
 - (void)setSourceApplicationSecondaryIdentifier:(NSString *)identifier
 {
     _configuration->setSourceApplicationSecondaryIdentifier(identifier);
+}
+
+- (BOOL)deviceManagementRestrictionsEnabled
+{
+    return _configuration->deviceManagementRestrictionsEnabled();
+}
+
+- (void)setDeviceManagementRestrictionsEnabled:(BOOL)enabled
+{
+    _configuration->setDeviceManagementRestrictionsEnabled(enabled);
+}
+
+- (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
+{
+    return _configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();
+}
+
+- (void)setAllLoadsBlockedByDeviceManagementRestrictionsForTesting:(BOOL)blocked
+{
+    _configuration->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(blocked);
 }
 
 - (API::Object&)_apiObject

@@ -82,6 +82,11 @@
     (global-name "com.apple.passd.in-app-payment")
     (global-name "com.apple.passd.library"))
 
+(allow mach-lookup
+    (global-name "com.apple.dmd.policy")
+    (global-name "com.apple.siri.context.service")
+    (global-name "com.apple.ctcategories.service"))
+
 (deny file-write-create
        (vnode-type SYMLINK))
 

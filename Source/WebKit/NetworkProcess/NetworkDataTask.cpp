@@ -50,7 +50,7 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
 {
     ASSERT(!parameters.request.url().protocolIsBlob());
 #if PLATFORM(COCOA)
-    return NetworkDataTaskCocoa::create(session, client, parameters.request, parameters.webFrameID, parameters.webPageID, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.shouldPreconnectOnly, parameters.isMainFrameNavigation, parameters.networkActivityTracker);
+    return NetworkDataTaskCocoa::create(session, client, parameters.request, parameters.webFrameID, parameters.webPageID, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.shouldPreconnectOnly, parameters.isMainFrameNavigation, parameters.isMainResourceNavigationForAnyFrame, parameters.networkActivityTracker);
 #endif
 #if USE(SOUP)
     return NetworkDataTaskSoup::create(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation);
@@ -132,6 +132,11 @@ void NetworkDataTask::failureTimerFired()
         m_scheduledFailureType = NoFailure;
         if (m_client)
             m_client->cannotShowURL();
+        return;
+    case RestrictedURLFailure:
+        m_scheduledFailureType = NoFailure;
+        if (m_client)
+            m_client->wasBlockedByRestrictions();
         return;
     case NoFailure:
         ASSERT_NOT_REACHED();

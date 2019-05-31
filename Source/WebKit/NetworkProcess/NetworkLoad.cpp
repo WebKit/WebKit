@@ -276,6 +276,10 @@ void NetworkLoad::cannotShowURL()
     m_client.get().didFailLoading(cannotShowURLError(m_currentRequest));
 }
 
+void NetworkLoad::wasBlockedByRestrictions()
+{
+    m_client.get().didFailLoading(wasBlockedByRestrictionsError(m_currentRequest));
+}
 
 String NetworkLoad::description() const
 {

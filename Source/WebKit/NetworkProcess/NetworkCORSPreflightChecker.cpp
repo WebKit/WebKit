@@ -163,6 +163,12 @@ void NetworkCORSPreflightChecker::cannotShowURL()
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_s, ResourceError::Type::AccessControl });
 }
 
+void NetworkCORSPreflightChecker::wasBlockedByRestrictions()
+{
+    RELEASE_LOG_IF_ALLOWED("wasBlockedByRestrictions");
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_s, ResourceError::Type::AccessControl });
+}
+
 NetworkTransactionInformation NetworkCORSPreflightChecker::takeInformation()
 {
     ASSERT(m_shouldCaptureExtraNetworkLoadMetrics);

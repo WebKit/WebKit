@@ -65,7 +65,8 @@ public:
         FrameLoadInterruptedByPolicyChange = 102,
         CannotUseRestrictedPort = 103,
         FrameLoadBlockedByContentBlocker = 104,
-        FrameLoadBlockedByContentFilter = 105
+        FrameLoadBlockedByContentFilter = 105,
+        FrameLoadBlockedByRestrictions = 106,
     };
     static const WTF::String& webKitPolicyErrorDomain();
 

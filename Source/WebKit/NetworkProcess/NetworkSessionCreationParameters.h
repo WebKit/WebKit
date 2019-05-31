@@ -86,6 +86,8 @@ struct NetworkSessionCreationParameters {
     bool enableResourceLoadStatistics { false };
     bool shouldIncludeLocalhostInResourceLoadStatistics { true };
     bool enableResourceLoadStatisticsDebugMode { false };
+    bool deviceManagementRestrictionsEnabled { false };
+    bool allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
 
     String localStorageDirectory;

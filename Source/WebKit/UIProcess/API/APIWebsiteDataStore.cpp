@@ -145,6 +145,8 @@ Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreCon
 {
     auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
 
+    configuration->setPersistent(true);
+
     configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
     configuration->setApplicationCacheFlatFileSubdirectoryName("Files");
     configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());

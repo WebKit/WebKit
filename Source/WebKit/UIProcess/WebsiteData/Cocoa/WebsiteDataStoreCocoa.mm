@@ -131,6 +131,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         false,
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
+        m_configuration->deviceManagementRestrictionsEnabled(),
+        m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
         WTFMove(localStorageDirectory),
         WTFMove(localStorageDirectoryExtensionHandle)

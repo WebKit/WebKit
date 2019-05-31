@@ -25,6 +25,7 @@
 
 #pragma once
 
+OBJC_CLASS DMFWebsitePolicyMonitor;
 OBJC_CLASS NSData;
 OBJC_CLASS NSURLSession;
 OBJC_CLASS NSURLSessionDownloadTask;
@@ -69,6 +70,10 @@ public:
 
     void continueDidReceiveChallenge(const WebCore::AuthenticationChallenge&, NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&&);
 
+    bool deviceManagementRestrictionsEnabled() const { return m_deviceManagementRestrictionsEnabled; }
+    bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
+    DMFWebsitePolicyMonitor *deviceManagementPolicyMonitor();
+
 private:
     NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
 
@@ -93,6 +98,9 @@ private:
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
+    RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
+    bool m_deviceManagementRestrictionsEnabled { false };
+    bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     bool m_shouldLogCookieInformation { false };
     Seconds m_loadThrottleLatency;
 };

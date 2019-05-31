@@ -58,6 +58,8 @@ int WKErrorGetErrorCode(WKErrorRef errorRef)
         return kWKErrorCodeCannotUseRestrictedPort;
     case API::Error::Policy::FrameLoadBlockedByContentBlocker:
         return kWKErrorCodeFrameLoadBlockedByContentBlocker;
+    case API::Error::Policy::FrameLoadBlockedByRestrictions:
+        return kWKErrorCodeFrameLoadBlockedByRestrictions;
     case API::Error::Policy::FrameLoadBlockedByContentFilter:
         return kWKErrorCodeFrameLoadBlockedByContentFilter;
     case API::Error::Plugin::CannotFindPlugIn:

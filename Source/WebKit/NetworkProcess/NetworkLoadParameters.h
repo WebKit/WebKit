@@ -51,6 +51,7 @@ public:
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool needsCertificateInfo { false };
     bool isMainFrameNavigation { false };
+    bool isMainResourceNavigationForAnyFrame { false };
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     Optional<NetworkActivityTracker> networkActivityTracker;

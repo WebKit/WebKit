@@ -1,3 +1,15 @@
+2019-05-31  Tim Horton  <timothy_horton@apple.com>
+
+        Optionally respect device management restrictions when loading from the network
+        https://bugs.webkit.org/show_bug.cgi?id=198318
+        <rdar://problem/44263806>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Platform.h:
+        Add a HAVE flag for DeviceManagement.framework.
+        It does exist in the simulator, but does not function; pretend it doesn't exist.
+
 2019-05-31  Geoffrey Garen  <ggaren@apple.com>
 
         Some WeakPtr cleanup

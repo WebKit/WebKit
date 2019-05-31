@@ -584,7 +584,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->synthesizeAppIsBackground(background);
 }
 
-- (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL) allows
+- (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL)allows
 {
 #if ENABLE(SERVICE_WORKER)
     _processPool->setAllowsAnySSLCertificateForServiceWorker(allows);

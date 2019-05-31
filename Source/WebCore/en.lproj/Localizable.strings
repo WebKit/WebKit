@@ -802,6 +802,9 @@
 /* WebKitErrorFrameLoadBlockedByContentFilter description */
 "The URL was blocked by a content filter" = "The URL was blocked by a content filter";
 
+/* WebKitErrorFrameLoadBlockedByRestrictions description */
+"The URL was blocked by device restrictions" = "The URL was blocked by device restrictions";
+
 /* WKErrorWebViewInvalidated description */
 "The WKWebView was invalidated" = "The WKWebView was invalidated";
 

@@ -430,6 +430,8 @@
 		2984F589164BA095004BC0C6 /* LegacyCustomProtocolManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F587164BA095004BC0C6 /* LegacyCustomProtocolManagerMessages.h */; };
 		29AD3093164B4C5D0072DEA9 /* LegacyCustomProtocolManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AD3092164B4C5D0072DEA9 /* LegacyCustomProtocolManagerProxy.h */; };
 		29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h */; };
+		2D0C56FD229F1DEA00BD33E7 /* DeviceManagementSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0C56FB229F1DEA00BD33E7 /* DeviceManagementSoftLink.h */; };
+		2D0C56FE229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D0C56FC229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm */; };
 		2D1087611D2C573E00B85F82 /* LoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D10875F1D2C573E00B85F82 /* LoadParameters.h */; };
 		2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DEC9421269E4C00B9F73C /* UnifiedSource1-mm.mm */; };
 		2D11B7522126A282006F8878 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7DED5B21269E4D00B9F73C /* UnifiedSource1.cpp */; };
@@ -702,6 +704,7 @@
 		2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */; };
 		2DA944A01884E4F000ED86DB /* WebIOSEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */; };
 		2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9449D1884E4F000ED86DB /* GestureTypes.h */; };
+		2DAADA8F2298C21000E36B0C /* DeviceManagementSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */; };
 		2DABA7721A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7711A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h */; };
 		2DABA7741A817EE600EF0F1A /* WKPluginLoadPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7731A817EE600EF0F1A /* WKPluginLoadPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DABA7761A82B42100EF0F1A /* APIHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */; };
@@ -2506,6 +2509,8 @@
 		29D04E2821F7C73D0076741D /* AccessibilityPrivSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPrivSPI.h; sourceTree = "<group>"; };
 		2D0035221BC7414800DA8716 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D0035231BC7414800DA8716 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
+		2D0C56FB229F1DEA00BD33E7 /* DeviceManagementSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManagementSoftLink.h; sourceTree = "<group>"; };
+		2D0C56FC229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceManagementSoftLink.mm; sourceTree = "<group>"; };
 		2D0CF64B21F2A80300787566 /* TextCheckingController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckingController.mm; sourceTree = "<group>"; };
 		2D0CF64C21F2A80300787566 /* TextCheckingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextCheckingController.h; sourceTree = "<group>"; };
 		2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadParameters.cpp; sourceTree = "<group>"; };
@@ -2798,6 +2803,7 @@
 		2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebProcessProxyIOS.mm; path = ios/WebProcessProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944B61884EA3500ED86DB /* WebPageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPageIOS.mm; path = ios/WebPageIOS.mm; sourceTree = "<group>"; };
 		2DA944BC188511E700ED86DB /* NetworkProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessIOS.mm; sourceTree = "<group>"; };
+		2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManagementSPI.h; sourceTree = "<group>"; };
 		2DABA7711A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageRenderingProgressEventsInternal.h; sourceTree = "<group>"; };
 		2DABA7731A817EE600EF0F1A /* WKPluginLoadPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginLoadPolicy.h; sourceTree = "<group>"; };
 		2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHistoryClient.h; sourceTree = "<group>"; };
@@ -6105,6 +6111,7 @@
 				37C21CAD1E994C0C0029D5F9 /* CorePredictionSPI.h */,
 				A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */,
 				57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */,
+				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				37B47E2C1D64DB76005F4EFF /* objcSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
@@ -7136,6 +7143,8 @@
 		7EC4F0F818E4A922008056AF /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				2D0C56FB229F1DEA00BD33E7 /* DeviceManagementSoftLink.h */,
+				2D0C56FC229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm */,
 				5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */,
 				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
@@ -9223,6 +9232,8 @@
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
 				57DCEDAB214C60090016B847 /* DeviceIdentitySPI.h in Headers */,
 				07297F9F1C17BBEA015F0735 /* DeviceIdHashSaltStorage.h in Headers */,
+				2D0C56FD229F1DEA00BD33E7 /* DeviceManagementSoftLink.h in Headers */,
+				2DAADA8F2298C21000E36B0C /* DeviceManagementSPI.h in Headers */,
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				C18173612058424700DFDA65 /* DisplayLink.h in Headers */,
 				5C1427021C23F84C00D41183 /* Download.h in Headers */,
@@ -10982,6 +10993,7 @@
 				2D92A77D212B6A7100F493FD /* Connection.cpp in Sources */,
 				2D92A77E212B6A7100F493FD /* DataReference.cpp in Sources */,
 				2D92A77F212B6A7100F493FD /* Decoder.cpp in Sources */,
+				2D0C56FE229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,
 				1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */,
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,

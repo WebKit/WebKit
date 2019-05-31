@@ -1,3 +1,27 @@
+2019-05-31  Tim Horton  <timothy_horton@apple.com>
+
+        Optionally respect device management restrictions when loading from the network
+        https://bugs.webkit.org/show_bug.cgi?id=198318
+        <rdar://problem/44263806>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceManagementRestrictions.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        Clone a test that tests non-persistent data stores and ensure
+        that it works if the data store is created via a configuration as well.
+
+        Add a test that ensures that you can't create a data store configuration
+        with an invalid set of options.
+
+        Add a test that device management restrictions (when mocked) correctly
+        fail the load with a new, appropriate error.
+
 2019-05-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r245943.
