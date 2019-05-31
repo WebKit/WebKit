@@ -601,7 +601,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
                 auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
                 String idlValue = "";
-                if (auto cssValue = computedStyleExtractor.valueForPropertyinStyle(style, cssPropertyId))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId))
                     idlValue = cssValue->cssText();
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
                 auto value = toJS<IDLDOMString>(state, idlValue);

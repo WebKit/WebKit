@@ -2775,10 +2775,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!style)
         return nullptr;
 
-    return valueForPropertyinStyle(*style, propertyID, renderer);
+    return valueForPropertyInStyle(*style, propertyID, renderer);
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer)
+RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
