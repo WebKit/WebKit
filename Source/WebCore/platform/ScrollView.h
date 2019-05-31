@@ -65,7 +65,7 @@ class ScrollView : public Widget, public ScrollableArea {
 public:
     virtual ~ScrollView();
 
-    typedef Widget::WeakValueType WeakValueType;
+    using WeakValueType = Widget::WeakValueType;
     using Widget::weakPtrFactory;
 
     // ScrollableArea functions.
