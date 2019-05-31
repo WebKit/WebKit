@@ -285,8 +285,6 @@ bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
 
 void AVVideoCaptureSource::setFrameRateWithPreset(double requestedFrameRate, RefPtr<VideoPreset> preset)
 {
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { preset->size.width(), preset->size.height(), requestedFrameRate });
-
     auto* avPreset = preset ? downcast<AVVideoPreset>(preset.get()) : nullptr;
     m_currentPreset = avPreset;
     m_currentFrameRate = requestedFrameRate;
@@ -302,6 +300,8 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
     auto* avPreset = m_currentPreset.get();
     if (!avPreset)
         return;
+
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { m_currentPreset->size.width(), m_currentPreset->size.height(), m_currentFrameRate });
 
     ASSERT(avPreset->format);
 
