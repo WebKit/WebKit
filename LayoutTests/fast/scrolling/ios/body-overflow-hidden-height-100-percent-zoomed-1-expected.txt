@@ -1,0 +1,5 @@
+This document shouldn't be scrollable normally but should be scrollable when pinch zoomed.
+To manually test, pinch zoom on the page. The document should become scrollable.
+PASS - the document did scroll with zooming
+PASS - the document scrolled back to the top
+

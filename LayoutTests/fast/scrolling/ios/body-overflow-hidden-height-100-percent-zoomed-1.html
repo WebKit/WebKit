@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<style>
+html, body { width: 100%; height: 100%; margin: 0px; padding: 0px; }
+body { overflow: hidden; }
+#content { width: 100%; height: 100%; box-sizing: border-box; padding: 20px; background: #ccc; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    let result = '';
+    const log = (text) => result += text + '\n';
+
+    await UIHelper.zoomToScale(1.5);
+
+    log(visualViewport.pageTop > 50 ? 'PASS - the document did scroll with zooming' : `FAIL - the document did not scroll with zooming: ${visualViewport.pageTop}`);
+
+    await touchAndDragFromPointToPoint(200, 100, 200, 200);
+    await liftUpAtPoint(200, 200);
+    await UIHelper.delayFor(200);
+
+    log(visualViewport.pageTop <= 0 ? 'PASS - the document scrolled back to the top' : `FAIL - the document did not scroll back to the top: ${visualViewport.pageTop}`);
+
+    document.getElementById('log').textContent = result;
+
+    testRunner.notifyDone();
+}
+
+</script>
+<body onload="runTest()">
+<div id="content">
+This document shouldn't be scrollable normally but should be scrollable when pinch zoomed.<br>
+To manually test, pinch zoom on the page. The document should become scrollable.
+</div>
+<pre id="log"></pre>
+</body>
+</html>
