@@ -31,6 +31,7 @@
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayLibWPE.h>
 #include <wpe/wpe-egl.h>
+#include <wtf/UniStdExtras.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -52,7 +53,7 @@ AcceleratedSurfaceLibWPE::~AcceleratedSurfaceLibWPE()
 
 void AcceleratedSurfaceLibWPE::initialize()
 {
-    m_backend = wpe_renderer_backend_egl_target_create(m_webPage.releaseHostFileDescriptor());
+    m_backend = wpe_renderer_backend_egl_target_create(dupCloseOnExec(m_webPage.hostFileDescriptor()));
     static struct wpe_renderer_backend_egl_target_client s_client = {
         // frame_complete
         [](void* data)

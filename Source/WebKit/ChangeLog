@@ -1,5 +1,25 @@
 2019-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [CoordinatedGraphics] WPERenderer: do not release the host file descritor when initializing the render target
+        https://bugs.webkit.org/show_bug.cgi?id=198371
+
+        Reviewed by Michael Catanzaro.
+
+        We are assuming that there will always be only one target for a web page. In the GTK port we destroy the render
+        target when leaving AC mode, and a new one is created when re-entering AC mode. Since the file descriptor is
+        released on the first target and adopted by libwpe, the second target passes -1 as host fd to libwpe, and the
+        new surface created by the target is not properly registered in the wayland compositor. That means that frame
+        requests for the new target are simply ignored by the wayland compositor, it returns early on surfacxe frame
+        when the surface doesn't have a view backend client.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::hostFileDescriptor const): Rename it and make it const.
+        * WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp:
+        (WebKit::AcceleratedSurfaceLibWPE::initialize): Pass a duplicated file descriptor to
+        wpe_renderer_backend_egl_target_create().
+
+2019-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix memory leak introduced in r245807
         https://bugs.webkit.org/show_bug.cgi?id=198369
 
