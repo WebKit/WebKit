@@ -1,5 +1,66 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245538. rdar://problem/50753927
+
+    Fix security check in ScriptController::canAccessFromCurrentOrigin()
+    https://bugs.webkit.org/show_bug.cgi?id=196730
+    <rdar://problem/49731231>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Fix security check in ScriptController::canAccessFromCurrentOrigin() when there is no
+    current JS exec state. Instead of returning true unconditionally, we now fall back to
+    using the accessing document's origin for the security check. The new behavior is
+    aligned with Blink:
+    https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/html/html_frame_element_base.cc?rcl=d3f22423d512b45466f1694020e20da9e0c6ee6a&l=62
+    
+    This fix is based on a patch from Sergei Glazunov <glazunov@google.com>.
+    
+    Test: http/tests/security/showModalDialog-sync-cross-origin-page-load2.html
+    
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::canAccessFromCurrentOrigin):
+    * bindings/js/ScriptController.h:
+    * html/HTMLFrameElementBase.cpp:
+    (WebCore::HTMLFrameElementBase::isURLAllowed const):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/tests/security/showModalDialog-sync-cross-origin-page-load2-expected.txt: Added.
+    * http/tests/security/showModalDialog-sync-cross-origin-page-load2.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245538 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-20  Chris Dumez  <cdumez@apple.com>
+
+            Fix security check in ScriptController::canAccessFromCurrentOrigin()
+            https://bugs.webkit.org/show_bug.cgi?id=196730
+            <rdar://problem/49731231>
+
+            Reviewed by Ryosuke Niwa.
+
+            Fix security check in ScriptController::canAccessFromCurrentOrigin() when there is no
+            current JS exec state. Instead of returning true unconditionally, we now fall back to
+            using the accessing document's origin for the security check. The new behavior is
+            aligned with Blink:
+            https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/html/html_frame_element_base.cc?rcl=d3f22423d512b45466f1694020e20da9e0c6ee6a&l=62
+
+            This fix is based on a patch from Sergei Glazunov <glazunov@google.com>.
+
+            Test: http/tests/security/showModalDialog-sync-cross-origin-page-load2.html
+
+            * bindings/js/ScriptController.cpp:
+            (WebCore::ScriptController::canAccessFromCurrentOrigin):
+            * bindings/js/ScriptController.h:
+            * html/HTMLFrameElementBase.cpp:
+            (WebCore::HTMLFrameElementBase::isURLAllowed const):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245509. rdar://problem/51264845
 
     Wait to get frame until after layout has been run
