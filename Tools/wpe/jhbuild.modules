@@ -289,7 +289,7 @@
     </dependencies>
   </meson>
 
-  <meson id="at-spi2-core" mesonargs="-Dintrospection=no">
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
     <branch module="pub/GNOME/sources/at-spi2-core/2.32/at-spi2-core-2.32.1.tar.xz" version="2.32.1"
             repo="ftp.gnome.org"
             hash="sha256:3c2aa937ebfaca2c86569bce9b16a34fbe20d69ef0c58846313b1c42f53b0d53">

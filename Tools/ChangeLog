@@ -1,3 +1,12 @@
+2019-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Build at-spi2-core without x11 support in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=198411
+
+        Reviewed by Philippe Normand.
+
+        * wpe/jhbuild.modules:
+
 2019-05-30  Sihui Liu  <sihui_liu@apple.com>
 
         WKWebsiteDataStore API fails to fetch web storage data for non-persistent data store
