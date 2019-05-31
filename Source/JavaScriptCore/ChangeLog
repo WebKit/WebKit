@@ -1,5 +1,51 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245815. rdar://problem/51264876
+
+    [YARR] Properly handle RegExp's that require large ParenContext space
+    https://bugs.webkit.org/show_bug.cgi?id=198065
+    
+    Reviewed by Keith Miller.
+    
+    JSTests:
+    
+    New test.
+    
+    * stress/regexp-large-paren-context.js: Added.
+    (testLargeRegExp):
+    
+    Source/JavaScriptCore:
+    
+    Changed what happens when we exceed VM::patternContextBufferSize when compiling a RegExp
+    that needs ParenCOntextSpace to fail the RegExp JIT compilation and fall back to the YARR
+    interpreter.  This can save large amounts of JIT memory for a
+    JIT'ed function that cannot ever succeed.
+    
+    * yarr/YarrJIT.cpp:
+    (JSC::Yarr::YarrGenerator::initParenContextFreeList):
+    (JSC::Yarr::YarrGenerator::compile):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245815 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-28  Michael Saboff  <msaboff@apple.com>
+
+            [YARR] Properly handle RegExp's that require large ParenContext space
+            https://bugs.webkit.org/show_bug.cgi?id=198065
+
+            Reviewed by Keith Miller.
+
+            Changed what happens when we exceed VM::patternContextBufferSize when compiling a RegExp
+            that needs ParenCOntextSpace to fail the RegExp JIT compilation and fall back to the YARR
+            interpreter.  This can save large amounts of JIT memory for a
+            JIT'ed function that cannot ever succeed.
+
+            * yarr/YarrJIT.cpp:
+            (JSC::Yarr::YarrGenerator::initParenContextFreeList):
+            (JSC::Yarr::YarrGenerator::compile):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r245586. rdar://problem/51264876
 
     Cleanup Yarr regexp code around paren contexts.
