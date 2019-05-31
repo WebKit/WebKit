@@ -39,7 +39,12 @@ class MediaDocumentController
         const media = mediaController.media;
         media.classList.add("media-document");
         media.classList.add("audio");
-        media.classList.add(window.navigator.platform === "MacIntel" ? "mac" : window.navigator.platform);
+
+        let deviceType = window.navigator.platform;
+        if (deviceType == "MacIntel")
+            deviceType = GestureRecognizer.SupportsTouches ? "ipad" : "mac";
+
+        media.classList.add(deviceType);
 
         media.addEventListener("error", this);
         media.addEventListener("play", this);

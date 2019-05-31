@@ -1375,7 +1375,8 @@ media/modern-media-controls/ios-inline-media-controls [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 media/modern-media-controls/media-controller/ios [ Skip ]
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad [ Skip ]
 
 # These tests are timing-related and can fail due to performance issues on bots

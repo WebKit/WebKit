@@ -18,7 +18,10 @@ fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
 
 # These tests are designed for iPhone and crash on iPad
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
-media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
+
+# This test is iPad-specific
+media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
 
 webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
 webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]

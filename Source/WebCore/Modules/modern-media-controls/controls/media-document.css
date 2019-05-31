@@ -60,6 +60,12 @@
     min-width: 700px !important;
 }
 
+@media (max-width: 699px) {
+    :host(.media-document.video.ipad) {
+        min-width: 100% !important;
+    }
+}
+
 :host(.media-document.video.iphone) {
     width: 100% !important;
 }
