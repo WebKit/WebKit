@@ -1,3 +1,25 @@
+2019-05-31  Joonghun Park  <jh718.park@samsung.com>
+
+        Always min-width should win over max-width.
+        https://bugs.webkit.org/show_bug.cgi?id=198032
+
+        Reviewed by Darin Adler.
+
+        In the spec, https://www.w3.org/TR/CSS21/visudet.html#min-max-widths,
+        the following algorithm describes how the two properties influence
+        the used value of the 'width' property.
+
+        1. The tentative used width is calculated (without 'min-width' and 'max-width')
+        following the rules under "Calculating widths and margins" above.
+        2. If the tentative used width is greater than 'max-width',
+        the rules above are applied again, but this time using the computed value of 'max-width'
+        as the computed value for 'width'.
+        3. If the resulting width is smaller than 'min-width', the rules above are applied again,
+        but this time using the value of 'min-width' as the computed value for 'width'.
+
+        * web-platform-tests/css/css-sizing/min-width-max-width-precedence-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/min-width-max-width-precedence.html: Added.
+
 2019-05-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r244182) [Mac WK2] Layout Test imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html is a flaky failure
