@@ -1,3 +1,16 @@
+2019-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r245899.
+
+        Seems to be causing crashes on iosmac
+
+        Reverted changeset:
+
+        "[iOS] UIProcess' background task expiration handler may get
+        called after the app is foreground again"
+        https://bugs.webkit.org/show_bug.cgi?id=198380
+        https://trac.webkit.org/changeset/245899
+
 2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Main frame should be scrollable when pinch zoomed or software keyboard is up
