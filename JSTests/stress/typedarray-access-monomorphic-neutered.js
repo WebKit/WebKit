@@ -28,7 +28,6 @@ for (let constructor of typedArrays) {
     test("array[0]", array);
     test("delete array[0]", array);
     test("Object.getOwnPropertyDescriptor(array, 0)", array);
-    test("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array);
     test("array[0] = 1", array);
     test("array[i] = 1", array);
 }
@@ -48,7 +47,39 @@ for (let constructor of typedArrays) {
     testFTL("array[0]", array, failArray);
     testFTL("delete array[0]", array, failArray);
     testFTL("Object.getOwnPropertyDescriptor(array, 0)", array, failArray);
-    testFTL("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array, failArray);
     testFTL("array[0] = 1", array, failArray);
     testFTL("array[i] = 1", array, failArray);
+}
+
+
+function checkNoException(array, thunk, count) {
+    thunk(array, count);
+}
+noInline(check);
+
+function testNoException(thunk, array) {
+    let fn = Function("array", "i", thunk);
+    noInline(fn);
+    for (let i = 0; i < 10000; i++)
+        checkNoException(array, fn, i);
+}
+
+for (let constructor of typedArrays) {
+    let array = new constructor(10);
+    transferArrayBuffer(array.buffer);
+    testNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array);
+}
+
+function testFTLNoException(thunk, array, failArray) {
+    let fn = Function("array", "i", thunk);
+    noInline(fn);
+    for (let i = 0; i < 10000; i++)
+        fn(array, i)
+    checkNoException(failArray, fn, 10000);
+}
+for (let constructor of typedArrays) {
+    let array = new constructor(10);
+    let failArray = new constructor(10);
+    transferArrayBuffer(failArray.buffer);
+    testFTLNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: false, enumerable: true })", array, failArray);
 }
