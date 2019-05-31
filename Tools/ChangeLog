@@ -1,3 +1,17 @@
+2019-05-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r245943.
+
+        Caused API test WKWebView.LocalStorageProcessSuspends to fail
+        on release bots.
+
+        Reverted changeset:
+
+        "WKWebsiteDataStore API fails to fetch web storage data for
+        non-persistent data store"
+        https://bugs.webkit.org/show_bug.cgi?id=198317
+        https://trac.webkit.org/changeset/245943
+
 2019-05-31  Alexey Proskuryakov  <ap@apple.com>
 
         WebKitTestRunner sometimes freezes under -[NSWindow release]

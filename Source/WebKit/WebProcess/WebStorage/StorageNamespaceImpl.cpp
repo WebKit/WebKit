@@ -47,12 +47,12 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(ui
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return createLocalStorageNamespace(identifier, quotaInBytes, IsEphemeral::Yes);
+    return createSessionStorageNamespace(identifier, quotaInBytes);
 }
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes, IsEphemeral isEphemeral)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return adoptRef(*new StorageNamespaceImpl(isEphemeral == IsEphemeral::Yes ? StorageType::EphemeralLocal : StorageType::Local, identifier, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Local, identifier, nullptr, quotaInBytes));
 }
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
