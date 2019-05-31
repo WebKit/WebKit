@@ -94,8 +94,9 @@ public:
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (needBuffer)
             m_buffer = m_vm.acquireRegExpPatternContexBuffer();
+#else
+        UNUSED_PARAM(needBuffer);
 #endif
-
     }
 
     ~PatternContextBufferHolder()
