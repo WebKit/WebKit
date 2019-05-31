@@ -85,6 +85,13 @@ void ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback()
 void ThreadedDisplayRefreshMonitor::invalidate()
 {
     m_displayRefreshTimer.stop();
+    bool wasScheduled = false;
+    {
+        LockHolder locker(mutex());
+        wasScheduled = isScheduled();
+    }
+    if (wasScheduled)
+        DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(this);
     m_client = nullptr;
 }
 
