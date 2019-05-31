@@ -1,3 +1,14 @@
+2019-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Video playback in Safari should continue when CarPlay is plugged in
+        https://bugs.webkit.org/show_bug.cgi?id=198345
+        <rdar://problem/45505750>
+
+        Reviewed by Eric Carlson.
+
+        * media/video-isplayingtoautomotiveheadunit-expected.txt: Added.
+        * media/video-isplayingtoautomotiveheadunit.html: Added.
+
 2019-05-30  Youenn Fablet  <youenn@apple.com>
 
         Add an option to mute audio capture automatically when page is not visible

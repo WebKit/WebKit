@@ -754,4 +754,6 @@ enum CompositingPolicy {
     void testDictionaryLogging();
 
     void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest xhr, double interval);
+
+    void setIsPlayingToAutomotiveHeadUnit(boolean value);
 };

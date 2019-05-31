@@ -824,6 +824,8 @@ public:
 
     void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest&, double);
 
+    void setIsPlayingToAutomotiveHeadUnit(bool);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

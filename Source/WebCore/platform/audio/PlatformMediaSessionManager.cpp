@@ -391,6 +391,14 @@ void PlatformMediaSessionManager::processDidResume()
 #endif
 }
 
+void PlatformMediaSessionManager::setIsPlayingToAutomotiveHeadUnit(bool isPlayingToAutomotiveHeadUnit)
+{
+    if (isPlayingToAutomotiveHeadUnit == m_isPlayingToAutomotiveHeadUnit)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, isPlayingToAutomotiveHeadUnit);
+    m_isPlayingToAutomotiveHeadUnit = isPlayingToAutomotiveHeadUnit;
+}
 
 void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession& session)
 {

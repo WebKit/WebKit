@@ -47,6 +47,10 @@ public:
 
     void externalOutputDeviceAvailableDidChange();
     bool hasWirelessTargetsAvailable() override;
+#if HAVE(CELESTIAL)
+    void carPlayServerDied();
+    void updateCarPlayIsConnected(Optional<bool>&&);
+#endif
 
 private:
     friend class PlatformMediaSessionManager;
