@@ -28,8 +28,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Line);
 
 bool Line::Content::isVisuallyEmpty() const
 {
@@ -51,34 +55,25 @@ Line::Content::Run::Run(Display::Run inlineRun, const InlineItem& inlineItem, bo
 {
 }
 
-Line::Line(const LayoutState& layoutState)
+Line::Line(const LayoutState& layoutState, const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumHeight, LayoutUnit baselineOffset)
     : m_layoutState(layoutState)
+    , m_content(std::make_unique<Line::Content>())
+    , m_logicalTopLeft(topLeft)
+    , m_logicalHeight({ baselineOffset, minimumHeight - baselineOffset })
+    , m_lineLogicalWidth(availableWidth)
 {
 }
 
-void Line::reset(const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumHeight, LayoutUnit baselineOffset)
-{
-    m_logicalTopLeft = topLeft;
-    m_lineLogicalWidth = availableWidth;
-    m_logicalHeight = { baselineOffset, minimumHeight - baselineOffset };
-
-    m_contentLogicalWidth = { };
-
-    m_content = { };
-
-    m_trimmableContent.clear();
-}
-
-const Line::Content& Line::close()
+std::unique_ptr<Line::Content> Line::close()
 {
     removeTrailingTrimmableContent();
     // Convert inline run geometry from relative to the baseline to relative to logical top.
-    for (auto& run : m_content.runs()) {
+    for (auto& run : m_content->runs()) {
         auto adjustedLogicalTop = run->inlineRun.logicalTop() + m_logicalHeight.height + m_logicalTopLeft.y();
         run->inlineRun.setLogicalTop(adjustedLogicalTop);
     }
-    m_content.setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
-    return m_content;
+    m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
+    return WTFMove(m_content);
 }
 
 void Line::removeTrailingTrimmableContent()
@@ -100,7 +95,7 @@ void Line::moveLogicalLeft(LayoutUnit delta)
     // Shrink the line and move the items.
     m_logicalTopLeft.move(delta, 0);
     m_lineLogicalWidth -= delta;
-    for (auto& run : m_content.runs())
+    for (auto& run : m_content->runs())
         run->inlineRun.moveHorizontally(delta);
 }
 
@@ -120,7 +115,7 @@ LayoutUnit Line::trailingTrimmableWidth() const
 
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
-    m_content.runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
+    m_content->runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
     m_contentLogicalWidth += inlineItem.width();
 }
 
@@ -165,7 +160,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSiz
         if (!isTrimmable)
             return false;
         // Leading whitespace.
-        auto& runs = m_content.runs();
+        auto& runs = m_content->runs();
         if (runs.isEmpty())
             return true;
         // Check if the last item is trimmable as well.
@@ -191,7 +186,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSiz
     if (isTrimmable)
         m_trimmableContent.add(lineItem.get());
 
-    m_content.runs().append(WTFMove(lineItem));
+    m_content->runs().append(WTFMove(lineItem));
     m_contentLogicalWidth += isCompletelyCollapsed ? LayoutUnit() : runSize.width();
 }
 
@@ -219,7 +214,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutSize r
     auto horizontalMargin = displayBox.horizontalMargin();
     auto logicalRect = Display::Rect { logicalTop, contentLogicalRight() + horizontalMargin.start, runSize.width(), runSize.height() };
 
-    m_content.runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
+    m_content->runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
     m_contentLogicalWidth += (runSize.width() + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
@@ -234,7 +229,7 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
 {
     auto ascent = inlineItem.layoutBox().style().fontMetrics().ascent();
     auto logicalRect = Display::Rect { -ascent, contentLogicalRight(), { }, logicalHeight() };
-    m_content.runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
+    m_content->runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
 }
 
 Line::UsedHeightAndDepth Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)

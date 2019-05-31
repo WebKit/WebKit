@@ -75,7 +75,7 @@ InlineFormattingContext::LineLayout::LineLayout(const InlineFormattingContext& i
 {
 }
 
-void InlineFormattingContext::LineLayout::initializeLine(Line& line, LayoutUnit lineLogicalTop, LayoutUnit availableWidth) const
+std::unique_ptr<Line> InlineFormattingContext::LineLayout::createLine(LayoutUnit lineLogicalTop, LayoutUnit availableWidth) const
 {
     auto& formattingRootDisplayBox = layoutState().displayBoxForLayoutBox(m_formattingRoot);
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
@@ -107,7 +107,7 @@ void InlineFormattingContext::LineLayout::initializeLine(Line& line, LayoutUnit 
     auto& formattingRootStyle = m_formattingRoot.style();
     auto mimimumLineHeight = formattingRootStyle.computedLineHeight();
     auto baselineOffset = Line::halfLeadingMetrics(formattingRootStyle.fontMetrics(), mimimumLineHeight).height;
-    line.reset({ lineLogicalLeft, lineLogicalTop }, availableWidth, mimimumLineHeight, baselineOffset);
+    return std::make_unique<Line>(layoutState(), LayoutPoint { lineLogicalLeft, lineLogicalTop }, availableWidth, mimimumLineHeight, baselineOffset);
 }
 
 unsigned InlineFormattingContext::LineLayout::createInlineRunsForLine(Line& line, unsigned startInlineItemIndex) const
@@ -172,17 +172,17 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
 {
     ASSERT(!m_formattingState.inlineItems().isEmpty());
 
-    Line line(layoutState());
-    initializeLine(line, layoutState().displayBoxForLayoutBox(m_formattingRoot).contentBoxTop(), widthConstraint);
-
     unsigned startInlineItemIndex = 0;
+    auto lineLogicalTop = layoutState().displayBoxForLayoutBox(m_formattingRoot).contentBoxTop();
     while (true) {
-        auto nextInlineItemIndex = createInlineRunsForLine(line, startInlineItemIndex);
-        processInlineRuns(line);
+        auto line = createLine(lineLogicalTop, widthConstraint);
+        auto nextInlineItemIndex = createInlineRunsForLine(*line, startInlineItemIndex);
+        auto lineContent = line->close();
+        processInlineRuns(*lineContent, line->availableWidth());
         if (nextInlineItemIndex == m_formattingState.inlineItems().size())
             break;
         startInlineItemIndex = nextInlineItemIndex;
-        initializeLine(line, line.logicalBottom(), widthConstraint);
+        lineLogicalTop = lineContent->logicalBottom();
     }
 }
 
@@ -214,9 +214,8 @@ LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUni
     return std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
 }
 
-void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
+void InlineFormattingContext::LineLayout::processInlineRuns(const Line::Content& lineContent, LayoutUnit availableWidth) const
 {
-    auto& lineContent = line.close();
     if (lineContent.isEmpty()) {
         // Spec tells us to create a zero height, empty line box.
         auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , 0 };
@@ -314,7 +313,7 @@ void InlineFormattingContext::LineLayout::processInlineRuns(Line& line) const
     // FIXME linebox needs to be ajusted after content alignment.
     m_formattingState.addLineBox({ lineBox });
     if (!lineContent.isVisuallyEmpty())
-        alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, line.availableWidth());
+        alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, availableWidth);
 }
 
 void InlineFormattingContext::LineLayout::handleFloat(Line& line, const FloatingContext& floatingContext, const InlineItem& floatItem) const

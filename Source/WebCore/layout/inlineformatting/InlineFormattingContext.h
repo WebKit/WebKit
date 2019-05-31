@@ -30,6 +30,7 @@
 #include "DisplayBox.h"
 #include "FormattingContext.h"
 #include "InlineFormattingState.h"
+#include "InlineLine.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -37,7 +38,6 @@ namespace Layout {
 
 class FloatingState;
 class InlineContainer;
-class Line;
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
@@ -58,9 +58,9 @@ private:
 
     private:
         LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-        void initializeLine(Line&, LayoutUnit lineLogicalTop, LayoutUnit widthConstraint) const;
+        std::unique_ptr<Line> createLine(LayoutUnit lineLogicalTop, LayoutUnit widthConstraint) const;
         unsigned createInlineRunsForLine(Line&, unsigned firstInlineItemIndex) const;
-        void processInlineRuns(Line&) const;
+        void processInlineRuns(const Line::Content&, LayoutUnit availableWidth) const;
         void commitInlineItemToLine(Line&, const InlineItem&) const;
         void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
         void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;

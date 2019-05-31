@@ -29,15 +29,16 @@
 
 #include "DisplayRun.h"
 #include "InlineItem.h"
+#include "InlineTextItem.h"
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
 class Line {
+    WTF_MAKE_ISO_ALLOCATED(Line);
 public:
-    Line(const LayoutState&);
-
-    void reset(const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumLineHeight, LayoutUnit baselineOffset);
+    Line(const LayoutState&, const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumLineHeight, LayoutUnit baselineOffset);
 
     class Content {
     public:
@@ -72,7 +73,7 @@ public:
         Display::Rect m_logicalRect;
         Runs m_runs;
     };
-    const Content& close();
+    std::unique_ptr<Content> close();
 
     void appendTextContent(const InlineTextItem&, LayoutSize);
     void appendNonReplacedInlineBox(const InlineItem&, LayoutSize);
@@ -81,7 +82,7 @@ public:
     void appendInlineContainerEnd(const InlineItem&);
     void appendHardLineBreak(const InlineItem&);
 
-    bool hasContent() const { return !m_content.isVisuallyEmpty(); }
+    bool hasContent() const { return !m_content->isVisuallyEmpty(); }
 
     LayoutUnit trailingTrimmableWidth() const;
 
@@ -112,7 +113,7 @@ private:
     void removeTrailingTrimmableContent();
 
     const LayoutState& m_layoutState;
-    Content m_content;
+    std::unique_ptr<Content> m_content;
     ListHashSet<Content::Run*> m_trimmableContent;
 
     LayoutPoint m_logicalTopLeft;
