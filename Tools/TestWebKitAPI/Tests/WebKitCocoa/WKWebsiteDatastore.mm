@@ -304,4 +304,46 @@ TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WKWebsiteDataStore, FetchNonPersistentWebStorage)
+{
+    auto nonPersistentDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:nonPersistentDataStore];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadHTMLString:@"<script>sessionStorage.setItem('session', 'storage');localStorage.setItem('local', 'storage');</script>" baseURL:[NSURL URLWithString:@"http://localhost"]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    readyToContinue = false;
+    [webView evaluateJavaScript:@"window.sessionStorage.getItem('session')" completionHandler:^(id result, NSError *) {
+        EXPECT_TRUE([@"storage" isEqualToString:result]);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    readyToContinue = false;
+    [webView evaluateJavaScript:@"window.localStorage.getItem('local')" completionHandler:^(id result, NSError *) {
+        EXPECT_TRUE([@"storage" isEqualToString:result]);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    readyToContinue = false;
+    [nonPersistentDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeSessionStorage] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ((int)dataRecords.count, 1);
+        EXPECT_TRUE([[[dataRecords objectAtIndex:0] displayName] isEqualToString:@"localhost"]);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    readyToContinue = false;
+    [nonPersistentDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeLocalStorage] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ((int)dataRecords.count, 1);
+        EXPECT_TRUE([[[dataRecords objectAtIndex:0] displayName] isEqualToString:@"localhost"]);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+}
+
 }

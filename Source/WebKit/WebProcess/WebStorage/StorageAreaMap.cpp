@@ -294,7 +294,7 @@ void StorageAreaMap::dispatchStorageEvent(uint64_t sourceStorageAreaID, const St
         applyChange(key, newValue);
     }
 
-    if (storageType() == StorageType::Session)
+    if (storageType() == StorageType::Session || storageType() == StorageType::EphemeralLocal)
         dispatchSessionStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
     else
         dispatchLocalStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
@@ -307,9 +307,7 @@ void StorageAreaMap::clearCache()
 
 void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
-    ASSERT(storageType() == StorageType::Session);
-
-    // Namespace IDs for session storage namespaces are equivalent to web page IDs
+    // Namespace IDs for session storage namespaces and ephemeral local storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
     WebPage* webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(m_storageNamespaceID));
     if (!webPage)
@@ -377,6 +375,7 @@ void StorageAreaMap::connect()
 
     switch (m_storageType) {
     case StorageType::Local:
+    case StorageType::EphemeralLocal:
     case StorageType::TransientLocal:
         if (SecurityOrigin* topLevelOrigin = m_storageNamespace->topLevelOrigin())
             WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManager::CreateTransientLocalStorageMap(m_storageMapID, m_storageNamespace->storageNamespaceID(), topLevelOrigin->data(), m_securityOrigin->data()), 0);
@@ -385,14 +384,10 @@ void StorageAreaMap::connect()
         break;
     case StorageType::Session:
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManager::CreateSessionStorageMap(m_storageMapID, m_storageNamespace->storageNamespaceID(), m_securityOrigin->data()), 0);
-        if (m_storageMap)
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManager::SetItems(m_storageMapID, m_storageMap->items()), 0);
-        break;
-    case StorageType::EphemeralLocal:
-        ASSERT_NOT_REACHED();
-        return;
     }
 
+    if (m_storageMap)
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManager::SetItems(m_storageMapID, m_storageMap->items()), 0);
     m_isDisconnected = false;
 }
 

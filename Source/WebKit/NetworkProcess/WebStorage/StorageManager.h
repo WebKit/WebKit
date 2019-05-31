@@ -103,7 +103,7 @@ private:
 
     Ref<WorkQueue> m_queue;
 
-    Ref<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
+    RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
     HashMap<uint64_t, RefPtr<LocalStorageNamespace>> m_localStorageNamespaces;
 
     HashMap<std::pair<uint64_t, WebCore::SecurityOriginData>, RefPtr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
@@ -112,9 +112,6 @@ private:
     HashMap<uint64_t, RefPtr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 
     HashMap<std::pair<IPC::Connection::UniqueID, uint64_t>, RefPtr<StorageArea>> m_storageAreasByConnection;
-
-    HashMap<WebCore::SecurityOriginData, Ref<WebCore::StorageMap>> m_ephemeralStorage;
-    bool m_isEphemeral { false };
 
     enum class State {
         Running,
