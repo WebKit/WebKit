@@ -1,3 +1,12 @@
+2019-05-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win10] Some tests are failing only on specific machines
+        https://bugs.webkit.org/show_bug.cgi?id=197509
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2019-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Main frame should be scrollable when pinch zoomed or software keyboard is up
