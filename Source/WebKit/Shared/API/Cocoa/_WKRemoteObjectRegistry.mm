@@ -38,6 +38,7 @@
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
 #import "WKSharedAPICast.h"
+#import "WebPage.h"
 #import "_WKRemoteObjectInterface.h"
 #import <objc/runtime.h>
 

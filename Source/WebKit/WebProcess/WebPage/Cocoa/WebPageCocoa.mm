@@ -29,6 +29,7 @@
 
 #import "LoadParameters.h"
 #import "PluginView.h"
+#import "RemoteObjectRegistry.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
@@ -183,6 +184,11 @@ void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
 {
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
+}
+
+void WebPage::setRemoteObjectRegistry(RemoteObjectRegistry& registry)
+{
+    m_remoteObjectRegistry = makeWeakPtr(registry);
 }
 
 } // namespace WebKit
