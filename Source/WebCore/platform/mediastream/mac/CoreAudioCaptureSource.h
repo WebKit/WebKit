@@ -142,9 +142,6 @@ private:
     }
 
     CaptureDeviceManager& audioCaptureDeviceManager() final;
-#if PLATFORM(IOS_FAMILY)
-    void setAudioCapturePageState(bool interrupted, bool pageMuted) final;
-#endif
 };
 
 } // namespace WebCore

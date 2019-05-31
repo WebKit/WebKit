@@ -86,11 +86,9 @@ public:
 
     WEBCORE_EXPORT void setDevicesChangedObserver(std::function<void()>&&);
 
-    void setCapturePageState(bool interrupted, bool pageMuted);
+    void setVideoCapturePageState(bool, bool);
 
     void captureDevicesChanged();
-
-    WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
 
 private:
     RealtimeMediaSourceCenter();
@@ -115,8 +113,6 @@ private:
     AudioCaptureFactory* m_audioCaptureFactoryOverride { nullptr };
     VideoCaptureFactory* m_videoCaptureFactoryOverride { nullptr };
     DisplayCaptureFactory* m_displayCaptureFactoryOverride { nullptr };
-
-    bool m_shouldInterruptAudioOnPageVisibilityChange { false };
 };
 
 } // namespace WebCore

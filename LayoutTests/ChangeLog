@@ -1,3 +1,7 @@
+2019-05-31  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r245946. rdar://problem/47390407
+
 2019-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Main frame should be scrollable when pinch zoomed or software keyboard is up

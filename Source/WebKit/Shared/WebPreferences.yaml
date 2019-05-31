@@ -545,12 +545,6 @@ PeerConnectionEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
 
-InterruptAudioOnPageVisibilityChangeEnabled:
-  type: bool
-  defaultValue: WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(MEDIA_STREAM)
-
 WebRTCUnifiedPlanEnabled:
   type: bool
   defaultValue: true
