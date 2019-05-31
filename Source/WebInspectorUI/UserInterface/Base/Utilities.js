@@ -522,62 +522,86 @@ Object.defineProperty(Array, "shallowEqual",
 
 Object.defineProperty(Array, "diffArrays",
 {
-    value(initialArray, currentArray, onEach)
+    value(initialArray, currentArray, onEach, comparator)
     {
-        let initialSet = new Set(initialArray);
-        let currentSet = new Set(currentArray);
-        let indexInitial = 0;
-        let indexCurrent = 0;
-        let deltaInitial = 0;
-        let deltaCurrent = 0;
+        "use strict";
 
-        let i = 0;
-        while (true) {
-            if (indexInitial >= initialArray.length || indexCurrent >= currentArray.length)
-                break;
+        function defaultComparator(initial, current) {
+            return initial === current;
+        }
+        comparator = comparator || defaultComparator;
 
-            let initial = initialArray[indexInitial];
-            let current = currentArray[indexCurrent];
-
-            if (initial === current)
-                onEach(current, 0);
-            else if (currentSet.has(initial)) {
-                if (initialSet.has(current)) {
-                    // Moved.
-                    onEach(current, 0);
-                } else {
-                    // Added.
-                    onEach(current, 1);
-                    --i;
-                    ++deltaCurrent;
+        // Find the shortest prefix of matching items in both arrays.
+        //
+        //    initialArray = ["a", "b", "b", "c"]
+        //    currentArray = ["c", "b", "b", "a"]
+        //    findShortestEdit() // [1, 1]
+        //
+        function findShortestEdit() {
+            let deletionCount = initialArray.length;
+            let additionCount = currentArray.length;
+            let editCount = deletionCount + additionCount;
+            for (let i = 0; i < initialArray.length; ++i) {
+                if (i > editCount) {
+                    // Break since any possible edits at this point are going to be longer than the one already found.
+                    break;
                 }
-            } else {
-                // Removed.
-                onEach(initial, -1);
-                if (!initialSet.has(current)) {
-                    // Added.
-                    onEach(current, 1);
-                } else {
-                    --i;
-                    ++deltaInitial;
+
+                for (let j = 0; j < currentArray.length; ++j) {
+                    let newEditCount = i + j;
+                    if (newEditCount > editCount) {
+                        // Break since any possible edits at this point are going to be longer than the one already found.
+                        break;
+                    }
+
+                    if (comparator(initialArray[i], currentArray[j])) {
+                        // A candidate for the shortest edit found.
+                        if (newEditCount < editCount) {
+                            editCount = newEditCount;
+                            deletionCount = i;
+                            additionCount = j;
+                        }
+                        break;
+                    }
                 }
             }
-
-            ++i;
-            indexInitial = i + deltaInitial;
-            indexCurrent = i + deltaCurrent;
+            return [deletionCount, additionCount];
         }
 
-        for (let i = indexInitial; i < initialArray.length; ++i) {
-            // Removed.
-            onEach(initialArray[i], -1);
+        function commonPrefixLength(listA, listB) {
+            let shorterListLength = Math.min(listA.length, listB.length);
+            let i = 0;
+            while (i < shorterListLength) {
+                if (!comparator(listA[i], listB[i]))
+                    break;
+                ++i;
+            }
+            return i;
         }
 
-        for (let i = indexCurrent; i < currentArray.length; ++i) {
-            // Added.
-            onEach(currentArray[i], 1);
+        function fireOnEach(count, diffAction, array) {
+            for (let i = 0; i < count; ++i)
+                onEach(array[i], diffAction);
         }
 
+        while (initialArray.length || currentArray.length) {
+            // Remove common prefix.
+            let prefixLength = commonPrefixLength(initialArray, currentArray);
+            if (prefixLength) {
+                fireOnEach(prefixLength, 0, currentArray);
+                initialArray = initialArray.slice(prefixLength);
+                currentArray = currentArray.slice(prefixLength);
+            }
+
+            if (!initialArray.length && !currentArray.length)
+                break;
+
+            let [deletionCount, additionCount] = findShortestEdit();
+            fireOnEach(deletionCount, -1, initialArray);
+            fireOnEach(additionCount, 1, currentArray);
+            initialArray = initialArray.slice(deletionCount);
+            currentArray = currentArray.slice(additionCount);
+        }
     }
 });
 

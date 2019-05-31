@@ -365,9 +365,11 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     markModified()
     {
-        let properties = this._initialState ? this._initialState.properties : this._properties;
-
         if (!this._initialState) {
+            let visibleProperties = this.visibleProperties.map((property) => {
+                return property.clone();
+            });
+
             this._initialState = new WI.CSSStyleDeclaration(
                 this._nodeStyles,
                 this._ownerStyleSheet,
@@ -376,11 +378,9 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
                 this._node,
                 this._inherited,
                 this._text,
-                [], // Passing CSS properties here would change their ownerStyle.
+                visibleProperties,
                 this._styleSheetTextRange);
         }
-
-        this._initialState.properties = properties.map((property) => { return property.initialState || property });
 
         WI.cssManager.addModifiedStyle(this);
     }
@@ -415,6 +415,36 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         // Invalidate cached properties.
         this._enabledProperties = null;
         this._visibleProperties = null;
+    }
+
+    updatePropertiesModifiedState()
+    {
+        if (!this._initialState)
+            return;
+
+        if (this._type === WI.CSSStyleDeclaration.Type.Computed)
+            return;
+
+        let initialCSSProperties = this._initialState.visibleProperties;
+        let cssProperties = this.visibleProperties;
+
+        let hasModified = false;
+
+        function onEach(cssProperty, action) {
+            if (action !== 0)
+                hasModified = true;
+
+            cssProperty.modified = action === 1;
+        }
+
+        function comparator(a, b) {
+            return a.equals(b);
+        }
+
+        Array.diffArrays(initialCSSProperties, cssProperties, onEach, comparator);
+
+        if (!hasModified)
+            WI.cssManager.removeModifiedStyle(this);
     }
 
     // Protected

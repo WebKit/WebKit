@@ -175,6 +175,16 @@ function test()
             diff(["b", "a"], ["a", "c"]);
             diff(["b", "a"], ["a", "b"]);
             diff(["a", "b", "c"], ["a", "d", "c"]);
+            diff(["a", "b", "c"], ["c", "b", "a"]);
+
+            InspectorTest.log("\nRepeating items:");
+            diff(["a"], ["a", "a"]);
+            diff(["a", "a"], ["a"]);
+            diff(["a", "a"], ["a", "a"]);
+            diff(["b", "a", "b"], ["a", "b", "a"]);
+            diff(["a", "b", "b", "c"], ["c", "b", "b", "b", "a"]);
+            diff(["a", "b", "b", "b", "c"], ["c", "b", "b", "a"]);
+            diff(["a", "a", "b", "b", "c", "c"], ["b", "b", "c", "c", "a", "a"]);
 
             return true;
         }

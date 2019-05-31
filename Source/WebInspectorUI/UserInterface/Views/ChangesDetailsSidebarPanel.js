@@ -149,28 +149,28 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
 
         selectorLineElement.append(" {\n");
 
-        let appendProperty = (cssProperty, className) => {
+        function onEach(cssProperty, action) {
+            let className = "";
+            if (action === 1)
+                className = "added";
+            else if (action === -1)
+                className = "removed";
+            else
+                className = "unchanged";
+
             let propertyLineElement = ruleElement.appendChild(document.createElement("div"));
             propertyLineElement.classList.add("css-property-line", className);
-            let stylePropertyView = new WI.SpreadsheetStyleProperty(null, cssProperty, {readOnly: true});
+
+            const delegate = null;
+            let stylePropertyView = new WI.SpreadsheetStyleProperty(delegate, cssProperty, {readOnly: true});
             propertyLineElement.append(WI.indentString(), stylePropertyView.element, "\n");
-        };
+        }
 
-        let initialCSSProperties = style.initialState.visibleProperties;
-        let cssProperties = style.visibleProperties;
+        function comparator(a, b) {
+            return a.equals(b);
+        }
 
-        Array.diffArrays(initialCSSProperties, cssProperties, (cssProperty, action) => {
-            if (action === 0) {
-                if (cssProperty.modified) {
-                    appendProperty(cssProperty.initialState, "removed");
-                    appendProperty(cssProperty, "added");
-                } else
-                    appendProperty(cssProperty, "unchanged");
-            } else if (action === 1)
-                appendProperty(cssProperty, "added");
-            else if (action === -1)
-                appendProperty(cssProperty, "removed");
-        });
+        Array.diffArrays(style.initialState.visibleProperties, style.visibleProperties, onEach, comparator);
 
         let closeBraceElement = document.createElement("span");
         closeBraceElement.className = "close-brace";

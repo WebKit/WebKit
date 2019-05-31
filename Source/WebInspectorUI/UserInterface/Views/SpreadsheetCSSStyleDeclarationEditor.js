@@ -82,6 +82,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
         this.element.removeChildren();
 
+        if (this._style)
+            this._style.updatePropertiesModifiedState();
+
         let properties = this.propertiesToRender;
         this.element.classList.toggle("no-properties", !properties.length);
 

@@ -33,6 +33,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._index = index;
         this._overridingProperty = null;
         this._initialState = null;
+        this._modified = false;
 
         this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, true);
     }
@@ -184,7 +185,16 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     get modified()
     {
-        return !!this._initialState;
+        return this._modified;
+    }
+
+    set modified(value)
+    {
+        if (this._modified === value)
+            return;
+
+        this._modified = value;
+        this.dispatchEventToListeners(WI.CSSProperty.Event.ModifiedChanged);
     }
 
     get name()
@@ -377,6 +387,37 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return this._hasOtherVendorNameOrKeyword;
     }
 
+    equals(property)
+    {
+        if (property === this)
+            return true;
+
+        if (!property)
+            return false;
+
+        return this._name === property.name && this._rawValue === property.rawValue && this._enabled === property.enabled;
+    }
+
+    clone()
+    {
+        let cssProperty = new WI.CSSProperty(
+            this._index,
+            this._text,
+            this._name,
+            this._rawValue,
+            this._priority,
+            this._enabled,
+            this._overridden,
+            this._implicit,
+            this._anonymous,
+            this._valid,
+            this._styleSheetTextRange);
+
+        cssProperty.ownerStyle = this._ownerStyle;
+
+        return cssProperty;
+    }
+
     // Private
 
     _updateStyleText(forceRemove = false)
@@ -393,8 +434,6 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     _updateOwnerStyleText(oldText, newText, forceRemove = false)
     {
-        console.assert(this.modified, "CSSProperty was modified without saving initial state.");
-
         if (oldText === newText) {
             if (forceRemove) {
                 const lineDelta = 0;
@@ -437,6 +476,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         let propertyWasRemoved = !newText;
         this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, propertyWasRemoved);
+        this._ownerStyle.updatePropertiesModifiedState();
     }
 
     _prependSemicolonIfNeeded()
@@ -456,30 +496,13 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     _markModified()
     {
-        if (this.modified)
-            return;
-
-        this._initialState = new WI.CSSProperty(
-            this._index,
-            this._text,
-            this._name,
-            this._rawValue,
-            this._priority,
-            this._enabled,
-            this._overridden,
-            this._implicit,
-            this._anonymous,
-            this._valid,
-            this._styleSheetTextRange);
-
-        if (this._ownerStyle) {
+        if (this._ownerStyle)
             this._ownerStyle.markModified();
-            this._initialState.ownerStyle = this._ownerStyle.initialState;
-        }
     }
 };
 
 WI.CSSProperty.Event = {
     Changed: "css-property-changed",
+    ModifiedChanged: "css-property-modified-changed",
     OverriddenStatusChanged: "css-property-overridden-status-changed"
 };

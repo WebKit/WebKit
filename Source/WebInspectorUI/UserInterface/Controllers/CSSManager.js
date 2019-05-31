@@ -431,6 +431,16 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._modifiedStyles.set(style.stringId, style);
     }
 
+    getModifiedStyle(style)
+    {
+        return this._modifiedStyles.get(style.stringId);
+    }
+
+    removeModifiedStyle(style)
+    {
+        this._modifiedStyles.delete(style.stringId);
+    }
+
     // Protected
 
     mediaQueryResultChanged()

@@ -1,3 +1,47 @@
+2019-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: CSS Changes: modifications aren't shared for rules that match multiple elements
+        https://bugs.webkit.org/show_bug.cgi?id=195264
+        <rdar://problem/48550023>
+
+        Reviewed by Devin Rousso.
+
+        This patch fixes several cases when the diff was incorrect.
+
+        1. Perform diff based on CSSProperty content (name, value, and enabled property) instead
+           of strict equality of CSSProperty instances.
+
+        2. Copy all initial CSSProperty instances of CSSStyleDeclaration on 1st edit.
+           This removes the need to update `properties` on every single edit.
+
+        3. Do full diff to display modified property markers (green background) in Rules panel.
+           This fixes a few cases when the markers were inaccurate. E.g. a newly added property
+           matches removed property - no need to show the green background.
+
+        * UserInterface/Base/Utilities.js:
+        (Array.diffArrays):
+        Allow repeating items in the arrays.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype.getModifiedStyle):
+        (WI.CSSManager.prototype.removeModifiedStyle):
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty):
+        (WI.CSSProperty.prototype.get modified):
+        (WI.CSSProperty.prototype.set modified):
+        (WI.CSSProperty.prototype.equals):
+        (WI.CSSProperty.prototype.clone):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        (WI.CSSProperty.prototype._markModified):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.markModified):
+        (WI.CSSStyleDeclaration.prototype.updatePropertiesModifiedState):
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype._createRuleElement):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+
 2019-05-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: CPU: gray (?) and (x) should be white
