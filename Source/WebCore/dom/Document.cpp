@@ -352,6 +352,10 @@ private:
     bool m_disallowLayout { false };
 };
 
+#if ENABLE(INTERSECTION_OBSERVER)
+static const Seconds intersectionObserversInitialUpdateDelay { 500_ms };
+#endif
+
 // DOM Level 2 says (letters added):
 //
 // a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
@@ -536,6 +540,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #endif
 #if ENABLE(INTERSECTION_OBSERVER)
     , m_intersectionObserversNotifyTimer(*this, &Document::notifyIntersectionObserversTimerFired)
+    , m_intersectionObserversInitialUpdateTimer(*this, &Document::scheduleRenderingUpdate)
 #endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -7416,6 +7421,8 @@ void Document::updateIntersectionObservations()
     if (!frameView)
         return;
 
+    m_intersectionObserversInitialUpdateTimer.stop();
+
     bool needsLayout = frameView->layoutContext().isLayoutPending() || (renderView() && renderView()->needsLayout());
     if (needsLayout || hasPendingStyleRecalc())
         return;
@@ -7503,6 +7510,14 @@ void Document::notifyIntersectionObserversTimerFired()
             observer->notify();
     }
     m_intersectionObserversWithPendingNotifications.clear();
+}
+
+void Document::scheduleInitialIntersectionObservationUpdate()
+{
+    if (m_readyState == Complete)
+        scheduleRenderingUpdate();
+    else if (!m_intersectionObserversInitialUpdateTimer.isActive())
+        m_intersectionObserversInitialUpdateTimer.startOneShot(intersectionObserversInitialUpdateDelay);
 }
 #endif
 

@@ -1387,6 +1387,7 @@ public:
     void removeIntersectionObserver(IntersectionObserver&);
     unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
     void updateIntersectionObservations();
+    void scheduleInitialIntersectionObservationUpdate();
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
@@ -1821,6 +1822,7 @@ private:
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObserversWithPendingNotifications;
     Timer m_intersectionObserversNotifyTimer;
+    Timer m_intersectionObserversInitialUpdateTimer;
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
