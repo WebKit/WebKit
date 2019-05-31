@@ -1,3 +1,22 @@
+2019-05-31  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKitTestRunner sometimes freezes under -[NSWindow release]
+        https://bugs.webkit.org/show_bug.cgi?id=198422
+
+        Reviewed by Tim Horton.
+
+        The window remains key until it's out of the allWindows vector, and AppKit is not
+        happy about deallocating key windows. Fixed by updating allWindows in -close
+        instead of -release.
+
+        Added isMainFrame assertions in code that manipulates allWindows for a good measure.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm:
+        (+[WebKitTestRunnerWindow _WTR_keyWindow]):
+        (-[WebKitTestRunnerWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebKitTestRunnerWindow close]):
+        (-[WebKitTestRunnerWindow dealloc]):
+
 2019-05-31  Geoffrey Garen  <ggaren@apple.com>
 
         Some WeakPtr cleanup
