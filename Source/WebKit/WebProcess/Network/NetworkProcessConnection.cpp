@@ -265,6 +265,12 @@ WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnectionForSessi
     }).iterator->value;
 }
 
+void NetworkProcessConnection::removeSWClientConnection(WebSWClientConnection& connection)
+{
+    ASSERT(m_swConnectionsByIdentifier.contains(connection.serverConnectionIdentifier()));
+    m_swConnectionsByIdentifier.remove(connection.serverConnectionIdentifier());
+}
+
 SWServerConnectionIdentifier NetworkProcessConnection::initializeSWClientConnection(WebSWClientConnection& connection)
 {
     SWServerConnectionIdentifier identifier;

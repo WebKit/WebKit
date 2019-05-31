@@ -1,3 +1,22 @@
+2019-05-30  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r245873) [Mac WK2] Layout Test http/wpt/service-workers/update-service-worker.https.html is a flaky crash after running new test
+        https://bugs.webkit.org/show_bug.cgi?id=198379
+        <rdar://problem/51264361>
+
+        Reviewed by Alex Christensen.
+
+        This case can happen when network process is crashing.
+        Given the WebSWClientConnection may be kept alive, it might reregister itself but in that case will never be unregistered.
+        Remove the WebSWClientConnection from the NetworkProcessConnection corresponding map on destruction time.
+        Covered by no longer crashing tests.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::removeSWClientConnection):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::~WebSWClientConnection):
+
 2019-05-30  Chris Dumez  <cdumez@apple.com>
 
         Network process crash when decoding SecItemResponseData

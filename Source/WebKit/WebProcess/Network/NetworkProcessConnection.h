@@ -77,6 +77,7 @@ public:
     WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
 
     WebCore::SWServerConnectionIdentifier initializeSWClientConnection(WebSWClientConnection&);
+    void removeSWClientConnection(WebSWClientConnection&);
 #endif
 
 private:

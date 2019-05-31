@@ -62,6 +62,8 @@ WebSWClientConnection::WebSWClientConnection(SessionID sessionID)
 
 WebSWClientConnection::~WebSWClientConnection()
 {
+    if (m_connection)
+        WebProcess::singleton().ensureNetworkProcessConnection().removeSWClientConnection(*this);
 }
 
 void WebSWClientConnection::initializeConnectionIfNeeded()
