@@ -1,5 +1,49 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245300. rdar://problem/51264763
+
+    Do not try to issue repaint while the render tree is being destroyed.
+    https://bugs.webkit.org/show_bug.cgi?id=197461
+    <rdar://problem/50368992>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Test: http/tests/svg/crash-on-reload-with-filter.html
+    
+    We don't need to compute repaint rects when the render tree is getting torn down. We'll issue a full repaint at some point.
+    Also during full render tree destruction the inline tree state is undefined. We should avoid accessing it.
+    
+    * rendering/svg/RenderSVGResourceContainer.cpp:
+    (WebCore::RenderSVGResourceContainer::markAllClientLayersForInvalidation):
+    
+    LayoutTests:
+    
+    * http/tests/svg/crash-on-reload-with-filter-expected.txt: Added.
+    * http/tests/svg/crash-on-reload-with-filter.html: Added.
+    * http/tests/svg/resources/finishTest.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245300 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-14  Zalan Bujtas  <zalan@apple.com>
+
+            Do not try to issue repaint while the render tree is being destroyed.
+            https://bugs.webkit.org/show_bug.cgi?id=197461
+            <rdar://problem/50368992>
+
+            Reviewed by Simon Fraser.
+
+            Test: http/tests/svg/crash-on-reload-with-filter.html
+
+            We don't need to compute repaint rects when the render tree is getting torn down. We'll issue a full repaint at some point.
+            Also during full render tree destruction the inline tree state is undefined. We should avoid accessing it.
+
+            * rendering/svg/RenderSVGResourceContainer.cpp:
+            (WebCore::RenderSVGResourceContainer::markAllClientLayersForInvalidation):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r244892. rdar://problem/50753927
 
     Setting a frame's src to a javascript URL should not run it synchronously
