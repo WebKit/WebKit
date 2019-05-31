@@ -1,5 +1,39 @@
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r245284. rdar://problem/51264857
+
+    Protect current WebFrame during form submission
+    https://bugs.webkit.org/show_bug.cgi?id=197459
+    <rdar://problem/50368618>
+    
+    Reviewed by Alex Christensen.
+    
+    The 'continueWillSubmitForm' method calls a completion handler that
+    might affect the state of the current frame. Ensure the frame is valid
+    for the scope of the function.
+    
+    * WebProcess/WebPage/WebFrame.cpp:
+    (WebKit::WebFrame::continueWillSubmitForm):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245284 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-14  Brent Fulgham  <bfulgham@apple.com>
+
+            Protect current WebFrame during form submission
+            https://bugs.webkit.org/show_bug.cgi?id=197459
+            <rdar://problem/50368618>
+
+            Reviewed by Alex Christensen.
+
+            The 'continueWillSubmitForm' method calls a completion handler that
+            might affect the state of the current frame. Ensure the frame is valid
+            for the scope of the function.
+
+            * WebProcess/WebPage/WebFrame.cpp:
+            (WebKit::WebFrame::continueWillSubmitForm):
+
+2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r244781. rdar://problem/51264871
 
     Long-standing rare crash under -[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal...]
