@@ -1,3 +1,23 @@
+2019-05-31  Sihui Liu  <sihui_liu@apple.com>
+
+        TestWebKitAPI.WKWebView.LocalStorageProcessSuspends is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=198450
+
+        Reviewed by Ryosuke Niwa.
+
+        In local-storage-process-suspends-2.html, we periodically checked local storage item and sent a message when the
+        item value was changed or times of check reached limit. We expected the message to be sent after network process
+        resumed from suspension, because that's when the item value should get updated. However, the limit we set seemed
+        to be not high enough, so that the message could be sent eariler than expected, when limit of check number was 
+        reached.
+
+        We can solve this in different ways. To make the test robust, we can send the message on a storage event, which
+        notifies about changes in local storage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/local-storage-process-suspends-2.html:
+
 2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         DragAndDropTests.DragImageLocationForLinkInSubframe fails on some iPad
