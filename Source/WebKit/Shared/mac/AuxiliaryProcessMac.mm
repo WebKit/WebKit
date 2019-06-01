@@ -57,6 +57,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
+#import <WebKitAdditions/AuxiliaryProcessAdditions.h>
 #import <rootless.h>
 #endif
 
@@ -159,6 +160,9 @@ void AuxiliaryProcess::platformInitialize()
 {
     initializeTimerCoalescingPolicy();
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+#if HAVE(LOAD_OPTIMIZER)
+AUXILIARYPROCESS_LOADOPTIMIZER_ADDITIONS
+#endif
 }
 
 static OSStatus enableSandboxStyleFileQuarantine()

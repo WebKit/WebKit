@@ -1,3 +1,16 @@
+2019-05-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Teach AuxiliaryProcess about LoadOptimizer
+        https://bugs.webkit.org/show_bug.cgi?id=198443
+        <rdar://problem/51319120>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+
 2019-05-31  Youenn Fablet  <youenn@apple.com>
 
         Add an option to mute audio capture automatically when page is not visible

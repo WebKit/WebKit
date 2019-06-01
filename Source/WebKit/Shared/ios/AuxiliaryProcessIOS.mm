@@ -43,6 +43,10 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/AuxiliaryProcessAdditions.h>
+#endif
+
 namespace WebKit {
 
 void AuxiliaryProcess::platformInitialize()
@@ -51,6 +55,9 @@ void AuxiliaryProcess::platformInitialize()
     floatingPointEnvironment.enableDenormalSupport(); 
     floatingPointEnvironment.saveMainThreadEnvironment(); 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+#if HAVE(LOAD_OPTIMIZER)
+AUXILIARYPROCESS_LOADOPTIMIZER_ADDITIONS
+#endif
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
