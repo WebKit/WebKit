@@ -1,3 +1,15 @@
+2019-06-01  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Every PaymentCoordinator client should explicitly decide whether they support unrestricted Apple Pay
+        https://bugs.webkit.org/show_bug.cgi?id=198449
+        <rdar://problem/51038583>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::supportsUnrestrictedApplePay const):
+
 2019-05-29  Don Olmstead  <don.olmstead@sony.com>
 
         Remove ENABLE definitions from WebKit config files

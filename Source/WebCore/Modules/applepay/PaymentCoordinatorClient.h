@@ -62,12 +62,12 @@ public:
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;
     virtual void paymentCoordinatorDestroyed() = 0;
+    virtual bool supportsUnrestrictedApplePay() const = 0;
 
     virtual bool isMockPaymentCoordinator() const { return false; }
     virtual bool isWebPaymentCoordinator() const { return false; }
 
     virtual bool isAlwaysOnLoggingAllowed() const { return false; }
-    virtual bool supportsUnrestrictedApplePay() const { return true; }
 
 protected:
     virtual ~PaymentCoordinatorClient() = default;

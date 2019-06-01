@@ -49,6 +49,7 @@ private:
     void abortPaymentSession() override;
     void cancelPaymentSession() override;
     void paymentCoordinatorDestroyed() override;
+    bool supportsUnrestrictedApplePay() const override;
 };
 
 #endif
