@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script src="resources/recording-utilities.js"></script>
-<script>
 let ctx = null;
 
 let redImage = new Image;
@@ -87,47 +81,3 @@ async function performConsoleActions() {
 
     ctx.transferFromImageBitmap(blueBitmap);
 }
-
-function test() {
-    let suite = InspectorTest.createAsyncSuite("Canvas.recordingBitmapRenderer");
-
-    suite.addTestCase({
-        name: "Canvas.recordingBitmapRenderer.singleFrame",
-        description: "Check that the recording is stopped after a single frame.",
-        test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {frameCount: 1});
-        },
-    });
-
-    suite.addTestCase({
-        name: "Canvas.recordingBitmapRenderer.multipleFrames",
-        description: "Check that recording data is serialized correctly for multiple frames.",
-        test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject);
-        },
-    });
-
-    suite.addTestCase({
-        name: "Canvas.recordingBitmapRenderer.memoryLimit",
-        description: "Check that the recording is stopped when it reaches the memory limit.",
-        test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {memoryLimit: 10});
-        },
-    });
-
-    suite.addTestCase({
-        name: "Canvas.recordingBitmapRenderer.Console",
-        description: "Check that a recording can be triggered by console.record().",
-        test(resolve, reject) {
-            consoleRecord(WI.Canvas.ContextType.BitmapRenderer, resolve, reject);
-        },
-    });
-
-    suite.runTestCasesAndFinish();
-}
-</script>
-</head>
-<body onload="load()">
-    <p>Test that CanvasManager is able to record actions made to BitmapRenderer canvas contexts.</p>
-</body>
-</html>

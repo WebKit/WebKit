@@ -543,7 +543,10 @@ webkit.org/b/166536 fast/canvas/webgl/webgl2-runtime-flag.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl2-texStorage.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/create-context-webgl2.html [ Skip ]
-webkit.org/b/166536 inspector/canvas/recording-webgl2.html [ Skip ]
+webkit.org/b/166536 inspector/canvas/console-record-webgl2.html [ Skip ]
+webkit.org/b/166536 inspector/canvas/recording-webgl2-frameCount.html [ Skip ]
+webkit.org/b/166536 inspector/canvas/recording-webgl2-full.html [ Skip ]
+webkit.org/b/166536 inspector/canvas/recording-webgl2-memoryLimit.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/recording-webgl2-snapshots.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/requestContent-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
@@ -2192,7 +2195,11 @@ webkit.org/b/197507 legacy-animation-engine/animations/animation-multiple-callba
 webkit.org/b/197507 legacy-animation-engine/imported/blink/css3/calc/transition-asan-crash.html [ Timeout Pass ]
 webkit.org/b/197507 media/destructor-logging-crash.html [ Timeout Pass ]
 
-webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure Timeout ]
+webkit.org/b/175662 inspector/canvas/console-record-2d.html [ Failure Timeout ]
+webkit.org/b/175662 inspector/canvas/recording-2d-frameCount.html [ Failure Timeout ]
+webkit.org/b/175662 inspector/canvas/recording-2d-full.html [ Failure Timeout ]
+webkit.org/b/175662 inspector/canvas/recording-2d-memoryLimit.html [ Failure Timeout ]
+webkit.org/b/175662 inspector/canvas/recording-2d-saves.html [ Failure Timeout ]
 
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Failure ]
 
@@ -3765,7 +3772,10 @@ webkit.org/b/193632 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure 
 
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 
-webkit.org/b/193637 inspector/canvas/recording-bitmaprenderer.html [ Failure ]
+webkit.org/b/193637 inspector/canvas/console-record-bitmaprenderer.html [ Failure ]
+webkit.org/b/193637 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Failure ]
+webkit.org/b/193637 inspector/canvas/recording-bitmaprenderer-full.html [ Failure ]
+webkit.org/b/193637 inspector/canvas/recording-bitmaprenderer-memoryLimit.html [ Failure ]
 
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 

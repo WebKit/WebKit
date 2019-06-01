@@ -1,0 +1,26 @@
+Test that CanvasManager is able to record actions made to WebGL2 canvas contexts.
+
+
+== Running test suite: Canvas.recordingWebGL2
+-- Running test case: Canvas.recordingWebGL2.memoryLimit
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":false,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
+  content: <filtered>
+frames:
+  0: (duration) (incomplete)
+    0: activeTexture(1)
+      swizzleTypes: [Number]
+      trace:
+        0: activeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: performActions
+        4: Global Code
+        5: evaluateWithScopeExtension
+        6: (anonymous function)
+        7: _wrapCall
+

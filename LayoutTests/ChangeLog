@@ -1,5 +1,71 @@
 2019-06-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: split recording tests into separate files so they don't timeout
+        https://bugs.webkit.org/show_bug.cgi?id=198459
+        <rdar://problem/51332026>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/recording.html:
+        * inspector/canvas/recording-expected.txt:
+
+        * inspector/canvas/recording-2d.html: Removed.
+        * inspector/canvas/recording-2d-expected.txt: Removed.
+        * inspector/canvas/console-record-2d.html: Added.
+        * inspector/canvas/console-record-2d-expected.txt: Added.
+        * inspector/canvas/recording-2d-frameCount.html: Added.
+        * inspector/canvas/recording-2d-frameCount-expected.txt: Added.
+        * inspector/canvas/recording-2d-full.html: Added.
+        * inspector/canvas/recording-2d-full-expected.txt: Added.
+        * inspector/canvas/recording-2d-memoryLimit.html: Added.
+        * inspector/canvas/recording-2d-memoryLimit-expected.txt: Added.
+        * inspector/canvas/recording-2d-saves.html: Added.
+        * inspector/canvas/recording-2d-saves-expected.txt: Added.
+        * inspector/canvas/resources/recording-2d.js: Added.
+
+        * inspector/canvas/recording-bitmaprenderer.html: Removed.
+        * inspector/canvas/recording-bitmaprenderer-expected.txt: Removed.
+        * inspector/canvas/console-record-bitmaprenderer.html: Added.
+        * inspector/canvas/console-record-bitmaprenderer-expected.txt: Added.
+        * inspector/canvas/recording-bitmaprenderer-frameCount.html: Added.
+        * inspector/canvas/recording-bitmaprenderer-frameCount-expected.txt: Added.
+        * inspector/canvas/recording-bitmaprenderer-full.html: Added.
+        * inspector/canvas/recording-bitmaprenderer-full-expected.txt: Added.
+        * inspector/canvas/recording-bitmaprenderer-memoryLimit.html: Added.
+        * inspector/canvas/recording-bitmaprenderer-memoryLimit-expected.txt: Added.
+        * inspector/canvas/resources/recording-bitmaprenderer.js: Added.
+
+        * inspector/canvas/recording-webgl.html: Removed.
+        * inspector/canvas/recording-webgl-expected.txt: Removed.
+        * inspector/canvas/console-record-webgl.html: Added.
+        * inspector/canvas/console-record-webgl-expected.txt: Added.
+        * inspector/canvas/recording-webgl-frameCount.html: Added.
+        * inspector/canvas/recording-webgl-frameCount-expected.txt: Added.
+        * inspector/canvas/recording-webgl-full.html: Added.
+        * inspector/canvas/recording-webgl-full-expected.txt: Added.
+        * inspector/canvas/recording-webgl-memoryLimit.html: Added.
+        * inspector/canvas/recording-webgl-memoryLimit-expected.txt: Added.
+        * inspector/canvas/resources/recording-webgl.js: Added.
+
+        * inspector/canvas/recording-webgl2.html: Removed.
+        * inspector/canvas/recording-webgl2-expected.txt: Removed.
+        * inspector/canvas/console-record-webgl2.html: Added.
+        * inspector/canvas/console-record-webgl2-expected.txt: Added.
+        * inspector/canvas/recording-webgl2-frameCount.html: Added.
+        * inspector/canvas/recording-webgl2-frameCount-expected.txt: Added.
+        * inspector/canvas/recording-webgl2-full.html: Added.
+        * inspector/canvas/recording-webgl2-full-expected.txt: Added.
+        * inspector/canvas/recording-webgl2-memoryLimit.html: Added.
+        * inspector/canvas/recording-webgl2-memoryLimit-expected.txt: Added.
+        * inspector/canvas/resources/recording-webgl2.js: Added.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2019-06-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: in tests don't manually stop recording if a frame count is specified
         https://bugs.webkit.org/show_bug.cgi?id=198457
         <rdar://problem/48248697>

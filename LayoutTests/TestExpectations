@@ -537,9 +537,6 @@ webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [
 
 # This test is fast enough in release but quite slow in debug builds.
 [ Debug ] inspector/debugger/debugger-stack-overflow.html [ Skip ]
-[ Debug ] inspector/canvas/recording-2d.html [ Slow ]
-[ Debug ] inspector/canvas/recording-webgl.html [ Slow ]
-[ Debug ] inspector/canvas/recording-webgl2.html [ Slow ]
 
 # Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend.
 webkit.org/b/161951 [ Debug ] inspector/debugger/paused-scopes.html [ Skip ]

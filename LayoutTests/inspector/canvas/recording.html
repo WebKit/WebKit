@@ -6,18 +6,54 @@
 let contextA = document.createElement("canvas").getContext("2d");
 let contextB = document.createElement("canvas").getContext("2d");
 
-function performActions() {
+function performActionsNaN() {
+    contextA.globalAlpha = NaN;
+}
+
+function performActionsMultiple() {
     contextA.fill();
     contextB.fill();
 
-    TestPage.dispatchEventToFrontend("TestPage-performActions");
+    TestPage.dispatchEventToFrontend("TestPage-performActionsMultiple");
 }
 
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.recording");
 
     suite.addTestCase({
-        name: "Canvas.multipleRecording",
+        name: "Canvas.ActionParameterNaN",
+        description: "Check that NaN is converted into the proper value for serialization.",
+        test(resolve, reject) {
+            let canvas = WI.canvasManager.canvases[0];
+            InspectorTest.assert(canvas, "There should be at least one canvas context.");
+
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStopped)
+            .then((event) => {
+                let recording = event.data.recording.toJSON();
+
+                let frames = recording.frames;
+                InspectorTest.expectEqual(frames.length, 1, "The recording should have 1 frame.");
+
+                let actions = frames[0].actions;
+                InspectorTest.expectEqual(actions.length, 1, "The first frame should have 1 action.");
+                InspectorTest.expectEqual(actions[0][1].length, 1, "The action should have 1 parameter.");
+                InspectorTest.expectEqual(actions[0][1][0], null, "The parameter should be null.");
+            })
+            .then(resolve, reject);
+
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStarted)
+            .then((event) => {
+                InspectorTest.evaluateInPage(`performActionsNaN()`);
+            });
+
+            const frameCount = 1;
+            CanvasAgent.startRecording(canvas.identifier, frameCount)
+            .catch(reject);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MultipleRecording",
         description: "Check that multiple recordings are able to be started/stopped at the same time.",
         test(resolve, reject) {
             const singleFrame = false;
@@ -39,7 +75,7 @@ function test() {
                 canvases[1].stopRecording();
             });
 
-            InspectorTest.awaitEvent("TestPage-performActions")
+            InspectorTest.awaitEvent("TestPage-performActionsMultiple")
             .then((event) => {
                 InspectorTest.pass("Actions performed.");
 
@@ -52,7 +88,7 @@ function test() {
                 InspectorTest.expectThat(canvases[1].recordingActive, "Recording started of canvas 2");
 
                 InspectorTest.log("Performing actions...");
-                InspectorTest.evaluateInPage(`performActions()`);
+                InspectorTest.evaluateInPage(`performActionsMultiple()`);
             });
 
             canvases[0].awaitEvent(WI.Canvas.Event.RecordingStarted)
@@ -65,6 +101,37 @@ function test() {
 
             InspectorTest.log("Starting a recording of canvas 1...");
             canvases[0].startRecording(singleFrame);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.NoActions",
+        description: "Check that a canvas is still able to be recorded after stopping a recording with no actions.",
+        test(resolve, reject) {
+            let canvas = WI.canvasManager.canvases[0];
+            InspectorTest.assert(canvas, "There should be at least one canvas context.");
+
+            let eventCount = 0;
+            function handleRecordingStopped(event) {
+                InspectorTest.assert(!event.data.recording, "The recording payload should be null.");
+
+                ++eventCount;
+                if (eventCount == 1) {
+                    InspectorTest.pass("A recording should have been started and stopped once.");
+
+                    canvas.startRecording();
+                    canvas.stopRecording();
+                } else if (eventCount >= 2) {
+                    InspectorTest.pass("A recording should have been started and stopped twice.");
+
+                    canvas.removeEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStopped);
+                    resolve();
+                }
+            }
+            canvas.addEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStopped);
+
+            canvas.startRecording();
+            canvas.stopRecording();
         },
     });
 

@@ -1,23 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script src="resources/recording-utilities.js"></script>
-<script src="resources/shaderProgram-utilities.js"></script>
-<script id="vertex-shader" type="x-shader/x-vertex">
-    attribute vec4 test;
-    void main(void) {
-        gl_Position = test;
-    }
-</script>
-<script id="fragment-shader" type="x-shader/x-fragment">
-    precision mediump float;
-
-    void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-</script>
-<script>
 if (window.internals) {
     window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
     window.internals.settings.setWebGL2Enabled(true);
@@ -507,50 +487,3 @@ function performConsoleActions() {
 
     context.createBuffer();
 }
-
-function test() {
-    let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGL2");
-
-    suite.addTestCase({
-        name: "Canvas.recordingWebGL2.singleFrame",
-        description: "Check that the recording is stopped after a single frame.",
-        test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.WebGL2, resolve, reject, {frameCount: 1});
-        },
-        timeout: -1,
-    });
-
-    suite.addTestCase({
-        name: "Canvas.recordingWebGL2.multipleFrames",
-        description: "Check that recording data is serialized correctly for multiple frames.",
-        test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.WebGL2, resolve, reject);
-        },
-        timeout: -1,
-    });
-
-    suite.addTestCase({
-        name: "Canvas.recordingWebGL2.memoryLimit",
-        description: "Check that the recording is stopped when it reaches the memory limit.",
-        test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.WebGL2, resolve, reject, {memoryLimit: 10});
-        },
-        timeout: -1,
-    });
-
-    suite.addTestCase({
-        name: "Canvas.recordingWebGL2.Console",
-        description: "Check that a recording can be triggered by console.record().",
-        test(resolve, reject) {
-            consoleRecord(WI.Canvas.ContextType.WebGL2, resolve, reject);
-        },
-    });
-
-    suite.runTestCasesAndFinish();
-}
-</script>
-</head>
-<body onload="load()">
-    <p>Test that CanvasManager is able to record actions made to WebGL2 canvas contexts.</p>
-</body>
-</html>
