@@ -107,9 +107,10 @@ TestPage.registerInitializer(() => {
         .then((event) => {
             lastFrame = true;
 
-            if (canvas.recordingActive)
-                CanvasAgent.stopRecording(canvas.identifier).catch(reject);
-            else {
+            if (canvas.recordingActive) {
+                if (!frameCount)
+                    CanvasAgent.stopRecording(canvas.identifier).catch(reject);
+            } else {
                 InspectorTest.evaluateInPage(`cancelActions()`)
                 .then(() => {
                     if (swizzled)
