@@ -65,7 +65,7 @@ require "config"
 # the registers. Also, >8 return types are returned in a weird way.
 #
 # rax => t0,     r0
-# rcx =>     a0
+# rcx => t5, a0
 # rdx => t1, a1, r1
 #  r8 => t2, a2
 #  r9 => t3, a3

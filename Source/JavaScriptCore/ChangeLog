@@ -1,3 +1,11 @@
+2019-05-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix setEntryAddressCommon register usage in LLInt ASM Windows 64
+        https://bugs.webkit.org/show_bug.cgi?id=197979
+
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/x86.rb:
+
 2019-05-31  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Support internal test runner for JSC tests

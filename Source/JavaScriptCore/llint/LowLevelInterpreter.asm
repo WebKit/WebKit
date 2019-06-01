@@ -1346,10 +1346,14 @@ macro setEntryAddressWide32(index, label)
 end
 
 macro setEntryAddressCommon(index, label, map)
-    if X86_64 or X86_64_WIN
+    if X86_64
         leap (label - _relativePCBase)[t3], t4
         move index, t5
         storep t4, [map, t5, 8]
+    elsif X86_64_WIN
+        leap (label - _relativePCBase)[t3], t4
+        move index, t0
+        storep t4, [map, t0, 8]
     elsif X86 or X86_WIN
         leap (label - _relativePCBase)[t3], t4
         move index, t5
