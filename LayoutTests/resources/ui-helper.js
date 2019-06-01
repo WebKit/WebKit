@@ -1,13 +1,13 @@
 
 window.UIHelper = class UIHelper {
-    static isIOS()
+    static isIOSFamily()
     {
-        return navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad');
+        return testRunner.isIOSFamily;
     }
 
     static isWebKit2()
     {
-        return window.testRunner.isWebKit2;
+        return testRunner.isWebKit2;
     }
 
     static doubleClickAt(x, y)
@@ -31,7 +31,7 @@ window.UIHelper = class UIHelper {
 
     static tapAt(x, y, modifiers=[])
     {
-        console.assert(this.isIOS());
+        console.assert(this.isIOSFamily());
 
         if (!this.isWebKit2()) {
             console.assert(!modifiers || !modifiers.length);
@@ -52,7 +52,7 @@ window.UIHelper = class UIHelper {
 
     static doubleTapAt(x, y)
     {
-        console.assert(this.isIOS());
+        console.assert(this.isIOSFamily());
 
         if (!this.isWebKit2()) {
             eventSender.addTouchPoint(x, y);
@@ -76,7 +76,7 @@ window.UIHelper = class UIHelper {
 
     static humanSpeedDoubleTapAt(x, y)
     {
-        console.assert(this.isIOS());
+        console.assert(this.isIOSFamily());
 
         if (!this.isWebKit2()) {
             // FIXME: Add a sleep in here.
@@ -101,7 +101,7 @@ window.UIHelper = class UIHelper {
 
     static humanSpeedZoomByDoubleTappingAt(x, y)
     {
-        console.assert(this.isIOS());
+        console.assert(this.isIOSFamily());
 
         if (!this.isWebKit2()) {
             // FIXME: Add a sleep in here.
@@ -133,7 +133,7 @@ window.UIHelper = class UIHelper {
 
     static zoomByDoubleTappingAt(x, y)
     {
-        console.assert(this.isIOS());
+        console.assert(this.isIOSFamily());
 
         if (!this.isWebKit2()) {
             eventSender.addTouchPoint(x, y);
@@ -159,7 +159,7 @@ window.UIHelper = class UIHelper {
 
     static activateAt(x, y)
     {
-        if (!this.isWebKit2() || !this.isIOS()) {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
@@ -183,7 +183,7 @@ window.UIHelper = class UIHelper {
 
     static async doubleActivateAt(x, y)
     {
-        if (this.isIOS())
+        if (this.isIOSFamily())
             await UIHelper.doubleTapAt(x, y);
         else
             await UIHelper.doubleClickAt(x, y);
@@ -194,7 +194,7 @@ window.UIHelper = class UIHelper {
         const rects = window.getSelection().getRangeAt(0).getClientRects();
         const x = rects[0].left;
         const y = rects[0].top;
-        if (this.isIOS()) {
+        if (this.isIOSFamily()) {
             await UIHelper.activateAndWaitForInputSessionAt(x, y);
             await UIHelper.doubleTapAt(x, y);
             // This is only here to deal with async/sync copy/paste calls, so
@@ -209,7 +209,7 @@ window.UIHelper = class UIHelper {
         const boundingRect = element.getBoundingClientRect();
         const x = boundingRect.x + relativeX;
         const y = boundingRect.y + relativeY;
-        if (this.isIOS()) {
+        if (this.isIOSFamily()) {
             await UIHelper.activateAndWaitForInputSessionAt(x, y);
             await UIHelper.doubleTapAt(x, y);
             // This is only here to deal with async/sync copy/paste calls, so
@@ -222,7 +222,7 @@ window.UIHelper = class UIHelper {
 
     static keyDown(key, modifiers=[])
     {
-        if (!this.isWebKit2() || !this.isIOS()) {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
             eventSender.keyDown(key, modifiers);
             return Promise.resolve();
         }
@@ -311,7 +311,7 @@ window.UIHelper = class UIHelper {
 
     static activateAndWaitForInputSessionAt(x, y)
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return this.activateAt(x, y);
 
         return new Promise(resolve => {
@@ -334,7 +334,7 @@ window.UIHelper = class UIHelper {
 
     static activateFormControl(element)
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return this.activateElement(element);
 
         const x = element.offsetLeft + element.offsetWidth / 2;
@@ -367,7 +367,7 @@ window.UIHelper = class UIHelper {
 
     static deactivateFormControl(element)
     {
-        if (!this.isWebKit2() || !this.isIOS()) {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
             element.blur();
             return Promise.resolve();
         }
@@ -384,7 +384,7 @@ window.UIHelper = class UIHelper {
 
     static waitForPopoverToPresent()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -400,7 +400,7 @@ window.UIHelper = class UIHelper {
 
     static waitForPopoverToDismiss()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -416,7 +416,7 @@ window.UIHelper = class UIHelper {
 
     static waitForKeyboardToHide()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -432,7 +432,7 @@ window.UIHelper = class UIHelper {
 
     static getUICaretRect()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -448,7 +448,7 @@ window.UIHelper = class UIHelper {
 
     static getUISelectionRects()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -464,7 +464,7 @@ window.UIHelper = class UIHelper {
 
     static getUICaretViewRect()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -480,7 +480,7 @@ window.UIHelper = class UIHelper {
 
     static getUISelectionViewRects()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -496,7 +496,7 @@ window.UIHelper = class UIHelper {
 
     static getSelectionStartGrabberViewRect()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -512,7 +512,7 @@ window.UIHelper = class UIHelper {
 
     static getSelectionEndGrabberViewRect()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -634,7 +634,7 @@ window.UIHelper = class UIHelper {
 
     static typeCharacter(characterString)
     {
-        if (!this.isWebKit2() || !this.isIOS()) {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
             eventSender.keyDown(characterString);
             return;
         }
@@ -656,7 +656,7 @@ window.UIHelper = class UIHelper {
 
     static inputViewBounds()
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {
@@ -795,7 +795,7 @@ window.UIHelper = class UIHelper {
 
     static contentOffset()
     {
-        if (!this.isIOS())
+        if (!this.isIOSFamily())
             return Promise.resolve();
 
         const uiScript = "JSON.stringify([uiController.contentOffsetX, uiController.contentOffsetY])";
@@ -909,7 +909,7 @@ window.UIHelper = class UIHelper {
 
     static rotateDevice(orientationName, animatedResize = false)
     {
-        if (!this.isWebKit2() || !this.isIOS())
+        if (!this.isWebKit2() || !this.isIOSFamily())
             return Promise.resolve();
 
         return new Promise(resolve => {

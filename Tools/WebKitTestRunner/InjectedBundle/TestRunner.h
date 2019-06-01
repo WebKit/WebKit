@@ -48,6 +48,15 @@ public:
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
+    bool isIOSFamily() const
+    {
+#if PLATFORM(IOS_FAMILY)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool isWebKit2() const { return true; }
 
     // The basics.

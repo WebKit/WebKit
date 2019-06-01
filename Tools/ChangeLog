@@ -1,5 +1,21 @@
 2019-05-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Make tests that use UIHelper more robust under certain configurations
+        https://bugs.webkit.org/show_bug.cgi?id=198442
+        <rdar://problem/51301737>
+
+        Reviewed by Megan Gardner.
+
+        For a certain device class, many tests that attempt to use UIHelper.isIOS are currently failing. We can fix this
+        by making the `isIOS` check more robust; this patch also renames `isIOS` to `isIOSFamily`, which is more
+        accurate (and consistent with the corresponding PLATFORM macro name).
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::isIOSFamily const):
+
+2019-05-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Autocorrection menu font is Times New Roman when using font-family: UICTFontTextStyle*
         https://bugs.webkit.org/show_bug.cgi?id=198427
         <rdar://problem/50031825>

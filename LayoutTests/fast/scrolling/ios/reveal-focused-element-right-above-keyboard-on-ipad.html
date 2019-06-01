@@ -30,7 +30,6 @@ async function runTest() {
     const resizeEvent = listenForEventOnce(target, 'focus').then(() => listenForEventOnce(visualViewport, 'resize'));
 
     if (window.testRunner) {
-        UIHelper.isIOS = () => true;
         await UIHelper.setHardwareKeyboardAttached(false);
         await UIHelper.activateElementAndWaitForInputSession(target);
     }

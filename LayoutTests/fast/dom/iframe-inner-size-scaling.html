@@ -17,7 +17,7 @@
             shouldBeNonZero("frame.contentWindow.innerHeight");
             shouldBe("frame.contentWindow.innerWidth", "originalWidth");
             
-            scrollbarWidth = UIHelper.isIOS() ? 0 : 15;
+            scrollbarWidth = UIHelper.isIOSFamily() ? 0 : 15;
             shouldBe("frame.contentWindow.innerHeight", "originalHeight - scrollbarWidth");
             finishJSTest();
         }

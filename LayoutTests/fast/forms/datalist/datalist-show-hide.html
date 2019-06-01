@@ -50,14 +50,14 @@ function waitForDataListSuggestionsToChangeVisibility(visible)
 async function runTest() {
     await UIHelper.activateAndWaitForInputSessionAt(150, 25);
 
-    if (UIHelper.isIOS()) {
+    if (UIHelper.isIOSFamily()) {
         await UIHelper.tapAt(290, 30);
         await waitForDataListSuggestionsToChangeVisibility(true);
     }
 
     before.textContent = await UIHelper.isShowingDataListSuggestions();
 
-    if (UIHelper.isIOS()) {
+    if (UIHelper.isIOSFamily()) {
         await UIHelper.tapAt(150, 25);
         await waitForDataListSuggestionsToChangeVisibility(false);
     } else

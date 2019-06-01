@@ -25,6 +25,7 @@
 
 interface TestRunner {
     readonly attribute boolean isWebKit2;
+    readonly attribute boolean isIOSFamily;
 
     // The basics.
     void dumpAsText(boolean dumpPixels);

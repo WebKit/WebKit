@@ -45,7 +45,7 @@ function focusInputFieldAndChooseFirstSuggestion()
 {
     return new Promise(async resolve => {
         await UIHelper.activateAndWaitForInputSessionAt(100, 25);
-        if (UIHelper.isIOS()) {
+        if (UIHelper.isIOSFamily()) {
             await UIHelper.tapAt(290, 30);
             await UIHelper.resignFirstResponder();
             await UIHelper.waitForKeyboardToHide();

@@ -1,3 +1,36 @@
+2019-05-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make tests that use UIHelper more robust under certain configurations
+        https://bugs.webkit.org/show_bug.cgi?id=198442
+        <rdar://problem/51301737>
+
+        Reviewed by Megan Gardner.
+
+        Replace usages of `UIHelper.isIOS` with `UIHelper.isIOSFamily`.
+
+        * fast/dom/iframe-inner-size-scaling.html:
+        * fast/forms/datalist/datalist-show-hide.html:
+        * fast/forms/datalist/datalist-textinput-suggestions-order.html:
+        * fast/scrolling/ios/reveal-focused-element-right-above-keyboard-on-ipad.html:
+
+        Also remove a workaround here that forces `isIOS` to return `true`.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.isIOSFamily):
+        (window.UIHelper.isWebKit2):
+        (window.UIHelper.humanSpeedDoubleTapAt):
+        (window.UIHelper.humanSpeedZoomByDoubleTappingAt):
+        (window.UIHelper.zoomByDoubleTappingAt):
+        (window.UIHelper.async.doubleActivateAt):
+        (window.UIHelper.async.doubleActivateAtSelectionStart):
+        (window.UIHelper.async.selectWordByDoubleTapOrClick):
+        (window.UIHelper.keyDown):
+        (window.UIHelper.deactivateFormControl):
+        (window.UIHelper.typeCharacter):
+        (window.UIHelper.inputViewBounds):
+        (window.UIHelper.contentOffset):
+        (window.UIHelper.isIOS): Deleted.
+
 2019-05-31  Youenn Fablet  <youenn@apple.com>
 
         Add an option to mute audio capture automatically when page is not visible
