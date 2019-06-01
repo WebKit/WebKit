@@ -1,3 +1,14 @@
+2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DragAndDropTests.DragImageLocationForLinkInSubframe fails on some iPad
+        https://bugs.webkit.org/show_bug.cgi?id=198447
+
+        Reviewed by Wenson Hsieh.
+
+        Give the elements an explicit 400px width to make the test always work.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/link-in-iframe-and-input.html:
+
 2019-05-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make tests that use UIHelper more robust under certain configurations
