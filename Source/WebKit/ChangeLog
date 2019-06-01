@@ -1,3 +1,20 @@
+2019-05-31  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove outdated FIXME in StorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=198049
+
+        Reviewed by Geoffrey Garen.
+
+        Previously StorageManager messages were dispatched and handled in the same thread, so we could perform a message
+        check. Now they are on different thread, and we would not be able to verify those parameters when dispatching
+        the message.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createLocalStorageMap):
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::destroyStorageMap):
+
 2019-05-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         Teach AuxiliaryProcess about LoadOptimizer
