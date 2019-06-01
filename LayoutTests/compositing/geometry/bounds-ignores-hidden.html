@@ -1,6 +1,6 @@
 <style>
   .composited {
-    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   
   img {
@@ -23,7 +23,7 @@
 </script>
 <body>
     <div style="position: absolute; left: 0px; top: 0px; z-index: 106; " class="composited">
-        <img style="position: absolute; left: 10px; top: 10px; z-index: -2;">
+        <img class="composited" style="position: absolute; left: 10px; top: 10px; z-index: -2;">
         <img style="position: absolute; left: 44940px; top: 15013px; z-index: 0; visibility: hidden;">
     </div>
 <pre id="layers">Layer tree goes here in DRT</pre>

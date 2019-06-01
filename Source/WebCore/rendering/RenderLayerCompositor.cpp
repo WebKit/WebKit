@@ -978,7 +978,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // If we have to make a layer for this child, make one now so we can have a contents layer
         // (since we need to ensure that the -ve z-order child renders underneath our contents).
         if (!willBeComposited && currentState.subtreeIsCompositing) {
-            // make layer compositing
             layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
             layerWillComposite();
         }
@@ -1250,7 +1249,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
 #endif
-    
+
     auto appendForegroundLayerIfNecessary = [&] {
         // If a negative z-order child is compositing, we get a foreground layer which needs to get parented.
         if (layer.negativeZOrderLayers().size()) {
@@ -3240,11 +3239,16 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
     return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
 }
 
-// If an element has negative z-index children, those children render in front of the 
+// If an element has composited negative z-index children, those children render in front of the
 // layer background, so we need an extra 'contents' layer for the foreground of the layer object.
 bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer& layer) const
 {
-    return layer.hasNegativeZOrderLayers();
+    for (auto* layer : layer.negativeZOrderLayers()) {
+        if (layer->isComposited() || layer->hasCompositingDescendant())
+            return true;
+    }
+
+    return false;
 }
 
 bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) const

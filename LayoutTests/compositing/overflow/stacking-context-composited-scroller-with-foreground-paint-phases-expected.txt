@@ -38,7 +38,16 @@ Scrolled contents
                     GraphicsLayerPaintOverflowContents
                     GraphicsLayerPaintCompositedScroll
                     )
-                  (children 1
+                  (children 2
+                    (GraphicsLayer
+                      (position 30.00 50.00)
+                      (bounds 100.00 100.00)
+                      (contentsOpaque 1)
+                      (paintingPhases
+                        GraphicsLayerPaintBackground
+                        GraphicsLayerPaintForeground
+                        )
+                    )
                     (GraphicsLayer
                       (offsetFromRenderer width=1 height=1)
                       (bounds 305.00 1020.00)

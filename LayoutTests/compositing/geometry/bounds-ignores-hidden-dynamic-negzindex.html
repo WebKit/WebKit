@@ -3,7 +3,7 @@
         overflow: hidden;
     }
     .composited {
-        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 
     .box {
@@ -79,13 +79,13 @@
 
     <div style="position: absolute; left: 0px; top: 0px; z-index: 0; " class="composited">
         <div class="inline"></div>
-        <img style="position: absolute; left: 50px; top: 50px; z-index: -1;">
+        <img class="composited" style="position: absolute; left: 50px; top: 50px; z-index: -1;">
         <img style="position: absolute; left: 400px; top: 150px; z-index: 0;" class="to-visible">
     </div>
 
     <div style="position: absolute; left: 0px; top: 250px; z-index: 0; " class="composited">
         <div class="inline"></div>
-        <img style="position: absolute; left: 50px; top: 50px; z-index: -1;">
+        <img class="composited" style="position: absolute; left: 50px; top: 50px; z-index: -1;">
         <img style="position: absolute; left: 400px; top: 150px; z-index: 0;" class="to-hidden">
     </div>
 
