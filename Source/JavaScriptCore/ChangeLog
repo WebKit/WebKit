@@ -1,3 +1,26 @@
+2019-05-31  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Support internal test runner for JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=198386
+
+        Reviewed by Alex Christensen.
+
+        Support using our test runner with our wrapper library
+        to run multiple tests sequentially in one execution. With
+        default arguments, will run as normal, but with special
+        arguments will shift into this mode.
+
+        * runtime/Options.h:
+        Export the default values of the JSC options similar
+        to the values for resetting the values between tests.
+        * shell/PlatformPlayStation.cmake:
+        * shell/playstation/TestShell.cpp: Added.
+        (setupTestRun): Function to set up the system before starting the tests
+        (preTest): Function for setting up individual test
+        (runTest): Function to run a test execution
+        (postTest): Function for shutdown of individual test
+        (shutdownTestRun): Function for shutting down the system after test run completes.
+
 2019-05-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::WTF target
