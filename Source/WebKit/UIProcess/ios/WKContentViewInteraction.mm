@@ -5718,6 +5718,8 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     }
 #endif
 
+    [self.inputDelegate selectionDidChange:self];
+    
     [_webView _didChangeEditorState];
 }
 
