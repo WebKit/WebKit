@@ -1,3 +1,25 @@
+2019-06-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Crash explicitly if StructureIDs are exhausted
+        https://bugs.webkit.org/show_bug.cgi?id=198467
+
+        Reviewed by Sam Weinig.
+
+        When StructureIDTable::m_size reaches to s_maximumNumberOfStructures, newCapacity in resize function is also capped with s_maximumNumberOfStructures.
+        So m_size == newCapacity. In that case, the following code in resize function, `makeFreeListFromRange(m_size, m_capacity - 1);` starts executing the
+        wrong code.
+
+        Currently, this is safe. We immediately execute the wrong code in makeFreeListFromRange, and crash with zero division. But we should not rely on
+        this crash, and instead we should explicitly crash because we exhaust StructureIDs.
+
+        This patch inserts RELEASE_ASSERT for `m_size < newCapacity` status to ensure that resize is always extending the table.
+
+        In practice, this crash does not happen in Safari because Safari has memory footprint limit. To exhaust StructureIDs, we need to allocate massive
+        amount of Structures, and it exceeds the memory footprint limit and the process will be killed.
+
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::resize):
+
 2019-06-02  Keith Miller  <keith_miller@apple.com>
 
         Reenable Gigacage on ARM64.

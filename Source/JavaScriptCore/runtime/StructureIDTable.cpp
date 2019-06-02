@@ -102,6 +102,10 @@ void StructureIDTable::resize(size_t newCapacity)
     if (newCapacity > s_maximumNumberOfStructures)
         newCapacity = s_maximumNumberOfStructures;
 
+    // If m_size is already s_maximumNumberOfStructures, newCapacity becomes s_maximumNumberOfStructures in the above code.
+    // In that case, we should crash because of exhaust of StructureIDs.
+    RELEASE_ASSERT_WITH_MESSAGE(m_size < newCapacity, "Crash intentionally because of exhaust of StructureIDs.");
+
     // Create the new table.
     auto newTable = makeUniqueArray<StructureOrOffset>(newCapacity);
 
