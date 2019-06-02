@@ -542,6 +542,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList assistant:self]];
 #endif
+
+    if ([elementInfo imageURL]) {
+        if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+            [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
+    }
+
     if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame) {
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
