@@ -34,9 +34,7 @@
 #include <wtf/SHA1.h>
 
 #if !OS(WINDOWS)
-#include <sys/mman.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #endif
 
 namespace WebKit {
