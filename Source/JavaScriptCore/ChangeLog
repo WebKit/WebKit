@@ -1,3 +1,26 @@
+2019-06-02  Keith Miller  <keith_miller@apple.com>
+
+        Reenable Gigacage on ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=198453
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds back Gigacaging on Apple's ARM64 ports. Unlike the
+        old Gigacage however, arm64e uses both Gigacaging and PAC. Since
+        Gigacaging would otherwise strip a PAC failed authenticate bit we
+        force a load of the pointer into some garbage register.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::untagArrayPtr):
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageConditionally):
+        * llint/LowLevelInterpreter64.asm:
+
 2019-06-02  Tadeu Zagallo  <tzagallo@apple.com>
 
         CachedMetadataTable::decode leaks empty tables

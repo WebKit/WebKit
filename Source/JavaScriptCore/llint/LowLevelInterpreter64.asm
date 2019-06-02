@@ -434,10 +434,13 @@ end
 
 macro loadCagedPrimitive(source, dest, scratchOrLength)
     loadp source, dest
+    if ARM64E
+        untagArrayPtr scratchOrLength, dest
+        # Force a load to check PAC before we clear it below.
+        loadp [dest], scratchOrLength
+    end
     if GIGACAGE_ENABLED
         uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, dest, scratchOrLength)
-    elsif ARM64E
-        untagArrayPtr scratchOrLength, dest
     end
 end
 
