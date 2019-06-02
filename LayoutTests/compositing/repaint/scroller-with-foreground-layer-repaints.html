@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] --><html>
+<head>
+    <style>
+        #scroller {
+            position: relative;
+            z-index: 0;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+            padding: 10px;
+        }
+
+        .contents {
+            height: 1000px;
+        }
+        
+        .negative {
+            position: absolute;
+            z-index: -1;
+            top: 50px;
+            left: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            border: 1px solid green;
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.internals)
+                    internals.startTrackingRepaints();
+            
+                scroller.scrollTo(0, 200);
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="negative"></div>
+        <div class="contents">Scrolled contents</div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

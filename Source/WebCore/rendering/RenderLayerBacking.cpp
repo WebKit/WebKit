@@ -1204,39 +1204,6 @@ void RenderLayerBacking::updateGeometry()
             m_contentsContainmentLayer->setAnchorPoint(FloatPoint3D(0.5, 0.5, 0));
     }
 
-    if (m_foregroundLayer) {
-        FloatPoint foregroundPosition;
-        FloatSize foregroundSize = primaryGraphicsLayerRect.size();
-        FloatSize foregroundOffset = m_graphicsLayer->offsetFromRenderer();
-        if (hasClippingLayer()) {
-            // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
-            // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
-            foregroundSize = FloatSize(clippingBox.size());
-            foregroundOffset = toFloatSize(clippingBox.location());
-        }
-
-        m_foregroundLayer->setPosition(foregroundPosition);
-        m_foregroundLayer->setSize(foregroundSize);
-        m_foregroundLayer->setOffsetFromRenderer(foregroundOffset);
-    }
-
-    if (m_backgroundLayer) {
-        FloatPoint backgroundPosition;
-        FloatSize backgroundSize = primaryGraphicsLayerRect.size();
-        if (backgroundLayerPaintsFixedRootBackground()) {
-            const FrameView& frameView = renderer().view().frameView();
-            backgroundPosition = frameView.scrollPositionForFixedPosition();
-            backgroundSize = frameView.layoutSize();
-        } else {
-            auto boundingBox = renderer().objectBoundingBox();
-            backgroundPosition = boundingBox.location();
-            backgroundSize = boundingBox.size();
-        }
-        m_backgroundLayer->setPosition(backgroundPosition);
-        m_backgroundLayer->setSize(backgroundSize);
-        m_backgroundLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
-    }
-
     if (m_owningLayer.reflectionLayer() && m_owningLayer.reflectionLayer()->isComposited()) {
         auto* reflectionBacking = m_owningLayer.reflectionLayer()->backing();
         reflectionBacking->updateGeometry();
@@ -1282,13 +1249,48 @@ void RenderLayerBacking::updateGeometry()
         m_scrolledContentsLayer->setSize(scrollSize);
         m_scrolledContentsLayer->setScrollOffset(scrollOffset, GraphicsLayer::DontSetNeedsDisplay);
         m_scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(paddingBoxIncludingScrollbar.location()), GraphicsLayer::DontSetNeedsDisplay);
-
-        if (m_foregroundLayer) {
-            m_foregroundLayer->setSize(m_scrolledContentsLayer->size());
-            m_foregroundLayer->setOffsetFromRenderer(m_scrolledContentsLayer->offsetFromRenderer() - toLayoutSize(m_scrolledContentsLayer->scrollOffset()));
-        }
         
         adjustTiledBackingCoverage();
+    }
+
+    if (m_foregroundLayer) {
+        FloatSize foregroundSize;
+        FloatSize foregroundOffset;
+        GraphicsLayer::ShouldSetNeedsDisplay needsDisplayOnOffsetChange = GraphicsLayer::SetNeedsDisplay;
+        if (m_scrolledContentsLayer) {
+            foregroundSize = m_scrolledContentsLayer->size();
+            foregroundOffset = m_scrolledContentsLayer->offsetFromRenderer() - toLayoutSize(m_scrolledContentsLayer->scrollOffset());
+            needsDisplayOnOffsetChange = GraphicsLayer::DontSetNeedsDisplay;
+        } else if (hasClippingLayer()) {
+            // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
+            // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
+            foregroundSize = FloatSize(clippingBox.size());
+            foregroundOffset = toFloatSize(clippingBox.location());
+        } else {
+            foregroundSize = primaryGraphicsLayerRect.size();
+            foregroundOffset = m_graphicsLayer->offsetFromRenderer();
+        }
+
+        m_foregroundLayer->setPosition({ });
+        m_foregroundLayer->setSize(foregroundSize);
+        m_foregroundLayer->setOffsetFromRenderer(foregroundOffset, needsDisplayOnOffsetChange);
+    }
+
+    if (m_backgroundLayer) {
+        FloatPoint backgroundPosition;
+        FloatSize backgroundSize = primaryGraphicsLayerRect.size();
+        if (backgroundLayerPaintsFixedRootBackground()) {
+            const FrameView& frameView = renderer().view().frameView();
+            backgroundPosition = frameView.scrollPositionForFixedPosition();
+            backgroundSize = frameView.layoutSize();
+        } else {
+            auto boundingBox = renderer().objectBoundingBox();
+            backgroundPosition = boundingBox.location();
+            backgroundSize = boundingBox.size();
+        }
+        m_backgroundLayer->setPosition(backgroundPosition);
+        m_backgroundLayer->setSize(backgroundSize);
+        m_backgroundLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
     }
 
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.

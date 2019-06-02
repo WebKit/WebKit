@@ -1,5 +1,20 @@
 2019-06-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Async overflow scroll on iOS paints slowly if it has a negative z-index child
+        https://bugs.webkit.org/show_bug.cgi?id=196508
+        rdar://problem/49532709
+
+        Reviewed by Dean Jackson.
+
+        * compositing/geometry/scroller-with-clipping-and-foreground-layers-expected.html: Added.
+        * compositing/geometry/scroller-with-clipping-and-foreground-layers.html: Added.
+        * compositing/repaint/scroller-with-foreground-layer-repaints-expected.txt: Added.
+        * compositing/repaint/scroller-with-foreground-layer-repaints.html: Added.
+        * platform/ios-wk2/compositing/repaint/scroller-with-foreground-layer-repaints-expected.txt: Added.
+        * platform/mac-wk1/compositing/repaint/scroller-with-foreground-layer-repaints-expected.txt: Added.
+
+2019-06-01  Simon Fraser  <simon.fraser@apple.com>
+
         Non-composited negative z-order children should not trigger creation of a foreground layer
         https://bugs.webkit.org/show_bug.cgi?id=198455
 

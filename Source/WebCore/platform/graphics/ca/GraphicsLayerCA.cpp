@@ -2598,18 +2598,18 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
 
     if (!shapeMaskLayer) {
         shapeMaskLayer = createPlatformCALayer(PlatformCALayer::LayerTypeShapeLayer, this);
-        shapeMaskLayer->setAnchorPoint(FloatPoint3D());
+        shapeMaskLayer->setAnchorPoint({ });
         shapeMaskLayer->setName("shape mask");
     }
     
-    shapeMaskLayer->setPosition(FloatPoint());
-    shapeMaskLayer->setBounds(clippingLayer.bounds());
+    shapeMaskLayer->setPosition(roundedRect.rect().location() - offsetFromRenderer());
+    FloatRect shapeBounds({ }, roundedRect.rect().size());
+    shapeMaskLayer->setBounds(shapeBounds);
+    FloatRoundedRect offsetRoundedRect(shapeBounds, roundedRect.radii());
+    shapeMaskLayer->setShapeRoundedRect(offsetRoundedRect);
 
     clippingLayer.setCornerRadius(0);
     clippingLayer.setMask(shapeMaskLayer.get());
-    
-    FloatRoundedRect offsetRoundedRect(clippingLayer.bounds(), roundedRect.radii());
-    shapeMaskLayer->setShapeRoundedRect(offsetRoundedRect);
 }
 
 void GraphicsLayerCA::updateContentsRects()
