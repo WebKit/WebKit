@@ -1,3 +1,22 @@
+2019-06-02  Tadeu Zagallo  <tzagallo@apple.com>
+
+        CachedMetadataTable::decode leaks empty tables
+        https://bugs.webkit.org/show_bug.cgi?id=198465
+        <rdar://problem/51307673>
+
+        Reviewed by Yusuke Suzuki.
+
+        CachedMetadataTable::decode creates the metadata and never calls finalize on it.
+        This leaks the underlying UnlinkedMetadataTable buffer when m_hasMetadata is false,
+        since the buffer would be freed in finalize instead of in the destructor.
+
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::empty):
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::UnlinkedMetadataTable):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedMetadataTable::decode const):
+
 2019-05-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix setEntryAddressCommon register usage in LLInt ASM Windows 64

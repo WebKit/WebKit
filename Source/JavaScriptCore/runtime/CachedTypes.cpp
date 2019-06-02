@@ -1360,6 +1360,9 @@ public:
 
     Ref<UnlinkedMetadataTable> decode(Decoder&) const
     {
+        if (!m_hasMetadata)
+            return UnlinkedMetadataTable::empty();
+
         Ref<UnlinkedMetadataTable> metadataTable = UnlinkedMetadataTable::create(m_is32Bit);
         metadataTable->m_isFinalized = true;
         metadataTable->m_isLinked = false;

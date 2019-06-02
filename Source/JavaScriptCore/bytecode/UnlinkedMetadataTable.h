@@ -61,12 +61,20 @@ public:
     }
 
 private:
+    enum EmptyTag { Empty };
+
     UnlinkedMetadataTable();
     UnlinkedMetadataTable(bool is32Bit);
+    UnlinkedMetadataTable(EmptyTag);
 
     static Ref<UnlinkedMetadataTable> create(bool is32Bit)
     {
         return adoptRef(*new UnlinkedMetadataTable(is32Bit));
+    }
+
+    static Ref<UnlinkedMetadataTable> empty()
+    {
+        return adoptRef(*new UnlinkedMetadataTable(Empty));
     }
 
     void unlink(MetadataTable&);

@@ -49,6 +49,15 @@ ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(bool is32Bit)
 {
 }
 
+ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(EmptyTag)
+    : m_hasMetadata(false)
+    , m_isFinalized(true)
+    , m_isLinked(false)
+    , m_is32Bit(false)
+    , m_rawBuffer(nullptr)
+{
+}
+
 ALWAYS_INLINE UnlinkedMetadataTable::~UnlinkedMetadataTable()
 {
     ASSERT(!m_isLinked);
