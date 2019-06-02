@@ -222,6 +222,13 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         this._includeProtoProperty = false;
     }
 
+    showOnlyJSON()
+    {
+        this.showOnlyProperties();
+
+        this._element.classList.add("json-only");
+    }
+
     appendTitleSuffix(suffixElement)
     {
         if (this._previewView)

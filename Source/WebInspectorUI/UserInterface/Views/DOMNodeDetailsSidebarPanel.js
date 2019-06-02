@@ -521,7 +521,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
                 let objectTree = element.__objectTree;
                 if (objectTree) {
-                    objectTree.showOnlyProperties();
+                    objectTree.showOnlyJSON();
                     objectTree.expand();
                 }
 

@@ -107,6 +107,10 @@ body[dir=rtl] .object-tree > :matches(.title, .object-preview)::before {
     opacity: 1;
 }
 
+.object-tree.properties-only.json-only .object-tree-property .prototype-property {
+    display: none;
+}
+
 .tree-outline.object li {
     white-space: nowrap;
     text-overflow: ellipsis;

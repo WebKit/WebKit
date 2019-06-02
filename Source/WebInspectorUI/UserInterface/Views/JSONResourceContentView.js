@@ -69,6 +69,7 @@ WI.JSONResourceContentView = class JSONResourceContentView extends WI.ResourceCo
             this._remoteObject = WI.RemoteObject.fromPayload(result, this.resource.target);
 
             let objectTree = new WI.ObjectTreeView(this._remoteObject);
+            objectTree.showOnlyJSON();
             objectTree.expand();
 
             this.element.appendChild(objectTree.element);

@@ -1,3 +1,27 @@
+2019-06-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: propagate whether to show prototype information to subobject views
+        https://bugs.webkit.org/show_bug.cgi?id=194929
+
+        Reviewed by Matt Baker.
+
+        Add a way to mark the `ObjectTreeView` as holding a JSON value, which extends
+        `showOnlyProperties` to also hide the prototype of all held values (e.g. children).
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype.showOnlyJSON): Added.
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree.properties-only.json-only .object-tree-property .prototype-property): Added.
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.layout):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshAssociatedData):
+        * UserInterface/Views/JSONResourceContentView.css:
+        (.content-view.resource.json .object-tree .prototype-property): Deleted.
+        * UserInterface/Views/JSONResourceContentView.js:
+        (WI.JSONResourceContentView.prototype.contentAvailable):
+
 2019-05-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: CSS Changes: modifications aren't shared for rules that match multiple elements

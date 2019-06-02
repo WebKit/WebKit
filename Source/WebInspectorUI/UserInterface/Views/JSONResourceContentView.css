@@ -27,7 +27,3 @@
     padding: 10px;
     overflow: scroll;
 }
-
-.content-view.resource.json .object-tree .prototype-property {
-    display: none;
-}

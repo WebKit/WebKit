@@ -161,7 +161,7 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
 
                     let objectTree = element.__objectTree;
                     if (objectTree) {
-                        objectTree.showOnlyProperties();
+                        objectTree.showOnlyJSON();
                         objectTree.expand();
                     }
 
