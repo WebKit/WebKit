@@ -54,6 +54,7 @@ Scrolled contents
                       (drawsContent 1)
                       (paintingPhases
                         GraphicsLayerPaintForeground
+                        GraphicsLayerPaintOverflowContents
                         )
                     )
                   )

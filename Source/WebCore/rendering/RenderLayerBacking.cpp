@@ -2102,6 +2102,10 @@ void RenderLayerBacking::updatePaintingPhases()
     
     if (m_foregroundLayer) {
         OptionSet<GraphicsLayerPaintingPhase> foregroundLayerPhases { GraphicsLayerPaintingPhase::Foreground };
+        
+        if (m_scrolledContentsLayer)
+            foregroundLayerPhases.add(GraphicsLayerPaintingPhase::OverflowContents);
+
         m_foregroundLayer->setPaintingPhase(foregroundLayerPhases);
         primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Foreground);
     }

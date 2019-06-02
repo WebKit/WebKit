@@ -1,5 +1,15 @@
 2019-06-01  Simon Fraser  <simon.fraser@apple.com>
 
+        [Async overflow scroll] Flashing content when scrolling async overflow with a negative z-index child
+        https://bugs.webkit.org/show_bug.cgi?id=198458
+
+        Reviewed by Dean Jackson.
+
+        * compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases-expected.txt:
+        * platform/ios-wk2/compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases-expected.txt:
+
+2019-06-01  Simon Fraser  <simon.fraser@apple.com>
+
         Async overflow scroll on iOS paints slowly if it has a negative z-index child
         https://bugs.webkit.org/show_bug.cgi?id=196508
         rdar://problem/49532709
