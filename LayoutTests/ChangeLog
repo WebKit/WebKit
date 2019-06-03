@@ -1,3 +1,14 @@
+2019-06-02  Devin Rousso  <drousso@apple.com>
+
+        Flaky Test: inspector/canvas/recording.html
+        https://bugs.webkit.org/show_bug.cgi?id=198470
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/recording.html:
+        Don't rely on `frameCount` to automatically stop the recording, as that's dependent on when
+        the <canvas> paints and is less controllable/deterministic.
+
 2019-06-01  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scroll] Flashing content when scrolling async overflow with a negative z-index child

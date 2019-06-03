@@ -44,11 +44,12 @@ function test() {
             canvas.awaitEvent(WI.Canvas.Event.RecordingStarted)
             .then((event) => {
                 InspectorTest.evaluateInPage(`performActionsNaN()`);
-            });
 
-            const frameCount = 1;
-            CanvasAgent.startRecording(canvas.identifier, frameCount)
+                canvas.stopRecording();
+            })
             .catch(reject);
+
+            canvas.startRecording();
         },
     });
 
@@ -56,8 +57,6 @@ function test() {
         name: "Canvas.MultipleRecording",
         description: "Check that multiple recordings are able to be started/stopped at the same time.",
         test(resolve, reject) {
-            const singleFrame = false;
-
             let canvases = WI.canvasManager.canvases;
             InspectorTest.assert(canvases.length === 2, "There should be two canvas contexts.");
 
@@ -73,7 +72,8 @@ function test() {
 
                 InspectorTest.log("Stopping the recording of canvas 2...");
                 canvases[1].stopRecording();
-            });
+            })
+            .catch(reject);
 
             InspectorTest.awaitEvent("TestPage-performActionsMultiple")
             .then((event) => {
@@ -81,7 +81,8 @@ function test() {
 
                 InspectorTest.log("Stopping the recording of canvas 1...");
                 canvases[0].stopRecording();
-            });
+            })
+            .catch(reject);
 
             canvases[1].awaitEvent(WI.Canvas.Event.RecordingStarted)
             .then((event) => {
@@ -89,18 +90,20 @@ function test() {
 
                 InspectorTest.log("Performing actions...");
                 InspectorTest.evaluateInPage(`performActionsMultiple()`);
-            });
+            })
+            .catch(reject);
 
             canvases[0].awaitEvent(WI.Canvas.Event.RecordingStarted)
             .then((event) => {
                 InspectorTest.expectThat(canvases[0].recordingActive, "Recording started of canvas 1");
 
                 InspectorTest.log("Starting a recording of canvas 2...");
-                canvases[1].startRecording(singleFrame);
-            });
+                canvases[1].startRecording();
+            })
+            .catch(reject);
 
             InspectorTest.log("Starting a recording of canvas 1...");
-            canvases[0].startRecording(singleFrame);
+            canvases[0].startRecording();
         },
     });
 
