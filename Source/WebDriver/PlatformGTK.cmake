@@ -1,4 +1,4 @@
-set(WebDriver_Process_OUTPUT_NAME WebKitWebDriver)
+set(WebDriver_OUTPUT_NAME WebKitWebDriver)
 
 add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
 
