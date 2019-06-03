@@ -34,6 +34,7 @@
 #include "DrawingArea.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/Chrome.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/PageOverlayController.h>
@@ -44,13 +45,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-static const PlatformDisplayID primaryDisplayID = 0;
-#if PLATFORM(GTK)
-static const PlatformDisplayID compositingDisplayID = 1;
-#else
-static const PlatformDisplayID compositingDisplayID = primaryDisplayID;
-#endif
 
 LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
@@ -83,12 +77,10 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
         if (m_surface->shouldPaintMirrored())
             paintFlags |= TextureMapper::PaintingMirrored;
 
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, compositingDisplayID, scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_webPage.corePage()->chrome().displayID(), scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, compositingDisplayID, scaledSize, scaleFactor);
-
-    m_webPage.windowScreenDidChange(compositingDisplayID);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_webPage.corePage()->chrome().displayID(), scaledSize, scaleFactor);
 
     didChangeViewport();
 }
@@ -324,10 +316,8 @@ void LayerTreeHost::setIsDiscardable(bool discardable)
     m_isDiscardable = discardable;
     if (m_isDiscardable) {
         m_discardableSyncActions = OptionSet<DiscardableSyncActions>();
-        m_webPage.windowScreenDidChange(primaryDisplayID);
         return;
     }
-    m_webPage.windowScreenDidChange(compositingDisplayID);
 
     if (m_discardableSyncActions.isEmpty())
         return;

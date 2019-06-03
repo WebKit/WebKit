@@ -1,3 +1,21 @@
+2019-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r244182): [CoordinatedGraphics] Related view doesn't receive graphic updates
+        https://bugs.webkit.org/show_bug.cgi?id=198418
+
+        Reviewed by Žan Doberšek.
+
+        This is because we need a DisplayRefreshMonitor per drawing area, but the one from the first ThreradedCompositor
+        is always reused because they use the same display ID.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode): Use a unique display ID derived from
+        WebPage's ID.
+        (WebKit::DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode): Use the primary display ID.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::LayerTreeHost): Get the current web page display ID instead of inventing one.
+        (WebKit::LayerTreeHost::setIsDiscardable): Do not change display ID.
+
 2019-06-01  Dean Jackson  <dino@apple.com>
 
         Provide an action to save an image on a link sheet

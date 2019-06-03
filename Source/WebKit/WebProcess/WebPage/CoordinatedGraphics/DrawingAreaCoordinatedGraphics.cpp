@@ -544,6 +544,10 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
+    // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because ThreadedDisplayRefreshMonitor
+    // is driven by the ThreadedCompositor of the drawing area), give each page a unique DisplayID derived from WebPage's unique ID.
+    m_webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - m_webPage.pageID().toUInt64());
+
     ASSERT(!m_layerTreeHost);
     if (m_previousLayerTreeHost) {
         m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
@@ -596,6 +600,9 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
     m_previousLayerTreeHost->pauseRendering();
     m_previousLayerTreeHost->setLayerFlushSchedulingEnabled(false);
     m_discardPreviousLayerTreeHostTimer.startOneShot(5_s);
+
+    // Always use the primary display ID (0) when not in accelerated compositing mode.
+    m_webPage.windowScreenDidChange(0);
 
     m_dirtyRegion = m_webPage.bounds();
 
