@@ -236,9 +236,6 @@
 #define DEFAULT_CONIC_GRADIENT_ENABLED false
 #endif
 
-bool defaultPassiveTouchListenersAsDefaultOnDocument();
-bool defaultCustomPasteboardDataEnabled();
-
 #if PLATFORM(MAC)
 #define DEFAULT_CAPTURE_AUDIO_IN_UIPROCESS true
 #else
@@ -278,3 +275,14 @@ bool defaultCustomPasteboardDataEnabled();
 #else
 #define DEFAULT_WEB_AUTHENTICATION_ENABLED false
 #endif
+
+namespace WebKit {
+
+bool defaultPassiveTouchListenersAsDefaultOnDocument();
+bool defaultCustomPasteboardDataEnabled();
+
+#if ENABLE(TEXT_AUTOSIZING)
+bool defaultTextAutosizingUsesIdempotentMode();
+#endif
+
+} // namespace WebKit

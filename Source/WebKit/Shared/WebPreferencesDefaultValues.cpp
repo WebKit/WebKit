@@ -35,6 +35,8 @@
 #include "VersionChecks.h"
 #endif
 
+namespace WebKit {
+
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -59,3 +61,13 @@ bool defaultCustomPasteboardDataEnabled()
 #endif
 }
 
+#if ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
+
+bool defaultTextAutosizingUsesIdempotentMode()
+{
+    return false;
+}
+
+#endif // ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
+
+} // namespace WebKit

@@ -1,3 +1,39 @@
+2019-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement an internal switch to turn idempotent text autosizing and viewport rules off
+        https://bugs.webkit.org/show_bug.cgi?id=198460
+        <rdar://problem/51324526>
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferences.yaml:
+
+        Add new preferences to control viewport shrink-to-fit-content and idempotent text autosizing.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+
+        Add the non-iOS implementation of defaultTextAutosizingUsesIdempotentMode, and also wrap these functions in the
+        WebKit namespace.
+
+        (WebKit::defaultTextAutosizingUsesIdempotentMode):
+        (defaultPassiveTouchListenersAsDefaultOnDocument): Deleted.
+        (defaultCustomPasteboardDataEnabled): Deleted.
+        * Shared/WebPreferencesDefaultValues.h:
+
+        Move some existing default preference value helper functions into the WebKit namespace.
+
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm: Copied from Source/WebKit/Shared/WebPreferencesDefaultValues.cpp.
+
+        Add an iOS-specific file for WebPreferencesDefaultValues, so that we can check for the user interface idiom.
+
+        (WebKit::defaultTextAutosizingUsesIdempotentMode):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+
+        Add an early return for the case where shrink-to-fit-content is explicitly disabled via the new preference.
+
 2019-06-03  Rob Buis  <rbuis@igalia.com>
 
         Implement imagesrcset and imagesizes attributes on link rel=preload

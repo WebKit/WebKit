@@ -1640,6 +1640,22 @@ MouseEventsSimulationEnabled:
   category: internal
   condition: ENABLE(TOUCH_EVENTS)
 
+TextAutosizingUsesIdempotentMode:
+  type: bool
+  defaultValue: defaultTextAutosizingUsesIdempotentMode()
+  humanReadableName: "Idempotent Text Autosizing"
+  humanReadableDescription: "Use idempotent text autosizing mode"
+  category: internal
+  condition: ENABLE(TEXT_AUTOSIZING)
+
+AllowViewportShrinkToFitContent:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Allow Viewport Shrink to Fit Content"
+  humanReadableDescription: "Allow the viewport shrink to fit content heuristic when appropriate"
+  category: internal
+  condition: PLATFORM(IOS_FAMILY)
+
 ReferrerPolicyAttributeEnabled:
   type: bool
   defaultValue: false

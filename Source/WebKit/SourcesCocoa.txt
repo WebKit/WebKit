@@ -176,6 +176,7 @@ Shared/ios/WebAutocorrectionData.mm
 Shared/ios/WebIconUtilities.mm
 Shared/ios/WebIOSEventFactory.mm
 Shared/ios/WebPlatformTouchPointIOS.cpp
+Shared/ios/WebPreferencesDefaultValuesIOS.mm
 Shared/ios/WebTouchEventIOS.cpp
 
 Shared/mac/AttributedString.mm

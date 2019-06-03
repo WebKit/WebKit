@@ -86,11 +86,6 @@ bool SettingsBase::defaultTextAutosizingEnabled()
     return true;
 }
 
-bool SettingsBase::defaultTextAutosizingUsesIdempotentMode()
-{
-    return deviceHasIPadCapability() && ![[PAL::getUIApplicationClass() sharedApplication] _isClassic];
-}
-
 #endif
 
 const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()

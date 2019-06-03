@@ -441,7 +441,7 @@ minimumZoomFontSize:
   initial: defaultMinimumZoomFontSize()
   conditional: TEXT_AUTOSIZING
 textAutosizingUsesIdempotentMode:
-  initial: defaultTextAutosizingUsesIdempotentMode()
+  initial: false
   onChange: setNeedsRecalcStyleInAllFrames
   conditional: TEXT_AUTOSIZING
 
@@ -836,6 +836,9 @@ shouldDecidePolicyBeforeLoadingQuickLookPreview:
 
 shouldDispatchSyntheticMouseEventsWhenModifyingSelection:
   initial: false
+
+allowViewportShrinkToFitContent:
+  initial: true
 
 # Deprecated
 
