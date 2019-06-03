@@ -1,3 +1,14 @@
+2019-06-03  Timothy Hatcher  <timothy@apple.com>
+
+        Tweak the text and underline color for data detected text.
+        https://bugs.webkit.org/show_bug.cgi?id=198487
+        rdar://problem/50667125
+
+        Reviewed by Devin Rousso.
+
+        * TestWebKitAPI/Tests/WebCore/Color.cpp:
+        (TestWebKitAPI::TEST): Added Color.RGBToHSL tests.
+
 2019-06-03  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::JavaScriptCore target

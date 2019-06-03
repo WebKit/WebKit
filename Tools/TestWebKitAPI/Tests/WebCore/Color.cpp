@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -142,6 +142,102 @@ TEST(Color, RGBToHSV_LightGray)
     EXPECT_DOUBLE_EQ(0, h);
     EXPECT_DOUBLE_EQ(0, s);
     EXPECT_DOUBLE_EQ(0.75294117647058822, v);
+}
+
+TEST(Color, RGBToHSL_White)
+{
+    Color color = Color::white;
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(0, hue);
+    EXPECT_DOUBLE_EQ(0, saturation);
+    EXPECT_DOUBLE_EQ(1, lightness);
+}
+
+TEST(Color, RGBToHSL_Black)
+{
+    Color color = Color::black;
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(0, hue);
+    EXPECT_DOUBLE_EQ(0, saturation);
+    EXPECT_DOUBLE_EQ(0, lightness);
+}
+
+TEST(Color, RGBToHSL_Red)
+{
+    Color color(255, 0, 0);
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(0, hue);
+    EXPECT_DOUBLE_EQ(1, saturation);
+    EXPECT_DOUBLE_EQ(0.5, lightness);
+}
+
+TEST(Color, RGBToHSL_Green)
+{
+    Color color(0, 255, 0);
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(2, hue);
+    EXPECT_DOUBLE_EQ(1, saturation);
+    EXPECT_DOUBLE_EQ(0.5, lightness);
+}
+
+TEST(Color, RGBToHSL_Blue)
+{
+    Color color(0, 0, 255);
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(4, hue);
+    EXPECT_DOUBLE_EQ(1, saturation);
+    EXPECT_DOUBLE_EQ(0.5, lightness);
+}
+
+TEST(Color, RGBToHSL_DarkGray)
+{
+    Color color = Color::darkGray;
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(0, hue);
+    EXPECT_DOUBLE_EQ(0, saturation);
+    EXPECT_DOUBLE_EQ(0.50196078431372548, lightness);
+}
+
+TEST(Color, RGBToHSL_Gray)
+{
+    Color color = Color::gray;
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(0, hue);
+    EXPECT_DOUBLE_EQ(0, saturation);
+    EXPECT_DOUBLE_EQ(0.62745098039215685, lightness);
+}
+
+TEST(Color, RGBToHSL_LightGray)
+{
+    Color color = Color::lightGray;
+
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+
+    EXPECT_DOUBLE_EQ(0, hue);
+    EXPECT_DOUBLE_EQ(0, saturation);
+    EXPECT_DOUBLE_EQ(0.75294117647058822, lightness);
 }
 
 TEST(Color, Validity)
