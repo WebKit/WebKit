@@ -35,18 +35,6 @@ constexpr bool tagCagedPtr = true;
 
 template<Gigacage::Kind passedKind, typename T, bool shouldTag = false, typename PtrTraits = DumbPtrTraits<T>>
 class CagedPtr {
-#if CPU(ARM64E)
-    static void authenticatingLoad(T* ptr)
-    {
-        double result;
-        asm volatile("ldr %[out], [%[in]]"
-            : [out] "=&r"(result)
-            : [in] "r"(ptr) :);
-    }
-#else
-    static void authenticatingLoad(T*) { }
-#endif
-
 public:
     static constexpr Gigacage::Kind kind = passedKind;
 
@@ -64,21 +52,16 @@ public:
     {
         ASSERT(m_ptr);
         T* ptr = PtrTraits::unwrap(m_ptr);
-        if (shouldTag) {
+        if (shouldTag)
             ptr = untagArrayPtr(ptr, size);
-            authenticatingLoad(ptr);
-        }
         return Gigacage::caged(kind, ptr);
     }
 
     T* getMayBeNull(unsigned size) const
     {
         T* ptr = PtrTraits::unwrap(m_ptr);
-        if (shouldTag) {
+        if (shouldTag)
             ptr = untagArrayPtr(ptr, size);
-            if (ptr)
-                authenticatingLoad(ptr);
-        }
         return Gigacage::cagedMayBeNull(kind, ptr);
     }
 

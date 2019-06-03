@@ -1571,18 +1571,6 @@ public:
     
     void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg scratchOrLength)
     {
-#if CPU(ARM64E)
-        if (kind == Gigacage::Primitive) {
-            untagArrayPtr(scratchOrLength, storage);
-            // Force a load to trap on authentication failure. storage shouldn't be null here.
-            loadPtr(storage, scratchOrLength);
-        }
-#else
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(storage);
-        UNUSED_PARAM(scratchOrLength);
-#endif
-
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
             return;
@@ -1595,6 +1583,13 @@ public:
         andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
         addPtr(scratchOrLength, storage);
         done.link(this);
+#elif CPU(ARM64E)
+        if (kind == Gigacage::Primitive)
+            untagArrayPtr(scratchOrLength, storage);
+#else
+        UNUSED_PARAM(kind);
+        UNUSED_PARAM(storage);
+        UNUSED_PARAM(scratchOrLength);
 #endif
     }
 

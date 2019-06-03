@@ -6463,7 +6463,7 @@ private:
                 m_out.int64Zero,
                 m_heaps.typedArrayProperties);
 
-#if CPU(ARM64E)
+#if !GIGACAGE_ENABLED && CPU(ARM64E)
             {
                 LValue sizePtr = m_out.zeroExtPtr(size);
                 PatchpointValue* authenticate = m_out.patchpoint(pointerType());
@@ -14108,12 +14108,9 @@ private:
         PatchpointValue* authenticate = m_out.patchpoint(pointerType());
         authenticate->appendSomeRegister(ptr);
         authenticate->append(size, B3::ValueRep(B3::ValueRep::SomeLateRegister));
-        authenticate->numGPScratchRegisters = 1;
         authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move(params[1].gpr(), params[0].gpr());
             jit.untagArrayPtr(params[2].gpr(), params[0].gpr());
-            // Force a load to check authentication. before it is cleared by Gigacaging later.
-            jit.loadPtr(params[0].gpr(), params.gpScratch(0));
         });
         return authenticate;
 #else
@@ -14138,16 +14135,6 @@ private:
 
     LValue caged(Gigacage::Kind kind, LValue ptr, LValue base)
     {
-#if CPU(ARM64E)
-        if (kind == Gigacage::Primitive) {
-            LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
-            ptr = untagArrayPtr(ptr, size);
-        }
-#else
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(base);
-#endif
-
 #if GIGACAGE_ENABLED
         UNUSED_PARAM(base);
         if (!Gigacage::isEnabled(kind))
@@ -14178,6 +14165,17 @@ private:
         // and possibly other smart things if we want to be able to remove this opaque.
         // https://bugs.webkit.org/show_bug.cgi?id=175493
         return m_out.opaque(result);
+#elif CPU(ARM64E)
+        if (kind == Gigacage::Primitive) {
+            LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
+            return untagArrayPtr(ptr, size);
+        }
+
+        return ptr;
+#else
+        UNUSED_PARAM(kind);
+        UNUSED_PARAM(base);
+        return ptr;
 #endif
     }
     

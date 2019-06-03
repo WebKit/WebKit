@@ -2873,7 +2873,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
                 TrustedImm32(WastefulTypedArray));
 
             JITCompiler::Jump hasNullVector;
-#if CPU(ARM64E)
+#if !GIGACAGE_ENABLED && CPU(ARM64E)
             {
                 GPRReg scratch = m_jit.scratchRegister();
                 DisallowMacroScratchRegisterUsage disallowScratch(m_jit);
@@ -2882,7 +2882,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
                 m_jit.removeArrayPtrTag(scratch);
                 hasNullVector = m_jit.branchTestPtr(MacroAssembler::Zero, scratch);
             }
-#else // CPU(ARM64E)
+#else // !GIGACAGE_ENABLED && CPU(ARM64E)
             hasNullVector = m_jit.branchTestPtr(
                 MacroAssembler::Zero,
                 MacroAssembler::Address(base, JSArrayBufferView::offsetOfVector()));
@@ -6719,14 +6719,6 @@ void SpeculativeJIT::compileConstantStoragePointer(Node* node)
 
 void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
 {
-#if CPU(ARM64E)
-    m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
-    m_jit.loadPtr(storageReg, m_jit.scratchRegister());
-#else
-    UNUSED_PARAM(baseReg);
-    UNUSED_PARAM(storageReg);
-#endif
-
 #if GIGACAGE_ENABLED
     UNUSED_PARAM(baseReg);
     if (!Gigacage::shouldBeEnabled())
@@ -6740,6 +6732,11 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
     }
     
     m_jit.cage(Gigacage::Primitive, storageReg);
+#elif CPU(ARM64E)
+    m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
+#else
+    UNUSED_PARAM(baseReg);
+    UNUSED_PARAM(storageReg);
 #endif
 }
 
