@@ -1,3 +1,24 @@
+2019-06-02  Andy Estes  <aestes@apple.com>
+
+        Memory-cached main resources continue to load after the client decides a content policy of PolicyAction::Download
+        https://bugs.webkit.org/show_bug.cgi?id=198469
+        <rdar://problem/50512713>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate webView:didStartProvisionalNavigation:]):
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate webView:didFinishNavigation:]):
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate _downloadDidStart:]):
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (TEST):
+        * TestWebKitAPI/cocoa/TestProtocol.h:
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (+[TestProtocol additionalResponseHeaders]):
+        (+[TestProtocol setAdditionalResponseHeaders:]):
+        (-[TestProtocol startLoading]):
+
 2019-06-03  Timothy Hatcher  <timothy@apple.com>
 
         Tweak the text and underline color for data detected text.

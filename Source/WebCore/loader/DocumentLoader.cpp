@@ -942,9 +942,15 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         } else
             frameLoader()->client().convertMainResourceLoadToDownload(this, sessionID, m_request, m_response);
 
-        // It might have gone missing
-        if (mainResourceLoader())
+        // The main resource might be loading from the memory cache, or its loader might have gone missing.
+        if (mainResourceLoader()) {
             static_cast<ResourceLoader*>(mainResourceLoader())->didFail(interruptedForPolicyChangeError());
+            return;
+        }
+
+        // We must stop loading even if there is no main resource loader. Otherwise, we might remain
+        // the client of a CachedRawResource that will continue to send us data.
+        stopLoadingForPolicyChange();
         return;
     }
     case PolicyAction::StopAllLoads:

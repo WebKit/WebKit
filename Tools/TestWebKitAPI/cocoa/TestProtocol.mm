@@ -68,6 +68,19 @@ static NSString *testScheme;
     testScheme = nil;
 }
 
+static NSDictionary<NSString *, NSString *> *additionalResponseHeaders;
+
++ (NSDictionary<NSString *, NSString *> *)additionalResponseHeaders
+{
+    return additionalResponseHeaders;
+}
+
++ (void)setAdditionalResponseHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
+{
+    [additionalResponseHeaders autorelease];
+    additionalResponseHeaders = [additionalHeaders copy];
+}
+
 static NSURL *createRedirectURL(NSString *query)
 {
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme, query]];
@@ -86,18 +99,26 @@ static NSURL *createRedirectURL(NSString *query)
         return;
     }
 
+    if ([requestURL.host isEqualToString:@"redirect"]) {
+        NSData *data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]);
+        [self.client URLProtocol:self wasRedirectedToRequest:[NSURLRequest requestWithURL:createRedirectURL(requestURL.query)] redirectResponse:response.get()];
+        return;
+    }
+
     NSData *data;
     if ([requestURL.host isEqualToString:@"bundle-html-file"])
         data = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:requestURL.lastPathComponent.stringByDeletingPathExtension withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     else
         data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
 
-    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]);
+    NSMutableDictionary *responseHeaders = [NSMutableDictionary dictionaryWithCapacity:2];
+    responseHeaders[@"Content-Type"] = @"text/html";
+    responseHeaders[@"Content-Length"] = [NSString stringWithFormat:@"%tu", data.length];
+    if (additionalResponseHeaders)
+        [responseHeaders addEntriesFromDictionary:additionalResponseHeaders];
 
-    if ([requestURL.host isEqualToString:@"redirect"]) {
-        [self.client URLProtocol:self wasRedirectedToRequest:[NSURLRequest requestWithURL:createRedirectURL(requestURL.query)] redirectResponse:response.get()];
-        return;
-    }
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:responseHeaders]);
 
     [self.client URLProtocol:self didReceiveResponse:response.get() cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     [self.client URLProtocol:self didLoadData:data];

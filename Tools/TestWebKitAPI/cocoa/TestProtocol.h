@@ -31,6 +31,7 @@
 + (void)registerWithScheme:(NSString *)scheme;
 + (void)unregister;
 + (NSString *)scheme;
+@property (nonatomic, class, copy) NSDictionary<NSString *, NSString *> *additionalResponseHeaders;
 @end
 
 #endif // TestProtocol_h

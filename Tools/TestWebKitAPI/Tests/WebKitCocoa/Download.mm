@@ -33,6 +33,7 @@
 #import "Test.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -913,5 +914,114 @@ TEST(_WKDownload, DownloadMonitorReturnToForeground)
 }
 
 } // namespace TestWebKitAPI
+
+@interface TestDownloadNavigationResponseFromMemoryCacheDelegate : NSObject <WKNavigationDelegate, _WKDownloadDelegate>
+@property (nonatomic) WKNavigationResponsePolicy responsePolicy;
+@property (nonatomic, readonly) BOOL didFailProvisionalNavigation;
+@property (nonatomic, readonly) BOOL didFinishNavigation;
+@property (nonatomic, readonly) BOOL didStartDownload;
+@end
+
+@implementation TestDownloadNavigationResponseFromMemoryCacheDelegate
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    _didFailProvisionalNavigation = NO;
+    _didFinishNavigation = NO;
+    _didStartDownload = NO;
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    EXPECT_EQ(_WKErrorCodeFrameLoadInterruptedByPolicyChange, error.code);
+    EXPECT_FALSE(_didFinishNavigation);
+    EXPECT_WK_STREQ(_WKLegacyErrorDomain, error.domain);
+    _didFailProvisionalNavigation = YES;
+    if (_responsePolicy != _WKNavigationResponsePolicyBecomeDownload || _didStartDownload)
+        isDone = true;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    EXPECT_FALSE(_didFailProvisionalNavigation);
+    _didFinishNavigation = YES;
+    if (_responsePolicy != _WKNavigationResponsePolicyBecomeDownload || _didStartDownload)
+        isDone = true;
+}
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    _didStartDownload = YES;
+    if (_didFailProvisionalNavigation || _didFinishNavigation)
+        isDone = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    decisionHandler(_responsePolicy);
+}
+
+@end
+
+TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
+{
+    [TestProtocol registerWithScheme:@"http"];
+    TestProtocol.additionalResponseHeaders = @{ @"Cache-Control" : @"max-age=3600" };
+
+    auto delegate = adoptNS([[TestDownloadNavigationResponseFromMemoryCacheDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView configuration].processPool._downloadDelegate = delegate.get();
+
+    NSURL *firstURL = [NSURL URLWithString:@"http://bundle-html-file/simple"];
+    [delegate setResponsePolicy:WKNavigationResponsePolicyAllow];
+    [webView loadRequest:[NSURLRequest requestWithURL:firstURL]];
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_FALSE([delegate didFailProvisionalNavigation]);
+    EXPECT_FALSE([delegate didStartDownload]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
+    EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
+
+    NSURL *secondURL = [NSURL URLWithString:@"http://bundle-html-file/simple2"];
+    [delegate setResponsePolicy:_WKNavigationResponsePolicyBecomeDownload];
+    [webView loadRequest:[NSURLRequest requestWithURL:secondURL]];
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_FALSE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFailProvisionalNavigation]);
+    EXPECT_TRUE([delegate didStartDownload]);
+    EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
+
+    [delegate setResponsePolicy:WKNavigationResponsePolicyAllow];
+    [webView loadRequest:[NSURLRequest requestWithURL:secondURL]];
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_FALSE([delegate didFailProvisionalNavigation]);
+    EXPECT_FALSE([delegate didStartDownload]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
+    EXPECT_WK_STREQ(secondURL.absoluteString, [webView URL].absoluteString);
+
+    [delegate setResponsePolicy:WKNavigationResponsePolicyAllow];
+    [webView goBack];
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_FALSE([delegate didFailProvisionalNavigation]);
+    EXPECT_FALSE([delegate didStartDownload]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
+    EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
+
+    [delegate setResponsePolicy:_WKNavigationResponsePolicyBecomeDownload];
+    [webView loadRequest:[NSURLRequest requestWithURL:secondURL]];
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_FALSE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFailProvisionalNavigation]);
+    EXPECT_TRUE([delegate didStartDownload]);
+    EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
+
+    TestProtocol.additionalResponseHeaders = nil;
+    [TestProtocol unregister];
+}
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS)
