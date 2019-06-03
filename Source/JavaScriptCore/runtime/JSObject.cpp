@@ -943,18 +943,24 @@ bool JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
         
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[propertyName];
         unsigned length = storage->length();
+
+        auto scope = DECLARE_THROW_SCOPE(vm);
         
         // Update length & m_numValuesInVector as necessary.
         if (propertyName >= length) {
             bool putResult = false;
-            if (thisObject->attemptToInterceptPutByIndexOnHole(exec, propertyName, value, shouldThrow, putResult))
+            bool result = thisObject->attemptToInterceptPutByIndexOnHole(exec, propertyName, value, shouldThrow, putResult);
+            RETURN_IF_EXCEPTION(scope, false);
+            if (result)
                 return putResult;
             length = propertyName + 1;
             storage->setLength(length);
             ++storage->m_numValuesInVector;
         } else if (!valueSlot) {
             bool putResult = false;
-            if (thisObject->attemptToInterceptPutByIndexOnHole(exec, propertyName, value, shouldThrow, putResult))
+            bool result = thisObject->attemptToInterceptPutByIndexOnHole(exec, propertyName, value, shouldThrow, putResult);
+            RETURN_IF_EXCEPTION(scope, false);
+            if (result)
                 return putResult;
             ++storage->m_numValuesInVector;
         }
@@ -2716,6 +2722,8 @@ void JSObject::deallocateSparseIndexMap()
 bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, JSValue thisValue, unsigned i, JSValue value, bool shouldThrow, bool& putResult)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     for (JSObject* current = this; ;) {
         // This has the same behavior with respect to prototypes as JSObject::put(). It only
         // allows a prototype to intercept a put if (a) the prototype declares the property
@@ -2726,18 +2734,21 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
         if (storage && storage->m_sparseMap) {
             SparseArrayValueMap::iterator iter = storage->m_sparseMap->find(i);
             if (iter != storage->m_sparseMap->notFound() && (iter->value.attributes() & (PropertyAttribute::Accessor | PropertyAttribute::ReadOnly))) {
+                scope.release();
                 putResult = iter->value.put(exec, thisValue, storage->m_sparseMap.get(), value, shouldThrow);
                 return true;
             }
         }
 
         if (current->type() == ProxyObjectType) {
+            scope.release();
             ProxyObject* proxy = jsCast<ProxyObject*>(current);
             putResult = proxy->putByIndexCommon(exec, thisValue, i, value, shouldThrow);
             return true;
         }
         
-        JSValue prototypeValue = current->getPrototypeDirect(vm);
+        JSValue prototypeValue = current->getPrototype(vm, exec);
+        RETURN_IF_EXCEPTION(scope, false);
         if (prototypeValue.isNull())
             return false;
         
@@ -2747,11 +2758,15 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
 
 bool JSObject::attemptToInterceptPutByIndexOnHole(ExecState* exec, unsigned i, JSValue value, bool shouldThrow, bool& putResult)
 {
-    JSValue prototypeValue = getPrototypeDirect(exec->vm());
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue prototypeValue = getPrototype(vm, exec);
+    RETURN_IF_EXCEPTION(scope, false);
     if (prototypeValue.isNull())
         return false;
     
-    return asObject(prototypeValue)->attemptToInterceptPutByIndexOnHoleForPrototype(exec, this, i, value, shouldThrow, putResult);
+    RELEASE_AND_RETURN(scope, asObject(prototypeValue)->attemptToInterceptPutByIndexOnHoleForPrototype(exec, this, i, value, shouldThrow, putResult));
 }
 
 template<IndexingType indexingShape>
@@ -2937,10 +2952,16 @@ bool JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
     case NonArrayWithSlowPutArrayStorage:
     case ArrayWithSlowPutArrayStorage: {
         // No own property present in the vector, but there might be in the sparse map!
+        auto scope = DECLARE_THROW_SCOPE(vm);
         SparseArrayValueMap* map = arrayStorage()->m_sparseMap.get();
         bool putResult = false;
-        if (!(map && map->contains(i)) && attemptToInterceptPutByIndexOnHole(exec, i, value, shouldThrow, putResult))
-            return putResult;
+        if (!(map && map->contains(i))) {
+            bool result = attemptToInterceptPutByIndexOnHole(exec, i, value, shouldThrow, putResult);
+            RETURN_IF_EXCEPTION(scope, false);
+            if (result)
+                return putResult;
+        }
+        scope.release();
         FALLTHROUGH;
     }
 

@@ -1,3 +1,22 @@
+2019-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
+        https://bugs.webkit.org/show_bug.cgi?id=198477
+        <rdar://problem/51299504>
+
+        Reviewed by Saam Barati.
+
+        JSObject::attemptToInterceptPutByIndexOnHole uses getPrototypeDirect, but it should use getPrototype to
+        handle getPrototype methods in derived JSObject classes correctly.
+
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+
 2019-06-03  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::JavaScriptCore target

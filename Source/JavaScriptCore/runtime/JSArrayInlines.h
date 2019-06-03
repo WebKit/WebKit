@@ -212,8 +212,10 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
     case ArrayWithSlowPutArrayStorage: {
         unsigned oldLength = length();
         bool putResult = false;
-        if (attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true, putResult)) {
-            if (!scope.exception() && oldLength < 0xFFFFFFFFu) {
+        bool result = attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true, putResult);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (result) {
+            if (oldLength < 0xFFFFFFFFu) {
                 scope.release();
                 setLength(exec, oldLength + 1, true);
             }
