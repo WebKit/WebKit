@@ -148,7 +148,7 @@ void PointerCaptureController::reset()
 #if !ENABLE(TOUCH_EVENTS)
     CapturingData capturingData;
     capturingData.pointerType = PointerEvent::mousePointerType();
-    m_activePointerIdsToCapturingData.set(mousePointerID, capturingData);
+    m_activePointerIdsToCapturingData.add(mousePointerID, capturingData);
 #endif
 }
 
