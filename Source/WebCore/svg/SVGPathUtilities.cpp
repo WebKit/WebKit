@@ -60,39 +60,39 @@ String buildStringFromPath(const Path& path)
             switch (element.type) {
             case PathElementMoveToPoint:
                 builder.append('M');
-                builder.appendShortestFormNumber(element.points[0].x());
+                builder.appendNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[0].y());
+                builder.appendNumber(element.points[0].y());
                 break;
             case PathElementAddLineToPoint:
                 builder.append('L');
-                builder.appendShortestFormNumber(element.points[0].x());
+                builder.appendNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[0].y());
+                builder.appendNumber(element.points[0].y());
                 break;
             case PathElementAddQuadCurveToPoint:
                 builder.append('Q');
-                builder.appendShortestFormNumber(element.points[0].x());
+                builder.appendNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[0].y());
+                builder.appendNumber(element.points[0].y());
                 builder.append(',');
-                builder.appendShortestFormNumber(element.points[1].x());
+                builder.appendNumber(element.points[1].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[1].y());
+                builder.appendNumber(element.points[1].y());
                 break;
             case PathElementAddCurveToPoint:
                 builder.append('C');
-                builder.appendShortestFormNumber(element.points[0].x());
+                builder.appendNumber(element.points[0].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[0].y());
+                builder.appendNumber(element.points[0].y());
                 builder.append(',');
-                builder.appendShortestFormNumber(element.points[1].x());
+                builder.appendNumber(element.points[1].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[1].y());
+                builder.appendNumber(element.points[1].y());
                 builder.append(',');
-                builder.appendShortestFormNumber(element.points[2].x());
+                builder.appendNumber(element.points[2].x());
                 builder.append(' ');
-                builder.appendShortestFormNumber(element.points[2].y());
+                builder.appendNumber(element.points[2].y());
                 break;
             case PathElementCloseSubpath:
                 builder.append('Z');

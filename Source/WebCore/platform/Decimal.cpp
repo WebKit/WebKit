@@ -681,8 +681,11 @@ Decimal Decimal::floor() const
 
 Decimal Decimal::fromDouble(double doubleValue)
 {
-    if (std::isfinite(doubleValue))
-        return fromString(String::numberToStringECMAScript(doubleValue));
+    if (std::isfinite(doubleValue)) {
+        // FIXME: Change fromString to take a StringView instead of a String and then
+        // use a fixed size stack buffer instead of allocating and deallocating a string.
+        return fromString(String::number(doubleValue));
+    }
 
     if (std::isinf(doubleValue))
         return infinity(doubleValue < 0 ? Negative : Positive);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -159,11 +159,8 @@ static void submitTopList(unsigned numberOfResourcesFromTheTop, const Vector<Pre
     unsigned topNumberOfTimesAccessedAsFirstPartyDueToUserInteraction = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, numberOfTimesAccessedAsFirstPartyDueToUserInteractionGetter);
     unsigned topNumberOfTimesAccessedAsFirstPartyDueToStorageAccessAPI = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, numberOfTimesAccessedAsFirstPartyDueToStorageAccessAPIGetter);
 
-    StringBuilder preambleBuilder;
-    preambleBuilder.appendLiteral("top");
-    preambleBuilder.appendNumber(numberOfResourcesFromTheTop);
-    String descriptionPreamble = preambleBuilder.toString();
-    
+    String descriptionPreamble = makeString("top", numberOfResourcesFromTheTop);
+
     store.sendDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "PrevalentResourcesWithUserInteraction",
         topPrevalentResourcesWithUserInteraction, significantFiguresForLoggedValues, ShouldSample::No);
     store.sendDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "SubframeUnderTopFrameOrigins",

@@ -222,20 +222,13 @@ public:
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
     WTF_EXPORT_PRIVATE void appendNumber(long long);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
-    // FIXME: Change to call appendShortestFormNumber.
-    void appendNumber(float) = delete;
-    void appendNumber(double) = delete;
+    WTF_EXPORT_PRIVATE void appendNumber(float);
+    WTF_EXPORT_PRIVATE void appendNumber(double);
 
-    WTF_EXPORT_PRIVATE void appendShortestFormNumber(float);
-    WTF_EXPORT_PRIVATE void appendShortestFormNumber(double);
     WTF_EXPORT_PRIVATE void appendFixedPrecisionNumber(float, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
     WTF_EXPORT_PRIVATE void appendFixedPrecisionNumber(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(double, unsigned decimalPlaces);
-
-    // FIXME: Delete in favor of the name appendShortestFormNumber or just appendNumber.
-    void appendECMAScriptNumber(float) = delete;
-    void appendECMAScriptNumber(double);
 
     String toString()
     {
@@ -392,11 +385,6 @@ ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
 {
     ASSERT(!m_is8Bit);
     return m_bufferCharacters16;
-}
-
-inline void StringBuilder::appendECMAScriptNumber(double number)
-{
-    appendShortestFormNumber(number);
 }
 
 template <typename CharType>

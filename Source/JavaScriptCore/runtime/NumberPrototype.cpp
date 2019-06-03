@@ -395,7 +395,7 @@ String toStringWithRadix(double doubleValue, int32_t radix)
         return toStringWithRadixInternal(integerValue, radix);
 
     if (radix == 10 || !std::isfinite(doubleValue))
-        return String::numberToStringECMAScript(doubleValue);
+        return String::number(doubleValue);
 
     RadixBuffer buffer;
     return toStringWithRadixInternal(buffer, doubleValue, radix);
@@ -422,7 +422,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
+        return JSValue::encode(jsNontrivialString(exec, String::number(x)));
 
     if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, "toExponential() argument must be between 0 and 20"_s));
@@ -463,7 +463,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // This also covers Ininity, and structure the check so that NaN
     // values are also handled by numberToString
     if (!(fabs(x) < 1e+21))
-        return JSValue::encode(jsString(exec, String::numberToStringECMAScript(x)));
+        return JSValue::encode(jsString(exec, String::number(x)));
 
     // The check above will return false for NaN or Infinity, these will be
     // handled by numberToString.
@@ -496,11 +496,11 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
     // To precision called with no argument is treated as ToString.
     if (isUndefined)
-        return JSValue::encode(jsString(exec, String::numberToStringECMAScript(x)));
+        return JSValue::encode(jsString(exec, String::number(x)));
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
+        return JSValue::encode(jsNontrivialString(exec, String::number(x)));
 
     if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, "toPrecision() argument must be between 1 and 21"_s));
@@ -537,7 +537,7 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return jsString(&vm, vm.numericStrings.add(doubleValue));
 
     if (!std::isfinite(doubleValue))
-        return jsNontrivialString(&vm, String::numberToStringECMAScript(doubleValue));
+        return jsNontrivialString(&vm, String::number(doubleValue));
 
     RadixBuffer buffer;
     return jsString(&vm, toStringWithRadixInternal(buffer, doubleValue, radix));

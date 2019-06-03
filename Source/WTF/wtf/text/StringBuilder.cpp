@@ -415,13 +415,13 @@ void StringBuilder::appendFixedPrecisionNumber(double number, unsigned precision
     append(numberToFixedPrecisionString(number, precision, buffer, policy == TruncateTrailingZeros));
 }
 
-void StringBuilder::appendShortestFormNumber(float number)
+void StringBuilder::appendNumber(float number)
 {
     NumberToStringBuffer buffer;
     append(numberToString(number, buffer));
 }
 
-void StringBuilder::appendShortestFormNumber(double number)
+void StringBuilder::appendNumber(double number)
 {
     NumberToStringBuffer buffer;
     append(numberToString(number, buffer));

@@ -1,3 +1,24 @@
+2019-06-03  Darin Adler  <darin@apple.com>
+
+        Finish cleanup of String::number for floating point
+        https://bugs.webkit.org/show_bug.cgi?id=198471
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::writeJSON const): Use appendNumber instead of
+        appendECMAScriptNumber, since that's now the default.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendNumber): Renamed from appendShortestFormNumber.
+        * wtf/text/StringBuilder.h: Removed appendShortestFormNumber and
+        appendECMAScriptNumber, replacing both with overload of appendNumber.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::number): Renamed from numberToStringShortest.
+        * wtf/text/WTFString.h: Removed numberToStringShortest and
+        numberToStringECMAScript, replacing both with overload of number.
+
 2019-06-02  Keith Miller  <keith_miller@apple.com>
 
         Reenable Gigacage on ARM64.

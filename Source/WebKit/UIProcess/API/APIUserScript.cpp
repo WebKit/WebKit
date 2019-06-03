@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,14 @@
 #include "config.h"
 #include "APIUserScript.h"
 
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace API {
 
 WTF::URL UserScript::generateUniqueURL()
 {
     static uint64_t identifier;
-
-    StringBuilder urlStringBuilder;
-    urlStringBuilder.appendLiteral("user-script:");
-    urlStringBuilder.appendNumber(++identifier);
-    return { { }, urlStringBuilder.toString() };
+    return { { }, makeString("user-script:", ++identifier) };
 }
 
 UserScript::UserScript(WebCore::UserScript userScript, API::UserContentWorld& world)

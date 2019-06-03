@@ -130,7 +130,9 @@ namespace JSC {
     
     inline const Identifier& IdentifierArena::makeNumericIdentifier(VM* vm, double number)
     {
-        m_identifiers.append(Identifier::fromString(vm, String::numberToStringECMAScript(number)));
+        // FIXME: Why doesn't this use the Identifier::from overload that takes a double?
+        // Seems we are missing out on multiple optimizations by not using it.
+        m_identifiers.append(Identifier::fromString(vm, String::number(number)));
         return m_identifiers.last();
     }
 

@@ -350,7 +350,7 @@ private:
                     if (value.isInt32())
                         return String::number(value.asInt32());
                     if (value.isNumber())
-                        return String::numberToStringECMAScript(value.asNumber());
+                        return String::number(value.asNumber());
                     if (value.isBoolean())
                         return value.asBoolean() ? "true"_s : "false"_s;
                     if (value.isNull())
@@ -421,7 +421,7 @@ private:
                         if (value.isInt32())
                             result = String::number(value.asInt32());
                         else if (value.isNumber())
-                            result = String::numberToStringECMAScript(value.asNumber());
+                            result = String::number(value.asNumber());
 
                         if (!result.isNull()) {
                             convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, result));

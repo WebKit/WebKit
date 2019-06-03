@@ -909,7 +909,7 @@ bool MediaControlTimelineElement::willRespondToMouseClickEvents()
 
 void MediaControlTimelineElement::setPosition(double currentTime)
 {
-    setValue(String::numberToStringECMAScript(currentTime));
+    setValue(String::number(currentTime));
 }
 
 void MediaControlTimelineElement::setDuration(double duration)

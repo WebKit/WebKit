@@ -39,7 +39,7 @@ public:
         if (d == entry.key && !entry.value.isNull())
             return entry.value;
         entry.key = d;
-        entry.value = String::numberToStringECMAScript(d);
+        entry.value = String::number(d);
         return entry.value;
     }
 

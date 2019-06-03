@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC { namespace Wasm {
 
@@ -151,11 +151,7 @@ void BBQPlan::prepare()
 
     auto tryReserveCapacity = [this] (auto& vector, size_t size, const char* what) {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {
-            StringBuilder builder;
-            builder.appendLiteral("Failed allocating enough space for ");
-            builder.appendNumber(size);
-            builder.append(what);
-            fail(holdLock(m_lock), builder.toString());
+            fail(holdLock(m_lock), WTF::makeString("Failed allocating enough space for ", size, what));
             return false;
         }
         return true;

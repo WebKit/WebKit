@@ -680,7 +680,7 @@ void Value::writeJSON(StringBuilder& output) const
         if (!std::isfinite(m_value.number))
             output.appendLiteral("null");
         else
-            output.appendECMAScriptNumber(m_value.number);
+            output.appendNumber(m_value.number);
         break;
     }
     default:

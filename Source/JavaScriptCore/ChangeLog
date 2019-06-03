@@ -1,3 +1,30 @@
+2019-06-03  Darin Adler  <darin@apple.com>
+
+        Finish cleanup of String::number for floating point
+        https://bugs.webkit.org/show_bug.cgi?id=198471
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode): Use String::number instead of
+        String::numberToStringECMAScript, since that's now the default.
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeNumericIdentifier): Ditto.
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue): Use appendNumber instead of
+        builder.appendECMAScriptNumber, since that's now the default.
+        * runtime/NumberPrototype.cpp:
+        (JSC::toStringWithRadix): Use String::number instead of
+        String::numberToStringECMAScript, since that's now the default.
+        (JSC::numberProtoFuncToExponential): Ditto.
+        (JSC::numberProtoFuncToFixed): Ditto.
+        (JSC::numberProtoFuncToPrecision): Ditto.
+        (JSC::numberToStringInternal): Ditto.
+        * runtime/NumericStrings.h:
+        (JSC::NumericStrings::add): Ditto.
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepare): Ditto.
+
 2019-06-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Crash explicitly if StructureIDs are exhausted

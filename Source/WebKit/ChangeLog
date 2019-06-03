@@ -1,3 +1,18 @@
+2019-06-03  Darin Adler  <darin@apple.com>
+
+        Finish cleanup of String::number for floating point
+        https://bugs.webkit.org/show_bug.cgi?id=198471
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::submitTopList): Use makeString instead of StringBuilder since it
+        is more terse and possibly more efficient as well.
+        * UIProcess/API/APIUserScript.cpp:
+        (API::UserScript::generateUniqueURL): Ditto.
+        * UIProcess/API/APIUserStyleSheet.cpp:
+        (API::UserStyleSheet::generateUniqueURL): Ditto.
+
 2019-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r240862) [WinCairo][WK2] position:fixed elements don't show

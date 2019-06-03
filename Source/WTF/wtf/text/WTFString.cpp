@@ -491,13 +491,13 @@ String String::numberToStringFixedPrecision(double number, unsigned precision, T
     return numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
 }
 
-String String::numberToStringShortest(float number)
+String String::number(float number)
 {
     NumberToStringBuffer buffer;
     return numberToString(number, buffer);
 }
 
-String String::numberToStringShortest(double number)
+String String::number(double number)
 {
     NumberToStringBuffer buffer;
     return numberToString(number, buffer);

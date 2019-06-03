@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
  *           (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,15 +54,10 @@ CSSCursorImageValue::~CSSCursorImageValue()
 
 String CSSCursorImageValue::customCSSText() const
 {
-    StringBuilder result;
-    result.append(m_imageValue.get().cssText());
-    if (m_hasHotSpot) {
-        result.append(' ');
-        result.appendNumber(m_hotSpot.x());
-        result.append(' ');
-        result.appendNumber(m_hotSpot.y());
-    }
-    return result.toString();
+    String text = m_imageValue.get().cssText();
+    if (!m_hasHotSpot)
+        return text;
+    return makeString(text, ' ', m_hotSpot.x(), ' ', m_hotSpot.y());
 }
 
 // FIXME: Should this function take a TreeScope instead?

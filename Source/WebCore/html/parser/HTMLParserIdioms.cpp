@@ -89,7 +89,7 @@ String serializeForNumberType(double number)
 {
     // According to HTML5, "the best representation of the number n as a floating
     // point number" is a string produced by applying ToString() to n.
-    return String::numberToStringECMAScript(number);
+    return String::number(number);
 }
 
 Decimal parseToDecimalForNumberType(const String& string, const Decimal& fallbackValue)
