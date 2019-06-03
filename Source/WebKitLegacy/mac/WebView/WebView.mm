@@ -3190,6 +3190,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setAriaReflectionEnabled([preferences ariaReflectionEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled([preferences fetchAPIKeepAliveEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setReferrerPolicyAttributeEnabled([preferences referrerPolicyAttributeEnabled]);
+    RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadResponsiveImagesEnabled([preferences linkPreloadResponsiveImagesEnabled]);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RuntimeEnabledFeatures::sharedFeatures().setLegacyEncryptedMediaAPIEnabled(preferences.legacyEncryptedMediaAPIEnabled);

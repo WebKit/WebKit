@@ -875,6 +875,8 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setCSSOMViewScrollingAPIEnabled:YES];
     [preferences setMediaRecorderEnabled:YES];
     [preferences setReferrerPolicyAttributeEnabled:YES];
+    [preferences setReferrerPolicyAttributeEnabled:YES];
+    [preferences setLinkPreloadResponsiveImagesEnabled:YES];
 }
 
 // Called before each test.

@@ -1,3 +1,14 @@
+2019-06-03  Rob Buis  <rbuis@igalia.com>
+
+        Implement imagesrcset and imagesizes attributes on link rel=preload
+        https://bugs.webkit.org/show_bug.cgi?id=192950
+
+        Reviewed by Youenn Fablet.
+
+        Add a runtime flag for link preload responsive images.
+
+        * Shared/WebPreferences.yaml:
+
 2019-06-03  Darin Adler  <darin@apple.com>
 
         Finish cleanup of String::number for floating point

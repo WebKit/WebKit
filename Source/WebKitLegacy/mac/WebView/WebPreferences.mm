@@ -692,6 +692,7 @@ public:
         @NO, WebKitResizeObserverEnabledPreferenceKey,
 #endif
         @NO, WebKitCoreMathMLEnabledPreferenceKey,
+        @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3466,6 +3467,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCoreMathMLEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCoreMathMLEnabledPreferenceKey];
+}
+
+- (BOOL)linkPreloadResponsiveImagesEnabled
+{
+    return [self _boolValueForKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
+}
+
+- (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
 }
 
 @end

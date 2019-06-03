@@ -1679,6 +1679,14 @@ LinkPrefetchEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
+LinkPreloadResponsiveImagesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Link preload responsive images"
+  humanReadableDescription: "Enable link preload responsive images"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 # Deprecated
 
 ICECandidateFilteringEnabled:
