@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingStateStickyNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "GraphicsLayer.h"
 #include "Logging.h"
@@ -139,4 +139,4 @@ void ScrollingStateStickyNode::dumpProperties(TextStream& ts, ScrollingStateTree
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING)

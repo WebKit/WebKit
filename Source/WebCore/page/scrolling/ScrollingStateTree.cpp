@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingStateTree.h"
 
-#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "AsyncScrollingCoordinator.h"
 #include "Logging.h"
@@ -418,4 +418,4 @@ void showScrollingStateTree(const WebCore::ScrollingStateNode* node)
 
 #endif
 
-#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING)

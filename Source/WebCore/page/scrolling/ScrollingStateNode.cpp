@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingStateNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateTree.h"
@@ -205,4 +205,4 @@ String ScrollingStateNode::scrollingStateTreeAsText(ScrollingStateTreeAsTextBeha
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING)

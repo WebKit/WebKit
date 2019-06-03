@@ -1,3 +1,18 @@
+2019-06-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Disable async scrolling until implemented
+        https://bugs.webkit.org/show_bug.cgi?id=198476
+
+        Reviewed by Antti Koivisto.
+
+        Disable async scrolling on Nicosia-using ports until the underlying
+        implementation is complete, allowing easier refactorings of the general
+        async scrolling system.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-05-30  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WEBKIT_FRAMEWORK_TARGET macro

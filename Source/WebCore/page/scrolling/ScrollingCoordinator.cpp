@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC) && !USE(COORDINATED_GRAPHICS)
+#if PLATFORM(IOS) || !ENABLE(ASYNC_SCROLLING)
 Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
     return adoptRef(*new ScrollingCoordinator(page));

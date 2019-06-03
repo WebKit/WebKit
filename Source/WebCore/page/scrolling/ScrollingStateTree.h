@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
@@ -113,4 +113,4 @@ void showScrollingStateTree(const WebCore::ScrollingStateTree*);
 void showScrollingStateTree(const WebCore::ScrollingStateNode*);
 #endif
 
-#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING)

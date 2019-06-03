@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingStateFrameHostingNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateTree.h"
 #include <wtf/text/TextStream.h>
@@ -84,4 +84,4 @@ void ScrollingStateFrameHostingNode::dumpProperties(TextStream& ts, ScrollingSta
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING)
