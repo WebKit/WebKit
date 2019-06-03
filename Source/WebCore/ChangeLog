@@ -1,3 +1,7 @@
+2019-06-03  Alan Coon  <alancoon@apple.com>
+
+        Revert r246001. rdar://problem/50871594
+
 2019-05-31  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/50871594
