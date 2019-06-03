@@ -636,12 +636,26 @@ SLOW_PATH_DECL(slow_path_pow)
 {
     BEGIN();
     auto bytecode = pc->as<OpPow>();
-    double a = GET_C(bytecode.m_lhs).jsValue().toNumber(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    double b = GET_C(bytecode.m_rhs).jsValue().toNumber(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
+    auto leftNumeric = left.toNumeric(exec);
+    CHECK_EXCEPTION();
+    auto rightNumeric = right.toNumeric(exec);
+    CHECK_EXCEPTION();
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::exponentiate(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            CHECK_EXCEPTION();
+            RETURN(result);
+        }
+
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in exponentiation operation."));
+    }
+    
+    double a = WTF::get<double>(leftNumeric);
+    double b = WTF::get<double>(rightNumeric);
+
     RETURN(jsNumber(operationMathPow(a, b)));
 }
 

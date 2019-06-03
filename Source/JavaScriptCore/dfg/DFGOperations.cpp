@@ -548,6 +548,19 @@ EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue e
     return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in division operation.");
 }
 
+EncodedJSValue JIT_OPERATION operationValuePow(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::exponentiate(exec, left, right);
+    };
+
+    auto numberOp = [] (double left, double right) -> double {
+        return operationMathPow(left, right);
+    };
+
+    return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in exponentiation operation."_s);
+}
+
 double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp1)
 {
     VM* vm = &exec->vm();
@@ -1394,6 +1407,17 @@ JSCell* JIT_OPERATION operationDivBigInt(ExecState* exec, JSCell* op1, JSCell* o
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
     return JSBigInt::divide(exec, leftOperand, rightOperand);
+}
+
+JSCell* JIT_OPERATION operationPowBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
+    JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
+    
+    return JSBigInt::exponentiate(exec, leftOperand, rightOperand);
 }
 
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell* op2)

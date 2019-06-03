@@ -237,6 +237,95 @@ void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
     internalMultiplyAdd(this, factor, summand, length(), this);
 }
 
+JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* exponent)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (exponent->sign()) {
+        throwRangeError(exec, scope, "Negative exponent is not allowed"_s);
+        return nullptr;
+    }
+
+    // 2. If base is 0n and exponent is 0n, return 1n.
+    if (exponent->isZero())
+        return JSBigInt::createFrom(vm, 1);
+    
+    // 3. Return a BigInt representing the mathematical value of base raised
+    //    to the power exponent.
+    if (base->isZero())
+        return base;
+
+    if (base->length() == 1 && base->digit(0) == 1) {
+        // (-1) ** even_number == 1.
+        if (base->sign() && !(exponent->digit(0) & 1))
+            return JSBigInt::unaryMinus(vm, base);
+
+        // (-1) ** odd_number == -1; 1 ** anything == 1.
+        return base;
+    }
+
+    // For all bases >= 2, very large exponents would lead to unrepresentable
+    // results.
+    static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit::max()");
+    if (exponent->length() > 1) {
+        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        return nullptr;
+    }
+
+    Digit expValue = exponent->digit(0);
+    if (expValue == 1)
+        return base;
+    if (expValue >= maxLengthBits) {
+        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        return nullptr;
+    }
+
+    static_assert(maxLengthBits <= maxInt, "maxLengthBits needs to be <= maxInt");
+    int n = static_cast<int>(expValue);
+    if (base->length() == 1 && base->digit(0) == 2) {
+        // Fast path for 2^n.
+        int neededDigits = 1 + (n / digitBits);
+        JSBigInt* result = JSBigInt::tryCreateWithLength(exec, neededDigits);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        result->initialize(InitializationType::WithZero);
+        // All bits are zero. Now set the n-th bit.
+        Digit msd = static_cast<Digit>(1) << (n % digitBits);
+        result->setDigit(neededDigits - 1, msd);
+        // Result is negative for odd powers of -2n.
+        if (base->sign()) 
+            result->setSign(static_cast<bool>(n & 1));
+
+        return result;
+    }
+
+    JSBigInt* result = nullptr;
+    JSBigInt* runningSquare = base;
+
+    // This implicitly sets the result's sign correctly.
+    if (n & 1)
+        result = base;
+
+    n >>= 1;
+    for (; n; n >>= 1) {
+        JSBigInt* maybeResult = JSBigInt::multiply(exec, runningSquare, runningSquare);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        runningSquare = maybeResult;
+        if (n & 1) {
+            if (!result)
+                result = runningSquare;
+            else {
+                maybeResult = JSBigInt::multiply(exec, result, runningSquare);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = maybeResult;
+            }
+        }
+    }
+
+    return result;
+}
+
 JSBigInt* JSBigInt::multiply(ExecState* exec, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = exec->vm();
@@ -1055,7 +1144,7 @@ void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend,
     }
 }
 
-// Returns whether (factor1 * factor2) > (high << kDigitBits) + low.
+// Returns whether (factor1 * factor2) > (high << digitBits) + low.
 inline bool JSBigInt::productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low)
 {
     Digit resultHigh;

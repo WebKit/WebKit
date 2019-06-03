@@ -5796,6 +5796,47 @@ static MacroAssembler::Jump compileArithPowIntegerFastPath(JITCompiler& assemble
     return skipSlowPath;
 }
 
+void SpeculativeJIT::compileValuePow(Node* node)
+{
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (node->binaryUseKind() == BigIntUse) {
+        SpeculateCellOperand left(this, leftChild);
+        SpeculateCellOperand right(this, rightChild);
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+
+        speculateBigInt(leftChild, leftGPR);
+        speculateBigInt(rightChild, rightGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+
+        callOperation(operationPowBigInt, resultGPR, leftGPR, rightGPR);
+
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    DFG_ASSERT(m_jit.graph(), node, node->binaryUseKind() == UntypedUse, node->binaryUseKind());
+
+    JSValueOperand left(this, leftChild);
+    JSValueOperand right(this, rightChild);
+    JSValueRegs leftRegs = left.jsValueRegs();
+    JSValueRegs rightRegs = right.jsValueRegs();
+
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(operationValuePow, resultRegs, leftRegs, rightRegs);
+    m_jit.exceptionCheck();
+
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileArithPow(Node* node)
 {
     if (node->child2().useKind() == Int32Use) {

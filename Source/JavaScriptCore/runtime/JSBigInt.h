@@ -111,6 +111,8 @@ public:
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
     inline bool toBoolean() const { return !isZero(); }
 
+    static JSBigInt* exponentiate(ExecState*, JSBigInt* base, JSBigInt* exponent);
+
     static JSBigInt* multiply(ExecState*, JSBigInt* x, JSBigInt* y);
     
     ComparisonResult static compareToDouble(JSBigInt* x, double y);

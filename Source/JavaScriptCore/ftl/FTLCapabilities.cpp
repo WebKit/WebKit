@@ -99,6 +99,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ValueMul:
     case ValueDiv:
     case ValueMod:
+    case ValuePow:
     case StrCat:
     case ArithAdd:
     case ArithClz32:

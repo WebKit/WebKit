@@ -1,3 +1,73 @@
+2019-06-03  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "**"
+        https://bugs.webkit.org/show_bug.cgi?id=190799
+
+        Reviewed by Saam Barati.
+
+        We are introducing support for BigInt into "**" operator. This Patch
+        also includes changes into DFG, introducing a new node "ValuePow" that
+        is responsible to handle UntypedUse and BigIntUse.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+        ValuePow(Untyped, Untyped) still can propagate constant if AI proves
+        it. We are doing so if AI proves rhs and lhs as numbers.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+        When compiling op_pow, we first verify if rhs and lhs can be any Int
+        or number. If this happen, we emit ArithPow, otherwise we fallback to
+        ValuePow and rely on fixup to convert it to ArithPow if possible.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+        We only clobberize world if ValuePow is UntypedUse. Otherwise, we can
+        properly support CSE.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
+        JSBigInt::exponentiate allocates JSBigInts to perform calculation and
+        it can trigger GC. ValuePow(UntypedUse) can trigger GC because it can
+        execute user code.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupArithPow):
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValuePow):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValuePow):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
+        We are adding proper support to BigInt on op_pow. The specification
+        defines that we can only apply pow when both operands have the same
+        type after calling ToNumeric().
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::exponentiate):
+        * runtime/JSBigInt.h:
+
 2019-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect

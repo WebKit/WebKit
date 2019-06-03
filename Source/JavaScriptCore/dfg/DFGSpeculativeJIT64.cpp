@@ -2253,6 +2253,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ValuePow:
+        compileValuePow(node);
+        break;
+
     case ArithPow:
         compileArithPow(node);
         break;

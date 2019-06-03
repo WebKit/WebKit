@@ -1359,6 +1359,7 @@ public:
     void compileValueMod(Node*);
     void compileArithMod(Node*);
     void compileArithPow(Node*);
+    void compileValuePow(Node*);
     void compileArithRounding(Node*);
     void compileArithRandom(Node*);
     void compileArithUnary(Node*);

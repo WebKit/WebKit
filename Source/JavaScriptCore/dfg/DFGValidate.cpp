@@ -258,6 +258,7 @@ public:
                 case ValueMul:
                 case ValueDiv:
                 case ValueMod:
+                case ValuePow:
                 case ArithAdd:
                 case ArithSub:
                 case ArithMul:

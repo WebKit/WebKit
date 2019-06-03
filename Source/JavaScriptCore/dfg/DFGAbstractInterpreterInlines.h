@@ -902,6 +902,27 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case ValuePow: {
+        JSValue childX = forNode(node->child1()).value();
+        JSValue childY = forNode(node->child2()).value();
+        if (childX && childY && childX.isNumber() && childY.isNumber()) {
+            // We need to call `didFoldClobberWorld` here because this path is only possible
+            // when node->useKind is UntypedUse. In the case of BigIntUse, children will be
+            // cleared by `AbstractInterpreter::executeEffects`.
+            didFoldClobberWorld();
+            setConstant(node, jsDoubleNumber(operationMathPow(childX.asNumber(), childY.asNumber())));
+            break;
+        }
+
+        if (node->binaryUseKind() == BigIntUse)
+            setTypeForNode(node, SpecBigInt);
+        else {
+            clobberWorld();
+            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+        }
+        break;
+    }
+
     case ValueMul: {
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);

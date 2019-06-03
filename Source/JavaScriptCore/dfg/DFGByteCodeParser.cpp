@@ -5125,12 +5125,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_pow: {
-            // FIXME: ArithPow(Untyped, Untyped) should be supported as the same to ArithMul, ArithSub etc.
-            // https://bugs.webkit.org/show_bug.cgi?id=160012
             auto bytecode = currentInstruction->as<OpPow>();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
-            set(bytecode.m_dst, addToGraph(ArithPow, op1, op2));
+            if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
+                set(bytecode.m_dst, addToGraph(ArithPow, op1, op2));
+            else
+                set(bytecode.m_dst, addToGraph(ValuePow, op1, op2));
             NEXT_OPCODE(op_pow);
         }
 

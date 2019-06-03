@@ -277,6 +277,22 @@ private:
             break;
         }
 
+        case ValuePow: {
+            SpeculatedType left = node->child1()->prediction();
+            SpeculatedType right = node->child2()->prediction();
+
+            if (left && right) {
+                if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())          
+                    changed |= mergePrediction(SpecBigInt);
+                else if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
+                    && isFullNumberOrBooleanSpeculationExpectingDefined(right))
+                    setPrediction(SpecBytecodeDouble);
+                else
+                    setPrediction(SpecBytecodeDouble | SpecBigInt);
+            }
+            break;
+        }
+
         case ValueNegate:
         case ArithNegate: {
             SpeculatedType prediction = node->child1()->prediction();
@@ -1120,6 +1136,7 @@ private:
         case ValueMul:
         case ValueDiv:
         case ValueMod:
+        case ValuePow:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

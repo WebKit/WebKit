@@ -793,6 +793,9 @@ private:
         case ArithAbs:
             compileArithAbs();
             break;
+        case ValuePow:
+            compileValuePow();
+            break;
         case ArithPow:
             compileArithPow();
             break;
@@ -2716,6 +2719,23 @@ private:
         LValue argument = lowJSValue(m_node->child1());
         LValue result = vmCall(Double, m_out.operation(DFG::arithUnaryOperation(m_node->arithUnaryType())), m_callFrame, argument);
         setDouble(result);
+    }
+
+    void compileValuePow()
+    {
+        if (m_node->isBinaryUseKind(BigIntUse)) {
+            LValue base = lowBigInt(m_node->child1());
+            LValue exponent = lowBigInt(m_node->child2());
+            
+            LValue result = vmCall(pointerType(), m_out.operation(operationPowBigInt), m_callFrame, base, exponent);
+            setJSValue(result);
+            return;
+        }
+
+        LValue base = lowJSValue(m_node->child1());
+        LValue exponent = lowJSValue(m_node->child2());
+        LValue result = vmCall(Int64, m_out.operation(operationValuePow), m_callFrame, base, exponent);
+        setJSValue(result);
     }
 
     void compileArithPow()

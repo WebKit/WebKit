@@ -108,6 +108,18 @@ private:
 
     }
 
+    void fixupArithPow(Node* node)
+    {
+        if (node->child2()->shouldSpeculateInt32OrBooleanForArithmetic()) {
+            fixDoubleOrBooleanEdge(node->child1());
+            fixIntOrBooleanEdge(node->child2());
+            return;
+        }
+
+        fixDoubleOrBooleanEdge(node->child1());
+        fixDoubleOrBooleanEdge(node->child2());
+    }
+
     void fixupArithDiv(Node* node, Edge& leftChild, Edge& rightChild)
     {
         if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
@@ -589,15 +601,30 @@ private:
             break;
         }
 
-        case ArithPow: {
-            if (node->child2()->shouldSpeculateInt32OrBooleanForArithmetic()) {
-                fixDoubleOrBooleanEdge(node->child1());
-                fixIntOrBooleanEdge(node->child2());
+        case ValuePow: {
+            if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+                fixEdge<BigIntUse>(node->child1());
+                fixEdge<BigIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
 
-            fixDoubleOrBooleanEdge(node->child1());
-            fixDoubleOrBooleanEdge(node->child2());
+            if (Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())) {
+                fixEdge<UntypedUse>(node->child1());
+                fixEdge<UntypedUse>(node->child2());
+                break;
+            }
+
+            node->setOp(ArithPow);
+            node->clearFlags(NodeMustGenerate);
+            node->setResult(NodeResultDouble);
+
+            fixupArithPow(node);
+            break;
+        }
+
+        case ArithPow: {
+            fixupArithPow(node);
             break;
         }
 

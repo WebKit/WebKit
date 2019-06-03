@@ -60,6 +60,7 @@ EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState*, EncodedJSValue 
 EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueDiv(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValuePow(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 double JIT_OPERATION operationArithAbs(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 uint32_t JIT_OPERATION operationArithClz32(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithFRound(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
@@ -171,6 +172,7 @@ JSCell* JIT_OPERATION operationSubBigInt(ExecState*, JSCell* op1, JSCell* op2) W
 JSCell* JIT_OPERATION operationMulBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationModBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationDivBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationPowBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitNotBigInt(ExecState*, JSCell* op1) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitOrBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
