@@ -1,3 +1,22 @@
+2019-06-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: remove RemoteObject.prototype.getPropertyDescriptorsAsObject
+        https://bugs.webkit.org/show_bug.cgi?id=198395
+
+        Reviewed by Matt Baker.
+
+        When calling `RemoteObject.prototype.getPropertyDescriptorsAsObject`, if one of the returned
+        property descriptors is named `__proto__`, it will replace the `__proto__` of the plain
+        object created for that function with the `WI.PropertyDescriptor` itself, altering the
+        prototype chain.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.getPropertyDescriptorsAsObject): Deleted.
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.prototype.async run.async parseResponse.async resultArrayForEach):
+        * UserInterface/Views/ErrorObjectView.js:
+        (WI.ErrorObjectView.prototype.update):
+
 2019-06-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Debugger: sidebar should always reveal active call frame when hitting a breakpoint

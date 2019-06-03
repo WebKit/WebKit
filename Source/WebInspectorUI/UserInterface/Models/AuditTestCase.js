@@ -181,12 +181,11 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                 if (!array)
                     return;
 
-                // `getPropertyDescriptorsAsObject` returns an object, meaning that if we
-                // want to iterate over `array` by index, we have to count.
-                let asObject = await new Promise((resolve, reject) => array.getPropertyDescriptorsAsObject(resolve, options));
+                let arrayProperties = await new Promise((resolve, reject) => array.getPropertyDescriptors(resolve, options));
                 for (let i = 0; i < array.size; ++i) {
-                    if (i in asObject)
-                        await callback(asObject[i]);
+                    let arrayPropertyForIndex = arrayProperties.find((arrayProperty) => arrayProperty.name === String(i));
+                    if (arrayPropertyForIndex)
+                        await callback(arrayPropertyForIndex);
                 }
             }
 

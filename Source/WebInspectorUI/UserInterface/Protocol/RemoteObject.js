@@ -651,19 +651,6 @@ WI.RemoteObject = class RemoteObject
         return JSON.stringify(this._objectId) + "-" + this._subtype;
     }
 
-    getPropertyDescriptorsAsObject(callback, options = {})
-    {
-        this.getPropertyDescriptors(function(properties) {
-            var propertiesResult = {};
-            var internalPropertiesResult = {};
-            for (var propertyDescriptor of properties) {
-                var object = propertyDescriptor.isInternalProperty ? internalPropertiesResult : propertiesResult;
-                object[propertyDescriptor.name] = propertyDescriptor;
-            }
-            callback(propertiesResult, internalPropertiesResult);
-        }, options);
-    }
-
     _getPropertyDescriptorsResolver(callback, error, properties, internalProperties)
     {
         if (error) {

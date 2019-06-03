@@ -53,10 +53,10 @@ function test()
         addTest(name, expression, options, async (remoteObject, wasThrown) => {
             InspectorTest.assert(wasThrown, "There should be an error.");
             if (value && typeof value === "object") {
-                let propertyDescriptors = await new Promise((resolve) => remoteObject.getPropertyDescriptorsAsObject(resolve));
+                let propertyDescriptors = await new Promise((resolve) => remoteObject.getPropertyDescriptors(resolve));
                 let properties = Array.isArray(value) ? [] : {};
                 for (let key in value)
-                    properties[key] = propertyDescriptors[key].value.value;
+                    properties[key] = propertyDescriptors.find((property) => property.name === key).value.value;
                 InspectorTest.expectShallowEqual(properties, value, "The rejected value should be " + JSON.stringify(value));
             } else
                 InspectorTest.expectEqual(remoteObject.value, value, "The rejected value should be " + JSON.stringify(value));
