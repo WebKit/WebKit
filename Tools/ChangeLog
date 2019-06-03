@@ -1,3 +1,19 @@
+2019-06-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MiniBrowser] WKViewSetIsInWindow should be called
+        https://bugs.webkit.org/show_bug.cgi?id=198474
+
+        Reviewed by Darin Adler.
+
+        WinCairo WK2 MiniBrowser can't play back videos because
+        Page::canStartMedia() always returns false. WKViewSetIsInWindow
+        should be called.
+
+        The original MiniBrowser did it in Bug 55364.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow): Call WKViewSetIsInWindow.
+
 2019-05-31  Sihui Liu  <sihui_liu@apple.com>
 
         TestWebKitAPI.WKWebView.LocalStorageProcessSuspends is flaky

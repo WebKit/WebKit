@@ -129,6 +129,8 @@ WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainW
 {
     RECT rect = { };
     m_view = adoptWK(WKViewCreate(rect, conf, mainWnd));
+    WKViewSetIsInWindow(m_view.get(), true);
+
     auto page = WKViewGetPage(m_view.get());
 
     WKPageNavigationClientV0 navigationClient = { };
