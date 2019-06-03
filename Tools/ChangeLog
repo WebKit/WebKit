@@ -1,3 +1,15 @@
+2019-06-03  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mac WK2 ] TestWebKitAPI.WKWebView.LocalStorageProcessCrashes is a flaky timeout when run locally.
+        https://bugs.webkit.org/show_bug.cgi?id=198423
+        <rdar://problem/51305247>
+
+        Reviewed by Youenn Fablet.
+
+        IDBDatabase receives error event on network process crash, so we don't need to check it periodically.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/local-storage-process-crashes.html:
+
 2019-06-03  Rob Buis  <rbuis@igalia.com>
 
         Implement imagesrcset and imagesizes attributes on link rel=preload

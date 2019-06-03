@@ -3,17 +3,6 @@
 
 var db;
 
-function put() {
-    var os = db.transaction(["TestObjectStore"], "readwrite").objectStore("TestObjectStore");
-    var request = os.put('value', 'key');
-    request.onsuccess = (event) => {
-        setTimeout(put, 100);
-    }
-    request.onerror = (event)=> {
-        window.webkit.messageHandlers.testHandler.postMessage("Network Process Crashed");
-    }
-}
-
 window.localStorage.setItem("local", "storage");
 window.sessionStorage.setItem("session", "storage");
 
@@ -22,7 +11,7 @@ request.onsuccess = function(event) {
     window.webkit.messageHandlers.testHandler.postMessage("local:" + window.localStorage.getItem("local"));
     window.webkit.messageHandlers.testHandler.postMessage("session:"+ window.sessionStorage.getItem("session"));
     db = request.result;
-    put();
+    db.onerror = () => window.webkit.messageHandlers.testHandler.postMessage("Network Process Crashed");
 }
 
 request.onupgradeneeded = function(event) {
