@@ -1,3 +1,39 @@
+2019-06-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Debugger: sidebar should always reveal active call frame when hitting a breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=198228
+        <rdar://problem/46719447>
+
+        Reviewed by Devin Rousso.
+
+        Reveal the active call frame TreeElement when call frames change. Refreshing
+        the current target's ThreadTreeElement children is insufficient, since
+        the sidebar panel content may have been scrolled.
+
+        This patch also introduces a workaround to prevent the DetailsSection header
+        element, which has sticky positioning, from covering a revealed TreeElement.
+        This can be the case when the TreeElement being revealed is at the topmost edge
+        of the scrolled content element.
+
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype.createContentTreeOutline):
+        (WI.DebuggerSidebarPanel.prototype._debuggerCallFramesDidChange):
+
+        * UserInterface/Views/DetailsSection.js:
+        (WI.DetailsSection.prototype.get element):
+        (WI.DetailsSection.prototype.get headerElement):
+        (WI.DetailsSection.prototype.get identifier):
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerCallFramesDidChange):
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.reveal):
+        * UserInterface/Views/TreeOutline.js:
+
 2019-06-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: propagate whether to show prototype information to subobject views

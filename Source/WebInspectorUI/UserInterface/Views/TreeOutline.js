@@ -1159,6 +1159,7 @@ WI.TreeOutline.Event = {
     ElementAdded: Symbol("element-added"),
     ElementDidChange: Symbol("element-did-change"),
     ElementRemoved: Symbol("element-removed"),
+    ElementRevealed: Symbol("element-revealed"),
     ElementClicked: Symbol("element-clicked"),
     ElementDisclosureDidChanged: Symbol("element-disclosure-did-change"),
     ElementVisibilityDidChange: Symbol("element-visbility-did-change"),

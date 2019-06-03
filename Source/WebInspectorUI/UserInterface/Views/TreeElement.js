@@ -488,6 +488,9 @@ WI.TreeElement = class TreeElement extends WI.Object
 
         if (this.onreveal)
             this.onreveal(this);
+
+        if (this.treeOutline)
+            this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRevealed, {element: this});
     }
 
     revealed(ignoreHidden)

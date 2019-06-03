@@ -161,8 +161,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         breakpointNavigationBar.addNavigationItem(this._createBreakpointButton);
 
         let breakpointsGroup = new WI.DetailsSectionGroup([breakpointsRow]);
-        let breakpointsSection = new WI.DetailsSection("breakpoints", WI.UIString("Breakpoints"), [breakpointsGroup], breakpointNavigationBarWrapper);
-        this.contentView.element.appendChild(breakpointsSection.element);
+        this._breakpointsSection = new WI.DetailsSection("breakpoints", WI.UIString("Breakpoints"), [breakpointsGroup], breakpointNavigationBarWrapper);
+        this.contentView.element.appendChild(this._breakpointsSection.element);
 
         this._breakpointsContentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._handleBreakpointElementAddedOrRemoved, this);
         this._breakpointsContentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleBreakpointElementAddedOrRemoved, this);
@@ -327,6 +327,29 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         // we have a ScriptContentView asking for the tree element we will make a ScriptTreeElement on demand and add it.
 
         return this._addScript(representedObject);
+    }
+
+    createContentTreeOutline(options = {})
+    {
+        let treeOutline = super.createContentTreeOutline(options)
+
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, (event) => {
+            let treeElement = event.data.element;
+            let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection, this._scriptsSection];
+            let detailsSection = detailsSections.find((detailsSection) => detailsSection.element.contains(treeElement.listItemElement));
+            if (!detailsSection)
+                return;
+
+            // Revealing a TreeElement at the scroll container's topmost edge with
+            // scrollIntoViewIfNeeded may result in the element being covered by the
+            // DetailsSection header, which uses sticky positioning. Detect this case,
+            // and adjust the sidebar content's scroll position to compensate.
+            let offset = detailsSection.headerElement.totalOffsetBottom - treeElement.listItemElement.totalOffsetTop;
+            if (offset > 0)
+                this.scrollElement.scrollBy(0, -offset);
+        });
+
+        return treeOutline;
     }
 
     // Protected
@@ -862,6 +885,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         let target = event.data.target;
         let treeElement = this._findThreadTreeElementForTarget(target);
         treeElement.refresh();
+
+        let activeCallFrameTreeElement = this._callStackTreeOutline.findTreeElement(WI.debuggerManager.activeCallFrame);
+        if (activeCallFrameTreeElement)
+            activeCallFrameTreeElement.reveal();
     }
 
     _debuggerActiveCallFrameDidChange()

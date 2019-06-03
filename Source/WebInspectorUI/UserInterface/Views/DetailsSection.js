@@ -65,15 +65,9 @@ WI.DetailsSection = class DetailsSection extends WI.Object
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
-
-    get identifier()
-    {
-        return this._identifier;
-    }
+    get element() { return this._element; }
+    get headerElement() { return this._headerElement; }
+    get identifier() { return this._identifier; }
 
     get title()
     {

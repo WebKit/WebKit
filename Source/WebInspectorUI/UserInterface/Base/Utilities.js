@@ -388,6 +388,14 @@ Object.defineProperty(Element.prototype, "totalOffsetTop",
     }
 });
 
+Object.defineProperty(Element.prototype, "totalOffsetBottom",
+{
+    get()
+    {
+        return this.getBoundingClientRect().bottom;
+    }
+});
+
 Object.defineProperty(Element.prototype, "removeChildren",
 {
     value()
