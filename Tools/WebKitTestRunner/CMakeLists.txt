@@ -23,7 +23,7 @@ set(WebKitTestRunner_SOURCES
 )
 
 set(WebKitTestRunner_LIBRARIES
-    JavaScriptCore
+    WebKit::JavaScriptCore
     WebCoreTestSupport
     WebKit
 )

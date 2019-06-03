@@ -245,8 +245,6 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}
         ${THIRDPARTY_DIR}/gtest/include
         ${PAL_FRAMEWORK_HEADERS_DIR}
-        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-        ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
         ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
         ${WebKit_FRAMEWORK_HEADERS_DIR}
     )

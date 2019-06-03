@@ -1,3 +1,16 @@
+2019-06-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::JavaScriptCore target
+        https://bugs.webkit.org/show_bug.cgi?id=198403
+
+        Reviewed by Konstantin Tokarev.
+
+        Create the WebKit::JavaScriptCore target and use that to propagate headers. Use
+        WEBKIT_COPY_FILES instead of WEBKIT_MAKE_FORWARDING_HEADERS.
+
+        * CMakeLists.txt:
+        * shell/CMakeLists.txt:
+
 2019-06-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246022.

@@ -17,7 +17,6 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 )
 
 set(WebCore_INCLUDE_DIRECTORIES
-    "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
     "${PAL_FRAMEWORK_HEADERS_DIR}"
 )
 
@@ -1204,7 +1203,7 @@ set(WebCore_LIBRARIES
 )
 
 set(WebCoreTestSupport_LIBRARIES
-    JavaScriptCore${DEBUG_SUFFIX}
+    WebKit::JavaScriptCore
 )
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)

@@ -1,3 +1,14 @@
+2019-06-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::JavaScriptCore target
+        https://bugs.webkit.org/show_bug.cgi?id=198403
+
+        Reviewed by Konstantin Tokarev.
+
+        Use the WebKit::JavaScriptCore target.
+
+        * pal/CMakeLists.txt:
+
 2019-05-29  Don Olmstead  <don.olmstead@sony.com>
 
         Remove ENABLE definitions from WebKit config files

@@ -26,7 +26,7 @@ set(WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 set(WebKitLegacy_LIBRARIES
-    PRIVATE JavaScriptCore${DEBUG_SUFFIX}
+    PRIVATE WebKit::JavaScriptCore
     PRIVATE WebCore${DEBUG_SUFFIX}
     PRIVATE PAL${DEBUG_SUFFIX}
 )

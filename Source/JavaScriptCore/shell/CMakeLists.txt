@@ -8,13 +8,12 @@ endif ()
 
 set(jsc_LIBRARIES
     ${CMAKE_DL_LIBS}
-    JavaScriptCore
+    WebKit::JavaScriptCore
 )
 
 set(jsc_PRIVATE_INCLUDE_DIRECTORIES
     ${JavaScriptCore_INCLUDE_DIRECTORIES}
     ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
-    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES}
 )
 
@@ -41,32 +40,32 @@ if (DEVELOPER_MODE)
     )
     set(testapi_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testapi_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testapi_LIBRARIES JavaScriptCore)
+    set(testapi_LIBRARIES WebKit::JavaScriptCore)
 
     set(testmasm_SOURCES ../assembler/testmasm.cpp)
     set(testmasm_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testmasm_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testmasm_LIBRARIES JavaScriptCore)
+    set(testmasm_LIBRARIES WebKit::JavaScriptCore)
 
     set(testRegExp_SOURCES ../testRegExp.cpp)
     set(testRegExp_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testRegExp_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testRegExp_LIBRARIES JavaScriptCore)
+    set(testRegExp_LIBRARIES WebKit::JavaScriptCore)
 
     set(testb3_SOURCES ../b3/testb3.cpp)
     set(testb3_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testb3_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testb3_LIBRARIES JavaScriptCore)
+    set(testb3_LIBRARIES WebKit::JavaScriptCore)
 
     set(testair_SOURCES ../b3/air/testair.cpp)
     set(testair_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testair_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testair_LIBRARIES JavaScriptCore)
+    set(testair_LIBRARIES WebKit::JavaScriptCore)
 
     set(testdfg_SOURCES ../dfg/testdfg.cpp)
     set(testdfg_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testdfg_LIBRARIES JavaScriptCore)
+    set(testdfg_LIBRARIES WebKit::JavaScriptCore)
 
     WEBKIT_EXECUTABLE_DECLARE(testapi)
     WEBKIT_EXECUTABLE_DECLARE(testRegExp)
