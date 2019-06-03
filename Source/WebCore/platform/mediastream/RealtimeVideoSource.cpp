@@ -177,12 +177,11 @@ void RealtimeVideoSource::updateCapabilities(RealtimeMediaSourceCapabilities& ca
     }
 
     if (canResizeVideoFrames()) {
+        minimumWidth = 1;
+        minimumHeight = 1;
         for (auto& size : standardVideoSizes()) {
-            if (size.width() < minimumWidth || size.height() < minimumHeight) {
-                minimumWidth = std::min(minimumWidth, size.width());
-                minimumHeight = std::min(minimumHeight, size.height());
+            if (size.width() < minimumWidth || size.height() < minimumHeight)
                 minimumAspectRatio = std::min(minimumAspectRatio, static_cast<double>(size.width()) / size.height());
-            }
         }
     }
 
@@ -307,13 +306,13 @@ Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource::best
         if (exactSizePreset || aspectRatioPreset)
             continue;
 
+        if ((requestedWidth && requestedWidth.value() > preset->size.width()) || (requestedHeight && requestedHeight.value() > preset->size.height()))
+            continue;
+
         if (requestedWidth && requestedHeight) {
-            const auto& minStandardSize = standardVideoSizes()[0];
-            if (requestedWidth.value() >= minStandardSize.width() && requestedHeight.value() >= minStandardSize.height()) {
-                if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
-                    resizePreset = &preset.get();
-                    resizeSize = { requestedWidth.value(), requestedHeight.value() };
-                }
+            if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
+                resizePreset = &preset.get();
+                resizeSize = { requestedWidth.value(), requestedHeight.value() };
             }
         } else {
             for (auto& standardSize : standardVideoSizes()) {
@@ -326,6 +325,14 @@ Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource::best
                     resizePreset = &preset.get();
                     resizeSize = standardSize;
                 }
+            }
+
+            if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
+                resizePreset = &preset.get();
+                if (requestedWidth)
+                    resizeSize = { requestedWidth.value(), requestedWidth.value() * preset->size.height() / preset->size.width()};
+                else
+                    resizeSize = { requestedHeight.value() * preset->size.width() / preset->size.height(), requestedHeight.value() };
             }
         }
     }
