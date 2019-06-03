@@ -1,3 +1,21 @@
+2019-06-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use WEBKIT_EXECUTABLE in ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=198490
+
+        Reviewed by Konstantin Tokarev.
+
+        Use WEBKIT_EXECUTABLE in ImageDiff. Change CMake variables to use the proper
+        convention. Add a shared CoreGraphics.cmake instead of just including PlatformMac
+        for AppleWin builds.
+
+        * ImageDiff/CMakeLists.txt:
+        * ImageDiff/Cairo.cmake:
+        * ImageDiff/CoreGraphics.cmake: Added.
+        * ImageDiff/PlatformGTK.cmake:
+        * ImageDiff/PlatformMac.cmake:
+        * ImageDiff/PlatformWin.cmake:
+
 2019-06-02  Andy Estes  <aestes@apple.com>
 
         Memory-cached main resources continue to load after the client decides a content policy of PolicyAction::Download
