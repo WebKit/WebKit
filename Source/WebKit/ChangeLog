@@ -1,3 +1,19 @@
+2019-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r240862) [WinCairo][WK2] position:fixed elements don't show
+        https://bugs.webkit.org/show_bug.cgi?id=198478
+
+        Reviewed by Carlos Garcia Campos.
+
+        All position:fixed elements didn't show in WinCairo WebKit2 since
+        r240862 which turns acceleratedCompositingEnabled on for WebKit2.
+        WinCairo WebKit2 doesn't have accelerated compositing support yet.
+        Let's do the same with GTK port.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Conditioned out the code
+        enabling acceleratedCompositingEnabled for PLATFORM(WIN).
+
 2019-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r244182): [CoordinatedGraphics] Related view doesn't receive graphic updates
