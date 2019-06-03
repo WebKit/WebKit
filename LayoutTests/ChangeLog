@@ -1,3 +1,14 @@
+2019-06-03  Devin Rousso  <drousso@apple.com>
+
+        Flaky Test: inspector/canvas/recording.html
+        https://bugs.webkit.org/show_bug.cgi?id=198470
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/canvas/recording.html:
+        The ordering of <canvas> in `WI.canvasManager.canvases` isn't always the same, so we should
+        perform the action on every <canvas> since we know we'll be recording at least one of them.
+
 2019-06-02  Devin Rousso  <drousso@apple.com>
 
         Flaky Test: inspector/canvas/recording.html
