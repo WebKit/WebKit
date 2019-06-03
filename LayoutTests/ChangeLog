@@ -1,3 +1,53 @@
+2019-06-02  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r245989. rdar://problem/51283532
+
+    iOS: Main frame should be scrollable when pinch zoomed or software keyboard is up
+    https://bugs.webkit.org/show_bug.cgi?id=198244
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebKit:
+    
+    This is a follow up to r245006. Even when overflow: hidden is specified on the document body,
+    we still need to make it scrollable when the page is pinch zoomed or there is a content inset
+    e.g. for software keyboard. Otherwise, the user won't be able to get to the content that is
+    outside the visual viewport when pinch zoomed or the parts of the page that is not outside
+    the visual viewport due to the scrolling caused by the software keyboard being brought up.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _didCommitLayerTree:]):
+    
+    LayoutTests:
+    
+    Added regression tests.
+    
+    * fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard-expected.txt: Added.
+    * fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html: Added.
+    * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1-expected.txt: Added.
+    * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html: Added.
+    * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2-expected.txt: Added.
+    * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245989 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+            iOS: Main frame should be scrollable when pinch zoomed or software keyboard is up
+            https://bugs.webkit.org/show_bug.cgi?id=198244
+
+            Reviewed by Simon Fraser.
+
+            Added regression tests.
+
+            * fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard-expected.txt: Added.
+            * fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html: Added.
+            * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1-expected.txt: Added.
+            * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html: Added.
+            * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2-expected.txt: Added.
+            * fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html: Added.
+
 2019-05-31  Kocsen Chung  <kocsen_chung@apple.com>
 
         Revert r245953. rdar://problem/51314019

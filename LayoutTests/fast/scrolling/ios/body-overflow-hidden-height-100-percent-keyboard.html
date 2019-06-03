@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<style>
+html, body { width: 100%; height: 100%; margin: 0px; padding: 0px; }
+body { overflow: hidden; }
+#content { width: 100%; height: 100%; box-sizing: border-box; padding: 20px; background: #ccc; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    // FIXME: <rdar://problem/51289800> Scrolling down by touch gestures does not work immediately after software keyboard is brought up for the first time
+    await UIHelper.activateElementAndWaitForInputSession(document.querySelector('input'));
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    await UIHelper.activateElementAndWaitForInputSession(document.querySelector('input'));
+
+    const result = document.getElementById('result');
+    const y = result.getBoundingClientRect().top + 10;
+
+    await touchAndDragFromPointToPoint(200, y + 100, 200, y + 10);
+    await liftUpAtPoint(200, y + 10);
+    await UIHelper.delayFor(100);
+
+    result.textContent = document.documentElement.scrollTop >= 50 ? 'PASS - the document did scroll' : 'FAIL - the document did not scroll';
+
+    testRunner.notifyDone();
+}
+
+</script>
+<body onload="runTest()"><div id="content">
+This document shouldn't be scrollable normally but should be scrollable when the software keyboard is shown.<br>
+To manually test, tap on the text field below to bring up the docked software keyboard.<br>
+The document should become scrollable.<br>
+<div id="result"><input placeholder="Click here"></div>
+</div></body>
+</html>
