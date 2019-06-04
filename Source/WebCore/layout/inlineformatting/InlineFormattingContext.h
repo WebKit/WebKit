@@ -61,6 +61,7 @@ private:
 
         struct LineContent {
             Optional<unsigned> lastInlineItemIndex;
+            Vector<WeakPtr<InlineItem>> floats;
             std::unique_ptr<Line::Content> runs;
         };
 
@@ -73,8 +74,7 @@ private:
             const InlineItems& inlineItems;
         };
         LineContent placeInlineItems(const LineInput&) const;
-        void createDisplayRuns(const Line::Content&, LayoutUnit widthConstraint) const;
-        void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
+        void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;
         void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:

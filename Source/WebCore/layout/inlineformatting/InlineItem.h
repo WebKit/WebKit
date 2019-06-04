@@ -30,11 +30,12 @@
 #include "LayoutBox.h"
 #include "LayoutInlineBox.h"
 #include "LayoutLineBreakBox.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {
 
-class InlineItem {
+class InlineItem : public CanMakeWeakPtr<InlineItem> {
 public:
     enum class Type { Text, HardLineBreak, Box, Float, ContainerStart, ContainerEnd };
     InlineItem(const Box& layoutBox, Type);
