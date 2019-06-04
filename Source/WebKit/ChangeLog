@@ -1,3 +1,24 @@
+2019-06-03  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Do not prevent app suspension for more than 20 seconds after getting backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=198488
+        <rdar://problem/50837208>
+
+        Reviewed by Geoff Garen.
+
+        Do not prevent app suspension for more than 20 seconds after getting backgrounded on iOS. We
+        do this by implementing our own expiration handler which notifies our child processes of
+        their imminent suspension before ending the background task that was preventing suspension.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (isBackgroundState):
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _scheduleTimeoutTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _cancelTimeoutTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _backgroundTaskExpired]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+
 2019-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement an internal switch to turn idempotent text autosizing and viewport rules off

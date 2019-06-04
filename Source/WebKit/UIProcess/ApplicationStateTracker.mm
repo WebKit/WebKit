@@ -142,9 +142,11 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         pid_t applicationPID = serviceViewController._hostProcessIdentifier;
         ASSERT(applicationPID);
 
-        auto applicationStateMonitor = adoptNS([[BKSApplicationStateMonitor alloc] init]);
-        m_isInBackground = isBackgroundState([applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID]);
-        [applicationStateMonitor invalidate];
+        {
+            auto applicationStateMonitor = adoptNS([[BKSApplicationStateMonitor alloc] init]);
+            m_isInBackground = isBackgroundState([applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID]);
+            [applicationStateMonitor invalidate];
+        }
 
         // Workaround for <rdar://problem/34028921>. If the host application is StoreKitUIService then it is also a ViewService
         // and is always in the background. We need to treat StoreKitUIService as foreground for the purpose of process suspension

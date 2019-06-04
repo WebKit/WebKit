@@ -41,6 +41,7 @@ using WebKit::ProcessAndUIAssertion;
 // the background task before the UIKit timeout (We get killed if we do not release the background task within 5 seconds
 // on the expiration handler getting called).
 static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
+static const Seconds maximumBackgroundTaskDuration { 20_s };
 
 @interface WKProcessAssertionBackgroundTaskManager : NSObject
 
@@ -56,13 +57,19 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     UIBackgroundTaskIdentifier _backgroundTask;
     HashSet<ProcessAndUIAssertion*> _assertionsNeedingBackgroundTask;
     BOOL _applicationIsBackgrounded;
-    dispatch_block_t _pendingTaskReleaseTask;
+    dispatch_block_t _releaseTask;
+    dispatch_block_t _timeoutTask;
 }
 
 + (WKProcessAssertionBackgroundTaskManager *)shared
 {
     static WKProcessAssertionBackgroundTaskManager *shared = [WKProcessAssertionBackgroundTaskManager new];
     return shared;
+}
+
+static bool isBackgroundState(BKSApplicationState state)
+{
+    return state == BKSApplicationStateBackgroundRunning || state == BKSApplicationStateBackgroundTaskSuspended;
 }
 
 - (instancetype)init
@@ -73,14 +80,30 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
     _backgroundTask = UIBackgroundTaskInvalid;
 
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
+    {
+        auto applicationStateMonitor = adoptNS([[BKSApplicationStateMonitor alloc] init]);
+        _applicationIsBackgrounded = isBackgroundState([applicationStateMonitor mostElevatedApplicationStateForPID:getpid()]);
+        [applicationStateMonitor invalidate];
+    }
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    UIApplication *application = [UIApplication sharedApplication];
+
+    [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:application queue:nil usingBlock:^(NSNotification *) {
+        RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Application will enter foreground", self);
         _applicationIsBackgrounded = NO;
-        [self _cancelPendingReleaseTask];
+        [self _cancelReleaseTask];
+        [self _cancelTimeoutTask];
         [self _updateBackgroundTask];
     }];
 
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
+    [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:^(NSNotification *) {
+        RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Application did enter background", self);
         _applicationIsBackgrounded = YES;
+
+        // We do not want to keep the app awake for more than 20 seconds after it gets backgrounded, so start the timeout timer now.
+        if (_backgroundTask != UIBackgroundTaskInvalid)
+            [self _scheduleTimeoutTask];
     }];
 
     return self;
@@ -112,33 +135,81 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         assertion->uiAssertionWillExpireImminently();
 }
 
-
-- (void)_scheduleReleaseTask
+- (void)_scheduleTimeoutTask
 {
-    ASSERT(!_pendingTaskReleaseTask);
-    if (_pendingTaskReleaseTask)
+    ASSERT(_backgroundTask != UIBackgroundTaskInvalid);
+
+    if (_timeoutTask)
         return;
 
-    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _scheduleReleaseTask because the expiration handler has been called", self);
-    _pendingTaskReleaseTask = dispatch_block_create((dispatch_block_flags_t)0, ^{
-        _pendingTaskReleaseTask = nil;
-        [self _releaseBackgroundTask];
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _scheduleTimeoutTask", self);
+    _timeoutTask = dispatch_block_create((dispatch_block_flags_t)0, ^{
+        _timeoutTask = nil;
+        RELEASE_LOG_ERROR(ProcessSuspension, "Background task was running for too long so WebKit will end it shortly.");
+        [self _backgroundTaskExpired];
     });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, releaseBackgroundTaskAfterExpirationDelay.value() * NSEC_PER_SEC), dispatch_get_main_queue(), _pendingTaskReleaseTask);
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, maximumBackgroundTaskDuration.value() * NSEC_PER_SEC), dispatch_get_main_queue(), _timeoutTask);
 #if !__has_feature(objc_arc)
     // dispatch_async() does a Block_copy() / Block_release() on behalf of the caller.
-    Block_release(_pendingTaskReleaseTask);
+    Block_release(_timeoutTask);
 #endif
 }
 
-- (void)_cancelPendingReleaseTask
+- (void)_cancelTimeoutTask
 {
-    if (!_pendingTaskReleaseTask)
+    if (!_timeoutTask)
         return;
 
-    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _cancelPendingReleaseTask because the application is foreground again", self);
-    dispatch_block_cancel(_pendingTaskReleaseTask);
-    _pendingTaskReleaseTask = nil;
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _cancelTimeoutTask", self);
+    dispatch_block_cancel(_timeoutTask);
+    _timeoutTask = nil;
+}
+
+- (void)_scheduleReleaseTask
+{
+    ASSERT(!_releaseTask);
+    if (_releaseTask)
+        return;
+
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _scheduleReleaseTask because the expiration handler has been called", self);
+    _releaseTask = dispatch_block_create((dispatch_block_flags_t)0, ^{
+        _releaseTask = nil;
+        [self _releaseBackgroundTask];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, releaseBackgroundTaskAfterExpirationDelay.value() * NSEC_PER_SEC), dispatch_get_main_queue(), _releaseTask);
+#if !__has_feature(objc_arc)
+    // dispatch_async() does a Block_copy() / Block_release() on behalf of the caller.
+    Block_release(_releaseTask);
+#endif
+}
+
+- (void)_cancelReleaseTask
+{
+    if (!_releaseTask)
+        return;
+
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _cancelReleaseTask because the application is foreground again", self);
+    dispatch_block_cancel(_releaseTask);
+    _releaseTask = nil;
+}
+
+- (void)_backgroundTaskExpired
+{
+    RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _backgroundTaskExpired", self);
+    [self _cancelTimeoutTask];
+
+    // Tell our child processes they will suspend imminently.
+    if (RunLoop::isMain())
+        [self _notifyAssertionsOfImminentSuspension];
+    else {
+        // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self _notifyAssertionsOfImminentSuspension];
+        });
+    }
+
+    [self _scheduleReleaseTask];
 }
 
 - (void)_updateBackgroundTask
@@ -150,17 +221,8 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         }
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - beginBackgroundTaskWithName", self);
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
-            RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
-            // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
-            if (RunLoop::isMain())
-                [self _notifyAssertionsOfImminentSuspension];
-            else {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self _notifyAssertionsOfImminentSuspension];
-                });
-            }
-
-            [self _scheduleReleaseTask];
+            RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d, _applicationIsBackgrounded? %d).", RunLoop::isMain(), _applicationIsBackgrounded);
+            [self _backgroundTaskExpired];
         }];
     } else if (_assertionsNeedingBackgroundTask.isEmpty())
         [self _releaseBackgroundTask];
@@ -173,6 +235,8 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - endBackgroundTask", self);
     [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+    [self _cancelReleaseTask];
+    [self _cancelTimeoutTask];
     _backgroundTask = UIBackgroundTaskInvalid;
 }
 
