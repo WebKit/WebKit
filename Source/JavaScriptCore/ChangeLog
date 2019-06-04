@@ -1,3 +1,31 @@
+2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Argument elimination should check transitive dependents for interference
+        https://bugs.webkit.org/show_bug.cgi?id=198520
+        <rdar://problem/50863343>
+
+        Reviewed by Filip Pizlo.
+
+        Consider the following program:
+
+            a: CreateRest
+            -->
+                b: CreateRest
+            <--
+            c: Spread(@a)
+            d: Spread(@b)
+            e: NewArrayWithSpread(@a, @b)
+            f: KillStack(locX)
+            g: LoadVarargs(@e)
+
+        Suppose @b reads locX, then we cannot transform @e to PhantomNewArraySpread, since that would
+        move the stack access from @b into @g, and that stack location is no longer valid at that point.
+
+        We fix that by computing a set of all inline call frames that any argument elimination candidate
+        depends on and checking each of them for interference in `eliminateCandidatesThatInterfere`.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2019-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] InferredValue should not be a JSCell
