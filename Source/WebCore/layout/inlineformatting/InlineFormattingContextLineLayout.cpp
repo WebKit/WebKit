@@ -214,11 +214,6 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         auto& inlineItem = lineInput.inlineItems[inlineItemIndex];
         auto inlineItemWidth = WebCore::Layout::inlineItemWidth(layoutState(), *inlineItem, currentLogicalRight);
 
-        if (inlineItem->isHardLineBreak()) {
-            uncommittedContent.add(*inlineItem, inlineItemWidth);
-            commitPendingContent();
-            return closeLine();
-        }
         // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
         auto breakingContext = lineBreaker.breakingContext(*inlineItem, inlineItemWidth, { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), !line->hasContent() });
         if (breakingContext.isAtBreakingOpportunity)
@@ -229,17 +224,23 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
             return closeLine();
 
         // Partial content stays on the current line. 
-        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Break) {
+        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Split) {
             ASSERT(inlineItem->isText());
 
             ASSERT_NOT_IMPLEMENTED_YET();
             return closeLine();
         }
 
+        ASSERT(breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Keep);
         if (inlineItem->isFloat()) {
             handleFloat(*line, floatingContext, *inlineItem);
             ++committedInlineItemCount;
             continue;
+        }
+        if (inlineItem->isHardLineBreak()) {
+            uncommittedContent.add(*inlineItem, inlineItemWidth);
+            commitPendingContent();
+            return closeLine();
         }
 
         uncommittedContent.add(*inlineItem, inlineItemWidth);

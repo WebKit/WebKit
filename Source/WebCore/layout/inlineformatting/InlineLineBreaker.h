@@ -34,7 +34,7 @@ class InlineTextItem;
 
 class LineBreaker {
 public:
-    enum class BreakingBehavior { Keep, Break, Wrap };
+    enum class BreakingBehavior { Keep, Split, Wrap };
     struct BreakingContext {
         BreakingBehavior breakingBehavior;
         bool isAtBreakingOpportunity { false };

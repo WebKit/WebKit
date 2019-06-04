@@ -40,6 +40,9 @@ LineBreaker::BreakingContext LineBreaker::breakingContext(const InlineItem& inli
     if (lineContext.isEmpty || logicalWidth <= lineContext.availableWidth)
         return { BreakingBehavior::Keep, isAtBreakingOpportunity(inlineItem) };
 
+    if (inlineItem.isHardLineBreak())
+        return { BreakingBehavior::Keep, isAtBreakingOpportunity(inlineItem) };
+
     if (is<InlineTextItem>(inlineItem))
         return { wordBreakingBehavior(downcast<InlineTextItem>(inlineItem), lineContext.isEmpty), isAtBreakingOpportunity(inlineItem) };
 
@@ -62,20 +65,20 @@ LineBreaker::BreakingBehavior LineBreaker::wordBreakingBehavior(const InlineText
     auto& style = inlineItem.style();
 
     if (inlineItem.isWhitespace())
-        return style.collapseWhiteSpace() ? BreakingBehavior::Wrap : BreakingBehavior::Break;
+        return style.collapseWhiteSpace() ? BreakingBehavior::Wrap : BreakingBehavior::Split;
 
     auto shouldHypenate = !m_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.locale());
     if (shouldHypenate)
-        return BreakingBehavior::Break;
+        return BreakingBehavior::Split;
 
     if (style.autoWrap()) {
         // Break any word
         if (style.wordBreak() == WordBreak::BreakAll)
-            return BreakingBehavior::Break;
+            return BreakingBehavior::Split;
 
         // Break first run on line.
         if (lineIsEmpty && style.breakWords() && style.preserveNewline())
-            return BreakingBehavior::Break;
+            return BreakingBehavior::Split;
     }
 
     // Non-breakable non-whitespace run.
@@ -84,6 +87,9 @@ LineBreaker::BreakingBehavior LineBreaker::wordBreakingBehavior(const InlineText
 
 bool LineBreaker::isAtBreakingOpportunity(const InlineItem& inlineItem)
 {
+    if (inlineItem.isHardLineBreak())
+        return true;
+
     if (is<InlineTextItem>(inlineItem))
         return downcast<InlineTextItem>(inlineItem).isWhitespace();
     return !inlineItem.isFloat() && !inlineItem.isContainerStart() && !inlineItem.isContainerEnd();
