@@ -204,7 +204,8 @@ void AcceleratedBackingStoreWayland::displayBuffer(struct wpe_fdo_egl_exported_i
 {
     if (!m_surfaceID) {
         wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, image);
+        if (image != m_committedImage)
+            wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, image);
         return;
     }
 

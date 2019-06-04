@@ -1,3 +1,18 @@
+2019-06-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash when re-entering AC mode after r245957
+        https://bugs.webkit.org/show_bug.cgi?id=198522
+
+        Reviewed by Žan Doberšek.
+
+        When AcceleratedBackingStoreWayland::displayBuffer() is called and we have already left AC mode, we early
+        dispatch the image and release it. The problem is that images are reused, so the given image can be the
+        committed one. In that case we end up freeing it again in the next AcceleratedBackingStoreWayland::paint()
+        call.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::displayBuffer): Do not release the given image if it's the committed one.
+
 2019-06-03  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Do not prevent app suspension for more than 20 seconds after getting backgrounded
