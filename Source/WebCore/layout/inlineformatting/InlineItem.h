@@ -42,8 +42,6 @@ public:
     Type type() const { return m_type; }
     const Box& layoutBox() const { return m_layoutBox; }
     const RenderStyle& style() const { return m_layoutBox.style(); }
-    void setWidth(LayoutUnit);
-    LayoutUnit width() const;
 
     bool isText() const { return type() == Type::Text; }
     bool isBox() const { return type() == Type::Box; }
@@ -56,30 +54,12 @@ public:
 private:
     const Box& m_layoutBox;
     const Type m_type;
-    LayoutUnit m_width;
-#if !ASSERT_DISABLED
-    bool m_hasValidWidth { false };
-#endif
 };
 
 inline InlineItem::InlineItem(const Box& layoutBox, Type type)
     : m_layoutBox(layoutBox)
     , m_type(type)
 {
-}
-
-inline void InlineItem::setWidth(LayoutUnit width)
-{
-#if !ASSERT_DISABLED
-    m_hasValidWidth = true;
-#endif
-    m_width = width;
-}
-
-inline LayoutUnit InlineItem::width() const
-{
-    ASSERT(m_hasValidWidth);
-    return m_width;
 }
 
 #define SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(ToValueTypeName, predicate) \

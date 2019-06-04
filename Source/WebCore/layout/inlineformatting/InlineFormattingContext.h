@@ -74,7 +74,6 @@ private:
         };
         LineContent placeInlineItems(const LineInput&) const;
         void createDisplayRuns(const Line::Content&, LayoutUnit widthConstraint) const;
-        void commitInlineItemToLine(Line&, const InlineItem&) const;
         void handleFloat(Line&, const FloatingContext&, const InlineItem& floatBox) const;
         void alignRuns(TextAlignMode, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
