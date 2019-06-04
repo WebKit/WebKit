@@ -9,5 +9,5 @@ Pointer Events setPointerCapture Tests
 The following pointer types were detected: mouse.
 
 
-FAIL pointer capture is not set while button state is inactive assert_false: pointer capture is not set while button state is inactive expected false got true
+PASS pointer capture is not set while button state is inactive 
 

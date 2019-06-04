@@ -70,10 +70,10 @@ ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturing
 #endif
 
     // 4. If the pointer is not in the active buttons state, then terminate these steps.
-    // FIXME: implement when we support mouse events.
-
     // 5. For the specified pointerId, set the pending pointer capture target override to the Element on which this method was invoked.
-    iterator->value.pendingTargetOverride = capturingTarget;
+    auto& capturingData = iterator->value;
+    if (capturingData.pointerIsPressed)
+        capturingData.pendingTargetOverride = capturingTarget;
 
     return { };
 }
@@ -237,17 +237,39 @@ void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* t
     if (iterator != m_activePointerIdsToCapturingData.end()) {
         auto& capturingData = iterator->value;
         if (capturingData.pendingTargetOverride && capturingData.targetOverride)
-            capturingData.targetOverride->dispatchEvent(event);
+            target = capturingData.targetOverride.get();
     }
 
-    if (target && !event.target())
-        target->dispatchEvent(event);
+    if (!target || event.target())
+        return;
 
+    pointerEventWillBeDispatched(event, target);
+    target->dispatchEvent(event);
     pointerEventWasDispatched(event);
 }
 
 void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& event, EventTarget* target)
 {
+    if (!is<Element>(target))
+        return;
+
+    bool isPointerdown = event.type() == eventNames().pointerdownEvent;
+    bool isPointerup = event.type() == eventNames().pointerupEvent;
+    if (!isPointerdown && !isPointerup)
+        return;
+
+    auto pointerId = event.pointerId();
+
+    if (event.pointerType() == PointerEvent::mousePointerType()) {
+        auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+        if (iterator != m_activePointerIdsToCapturingData.end())
+            iterator->value.pointerIsPressed = isPointerdown;
+        return;
+    }
+
+    if (!isPointerdown)
+        return;
+
     // https://w3c.github.io/pointerevents/#implicit-pointer-capture
 
     // Some input devices (such as touchscreens) implement a "direct manipulation" metaphor where a pointer is intended to act primarily on the UI
@@ -260,12 +282,9 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
     // releasePointerCapture is not called for the pointer before the next pointer event is fired, then a gotpointercapture event will be dispatched
     // to the target (as normal) indicating that capture is active.
 
-    if (!is<Element>(target) || event.type() != eventNames().pointerdownEvent)
-        return;
-
-    auto pointerId = event.pointerId();
     CapturingData capturingData;
     capturingData.pointerType = event.pointerType();
+    capturingData.pointerIsPressed = true;
     m_activePointerIdsToCapturingData.set(pointerId, capturingData);
     setPointerCapture(downcast<Element>(target), pointerId);
 }
@@ -281,10 +300,8 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         // override for the pointerId of the pointerup or pointercancel event that was just dispatched, and then run Process Pending
         // Pointer Capture steps to fire lostpointercapture if necessary.
         // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
-        if (event.type() == eventNames().pointerupEvent) {
+        if (event.type() == eventNames().pointerupEvent)
             capturingData.pendingTargetOverride = nullptr;
-            capturingData.pointerIsPressed = false;
-        }
 
         // If a mouse pointer has moved while it isn't pressed, make sure we reset the preventsCompatibilityMouseEvents flag since
         // we could otherwise prevent compatibility mouse events while those are only supposed to be prevented while the pointer is pressed.
@@ -293,10 +310,8 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
 
         // If the pointer event dispatched was pointerdown and the event was canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
         // https://www.w3.org/TR/pointerevents/#mapping-for-devices-that-support-hover
-        if (event.type() == eventNames().pointerdownEvent) {
+        if (event.type() == eventNames().pointerdownEvent)
             capturingData.preventsCompatibilityMouseEvents = event.defaultPrevented();
-            capturingData.pointerIsPressed = true;
-        }
     }
 
     processPendingPointerCapture(event);
