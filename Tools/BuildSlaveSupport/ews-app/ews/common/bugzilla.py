@@ -25,6 +25,7 @@ import logging
 import os
 import re
 import socket
+import time
 
 from datetime import datetime, timedelta
 
@@ -61,6 +62,9 @@ class Bugzilla():
             return None
 
         attachment_url = '{}rest/bug/attachment/{}'.format(config.BUG_SERVER_URL, attachment_id)
+        api_key = os.getenv('BUGZILLA_API_KEY', None)
+        if api_key:
+            attachment_url += '?api_key={}'.format(api_key)
         attachment = util.fetch_data_from_url(attachment_url)
         if not attachment:
             return None
@@ -101,6 +105,38 @@ class BugzillaBeautifulSoup():
 
     browser = property(_get_browser, _set_browser)
 
+    def authenticate(self):
+        username = os.getenv('BUGZILLA_USERNAME', None)
+        password = os.getenv('BUGZILLA_PASSWORD', None)
+        if not username or not password:
+            _log.warn('Bugzilla username/password not configured in environment variables. Skipping authentication.')
+            return
+
+        authenticated = False
+        attempts = 0
+        while not authenticated:
+            attempts += 1
+            _log.info('Logging in as {}...'.format(username))
+            self.browser.open(config.BUG_SERVER_URL + 'index.cgi?GoAheadAndLogIn=1')
+            self.browser.select_form(name="login")
+            self.browser['Bugzilla_login'] = username
+            self.browser['Bugzilla_password'] = password
+            self.browser.find_control("Bugzilla_restrictlogin").items[0].selected = False
+            response = self.browser.submit()
+
+            match = re.search("<title>(.+?)</title>", response.read())
+            # If the resulting page has a title, and it contains the word
+            # "invalid" assume it's the login failure page.
+            if match and re.search("Invalid", match.group(1), re.IGNORECASE):
+                errorMessage = 'Bugzilla login failed: {}'.format(match.group(1))
+                if attempts >= 5:
+                    # raise an exception only if this was the last attempt
+                    raise Exception(errorMessage)
+                _log.error(errorMessage)
+                time.sleep(5)
+            else:
+                authenticated = True
+
     def fetch_attachment_ids_from_review_queue(self, since=None, only_security_bugs=False):
         review_queue_url = 'request.cgi?action=queue&type=review&group=type'
         if only_security_bugs:
@@ -108,7 +144,7 @@ class BugzillaBeautifulSoup():
         return self._parse_attachment_ids_request_query(self._load_query(review_queue_url), since)
 
     def _load_query(self, query):
-        # TODO: check if we need to authenticate.
+        self.authenticate()
         full_url = '{}{}'.format(config.BUG_SERVER_URL, query)
         _log.info('Getting list of patches needing review, URL: {}'.format(full_url))
         return self.browser.open(full_url)

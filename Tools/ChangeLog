@@ -1,5 +1,18 @@
 2019-06-04  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add authentication while fetching bugs
+        https://bugs.webkit.org/show_bug.cgi?id=198415
+        <rdar://problem/51298710>
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py:
+        (Bugzilla._fetch_attachment_json): Use api_key if configured in environment variable.
+        (BugzillaBeautifulSoup.authenticate): Method to authenticate, logic copied from webkitpy/common/net/bugzilla/bugzilla.py
+        (BugzillaBeautifulSoup._load_query):
+
+2019-06-04  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Do not display unnecessary steps in the Buildbot build page UI
         https://bugs.webkit.org/show_bug.cgi?id=198218
         <rdar://problem/51104544>
