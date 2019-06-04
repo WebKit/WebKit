@@ -12,6 +12,8 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND WebCore_SOURCES
     page/win/FrameCairoWin.cpp
+    page/win/ResourceUsageOverlayWin.cpp
+    page/win/ResourceUsageThreadWin.cpp
 
     platform/graphics/GLContext.cpp
     platform/graphics/PlatformDisplay.cpp

@@ -72,7 +72,7 @@ private:
     void recomputeCollectionMode();
 
     void createThreadIfNeeded();
-    void threadBody();
+    NO_RETURN void threadBody();
 
     void platformSaveStateBeforeStarting();
     void platformCollectCPUData(JSC::VM*, ResourceUsageData&);

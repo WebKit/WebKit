@@ -1,3 +1,12 @@
+2019-06-04  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [WinCairo] Implement cpu and memory measuring functions.
+        https://bugs.webkit.org/show_bug.cgi?id=198466
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2019-06-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Disable async scrolling until implemented
