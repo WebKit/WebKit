@@ -316,7 +316,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker() { return m_networkHTTPSUpgradeChecker; }
+    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker();
 #endif
 
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
@@ -546,7 +546,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    NetworkHTTPSUpgradeChecker m_networkHTTPSUpgradeChecker;
+    std::unique_ptr<NetworkHTTPSUpgradeChecker> m_networkHTTPSUpgradeChecker;
 #endif
 
     class StorageQuotaManagers {

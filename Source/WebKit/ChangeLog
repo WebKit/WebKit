@@ -1,3 +1,17 @@
+2019-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Lazily construct the NetworkHTTPSUpgradeChecker
+        https://bugs.webkit.org/show_bug.cgi?id=198500
+
+        Reviewed by Alex Christensen.
+
+        Lazily construct the NetworkHTTPSUpgradeChecker since the feature is off by default and this
+        avoids unnecessarily opening its database in the common case.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::networkHTTPSUpgradeChecker):
+
 2019-06-04  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r245913) [ Debug ] ASSERTION FAILED: m_swConnectionsByIdentifier.contains(connection.serverConnectionIdentifier()) Layout Test http/wpt/service-workers/update-service-worker.https.html is a flaky crash
