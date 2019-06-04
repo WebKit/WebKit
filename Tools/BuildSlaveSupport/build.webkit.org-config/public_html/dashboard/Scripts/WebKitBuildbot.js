@@ -84,7 +84,6 @@ WebKitBuildbot = function()
         "JSCOnly ARMv7 Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "ARMv7", combinedQueues: {
             "JSCOnly Linux ARMv7 Thumb2 Release": {heading: "ARMv7 Thumb2"},
             "JSCOnly Linux ARMv7 Thumb2 SoftFP Release": {heading: "ARMv7 Thumb2 SoftFP"},
-            "JSCOnly Linux ARMv7 Traditional Release": {heading: "ARMv7 Traditional"},
         }},
         "JSCOnly MIPS Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "MIPS", combinedQueues: {
             "JSCOnly Linux MIPS32el Release": {heading: "MIPS32el"},

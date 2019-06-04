@@ -545,7 +545,6 @@ expected_build_steps = {
 
     'JSCOnly Linux ARMv7 Thumb2 Release': ['configure build', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux ARMv7 Thumb2 SoftFP Release': ['configure build', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
-    'JSCOnly Linux ARMv7 Traditional Release': ['configure build', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux AArch64 Release': ['configure build', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux MIPS32el Release': ['configure build', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
 

@@ -1,3 +1,18 @@
+2019-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [misc] Remove JSCOnly ARMv7 Traditional bot
+        https://bugs.webkit.org/show_bug.cgi?id=198524
+
+        Reviewed by Carlos Garcia Campos.
+
+        This is not a supported configuration anymore, so the buildbot slave can
+        be removed from configuration.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2019-06-03  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Disable script injection when canMakePayment APIs are called and return true
