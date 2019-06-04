@@ -8793,6 +8793,7 @@
 		585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutResolver.cpp; sourceTree = "<group>"; };
 		585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFlowContents.cpp; sourceTree = "<group>"; };
 		585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFlowContents.h; sourceTree = "<group>"; };
+		5884FE5622813E2D0040AFF6 /* JSResizeObserverEntryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSResizeObserverEntryCustom.cpp; sourceTree = "<group>"; };
 		589556EC18D4A44000764B03 /* BorderEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderEdge.h; sourceTree = "<group>"; };
 		58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BorderEdge.cpp; sourceTree = "<group>"; };
 		58B2F9EA2232D43B00938D63 /* ResizeObserverEntry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ResizeObserverEntry.idl; sourceTree = "<group>"; };
@@ -20690,6 +20691,7 @@
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */,
 				A4A69B8BB91B49D0A804C31D /* JSPromiseRejectionEventCustom.cpp */,
+				5884FE5622813E2D0040AFF6 /* JSResizeObserverEntryCustom.cpp */,
 				83F572941FA1066F003837BE /* JSServiceWorkerClientCustom.cpp */,
 				460D19441FCE21DD00C3DB85 /* JSServiceWorkerGlobalScopeCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,

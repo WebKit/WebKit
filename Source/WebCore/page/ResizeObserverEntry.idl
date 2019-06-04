@@ -28,7 +28,8 @@
 [
     Conditional=RESIZE_OBSERVER,
     ImplementationLacksVTable,
-    EnabledBySetting=ResizeObserver
+    EnabledBySetting=ResizeObserver,
+    JSCustomMarkFunction
 ] interface ResizeObserverEntry {
     readonly attribute Element target;
     readonly attribute DOMRectReadOnly contentRect;

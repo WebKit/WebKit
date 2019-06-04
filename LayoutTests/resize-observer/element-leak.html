@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:ResizeObserverEnabled=true ] -->
+<html>
+<meta name="timeout" content="long">
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+</head>
+<body>
+<iframe id="testFrame" src="resources/element-leak-frame.html"></iframe>
+<script>
+
+test(_ => {
+    assert_own_property(window, "ResizeObserver");
+}, "ResizeObserver implemented");
+
+promise_test(async () => {
+    return new Promise(function(resolve, reject) {
+        window.addEventListener('message', event => {
+            switch(event.data) {
+            case 'Notified':
+                var testFrame = document.getElementById("testFrame");
+                let frameDocumentIdentifier = internals.documentIdentifier(testFrame.contentDocument);
+                testFrame.remove();
+
+                handle = setInterval(function() {
+                    gc();
+                    if (internals && !internals.isDocumentAlive(frameDocumentIdentifier)) {
+                        clearInterval(handle);
+                        resolve();
+                    }
+                }, 10);
+            break;
+            }
+         }, false);
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}, 'Test elements leak');
+
+</script>
+</body>
+</html>

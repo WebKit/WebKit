@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<body></body>
+<script src="../../resources/gc.js"></script>
+<script type="text/javascript">
+
+const targetCount = 1000;
+var resizeObserver = new ResizeObserver( entries => {
+    for (let entry of entries)
+        entry.target.myEntry = entry;
+
+    resizeObserver.disconnect();
+    document.querySelectorAll('div').forEach(target => target.remove());
+    // Make sure targets be added to m_opaqueRoots.
+    gc();
+    parent.postMessage('Notified', '*');
+});
+
+for (let i = 0; i < targetCount; ++i) {
+    var target = document.createElement('div');
+    document.body.appendChild(target);
+}
+
+document.querySelectorAll('div').forEach(target => resizeObserver.observe(target));
+
+</script>
+</html>

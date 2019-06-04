@@ -4401,3 +4401,7 @@ webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
 
 webkit.org/b/198112 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
+
+# The removed elements couldn't be released properly in Win.
+# The relevant bug is https://bugs.webkit.org/show_bug.cgi?id=197908
+resize-observer/element-leak.html [ Skip ]

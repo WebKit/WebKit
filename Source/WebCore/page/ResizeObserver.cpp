@@ -69,6 +69,7 @@ void ResizeObserver::observe(Element& target)
     observerData.observers.append(makeWeakPtr(this));
 
     m_observations.append(ResizeObservation::create(&target));
+    m_pendingTargets.append(target);
 
     if (m_document) {
         m_document->addResizeObserver(*this);
@@ -140,11 +141,17 @@ void ResizeObserver::removeAllTargets()
         bool removed = removeTarget(*observation->target());
         ASSERT_UNUSED(removed, removed);
     }
+    m_pendingTargets.clear();
+    m_activeObservations.clear();
     m_observations.clear();
 }
 
 bool ResizeObserver::removeObservation(const Element& target)
 {
+    m_pendingTargets.removeFirstMatching([&target](auto& pendingTarget) {
+        return pendingTarget.ptr() == &target;
+    });
+
     m_activeObservations.removeFirstMatching([&target](auto& observation) {
         return observation->target() == &target;
     });
@@ -173,8 +180,6 @@ void ResizeObserver::stop()
 {
     disconnect();
     m_callback = nullptr;
-    m_observations.clear();
-    m_activeObservations.clear();
 }
 
 } // namespace WebCore

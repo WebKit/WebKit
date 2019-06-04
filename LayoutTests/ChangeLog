@@ -1,3 +1,19 @@
+2019-06-04  Cathie Chen  <cathiechen@igalia.com>
+
+        JS wrapper of target in ResizeObserverEntry/ResizeObserver shouldn't get collected ahead
+        https://bugs.webkit.org/show_bug.cgi?id=197457
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/win/TestExpectations:
+        * resize-observer/element-leak-expected.txt: Added.
+        * resize-observer/element-leak.html: Added.
+        * resize-observer/resize-observer-entry-keeps-js-wrapper-of-target-alive-expected.txt: Added.
+        * resize-observer/resize-observer-entry-keeps-js-wrapper-of-target-alive.html: Added.
+        * resize-observer/resize-observer-keeps-js-wrapper-of-target-alive-expected.txt: Added.
+        * resize-observer/resize-observer-keeps-js-wrapper-of-target-alive.html: Added.
+        * resize-observer/resources/element-leak-frame.html: Added.
+
 2019-06-03  Youenn Fablet  <youenn@apple.com>
 
         Allow resizing of camera video feeds to very small resolutions
