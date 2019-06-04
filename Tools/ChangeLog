@@ -1,3 +1,43 @@
+2019-06-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r246042. rdar://problem/50667125
+
+    Tweak the text and underline color for data detected text.
+    https://bugs.webkit.org/show_bug.cgi?id=198487
+    rdar://problem/50667125
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebCore:
+    
+    Tests: Color.RGBToHSL API tests
+    
+    * editing/cocoa/DataDetection.mm:
+    (WebCore::DataDetection::detectContentInRange): Use currentcolor so semantic text colors work.
+    Force the lightness of the underline color to the middle, and multiply the alpha by 38%,
+    so the color will appear on light and dark backgrounds, since only one color can be specified.
+    * platform/graphics/Color.cpp:
+    (WebCore::Color::getHSL const): Return hue in [0...6) range to easily round-trip with makeRGBAFromHSLA().
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebCore/Color.cpp:
+    (TestWebKitAPI::TEST): Added Color.RGBToHSL tests.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246042 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-03  Timothy Hatcher  <timothy@apple.com>
+
+            Tweak the text and underline color for data detected text.
+            https://bugs.webkit.org/show_bug.cgi?id=198487
+            rdar://problem/50667125
+
+            Reviewed by Devin Rousso.
+
+            * TestWebKitAPI/Tests/WebCore/Color.cpp:
+            (TestWebKitAPI::TEST): Added Color.RGBToHSL tests.
+
 2019-05-31  Alan Coon  <alancoon@apple.com>
 
         Revert r245943. rdar://problem/51244662

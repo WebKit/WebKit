@@ -542,7 +542,7 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
 {
     // http://en.wikipedia.org/wiki/HSL_color_space. This is a direct copy of
     // the algorithm therein, although it's 360^o based and we end up wanting
-    // [0...1) based. It's clearer if we stick to 360^o until the end.
+    // [0...6) based. It's clearer if we stick to 360^o until the end.
     double r = static_cast<double>(red()) / 255.0;
     double g = static_cast<double>(green()) / 255.0;
     double b = static_cast<double>(blue()) / 255.0;
@@ -562,8 +562,8 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
     if (hue >= 360.0)
         hue -= 360.0;
 
-    // makeRGBAFromHSLA assumes that hue is in [0...1).
-    hue /= 360.0;
+    // makeRGBAFromHSLA assumes that hue is in [0...6).
+    hue /= 60.0;
 
     lightness = 0.5 * (max + min);
     if (!chroma)
