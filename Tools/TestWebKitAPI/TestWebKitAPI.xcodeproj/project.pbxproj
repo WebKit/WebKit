@@ -730,6 +730,11 @@
 		A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1C4FB721BACD1B7003742D0 /* pages.pages */; };
 		A1DF74321C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */; };
 		A1EC11881F42541200D0146E /* PreviewConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EC11871F42541200D0146E /* PreviewConverter.cpp */; };
+		A1FB503D22A1CBE200D4D979 /* apple-pay-availability-existing-object.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB503C22A1C24400D4D979 /* apple-pay-availability-existing-object.html */; };
+		A1FB503F22A20F6400D4D979 /* apple-pay-can-make-payments.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB503E22A1E3B300D4D979 /* apple-pay-can-make-payments.html */; };
+		A1FB504122A212A900D4D979 /* apple-pay-can-make-payments-with-active-card.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB504022A2128400D4D979 /* apple-pay-can-make-payments-with-active-card.html */; };
+		A1FB504322A213A300D4D979 /* apple-pay-can-make-payment.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB504222A2138F00D4D979 /* apple-pay-can-make-payment.html */; };
+		A1FB504522A2157100D4D979 /* apple-pay.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1FB504422A2154B00D4D979 /* apple-pay.js */; };
 		A310827221F296FF00C28B97 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A310827121F296EC00C28B97 /* FileSystem.cpp */; };
 		A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */; };
 		A57D54F31F338C3600A97AA7 /* NeverDestroyed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D54F21F338C3600A97AA7 /* NeverDestroyed.cpp */; };
@@ -1049,8 +1054,13 @@
 				C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */,
 				F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */,
 				A1798B8B224361A4000764BD /* apple-pay-active-session.html in Copy Resources */,
+				A1FB503D22A1CBE200D4D979 /* apple-pay-availability-existing-object.html in Copy Resources */,
 				A1798B8922435E29000764BD /* apple-pay-availability-in-iframe.html in Copy Resources */,
 				A1798B872243449B000764BD /* apple-pay-availability.html in Copy Resources */,
+				A1FB504322A213A300D4D979 /* apple-pay-can-make-payment.html in Copy Resources */,
+				A1FB504122A212A900D4D979 /* apple-pay-can-make-payments-with-active-card.html in Copy Resources */,
+				A1FB503F22A20F6400D4D979 /* apple-pay-can-make-payments.html in Copy Resources */,
+				A1FB504522A2157100D4D979 /* apple-pay.js in Copy Resources */,
 				F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */,
 				5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */,
 				5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */,
@@ -2028,6 +2038,11 @@
 		A1C4FB721BACD1B7003742D0 /* pages.pages */ = {isa = PBXFileReference; lastKnownFileType = file; name = pages.pages; path = ios/pages.pages; sourceTree = SOURCE_ROOT; };
 		A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AlwaysRevalidatedURLSchemes.mm; sourceTree = "<group>"; };
 		A1EC11871F42541200D0146E /* PreviewConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PreviewConverter.cpp; sourceTree = "<group>"; };
+		A1FB503C22A1C24400D4D979 /* apple-pay-availability-existing-object.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-availability-existing-object.html"; sourceTree = "<group>"; };
+		A1FB503E22A1E3B300D4D979 /* apple-pay-can-make-payments.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-can-make-payments.html"; sourceTree = "<group>"; };
+		A1FB504022A2128400D4D979 /* apple-pay-can-make-payments-with-active-card.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-can-make-payments-with-active-card.html"; sourceTree = "<group>"; };
+		A1FB504222A2138F00D4D979 /* apple-pay-can-make-payment.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-can-make-payment.html"; sourceTree = "<group>"; };
+		A1FB504422A2154B00D4D979 /* apple-pay.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "apple-pay.js"; sourceTree = "<group>"; };
 		A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKImageCreateCGImageCrash.cpp; sourceTree = "<group>"; };
 		A310827121F296EC00C28B97 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
 		A57A34EF16AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageVisibilityStateWithWindowChanges.mm; sourceTree = "<group>"; };
@@ -2959,8 +2974,13 @@
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
 				A1798B8A2243611A000764BD /* apple-pay-active-session.html */,
+				A1FB503C22A1C24400D4D979 /* apple-pay-availability-existing-object.html */,
 				A1798B8822435D2E000764BD /* apple-pay-availability-in-iframe.html */,
 				A1798B862243446B000764BD /* apple-pay-availability.html */,
+				A1FB504222A2138F00D4D979 /* apple-pay-can-make-payment.html */,
+				A1FB504022A2128400D4D979 /* apple-pay-can-make-payments-with-active-card.html */,
+				A1FB503E22A1E3B300D4D979 /* apple-pay-can-make-payments.html */,
+				A1FB504422A2154B00D4D979 /* apple-pay.js */,
 				F47D30EB1ED28619000482E1 /* apple.gif */,
 				5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */,
 				5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */,

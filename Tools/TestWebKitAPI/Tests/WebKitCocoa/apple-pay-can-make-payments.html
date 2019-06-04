@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<body>
+<script>
+    internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
+    internals.mockPaymentCoordinator.setCanMakePayments(window.location.search === "?false" ? false : true);
+    ApplePaySession.canMakePayments();
+    window.webkit.messageHandlers.testApplePay.postMessage("done");
+</script>

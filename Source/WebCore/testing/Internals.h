@@ -681,7 +681,7 @@ public:
 
     void setAsRunningUserScripts(Document&);
 #if ENABLE(APPLE_PAY)
-    void setHasStartedApplePaySession(Document&);
+    void setApplePayIsActive(Document&);
 #endif
 
 #if ENABLE(WEBGL)

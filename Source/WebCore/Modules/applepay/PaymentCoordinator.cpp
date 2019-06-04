@@ -56,11 +56,8 @@ PaymentCoordinator::~PaymentCoordinator()
     m_client.paymentCoordinatorDestroyed();
 }
 
-bool PaymentCoordinator::supportsVersion(Document& document, unsigned version) const
+bool PaymentCoordinator::supportsVersion(Document&, unsigned version) const
 {
-    if (!shouldAllowApplePay(document))
-        return false;
-
     auto supportsVersion = m_client.supportsVersion(version);
     RELEASE_LOG_IF_ALLOWED("supportsVersion(%d) -> %d", version, supportsVersion);
     return supportsVersion;
@@ -68,28 +65,38 @@ bool PaymentCoordinator::supportsVersion(Document& document, unsigned version) c
 
 bool PaymentCoordinator::canMakePayments(Document& document)
 {
-    if (!shouldAllowApplePay(document))
-        return false;
-
     auto canMakePayments = m_client.canMakePayments();
     RELEASE_LOG_IF_ALLOWED("canMakePayments() -> %d", canMakePayments);
-    return canMakePayments;
+
+    if (!canMakePayments)
+        return false;
+
+    if (!setApplePayIsActiveIfAllowed(document))
+        return false;
+
+    return true;
 }
 
 void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
 {
-    if (!shouldAllowApplePay(document))
-        return completionHandler(false);
+    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = makeWeakPtr(*this), document = makeWeakPtr(document), completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
+        if (!weakThis)
+            return completionHandler(false);
 
-    RELEASE_LOG_IF_ALLOWED("canMakePaymentsWithActiveCard()");
-    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), WTFMove(completionHandler));
+        RELEASE_LOG_IF_ALLOWED("canMakePaymentsWithActiveCard() -> %d", canMakePayments);
+
+        if (!canMakePayments)
+            return completionHandler(false);
+
+        if (!document || !setApplePayIsActiveIfAllowed(*document))
+            return completionHandler(false);
+
+        completionHandler(true);
+    });
 }
 
 void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
 {
-    if (!shouldAllowApplePay(document))
-        return completionHandler(false);
-
     RELEASE_LOG_IF_ALLOWED("openPaymentSetup()");
     m_client.openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
@@ -98,7 +105,7 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
 {
     ASSERT(!m_activeSession);
 
-    if (!shouldAllowApplePay(document))
+    if (!setApplePayIsActiveIfAllowed(document))
         return false;
 
     Vector<URL> linkIconURLs;
@@ -111,7 +118,6 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
         return false;
 
     m_activeSession = &paymentSession;
-    document.setHasStartedApplePaySession();
     return true;
 }
 
@@ -239,11 +245,8 @@ void PaymentCoordinator::didCancelPaymentSession()
     m_activeSession = nullptr;
 }
 
-Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document& document, unsigned version, const String& paymentNetwork) const
+Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned version, const String& paymentNetwork) const
 {
-    if (!shouldAllowApplePay(document))
-        return WTF::nullopt;
-
     if (version < 2 && equalIgnoringASCIICase(paymentNetwork, "jcb"))
         return WTF::nullopt;
 
@@ -269,37 +272,32 @@ bool PaymentCoordinator::shouldEnableApplePayAPIs(Document& document) const
     return shouldEnableAPIs;
 }
 
-bool PaymentCoordinator::shouldAllowApplePay(Document& document) const
+bool PaymentCoordinator::setApplePayIsActiveIfAllowed(Document& document) const
 {
-    if (m_client.supportsUnrestrictedApplePay()) {
-        RELEASE_LOG_IF_ALLOWED("shouldAllowApplePay() -> true (unrestricted client)");
-        return true;
-    }
-
     auto hasEvaluatedUserAgentScripts = document.hasEvaluatedUserAgentScripts();
     auto isRunningUserScripts = document.isRunningUserScripts();
-    if (hasEvaluatedUserAgentScripts || isRunningUserScripts) {
-        ASSERT(shouldAllowUserAgentScripts(document));
-        RELEASE_LOG_IF_ALLOWED("shouldAllowApplePay() -> false (hasEvaluatedUserAgentScripts: %d, isRunningUserScripts: %d)", hasEvaluatedUserAgentScripts, isRunningUserScripts);
+    auto supportsUnrestrictedApplePay = m_client.supportsUnrestrictedApplePay();
+
+    if (!supportsUnrestrictedApplePay && (hasEvaluatedUserAgentScripts || isRunningUserScripts)) {
+        ASSERT(!document.isApplePayActive());
+        RELEASE_LOG_IF_ALLOWED("setApplePayIsActiveIfAllowed() -> false (hasEvaluatedUserAgentScripts: %d, isRunningUserScripts: %d)", hasEvaluatedUserAgentScripts, isRunningUserScripts);
         return false;
     }
 
-    RELEASE_LOG_IF_ALLOWED("shouldAllowApplePay() -> true");
+    RELEASE_LOG_IF_ALLOWED("setApplePayIsActiveIfAllowed() -> true (supportsUnrestrictedApplePay: %d)", supportsUnrestrictedApplePay);
+    document.setApplePayIsActive();
     return true;
 }
 
 bool PaymentCoordinator::shouldAllowUserAgentScripts(Document& document) const
 {
-    if (m_client.supportsUnrestrictedApplePay())
+    if (m_client.supportsUnrestrictedApplePay() || !document.isApplePayActive())
         return true;
 
-    if (document.hasStartedApplePaySession()) {
-        ASSERT(shouldAllowApplePay(document));
-        RELEASE_LOG_ERROR_IF_ALLOWED("shouldAllowUserAgentScripts() -> false (active session)");
-        return false;
-    }
-
-    return true;
+    ASSERT(!document.hasEvaluatedUserAgentScripts());
+    ASSERT(!document.isRunningUserScripts());
+    RELEASE_LOG_ERROR_IF_ALLOWED("shouldAllowUserAgentScripts() -> false (active session)");
+    return false;
 }
 
 } // namespace WebCore

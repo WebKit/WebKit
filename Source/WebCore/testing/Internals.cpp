@@ -4603,9 +4603,9 @@ void Internals::setAsRunningUserScripts(Document& document)
 }
 
 #if ENABLE(APPLE_PAY)
-void Internals::setHasStartedApplePaySession(Document& document)
+void Internals::setApplePayIsActive(Document& document)
 {
-    document.setHasStartedApplePaySession();
+    document.setApplePayIsActive();
 }
 #endif
 

@@ -1,33 +1,9 @@
 <!DOCTYPE html>
 <body>
+<script src="apple-pay.js"></script>
 <script>
-    const applePayRequestBase = () => {
-        return {
-            merchantCapabilities: ['supports3DS'],
-            supportedNetworks: ['visa'],
-            countryCode: 'US',
-        };
-    };
-
-    const applePayPaymentRequest = () => {
-        const request = applePayRequestBase();
-        request.total = { label: 'total', amount: '0.00' };
-        request.currencyCode = 'USD';
-        return request;
-    };
-
-    const applePayMethod = () => {
-        const request = applePayRequestBase();
-        request.version = 1;
-        request.merchantIdentifier = '';
-        return {
-            supportedMethods: 'https://apple.com/apple-pay',
-            data: request,
-        };
-    };
-
-    const eventListener = async () => {
-        internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
+    window.addEventListener('load', async () => {
+        internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = window.location.search === "?unrestricted" ? true : false;
 
         const applePaySessionAvailable = !!window.ApplePaySession;
         const paymentRequestAvailable = !!window.PaymentRequest;
@@ -40,16 +16,8 @@
         const canMakePayments = ApplePaySession.canMakePayments();
         const canMakePaymentsWithActiveCard = await ApplePaySession.canMakePaymentsWithActiveCard('');
 
-        if (!window.wkPaymentRequest) {
-            wkPaymentRequest = new PaymentRequest([applePayMethod()], {
-                total: {
-                    label: 'total',
-                    amount: { currency: 'USD', value: '0.00' },
-                },
-            });
-        }
-
-        const canMakePayment = await wkPaymentRequest.canMakePayment();
+        const paymentRequest = new PaymentRequest([applePayMethod()], applePayDetails);
+        const canMakePayment = await paymentRequest.canMakePayment();
 
         window.webkit.messageHandlers.testApplePay.postMessage({
             applePaySessionAvailable,
@@ -59,8 +27,5 @@
             canMakePaymentsWithActiveCard,
             canMakePayment,
         });
-    };
-
-    window.addEventListener('load', eventListener);
-    window.addEventListener('hashchange', eventListener);
+    });
 </script>

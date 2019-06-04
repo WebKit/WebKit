@@ -29,6 +29,10 @@
 #import <WebKit/WKBrowsingContextController.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include <MobileCoreServices/MobileCoreServices.h>
+#endif
+
 static NSString *testScheme;
 
 @implementation TestProtocol
@@ -86,6 +90,13 @@ static NSURL *createRedirectURL(NSString *query)
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme, query]];
 }
 
+static NSString *contentTypeForFileExtension(NSString *fileExtension)
+{
+    auto identifier = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, nullptr));
+    auto mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(identifier.get(), kUTTagClassMIMEType));
+    return (__bridge NSString *)mimeType.autorelease();
+}
+
 - (void)startLoading
 {
     NSURL *requestURL = self.request.URL;
@@ -106,14 +117,20 @@ static NSURL *createRedirectURL(NSString *query)
         return;
     }
 
+    NSString *contentType;
     NSData *data;
-    if ([requestURL.host isEqualToString:@"bundle-html-file"])
-        data = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:requestURL.lastPathComponent.stringByDeletingPathExtension withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    else
+    if ([requestURL.host isEqualToString:@"bundle-file"]) {
+        NSString *fileName = requestURL.lastPathComponent;
+        NSString *fileExtension = fileName.pathExtension;
+        contentType = contentTypeForFileExtension(fileExtension);
+        data = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:fileName.stringByDeletingPathExtension withExtension:fileExtension subdirectory:@"TestWebKitAPI.resources"]];
+    } else {
+        contentType = @"text/html";
         data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
+    }
 
     NSMutableDictionary *responseHeaders = [NSMutableDictionary dictionaryWithCapacity:2];
-    responseHeaders[@"Content-Type"] = @"text/html";
+    responseHeaders[@"Content-Type"] = contentType;
     responseHeaders[@"Content-Length"] = [NSString stringWithFormat:@"%tu", data.length];
     if (additionalResponseHeaders)
         [responseHeaders addEntriesFromDictionary:additionalResponseHeaders];

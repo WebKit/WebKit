@@ -37,8 +37,9 @@
 #import <WebKit/WebKit.h>
 
 static bool isDone;
+static NSString * const userScriptSource = @"window.wkUserScriptInjected = true";
 
-@interface TestApplePayScriptMessageHandler : NSObject <WKScriptMessageHandler>
+@interface TestApplePayAvailableScriptMessageHandler : NSObject <WKScriptMessageHandler>
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithAPIsAvailableExpectation:(BOOL)apisAvailableExpectation canMakePaymentsExpectation:(BOOL)canMakePaymentsExpectation;
@@ -48,7 +49,7 @@ static bool isDone;
 
 @end
 
-@implementation TestApplePayScriptMessageHandler
+@implementation TestApplePayAvailableScriptMessageHandler
 
 - (instancetype)initWithAPIsAvailableExpectation:(BOOL)apisAvailableExpectation canMakePaymentsExpectation:(BOOL)canMakePaymentsExpectation
 {
@@ -64,10 +65,22 @@ static bool isDone;
 {
     EXPECT_EQ(_apisAvailableExpectation, [[message.body objectForKey:@"applePaySessionAvailable"] boolValue]);
     EXPECT_EQ(_apisAvailableExpectation, [[message.body objectForKey:@"paymentRequestAvailable"] boolValue]);
-    EXPECT_EQ(_canMakePaymentsExpectation, [[message.body objectForKey:@"supportsVersion"] boolValue]);
+    EXPECT_EQ(_apisAvailableExpectation, [[message.body objectForKey:@"supportsVersion"] boolValue]);
     EXPECT_EQ(_canMakePaymentsExpectation, [[message.body objectForKey:@"canMakePayments"] boolValue]);
     EXPECT_EQ(_canMakePaymentsExpectation, [[message.body objectForKey:@"canMakePaymentsWithActiveCard"] boolValue]);
     EXPECT_EQ(_canMakePaymentsExpectation, [[message.body objectForKey:@"canMakePayment"] boolValue]);
+    isDone = true;
+}
+
+@end
+
+@interface TestApplePayActiveSessionScriptMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation TestApplePayActiveSessionScriptMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
     isDone = true;
 }
 
@@ -79,15 +92,38 @@ TEST(ApplePay, ApplePayAvailableByDefault)
 {
     [TestProtocol registerWithScheme:@"https"];
 
-    auto messageHandler = adoptNS([[TestApplePayScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:YES]);
+    auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:YES]);
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-html-file/apple-pay-availability"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-availability.html"]]];
 
     Util::run(&isDone);
+
+    [TestProtocol unregister];
+}
+
+TEST(ApplePay, ApplePayAvailableInUnrestrictedClients)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:YES]);
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    [configuration.userContentController addUserScript:userScript.get()];
+    [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-availability-in-iframe.html?unrestricted"]]];
+    [webView _test_waitForDidFinishNavigation];
+    [webView evaluateJavaScript:@"loadApplePayFrame();" completionHandler:nil];
+
+    Util::run(&isDone);
+
+    EXPECT_EQ(YES, [[webView objectByEvaluatingJavaScript:@"window.wkUserScriptInjected"] boolValue]);
 
     [TestProtocol unregister];
 }
@@ -96,15 +132,15 @@ TEST(ApplePay, UserScriptAtDocumentStartDisablesApplePay)
 {
     [TestProtocol registerWithScheme:@"https"];
 
-    auto messageHandler = adoptNS([[TestApplePayScriptMessageHandler alloc] initWithAPIsAvailableExpectation:NO canMakePaymentsExpectation:NO]);
-    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"window.wkUserScriptInjected = true" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:NO canMakePaymentsExpectation:NO]);
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
     [configuration.userContentController addUserScript:userScript.get()];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-html-file/apple-pay-availability"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-availability.html"]]];
 
     Util::run(&isDone);
 
@@ -117,15 +153,15 @@ TEST(ApplePay, UserScriptAtDocumentEndDisablesApplePay)
 {
     [TestProtocol registerWithScheme:@"https"];
     
-    auto messageHandler = adoptNS([[TestApplePayScriptMessageHandler alloc] initWithAPIsAvailableExpectation:NO canMakePaymentsExpectation:NO]);
-    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"window.wkUserScriptInjected = true" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
+    auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:NO canMakePaymentsExpectation:NO]);
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
     
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
     [configuration.userContentController addUserScript:userScript.get()];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
     
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-html-file/apple-pay-availability"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-availability.html"]]];
     
     Util::run(&isDone);
     
@@ -138,13 +174,13 @@ TEST(ApplePay, UserAgentScriptEvaluationDisablesApplePay)
 {
     [TestProtocol registerWithScheme:@"https"];
 
-    auto messageHandler = adoptNS([[TestApplePayScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:NO]);
+    auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:NO]);
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-html-file/apple-pay-availability-in-iframe"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-availability-in-iframe.html"]]];
     [webView _test_waitForDidFinishNavigation];
     [webView evaluateJavaScript:@"window.wkScriptEvaluated = true; loadApplePayFrame();" completionHandler:nil];
 
@@ -159,13 +195,13 @@ TEST(ApplePay, UserAgentScriptEvaluationDisablesApplePayInExistingObjects)
 {
     [TestProtocol registerWithScheme:@"https"];
 
-    auto messageHandler = adoptNS([[TestApplePayScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:YES]);
+    auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:NO]);
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-html-file/apple-pay-availability"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-availability-existing-object.html"]]];
 
     Util::run(&isDone);
 
@@ -178,27 +214,66 @@ TEST(ApplePay, UserAgentScriptEvaluationDisablesApplePayInExistingObjects)
     [TestProtocol unregister];
 }
 
-TEST(ApplePay, ActiveSessionBlocksUserAgentScripts)
+static void runActiveSessionTest(NSURL *url, BOOL shouldBlockScripts)
 {
     [TestProtocol registerWithScheme:@"https"];
 
-    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"window.wkUserScriptInjected = true" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    auto messageHandler = adoptNS([[TestApplePayActiveSessionScriptMessageHandler alloc] init]);
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-html-file/apple-pay-active-session"]]];
-    [webView _test_waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    Util::run(&isDone);
 
     [configuration.userContentController _addUserScriptImmediately:userScript.get()];
     [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
-        EXPECT_NULL(result);
-        EXPECT_NOT_NULL(error);
+        EXPECT_EQ(shouldBlockScripts, !result);
+        EXPECT_EQ(shouldBlockScripts, !!error);
         isDone = true;
     }];
+
+    isDone = false;
     Util::run(&isDone);
 
     [TestProtocol unregister];
+}
+
+TEST(ApplePay, ActiveSessionBlocksUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-active-session.html"], YES);
+}
+
+TEST(ApplePay, CanMakePaymentsBlocksUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payments.html"], YES);
+}
+
+TEST(ApplePay, CanMakePaymentsFalseDoesNotBlockUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payments.html?false"], NO);
+}
+
+TEST(ApplePay, CanMakePaymentsWithActiveCardBlocksUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payments-with-active-card.html"], YES);
+}
+
+TEST(ApplePay, CanMakePaymentsWithActiveCardFalseDoesNotBlockUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payments-with-active-card.html?false"], NO);
+}
+
+TEST(ApplePay, CanMakePaymentBlocksUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payment.html"], YES);
+}
+
+TEST(ApplePay, CanMakePaymentFalseDoesNotBlockUserAgentScripts)
+{
+    runActiveSessionTest([NSURL URLWithString:@"https://bundle-file/apple-pay-can-make-payment.html?false"], NO);
 }
 
 } // namespace TestWebKitAPI

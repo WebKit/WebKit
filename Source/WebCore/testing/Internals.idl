@@ -657,7 +657,7 @@ enum CompositingPolicy {
     void setQuickLookPassword(DOMString password);
 
     [CallWith=Document] void setAsRunningUserScripts();
-    [CallWith=Document, Conditional=APPLE_PAY] void setHasStartedApplePaySession();
+    [CallWith=Document, Conditional=APPLE_PAY] void setApplePayIsActive();
 
     void disableTileSizeUpdateDelay();
     void setSpeculativeTilingDelayDisabledForTesting(boolean disabled);

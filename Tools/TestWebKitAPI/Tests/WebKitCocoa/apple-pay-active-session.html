@@ -2,5 +2,6 @@
 <body>
 <script>
     internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
-    internals.setHasStartedApplePaySession();
+    internals.setApplePayIsActive();
+    window.webkit.messageHandlers.testApplePay.postMessage("done");
 </script>

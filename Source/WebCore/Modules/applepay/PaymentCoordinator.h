@@ -29,6 +29,7 @@
 
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Function.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ struct PaymentMethodUpdate;
 struct ShippingContactUpdate;
 struct ShippingMethodUpdate;
 
-class PaymentCoordinator {
+class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT explicit PaymentCoordinator(PaymentCoordinatorClient&);
@@ -79,12 +80,12 @@ public:
     Optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
 
     bool shouldEnableApplePayAPIs(Document&) const;
-    WEBCORE_EXPORT bool shouldAllowApplePay(Document&) const;
     WEBCORE_EXPORT bool shouldAllowUserAgentScripts(Document&) const;
 
 private:
-    PaymentCoordinatorClient& m_client;
+    bool setApplePayIsActiveIfAllowed(Document&) const;
 
+    PaymentCoordinatorClient& m_client;
     RefPtr<PaymentSession> m_activeSession;
 };
 

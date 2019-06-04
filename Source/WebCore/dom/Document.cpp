@@ -8249,19 +8249,19 @@ void Document::setHasEvaluatedUserAgentScripts()
 
 #if ENABLE(APPLE_PAY)
 
-bool Document::hasStartedApplePaySession() const
+bool Document::isApplePayActive() const
 {
     auto& top = topDocument();
-    return this == &top ? m_hasStartedApplePaySession : top.hasStartedApplePaySession();
+    return this == &top ? m_hasStartedApplePaySession : top.isApplePayActive();
 }
 
-void Document::setHasStartedApplePaySession()
+void Document::setApplePayIsActive()
 {
     auto& top = topDocument();
     if (this == &top)
         m_hasStartedApplePaySession = true;
     else
-        top.setHasStartedApplePaySession();
+        top.setApplePayIsActive();
 }
 
 #endif

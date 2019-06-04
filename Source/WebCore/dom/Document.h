@@ -1522,8 +1522,8 @@ public:
     WEBCORE_EXPORT void setAsRunningUserScripts();
     void setHasEvaluatedUserAgentScripts();
 #if ENABLE(APPLE_PAY)
-    WEBCORE_EXPORT bool hasStartedApplePaySession() const;
-    WEBCORE_EXPORT void setHasStartedApplePaySession();
+    WEBCORE_EXPORT bool isApplePayActive() const;
+    WEBCORE_EXPORT void setApplePayIsActive();
 #endif
 
     void frameWasDisconnectedFromOwner();

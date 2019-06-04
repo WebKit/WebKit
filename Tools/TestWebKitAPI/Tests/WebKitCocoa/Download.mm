@@ -973,7 +973,7 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
     [webView setNavigationDelegate:delegate.get()];
     [webView configuration].processPool._downloadDelegate = delegate.get();
 
-    NSURL *firstURL = [NSURL URLWithString:@"http://bundle-html-file/simple"];
+    NSURL *firstURL = [NSURL URLWithString:@"http://bundle-file/simple.html"];
     [delegate setResponsePolicy:WKNavigationResponsePolicyAllow];
     [webView loadRequest:[NSURLRequest requestWithURL:firstURL]];
     isDone = false;
@@ -983,7 +983,7 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
     EXPECT_TRUE([delegate didFinishNavigation]);
     EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
 
-    NSURL *secondURL = [NSURL URLWithString:@"http://bundle-html-file/simple2"];
+    NSURL *secondURL = [NSURL URLWithString:@"http://bundle-file/simple2.html"];
     [delegate setResponsePolicy:_WKNavigationResponsePolicyBecomeDownload];
     [webView loadRequest:[NSURLRequest requestWithURL:secondURL]];
     isDone = false;
