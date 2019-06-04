@@ -9394,6 +9394,7 @@
 		71EFCEDA202B388F00D7C411 /* AnimationEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffect.cpp; sourceTree = "<group>"; };
 		71EFCEDE202B39C700D7C411 /* JSAnimationEffectCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectCustom.cpp; sourceTree = "<group>"; };
 		71F936F71DD4F99B00922CC7 /* tracks-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "tracks-support.js"; sourceTree = "<group>"; };
+		71FF851822A3F81F005D5959 /* NavigatorMaxTouchPoints.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorMaxTouchPoints.idl; sourceTree = "<group>"; };
 		721443452240C8BA00F12FF7 /* SVGAnimatedValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedValueProperty.h; sourceTree = "<group>"; };
 		721443462240CAD200F12FF7 /* SVGValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGValueProperty.h; sourceTree = "<group>"; };
 		724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTBlendMinMax.cpp; sourceTree = "<group>"; };
@@ -27488,6 +27489,7 @@
 				A81872130977D3C0005826D9 /* NameNodeList.h */,
 				8306EFF01B8BCE7C0031D032 /* NativeNodeFilter.cpp */,
 				83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */,
+				71FF851822A3F81F005D5959 /* NavigatorMaxTouchPoints.idl */,
 				A8C4A7EE09D563270003AC8D /* Node.cpp */,
 				14115B5109F84B7100CA4FC1 /* Node.h */,
 				14DC0D0B09FECFA4007B0235 /* Node.idl */,

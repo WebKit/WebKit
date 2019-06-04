@@ -2935,6 +2935,7 @@ JSNavigatorGeolocation.cpp
 JSNavigatorGPU.cpp
 JSNavigatorID.cpp
 JSNavigatorLanguage.cpp
+JSNavigatorMaxTouchPoints.cpp
 JSNavigatorMediaCapabilities.cpp
 JSNavigatorMediaDevices.cpp
 JSNavigatorOnLine.cpp

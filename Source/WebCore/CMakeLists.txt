@@ -710,6 +710,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/MutationObserver.idl
     dom/MutationRecord.idl
     dom/NamedNodeMap.idl
+    dom/NavigatorMaxTouchPoints.idl
     dom/Node.idl
     dom/NodeFilter.idl
     dom/NodeIterator.idl

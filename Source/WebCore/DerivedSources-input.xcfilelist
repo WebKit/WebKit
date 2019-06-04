@@ -593,6 +593,7 @@ $(PROJECT_DIR)/dom/MutationEvent.idl
 $(PROJECT_DIR)/dom/MutationObserver.idl
 $(PROJECT_DIR)/dom/MutationRecord.idl
 $(PROJECT_DIR)/dom/NamedNodeMap.idl
+$(PROJECT_DIR)/dom/NavigatorMaxTouchPoints.idl
 $(PROJECT_DIR)/dom/Node.idl
 $(PROJECT_DIR)/dom/NodeFilter.idl
 $(PROJECT_DIR)/dom/NodeIterator.idl

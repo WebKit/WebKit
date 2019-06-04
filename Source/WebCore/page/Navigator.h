@@ -55,6 +55,14 @@ public:
 
     void getStorageUpdates();
 
+#if ENABLE(POINTER_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(IOSMAC)
+    int maxTouchPoints() const { return 5; }
+#else
+    int maxTouchPoints() const { return 0; }
+#endif
+#endif
+
 private:
     explicit Navigator(ScriptExecutionContext*, DOMWindow&);
 

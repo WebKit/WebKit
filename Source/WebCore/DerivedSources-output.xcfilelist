@@ -1051,6 +1051,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorID.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorID.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLanguage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLanguage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMaxTouchPoints.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMaxTouchPoints.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMediaCapabilities.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMediaCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMediaDevices.cpp

@@ -1,3 +1,19 @@
+2019-06-02  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Expose navigator.maxTouchPoints
+        https://bugs.webkit.org/show_bug.cgi?id=198468
+        <rdar://problem/51273029>
+
+        Reviewed by Chris Dumez.
+
+        * js/dom/navigator-maxtouchpoints-expected.txt: Added.
+        * js/dom/navigator-maxtouchpoints.html: Added.
+        * platform/mac-highsierra-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-highsierra/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/win/js/dom/navigator-maxtouchpoints-expected.txt: Added.
+
 2019-06-04  Antoine Quint  <graouts@apple.com>
 
         The "mouseenter" and "pointerenter" events are fired from the bottom up

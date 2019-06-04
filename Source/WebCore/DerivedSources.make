@@ -609,6 +609,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/MutationObserver.idl \
     $(WebCore)/dom/MutationRecord.idl \
     $(WebCore)/dom/NamedNodeMap.idl \
+    $(WebCore)/dom/NavigatorMaxTouchPoints.idl \
     $(WebCore)/dom/Node.idl \
     $(WebCore)/dom/NodeFilter.idl \
     $(WebCore)/dom/NodeIterator.idl \
