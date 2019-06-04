@@ -197,6 +197,7 @@ static bool isBackgroundState(BKSApplicationState state)
 - (void)_backgroundTaskExpired
 {
     RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _backgroundTaskExpired", self);
+    ASSERT(_applicationIsBackgrounded);
     [self _cancelTimeoutTask];
 
     // Tell our child processes they will suspend imminently.
@@ -222,6 +223,17 @@ static bool isBackgroundState(BKSApplicationState state)
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - beginBackgroundTaskWithName", self);
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
             RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d, _applicationIsBackgrounded? %d).", RunLoop::isMain(), _applicationIsBackgrounded);
+            if (!_applicationIsBackgrounded) {
+                // We've received the invalidation warning after the app has become foreground again. In this case, we should not
+                // warn clients of imminent suspension. To be safe (avoid potential killing), we end the task right away and call
+                // _updateBackgroundTask asynchronously to start a new task if necessary.
+                [self _releaseBackgroundTask];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self _updateBackgroundTask];
+                });
+                return;
+            }
+            
             [self _backgroundTaskExpired];
         }];
     } else if (_assertionsNeedingBackgroundTask.isEmpty())
