@@ -139,6 +139,9 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         d = self.downloadFileContentToWorker('.buildbot-diff', patch)
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 
+    def hideStepIf(self, results, step):
+        return results == SUCCESS and self.getProperty('validated', '') == False
+
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {u'step': u'Patch does not apply'}
@@ -368,6 +371,7 @@ class ValidatePatch(buildstep.BuildStep):
 
         if obsolete == -1 or review_denied == -1 or bug_closed == -1:
             self.finished(WARNINGS)
+            self.setProperty('validated', False)
             return None
 
         self._addToLog('stdio', 'Bug is open.\nPatch is not obsolete.\nPatch is not marked r-.\n')
@@ -808,6 +812,9 @@ class TransferToS3(master.MasterShellCommand):
                 self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggers)])
 
         return super(TransferToS3, self).finished(results)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS and self.getProperty('validated', '') == False
 
     def getResultSummary(self):
         if self.results != SUCCESS:
