@@ -84,8 +84,6 @@ protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
-    WEBCORE_EXPORT virtual void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode);
-
     virtual void applyLayerPositions() = 0;
 
     WEBCORE_EXPORT virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;

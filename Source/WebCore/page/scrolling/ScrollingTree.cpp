@@ -294,28 +294,28 @@ void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScr
     if (is<ScrollingTreeOverflowScrollingNode>(changedNode))
         additionalUpdateRoots = overflowRelatedNodes().get(changedNode.scrollingNodeID());
 
-    notifyRelatedNodesRecursive(changedNode, changedNode);
+    notifyRelatedNodesRecursive(changedNode);
     
     for (auto positionedNodeID : additionalUpdateRoots) {
         auto* positionedNode = nodeForID(positionedNodeID);
         if (positionedNode)
-            notifyRelatedNodesRecursive(changedNode, *positionedNode);
+            notifyRelatedNodesRecursive(*positionedNode);
     }
 }
 
-void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode)
+void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeNode& node)
 {
-    currNode.relatedNodeScrollPositionDidChange(changedNode);
+    node.applyLayerPositions();
 
-    if (!currNode.children())
+    if (!node.children())
         return;
 
-    for (auto& child : *currNode.children()) {
+    for (auto& child : *node.children()) {
         // Never need to cross frame boundaries, since scroll layer adjustments are isolated to each document.
         if (is<ScrollingTreeFrameScrollingNode>(child))
             continue;
 
-        notifyRelatedNodesRecursive(changedNode, *child);
+        notifyRelatedNodesRecursive(*child);
     }
 }
 

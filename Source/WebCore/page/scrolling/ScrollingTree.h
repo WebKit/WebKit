@@ -167,7 +167,7 @@ private:
 
     void applyLayerPositionsRecursive(ScrollingTreeNode&);
 
-    void notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode);
+    void notifyRelatedNodesRecursive(ScrollingTreeNode&);
 
     Lock m_treeMutex; // Protects the scrolling tree.
 

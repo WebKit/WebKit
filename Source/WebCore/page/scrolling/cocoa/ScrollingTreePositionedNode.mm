@@ -76,36 +76,33 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
         scrollingTree().positionedNodesWithRelatedOverflow().add(scrollingNodeID());
 }
 
-void ScrollingTreePositionedNode::applyLayerPositions()
+FloatSize ScrollingTreePositionedNode::scrollOffsetSinceLastCommit() const
 {
-    FloatSize scrollOffsetSinceLastCommit;
+    FloatSize offset;
     for (auto nodeID : m_relatedOverflowScrollingNodes) {
         if (auto* node = scrollingTree().nodeForID(nodeID)) {
             if (is<ScrollingTreeOverflowScrollingNode>(node)) {
                 auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*node);
-                scrollOffsetSinceLastCommit += overflowNode.lastCommittedScrollPosition() - overflowNode.currentScrollPosition();
+                offset += overflowNode.currentScrollPosition() - overflowNode.lastCommittedScrollPosition();
             }
         }
     }
-    auto layerOffset = -scrollOffsetSinceLastCommit;
     if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Stationary) {
         // Stationary nodes move in the opposite direction.
-        layerOffset = -layerOffset;
+        return -offset;
     }
 
-    FloatPoint layerPosition = m_constraints.layerPositionAtLastLayout() - layerOffset;
-
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << scrollOffsetSinceLastCommit << " moving layer to " << layerPosition);
-
-    [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
+    return offset;
 }
 
-void ScrollingTreePositionedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode)
+void ScrollingTreePositionedNode::applyLayerPositions()
 {
-    if (!m_relatedOverflowScrollingNodes.contains(changedNode.scrollingNodeID()))
-        return;
+    auto offset = scrollOffsetSinceLastCommit();
+    auto layerPosition = m_constraints.layerPositionAtLastLayout() - offset;
 
-    applyLayerPositions();
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << offset << " moving layer to " << layerPosition);
+
+    [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 }
 
 void ScrollingTreePositionedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

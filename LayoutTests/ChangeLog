@@ -1,3 +1,24 @@
+2019-06-04  Antti Koivisto  <antti@apple.com>
+
+        Sticky positioning is jumpy in many overflow cases
+        https://bugs.webkit.org/show_bug.cgi?id=198532
+        <rdar://problem/51400532>
+
+        Reviewed by Simon Fraser.
+
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-no-stick-1-expected.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-no-stick-1.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-no-stick-2-expected.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-no-stick-2.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-stick-1-expected.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-stick-1.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-stick-2-expected.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-no-stacking-context-stick-2.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-stacking-context-no-stick-expected.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-stacking-context-no-stick.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-stacking-context-stick-expected.html: Added.
+        * scrollingcoordinator/ios/sticky-overflow-stacking-context-stick.html: Added.
+
 2019-06-04  Takashi Komori  <Takashi.Komori@sony.com>
 
         [WinCairo] Implement cpu and memory measuring functions.
