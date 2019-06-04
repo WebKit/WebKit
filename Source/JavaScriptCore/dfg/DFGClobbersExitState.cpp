@@ -87,14 +87,14 @@ bool clobbersExitState(Graph& graph, Node* node)
 
     case CreateActivation:
         // Like above, but with the activation allocation caveat.
-        return node->castOperand<SymbolTable*>()->singletonScope()->isStillValid();
+        return node->castOperand<SymbolTable*>()->singleton().isStillValid();
 
     case NewFunction:
     case NewGeneratorFunction:
     case NewAsyncGeneratorFunction:
     case NewAsyncFunction:
         // Like above, but with the JSFunction allocation caveat.
-        return node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid();
+        return node->castOperand<FunctionExecutable*>()->singleton().isStillValid();
 
     default:
         // For all other nodes, we just care about whether they write to something other than SideState.

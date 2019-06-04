@@ -840,7 +840,7 @@ private:
         case NewGeneratorFunction:
         case NewAsyncGeneratorFunction:
         case NewAsyncFunction: {
-            if (isStillValid(node->castOperand<FunctionExecutable*>()->singletonFunction())) {
+            if (isStillValid(node->castOperand<FunctionExecutable*>())) {
                 m_heap.escape(node->child1().node());
                 break;
             }
@@ -868,7 +868,7 @@ private:
         }
 
         case CreateActivation: {
-            if (isStillValid(node->castOperand<SymbolTable*>()->singletonScope())) {
+            if (isStillValid(node->castOperand<SymbolTable*>())) {
                 m_heap.escape(node->child1().node());
                 break;
             }
@@ -2382,10 +2382,16 @@ private:
     // different answers. It turns out that this analysis works OK regardless of what this
     // returns but breaks badly if this changes its mind for any particular InferredValue. This
     // method protects us from that.
-    bool isStillValid(InferredValue* value)
+    bool isStillValid(SymbolTable* value)
     {
-        return m_validInferredValues.add(value, value->isStillValid()).iterator->value;
+        return m_validInferredValues.add(value, value->singleton().isStillValid()).iterator->value;
     }
+
+    bool isStillValid(FunctionExecutable* value)
+    {
+        return m_validInferredValues.add(value, value->singleton().isStillValid()).iterator->value;
+    }
+
 
     SSACalculator m_pointerSSA;
     SSACalculator m_allocationSSA;
@@ -2397,7 +2403,7 @@ private:
     InsertionSet m_insertionSet;
     CombinedLiveness m_combinedLiveness;
 
-    HashMap<InferredValue*, bool> m_validInferredValues;
+    HashMap<JSCell*, bool> m_validInferredValues;
 
     HashMap<Node*, Node*> m_materializationToEscapee;
     HashMap<Node*, Vector<Node*>> m_materializationSiteToMaterializations;

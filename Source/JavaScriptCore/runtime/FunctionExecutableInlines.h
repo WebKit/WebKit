@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,15 @@
 
 #pragma once
 
-#include "InferredValue.h"
+#include "FunctionExecutable.h"
+#include "InferredValueInlines.h"
 
 namespace JSC {
 
-template<typename JSCellType>
-void InferredValue<JSCellType>::finalizeUnconditionally(VM& vm)
+inline void FunctionExecutable::finalizeUnconditionally(VM& vm)
 {
-    JSCellType* value = inferredValue();
-
-    if (value) {
-        if (vm.heap.isMarked(value))
-            return;
-
-        invalidate(vm, StringFireDetail("InferredValue clean-up during GC"));
-    }
+    m_singleton.finalizeUnconditionally(vm);
 }
 
 } // namespace JSC
+

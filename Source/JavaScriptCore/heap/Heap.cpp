@@ -31,6 +31,7 @@
 #include "EdenGCActivityCallback.h"
 #include "Exception.h"
 #include "FullGCActivityCallback.h"
+#include "FunctionExecutableInlines.h"
 #include "GCActivityCallback.h"
 #include "GCIncomingRefCountedSetInlines.h"
 #include "GCSegmentedArrayInlines.h"
@@ -67,6 +68,7 @@
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
 #include "SweepingScope.h"
+#include "SymbolTableInlines.h"
 #include "SynchronousStopTheWorldMutatorScheduler.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
@@ -596,8 +598,8 @@ void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
 void Heap::finalizeUnconditionalFinalizers()
 {
     vm()->builtinExecutables()->finalizeUnconditionally();
-    if (vm()->m_inferredValueSpace)
-        finalizeMarkedUnconditionalFinalizers<InferredValue>(vm()->m_inferredValueSpace->space);
+    finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(vm()->functionExecutableSpace.space);
+    finalizeMarkedUnconditionalFinalizers<SymbolTable>(vm()->symbolTableSpace);
     vm()->forEachCodeBlockSpace(
         [&] (auto& space) {
             this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);

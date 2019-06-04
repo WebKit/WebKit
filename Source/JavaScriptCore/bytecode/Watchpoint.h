@@ -161,10 +161,11 @@ private:
     Type m_type;
 };
 
-enum WatchpointState {
-    ClearWatchpoint,
-    IsWatched,
-    IsInvalidated
+// Make sure that the state can be represented in 2 bits.
+enum WatchpointState : uint8_t {
+    ClearWatchpoint = 0,
+    IsWatched = 1,
+    IsInvalidated = 2
 };
 
 class InlineWatchpointSet;

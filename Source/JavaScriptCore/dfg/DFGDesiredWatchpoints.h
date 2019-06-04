@@ -28,9 +28,10 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommonData.h"
-#include "InferredValue.h"
+#include "FunctionExecutable.h"
 #include "JSArrayBufferView.h"
 #include "ObjectPropertyCondition.h"
+#include "SymbolTable.h"
 #include "Watchpoint.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashSet.h>
@@ -55,15 +56,27 @@ struct SetPointerAdaptor {
     }
 };
 
-struct InferredValueAdaptor {
-    static void add(CodeBlock*, InferredValue*, CommonData&);
-    static bool hasBeenInvalidated(InferredValue* inferredValue)
+struct SymbolTableAdaptor {
+    static void add(CodeBlock*, SymbolTable*, CommonData&);
+    static bool hasBeenInvalidated(SymbolTable* symbolTable)
     {
-        return inferredValue->hasBeenInvalidated();
+        return symbolTable->singleton().hasBeenInvalidated();
     }
-    static void dumpInContext(PrintStream& out, InferredValue* inferredValue, DumpContext*)
+    static void dumpInContext(PrintStream& out, SymbolTable* symbolTable, DumpContext*)
     {
-        out.print(RawPointer(inferredValue));
+        out.print(RawPointer(symbolTable));
+    }
+};
+
+struct FunctionExecutableAdaptor {
+    static void add(CodeBlock*, FunctionExecutable*, CommonData&);
+    static bool hasBeenInvalidated(FunctionExecutable* executable)
+    {
+        return executable->singleton().hasBeenInvalidated();
+    }
+    static void dumpInContext(PrintStream& out, FunctionExecutable* executable, DumpContext*)
+    {
+        out.print(RawPointer(executable));
     }
 };
 
@@ -154,7 +167,8 @@ public:
     
     void addLazily(WatchpointSet*);
     void addLazily(InlineWatchpointSet&);
-    void addLazily(InferredValue*);
+    void addLazily(SymbolTable*);
+    void addLazily(FunctionExecutable*);
     void addLazily(JSArrayBufferView*);
     
     // It's recommended that you don't call this directly. Use Graph::watchCondition(), which does
@@ -175,9 +189,13 @@ public:
     {
         return m_inlineSets.isWatched(&set);
     }
-    bool isWatched(InferredValue* inferredValue)
+    bool isWatched(SymbolTable* symbolTable)
     {
-        return m_inferredValues.isWatched(inferredValue);
+        return m_symbolTables.isWatched(symbolTable);
+    }
+    bool isWatched(FunctionExecutable* executable)
+    {
+        return m_functionExecutables.isWatched(executable);
     }
     bool isWatched(JSArrayBufferView* view)
     {
@@ -193,7 +211,8 @@ public:
 private:
     GenericDesiredWatchpoints<WatchpointSet*> m_sets;
     GenericDesiredWatchpoints<InlineWatchpointSet*> m_inlineSets;
-    GenericDesiredWatchpoints<InferredValue*, InferredValueAdaptor> m_inferredValues;
+    GenericDesiredWatchpoints<SymbolTable*, SymbolTableAdaptor> m_symbolTables;
+    GenericDesiredWatchpoints<FunctionExecutable*, FunctionExecutableAdaptor> m_functionExecutables;
     GenericDesiredWatchpoints<JSArrayBufferView*, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
     GenericDesiredWatchpoints<ObjectPropertyCondition, AdaptiveStructureWatchpointAdaptor> m_adaptiveStructureSets;
 };

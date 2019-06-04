@@ -380,6 +380,7 @@ public:
     IsoSubspace propertyTableSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
+    IsoSubspace symbolTableSpace;
 
 #define DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(name) \
     template<SubspaceAccess mode> \
@@ -451,7 +452,6 @@ public:
     };
     
     SpaceAndSet codeBlockSpace;
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(inferredValueSpace)
 
     template<typename Func>
     void forEachCodeBlockSpace(const Func& func)
@@ -527,7 +527,6 @@ public:
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> unlinkedModuleProgramCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
-    Strong<Structure> inferredValueStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
     Strong<Structure> promiseDeferredStructure;

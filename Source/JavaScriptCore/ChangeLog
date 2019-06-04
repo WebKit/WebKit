@@ -1,3 +1,109 @@
+2019-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] InferredValue should not be a JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=198407
+
+        Reviewed by Filip Pizlo.
+
+        Allocating InferredValue as a JSCell is too costly in terms of memory. Gmail has 90000 FunctionExecutables. And each gets
+        InferredValue, which takes 32 bytes. So it takes 2.7 MB memory footprint.
+
+        In this patch, we introduce a new container InferredValue<>. Which is similar to WriteBarrier<> container, but it replaces
+        the existing InferredValue cells with one pointer size field. The implementation of InferredValue<> is similar to
+        InlineWatchpointSet. But we encode JSCell* too to the pointer data of InlineWatchpointSet. So sizeof(InferredValue<>) is one
+        pointer size while it keeps Watchpoint feature and JSCell holder feature.
+
+        InferredValue<> needs validation in GC finalize phase. So this patch also makes SymbolTable Iso-allocated.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfileBase<Derived>::initializeProfile):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::SymbolTableAdaptor::add):
+        (JSC::DFG::FunctionExecutableAdaptor::add):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValid const):
+        (JSC::DFG::DesiredWatchpoints::dumpInContext const):
+        (JSC::DFG::InferredValueAdaptor::add): Deleted.
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::SymbolTableAdaptor::hasBeenInvalidated):
+        (JSC::DFG::SymbolTableAdaptor::dumpInContext):
+        (JSC::DFG::FunctionExecutableAdaptor::hasBeenInvalidated):
+        (JSC::DFG::FunctionExecutableAdaptor::dumpInContext):
+        (JSC::DFG::DesiredWatchpoints::isWatched):
+        (JSC::DFG::InferredValueAdaptor::hasBeenInvalidated): Deleted.
+        (JSC::DFG::InferredValueAdaptor::dumpInContext): Deleted.
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::finishCreation):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionExecutableInlines.h: Copied from Source/JavaScriptCore/runtime/InferredValueInlines.h.
+        (JSC::FunctionExecutable::finalizeUnconditionally):
+        * runtime/InferredValue.cpp: Removed.
+        * runtime/InferredValue.h:
+        (JSC::InferredValue::inferredValue):
+        (JSC::InferredValue::InferredValue):
+        (JSC::InferredValue::~InferredValue):
+        (JSC::InferredValue::stateOnJSThread const):
+        (JSC::InferredValue::state const):
+        (JSC::InferredValue::hasBeenInvalidated const):
+        (JSC::InferredValue::isStillValid const):
+        (JSC::InferredValue::invalidate):
+        (JSC::InferredValue::isBeingWatched const):
+        (JSC::InferredValue::notifyWrite):
+        (JSC::InferredValue::isThin):
+        (JSC::InferredValue::isFat):
+        (JSC::InferredValue::decodeState):
+        (JSC::InferredValue::encodeState):
+        (JSC::InferredValue::isThin const):
+        (JSC::InferredValue::isFat const):
+        (JSC::InferredValue::fat):
+        (JSC::InferredValue::fat const):
+        (JSC::InferredValue::inflate):
+        (JSC::InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow):
+        (JSC::InferredValue<JSCellType>::notifyWriteSlow):
+        (JSC::InferredValue<JSCellType>::add):
+        (JSC::InferredValue<JSCellType>::inflateSlow):
+        (JSC::InferredValue<JSCellType>::freeFat):
+        * runtime/InferredValueInlines.h:
+        (JSC::InferredValue<JSCellType>::finalizeUnconditionally):
+        (JSC::InferredValue::finalizeUnconditionally): Deleted.
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::setSymbolTable):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::finishCreation):
+        (JSC::SymbolTable::visitChildren):
+        * runtime/SymbolTable.h:
+        * runtime/SymbolTableInlines.h: Copied from Source/JavaScriptCore/runtime/InferredValueInlines.h.
+        (JSC::SymbolTable::finalizeUnconditionally):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Argument elimination should check for negative indices in GetByVal

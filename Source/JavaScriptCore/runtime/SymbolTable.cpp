@@ -90,8 +90,6 @@ SymbolTable::~SymbolTable() { }
 void SymbolTable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    if (VM::canUseJIT())
-        m_singletonScope.set(vm, this, InferredValue::create(vm));
 }
 
 void SymbolTable::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
@@ -100,7 +98,6 @@ void SymbolTable::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     Base::visitChildren(thisSymbolTable, visitor);
 
     visitor.append(thisSymbolTable->m_arguments);
-    visitor.append(thisSymbolTable->m_singletonScope);
     
     if (thisSymbolTable->m_rareData)
         visitor.append(thisSymbolTable->m_rareData->m_codeBlock);

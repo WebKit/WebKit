@@ -48,18 +48,12 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
 {
     RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());
-    if (VM::canUseJIT())
-        new (&m_singletonFunction) WriteBarrier<InferredValue>();
-    else
-        m_singletonFunctionState = ClearWatchpoint;
 }
 
 void FunctionExecutable::finishCreation(VM& vm, ScriptExecutable* topLevelExecutable)
 {
     Base::finishCreation(vm);
     m_topLevelExecutable.set(vm, this, topLevelExecutable ? topLevelExecutable : this);
-    if (VM::canUseJIT())
-        m_singletonFunction.set(vm, this, InferredValue::create(vm));
 }
 
 void FunctionExecutable::destroy(JSCell* cell)
@@ -90,8 +84,6 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_codeBlockForCall);
     visitor.append(thisObject->m_codeBlockForConstruct);
     visitor.append(thisObject->m_unlinkedExecutable);
-    if (VM::canUseJIT())
-        visitor.append(thisObject->m_singletonFunction);
     if (RareData* rareData = thisObject->m_rareData.get()) {
         visitor.append(rareData->m_cachedPolyProtoStructure);
         if (TemplateObjectMap* map = rareData->m_templateObjectMap.get()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,19 @@
 
 #pragma once
 
-#include "IsoSubspace.h"
 #include "JSCast.h"
 #include "VM.h"
 #include "Watchpoint.h"
 #include "WriteBarrier.h"
+#include <wtf/Nonmovable.h>
 
 namespace JSC {
 
-// Allocate one of these if you'd like to infer a constant value. Writes to the value should use
-// notifyWrite(). So long as exactly one value had ever been written and invalidate() has never been
-// called, and you register a watchpoint, you can rely on the inferredValue() being the one true
-// value.
-//
-// Commonly used for inferring singletons - in that case each allocation does notifyWrite(). But you
-// can use it for other things as well.
-
-class InferredValue final : public JSCell {
+template<typename JSCellType>
+class InferredValue {
+    WTF_MAKE_NONCOPYABLE(InferredValue);
+    WTF_MAKE_NONMOVABLE(InferredValue);
 public:
-    typedef JSCell Base;
-    
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.inferredValueSpace<mode>();
-    }
-
-    static InferredValue* create(VM&);
-    
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-    
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-    
-    static void visitChildren(JSCell*, SlotVisitor&);
-    
-    DECLARE_INFO;
-    
     // For the purpose of deciding whether or not to watch this variable, you only need
     // to inspect inferredValue(). If this returns something other than the empty
     // value, then it means that at all future safepoints, this watchpoint set will be
@@ -73,51 +49,259 @@ public:
     //    IsInvalidated: in this case the variable's value may be anything but you'll
     //        either notice that it's invalidated and not install the watchpoint, or
     //        you will have been notified that the watchpoint was fired.
-    JSValue inferredValue() { return m_value.get(); }
+    JSCellType* inferredValue()
+    {
+        uintptr_t data = m_data;
+        if (isFat(data))
+            return fat(data)->inferredValue();
+        return bitwise_cast<JSCellType*>(data & ValueMask);
+    }
 
-    // Forwards some WatchpointSet methods.
-    WatchpointState state() const { return m_set.state(); }
-    bool isStillValid() const { return m_set.isStillValid(); }
-    bool hasBeenInvalidated() const { return m_set.hasBeenInvalidated(); }
-    void add(Watchpoint* watchpoint) { m_set.add(watchpoint); }
-    
-    void notifyWrite(VM& vm, JSValue value, const FireDetail& detail)
+    explicit InferredValue()
+        : m_data(encodeState(ClearWatchpoint))
     {
-        if (LIKELY(m_set.stateOnJSThread() == IsInvalidated))
+        ASSERT(inferredValue() == nullptr);
+    }
+
+    ~InferredValue()
+    {
+        if (isThin())
             return;
-        notifyWriteSlow(vm, value, detail);
+        freeFat();
+    }
+
+    // Fast way of getting the state, which only works from the main thread.
+    WatchpointState stateOnJSThread() const
+    {
+        uintptr_t data = m_data;
+        if (isFat(data))
+            return fat(data)->stateOnJSThread();
+        return decodeState(data);
+    }
+
+    // It is safe to call this from another thread. It may return a prior state,
+    // but that should be fine since you should only perform actions based on the
+    // state if you also add a watchpoint.
+    WatchpointState state() const
+    {
+        WTF::loadLoadFence();
+        uintptr_t data = m_data;
+        WTF::loadLoadFence();
+        if (isFat(data))
+            return fat(data)->state();
+        return decodeState(data);
+    }
+
+    // It is safe to call this from another thread. It may return false
+    // even if the set actually had been invalidated, but that ought to happen
+    // only in the case of races, and should be rare.
+    bool hasBeenInvalidated() const
+    {
+        return state() == IsInvalidated;
     }
     
-    void notifyWrite(VM& vm, JSValue value, const char* reason)
+    // Like hasBeenInvalidated(), may be called from another thread.
+    bool isStillValid() const
     {
-        if (LIKELY(m_set.stateOnJSThread() == IsInvalidated))
-            return;
-        notifyWriteSlow(vm, value, reason);
+        return !hasBeenInvalidated();
     }
+    
+    void add(Watchpoint*);
     
     void invalidate(VM& vm, const FireDetail& detail)
     {
-        m_value.clear();
-        m_set.invalidate(vm, detail);
+        if (isFat())
+            fat()->invalidate(vm, detail);
+        else
+            m_data = encodeState(IsInvalidated);
     }
     
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    bool isBeingWatched() const
+    {
+        if (isFat())
+            return fat()->isBeingWatched();
+        return false;
+    }
+
+    void notifyWrite(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail)
+    {
+        if (LIKELY(stateOnJSThread() == IsInvalidated))
+            return;
+        notifyWriteSlow(vm, owner, value, detail);
+    }
+    
+    void notifyWrite(VM& vm, JSCell* owner, JSCellType* value, const char* reason)
+    {
+        if (LIKELY(stateOnJSThread() == IsInvalidated))
+            return;
+        notifyWriteSlow(vm, owner, value, reason);
+    }
     
     void finalizeUnconditionally(VM&);
-    
+
 private:
-    InferredValue(VM&);
-    ~InferredValue();
+    class InferredValueWatchpointSet final : public WatchpointSet {
+    public:
+        InferredValueWatchpointSet(WatchpointState state, JSCellType* value)
+            : WatchpointSet(state)
+            , m_value(value)
+        {
+        }
+
+        JSCellType* inferredValue() const { return m_value; }
+
+        void invalidate(VM& vm, const FireDetail& detail)
+        {
+            m_value = nullptr;
+            WatchpointSet::invalidate(vm, detail);
+        }
+
+        void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const FireDetail&);
+
+    private:
+        JSCellType* m_value;
+    };
+
+    static constexpr uintptr_t IsThinFlag        = 1;
+    static constexpr uintptr_t StateMask         = 6;
+    static constexpr uintptr_t StateShift        = 1;
+    static constexpr uintptr_t ValueMask         = ~static_cast<uintptr_t>(IsThinFlag | StateMask);
     
-    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const FireDetail&);
-    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const char* reason);
+    static bool isThin(uintptr_t data) { return data & IsThinFlag; }
+    static bool isFat(uintptr_t data) { return !isThin(data); }
     
-    InlineWatchpointSet m_set;
-    WriteBarrier<Unknown> m_value;
+    static WatchpointState decodeState(uintptr_t data)
+    {
+        ASSERT(isThin(data));
+        return static_cast<WatchpointState>((data & StateMask) >> StateShift);
+    }
+    
+    static uintptr_t encodeState(WatchpointState state)
+    {
+        return (static_cast<uintptr_t>(state) << StateShift) | IsThinFlag;
+    }
+    
+    bool isThin() const { return isThin(m_data); }
+    bool isFat() const { return isFat(m_data); };
+    
+    static InferredValueWatchpointSet* fat(uintptr_t data)
+    {
+        return bitwise_cast<InferredValueWatchpointSet*>(data);
+    }
+    
+    InferredValueWatchpointSet* fat()
+    {
+        ASSERT(isFat());
+        return fat(m_data);
+    }
+    
+    const InferredValueWatchpointSet* fat() const
+    {
+        ASSERT(isFat());
+        return fat(m_data);
+    }
+    
+    InferredValueWatchpointSet* inflate()
+    {
+        if (LIKELY(isFat()))
+            return fat();
+        return inflateSlow();
+    }
+
+    InferredValueWatchpointSet* inflateSlow();
+    void freeFat();
+
+    void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const FireDetail&);
+    void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const char* reason);
+    
+    uintptr_t m_data;
 };
 
-// FIXME: We could have an InlineInferredValue, which only allocates the InferredValue object when
-// a notifyWrite() transitions us towards watching, and then clears the reference (allowing the object
-// to die) when we get invalidated.
+template<typename JSCellType>
+void InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail)
+{
+    switch (state()) {
+    case ClearWatchpoint:
+        m_value = value;
+        vm.heap.writeBarrier(owner, value);
+        startWatching();
+        return;
+
+    case IsWatched:
+        ASSERT(!!m_value);
+        if (m_value == value)
+            return;
+        invalidate(vm, detail);
+        return;
+
+    case IsInvalidated:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+template<typename JSCellType>
+void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail)
+{
+    uintptr_t data = m_data;
+    if (isFat(data)) {
+        fat(data)->notifyWriteSlow(vm, owner, value, detail);
+        return;
+    }
+
+    switch (state()) {
+    case ClearWatchpoint:
+        ASSERT(decodeState(m_data) != IsInvalidated);
+        m_data = (bitwise_cast<uintptr_t>(value) & ValueMask) | encodeState(IsWatched);
+        vm.heap.writeBarrier(owner, value);
+        return;
+
+    case IsWatched:
+        ASSERT(!!inferredValue());
+        if (inferredValue() == value)
+            return;
+        invalidate(vm, detail);
+        return;
+
+    case IsInvalidated:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+template<typename JSCellType>
+void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const char* reason)
+{
+    notifyWriteSlow(vm, owner, value, StringFireDetail(reason));
+}
+
+template<typename JSCellType>
+void InferredValue<JSCellType>::add(Watchpoint* watchpoint)
+{
+    inflate()->add(watchpoint);
+}
+
+template<typename JSCellType>
+auto InferredValue<JSCellType>::inflateSlow() -> InferredValueWatchpointSet*
+{
+    ASSERT(isThin());
+    ASSERT(!isCompilationThread());
+    uintptr_t data = m_data;
+    InferredValueWatchpointSet* fat = adoptRef(new InferredValueWatchpointSet(decodeState(m_data), bitwise_cast<JSCellType*>(data & ValueMask))).leakRef();
+    WTF::storeStoreFence();
+    m_data = bitwise_cast<uintptr_t>(fat);
+    return fat;
+}
+
+template<typename JSCellType>
+void InferredValue<JSCellType>::freeFat()
+{
+    ASSERT(isFat());
+    fat()->deref();
+}
 
 } // namespace JSC

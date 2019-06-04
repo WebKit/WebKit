@@ -248,36 +248,14 @@ public:
 
     DECLARE_INFO;
 
-    InferredValue* singletonFunction()
+    InferredValue<JSFunction>& singleton()
     {
-        if (VM::canUseJIT())
-            return m_singletonFunction.get();
-        return nullptr;
+        return m_singleton;
     }
 
-    void notifyCreation(VM& vm, JSValue value, const char* reason)
+    void notifyCreation(VM& vm, JSFunction* function, const char* reason)
     {
-        if (VM::canUseJIT()) {
-            singletonFunction()->notifyWrite(vm, value, reason);
-            return;
-        }
-        switch (m_singletonFunctionState) {
-        case ClearWatchpoint:
-            m_singletonFunctionState = IsWatched;
-            return;
-        case IsWatched:
-            m_singletonFunctionState = IsInvalidated;
-            return;
-        case IsInvalidated:
-            return;
-        }
-    }
-
-    bool singletonFunctionHasBeenInvalidated()
-    {
-        if (VM::canUseJIT())
-            return singletonFunction()->hasBeenInvalidated();
-        return m_singletonFunctionState == IsInvalidated;
+        m_singleton.notifyWrite(vm, this, function, reason);
     }
 
     // Cached poly proto structure for the result of constructing this executable.
@@ -304,6 +282,8 @@ public:
     ScriptExecutable* topLevelExecutable() const { return m_topLevelExecutable.get(); }
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
+
+    void finalizeUnconditionally(VM&);
 
 private:
     friend class ExecutableBase;
@@ -342,10 +322,7 @@ private:
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForCall;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForConstruct;
-    union {
-        WriteBarrier<InferredValue> m_singletonFunction;
-        WatchpointState m_singletonFunctionState;
-    };
+    InferredValue<JSFunction> m_singleton;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 };
 

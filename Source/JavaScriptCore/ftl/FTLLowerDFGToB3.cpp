@@ -5441,7 +5441,7 @@ private:
         RegisteredStructure structure = m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->activationStructure());
         JSValue initializationValue = m_node->initializationValueForActivation();
         ASSERT(initializationValue.isUndefined() || initializationValue == jsTDZValue());
-        if (table->singletonScope()->isStillValid()) {
+        if (table->singleton().isStillValid()) {
             LValue callResult = vmCall(
                 Int64,
                 m_out.operation(operationCreateActivationDirect), m_callFrame, weakStructure(structure),
@@ -5502,7 +5502,7 @@ private:
         LValue scope = lowCell(m_node->child1());
         
         FunctionExecutable* executable = m_node->castOperand<FunctionExecutable*>();
-        if (executable->singletonFunction()->isStillValid()) {
+        if (executable->singleton().isStillValid()) {
             LValue callResult =
                 isGeneratorFunction ? vmCall(Int64, m_out.operation(operationNewGeneratorFunction), m_callFrame, scope, weakPointer(executable)) :
                 isAsyncFunction ? vmCall(Int64, m_out.operation(operationNewAsyncFunction), m_callFrame, scope, weakPointer(executable)) :

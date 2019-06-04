@@ -7193,7 +7193,7 @@ void SpeculativeJIT::compileNewFunction(Node* node)
 
     FunctionExecutable* executable = node->castOperand<FunctionExecutable*>();
 
-    if (executable->singletonFunction()->isStillValid()) {
+    if (executable->singleton().isStillValid()) {
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         
@@ -7410,7 +7410,7 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
     JSValue initializationValue = node->initializationValueForActivation();
     ASSERT(initializationValue == jsUndefined() || initializationValue == jsTDZValue());
     
-    if (table->singletonScope()->isStillValid()) {
+    if (table->singleton().isStillValid()) {
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
