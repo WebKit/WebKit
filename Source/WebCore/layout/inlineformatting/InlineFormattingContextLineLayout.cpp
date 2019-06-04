@@ -83,6 +83,34 @@ InlineFormattingContext::LineLayout::LineLayout(const InlineFormattingContext& i
 {
 }
 
+static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineItem& inlineItem, LayoutUnit contentLogicalLeft)
+{
+    if (inlineItem.isLineBreak())
+        return 0;
+
+    if (is<InlineTextItem>(inlineItem)) {
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        auto end = inlineTextItem.isCollapsed() ? inlineTextItem.start() + 1 : inlineTextItem.end();
+        return TextUtil::width(downcast<InlineBox>(inlineTextItem.layoutBox()), inlineTextItem.start(), end, contentLogicalLeft);
+    }
+
+    auto& layoutBox = inlineItem.layoutBox();
+    ASSERT(layoutState.hasDisplayBox(layoutBox));
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+
+    if (inlineItem.isContainerStart())
+        return displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0);
+
+    if (inlineItem.isContainerEnd())
+        return displayBox.marginEnd() + displayBox.borderRight() + displayBox.paddingRight().valueOr(0);
+
+    if (inlineItem.isFloat())
+        return displayBox.marginBoxWidth();
+
+    return displayBox.width();
+}
+
+
 static std::unique_ptr<Line> constructLine(const LayoutState& layoutState, const FloatingState& floatingState, const Box& formattingRoot,
     LayoutUnit lineLogicalTop, LayoutUnit availableWidth)
 {
@@ -140,7 +168,7 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         ASSERT(committedInlineItemCount);
         return LineContent { lineInput.firstInlineItemIndex + (committedInlineItemCount - 1), line->close() };
     };
-    LineBreaker lineBreaker(layoutState());
+    LineBreaker lineBreaker;
     // Iterate through the inline content and place the inline boxes on the current line.
     for (auto inlineItemIndex = lineInput.firstInlineItemIndex; inlineItemIndex < lineInput.inlineItems.size(); ++inlineItemIndex) {
         auto& inlineItem = lineInput.inlineItems[inlineItemIndex];
@@ -151,8 +179,9 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         }
         auto availableWidth = line->availableWidth() - uncommittedContent.width();
         auto currentLogicalRight = line->contentLogicalRight() + uncommittedContent.width();
+        inlineItem->setWidth(inlineItemWidth(layoutState(), *inlineItem, currentLogicalRight));
         // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
-        auto breakingContext = lineBreaker.breakingContext(*inlineItem, { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), !line->hasContent() });
+        auto breakingContext = lineBreaker.breakingContext(*inlineItem, inlineItem->width(), { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), !line->hasContent() });
         if (breakingContext.isAtBreakingOpportunity)
             commitPendingContent();
 
@@ -206,10 +235,12 @@ LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUni
     LayoutUnit lineLogicalRight;
     LayoutUnit trimmableTrailingWidth;
 
-    LineBreaker lineBreaker(layoutState());
+    LineBreaker lineBreaker;
     auto& inlineContent = m_formattingState.inlineItems();
     for (auto& inlineItem : inlineContent) {
-        auto breakingContext = lineBreaker.breakingContext(*inlineItem, { widthConstraint, lineLogicalRight, !lineLogicalRight });
+        auto logicalWidth = inlineItemWidth(layoutState(), *inlineItem, lineLogicalRight);
+        inlineItem->setWidth(logicalWidth);
+        auto breakingContext = lineBreaker.breakingContext(*inlineItem, logicalWidth, { widthConstraint, lineLogicalRight, !lineLogicalRight });
         if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap) {
             maximumLineWidth = std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
             trimmableTrailingWidth = { };
@@ -219,10 +250,10 @@ LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUni
             // Skip leading whitespace.
             if (!lineLogicalRight)
                 continue;
-            trimmableTrailingWidth += inlineItem->width();
+            trimmableTrailingWidth += logicalWidth;
         } else
             trimmableTrailingWidth = { };
-        lineLogicalRight += inlineItem->width();
+        lineLogicalRight += logicalWidth;
     }
     return std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
 }

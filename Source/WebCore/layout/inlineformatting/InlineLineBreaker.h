@@ -34,8 +34,6 @@ class InlineTextItem;
 
 class LineBreaker {
 public:
-    LineBreaker(const LayoutState&);
-
     enum class BreakingBehavior { Keep, Break, Wrap };
     struct BreakingContext {
         BreakingBehavior breakingBehavior;
@@ -47,16 +45,13 @@ public:
         LayoutUnit trimmableWidth;
         bool isEmpty { false };
     };
-    BreakingContext breakingContext(InlineItem&, const LineContext);
+    BreakingContext breakingContext(const InlineItem&, LayoutUnit logicalWidth, const LineContext&);
 
 private:
 
     BreakingBehavior wordBreakingBehavior(const InlineTextItem&, bool lineIsEmpty) const;
     bool isAtBreakingOpportunity(const InlineItem&);
-    LayoutUnit runWidth(const InlineItem&, LayoutUnit contentLogicalLeft) const;
-    LayoutUnit textWidth(const InlineTextItem&, LayoutUnit contentLogicalLeft) const;
 
-    const LayoutState& m_layoutState;
     bool m_hyphenationIsDisabled { true };
 };
 
