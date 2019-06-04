@@ -1,3 +1,14 @@
+2019-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r244557): Leak of WKNSString in WTR::runOpenPanel() while running WebKit layout tests
+        <https://webkit.org/b/198538>
+        <rdar://problem/51407719>
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::runOpenPanel): Use adoptWK() to fix the leak.
+
 2019-06-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add authentication while fetching bugs
