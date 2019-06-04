@@ -47,9 +47,9 @@ public:
     }
 
 #if !OS(WINDOWS)
-    static Ref<CachedBytecode> create(void* data, size_t size)
+    static Ref<CachedBytecode> create(void* data, size_t size, LeafExecutableMap&& leafExecutables = { })
     {
-        return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(data, size)));
+        return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(data, size), WTFMove(leafExecutables)));
     }
 #endif
 

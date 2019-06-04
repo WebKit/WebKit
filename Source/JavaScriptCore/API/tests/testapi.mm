@@ -2197,7 +2197,7 @@ static void testBytecodeCacheWithSyntaxError(JSScriptType type)
         if ([script cacheBytecodeWithError:&error])
             CRASH();
         RELEASE_ASSERT(error);
-        checkResult(@"Got error when trying to cache bytecode for a script with a syntax error.", [[error description] containsString:@"Unable to generate bytecode for this JSScript because of a parser error"]);
+        checkResult(@"Got error when trying to cache bytecode for a script with a syntax error.", [[error description] containsString:@"Unable to generate bytecode for this JSScript because"]);
     }
 }
 

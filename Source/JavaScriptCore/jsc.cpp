@@ -26,6 +26,7 @@
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
+#include "BytecodeCacheError.h"
 #include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
@@ -981,8 +982,10 @@ public:
     {
         if (!cacheEnabled() || !m_cachedBytecode)
             return;
-        Ref<CachedBytecode> cachedBytecode = encodeFunctionCodeBlock(*executable->vm(), codeBlock);
-        m_cachedBytecode->addFunctionUpdate(executable, kind, WTFMove(cachedBytecode));
+        BytecodeCacheError error;
+        RefPtr<CachedBytecode> cachedBytecode = encodeFunctionCodeBlock(*executable->vm(), codeBlock, error);
+        if (cachedBytecode && !error.isValid())
+            m_cachedBytecode->addFunctionUpdate(executable, kind, *cachedBytecode);
     }
 
     void cacheBytecode(const BytecodeCacheGenerator& generator) const override
@@ -991,7 +994,9 @@ public:
             return;
         if (!m_cachedBytecode)
             m_cachedBytecode = CachedBytecode::create();
-        m_cachedBytecode->addGlobalUpdate(generator());
+        auto update = generator();
+        if (update)
+            m_cachedBytecode->addGlobalUpdate(*update);
     }
 
     void commitCachedBytecode() const override

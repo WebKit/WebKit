@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Completion.h"
 
+#include "BytecodeCacheError.h"
 #include "CallFrame.h"
 #include "CatchScope.h"
 #include "CodeCache.h"
@@ -91,7 +92,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
     return true;
 }
 
-Ref<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, ParserError& error)
+RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, int fd, BytecodeCacheError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
@@ -101,13 +102,17 @@ Ref<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, Pa
     JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
     EvalContextType evalContextType = EvalContextType::None;
 
-    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, { }, error, evalContextType, &variablesUnderTDZ);
+    ParserError parserError;
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, { }, parserError, evalContextType, &variablesUnderTDZ);
+    if (parserError.isValid())
+        error = parserError;
     if (!unlinkedCodeBlock)
-        return CachedBytecode::create();
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, { });
+        return nullptr;
+
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, fd, error, { });
 }
 
-Ref<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, ParserError& error)
+RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, int fd, BytecodeCacheError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
@@ -117,10 +122,13 @@ Ref<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, Par
     JSParserScriptMode scriptMode = JSParserScriptMode::Module;
     EvalContextType evalContextType = EvalContextType::None;
 
-    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, { }, error, evalContextType, &variablesUnderTDZ);
+    ParserError parserError;
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, { }, parserError, evalContextType, &variablesUnderTDZ);
+    if (parserError.isValid())
+        error = parserError;
     if (!unlinkedCodeBlock)
-        return CachedBytecode::create();
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, { });
+        return nullptr;
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, fd, error, { });
 }
 
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)

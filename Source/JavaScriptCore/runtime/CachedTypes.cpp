@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedTypes.h"
 
+#include "BytecodeCacheError.h"
 #include "BytecodeCacheVersion.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "JSCInlines.h"
@@ -87,8 +88,9 @@ public:
         ptrdiff_t m_offset;
     };
 
-    Encoder(VM& vm)
+    Encoder(VM& vm, int fd = -1)
         : m_vm(vm)
+        , m_fd(fd)
         , m_baseOffset(0)
         , m_currentPage(nullptr)
     {
@@ -144,12 +146,20 @@ public:
         m_leafExecutables.add(executable, offset);
     }
 
-    Ref<CachedBytecode> release()
+    RefPtr<CachedBytecode> release(BytecodeCacheError& error)
     {
         if (!m_currentPage)
-            return CachedBytecode::create();
-
+            return nullptr;
         m_currentPage->alignEnd();
+
+        if (m_fd != -1) {
+#if !OS(WINDOWS)
+            return releaseMapped(error);
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        }
+
         size_t size = m_baseOffset + m_currentPage->size();
         MallocPtr<uint8_t> buffer = MallocPtr<uint8_t>::malloc(size);
         unsigned offset = 0;
@@ -162,6 +172,38 @@ public:
     }
 
 private:
+#if !OS(WINDOWS)
+    RefPtr<CachedBytecode> releaseMapped(BytecodeCacheError& error)
+    {
+        size_t size = m_baseOffset + m_currentPage->size();
+        if (ftruncate(m_fd, size)) {
+            error = BytecodeCacheError::StandardError(errno);
+            return nullptr;
+        }
+
+        for (const auto& page : m_pages) {
+            ssize_t bytesWritten = write(m_fd, page.buffer(), page.size());
+            if (bytesWritten == -1) {
+                error = BytecodeCacheError::StandardError(errno);
+                return nullptr;
+            }
+
+            if (static_cast<size_t>(bytesWritten) != page.size()) {
+                error = BytecodeCacheError::WriteError(bytesWritten, page.size());
+                return nullptr;
+            }
+        }
+
+        void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, m_fd, 0);
+        if (buffer == MAP_FAILED) {
+            error = BytecodeCacheError::StandardError(errno);
+            return nullptr;
+        }
+
+        return CachedBytecode::create(buffer, size, WTFMove(m_leafExecutables));
+    }
+#endif
+
     class Page {
     public:
         Page(size_t size)
@@ -228,6 +270,7 @@ private:
     }
 
     VM& m_vm;
+    int m_fd;
     ptrdiff_t m_baseOffset;
     Page* m_currentPage;
     Vector<Page> m_pages;
@@ -2342,11 +2385,11 @@ void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedC
     entry->encode(encoder, { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
 }
 
-Ref<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
+RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock, int fd, BytecodeCacheError& error)
 {
     const ClassInfo* classInfo = codeBlock->classInfo(vm);
 
-    Encoder encoder(vm);
+    Encoder encoder(vm, fd);
     if (classInfo == UnlinkedProgramCodeBlock::info())
         encodeCodeBlock<UnlinkedProgramCodeBlock>(encoder, key, codeBlock);
     else if (classInfo == UnlinkedModuleProgramCodeBlock::info())
@@ -2354,14 +2397,20 @@ Ref<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const Unli
     else
         ASSERT(classInfo == UnlinkedEvalCodeBlock::info());
 
-    return encoder.release();
+    return encoder.release(error);
 }
 
-Ref<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCodeBlock* codeBlock)
+RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
+{
+    BytecodeCacheError error;
+    return encodeCodeBlock(vm, key, codeBlock, -1, error);
+}
+
+RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCodeBlock* codeBlock, BytecodeCacheError& error)
 {
     Encoder encoder(vm);
     encoder.malloc<CachedFunctionCodeBlock>()->encode(encoder, *codeBlock);
-    return encoder.release();
+    return encoder.release(error);
 }
 
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)

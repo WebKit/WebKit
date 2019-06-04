@@ -48,7 +48,7 @@ class UnlinkedFunctionCodeBlock;
         WebAssembly,
     };
 
-    using BytecodeCacheGenerator = Function<Ref<CachedBytecode>()>;
+    using BytecodeCacheGenerator = Function<RefPtr<CachedBytecode>()>;
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:

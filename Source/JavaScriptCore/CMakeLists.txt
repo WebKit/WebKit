@@ -751,6 +751,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/BooleanPrototype.h
     runtime/Butterfly.h
     runtime/ButterflyInlines.h
+    runtime/BytecodeCacheError.h
     runtime/CachePayload.h
     runtime/CacheUpdate.h
     runtime/CachedBytecode.h
