@@ -195,8 +195,8 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    m_swConnectionsByIdentifier.clear();
-    for (auto& connection : m_swConnectionsBySession.values())
+    auto connections = std::exchange(m_swConnectionsByIdentifier, { });
+    for (auto& connection : connections.values())
         connection->connectionToServerLost();
 #endif
 }

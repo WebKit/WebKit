@@ -1,3 +1,16 @@
+2019-06-04  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r245913) [ Debug ] ASSERTION FAILED: m_swConnectionsByIdentifier.contains(connection.serverConnectionIdentifier()) Layout Test http/wpt/service-workers/update-service-worker.https.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=198434
+        <rdar://problem/51313917>
+
+        Reviewed by Alex Christensen.
+
+        Iterate through the connectionID-based connection map instead of the sessionID-based map to notify them their connection is lost.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didClose):
+
 2019-06-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] UIProcess' background task expiration handler may get called after the app is foreground again
