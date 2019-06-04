@@ -14,8 +14,8 @@ mouseenter on slotParent
 mouseenter on slot
 
 ==Entering slotted element==
-mouseenter on target
 mouseenter on targetParent
+mouseenter on target
 
 ==Leaving slotted element==
 mouseleave on target

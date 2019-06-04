@@ -67,16 +67,16 @@ mouseover@window
     target:input#target
     relatedTarget:html
 
-mouseenter@input#target
-    target:input#target
+mouseenter@body
+    target:body
     relatedTarget:html
 
 mouseenter@div#detailsContainer
     target:div#detailsContainer
     relatedTarget:html
 
-mouseenter@body
-    target:body
+mouseenter@input#target
+    target:input#target
     relatedTarget:html
 
 mousemove@input#target

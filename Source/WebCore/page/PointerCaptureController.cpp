@@ -190,8 +190,17 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
             }
         }
 
-        for (Element* element = &downcast<Element>(target); element; element = element->parentElementInComposedTree()) {
+        Vector<Ref<Element>, 32> targetChain;
+        for (Element* element = targetElement; element; element = element->parentElementInComposedTree()) {
             if (hasCapturingListenerInHierarchy || element->hasEventListeners(type))
+                targetChain.append(*element);
+        }
+
+        if (type == eventNames().pointerenterEvent) {
+            for (auto& element : WTF::makeReversedRange(targetChain))
+                element->dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view));
+        } else {
+            for (auto& element : targetChain)
                 element->dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view));
         }
     };

@@ -4,10 +4,10 @@ WebKit must generate mouseenter and mouseleve events exactly once on host (as we
 
 
 ==Entering target==
-mouseenter on target
-mouseenter on container
-mouseenter on host
 mouseenter on hostParent
+mouseenter on host
+mouseenter on container
+mouseenter on target
 
 ==Leaving target==
 mouseleave on target

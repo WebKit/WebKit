@@ -39,32 +39,32 @@ mouseover@window
     target:input#target
     relatedTarget:null
 
-mouseenter@input#target
-    target:input#target
-    relatedTarget:null
-
-mouseenter@div#divInsideSummary
-    target:div#divInsideSummary
-    relatedTarget:null
-
-mouseenter@summary
-    target:summary
-    relatedTarget:null
-
-mouseenter@details
-    target:details
-    relatedTarget:null
-
-mouseenter@div#detailsContainer
-    target:div#detailsContainer
+mouseenter@html
+    target:html
     relatedTarget:null
 
 mouseenter@body
     target:body
     relatedTarget:null
 
-mouseenter@html
-    target:html
+mouseenter@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mouseenter@details
+    target:details
+    relatedTarget:null
+
+mouseenter@summary
+    target:summary
+    relatedTarget:null
+
+mouseenter@div#divInsideSummary
+    target:div#divInsideSummary
+    relatedTarget:null
+
+mouseenter@input#target
+    target:input#target
     relatedTarget:null
 
 mousemove@input#target

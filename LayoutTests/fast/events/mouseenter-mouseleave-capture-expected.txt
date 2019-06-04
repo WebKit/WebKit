@@ -8,8 +8,8 @@ mousemove on html
 mouseMoveTo(110,140)
 mouseout on html
 mouseover on outer1
-mouseenter on outer1
 mouseenter on body
+mouseenter on outer1
 mousemove on outer1
 
 mouseMoveTo(130,140)
@@ -22,8 +22,8 @@ mouseMoveTo(170,140)
 mouseout on inner1
 mouseleave on inner1
 mouseover on inner3
-mouseenter on inner3
 mouseenter on inner2
+mouseenter on inner3
 mousemove on inner3
 
 mouseMoveTo(180,140)

@@ -57,6 +57,11 @@ static PointerEvent::IsCancelable phaseIsCancelable(PlatformTouchPoint::TouchPha
     return PointerEvent::IsCancelable::Yes;
 }
 
+static Event::CanBubble typeCanBubble(const AtomicString& type)
+{
+    return (type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent) ? Event::CanBubble::No : Event::CanBubble::Yes;
+}
+
 Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
 {
     auto phase = event.touchPhaseAtIndex(index);
@@ -69,7 +74,7 @@ Ref<PointerEvent> PointerEvent::create(const String& type, const PlatformTouchEv
 }
 
 PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
-    : MouseEvent(type, CanBubble::Yes, isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
+    : MouseEvent(type, typeCanBubble(type), isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(event.touchIdentifierAtIndex(index))
     , m_width(2 * event.radiusXAtIndex(index))
     , m_height(2 * event.radiusYAtIndex(index))
