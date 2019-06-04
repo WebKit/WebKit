@@ -817,7 +817,9 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
 #if ENABLE(DASHBOARD_SUPPORT)
     allowUnsafeHeaderField = usesDashboardBackwardCompatibilityMode();
 #endif
-    if (securityOrigin()->canLoadLocalResources() && document()->settings().allowSettingAnyXHRHeaderFromFileURLs())
+
+    // FIXME: The allowSettingAnyXHRHeaderFromFileURLs setting currently only applies to Documents, not workers.
+    if (securityOrigin()->canLoadLocalResources() && scriptExecutionContext()->isDocument() && document()->settings().allowSettingAnyXHRHeaderFromFileURLs())
         allowUnsafeHeaderField = true;
     if (!allowUnsafeHeaderField && isForbiddenHeaderName(name)) {
         logConsoleError(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
