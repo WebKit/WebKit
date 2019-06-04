@@ -1,5 +1,21 @@
 2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Argument elimination should check for negative indices in GetByVal
+        https://bugs.webkit.org/show_bug.cgi?id=198302
+        <rdar://problem/51188095>
+
+        Reviewed by Filip Pizlo.
+
+        In DFG::ArgumentEliminationPhase, the index is treated as unsigned, but there's no check
+        for overflow in the addition. In compileGetMyArgumentByVal, there's a check for overflow,
+        but the index is treated as signed, resulting in an index lower than numberOfArgumentsToSkip.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+
+2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
         JSScript should not keep bytecode cache in memory
         https://bugs.webkit.org/show_bug.cgi?id=198482
 

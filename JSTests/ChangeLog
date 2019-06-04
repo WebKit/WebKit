@@ -1,3 +1,15 @@
+2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Argument elimination should check for negative indices in GetByVal
+        https://bugs.webkit.org/show_bug.cgi?id=198302
+        <rdar://problem/51188095>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/eliminate-arguments-negative-rest-access.js: Added.
+        (inlinee):
+        (opt):
+
 2019-06-03  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "**"
