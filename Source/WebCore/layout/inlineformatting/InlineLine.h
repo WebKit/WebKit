@@ -78,8 +78,8 @@ public:
     void appendTextContent(const InlineTextItem&, LayoutSize);
     void appendNonReplacedInlineBox(const InlineItem&, LayoutSize);
     void appendReplacedInlineBox(const InlineItem&, LayoutSize);
-    void appendInlineContainerStart(const InlineItem&);
-    void appendInlineContainerEnd(const InlineItem&);
+    void appendInlineContainerStart(const InlineItem&, LayoutSize);
+    void appendInlineContainerEnd(const InlineItem&, LayoutSize);
     void appendHardLineBreak(const InlineItem&);
 
     bool hasContent() const { return !m_content->isVisuallyEmpty(); }

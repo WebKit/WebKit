@@ -116,10 +116,10 @@ LayoutUnit Line::trailingTrimmableWidth() const
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
     m_content->runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
-    m_contentLogicalWidth += inlineItem.width();
+    m_contentLogicalWidth += logicalRect.width();
 }
 
-void Line::appendInlineContainerStart(const InlineItem& inlineItem)
+void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutSize runSize)
 {
     auto& layoutBox = inlineItem.layoutBox();
     auto& style = layoutBox.style();
@@ -137,16 +137,15 @@ void Line::appendInlineContainerStart(const InlineItem& inlineItem)
 
     alignAndAdjustLineHeight();
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
-    auto containerHeight = fontMetrics.height() + displayBox.verticalBorder() + displayBox.verticalPadding().valueOr(0);
     auto logicalTop = -fontMetrics.ascent() - displayBox.borderTop() - displayBox.paddingTop().valueOr(0);
-    auto logicalRect = Display::Rect { logicalTop, contentLogicalRight(), inlineItem.width(), containerHeight };
+    auto logicalRect = Display::Rect { logicalTop, contentLogicalRight(), runSize.width(), runSize.height() };
     appendNonBreakableSpace(inlineItem, logicalRect);
 }
 
-void Line::appendInlineContainerEnd(const InlineItem& inlineItem)
+void Line::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutSize runSize)
 {
     // This is really just a placeholder to mark the end of the inline level container.
-    auto logicalRect = Display::Rect { 0, contentLogicalRight(), inlineItem.width(), 0 };
+    auto logicalRect = Display::Rect { 0, contentLogicalRight(), runSize.width(), runSize.height() };
     appendNonBreakableSpace(inlineItem, logicalRect);
 }
 

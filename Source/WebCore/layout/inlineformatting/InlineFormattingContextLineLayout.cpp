@@ -340,27 +340,31 @@ void InlineFormattingContext::LineLayout::handleFloat(Line& line, const Floating
     displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
     m_floatingState.append(floatBox);
     // Shrink availble space for current line and move existing inline runs.
-    auto floatBoxWidth = floatItem.width();
+    auto floatBoxWidth = displayBox.marginBoxWidth();
     floatBox.isLeftFloatingPositioned() ? line.moveLogicalLeft(floatBoxWidth) : line.moveLogicalRight(floatBoxWidth);
 }
 
 void InlineFormattingContext::LineLayout::commitInlineItemToLine(Line& line, const InlineItem& inlineItem) const
 {
-    if (inlineItem.isContainerStart())
-        return line.appendInlineContainerStart(inlineItem);
-
-    if (inlineItem.isContainerEnd())
-        return line.appendInlineContainerEnd(inlineItem);
-
     if (inlineItem.isHardLineBreak())
         return line.appendHardLineBreak(inlineItem);
 
     auto width = inlineItem.width();
+    auto& fontMetrics = inlineItem.style().fontMetrics();
     if (is<InlineTextItem>(inlineItem))
-        return line.appendTextContent(downcast<InlineTextItem>(inlineItem), { width, inlineItem.style().fontMetrics().height() });
+        return line.appendTextContent(downcast<InlineTextItem>(inlineItem), { width, fontMetrics.height() });
 
     auto& layoutBox = inlineItem.layoutBox();
     auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
+
+    if (inlineItem.isContainerStart()) {
+        auto containerHeight = fontMetrics.height() + displayBox.verticalBorder() + displayBox.verticalPadding().valueOr(0);
+        return line.appendInlineContainerStart(inlineItem, { width, containerHeight });
+    }
+
+    if (inlineItem.isContainerEnd())
+        return line.appendInlineContainerEnd(inlineItem, { width, 0 });
+
     if (layoutBox.isReplaced())
         return line.appendReplacedInlineBox(inlineItem, { width, displayBox.height() });
 
