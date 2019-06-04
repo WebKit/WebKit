@@ -42,7 +42,6 @@ enum class GestureType {
     TwoFingerSingleTap,
     TwoFingerRangedSelectGesture,
     TapOnLinkWithGesture,
-    MakeWebSelection,
     PhraseBoundary
 };
 
