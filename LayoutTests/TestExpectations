@@ -1931,7 +1931,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html [ Failure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-001.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-discard-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-004.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-000.html [ ImageOnlyFailure ]
@@ -1945,7 +1944,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/whi
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-014.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/text-space-trim-trim-inner-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-004.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-003.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-006.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-preserve-breaks-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/line-edge-white-space-collapse-002.html [ ImageOnlyFailure ]
@@ -1960,15 +1958,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-008.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-009.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure ]
-
-# The 'line-break: anywhere' feature is not implemented yet
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ Skip ]
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-002.html [ Skip ]
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-007.html [ Skip ]
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-008.html [ Skip ]
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-009.html [ Skip ]
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-010.html [ Skip ]
-webkit.org/b/181169 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-011.html [ Skip ]
 
 # overflow-wrap:anywhere feature is not implemented yet.
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-001.html [ Skip ]
@@ -1991,6 +1980,7 @@ webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/white-space/bre
 webkit.org/b/197277 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-008.html [ ImageOnlyFailure ]
 webkit.org/b/197277 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-004.html [ ImageOnlyFailure ]
 webkit.org/b/197277 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-005.html [ ImageOnlyFailure ]
+webkit.org/b/197277 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-017.html [ ImageOnlyFailure ]
 
 webkit.org/b/197409 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-016.html [ ImageOnlyFailure ]
 webkit.org/b/197409 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-019.html [ ImageOnlyFailure ]
@@ -1999,6 +1989,8 @@ webkit.org/b/197411 imported/w3c/web-platform-tests/css/css-text/word-break/word
 webkit.org/b/197411 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-022.html [ ImageOnlyFailure ]
 webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-023.html [ ImageOnlyFailure ]
 webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html [ ImageOnlyFailure ]
+webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-026.html [ ImageOnlyFailure ]
+webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-027.html [ ImageOnlyFailure ]
 
 ########################################
 ### START OF display: contents failures

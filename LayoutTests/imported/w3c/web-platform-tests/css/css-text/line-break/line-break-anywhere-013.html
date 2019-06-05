@@ -2,11 +2,11 @@
 <meta charset="utf-8">
 <title>CSS Text Test: word-break: break-all</title>
 <link rel="author" title="Javier Fernandez Garcia-Boente" href="mailto:jfernandez@igalia.com">
-<link rel="help" title="5.2. Breaking Rules for Letters: the word-break property" href="https://drafts.csswg.org/css-text-3/#word-break-property">
-<link rel="help" href="https://drafts.csswg.org/css-text-3/#valdef-word-break-break-all">
+<link rel="help" title="5.3. Line Breaking Strictness: the line-break property" href="https://www.w3.org/TR/css-text-3/#propdef-line-break">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#valdef-line-break-anywhere">
 <meta name="flags" content="">
-<link rel="match" href="reference/word-break-break-all-010-ref.html">
-<meta name="assert" content="break-all breaks before the first backslash character because UAX14 rules forbid to break after PR class.">
+<link rel="match" href="reference/line-break-anywhere-004-ref.html">
+<meta name="assert" content="line-break:anywhere allows breaking opportunities before slash characters.">
 <style>
 div {
   position: relative;
@@ -24,12 +24,12 @@ div {
 }
 .test {
   color: green;
-  width: 4ch;
-  word-break: break-all;
+  width: 3ch;
+  line-break: anywhere;
 }
 </style>
 <body>
   <p>Test passes if there is a <strong>filled green square</strong> and <strong>no red</strong>.</p>
   <div class="red">XXX<br>XX</div>
-  <div class="test">XXX\X</div>
+  <div class="test">XXX/X</div>
 </body>

@@ -6,7 +6,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-text-3/#valdef-word-break-break-all">
 <meta name="flags" content="">
 <link rel="match" href="reference/word-break-break-all-010-ref.html">
-<meta name="assert" content="break-all breaks between the last two letters, because breaking opportunities between the backslashes characters are forbidden.">
+<meta name="assert" content="break-all breaks before the first backslash character because UAX14 rules forbid to break after PR class.">
 <style>
 div {
   position: relative;
@@ -24,12 +24,12 @@ div {
 }
 .test {
   color: green;
-  width: 8ch;
+  width: 7ch;
   word-break: break-all;
 }
 </style>
 <body>
   <p>Test passes if there is a <strong>filled green square</strong> and <strong>no red</strong>.</p>
-  <div class="red">XX XXX<br>XXXX</div>
-  <div class="test">XX XXX\\\</div>
+  <div class="red">XX XX<br>XXX</div>
+  <div class="test">XX XX\\\</div>
 </body>

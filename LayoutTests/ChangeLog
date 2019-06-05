@@ -1,3 +1,16 @@
+2019-06-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        Update the CSS Text WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=197929
+
+        Reviewed by Myles C. Maxfield.
+
+        Import the last changes in the CSS Text suite.
+
+        * TestExpectations: A few tests pass now
+          - white-space-intrinsic-size-004.html
+          - white-space-pre-wrap-trailing-spaces-003.html
+
 2019-06-01  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Add support for chorded button interactions

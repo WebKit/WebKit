@@ -1,3 +1,47 @@
+2019-06-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        Update the CSS Text WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=197929
+
+        Reviewed by Myles C. Maxfield.
+
+        Import the last changes in the CSS Text suite.
+
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-002.html:
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-013-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-013.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-014-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-014.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-015-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-015.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-016-expected.html: Added.
+        * web-platform-tests/css/css-text/line-break/line-break-anywhere-016.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/line-break/w3c-import.log:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-008.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-009.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-010-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-010.html: Added.
+        * web-platform-tests/css/css-text/white-space/w3c-import.log:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-002.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-003-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-003.html:
+        * web-platform-tests/css/css-text/word-break/w3c-import.log:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-017.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-023.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-024.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-025-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-025.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-026-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-026.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-027-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-027.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-028-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-028.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html.
+
 2019-06-01  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Add support for chorded button interactions
