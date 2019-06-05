@@ -183,7 +183,7 @@ void ResourceRequest::updateSoupRequest(SoupRequest* soupRequest) const
 {
     if (m_initiatingPageID) {
         uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
-        *initiatingPageIDPtr = m_initiatingPageID.toUInt64();
+        *initiatingPageIDPtr = m_initiatingPageID->toUInt64();
         g_object_set_data_full(G_OBJECT(soupRequest), g_intern_static_string(gSoupRequestInitiatingPageIDKey), initiatingPageIDPtr, fastFree);
     }
 

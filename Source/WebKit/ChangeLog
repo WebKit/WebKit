@@ -1,3 +1,13 @@
+2019-06-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r245796): [WPE][GTK] Web process crash on startup
+        https://bugs.webkit.org/show_bug.cgi?id=198485
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate):
+
 2019-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Re-enable process warming

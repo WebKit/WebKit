@@ -95,7 +95,7 @@ namespace WebCore {
         SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
         void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
 
-        PageIdentifier initiatingPageID() const { return m_initiatingPageID; }
+        Optional<PageIdentifier> initiatingPageID() const { return m_initiatingPageID; }
         void setInitiatingPageID(PageIdentifier pageID) { m_initiatingPageID = pageID; }
 
         GUniquePtr<SoupURI> createSoupURI() const;
@@ -108,7 +108,7 @@ namespace WebCore {
 
         bool m_acceptEncoding : 1;
         SoupMessageFlags m_soupFlags;
-        PageIdentifier m_initiatingPageID;
+        Optional<PageIdentifier> m_initiatingPageID;
 
         void updateSoupMessageMembers(SoupMessage*) const;
         void updateSoupMessageBody(SoupMessage*) const;
@@ -157,7 +157,7 @@ bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
         return false;
     m_soupFlags = static_cast<SoupMessageFlags>(soupMessageFlags);
 
-    Optional<PageIdentifier> initiatingPageID;
+    Optional<Optional<PageIdentifier>> initiatingPageID;
     decoder >> initiatingPageID;
     if (!initiatingPageID)
         return false;
