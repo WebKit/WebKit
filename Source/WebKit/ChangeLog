@@ -1,3 +1,10 @@
+2019-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed assertion fix for macOS after r246097.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageOperations):
+
 2019-06-01  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Add support for chorded button interactions

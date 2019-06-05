@@ -171,7 +171,7 @@ WebProcessPool* WebsiteDataStore::processPoolForCookieStorageOperations()
 
     for (auto* processPool : WebProcessPool::allProcessPools()) {
         for (auto& process : processPool->processes()) {
-            if (process->pageCount() && &process->websiteDataStore() == this)
+            if (process != processPool->dummyProcessProxy() && process->pageCount() && &process->websiteDataStore() == this)
                 return processPool;
         }
     }
