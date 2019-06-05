@@ -451,12 +451,13 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 #endif
 
 #if USE(WPE_RENDERER)
-        ASSERT(is<PlatformDisplayLibWPE>(sharedDisplay));
-        GST_DEBUG_OBJECT(pipeline(), "Creating WPE shared EGL display");
-        if (shouldAdoptRef)
-            m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay())));
-        else
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay()));
+        if (is<PlatformDisplayLibWPE>(sharedDisplay)) {
+            GST_DEBUG_OBJECT(pipeline(), "Creating WPE shared EGL display");
+            if (shouldAdoptRef)
+                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay())));
+            else
+                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay()));
+        }
 #endif
 
         ASSERT(m_glDisplay);
