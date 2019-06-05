@@ -88,7 +88,7 @@ bool ISOFairPlayStreamingKeyAssetIdBox::parse(JSC::DataView& view, unsigned& off
     if (!buffer)
         return false;
 
-    uint64_t dataSize;
+    size_t dataSize;
     if (!WTF::safeSub(m_size, localOffset - offset, dataSize))
         return false;
 
@@ -117,7 +117,7 @@ bool ISOFairPlayStreamingKeyContextBox::parse(JSC::DataView& view, unsigned& off
     if (!buffer)
         return false;
 
-    uint64_t dataSize;
+    size_t dataSize;
     if (!WTF::safeSub(m_size, localOffset - offset, dataSize))
         return false;
 
