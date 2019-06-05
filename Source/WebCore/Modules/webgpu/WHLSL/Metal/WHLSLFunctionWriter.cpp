@@ -35,6 +35,7 @@
 #include "WHLSLTypeNamer.h"
 #include "WHLSLVisitor.h"
 #include <wtf/HashMap.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -139,6 +140,12 @@ protected:
     void visit(AST::TernaryExpression&) override;
     void visit(AST::VariableReference&) override;
 
+    enum class LoopConditionLocation {
+        BeforeBody,
+        AfterBody
+    };
+    void emitLoop(LoopConditionLocation, AST::Expression* conditionExpression, AST::Expression* increment, AST::Statement& body);
+
     String constantExpressionString(AST::ConstantExpression&);
 
     String generateNextVariableName()
@@ -155,6 +162,7 @@ protected:
     std::unique_ptr<EntryPointScaffolding> m_entryPointScaffolding;
     Layout& m_layout;
     unsigned m_variableCount { 0 };
+    String m_breakOutOfCurrentLoopEarlyVariable;
 };
 
 void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
@@ -224,22 +232,15 @@ void FunctionDefinitionWriter::visit(AST::Block& block)
 
 void FunctionDefinitionWriter::visit(AST::Break&)
 {
+    ASSERT(m_breakOutOfCurrentLoopEarlyVariable.length());
+    m_stringBuilder.append(makeString(m_breakOutOfCurrentLoopEarlyVariable, " = true;\n"));
     m_stringBuilder.append("break;\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Continue&)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195808 Figure out which loop we're in, and run the increment code
-    notImplemented();
-}
-
-void FunctionDefinitionWriter::visit(AST::DoWhileLoop& doWhileLoop)
-{
-    m_stringBuilder.append("do {\n");
-    checkErrorAndVisit(doWhileLoop.body());
-    checkErrorAndVisit(doWhileLoop.conditional());
-    m_stringBuilder.append(makeString("if (!", m_stack.takeLast(), ") break;\n"));
-    m_stringBuilder.append(makeString("} while(true);\n"));
+    ASSERT(m_breakOutOfCurrentLoopEarlyVariable.length());
+    m_stringBuilder.append("break;\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::EffectfulExpressionStatement& effectfulExpressionStatement)
@@ -253,25 +254,61 @@ void FunctionDefinitionWriter::visit(AST::Fallthrough&)
     m_stringBuilder.append("[[clang::fallthrough]];\n"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195808 Make sure this is okay. Alternatively, we could do nothing and just return here instead.
 }
 
+void FunctionDefinitionWriter::emitLoop(LoopConditionLocation loopConditionLocation, AST::Expression* conditionExpression, AST::Expression* increment, AST::Statement& body)
+{
+    SetForScope<String> loopVariableScope(m_breakOutOfCurrentLoopEarlyVariable, generateNextVariableName());
+
+    m_stringBuilder.append(makeString("bool ", m_breakOutOfCurrentLoopEarlyVariable, " = false;\n"));
+
+    m_stringBuilder.append("while (true) {\n");
+
+    if (loopConditionLocation == LoopConditionLocation::BeforeBody && conditionExpression) {
+        checkErrorAndVisit(*conditionExpression);
+        m_stringBuilder.append(makeString("if (!", m_stack.takeLast(), ") break;\n"));
+    }
+
+    m_stringBuilder.append("do {\n");
+    checkErrorAndVisit(body);
+    m_stringBuilder.append("} while(false); \n");
+    m_stringBuilder.append(makeString("if (", m_breakOutOfCurrentLoopEarlyVariable, ") break;\n"));
+
+    if (increment) {
+        checkErrorAndVisit(*increment);
+        // Expression results get pushed to m_stack. We don't use the result
+        // of increment, so we dispense of that now.
+        m_stack.takeLast();
+    }
+
+    if (loopConditionLocation == LoopConditionLocation::AfterBody && conditionExpression) {
+        checkErrorAndVisit(*conditionExpression);
+        m_stringBuilder.append(makeString("if (!", m_stack.takeLast(), ") break;\n"));
+    }
+
+    m_stringBuilder.append("} \n");
+}
+
+void FunctionDefinitionWriter::visit(AST::DoWhileLoop& doWhileLoop)
+{
+    emitLoop(LoopConditionLocation::AfterBody, &doWhileLoop.conditional(), nullptr, doWhileLoop.body());
+}
+
+void FunctionDefinitionWriter::visit(AST::WhileLoop& whileLoop)
+{
+    emitLoop(LoopConditionLocation::BeforeBody, &whileLoop.conditional(), nullptr, whileLoop.body());
+}
+
 void FunctionDefinitionWriter::visit(AST::ForLoop& forLoop)
 {
-    WTF::visit(WTF::makeVisitor([&](AST::VariableDeclarationsStatement& variableDeclarationsStatement) {
-        checkErrorAndVisit(variableDeclarationsStatement);
+    m_stringBuilder.append("{\n");
+
+    WTF::visit(WTF::makeVisitor([&](AST::Statement& statement) {
+        checkErrorAndVisit(statement);
     }, [&](UniqueRef<AST::Expression>& expression) {
         checkErrorAndVisit(expression);
         m_stack.takeLast(); // We don't need to do anything with the result.
     }), forLoop.initialization());
 
-    m_stringBuilder.append("for ( ; ; ) {\n");
-    if (forLoop.condition()) {
-        checkErrorAndVisit(*forLoop.condition());
-        m_stringBuilder.append(makeString("if (!", m_stack.takeLast(), ") break;\n"));
-    }
-    checkErrorAndVisit(forLoop.body());
-    if (forLoop.increment()) {
-        checkErrorAndVisit(*forLoop.increment());
-        m_stack.takeLast();
-    }
+    emitLoop(LoopConditionLocation::BeforeBody, forLoop.condition(), forLoop.increment(), forLoop.body());
     m_stringBuilder.append("}\n");
 }
 
@@ -331,15 +368,6 @@ void FunctionDefinitionWriter::visit(AST::Trap&)
 void FunctionDefinitionWriter::visit(AST::VariableDeclarationsStatement& variableDeclarationsStatement)
 {
     Visitor::visit(variableDeclarationsStatement);
-}
-
-void FunctionDefinitionWriter::visit(AST::WhileLoop& whileLoop)
-{
-    m_stringBuilder.append(makeString("while (true) {\n"));
-    checkErrorAndVisit(whileLoop.conditional());
-    m_stringBuilder.append(makeString("if (!", m_stack.takeLast(), ") break;\n"));
-    checkErrorAndVisit(whileLoop.body());
-    m_stringBuilder.append("}\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::IntegerLiteral& integerLiteral)

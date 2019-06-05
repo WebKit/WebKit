@@ -1,3 +1,30 @@
+2019-06-05  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Implement loop expressions
+        https://bugs.webkit.org/show_bug.cgi?id=195808
+        <rdar://problem/50746309>
+
+        Reviewed by Myles Maxfield.
+
+        * webgpu/whlsl-do-while-loop-break-expected.html: Added.
+        * webgpu/whlsl-do-while-loop-break.html: Added.
+        * webgpu/whlsl-do-while-loop-continue-expected.html: Added.
+        * webgpu/whlsl-do-while-loop-continue.html: Added.
+        * webgpu/whlsl-do-while-loop-expected.html: Added.
+        * webgpu/whlsl-do-while-loop.html: Added.
+        * webgpu/whlsl-loops-break-expected.html: Added.
+        * webgpu/whlsl-loops-break.html: Added.
+        * webgpu/whlsl-loops-continue-expected.html: Added.
+        * webgpu/whlsl-loops-continue.html: Added.
+        * webgpu/whlsl-loops-expected.html: Added.
+        * webgpu/whlsl-loops.html: Added.
+        * webgpu/whlsl-nested-loop-expected.html: Added.
+        * webgpu/whlsl-nested-loop.html: Added.
+        * webgpu/whlsl-while-loop-break-expected.html: Added.
+        * webgpu/whlsl-while-loop-break.html: Added.
+        * webgpu/whlsl-while-loop-continue-expected.html: Added.
+        * webgpu/whlsl-while-loop-continue.html: Added.
+
 2019-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream content mode support into open source from WebKitAdditions

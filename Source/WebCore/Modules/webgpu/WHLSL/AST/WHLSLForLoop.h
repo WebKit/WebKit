@@ -44,7 +44,7 @@ namespace AST {
 
 class ForLoop : public Statement {
 public:
-    ForLoop(Lexer::Token&& origin, Variant<VariableDeclarationsStatement, UniqueRef<Expression>>&& initialization, Optional<UniqueRef<Expression>>&& condition, Optional<UniqueRef<Expression>>&& increment, UniqueRef<Statement>&& body)
+    ForLoop(Lexer::Token&& origin, Variant<UniqueRef<Statement>, UniqueRef<Expression>>&& initialization, Optional<UniqueRef<Expression>>&& condition, Optional<UniqueRef<Expression>>&& increment, UniqueRef<Statement>&& body)
         : Statement(WTFMove(origin))
         , m_initialization(WTFMove(initialization))
         , m_condition(WTFMove(condition))
@@ -62,13 +62,13 @@ public:
 
     bool isForLoop() const override { return true; }
 
-    Variant<VariableDeclarationsStatement, UniqueRef<Expression>>& initialization() { return m_initialization; }
+    Variant<UniqueRef<Statement>, UniqueRef<Expression>>& initialization() { return m_initialization; }
     Expression* condition() { return m_condition ? &*m_condition : nullptr; }
     Expression* increment() { return m_increment ? &*m_increment : nullptr; }
     Statement& body() { return m_body; }
 
 private:
-    Variant<VariableDeclarationsStatement, UniqueRef<Expression>> m_initialization;
+    Variant<UniqueRef<Statement>, UniqueRef<Expression>> m_initialization;
     Optional<UniqueRef<Expression>> m_condition;
     Optional<UniqueRef<Expression>> m_increment;
     UniqueRef<Statement> m_body;

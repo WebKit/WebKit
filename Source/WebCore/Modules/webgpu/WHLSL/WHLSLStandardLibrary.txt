@@ -384,6 +384,14 @@ native float4 operator.y=(float4, float);
 native float4 operator.z=(float4, float);
 native float4 operator.w=(float4, float);
 
+native float operator+(float, float);
+native float operator-(float, float);
+native int operator+(int, int);
+native uint operator+(uint, uint);
+native bool operator<(int, int);
+native bool operator<(uint, uint);
+native bool operator<(float, float);
+
 native float ddx(float);
 native float ddy(float);
 native void AllMemoryBarrierWithGroupSync();

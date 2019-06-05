@@ -1414,7 +1414,7 @@ auto Parser::parseForLoop() -> Expected<AST::ForLoop, Error>
     if (!origin)
         return Unexpected<Error>(origin.error());
 
-    auto parseRemainder = [&](Variant<AST::VariableDeclarationsStatement, UniqueRef<AST::Expression>>&& initialization) -> Expected<AST::ForLoop, Error> {
+    auto parseRemainder = [&](Variant<UniqueRef<AST::Statement>, UniqueRef<AST::Expression>>&& initialization) -> Expected<AST::ForLoop, Error> {
         auto semicolon = consumeType(Lexer::Token::Type::Semicolon);
         if (!semicolon)
             return Unexpected<Error>(semicolon.error());
@@ -1453,8 +1453,10 @@ auto Parser::parseForLoop() -> Expected<AST::ForLoop, Error>
     auto variableDeclarations = backtrackingScope<Expected<AST::VariableDeclarationsStatement, Error>>([&]() {
         return parseVariableDeclarations();
     });
-    if (variableDeclarations)
-        return parseRemainder(WTFMove(*variableDeclarations));
+    if (variableDeclarations) {
+        UniqueRef<AST::Statement> declarationStatement = makeUniqueRef<AST::VariableDeclarationsStatement>(WTFMove(*variableDeclarations));
+        return parseRemainder(WTFMove(declarationStatement));
+    }
 
     auto effectfulExpression = parseEffectfulExpression();
     if (!effectfulExpression)

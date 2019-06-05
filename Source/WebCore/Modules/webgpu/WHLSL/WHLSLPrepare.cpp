@@ -57,7 +57,7 @@ namespace WHLSL {
 
 static constexpr bool dumpASTBeforeEachPass = false;
 static constexpr bool dumpASTAfterParsing = false;
-static constexpr bool dumpASTAtEnd = true;
+static constexpr bool dumpASTAtEnd = false;
 static constexpr bool alwaysDumpPassFailures = false;
 static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
 

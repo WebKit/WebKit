@@ -434,8 +434,8 @@ void Visitor::visit(AST::Fallthrough&)
 
 void Visitor::visit(AST::ForLoop& forLoop)
 {
-    WTF::visit(WTF::makeVisitor([&](AST::VariableDeclarationsStatement& variableDeclarationsStatement) {
-        checkErrorAndVisit(variableDeclarationsStatement);
+    WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::Statement>& statement) {
+        checkErrorAndVisit(statement);
     }, [&](UniqueRef<AST::Expression>& expression) {
         checkErrorAndVisit(expression);
     }), forLoop.initialization());

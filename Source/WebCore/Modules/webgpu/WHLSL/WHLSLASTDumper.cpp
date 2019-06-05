@@ -413,8 +413,8 @@ void ASTDumper::visit(AST::DoWhileLoop& doWhileLoop)
 void ASTDumper::visit(AST::ForLoop& forLoop)
 {
     m_out.print("for (");
-    WTF::visit(WTF::makeVisitor([&](AST::VariableDeclarationsStatement& variableDeclarationsStatement) {
-        visit(variableDeclarationsStatement);
+    WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::Statement>& statement) {
+        visit(statement);
     }, [&](UniqueRef<AST::Expression>& expression) {
         visit(expression);
     }), forLoop.initialization());
