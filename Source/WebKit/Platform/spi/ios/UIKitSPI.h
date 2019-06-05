@@ -530,31 +530,8 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (UIColor *)_inheritedInteractionTintColor;
 @end
 
-@interface UIWebSelectionView : UIView
-@end
-
-@interface UIWebSelectionAssistant : NSObject <UIGestureRecognizerDelegate>
-@end
-
 @protocol UISelectionInteractionAssistant
 - (void)showSelectionCommands;
-@end
-
-@interface UIWebSelectionAssistant ()
-- (BOOL)isSelectionGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
-- (id)initWithView:(UIView *)view;
-- (void)clearSelection;
-- (void)didEndScrollingOrZoomingPage;
-- (void)didEndScrollingOverflow;
-- (void)resignedFirstResponder;
-- (void)selectionChanged;
-- (void)setGestureRecognizers;
-- (void)willStartScrollingOrZoomingPage;
-- (void)willStartScrollingOverflow;
-#if !PLATFORM(IOSMAC)
-@property (nonatomic, retain) UIWebSelectionView *selectionView;
-#endif
-@property (nonatomic, readonly) CGRect selectionFrame;
 @end
 
 typedef NS_ENUM(NSInteger, UIWKSelectionTouch) {
@@ -590,18 +567,15 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
     UIWKGesturePhraseBoundary = 14,
 };
 
+@interface UIWebSelectionAssistant : NSObject
+@end
+
 @interface UIWKSelectionAssistant : UIWebSelectionAssistant
 @end
 
 @interface UIWKSelectionAssistant ()
-- (BOOL)shouldHandleSingleTapAtPoint:(CGPoint)point;
-- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags;
-- (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+- (id)initWithView:(UIView *)view;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
-@property (nonatomic, readonly) UILongPressGestureRecognizer *selectionLongPressRecognizer;
 @end
 
 @interface UIWKAutocorrectionRects : NSObject

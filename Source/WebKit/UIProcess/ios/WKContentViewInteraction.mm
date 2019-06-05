@@ -3278,10 +3278,11 @@ static inline WebKit::GestureType toGestureType(UIWKGestureType gestureType)
         return WebKit::GestureType::TwoFingerRangedSelectGesture;
     case UIWKGestureTapOnLinkWithGesture:
         return WebKit::GestureType::TapOnLinkWithGesture;
-    case UIWKGestureMakeWebSelection:
-        return WebKit::GestureType::MakeWebSelection;
     case UIWKGesturePhraseBoundary:
         return WebKit::GestureType::PhraseBoundary;
+    case UIWKGestureMakeWebSelection:
+        ASSERT_NOT_REACHED();
+        return WebKit::GestureType::Loupe;
     }
     ASSERT_NOT_REACHED();
     return WebKit::GestureType::Loupe;
@@ -3316,8 +3317,6 @@ static inline UIWKGestureType toUIWKGestureType(WebKit::GestureType gestureType)
         return UIWKGestureTwoFingerRangedSelectGesture;
     case WebKit::GestureType::TapOnLinkWithGesture:
         return UIWKGestureTapOnLinkWithGesture;
-    case WebKit::GestureType::MakeWebSelection:
-        return UIWKGestureMakeWebSelection;
     case WebKit::GestureType::PhraseBoundary:
         return UIWKGesturePhraseBoundary;
     }
