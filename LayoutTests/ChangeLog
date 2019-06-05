@@ -1,3 +1,15 @@
+2019-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (~r244378) fast/events/touch/ios/content-observation/stuck-with-hover-state.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=198571
+        <rdar://problem/50349265>
+
+        Reviewed by Brent Fulgham.
+
+        testRunner.notifyDone() is called prematurely.
+
+        * fast/events/touch/ios/content-observation/stuck-with-hover-state.html:
+
 2019-06-05  Shawn Roberts  <sroberts@apple.com>
 
         http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html is a flaky failure on Mojave

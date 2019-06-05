@@ -24,9 +24,7 @@ async function test() {
     let x = rect.left + rect.width / 2;
     let y = rect.top + rect.height / 2;
 
-	await tapAtPoint(x, y);
-
-    setTimeout("testRunner.notifyDone()", 50);
+    await tapAtPoint(x, y);
 }
 </script>
 </head>
@@ -35,11 +33,13 @@ async function test() {
 <pre id=result></pre>
 <script>
 tapthis.addEventListener("mouseover", function( event ) {
-	clearTimeout(setTimeout(function() { tapthis.innerHTML = "should not see this"; }, 50));
+    clearTimeout(setTimeout(function() { tapthis.innerHTML = "should not see this"; }, 50));
 }, false);
 
 tapthis.addEventListener("click", function( event ) {   
-	result.innerHTML = "clicked";
+    result.innerHTML = "clicked";
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, false);
 </script>
 </body>
