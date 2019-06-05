@@ -71,8 +71,6 @@ public:
         ~StyleChangeScope();
 
     private:
-        bool isConsideredClickable() const;
-
         ContentChangeObserver& m_contentChangeObserver;
         const Element& m_element;
         bool m_wasHidden { false };
@@ -189,8 +187,9 @@ private:
         StartedStyleRecalc,
         EndedStyleRecalc,
         AddedTransition,
-        EndedTransition,
-        CompletedTransition,
+        EndedTransitionButFinalStyleIsNotDefiniteYet,
+        CompletedTransitionWithClickableContent,
+        CompletedTransitionWithoutClickableContent,
         CanceledTransition,
         StartedFixedObservationTimeWindow,
         EndedFixedObservationTimeWindow,

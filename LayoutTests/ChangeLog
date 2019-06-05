@@ -1,3 +1,13 @@
+2019-06-04  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Gmail text editing controls require two taps
+        https://bugs.webkit.org/show_bug.cgi?id=198541
+        <rdar://problem/51375055>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove-no-clickable.html: Added.
+
 2019-06-04  Youenn Fablet  <youenn@apple.com>
 
         Layout test landed flaky in 245873 [ Release ] http/wpt/service-workers/service-worker-networkprocess-crash.html is a flaky failure
