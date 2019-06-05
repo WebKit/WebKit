@@ -820,6 +820,13 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     if (!m_prewarmedProcess)
         return nullptr;
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // In platforms using Bubblewrap for sandboxing, prewarmed process is launched using the WebProcessPool primary WebsiteDataStore,
+    // so we don't use it in case of using a different WebsiteDataStore.
+    if (m_sandboxEnabled && m_websiteDataStore && &m_websiteDataStore->websiteDataStore() != &websiteDataStore)
+        return nullptr;
+#endif
+
     ASSERT(m_prewarmedProcess->isPrewarmed());
     m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
 

@@ -38,12 +38,23 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 {
     launchOptions.extraInitializationData.set("enable-sandbox", m_processPool->sandboxEnabled() ? "true" : "false");
 
-    websiteDataStore().resolveDirectoriesIfNecessary();
-    launchOptions.extraInitializationData.set("webSQLDatabaseDirectory", websiteDataStore().resolvedDatabaseDirectory());
-    launchOptions.extraInitializationData.set("mediaKeysDirectory", websiteDataStore().resolvedMediaKeysDirectory());
-    launchOptions.extraInitializationData.set("applicationCacheDirectory", websiteDataStore().resolvedApplicationCacheDirectory());
+    if (m_processPool->sandboxEnabled()) {
+        WebsiteDataStore* dataStore = m_websiteDataStore.get();
+        if (!dataStore) {
+            // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
+            // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
+            if (auto* apiDataStore = m_processPool->websiteDataStore())
+                dataStore = &apiDataStore->websiteDataStore();
+        }
 
-    launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
+        ASSERT(dataStore);
+        dataStore->resolveDirectoriesIfNecessary();
+        launchOptions.extraInitializationData.set("webSQLDatabaseDirectory", dataStore->resolvedDatabaseDirectory());
+        launchOptions.extraInitializationData.set("mediaKeysDirectory", dataStore->resolvedMediaKeysDirectory());
+        launchOptions.extraInitializationData.set("applicationCacheDirectory", dataStore->resolvedApplicationCacheDirectory());
+
+        launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
+    }
 }
 
 };

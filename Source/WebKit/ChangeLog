@@ -1,3 +1,23 @@
+2019-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Re-enable process warming
+        https://bugs.webkit.org/show_bug.cgi?id=198526
+
+        Reviewed by Michael Catanzaro.
+
+        It was disabled in r243490 because bubblewrap sandbox needs a valid WebsiteDataStore before launching the web
+        process. We can use the default WebsiteDataStore from the WebProcessPool and only use the prewarmed process
+        later if the given WebsiteDataStore is the same as the WebProcessPool one.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess): Do not use the prewarmed process if WebsiteDataStore is
+        different than the one used to launch the process when sandboxing is enabled.
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitialize): Do not disable process warming.
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions): Use the WebsiteDataStore from the WebProcessPool if process
+        is prewarmed and sandboxing is enabled.
+
 2019-06-04  Chris Dumez  <cdumez@apple.com>
 
         Cookies set via [WKHTTPCookieStore setCookie:] on store right after constructing WKWebView get lost

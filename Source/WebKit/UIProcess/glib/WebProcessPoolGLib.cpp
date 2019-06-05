@@ -98,13 +98,6 @@ void WebProcessPool::platformInitialize()
 
     if (!memoryPressureMonitorDisabled())
         installMemoryPressureHandler();
-
-    // Process warming is incompatible with the fact our WebProcessProxy::platformGetLaunchOptions()
-    // requires a valid WebsiteDataStore at initialization time for our sandbox permissions.
-    // FIXME: With process warming disabled, the performance of
-    // process-swap-on-navigation is not going to be great. So this needs to be
-    // re-enabled when we enable PSON.
-    configuration().setIsAutomaticProcessWarmingEnabled(false);
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
