@@ -1070,14 +1070,6 @@ DisableScreenSizeOverride:
   category: debug
   condition: PLATFORM(IOS_FAMILY)
 
-UseModernCompatibilityModeByDefault:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Use Modern Compatibility Mode"
-  humanReadableDescription: "Use modern compatibility mode by default"
-  webcoreBinding: none
-  category: debug
-
 SimpleLineLayoutDebugBordersEnabled:
   type: bool
   defaultValue: false

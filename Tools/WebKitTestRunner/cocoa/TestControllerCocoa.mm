@@ -159,8 +159,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableUndoManagerAPI)
         [copiedConfiguration _setUndoManagerAPIEnabled:YES];
 
-    if (options.shouldUseModernCompatibilityMode)
-        enableModernCompatibilityMode(copiedConfiguration.get());
+    configureContentMode(copiedConfiguration.get(), options);
 
     if (options.applicationManifest.length()) {
         auto manifestPath = [NSString stringWithUTF8String:options.applicationManifest.c_str()];
@@ -431,14 +430,30 @@ bool TestController::isDoingMediaCapture() const
     return m_mainWebView->platformView()._mediaCaptureState != _WKMediaCaptureStateNone;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/TestControllerCocoaAdditions.mm>
-#else
+#if PLATFORM(IOS_FAMILY)
 
-void TestController::enableModernCompatibilityMode(WKWebViewConfiguration *)
+static WKContentMode contentMode(const TestOptions& options)
 {
+    if (options.contentMode == "desktop"_s)
+        return WKContentModeDesktop;
+
+    if (options.contentMode == "mobile"_s)
+        return WKContentModeMobile;
+
+    return WKContentModeRecommended;
 }
 
+#endif // PLATFORM(IOS_FAMILY)
+
+void TestController::configureContentMode(WKWebViewConfiguration *configuration, const TestOptions& options)
+{
+    auto webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
+#if PLATFORM(IOS_FAMILY)
+    [webpagePreferences setPreferredContentMode:contentMode(options)];
+#else
+    UNUSED_PARAM(options);
 #endif
+    configuration.defaultWebpagePreferences = webpagePreferences.get();
+}
 
 } // namespace WTR

@@ -57,7 +57,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setCustomUserAgent(m_customUserAgent);
     policies->setCustomJavaScriptUserAgentAsSiteSpecificQuirks(m_customJavaScriptUserAgentAsSiteSpecificQuirks);
     policies->setCustomNavigatorPlatform(m_customNavigatorPlatform);
-    policies->setPreferredCompatibilityMode(m_preferredCompatibilityMode);
+    policies->setPreferredContentMode(m_preferredContentMode);
     policies->setMetaViewportPolicy(m_metaViewportPolicy);
     policies->setMediaSourcePolicy(m_mediaSourcePolicy);
     policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
@@ -74,7 +74,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     for (auto& field : m_customHeaderFields)
         customHeaderFields.uncheckedAppend(field);
     policies->setCustomHeaderFields(WTFMove(customHeaderFields));
-    policies->setAllowSiteSpecificQuirksToOverrideCompatibilityMode(m_allowSiteSpecificQuirksToOverrideCompatibilityMode);
+    policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForUserAgentWithModernCompatibility(m_applicationNameForUserAgentWithModernCompatibility);
     return policies;
 }

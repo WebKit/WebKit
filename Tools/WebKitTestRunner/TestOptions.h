@@ -91,7 +91,6 @@ struct TestOptions {
     bool enableUndoManagerAPI { false };
     bool shouldHandleRunOpenPanel { true };
     bool shouldPresentPopovers { true };
-    bool shouldUseModernCompatibilityMode { false };
     bool enableAppNap { false };
 
     double contentInsetTop { 0 };
@@ -102,6 +101,7 @@ struct TestOptions {
     std::string additionalSupportedImageTypes;
     HashMap<String, bool> experimentalFeatures;
     HashMap<String, bool> internalDebugFeatures;
+    String contentMode;
 
     ContextOptions contextOptions;
 
@@ -145,7 +145,7 @@ struct TestOptions {
             || shouldHandleRunOpenPanel != options.shouldHandleRunOpenPanel
             || shouldPresentPopovers != options.shouldPresentPopovers
             || contentInsetTop != options.contentInsetTop
-            || shouldUseModernCompatibilityMode != options.shouldUseModernCompatibilityMode
+            || contentMode != options.contentMode
             || enableAppNap != options.enableAppNap)
             return false;
 

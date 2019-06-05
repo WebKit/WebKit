@@ -1388,8 +1388,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.contentInsetTop = std::stod(value);
         else if (key == "ignoreSynchronousMessagingTimeouts")
             testOptions.contextOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
-        else if (key == "shouldUseModernCompatibilityMode")
-            testOptions.shouldUseModernCompatibilityMode = parseBooleanTestHeaderValue(value);
+        else if (key == "contentMode")
+            testOptions.contentMode = { value.c_str() };
         else if (key == "enableAppNap")
             testOptions.enableAppNap = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;

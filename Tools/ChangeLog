@@ -1,3 +1,43 @@
+2019-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream content mode support into open source from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=198484
+        <rdar://problem/51355671>
+
+        Reviewed by Andy Estes.
+
+        Change the "useModernCompatibilityMode" layout test option to instead be "contentMode", with values of either
+        "mobile" or "desktop".
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/ios/PreferredCompatibilityMode.mm: Removed.
+        * TestWebKitAPI/ios/PreferredContentMode.mm: Added.
+        (-[ContentModeNavigationDelegate setDecidePolicyForNavigationActionWithPreferences:]):
+        (-[ContentModeNavigationDelegate decidePolicyForNavigationActionWithPreferences]):
+        (-[ContentModeNavigationDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (+[WKWebpagePreferences preferencesWithContentMode:]):
+        (-[WKWebView navigatorUserAgent]):
+        (-[WKWebView navigatorPlatform]):
+        (-[WKWebView loadTestPageNamed:withPolicyDecisionHandler:]):
+        (-[WKWebView loadHTMLString:withPolicyDecisionHandler:]):
+        (-[WKWebView loadTestPageNamed:andExpectEffectiveContentMode:withPolicyDecisionHandler:]):
+        (-[NSString shouldContainStrings:]):
+        (IPhoneUserInterfaceSwizzler::IPhoneUserInterfaceSwizzler):
+        (IPhoneUserInterfaceSwizzler::phoneUserInterfaceIdiom):
+        (TestWebKitAPI::setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate):
+        (TestWebKitAPI::setUpWebViewForPreferredContentModeTesting):
+        (TestWebKitAPI::makeContentModeDecisionHandler):
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::configureContentMode):
+        (WTR::TestController::enableModernCompatibilityMode): Deleted.
+
 2019-06-01  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Add support for chorded button interactions

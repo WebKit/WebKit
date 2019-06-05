@@ -38,6 +38,7 @@
 #else
 
 static const CFStringRef kMGQAppleInternalInstallCapability = CFSTR("apple-internal-install");
+static const CFStringRef kMGQMainScreenClass = CFSTR("main-screen-class");
 static const CFStringRef kMGQMainScreenPitch = CFSTR("main-screen-pitch");
 static const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
 static const CFStringRef kMGQiPadCapability = CFSTR("ipad");
@@ -55,6 +56,12 @@ typedef enum {
     /* 5 is intentionally not in this enum */
     MGDeviceClassWatch   = 6,
 } MGDeviceClass;
+
+typedef enum {
+    MGScreenClassPad2          = 4,
+    MGScreenClassPad3          = 6,
+    MGScreenClassPad4          = 7,
+} MGScreenClass;
 
 #endif
 

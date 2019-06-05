@@ -45,9 +45,14 @@
     return _navigation->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKNavigationAdditions.mm>
-#endif
+#if PLATFORM(IOS_FAMILY)
+
+- (WKContentMode)effectiveContentMode
+{
+    return WebKit::contentMode(_navigation->effectiveContentMode());
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 #pragma mark WKObject protocol implementation
 

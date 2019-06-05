@@ -1,3 +1,15 @@
+2019-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream content mode support into open source from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=198484
+        <rdar://problem/51355671>
+
+        Reviewed by Andy Estes.
+
+        Add some new constants to MobileGestaltSPI.h.
+
+        * pal/spi/ios/MobileGestaltSPI.h:
+
 2019-06-03  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::JavaScriptCore target

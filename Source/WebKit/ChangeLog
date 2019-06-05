@@ -1,3 +1,56 @@
+2019-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream content mode support into open source from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=198484
+        <rdar://problem/51355671>
+
+        Reviewed by Andy Estes.
+
+        Move code for handling WKContentMode into open source. No change in behavior, for internal builds.
+
+        * Shared/API/Cocoa/WebKit.apinotes:
+        * Shared/WebContentMode.h: Renamed from Source/WebKit/Shared/WebCompatibilityMode.h.
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setEffectiveContentMode):
+        (API::Navigation::effectiveContentMode const):
+        (API::Navigation::setEffectiveCompatibilityMode): Deleted.
+        (API::Navigation::effectiveCompatibilityMode const): Deleted.
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::shouldBypassContentModeSafeguards const):
+        (API::NavigationClient::shouldBypassCompatibilityModeSafeguards const): Deleted.
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation effectiveContentMode]):
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (WebKit::contentMode):
+        (WebKit::webContentMode):
+        (-[WKWebpagePreferences _allowSiteSpecificQuirksToOverrideCompatibilityMode]):
+        (-[WKWebpagePreferences _setAllowSiteSpecificQuirksToOverrideCompatibilityMode:]):
+        (-[WKWebpagePreferences setPreferredContentMode:]):
+        (-[WKWebpagePreferences preferredContentMode]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::shouldBypassContentModeSafeguards const):
+        (WebKit::NavigationState::NavigationClient::shouldBypassCompatibilityModeSafeguards const): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+        (WebKit::WebPageProxy::effectiveCompatibilityModeAfterAdjustingPolicies): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingSupported):
+        (WebKit::webViewSizeIsNarrow):
+        (WebKit::desktopClassBrowsingRecommendedForRequest):
+        (WebKit::desktopClassBrowsingRecommended):
+        (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-06-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove some unused selection code

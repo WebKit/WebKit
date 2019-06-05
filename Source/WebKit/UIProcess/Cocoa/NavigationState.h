@@ -109,7 +109,7 @@ private:
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 
-        bool shouldBypassCompatibilityModeSafeguards() const final;
+        bool shouldBypassContentModeSafeguards() const final;
 
         void didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy&) override;
         bool processDidTerminate(WebPageProxy&, ProcessTerminationReason) override;

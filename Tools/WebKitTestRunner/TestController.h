@@ -471,7 +471,7 @@ private:
 
 #if PLATFORM(COCOA)
     static void finishCreatingPlatformWebView(PlatformWebView*, const TestOptions&);
-    void enableModernCompatibilityMode(WKWebViewConfiguration *);
+    void configureContentMode(WKWebViewConfiguration *, const TestOptions&);
 #endif
 
     static const char* libraryPathForTesting();

@@ -1,3 +1,22 @@
+2019-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream content mode support into open source from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=198484
+        <rdar://problem/51355671>
+
+        Reviewed by Andy Estes.
+
+        Explicitly opt a few tests into desktop or mobile content mode.
+
+        * fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html:
+        * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode-expected.html:
+        * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html:
+        * media/modern-media-controls/media-controller/ios/media-controller-ios-layout-traits-modern-compatibility-mode.html:
+        * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html:
+        * platform/ipad/fast/viewport/empty-meta.html:
+        * platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html:
+        * platform/ipad/media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html:
+
 2019-06-05  Shawn Roberts  <sroberts@apple.com>
 
         imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm is a flaky failure
