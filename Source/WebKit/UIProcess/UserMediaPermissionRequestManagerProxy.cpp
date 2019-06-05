@@ -333,12 +333,10 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
 void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, MediaStreamRequest&& userRequest)
 {
 #if ENABLE(MEDIA_STREAM)
-    auto logSiteIdentifier = LOGIDENTIFIER;
-
     if (!m_page.hasRunningProcess())
         return;
 
-    ALWAYS_LOG(logSiteIdentifier, userMediaID);
+    ALWAYS_LOG(LOGIDENTIFIER, userMediaID);
 
     auto request = UserMediaPermissionRequestProxy::create(*this, userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), { }, { }, WTFMove(userRequest));
     if (m_currentUserMediaRequest) {
@@ -347,7 +345,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
     }
 
     if (!UserMediaProcessManager::singleton().captureEnabled()) {
-        ALWAYS_LOG(logSiteIdentifier, "capture disabled");
+        ALWAYS_LOG(LOGIDENTIFIER, "capture disabled");
         m_pendingRejections.append(WTFMove(request));
         scheduleNextRejection();
         return;
