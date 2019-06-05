@@ -127,10 +127,10 @@ private:
 class WebMouseEvent : public WebEvent {
 public:
     enum Button {
-        NoButton = -1,
-        LeftButton,
+        LeftButton = 0,
         MiddleButton,
-        RightButton
+        RightButton,
+        NoButton = -2
     };
 
     enum SyntheticClickType { NoTap, OneFingerTap, TwoFingerTap };

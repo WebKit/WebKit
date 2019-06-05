@@ -960,7 +960,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
     NSWindow *window = [sender window];
     NSEvent *nsEvent = [window currentEvent];
-    const int noButton = -1;
+    const int noButton = -2;
     int button = noButton;
     RefPtr<Event> event;
     switch ([nsEvent type]) {

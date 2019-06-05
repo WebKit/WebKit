@@ -49,6 +49,8 @@ public:
     void pointerLockWasApplied();
     void elementWasRemoved(Element&);
 
+    RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&);
+
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
 #endif
@@ -68,6 +70,7 @@ private:
         bool isPrimary { false };
         bool preventsCompatibilityMouseEvents { false };
         bool pointerIsPressed { false };
+        short previousMouseButton { -1 };
     };
 
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);

@@ -1,3 +1,26 @@
+2019-06-01  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Add support for chorded button interactions
+        https://bugs.webkit.org/show_bug.cgi?id=198462
+
+        Reviewed by Dean Jackson.
+
+        Update some tests and their expectations due to MouseEvent.buttons now returning the correct value in DRT and WKTR
+        and MouseEvent.button now being a "short" instead of an "unsigned short".
+
+        * fast/events/constructors/mouse-event-constructor-expected.txt:
+        * fast/events/constructors/mouse-event-constructor.html: Update the test to test the boundary values for "short" instead
+        of "unsigned short" as well as the new "magic" value of -2 for no button, which ends up being reported as 0.
+        * fast/events/constructors/wheel-event-constructor-expected.txt:
+        * fast/events/constructors/wheel-event-constructor.html: Update the test to test the boundary values for "short" instead
+        of "unsigned short" as well as the new "magic" value of -2 for no button, which ends up being reported as 0.
+        * fast/events/fire-mousedown-while-pressing-mouse-button.html: Rewrite this test to always use MouseEvent.buttons and
+        adjust the bitmask expectations which were way off.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt:
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt:
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt:
+        This test fails differently in WK1 and WK2 and will be addressed in a future patch.
+
 2019-06-04  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Gmail text editing controls require two taps

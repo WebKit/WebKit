@@ -231,6 +231,41 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 }
 #endif
 
+RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent)
+{
+    const auto& type = mouseEvent.type();
+    const auto& names = eventNames();
+
+    auto iterator = m_activePointerIdsToCapturingData.find(mousePointerID);
+    ASSERT(iterator != m_activePointerIdsToCapturingData.end());
+    auto& capturingData = iterator->value;
+
+    short newButton = mouseEvent.button();
+    short button = newButton == capturingData.previousMouseButton ? -1 : newButton;
+
+    // https://w3c.github.io/pointerevents/#chorded-button-interactions
+    // Some pointer devices, such as mouse or pen, support multiple buttons. In the Mouse Event model, each button
+    // press produces a mousedown and mouseup event. To better abstract this hardware difference and simplify
+    // cross-device input authoring, Pointer Events do not fire overlapping pointerdown and pointerup events
+    // for chorded button presses (depressing an additional button while another button on the pointer device is
+    // already depressed).
+    if (type == names.mousedownEvent || type == names.mouseupEvent) {
+        // We're already active and getting another mousedown, this means that we should dispatch
+        // a pointermove event and let the button state show the newly depressed button.
+        if (type == names.mousedownEvent && capturingData.pointerIsPressed)
+            return PointerEvent::create(names.pointermoveEvent, button, mouseEvent);
+
+        // We're active and the mouseup still has some pressed button, this means we should dispatch
+        // a pointermove event.
+        if (type == names.mouseupEvent && capturingData.pointerIsPressed && mouseEvent.buttons() > 0)
+            return PointerEvent::create(names.pointermoveEvent, button, mouseEvent);
+    }
+
+    capturingData.previousMouseButton = newButton;
+
+    return PointerEvent::create(button, mouseEvent);
+}
+
 void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* target)
 {
     auto iterator = m_activePointerIdsToCapturingData.find(event.pointerId());

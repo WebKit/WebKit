@@ -1,3 +1,18 @@
+2019-06-01  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Add support for chorded button interactions
+        https://bugs.webkit.org/show_bug.cgi?id=198462
+
+        Reviewed by Dean Jackson.
+
+        Update -[DOMMouseEvent button] to be a "short" and update the noButton value from -1 to -2.
+
+        * DOM/DOMMouseEvent.h:
+        * DOM/DOMMouseEvent.mm:
+        (-[DOMMouseEvent button]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2019-06-03  Rob Buis  <rbuis@igalia.com>
 
         Implement imagesrcset and imagesizes attributes on link rel=preload

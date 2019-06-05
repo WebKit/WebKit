@@ -47,15 +47,15 @@ window.onload = function()
     runTest();
 }
 
-function toIEMouseButton(w3cButton)
+function toBitmaskMouseButton(w3cButton)
 {
     switch (w3cButton) {
     case LeftMouseButton:
-        return 1;
+        return 1 << 0;
     case MiddleMouseButton:
-        return 4;
+        return 1 << 1;
     case RightMouseButton:
-        return 2;
+        return 1 << 2;
     }
     return; // We shouldn't get here.
 }
@@ -91,24 +91,13 @@ function cancelContextMenu(event)
 
 function checkIfDoneOnMouseDown(event)
 {
-    var pressedButtons; // A bitmask that represents the combination of buttons that are currently being pressed.
-    if (event && event.buttons)
-        pressedButtons = event.buttons; // DOM Level 3 Events (Working Draft 07 September 2010).
-    else if (event) {
-        // For browsers than don't support event.buttons (or IE's window.event.button) we convert event.button to
-        // the corresponding bitmask to simplify the logic below.
-        pressedButtons = toIEMouseButton(event.button);
-    } else {
-        // Assume this script is running within Internet Explorer.
-        pressedButtons = window.event.button;
-    }
-
+    var pressedButtons = event.buttons; // A bitmask that represents the combination of buttons that are currently being pressed.
     var chosenFirstMouseButton = firstMouseButtonElem.selectedIndex;
     var chosenSecondMouseButton = secondMouseButtonElem.selectedIndex;
-    if (!didFireMousedownForFirstMouseButton && (pressedButtons & toIEMouseButton(chosenFirstMouseButton)) == toIEMouseButton(chosenFirstMouseButton)) {
+    if (!didFireMousedownForFirstMouseButton && (pressedButtons & toBitmaskMouseButton(chosenFirstMouseButton)) == toBitmaskMouseButton(chosenFirstMouseButton)) {
         didFireMousedownForFirstMouseButton = true;
         square.innerHTML = "Now, " + shortMouseButtonName(chosenSecondMouseButton) + " click";
-    } else if (didFireMousedownForFirstMouseButton && (pressedButtons & toIEMouseButton(chosenSecondMouseButton)) == toIEMouseButton(chosenSecondMouseButton))
+    } else if (didFireMousedownForFirstMouseButton && (pressedButtons & toBitmaskMouseButton(chosenSecondMouseButton)) == toBitmaskMouseButton(chosenSecondMouseButton))
         didFireMousedownForSecondMouseButton = true;
     if (didFireMousedownForFirstMouseButton && didFireMousedownForSecondMouseButton) {
         testPassed("received mousedown for the " + mouseButtonName(chosenSecondMouseButton) + " while pressing the " + mouseButtonName(chosenFirstMouseButton) + ".");

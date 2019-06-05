@@ -14,5 +14,5 @@ The following pointer types were detected: mouse.
 Refresh the page to run the tests again.
 
 
-FAIL pointermove events received for button state changes assert_true: There must not be more than one pointer down event. expected true got false
+PASS pointermove events received for button state changes 
 

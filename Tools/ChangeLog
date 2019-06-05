@@ -1,3 +1,35 @@
+2019-06-01  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Add support for chorded button interactions
+        https://bugs.webkit.org/show_bug.cgi?id=198462
+
+        Reviewed by Dean Jackson.
+
+        Until now, MouseEvent.buttons would always return 0 when used within DRT and WKTR as [NSEvent pressedMouseButtons], used
+        by PlatformMouseEventBuilder to set the m_buttons value eventually used to set MouseEvent.buttons, not account for the
+        NSEvent created through the eventSender JS object in tests. To fix this, we now track the pressed mouse buttons within
+        DRT and WKTR as mouseDown() and mouseUp() are called, and swizzle [NSEvent pressedMouseButtons] to return that value.
+
+        In the case of DRT, one test would fail when swizzling this method in the case where the target view for the event would
+        be the DRTMockScroller, a subclass of NSScroller. So we only swizzle when the target view is *not* an NSScroller or a
+        subclass.
+
+        Finally, we change the NoMouseButton enum value from -1 to -2 to adjust to MouseEvent.button now being a "short".
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (swizzledEventPressedMouseButtons):
+        (-[EventSendingController mouseDown:withModifiers:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        * TestWebKitAPI/Tests/mac/IsNavigationActionTrusted.mm:
+        * WebKitTestRunner/EventSenderProxy.h:
+        (WTR::EventSenderProxy::mouseButtonsCurrentlyDown const):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::swizzledEventPressedMouseButtons):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+
 2019-06-04  Chris Dumez  <cdumez@apple.com>
 
         Cookies set via [WKHTTPCookieStore setCookie:] on store right after constructing WKWebView get lost

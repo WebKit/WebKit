@@ -28,14 +28,12 @@ function dispatchMouseActions(actions)
                     eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y);
                     break;
                 case "pointerDown":
-                    // FIXME: what to do with "button"?
                     logDebug(() => `eventSender.mouseDown()`);
-                    eventSender.mouseDown();
+                    eventSender.mouseDown(action.button);
                     break;
                 case "pointerUp":
-                    // FIXME: what to do with "button"?
                     logDebug(() => `eventSender.mouseUp()`);
-                    eventSender.mouseUp();
+                    eventSender.mouseUp(action.button);
                     break;
                 default:
                     return Promise.reject(new Error(`Unknown action type "${action.type}".`));

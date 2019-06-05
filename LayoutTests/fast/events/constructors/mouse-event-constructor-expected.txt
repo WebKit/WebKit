@@ -151,11 +151,13 @@ PASS new MouseEvent('eventType', { shiftKey: true }).shiftKey is true
 PASS new MouseEvent('eventType', { metaKey: false }).metaKey is false
 PASS new MouseEvent('eventType', { metaKey: true }).metaKey is true
 PASS new MouseEvent('eventType', { button: 0 }).button is 0
+PASS new MouseEvent('eventType', { button: -1 }).button is -1
+PASS new MouseEvent('eventType', { button: -2 }).button is 0
 PASS new MouseEvent('eventType', { button: 1 }).button is 1
-PASS new MouseEvent('eventType', { button: 65534 }).button is 65534
-PASS new MouseEvent('eventType', { button: 65535 }).button is 0
-PASS new MouseEvent('eventType', { button: 9007199254740991 }).button is 0
-PASS new MouseEvent('eventType', { button: -1 }).button is 0
+PASS new MouseEvent('eventType', { button: -32768 }).button is -32768
+PASS new MouseEvent('eventType', { button: 32767 }).button is 32767
+PASS new MouseEvent('eventType', { button: 32768 }).button is -32768
+PASS new MouseEvent('eventType', { button: -32769 }).button is 32767
 PASS new MouseEvent('eventType', { button: 18446744073709551615 }).button is 0
 PASS new MouseEvent('eventType', { button: 12345678901234567890 }).button is 2048
 PASS new MouseEvent('eventType', { button: 123.45 }).button is 123

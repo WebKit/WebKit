@@ -204,7 +204,7 @@ enum MouseButton {
     LeftMouseButton = 0,
     MiddleMouseButton = 1,
     RightMouseButton = 2,
-    NoMouseButton = -1
+    NoMouseButton = -2
 };
 
 struct KeyMappingEntry {
@@ -301,8 +301,15 @@ void EventSenderProxy::updateClickCountForButton(int button)
     m_clickButton = button;
 }
 
+static NSUInteger swizzledEventPressedMouseButtons()
+{
+    return TestController::singleton().eventSenderProxy()->mouseButtonsCurrentlyDown();
+}
+
 void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers)
 {
+    m_mouseButtonsCurrentlyDown |= (1 << buttonNumber);
+
     updateClickCountForButton(buttonNumber);
 
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
@@ -318,6 +325,7 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
 
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     if (targetView) {
+        auto eventPressedMouseButtonsSwizzler = std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
         [NSApp _setCurrentEvent:event];
         [targetView mouseDown:event];
         [NSApp _setCurrentEvent:nil];
@@ -328,6 +336,8 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
 
 void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers)
 {
+    m_mouseButtonsCurrentlyDown &= ~(1 << buttonNumber);
+
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:NSMakePoint(m_position.x, m_position.y)
@@ -347,6 +357,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
         targetView = m_testController->mainWebView()->platformView();
 
     ASSERT(targetView);
+    auto eventPressedMouseButtonsSwizzler = std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
     [NSApp _setCurrentEvent:event];
     [targetView mouseUp:event];
     [NSApp _setCurrentEvent:nil];
@@ -582,6 +593,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     // Always target drags at the WKWebView to allow for drag-scrolling outside the view.
     NSView *targetView = isDrag ? m_testController->mainWebView()->platformView() : [m_testController->mainWebView()->platformView() hitTest:windowLocation];
     if (targetView) {
+        auto eventPressedMouseButtonsSwizzler = std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
         [NSApp _setCurrentEvent:event];
         if (isDrag)
             [targetView mouseDragged:event];

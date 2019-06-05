@@ -94,7 +94,7 @@ public:
 
         LayoutPoint absoluteLocation;
         FloatPoint locationInRootViewCoordinates;
-        unsigned short button;
+        short button;
         unsigned short syntheticClickType;
         bool buttonDown;
     };

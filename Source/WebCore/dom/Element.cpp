@@ -314,25 +314,24 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
 #if ENABLE(POINTER_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
-#if ENABLE(TOUCH_EVENTS)
         if (auto* page = document().page()) {
-            if (mouseEvent->type() != eventNames().clickEvent && page->pointerCaptureController().preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
+            auto& pointerCaptureController = page->pointerCaptureController();
+#if ENABLE(TOUCH_EVENTS)
+            if (mouseEvent->type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
                 return false;
-        }
 #else
-        if (auto pointerEvent = PointerEvent::create(mouseEvent)) {
-            if (auto* page = document().page()) {
-                page->pointerCaptureController().dispatchEvent(*pointerEvent, this);
-                if (isCompatibilityMouseEvent(mouseEvent) && page->pointerCaptureController().preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
+            if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent)) {
+                pointerCaptureController.dispatchEvent(*pointerEvent, this);
+                if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
                     return false;
+                if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
+                    didNotSwallowEvent = false;
+                    if (pointerEvent->type() == eventNames().pointerdownEvent)
+                        return false;
+                }
             }
-            if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
-                didNotSwallowEvent = false;
-                if (pointerEvent->type() == eventNames().pointerdownEvent)
-                    return false;
-            }
-        }
 #endif
+        }
     }
 #endif
 

@@ -42,10 +42,10 @@ enum {
 typedef uint32_t WKEventModifiers;
 
 enum {
-    kWKEventMouseButtonNoButton = -1,
     kWKEventMouseButtonLeftButton = 0,
     kWKEventMouseButtonMiddleButton = 1,
     kWKEventMouseButtonRightButton = 2,
+    kWKEventMouseButtonNoButton = -2
 };
 typedef int32_t WKEventMouseButton;
 

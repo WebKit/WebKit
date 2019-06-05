@@ -71,17 +71,22 @@ static AtomicString pointerEventType(const AtomicString& mouseEventType)
     return nullAtom();
 }
 
-RefPtr<PointerEvent> PointerEvent::create(const MouseEvent& mouseEvent)
+RefPtr<PointerEvent> PointerEvent::create(short button, const MouseEvent& mouseEvent)
 {
     auto type = pointerEventType(mouseEvent.type());
     if (type.isEmpty())
         return nullptr;
 
+    return create(type, button, mouseEvent);
+}
+
+Ref<PointerEvent> PointerEvent::create(const String& type, short button, const MouseEvent& mouseEvent)
+{
     auto isEnterOrLeave = type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent;
     auto canBubble = isEnterOrLeave ? CanBubble::No : CanBubble::Yes;
     auto isCancelable = isEnterOrLeave ? IsCancelable::No : IsCancelable::Yes;
     auto isComposed = isEnterOrLeave ? IsComposed::No : IsComposed::Yes;
-    return adoptRef(*new PointerEvent(type, canBubble, isCancelable, isComposed, mouseEvent));
+    return adoptRef(*new PointerEvent(type, canBubble, isCancelable, isComposed, button, mouseEvent));
 }
 
 Ref<PointerEvent> PointerEvent::create(const String& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
@@ -106,8 +111,8 @@ PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
 {
 }
 
-PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, const MouseEvent& mouseEvent)
-    : MouseEvent(type, canBubble, isCancelable, isComposed, mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(), { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.modifierKeys(), mouseEvent.button(), mouseEvent.buttons(), mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
+PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, short button, const MouseEvent& mouseEvent)
+    : MouseEvent(type, canBubble, isCancelable, isComposed, mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(), { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.modifierKeys(), button, mouseEvent.buttons(), mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
     , m_isPrimary(true)
 {
 }

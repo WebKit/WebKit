@@ -76,6 +76,10 @@ public:
 
     void keyDown(WKStringRef key, WKEventModifiers, unsigned location);
 
+#if PLATFORM(COCOA)
+    unsigned mouseButtonsCurrentlyDown() const { return m_mouseButtonsCurrentlyDown; }
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     // Touch events.
     void addTouchPoint(int x, int y);
@@ -137,6 +141,7 @@ private:
     WKEventMouseButton m_clickButton;
 #if PLATFORM(COCOA)
     int eventNumber;
+    unsigned m_mouseButtonsCurrentlyDown { 0 };
 #elif PLATFORM(GTK)
     Deque<WTREventQueueItem> m_eventQueue;
     unsigned m_mouseButtonsCurrentlyDown { 0 };

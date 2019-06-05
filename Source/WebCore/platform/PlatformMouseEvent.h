@@ -42,7 +42,9 @@ const double ForceAtClick = 1;
 const double ForceAtForceClick = 2;
 
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
-    enum MouseButton : int8_t { NoButton = -1, LeftButton, MiddleButton, RightButton };
+    // We use -2 for NoButton because -1 is a valid value in the DOM API for Pointer Events for pointermove events that
+    // indicate that the pressed mouse button hasn't changed since the last event.
+    enum MouseButton : int8_t { LeftButton = 0, MiddleButton, RightButton, NoButton = -2 };
     enum SyntheticClickType : int8_t { NoTap, OneFingerTap, TwoFingerTap };
 
     class PlatformMouseEvent : public PlatformEvent {
@@ -136,15 +138,15 @@ const double ForceAtForceClick = 2;
 
 #if COMPILER(MSVC)
     // These functions are necessary to work around the fact that MSVC will not find a most-specific
-    // operator== to use after implicitly converting MouseButton to an unsigned short.
-    inline bool operator==(unsigned short a, MouseButton b)
+    // operator== to use after implicitly converting MouseButton to a short.
+    inline bool operator==(short a, MouseButton b)
     {
-        return a == static_cast<unsigned short>(b);
+        return a == static_cast<short>(b);
     }
 
-    inline bool operator!=(unsigned short a, MouseButton b)
+    inline bool operator!=(short a, MouseButton b)
     {
-        return a != static_cast<unsigned short>(b);
+        return a != static_cast<short>(b);
     }
 #endif
 

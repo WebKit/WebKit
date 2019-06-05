@@ -137,15 +137,15 @@ shouldBe("new WheelEvent('eventType', { deltaMode: {valueOf: function () { retur
 });
 
 // button is passed.
-// Numbers within the unsigned short range.
+// Numbers within the short range.
 shouldBe("new WheelEvent('eventType', { button: 0 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: -1 }).button", "-1");
+shouldBe("new WheelEvent('eventType', { button: -2 }).button", "0");
 shouldBe("new WheelEvent('eventType', { button: 1 }).button", "1");
-shouldBe("new WheelEvent('eventType', { button: 65534 }).button", "65534");
-
-// Numbers that are equal to ((unsigned short)-1) should be treated as 0.
-shouldBe("new WheelEvent('eventType', { button: 65535 }).button", "0");
-shouldBe("new WheelEvent('eventType', { button: 9007199254740991 }).button", "0");
-shouldBe("new WheelEvent('eventType', { button: -1 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: -32768 }).button", "-32768");
+shouldBe("new WheelEvent('eventType', { button: 32767 }).button", "32767");
+shouldBe("new WheelEvent('eventType', { button: 32768 }).button", "-32768");
+shouldBe("new WheelEvent('eventType', { button: -32769 }).button", "32767");
 
 // Numbers out of the unsigned short range.
 // 2^{64}-1
