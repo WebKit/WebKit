@@ -1,3 +1,13 @@
+2019-06-05  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Follow up fix after r246115.
+        I changed the code to assert that we don't have duplicate native
+        functions. It turns out we do. I will fix that here, then add
+        back the assert. https://bugs.webkit.org/show_bug.cgi?id=198580
+
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        (WebCore::WHLSL::checkDuplicateFunctions):
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards resurrecting Mac CMake build

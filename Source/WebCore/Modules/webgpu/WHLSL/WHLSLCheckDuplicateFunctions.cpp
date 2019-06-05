@@ -160,13 +160,15 @@ bool checkDuplicateFunctions(const Program& program)
     }
 
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        // Native function declarations are never equal to each other. So we don't need
-        // to add them to the set, because they can't collide with each other. Instead, we
-        // just check that no user-defined function is a duplicate.
+        // We generate duplicate native function declarations in synthesize constructors.
+        // FIXME: is this right?
+        // https://bugs.webkit.org/show_bug.cgi?id=198580
+        //
+        // Since we do that, we just need to make sure no native function is a duplicate
+        // of a user-defined function.
         ASSERT(passesStaticChecks(nativeFunctionDeclaration.get()));
         if (functions.contains(DuplicateFunctionKey { nativeFunctionDeclaration.get() }))
             return false;
-        ASSERT(add(nativeFunctionDeclaration.get()));
     }
 
     return true;
