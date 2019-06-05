@@ -119,7 +119,7 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::
     m_contentLogicalWidth += logicalRect.width();
 }
 
-void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutSize runSize)
+void Line::appendInlineContainerStart(const InlineItem& inlineItem, InlineItemSize runSize)
 {
     auto& layoutBox = inlineItem.layoutBox();
     auto& style = layoutBox.style();
@@ -138,18 +138,18 @@ void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutSize r
     alignAndAdjustLineHeight();
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
     auto logicalTop = -fontMetrics.ascent() - displayBox.borderTop() - displayBox.paddingTop().valueOr(0);
-    auto logicalRect = Display::Rect { logicalTop, contentLogicalRight(), runSize.width(), runSize.height() };
+    auto logicalRect = Display::Rect { logicalTop, contentLogicalRight(), runSize.logicalWidth, runSize.logicalHeight.valueOr(0) };
     appendNonBreakableSpace(inlineItem, logicalRect);
 }
 
-void Line::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutSize runSize)
+void Line::appendInlineContainerEnd(const InlineItem& inlineItem, InlineItemSize runSize)
 {
     // This is really just a placeholder to mark the end of the inline level container.
-    auto logicalRect = Display::Rect { 0, contentLogicalRight(), runSize.width(), runSize.height() };
+    auto logicalRect = Display::Rect { 0, contentLogicalRight(), runSize.logicalWidth, runSize.logicalHeight.valueOr(0) };
     appendNonBreakableSpace(inlineItem, logicalRect);
 }
 
-void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSize)
+void Line::appendTextContent(const InlineTextItem& inlineItem, InlineItemSize runSize)
 {
     auto isTrimmable = TextUtil::isTrimmableContent(inlineItem);
     if (!isTrimmable)
@@ -177,7 +177,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSiz
     // Collapsed line items don't contribute to the line width.
     auto isCompletelyCollapsed = shouldCollapseCompletely();
     auto canBeExtended = !isCompletelyCollapsed && !inlineItem.isCollapsed();
-    auto logicalRect = Display::Rect { -inlineItem.style().fontMetrics().ascent(), contentLogicalRight(), runSize.width(), runSize.height() };
+    auto logicalRect = Display::Rect { -inlineItem.style().fontMetrics().ascent(), contentLogicalRight(), runSize.logicalWidth, runSize.logicalHeight.valueOr(0) };
     auto textContext = Display::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
     auto displayRun = Display::Run(logicalRect, textContext);
 
@@ -186,13 +186,13 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutSize runSiz
         m_trimmableContent.add(lineItem.get());
 
     m_content->runs().append(WTFMove(lineItem));
-    m_contentLogicalWidth += isCompletelyCollapsed ? LayoutUnit() : runSize.width();
+    m_contentLogicalWidth += isCompletelyCollapsed ? LayoutUnit() : runSize.logicalWidth;
 }
 
-void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutSize runSize)
+void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineItemSize runSize)
 {
+    auto inlineBoxHeight = runSize.logicalHeight.valueOr(0);
     auto alignAndAdjustLineHeight = [&] {
-        auto inlineBoxHeight = runSize.height();
         // FIXME: We need to look inside the inline-block's formatting context and check the lineboxes (if any) to be able to baseline align.
         if (inlineItem.layoutBox().establishesInlineFormattingContext()) {
             if (inlineBoxHeight == logicalHeight())
@@ -209,16 +209,16 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutSize r
 
     alignAndAdjustLineHeight();
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(inlineItem.layoutBox());
-    auto logicalTop = -runSize.height();
+    auto logicalTop = -inlineBoxHeight;
     auto horizontalMargin = displayBox.horizontalMargin();
-    auto logicalRect = Display::Rect { logicalTop, contentLogicalRight() + horizontalMargin.start, runSize.width(), runSize.height() };
+    auto logicalRect = Display::Rect { logicalTop, contentLogicalRight() + horizontalMargin.start, runSize.logicalWidth, inlineBoxHeight };
 
     m_content->runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
-    m_contentLogicalWidth += (runSize.width() + horizontalMargin.start + horizontalMargin.end);
+    m_contentLogicalWidth += (runSize.logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
 
-void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutSize runSize)
+void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineItemSize runSize)
 {
     // FIXME Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, runSize);

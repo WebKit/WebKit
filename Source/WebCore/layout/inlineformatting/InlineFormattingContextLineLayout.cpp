@@ -44,10 +44,10 @@ namespace Layout {
 struct UncommittedContent {
     struct Run {
         const InlineItem& inlineItem;
-        LayoutUnit logicalWidth;
+        Line::InlineItemSize size;
         // FIXME: add optional breaking context (start and end position) for split text content.
     };
-    void add(const InlineItem&, LayoutUnit logicalWidth);
+    void add(const InlineItem&, const Line::InlineItemSize&);
     void reset();
 
     Vector<Run> runs() { return m_uncommittedRuns; }
@@ -60,10 +60,10 @@ private:
     LayoutUnit m_width;
 };
 
-void UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void UncommittedContent::add(const InlineItem& inlineItem, const Line::InlineItemSize& size)
 {
-    m_uncommittedRuns.append({ inlineItem, logicalWidth });
-    m_width += logicalWidth;
+    m_uncommittedRuns.append({ inlineItem, size });
+    m_width += size.logicalWidth;
 }
 
 void UncommittedContent::reset()
@@ -103,18 +103,44 @@ static LayoutUnit inlineItemWidth(const LayoutState& layoutState, const InlineIt
     ASSERT(layoutState.hasDisplayBox(layoutBox));
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
 
+    if (layoutBox.isFloatingPositioned())
+        return displayBox.marginBoxWidth();
+
+    if (layoutBox.isReplaced())
+        return displayBox.width();
+
     if (inlineItem.isContainerStart())
         return displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0);
 
     if (inlineItem.isContainerEnd())
         return displayBox.marginEnd() + displayBox.borderRight() + displayBox.paddingRight().valueOr(0);
 
-    if (inlineItem.isFloat())
-        return displayBox.marginBoxWidth();
-
+    // Non-replaced inline box (e.g. inline-block)
     return displayBox.width();
 }
 
+static LayoutUnit inlineItemHeight(const LayoutState& layoutState, const InlineItem& inlineItem)
+{
+    auto& fontMetrics = inlineItem.style().fontMetrics();
+    if (inlineItem.isLineBreak() || is<InlineTextItem>(inlineItem))
+        return fontMetrics.height();
+
+    auto& layoutBox = inlineItem.layoutBox();
+    ASSERT(layoutState.hasDisplayBox(layoutBox));
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+
+    if (layoutBox.isFloatingPositioned())
+        return displayBox.marginBox().height();
+
+    if (layoutBox.isReplaced())
+        return displayBox.height();
+
+    if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+        return fontMetrics.height() + displayBox.verticalBorder() + displayBox.verticalPadding().valueOr(0);
+
+    // Non-replaced inline box (e.g. inline-block)
+    return displayBox.height();
+}
 
 static std::unique_ptr<Line> constructLine(const LayoutState& layoutState, const FloatingState& floatingState, const Box& formattingRoot,
     LayoutUnit lineLogicalTop, LayoutUnit availableWidth)
@@ -165,38 +191,18 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         committedInlineItemCount += uncommittedContent.size();
         for (auto& uncommittedRun : uncommittedContent.runs()) {
             auto& inlineItem = uncommittedRun.inlineItem;
-            if (inlineItem.isHardLineBreak()) {
+            if (inlineItem.isHardLineBreak())
                 line->appendHardLineBreak(inlineItem);
-                continue;
-            }
-
-            auto width = uncommittedRun.logicalWidth;
-            auto& fontMetrics = inlineItem.style().fontMetrics();
-            if (is<InlineTextItem>(inlineItem)) {
-                line->appendTextContent(downcast<InlineTextItem>(inlineItem), { width, fontMetrics.height() });
-                continue;
-            }
-
-            auto& layoutBox = inlineItem.layoutBox();
-            auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
-
-            if (inlineItem.isContainerStart()) {
-                auto containerHeight = fontMetrics.height() + displayBox.verticalBorder() + displayBox.verticalPadding().valueOr(0);
-                line->appendInlineContainerStart(inlineItem, { width, containerHeight });
-                continue;
-            }
-
-            if (inlineItem.isContainerEnd()) {
-                line->appendInlineContainerEnd(inlineItem, { width, 0 });
-                continue;
-            }
-
-            if (layoutBox.isReplaced()) {
-                line->appendReplacedInlineBox(inlineItem, { width, displayBox.height() });
-                continue;
-            }
-
-            line->appendNonReplacedInlineBox(inlineItem, { width, displayBox.height() });
+            else if (is<InlineTextItem>(inlineItem))
+                line->appendTextContent(downcast<InlineTextItem>(inlineItem), uncommittedRun.size);
+            else if (inlineItem.isContainerStart())
+                line->appendInlineContainerStart(inlineItem, uncommittedRun.size);
+            else if (inlineItem.isContainerEnd())
+                line->appendInlineContainerEnd(inlineItem, uncommittedRun.size);
+            else if (inlineItem.layoutBox().isReplaced())
+                line->appendReplacedInlineBox(inlineItem, uncommittedRun.size);
+            else
+                line->appendNonReplacedInlineBox(inlineItem, uncommittedRun.size);
         }
         uncommittedContent.reset();
     };
@@ -212,10 +218,10 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         auto availableWidth = line->availableWidth() - uncommittedContent.width();
         auto currentLogicalRight = line->contentLogicalRight() + uncommittedContent.width();
         auto& inlineItem = lineInput.inlineItems[inlineItemIndex];
-        auto inlineItemWidth = WebCore::Layout::inlineItemWidth(layoutState(), *inlineItem, currentLogicalRight);
+        auto itemLogicalWidth = inlineItemWidth(layoutState(), *inlineItem, currentLogicalRight);
 
         // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
-        auto breakingContext = lineBreaker.breakingContext(*inlineItem, inlineItemWidth, { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), !line->hasContent() });
+        auto breakingContext = lineBreaker.breakingContext(*inlineItem, itemLogicalWidth, { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), !line->hasContent() });
         if (breakingContext.isAtBreakingOpportunity)
             commitPendingContent();
 
@@ -243,12 +249,12 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
             continue;
         }
         if (inlineItem->isHardLineBreak()) {
-            uncommittedContent.add(*inlineItem, inlineItemWidth);
+            uncommittedContent.add(*inlineItem, { itemLogicalWidth, inlineItemHeight(layoutState(), *inlineItem) });
             commitPendingContent();
             return closeLine();
         }
 
-        uncommittedContent.add(*inlineItem, inlineItemWidth);
+        uncommittedContent.add(*inlineItem, { itemLogicalWidth, inlineItemHeight(layoutState(), *inlineItem) });
         if (breakingContext.isAtBreakingOpportunity)
             commitPendingContent();
     }
