@@ -64,6 +64,11 @@ public:
         return makeUniqueRef<ArrayType>(Lexer::Token(origin()), m_elementType->clone(), m_numElements);
     }
 
+    unsigned hash() const override
+    {
+        return WTF::IntHash<unsigned>::hash(m_numElements) ^ m_elementType->hash();
+    }
+
 private:
     UniqueRef<UnnamedType> m_elementType;
     unsigned m_numElements;

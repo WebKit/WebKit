@@ -32,56 +32,95 @@
 #include "WHLSLArrayType.h"
 #include "WHLSLInferTypes.h"
 #include "WHLSLTypeReference.h"
+#include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
+class DuplicateFunctionKey {
+public:
+    DuplicateFunctionKey() = default;
+    DuplicateFunctionKey(WTF::HashTableDeletedValueType)
+    {
+        m_function = bitwise_cast<AST::FunctionDeclaration*>(static_cast<uintptr_t>(1));
+    }
+
+    DuplicateFunctionKey(const AST::FunctionDeclaration& function)
+        : m_function(&function)
+    { }
+
+    bool isEmptyValue() const { return !m_function; }
+    bool isHashTableDeletedValue() const { return m_function == bitwise_cast<AST::FunctionDeclaration*>(static_cast<uintptr_t>(1)); }
+
+    unsigned hash() const
+    {
+        unsigned hash = IntHash<size_t>::hash(m_function->parameters().size());
+        hash ^= m_function->name().hash();
+        for (size_t i = 0; i < m_function->parameters().size(); ++i)
+            hash ^= m_function->parameters()[i]->type().value()->hash();
+
+        if (m_function->isCast())
+            hash ^= m_function->type().hash();
+
+        return hash;
+    }
+
+    bool operator==(const DuplicateFunctionKey& other) const
+    {
+        if (m_function->parameters().size() != other.m_function->parameters().size())
+            return false;
+
+        if (m_function->name() != other.m_function->name())
+            return false;
+
+        ASSERT(m_function->isCast() == other.m_function->isCast());
+
+        for (size_t i = 0; i < m_function->parameters().size(); ++i) {
+            if (!matches(*m_function->parameters()[i]->type(), *other.m_function->parameters()[i]->type()))
+                return false;
+        }
+
+        if (!m_function->isCast())
+            return true;
+
+        if (matches(m_function->type(), other.m_function->type()))
+            return true;
+
+        return false;
+    }
+
+    struct Hash {
+        static unsigned hash(const DuplicateFunctionKey& key)
+        {
+            return key.hash();
+        }
+
+        static bool equal(const DuplicateFunctionKey& a, const DuplicateFunctionKey& b)
+        {
+            return a == b;
+        }
+
+        static const bool safeToCompareToEmptyOrDeleted = false;
+        static const bool emptyValueIsZero = true;
+    };
+
+    struct Traits : public WTF::SimpleClassHashTraits<DuplicateFunctionKey> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const DuplicateFunctionKey& key) { return key.isEmptyValue(); }
+    };
+
+private:
+    const AST::FunctionDeclaration* m_function { nullptr };
+};
+
 bool checkDuplicateFunctions(const Program& program)
 {
-    Vector<std::reference_wrapper<const AST::FunctionDeclaration>> functions;
-    for (auto& functionDefinition : program.functionDefinitions())
-        functions.append(functionDefinition);
-    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
-        functions.append(nativeFunctionDeclaration);
-
-    std::sort(functions.begin(), functions.end(), [](const AST::FunctionDeclaration& a, const AST::FunctionDeclaration& b) -> bool {
-        if (a.name().length() < b.name().length())
-            return true;
-        if (a.name().length() > b.name().length())
-            return false;
-        for (unsigned i = 0; i < a.name().length(); ++i) {
-            if (a.name()[i] < b.name()[i])
-                return true;
-            if (a.name()[i] > b.name()[i])
-                return false;
-        }
-        return false;
-    });
-    for (size_t i = 0; i < functions.size(); ++i) {
-        for (size_t j = i + 1; j < functions.size(); ++j) {
-            if (functions[i].get().name() != functions[j].get().name())
-                break;
-            if (is<AST::NativeFunctionDeclaration>(functions[i].get()) && is<AST::NativeFunctionDeclaration>(functions[j].get()))
-                continue;
-            if (functions[i].get().parameters().size() != functions[j].get().parameters().size())
-                continue;
-            if (functions[i].get().isCast() && !matches(functions[i].get().type(), functions[j].get().type()))
-                continue;
-            bool same = true;
-            for (size_t k = 0; k < functions[i].get().parameters().size(); ++k) {
-                if (!matches(*functions[i].get().parameters()[k]->type(), *functions[j].get().parameters()[k]->type())) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same)
-                return false;
-        }
-        
-        if (functions[i].get().name() == "operator&[]" && functions[i].get().parameters().size() == 2
-            && is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))) {
-            auto& type = static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1]->type());
+    auto passesStaticChecks = [&] (const AST::FunctionDeclaration& function) {
+        if (function.name() == "operator&[]" && function.parameters().size() == 2
+            && is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))) {
+            auto& type = static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type());
             if (is<AST::TypeReference>(type)) {
                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198161 Shouldn't we already know whether the types have been resolved by now?
                 if (auto* resolvedType = downcast<AST::TypeReference>(type).maybeResolvedType()) {
@@ -92,17 +131,44 @@ bool checkDuplicateFunctions(const Program& program)
                     }
                 }
             }
-        } else if (functions[i].get().name() == "operator.length" && functions[i].get().parameters().size() == 1
-            && (is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))
-            || is<AST::ArrayType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))))
+        } else if (function.name() == "operator.length" && function.parameters().size() == 1
+            && (is<AST::ArrayReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))
+            || is<AST::ArrayType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))))
             return false;
-        else if (functions[i].get().name() == "operator=="
-            && functions[i].get().parameters().size() == 2
-            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0]->type()))
-            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1]->type()))
-            && matches(*functions[i].get().parameters()[0]->type(), *functions[i].get().parameters()[1]->type()))
+        else if (function.name() == "operator=="
+            && function.parameters().size() == 2
+            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[0]->type()))
+            && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*function.parameters()[1]->type()))
+            && matches(*function.parameters()[0]->type(), *function.parameters()[1]->type()))
+            return false;
+
+        return true;
+    };
+
+    HashSet<DuplicateFunctionKey, DuplicateFunctionKey::Hash, DuplicateFunctionKey::Traits> functions;
+
+    auto add = [&] (const AST::FunctionDeclaration& function) {
+        auto addResult = functions.add(DuplicateFunctionKey { function });
+        if (!addResult.isNewEntry)
+            return false;
+        return passesStaticChecks(function);
+    };
+
+    for (auto& functionDefinition : program.functionDefinitions()) {
+        if (!add(functionDefinition.get()))
             return false;
     }
+
+    for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
+        // Native function declarations are never equal to each other. So we don't need
+        // to add them to the set, because they can't collide with each other. Instead, we
+        // just check that no user-defined function is a duplicate.
+        ASSERT(passesStaticChecks(nativeFunctionDeclaration.get()));
+        if (functions.contains(DuplicateFunctionKey { nativeFunctionDeclaration.get() }))
+            return false;
+        ASSERT(add(nativeFunctionDeclaration.get()));
+    }
+
     return true;
 }
 

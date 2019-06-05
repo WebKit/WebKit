@@ -39,9 +39,10 @@ namespace WHLSL {
 namespace AST {
 
 class PointerType : public ReferenceType {
+    using Base = ReferenceType;
 public:
     PointerType(Lexer::Token&& origin, AddressSpace addressSpace, UniqueRef<UnnamedType> elementType)
-        : ReferenceType(WTFMove(origin), addressSpace, WTFMove(elementType))
+        : Base(WTFMove(origin), addressSpace, WTFMove(elementType))
     {
     }
 
@@ -55,6 +56,11 @@ public:
     UniqueRef<UnnamedType> clone() const override
     {
         return makeUniqueRef<PointerType>(Lexer::Token(origin()), addressSpace(), elementType().clone());
+    }
+
+    unsigned hash() const override
+    {
+        return this->Base::hash() ^ StringHasher::computeLiteralHash("pointer");
     }
 
 private:

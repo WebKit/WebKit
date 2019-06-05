@@ -63,6 +63,8 @@ public:
 
     virtual UniqueRef<UnnamedType> clone() const = 0;
 
+    virtual unsigned hash() const = 0;
+
     const Lexer::Token& origin() const { return m_origin; }
 
 private:

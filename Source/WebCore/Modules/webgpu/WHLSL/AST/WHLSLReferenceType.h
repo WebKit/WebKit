@@ -59,6 +59,11 @@ public:
     const UnnamedType& elementType() const { return m_elementType; }
     UnnamedType& elementType() { return m_elementType; }
 
+    unsigned hash() const override
+    {
+        return ~m_elementType->hash();
+    }
+
 private:
     AddressSpace m_addressSpace;
     UniqueRef<UnnamedType> m_elementType;

@@ -39,9 +39,10 @@ namespace WHLSL {
 namespace AST {
 
 class ArrayReferenceType : public ReferenceType {
+    using Base = ReferenceType;
 public:
     ArrayReferenceType(Lexer::Token&& origin, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
-        : ReferenceType(WTFMove(origin), addressSpace, WTFMove(elementType))
+        : Base(WTFMove(origin), addressSpace, WTFMove(elementType))
     {
     }
 
@@ -55,6 +56,11 @@ public:
     UniqueRef<UnnamedType> clone() const override
     {
         return makeUniqueRef<ArrayReferenceType>(Lexer::Token(origin()), addressSpace(), elementType().clone());
+    }
+
+    unsigned hash() const override
+    {
+        return this->Base::hash() ^ StringHasher::computeLiteralHash("array");
     }
 
 private:

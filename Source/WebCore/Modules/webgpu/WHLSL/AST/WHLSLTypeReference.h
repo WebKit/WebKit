@@ -99,6 +99,14 @@ public:
         return cloneTypeReference();
     }
 
+    unsigned hash() const override
+    {
+        // Currently, we only use this function after the name resolver runs.
+        // Relying on having a resolved type simplifies this implementation.
+        ASSERT(m_resolvedType);
+        return WTF::PtrHash<const Type*>::hash(&unifyNode());
+    }
+
 private:
     String m_name;
     TypeArguments m_typeArguments;
