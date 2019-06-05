@@ -1,3 +1,11 @@
+2019-06-05  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, add GTK baselines for new mediacapabilities test.
+
+        This test was added in r245636 with baselines for the mac port, but not for the GTK port.
+
+        * platform/gtk/media/mediacapabilities/mediacapabilities-types-expected.txt: Added.
+
 2019-06-05  Truitt Savell  <tsavell@apple.com>
 
         Mark two tests added in r246016 as slow.
