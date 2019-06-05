@@ -66,10 +66,14 @@ private:
         };
 
         struct LineInput {
-            LineInput(LayoutUnit logicalTop, LayoutUnit availableLogicalWidth, unsigned firstInlineItemIndex, const InlineItems&);
+            LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, unsigned firstInlineItemIndex, const InlineItems&);
+            struct HorizontalConstraint {
+                HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth);
 
-            LayoutUnit logicalTop;
-            LayoutUnit availableLogicalWidth;
+                LayoutPoint logicalTopLeft;
+                LayoutUnit availableLogicalWidth;
+            };
+            HorizontalConstraint horizontalConstraint;
             unsigned firstInlineItemIndex { 0 };
             const InlineItems& inlineItems;
         };
