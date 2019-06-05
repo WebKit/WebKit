@@ -374,7 +374,7 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
 
     .tab-bar > .item {
         background-image: none;
-        background-color: hsl(0, 0%, 17%);
+        background-color: hsl(0, 0%, 10%);
     }
 
     .tab-bar > .item > .title {
