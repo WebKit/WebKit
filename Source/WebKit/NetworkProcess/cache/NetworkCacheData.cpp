@@ -183,12 +183,12 @@ Optional<Salt> readOrMakeSalt(const String& path)
     Salt salt;
     auto bytesRead = read(fd, salt.data(), salt.size());
     close(fd);
-    if (bytesRead != salt.size()) {
+    if (bytesRead != static_cast<ssize_t>(salt.size())) {
         salt = makeSalt();
 
         unlink(cpath.data());
         fd = open(cpath.data(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-        bool success = write(fd, salt.data(), salt.size()) == salt.size();
+        bool success = write(fd, salt.data(), salt.size()) == static_cast<ssize_t>(salt.size());
         close(fd);
         if (!success)
             return { };

@@ -145,7 +145,7 @@ bool XSLStyleSheet::parseString(const String& string)
     const char* buffer = reinterpret_cast<const char*>(upconvertedCharacters.get());
     Checked<unsigned, RecordOverflow> unsignedSize = string.length();
     unsignedSize *= sizeof(UChar);
-    if (unsignedSize.hasOverflowed() || unsignedSize.unsafeGet() > std::numeric_limits<int>::max())
+    if (unsignedSize.hasOverflowed() || unsignedSize.unsafeGet() > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return false;
 
     int size = static_cast<int>(unsignedSize.unsafeGet());

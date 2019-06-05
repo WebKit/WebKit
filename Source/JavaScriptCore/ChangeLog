@@ -1,3 +1,15 @@
+2019-06-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix miscellaneous build warnings
+        https://bugs.webkit.org/show_bug.cgi?id=198544
+
+        Reviewed by Don Olmstead.
+
+        Silence -Wclass-memaccess warning in this dangerous code.
+
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+
 2019-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, update exception scope for putByIndexBeyondVectorLength

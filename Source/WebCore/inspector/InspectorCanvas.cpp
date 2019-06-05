@@ -432,7 +432,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         return false;
     });
     if (index != notFound) {
-        ASSERT(index < std::numeric_limits<int>::max());
+        ASSERT(index < static_cast<size_t>(std::numeric_limits<int>::max()));
         return static_cast<int>(index);
     }
 
@@ -526,7 +526,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         index = m_indexedDuplicateData.size() - 1;
     }
 
-    ASSERT(index < std::numeric_limits<int>::max());
+    ASSERT(index < static_cast<size_t>(std::numeric_limits<int>::max()));
     return static_cast<int>(index);
 }
 

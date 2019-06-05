@@ -55,7 +55,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) ImportFunctionInfo();
-    memset(m_globals.get(), 0, globalMemoryByteSize(m_module.get()));
+    memset(static_cast<void*>(m_globals.get()), 0, globalMemoryByteSize(m_module.get()));
     for (unsigned i = 0; i < m_module->moduleInformation().globals.size(); ++i) {
         if (m_module.get().moduleInformation().globals[i].type == Anyref)
             m_globalsToMark.set(i);
