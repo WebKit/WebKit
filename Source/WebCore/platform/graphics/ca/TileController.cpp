@@ -650,7 +650,7 @@ unsigned TileController::blankPixelCountForTiles(const PlatformLayerList& tiles,
     Region uncoveredRegion(enclosingIntRect(visibleRect));
     uncoveredRegion.subtract(paintedVisibleTiles);
 
-    return uncoveredRegion.totalArea();
+    return static_cast<unsigned>(uncoveredRegion.totalArea());
 }
 
 void TileController::setNeedsRevalidateTiles()
