@@ -435,7 +435,7 @@ class Responsive_Toggle_Walker_Nav_Menu extends Walker_Nav_Menu {
         $atts['target'] = ! empty( $item->target )     ? $item->target     : '';
         $atts['rel']    = ! empty( $item->xfn )        ? $item->xfn        : '';
         $atts['href']   = ! empty( $item->url )        ? $item->url        : '';
-        $atts['role']   = ! empty( $item->role )       ? $item->role       : '';
+        $atts['role']   = ! empty( $item->role )       ? $item->role       : 'menuitem';
 
         if ( in_array('menu-item-has-children', $item->classes) && 0 == $depth ) {
             $atts['aria-haspopup'] = "true";

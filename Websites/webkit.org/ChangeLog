@@ -1,3 +1,13 @@
+2019-06-05  Jon Davis  <jond@apple.com>
+
+        Improve accessibility on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=198531
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/functions.php: Added menuitem ARIA role to links
+        * wp-content/themes/webkit/widgets/post.php: Added aria-label to SVG icons
+
 2019-06-04  Jon Davis  <jond@apple.com>
 
         Improve performance of the lazy image loader
