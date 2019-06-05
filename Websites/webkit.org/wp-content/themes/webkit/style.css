@@ -900,8 +900,13 @@ footer .menu {
             filter: saturate(1);
 }
 
+.tile .background-image.loaded svg {
+    display: none;
+}
+
 .tile .featured-image::before {
-    padding-bottom: 80%;
+    padding-top: 80%;
+    margin-bottom: 20%;
     content: '';
     display: block;
 }

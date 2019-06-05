@@ -1,5 +1,16 @@
 2019-06-05  Jon Davis  <jond@apple.com>
 
+        Fix icons positioned incorrectly when a featured image is used
+        https://bugs.webkit.org/show_bug.cgi?id=198535
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/style.css:
+        (.tile .background-image.loaded svg):
+        (.tile .featured-image::before):
+
+2019-06-05  Jon Davis  <jond@apple.com>
+
         Improve accessibility on webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=198531
 
