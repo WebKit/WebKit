@@ -170,17 +170,17 @@ TEST(SafeBrowsing, Preference)
     };
 
     auto webView = adoptNS([WKWebView new]);
-    EXPECT_FALSE([webView configuration].preferences._safeBrowsingEnabled);
-    [webView configuration].preferences._safeBrowsingEnabled = YES;
+    EXPECT_TRUE([webView configuration].preferences.fraudulentWebsiteWarningEnabled);
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
     [webView setNavigationDelegate:delegate.get()];
-    [webView configuration].preferences._safeBrowsingEnabled = YES;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
     while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple2")]];
     TestWebKitAPI::Util::run(&done);
-    EXPECT_FALSE([webView configuration].preferences._safeBrowsingEnabled);
+    EXPECT_FALSE([webView configuration].preferences.fraudulentWebsiteWarningEnabled);
     EXPECT_FALSE([webView _safeBrowsingWarning]);
 }
 
@@ -190,7 +190,7 @@ static RetainPtr<WKWebView> safeBrowsingView()
 
     static auto delegate = adoptNS([SafeBrowsingNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
-    [webView configuration].preferences._safeBrowsingEnabled = YES;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
@@ -319,7 +319,7 @@ TEST(SafeBrowsing, URLObservation)
 
     auto webViewWithWarning = [&] () -> RetainPtr<WKWebView> {
         auto webView = adoptNS([WKWebView new]);
-        [webView configuration].preferences._safeBrowsingEnabled = YES;
+        [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
         [webView addObserver:observer.get() forKeyPath:@"URL" options:NSKeyValueObservingOptionNew context:nil];
 
         [webView loadHTMLString:@"meaningful content to be drawn" baseURL:simpleURL.get()];
@@ -415,7 +415,7 @@ TEST(SafeBrowsing, WKWebViewGoBack)
     
     auto delegate = adoptNS([WKWebViewGoBackNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
-    [webView configuration].preferences._safeBrowsingEnabled = YES;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
     TestWebKitAPI::Util::run(&navigationFinished);

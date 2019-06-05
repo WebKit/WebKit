@@ -606,7 +606,7 @@ TEST(ProcessSwap, KillWebContentProcessAfterServerRedirectPolicyDecision)
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
@@ -1696,7 +1696,7 @@ TEST(ProcessSwap, TerminateProcessRightAfterSwap)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
@@ -2245,7 +2245,7 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
@@ -3046,7 +3046,7 @@ TEST(ProcessSwap, NavigateCrossSiteBeforePageLoadEnd)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     failed = false;
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
@@ -3074,7 +3074,7 @@ TEST(ProcessSwap, DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
@@ -4453,7 +4453,7 @@ TEST(ProcessSwap, ClosePageAfterCrossSiteProvisionalLoad)
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
@@ -4511,7 +4511,7 @@ TEST(ProcessSwap, LoadingStateAfterPolicyDecision)
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView configuration].preferences._safeBrowsingEnabled = NO;
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);

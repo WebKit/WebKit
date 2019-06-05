@@ -51,6 +51,13 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
+/*! @abstract A Boolean value indicating whether warnings should be
+ shown for suspected fraudulent content such as phishing or malware.
+ @discussion The default value is YES. This feature is currently available
+ in the following region: China.
+ */
+@property (nonatomic, getter=isFraudulentWebsiteWarningEnabled) BOOL fraudulentWebsiteWarningEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 /*!
  @property tabFocusesLinks

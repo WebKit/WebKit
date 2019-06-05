@@ -122,6 +122,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _preferences->setJavaScriptEnabled(javaScriptEnabled);
 }
 
+- (void)setFraudulentWebsiteWarningEnabled:(BOOL)enabled
+{
+    _preferences->setSafeBrowsingEnabled(enabled);
+}
+
+- (BOOL)isFraudulentWebsiteWarningEnabled
+{
+    return _preferences->safeBrowsingEnabled();
+}
+
 - (BOOL)javaScriptCanOpenWindowsAutomatically
 {
     return _preferences->javaScriptCanOpenWindowsAutomatically();

@@ -1,1 +1,11 @@
+2019-06-05  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable safe browsing in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=196161
+        <rdar://problem/49171413>
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac-wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt:
+
 == Rolled over to ChangeLog-2019-06-05 ==
