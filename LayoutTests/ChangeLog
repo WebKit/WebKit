@@ -1,3 +1,12 @@
+2019-06-05  Shawn Roberts  <sroberts@apple.com>
+
+        http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html is a flaky failure on Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=176240
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-06-05  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, add GTK baselines for new mediacapabilities test.
