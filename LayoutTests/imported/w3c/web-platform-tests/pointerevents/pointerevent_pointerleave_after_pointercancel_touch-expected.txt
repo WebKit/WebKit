@@ -9,5 +9,5 @@ Pointer Events pointerleave tests
 The following pointer types were detected: touch.
 
 
-FAIL pointerleave event received assert_true: pointerleave should be received before the test finishes expected true got false
+PASS pointerleave event received 
 

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static AtomicString pointerEventType(PlatformTouchPoint::TouchPhaseType phase)
+static const AtomicString& pointerEventType(PlatformTouchPoint::TouchPhaseType phase)
 {
     switch (phase) {
     case PlatformTouchPoint::TouchPhaseBegan:
@@ -50,31 +50,19 @@ static AtomicString pointerEventType(PlatformTouchPoint::TouchPhaseType phase)
     return nullAtom();
 }
 
-static PointerEvent::IsCancelable phaseIsCancelable(PlatformTouchPoint::TouchPhaseType phase)
-{
-    if (phase == PlatformTouchPoint::TouchPhaseCancelled)
-        return PointerEvent::IsCancelable::No;
-    return PointerEvent::IsCancelable::Yes;
-}
-
-static Event::CanBubble typeCanBubble(const AtomicString& type)
-{
-    return (type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent) ? Event::CanBubble::No : Event::CanBubble::Yes;
-}
-
 Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
 {
-    auto phase = event.touchPhaseAtIndex(index);
-    return adoptRef(*new PointerEvent(pointerEventType(phase), event, phaseIsCancelable(phase), index, isPrimary, WTFMove(view)));
+    const auto& type = pointerEventType(event.touchPhaseAtIndex(index));
+    return adoptRef(*new PointerEvent(type, event, typeIsCancelable(type), index, isPrimary, WTFMove(view)));
 }
 
 Ref<PointerEvent> PointerEvent::create(const String& type, const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
 {
-    return adoptRef(*new PointerEvent(type, event, phaseIsCancelable(event.touchPhaseAtIndex(index)), index, isPrimary, WTFMove(view)));
+    return adoptRef(*new PointerEvent(type, event, typeIsCancelable(type), index, isPrimary, WTFMove(view)));
 }
 
 PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
-    : MouseEvent(type, typeCanBubble(type), isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
+    : MouseEvent(type, typeCanBubble(type), isCancelable, typeIsComposed(type), event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(event.touchIdentifierAtIndex(index))
     , m_width(2 * event.radiusXAtIndex(index))
     , m_height(2 * event.radiusYAtIndex(index))

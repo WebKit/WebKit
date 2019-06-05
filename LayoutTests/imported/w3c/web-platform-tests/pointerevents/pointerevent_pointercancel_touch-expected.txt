@@ -11,7 +11,7 @@ Pointer Events pointercancel Tests
 The following pointer types were detected: touch.
 
 
-FAIL pointercancel event received assert_true: pointerleave should be received before the test finished expected true got false
+PASS pointercancel event received 
 PASS  touch pointercancel event is a PointerEvent event 
 PASS  touch pointercancel.pointerId attribute exists 
 PASS  touch pointercancel.pointerId is readonly 
@@ -48,6 +48,6 @@ PASS  touch pointercancel.fromElement value is null.
 PASS  touch pointercancel.toElement attribute exists 
 PASS  touch pointercancel.toElement is readonly 
 PASS  touch pointercancel.toElement IDL type object (JS type was object) 
-FAIL  touch pointercancel.toElement value is null. assert_equals: toElement attribute value expected null but got Element node <div id="target0" style="background: black"></div>
+PASS  touch pointercancel.toElement value is null. 
 PASS  touch pointercancel.pressure value is valid 
 

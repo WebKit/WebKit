@@ -9,5 +9,5 @@ Pointer Events pointerout tests
 The following pointer types were detected: touch.
 
 
-FAIL pointerout event received assert_true: pointerout should be received before the test finishes expected true got false
+PASS pointerout event received 
 

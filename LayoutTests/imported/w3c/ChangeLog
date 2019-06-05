@@ -1,3 +1,17 @@
+2019-06-05  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Fire pointerout and pointerleave events after firing pointercancel
+        https://bugs.webkit.org/show_bug.cgi?id=198560
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions. Notably, the iOS-specific tests now have 100% PASS rate.
+
+        * web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_pointercancel_touch-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch-expected.txt:
+
 2019-06-05  Javier Fernandez  <jfernandez@igalia.com>
 
         Update the CSS Text WPT test suite

@@ -389,9 +389,14 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     if (!target)
         return;
 
-    auto event = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType, capturingData.isPrimary ? PointerEvent::IsPrimary::Yes : PointerEvent::IsPrimary::No);
-    target->dispatchEvent(event);
-    processPendingPointerCapture(WTFMove(event));
+    // After firing the pointercancel event, a user agent MUST also fire a pointer event named pointerout
+    // followed by firing a pointer event named pointerleave.
+    auto isPrimary = capturingData.isPrimary ? PointerEvent::IsPrimary::Yes : PointerEvent::IsPrimary::No;
+    auto cancelEvent = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType, isPrimary);
+    target->dispatchEvent(cancelEvent);
+    target->dispatchEvent(PointerEvent::create(eventNames().pointeroutEvent, pointerId, capturingData.pointerType, isPrimary));
+    target->dispatchEvent(PointerEvent::create(eventNames().pointerleaveEvent, pointerId, capturingData.pointerType, isPrimary));
+    processPendingPointerCapture(WTFMove(cancelEvent));
 }
 
 void PointerCaptureController::processPendingPointerCapture(const PointerEvent& event)
