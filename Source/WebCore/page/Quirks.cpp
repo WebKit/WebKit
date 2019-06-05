@@ -338,6 +338,17 @@ bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
     if (!needsQuirks())
         return false;
 
+    if (element.hasTagName(HTMLNames::inputTag)) {
+        if (!equalLettersIgnoringASCIICase(m_document->url().host(), "calendar.google.com"))
+            return false;
+        static NeverDestroyed<QualifiedName> dataInitialValueAttr(nullAtom(), "data-initial-value", nullAtom());
+        static NeverDestroyed<QualifiedName> dataPreviousValueAttr(nullAtom(), "data-previous-value", nullAtom());
+
+        return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr), "off")
+            && element.hasAttributeWithoutSynchronization(dataInitialValueAttr)
+            && element.hasAttributeWithoutSynchronization(dataPreviousValueAttr);
+    }
+
     if (!element.hasTagName(HTMLNames::textareaTag))
         return false;
 
