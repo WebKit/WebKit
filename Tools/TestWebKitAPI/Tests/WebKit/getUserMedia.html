@@ -36,6 +36,20 @@
             {
                 return stream !== null;
             }
+
+            function doMultipleGetUserMediaSynchronously()
+            {
+                navigator.mediaDevices.getUserMedia({video: true});
+                navigator.mediaDevices.getUserMedia({video: true});
+                navigator.mediaDevices.getUserMedia({video: true});
+
+                // This one should prompt.
+                navigator.mediaDevices.getUserMedia({audio: true});
+
+                navigator.mediaDevices.getUserMedia({audio: true});
+                navigator.mediaDevices.getUserMedia({audio: true});
+                navigator.mediaDevices.getUserMedia({audio: true, video: true});
+            }
         </script>
     <head>
 

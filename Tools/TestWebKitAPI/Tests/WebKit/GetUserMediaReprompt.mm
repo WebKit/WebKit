@@ -37,6 +37,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 static bool wasPrompted = false;
+static int numberOfPrompts = 0;
 
 @interface GetUserMediaRepromptUIDelegate : NSObject<WKUIDelegate>
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
@@ -46,6 +47,7 @@ static bool wasPrompted = false;
 @implementation GetUserMediaRepromptUIDelegate
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
 {
+    numberOfPrompts++;
     wasPrompted = true;
     decisionHandler(YES);
 }
@@ -115,6 +117,31 @@ TEST(WebKit2, GetUserMediaReprompt)
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
     TestWebKitAPI::Util::run(&wasPrompted);
     EXPECT_TRUE([webView haveStream:YES]);
+}
+
+TEST(WebKit2, MultipleGetUserMediaSynchronously)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mediaDevicesEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+    auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto delegate = adoptNS([[GetUserMediaRepromptUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    wasPrompted = false;
+    numberOfPrompts = 0;
+    [webView loadTestPageNamed:@"getUserMedia"];
+    TestWebKitAPI::Util::run(&wasPrompted);
+    EXPECT_EQ(numberOfPrompts, 1);
+
+    wasPrompted = false;
+    numberOfPrompts = 0;
+    [webView stringByEvaluatingJavaScript:@"doMultipleGetUserMediaSynchronously()"];
+    TestWebKitAPI::Util::run(&wasPrompted);
+    EXPECT_EQ(numberOfPrompts, 1);
 }
 
 } // namespace TestWebKitAPI

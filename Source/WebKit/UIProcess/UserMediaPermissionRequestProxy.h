@@ -41,7 +41,6 @@ public:
     }
 
     void allow(const String& audioDeviceUID, const String& videoDeviceUID);
-    void allow(WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice);
     void allow();
 
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };

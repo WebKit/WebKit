@@ -1,3 +1,53 @@
+2019-06-04  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia requests should be processed sequentially in UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=198430
+        <rdar://problem/51311420>
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, we process all incoming gum/gdm requests in parallel.
+        We now queueu them and process them one at a time.
+        This allows to take into consideration state changes triggered by one request for the next one.
+        In particular, if a user grants a request, this might grant the next one as well.
+
+        To implement that, we keep a reference of the current request to process.
+        We queue other requests happening whenever another request comes.
+        When the request is processed, we look at the next one in the queue.
+        To ensure we do not stop processing the queue for no good reason, some refactoring is done:
+        - queue processing happens when sending back IPC response to WebProcess.
+        - denyRequest/grantRequest are consistently called in the manager proxy.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::invalidatePendingRequests):
+        Invalidate pregranted requests as well.
+        (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+        Renamed from userMediaAccessWasDenied to denyRequest.
+        This method is now consistently used whenever the manager proxy wants to deny the request.
+        It does the IPC to the WebProcess and triggers processing of the next request.
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+        Renamed from userMediaAccessWasGranted to grantRequest.
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        This method is now consistently used whenever the manager proxy wants to deny the request.
+        It does the IPC to the WebProcess and triggers processing of the next request.
+        (WebKit::UserMediaPermissionRequestManagerProxy::rejectionTimerFired):
+        We now keep a queue of request instead of request IDs to make the deny code path more consistent.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processNextUserMediaRequestIfNeeded):
+        (WebKit::UserMediaPermissionRequestManagerProxy::startProcessingUserMediaPermissionRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest):
+        To make sure we do not process a different request, we keep a pointer to the request and compare it with the current media request.
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::viewIsBecomingVisible):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::setDeviceAsFirst):
+        (WebKit::UserMediaPermissionRequestProxy::allow):
+        (WebKit::UserMediaPermissionRequestProxy::deny):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+
 2019-06-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246086.

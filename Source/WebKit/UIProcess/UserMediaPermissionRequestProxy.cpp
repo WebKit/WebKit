@@ -43,56 +43,37 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
 {
 }
 
+#if ENABLE(MEDIA_STREAM)
+static inline void setDeviceAsFirst(Vector<CaptureDevice>& devices, const String& deviceID)
+{
+    size_t index = devices.findMatching([&deviceID](const auto& device) {
+        return device.persistentId() == deviceID;
+    });
+    ASSERT(index != notFound);
+
+    if (index) {
+        auto device = devices[index];
+        ASSERT(device.enabled());
+
+        devices.remove(index);
+        devices.insert(0, WTFMove(device));
+    }
+}
+#endif
+
 void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const String& videoDeviceUID)
 {
-    ASSERT(m_manager);
-    if (!m_manager)
-        return;
-
 #if ENABLE(MEDIA_STREAM)
-    CaptureDevice audioDevice;
-    if (!audioDeviceUID.isEmpty()) {
-        size_t index = m_eligibleAudioDevices.findMatching([&](const auto& device) {
-            return device.persistentId() == audioDeviceUID;
-        });
-        ASSERT(index != notFound);
-
-        if (index != notFound)
-            audioDevice = m_eligibleAudioDevices[index];
-
-        ASSERT(audioDevice.enabled());
-    }
-
-    CaptureDevice videoDevice;
-    if (!videoDeviceUID.isEmpty()) {
-        size_t index = m_eligibleVideoDevices.findMatching([&](const auto& device) {
-            return device.persistentId() == videoDeviceUID;
-        });
-        ASSERT(index != notFound);
-
-        if (index != notFound)
-            videoDevice = m_eligibleVideoDevices[index];
-
-        ASSERT(videoDevice.enabled());
-    }
-
-    m_manager->userMediaAccessWasGranted(m_userMediaID, WTFMove(audioDevice), WTFMove(videoDevice));
+    if (!audioDeviceUID.isEmpty())
+        setDeviceAsFirst(m_eligibleAudioDevices, audioDeviceUID);
+    if (!videoDeviceUID.isEmpty())
+        setDeviceAsFirst(m_eligibleVideoDevices, videoDeviceUID);
 #else
     UNUSED_PARAM(audioDeviceUID);
     UNUSED_PARAM(videoDeviceUID);
 #endif
 
-    invalidate();
-}
-
-void UserMediaPermissionRequestProxy::allow(WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice)
-{
-    ASSERT(m_manager);
-    if (!m_manager)
-        return;
-
-    m_manager->userMediaAccessWasGranted(m_userMediaID, WTFMove(audioDevice), WTFMove(videoDevice));
-    invalidate();
+    allow();
 }
 
 void UserMediaPermissionRequestProxy::allow()
@@ -101,10 +82,7 @@ void UserMediaPermissionRequestProxy::allow()
     if (!m_manager)
         return;
 
-    auto audioDevice = !m_eligibleAudioDevices.isEmpty() ? m_eligibleAudioDevices[0] : CaptureDevice();
-    auto videoDevice = !m_eligibleVideoDevices.isEmpty() ? m_eligibleVideoDevices[0] : CaptureDevice();
-
-    m_manager->userMediaAccessWasGranted(m_userMediaID, WTFMove(audioDevice), WTFMove(videoDevice));
+    m_manager->grantRequest(*this);
     invalidate();
 }
 
@@ -113,7 +91,7 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
     if (!m_manager)
         return;
 
-    m_manager->userMediaAccessWasDenied(m_userMediaID, reason);
+    m_manager->denyRequest(*this, reason);
     invalidate();
 }
 
