@@ -37,16 +37,17 @@
 #import "JSValuePrivate.h"
 #import "JSVirtualMachineInternal.h"
 #import "Symbol.h"
-#include <sys/stat.h>
-#include <wtf/FileMetadata.h>
-#include <wtf/FileSystem.h>
-#include <wtf/Scope.h>
-#include <wtf/spi/darwin/DataVaultSPI.h>
+#import <sys/stat.h>
+#import <wtf/FileMetadata.h>
+#import <wtf/FileSystem.h>
+#import <wtf/Scope.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/spi/darwin/DataVaultSPI.h>
 
 #if JSC_OBJC_API_ENABLED
 
 @implementation JSScript {
-    __weak JSVirtualMachine* m_virtualMachine;
+    WeakObjCPtr<JSVirtualMachine> m_virtualMachine;
     JSScriptType m_type;
     FileSystem::MappedFileData m_mappedSource;
     String m_source;
@@ -169,7 +170,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     Ref<JSC::CachedBytecode> cachedBytecode = JSC::CachedBytecode::create(buffer, size);
 
-    JSC::VM& vm = m_virtualMachine.vm;
+    JSC::VM& vm = [m_virtualMachine vm];
     JSC::SourceCode sourceCode = [self sourceCode];
     JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
     if (isCachedBytecodeStillValid(vm, cachedBytecode.copyRef(), key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
@@ -237,7 +238,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::SourceCode)sourceCode
 {
-    JSC::VM& vm = m_virtualMachine.vm;
+    JSC::VM& vm = [m_virtualMachine vm];
     JSC::JSLockHolder locker(vm);
 
     TextPosition startPosition { };
@@ -250,7 +251,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::JSSourceCode*)jsSourceCode
 {
-    JSC::VM& vm = m_virtualMachine.vm;
+    JSC::VM& vm = [m_virtualMachine vm];
     JSC::JSLockHolder locker(vm);
     JSC::JSSourceCode* jsSourceCode = JSC::JSSourceCode::create(vm, [self sourceCode]);
     return jsSourceCode;
@@ -281,10 +282,10 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     JSC::SourceCode sourceCode = [self sourceCode];
     switch (m_type) {
     case kJSScriptTypeModule:
-        m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, sourceCode, fd, cacheError);
+        m_cachedBytecode = JSC::generateModuleBytecode([m_virtualMachine vm], sourceCode, fd, cacheError);
         break;
     case kJSScriptTypeProgram:
-        m_cachedBytecode = JSC::generateProgramBytecode(m_virtualMachine.vm, sourceCode, fd, cacheError);
+        m_cachedBytecode = JSC::generateProgramBytecode([m_virtualMachine vm], sourceCode, fd, cacheError);
         break;
     }
 

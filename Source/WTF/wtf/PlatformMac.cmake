@@ -28,6 +28,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 
+    spi/darwin/DataVaultSPI.h
     spi/darwin/SandboxSPI.h
     spi/darwin/XPCSPI.h
     spi/darwin/dyldSPI.h

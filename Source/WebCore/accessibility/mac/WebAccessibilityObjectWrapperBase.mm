@@ -66,12 +66,13 @@
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "VisibleUnits.h"
-#import "WAKView.h"
-#import "WAKWindow.h"
 #import "WebCoreFrameView.h"
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>
+#else
+#import "WAKView.h"
+#import "WAKWindow.h"
 #endif
 
 using namespace WebCore;

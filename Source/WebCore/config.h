@@ -39,6 +39,12 @@
 #ifndef JSC_API_AVAILABLE
 #define JSC_API_AVAILABLE(...)
 #endif
+#ifndef JSC_CLASS_AVAILABLE
+#define JSC_CLASS_AVAILABLE(...) JS_EXPORT
+#endif
+#ifndef JSC_API_DEPRECATED
+#define JSC_API_DEPRECATED(...)
+#endif
 #endif
 
 #ifdef __cplusplus

@@ -32,3 +32,7 @@ set(bundle_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/mac/SyntheticBackingScaleFactorWindow.m
     ${TESTWEBKITAPI_DIR}/mac/TestBrowsingContextLoadDelegate.mm
 )
+
+list(APPEND TestWebKitLegacy_SOURCES
+    ${test_main_SOURCES}
+)

@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/AbstractPasteboard.h>
-
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+#import <WebCore/AbstractPasteboard.h>
 
 struct CGSize;
 

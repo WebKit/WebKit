@@ -23,13 +23,6 @@ list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebKitLegacy_SOURCES
     cf/WebCoreSupport/WebInspectorClientCF.cpp
 
-    mac/Carbon/CarbonUtils.m
-    mac/Carbon/CarbonWindowAdapter.mm
-    mac/Carbon/CarbonWindowContentView.m
-    mac/Carbon/CarbonWindowFrame.m
-    mac/Carbon/HIViewAdapter.m
-    mac/Carbon/HIWebView.mm
-
     mac/DOM/DOM.mm
     mac/DOM/DOMAbstractView.mm
     mac/DOM/DOMAttr.mm
@@ -338,8 +331,6 @@ set(WebKitLegacy_FORWARDING_HEADERS_FILES
 
     mac/Storage/WebDatabaseManagerPrivate.h
 
-    mac/WebCoreSupport/WebKeyGenerator.h
-
     mac/WebInspector/WebInspector.h
 
     mac/WebView/WebFrame.h
@@ -431,20 +422,13 @@ list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginHostUser.c
 )
 
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
-
-# FIXME: Forwarding headers should be copies of actual headers.
-file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
-list(APPEND ObjCHeaders
-    WebKitAvailability.h
-    WebScriptObject.h
+WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacy
+    TARGET_NAME WebKitLegacyFrameworkHeaders
+    DESTINATION ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy
+    FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES}
+    FLATTENED
 )
-foreach (_file ${ObjCHeaders})
-    get_filename_component(_name ${_file} NAME)
-    if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKitLegacy/${_name})
-        file(WRITE ${FORWARDING_HEADERS_DIR}/WebKitLegacy/${_name} "#import <WebCore/${_name}>")
-    endif ()
-endforeach ()
+add_dependencies(WebKitLegacyFrameworkHeaders WebCorePrivateFrameworkHeaders)
 
 set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
 

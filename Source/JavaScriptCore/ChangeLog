@@ -1,1 +1,15 @@
+2019-06-05  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards resurrecting Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=197132
+
+        Reviewed by Don Olmstead.
+
+        * API/JSScript.mm:
+        (-[JSScript readCache]):
+        (-[JSScript sourceCode]):
+        (-[JSScript jsSourceCode]):
+        (-[JSScript writeCache:]):
+        * CMakeLists.txt:
+
 == Rolled over to ChangeLog-2019-06-05 ==

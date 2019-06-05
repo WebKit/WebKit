@@ -66,15 +66,15 @@
 #import "TextIterator.h"
 #import "VisibleSelection.h"
 #import <objc/runtime.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ASCIICType.h>
 #import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS_FAMILY)
 
 #import "WAKAppKitStubs.h"
+#import <pal/ios/UIKitSoftLink.h>
+#import <pal/spi/ios/UIKitSPI.h>
 
 SOFT_LINK_CLASS(UIFoundation, NSColor)
 SOFT_LINK_CLASS(UIFoundation, NSShadow)

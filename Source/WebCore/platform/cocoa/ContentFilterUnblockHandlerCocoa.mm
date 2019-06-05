@@ -35,7 +35,10 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/CString.h>
+
+#if PLATFORM(IOS_FAMILY)
 #import "WebCoreThreadRun.h"
+#endif
 
 static NSString * const unblockURLHostKey { @"unblockURLHost" };
 static NSString * const unreachableURLKey { @"unreachableURL" };

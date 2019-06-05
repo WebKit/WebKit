@@ -135,7 +135,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/cg/ShareableBitmapCG.cpp
 
-    Shared/mac/ArgumentCodersMac.mm
     Shared/mac/AttributedString.mm
     Shared/mac/AuxiliaryProcessMac.mm
     Shared/mac/CodeSigning.mm
@@ -149,9 +148,6 @@ list(APPEND WebKit_SOURCES
     Shared/mac/PDFKitImports.mm
     Shared/mac/PasteboardTypes.mm
     Shared/mac/PrintInfoMac.mm
-    Shared/mac/SandboxExtensionMac.mm
-    Shared/mac/SandboxInitialiationParametersMac.mm
-    Shared/mac/SandboxUtilities.mm
     Shared/mac/SecItemRequestData.cpp
     Shared/mac/SecItemResponseData.cpp
     Shared/mac/SecItemShim.cpp
@@ -426,22 +422,22 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 )
 
 set(XPCService_SOURCES
-    Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm
-    Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm
+    Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
+    Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 )
 
 set(WebProcess_SOURCES
-    WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm
+    WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )
 
 set(PluginProcess_SOURCES
-    PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm
+    PluginProcess/EntryPoint/Cocoa/XPCService/PluginServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )
 
 list(APPEND NetworkProcess_SOURCES
-    NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm
+    NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )
 
@@ -767,12 +763,12 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
 
     WEBKIT_XPC_SERVICE(WebProcess
         "com.apple.WebKit.WebContent"
-        ${WEBKIT_DIR}/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist
+        ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist
         ${WebKit_WebProcess_OUTPUT_NAME})
 
     WEBKIT_XPC_SERVICE(NetworkProcess
         "com.apple.WebKit.Networking"
-        ${WEBKIT_DIR}/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist
+        ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist
         ${WebKit_NetworkProcess_OUTPUT_NAME})
 
     add_custom_target(WebContentProcessNib COMMAND
