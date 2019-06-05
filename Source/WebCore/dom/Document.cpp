@@ -5903,6 +5903,8 @@ bool Document::shouldInheritContentSecurityPolicyFromOwner() const
     ASSERT(m_frame);
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(m_url))
         return true;
+    if (m_url.protocolIsData())
+        return true;
     if (!isPluginDocument())
         return false;
     if (m_frame->tree().parent())

@@ -1,3 +1,16 @@
+2019-06-05  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Data URLs should inherit their CSP policy
+        https://bugs.webkit.org/show_bug.cgi?id=198572
+        <rdar://problem/50660927>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test to ensure that a framed data URL inherits its CSP policy from its parent document.
+
+        * http/tests/security/contentSecurityPolicy/subframe-with-data-url-inheritance-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/subframe-with-data-url-inheritance.html: Added.
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable safe browsing in WKWebView

@@ -1,3 +1,19 @@
+2019-06-05  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Data URLs should inherit their CSP policy
+        https://bugs.webkit.org/show_bug.cgi?id=198572
+        <rdar://problem/50660927>
+
+        Reviewed by Brent Fulgham.
+
+        As per <https://w3c.github.io/webappsec-csp/#security-inherit-csp> (Editor's Draft, 28 February 2019) data
+        URLs should inherit their CSP policy from their parent (if they have one).
+
+        Test: http/tests/security/contentSecurityPolicy/subframe-with-data-url-inheritance.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldInheritContentSecurityPolicyFromOwner const):
+
 2019-06-05  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Follow up fix after r246115.
