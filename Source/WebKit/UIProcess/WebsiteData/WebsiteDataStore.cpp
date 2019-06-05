@@ -166,7 +166,17 @@ WebsiteDataStore* WebsiteDataStore::existingNonDefaultDataStoreForSessionID(PAL:
 WebProcessPool* WebsiteDataStore::processPoolForCookieStorageOperations()
 {
     auto pools = processPools(1, false);
-    return pools.isEmpty() ? nullptr : pools.begin()->get();
+    if (!pools.isEmpty())
+        return pools.begin()->get();
+
+    for (auto* processPool : WebProcessPool::allProcessPools()) {
+        for (auto& process : processPool->processes()) {
+            if (process->pageCount() && &process->websiteDataStore() == this)
+                return processPool;
+        }
+    }
+
+    return nullptr;
 }
 
 void WebsiteDataStore::resolveDirectoriesIfNecessary()

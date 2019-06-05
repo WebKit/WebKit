@@ -1,3 +1,17 @@
+2019-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Cookies set via [WKHTTPCookieStore setCookie:] on store right after constructing WKWebView get lost
+        https://bugs.webkit.org/show_bug.cgi?id=198553
+        <rdar://problem/51317144>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (-[CheckSessionCookieUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2019-06-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix miscellaneous build warnings
