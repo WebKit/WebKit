@@ -973,6 +973,12 @@
         (syscall-number SYS_getgroups)
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50931110>
         (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
+        (syscall-number SYS_open_dprotected_np)
+        (syscall-number SYS_flistxattr)
+        (syscall-number SYS_fsetattrlist)
+        (syscall-number SYS_fchown)
+        (syscall-number SYS_fchflags)
+        (syscall-number SYS_fstat64_extended)
     )
 )
 
