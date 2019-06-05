@@ -133,6 +133,9 @@
 namespace WebKit {
 using namespace WebCore;
 
+const int blockSelectionStartWidth = 100;
+const int blockSelectionStartHeight = 100;
+
 void WebPage::platformInitialize()
 {
     platformInitializeAccessibility();
@@ -1232,6 +1235,93 @@ static IntRect selectionBoxForRange(WebCore::Range* range)
     return boundingRect;
 }
 
+static bool canShrinkToTextSelection(Node* node)
+{
+    if (node && !is<Element>(*node))
+        node = node->parentElement();
+    
+    auto* renderer = (node) ? node->renderer() : nullptr;
+    return renderer && renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation()) && !renderer->isTable();
+}
+
+static bool hasCustomLineHeight(Node& node)
+{
+    auto* renderer = node.renderer();
+    return renderer && renderer->style().lineHeight().isSpecified();
+}
+    
+RefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, const VisiblePosition& position, SelectionFlags& flags)
+{
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
+
+    Node* currentNode = result.innerNode();
+    if (!currentNode)
+        return nullptr;
+    RefPtr<Range> range;
+    FloatRect boundingRectInScrollViewCoordinates;
+
+    if (!currentNode->isTextNode() && !canShrinkToTextSelection(currentNode) && hasCustomLineHeight(*currentNode)) {
+        auto* renderer = currentNode->renderer();
+        if (is<RenderBlockFlow>(renderer)) {
+            auto* renderText = downcast<RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
+            if (renderText && renderText->textNode())
+                currentNode = renderText->textNode();
+        }
+    }
+
+    if (currentNode->isTextNode()) {
+        range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
+        if (!range || range->collapsed())
+            range = Range::create(currentNode->document(), position, position);
+        else {
+            m_blockRectForTextSelection = selectionBoxForRange(range.get());
+            range = wordRangeFromPosition(position);
+        }
+
+        return range;
+    }
+
+    if (!currentNode->isElementNode())
+        currentNode = currentNode->parentElement();
+
+    Node* bestChoice = currentNode;
+    while (currentNode) {
+        if (currentNode->renderer()) {
+            boundingRectInScrollViewCoordinates = currentNode->renderer()->absoluteBoundingBoxRect(true);
+            boundingRectInScrollViewCoordinates.scale(m_page->pageScaleFactor());
+            if (boundingRectInScrollViewCoordinates.width() > m_blockSelectionDesiredSize.width() && boundingRectInScrollViewCoordinates.height() > m_blockSelectionDesiredSize.height())
+                break;
+            bestChoice = currentNode;
+        }
+        currentNode = currentNode->parentElement();
+    }
+
+    if (!bestChoice)
+        return nullptr;
+
+    RenderObject* renderer = bestChoice->renderer();
+    if (!renderer || renderer->style().userSelect() == UserSelect::None)
+        return nullptr;
+
+    if (renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation()) && !renderer->isTable()) {
+        range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
+        if (range && !range->collapsed())
+            return range;
+    }
+
+    // If all we could find is a block whose height is very close to the height
+    // of the visible area, don't use it.
+    const float adjustmentFactor = .97;
+    boundingRectInScrollViewCoordinates = renderer->absoluteBoundingBoxRect(true);
+
+    if (boundingRectInScrollViewCoordinates.height() > m_page->mainFrame().view()->exposedContentRect().height() * adjustmentFactor)
+        return nullptr;
+
+    range = Range::create(bestChoice->document());
+    range->selectNodeContents(*bestChoice);
+    return range->collapsed() ? nullptr : range;
+}
+
 void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
@@ -1373,6 +1463,14 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
             range = Range::create(*frame.document(), position, position);
         } else
             range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
+        break;
+
+    case GestureType::MakeWebSelection:
+        if (wkGestureState == GestureRecognizerState::Began) {
+            m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
+            m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
+        }
+        range = rangeForWebSelectionAtPosition(point, position, flags);
         break;
 
     default:
@@ -1958,6 +2056,8 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     auto& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
     if (!isInteractingWithFocusedElement) {
+        m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
+        m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
         auto* renderer = range ? range->startContainer().renderer() : nullptr;
         if (renderer && renderer->style().preserveNewline())
             m_blockRectForTextSelection = renderer->absoluteBoundingBoxRect(true);

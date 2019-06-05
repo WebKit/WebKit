@@ -522,7 +522,6 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
-    // FIXME: We should use WKShareSheet instead of UIWKSelectionAssistant for this.
     auto selectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:[_hostViewController view]]);
     [selectionAssistant showShareSheetFor:WTF::userVisibleString(url) fromRect:boundingRect];
 }

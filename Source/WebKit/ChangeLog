@@ -1,3 +1,17 @@
+2019-06-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r246086.
+        https://bugs.webkit.org/show_bug.cgi?id=198549
+
+        Causing Internal build failures (Requested by ShawnRoberts on
+        #webkit).
+
+        Reverted changeset:
+
+        "Remove some unused selection code"
+        https://bugs.webkit.org/show_bug.cgi?id=198451
+        https://trac.webkit.org/changeset/246086
+
 2019-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Turn on background color estimation for all link indicators
