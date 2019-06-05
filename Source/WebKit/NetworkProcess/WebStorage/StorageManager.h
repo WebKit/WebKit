@@ -118,7 +118,7 @@ private:
         WillSuspend,
         Suspended
     };
-    State m_state;
+    State m_state { State::Running };
     Lock m_stateLock;
     Condition m_stateChangeCondition;
 };
