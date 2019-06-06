@@ -1,3 +1,28 @@
+2019-06-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Formatter: pretty-print CSS using a Worker
+        https://bugs.webkit.org/show_bug.cgi?id=197829
+        <rdar://problem/36891532>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/formatting/formatting-css.html: Added.
+        * inspector/formatting/formatting-css-expected.txt: Added.
+        * inspector/formatting/resources/css-tests/basic-expected.css: Added.
+        * inspector/formatting/resources/css-tests/basic.css: Added.
+        * inspector/formatting/resources/css-tests/gradient-expected.css: Added.
+        * inspector/formatting/resources/css-tests/gradient.css: Added.
+        * inspector/formatting/resources/css-tests/keyframes-expected.css: Added.
+        * inspector/formatting/resources/css-tests/keyframes.css: Added.
+        * inspector/formatting/resources/css-tests/media-query-expected.css: Added.
+        * inspector/formatting/resources/css-tests/media-query.css: Added.
+        * inspector/formatting/resources/css-tests/selectors-expected.css: Added.
+        * inspector/formatting/resources/css-tests/selectors.css: Added.
+        * inspector/formatting/resources/css-tests/wrapping-expected.css: Added.
+        * inspector/formatting/resources/css-tests/wrapping.css: Added.
+        * inspector/formatting/resources/utilities.js:
+        (TestPage.registerInitializer.runFormattingTest):
+
 2019-06-06  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r243270) [ iOS Sim Release ] Layout Test imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm is a flaky failure

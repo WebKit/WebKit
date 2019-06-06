@@ -50,6 +50,11 @@ WI.FormatterWorkerProxy = class FormatterWorkerProxy
         this.performAction("formatJavaScript", ...arguments);
     }
 
+    formatCSS(sourceText, indentString, includeSourceMapData)
+    {
+        this.performAction("formatCSS", ...arguments);
+    }
+
     // Public
 
     performAction(actionName)

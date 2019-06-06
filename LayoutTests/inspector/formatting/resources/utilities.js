@@ -13,10 +13,10 @@ TestPage.registerInitializer(function() {
         return loadFormattingTestAndExpectedResults(testURL).then(function(results) {
             let {testText, expectedText} = results;
             return new Promise(function(resolve, reject) {
-                const indentString = "    ";
                 let workerProxy = WI.FormatterWorkerProxy.singleton();
-                let isModule = /^module/.test(testName);
-                workerProxy.formatJavaScript(testText, isModule, indentString, ({formattedText, sourceMapData}) => {
+                const indentString = "    ";
+
+                function callback({formattedText, sourceMapData}) {
                     let pass = formattedText === expectedText;
                     InspectorTest.log(pass ? "PASS" : "FAIL");
 
@@ -36,7 +36,19 @@ TestPage.registerInitializer(function() {
                     }
 
                     resolve(pass);
-                });
+                }
+
+                switch (mode) {
+                case "text/javascript": {
+                    let isModule = /^module/.test(testName);
+                    workerProxy.formatJavaScript(testText, isModule, indentString, callback);
+                    break;
+                }
+
+                case "text/css":
+                    workerProxy.formatCSS(testText, indentString, callback);
+                    break;
+                }
             });
         });
     }

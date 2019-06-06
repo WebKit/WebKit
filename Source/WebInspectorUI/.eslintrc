@@ -90,6 +90,7 @@
         "esprima": true,
 
         // Formatters
+        "CSSFormatter": true,
         "ESTreeWalker": true,
         "EsprimaFormatter": true,
         "FormatterWorker": true,

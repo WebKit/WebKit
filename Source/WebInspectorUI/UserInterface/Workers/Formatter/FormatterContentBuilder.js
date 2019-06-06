@@ -74,6 +74,11 @@ FormatterContentBuilder = class FormatterContentBuilder
         };
     }
 
+    get currentLine()
+    {
+        return this._formattedContent.slice(this._formattedContent.lastIndexOf("\n") + 1).join("");
+    }
+
     setOriginalContent(originalContent)
     {
         console.assert(!this._originalContent);

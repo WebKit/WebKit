@@ -896,7 +896,8 @@ WI.TextEditor = class TextEditor extends WI.View
 
     _canUseFormatterWorker()
     {
-        return this._codeMirror.getMode().name === "javascript";
+        let mode = this._codeMirror.getMode().name;
+        return mode === "javascript" || mode === "css";
     }
 
     _attemptToDetermineMIMEType()
@@ -919,22 +920,27 @@ WI.TextEditor = class TextEditor extends WI.View
 
     _startWorkerPrettyPrint(beforePrettyPrintState, callback)
     {
+        let workerProxy = WI.FormatterWorkerProxy.singleton();
         let sourceText = this._codeMirror.getValue();
         let indentString = WI.indentString();
         const includeSourceMapData = true;
 
-        let sourceType = this._delegate ? this._delegate.textEditorScriptSourceType(this) : WI.Script.SourceType.Program;
-        const isModule = sourceType === WI.Script.SourceType.Module;
-
-        let workerProxy = WI.FormatterWorkerProxy.singleton();
-        workerProxy.formatJavaScript(sourceText, isModule, indentString, includeSourceMapData, ({formattedText, sourceMapData}) => {
+        let formatCallback = ({formattedText, sourceMapData}) => {
             // Handle if formatting failed, which is possible for invalid programs.
             if (formattedText === null) {
                 callback();
                 return;
             }
             this._finishPrettyPrint(beforePrettyPrintState, formattedText, sourceMapData, callback);
-        });
+        };
+
+        let mode = this._codeMirror.getMode().name;
+        if (mode === "javascript") {
+            let sourceType = this._delegate ? this._delegate.textEditorScriptSourceType(this) : WI.Script.SourceType.Program;
+            const isModule = sourceType === WI.Script.SourceType.Module;
+            workerProxy.formatJavaScript(sourceText, isModule, indentString, includeSourceMapData, formatCallback);
+        } else if (mode === "css")
+            workerProxy.formatCSS(sourceText, indentString, includeSourceMapData, formatCallback);
     }
 
     _startCodeMirrorPrettyPrint(beforePrettyPrintState, callback)

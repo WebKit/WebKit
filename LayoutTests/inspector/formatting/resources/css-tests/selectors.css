@@ -1,0 +1,5 @@
+/* SHORT SELECTOR, EMPTY CONTENT */
+a{}
+
+/* COMPLEX SELECTOR */
+div div>div#id.foo.bar:hover .something>.child~.sibling+.sibling::after{color:red;}

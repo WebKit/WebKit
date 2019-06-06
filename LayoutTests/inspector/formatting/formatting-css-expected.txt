@@ -1,0 +1,22 @@
+Test CSS formatting.
+
+
+== Running test suite: CSSFormatter
+-- Running test case: CSSFormatter.basic.css
+PASS
+
+-- Running test case: CSSFormatter.gradient.css
+PASS
+
+-- Running test case: CSSFormatter.keyframes.css
+PASS
+
+-- Running test case: CSSFormatter.media-query.css
+PASS
+
+-- Running test case: CSSFormatter.selectors.css
+PASS
+
+-- Running test case: CSSFormatter.wrapping.css
+PASS
+

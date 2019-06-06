@@ -29,6 +29,7 @@ importScripts(...[
     "FormatterContentBuilder.js",
     "ESTreeWalker.js",
     "EsprimaFormatter.js",
+    "CSSFormatter.js",
 ]);
 
 FormatterWorker = class FormatterWorker
@@ -86,6 +87,18 @@ FormatterWorker = class FormatterWorker
         }
 
         return {formattedText: null};
+    }
+
+    formatCSS(sourceText, indentString, includeSourceMapData)
+    {
+        let result = {formattedText: null};
+        let formatter = new CSSFormatter(sourceText, indentString);
+        if (formatter.success) {
+            result.formattedText = formatter.formattedText;
+            if (includeSourceMapData)
+                result.sourceMapData = formatter.sourceMapData;
+        }
+        return result;
     }
 
     // Private

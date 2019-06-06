@@ -1,0 +1,6 @@
+/* MEDIA QUERY INDENTATION */
+@media print{body,#main,#content{color:#000!important;}a,a:link,a:visited{color:#000!important;text-decoration:none!important;}#tabs,#globalheader,#globalfooter,#directorynav,.noprint,.hide{display:none!important;}#main a.pdf,#main a.html,#main a.qt,#main a.ical,#main a.dl,#main a.dmg,#main a.zip,#main a.keynote,#main a.audio{padding-left:0;background-image:none;}}
+
+/* MEDIA QUERY */
+@media screen and(max-device-width:480px){html{-webkit-text-size-adjust:none;}}
+@media not((screen)and(print)),(print){body{color:red}}
