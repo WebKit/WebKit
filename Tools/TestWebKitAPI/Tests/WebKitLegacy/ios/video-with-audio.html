@@ -17,6 +17,12 @@
         }
     }
 
+    function paused() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage('paused');
+        } catch(e) { }
+    }
+
     function notPlaying() {
         try {
             window.webkit.messageHandlers.testHandler.postMessage('not playing');

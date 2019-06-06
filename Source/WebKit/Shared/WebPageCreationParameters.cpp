@@ -66,6 +66,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mediaVolume;
     encoder << muted;
     encoder << mayStartMediaWhenInWindow;
+    encoder << mediaPlaybackIsSuspended;
     encoder << viewLayoutSize;
     encoder << autoSizingShouldExpandToViewHeight;
     encoder << viewportSizeForCSSViewportUnits;
@@ -222,6 +223,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.muted))
         return WTF::nullopt;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.mediaPlaybackIsSuspended))
         return WTF::nullopt;
     if (!decoder.decode(parameters.viewLayoutSize))
         return WTF::nullopt;

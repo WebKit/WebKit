@@ -5472,6 +5472,10 @@ void WebPageProxy::stopAllMediaPlayback()
 
 void WebPageProxy::suspendAllMediaPlayback()
 {
+    if (m_mediaPlaybackIsSuspended)
+        return;
+    m_mediaPlaybackIsSuspended = true;
+
     if (!hasRunningProcess())
         return;
 
@@ -5480,6 +5484,10 @@ void WebPageProxy::suspendAllMediaPlayback()
 
 void WebPageProxy::resumeAllMediaPlayback()
 {
+    if (!m_mediaPlaybackIsSuspended)
+        return;
+    m_mediaPlaybackIsSuspended = false;
+
     if (!hasRunningProcess())
         return;
 
@@ -7125,6 +7133,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.mediaVolume = m_mediaVolume;
     parameters.muted = m_mutedState;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
+    parameters.mediaPlaybackIsSuspended = m_mediaPlaybackIsSuspended;
     parameters.viewLayoutSize = m_viewLayoutSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     parameters.viewportSizeForCSSViewportUnits = m_viewportSizeForCSSViewportUnits;

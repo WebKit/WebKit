@@ -2412,6 +2412,7 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
     float m_mediaVolume { 1 };
     WebCore::MediaProducer::MutedStateFlags m_mutedState { WebCore::MediaProducer::NoneMuted };
     bool m_mayStartMediaWhenInWindow { true };
+    bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaCaptureEnabled { true };
 
     bool m_waitingForDidUpdateActivityState { false };

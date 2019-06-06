@@ -6265,3 +6265,33 @@ TEST(ProcessSwap, PassMinimumDeviceWidthOnNewWebView)
 }
 
 #endif
+
+TEST(ProcessSwap, SuspendAllMediaPlayback)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+#if TARGET_OS_IPHONE
+    configuration.get().allowsInlineMediaPlayback = YES;
+#endif
+    [configuration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    __block bool loaded = false;
+    [webView performAfterLoading:^{ loaded = true; }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+
+    TestWebKitAPI::Util::run(&loaded);
+
+    [webView _suspendAllMediaPlayback];
+
+    __block bool notPlaying = false;
+    [webView performAfterReceivingMessage:@"not playing" action:^() { notPlaying = true; }];
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+    TestWebKitAPI::Util::run(&notPlaying);
+}

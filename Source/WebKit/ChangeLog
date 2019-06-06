@@ -1,3 +1,25 @@
+2019-06-05  Jer Noble  <jer.noble@apple.com>
+
+        -[WKWebView _suspendAllMediaPlayback] does not persist across navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=198585
+
+        Reviewed by Chris Dumez.
+
+        Add a new WebPageCreationParameters entry for mediaPlaybackIsSuspended, and pass
+        that value across during WebPage creation.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendAllMediaPlayback):
+        (WebKit::WebPageProxy::resumeAllMediaPlayback):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage):
+
 2019-06-05  Sihui Liu  <sihui_liu@apple.com>
 
         TestWebKitAPI.WKWebView.LocalStorageProcessSuspends is flaky on release builds

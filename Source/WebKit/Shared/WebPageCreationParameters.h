@@ -116,6 +116,7 @@ struct WebPageCreationParameters {
     float mediaVolume;
     WebCore::MediaProducer::MutedStateFlags muted;
     bool mayStartMediaWhenInWindow;
+    bool mediaPlaybackIsSuspended { false };
 
     WebCore::IntSize viewLayoutSize;
     bool autoSizingShouldExpandToViewHeight;
