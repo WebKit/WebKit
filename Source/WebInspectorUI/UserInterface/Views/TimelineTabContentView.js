@@ -28,9 +28,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
     constructor(identifier)
     {
         let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.TimelineTabContentView.tabInfo());
-        let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
-
-        super(identifier || "timeline", "timeline", tabBarItem, null, detailsSidebarPanelConstructors);
+        super(identifier || "timeline", "timeline", tabBarItem);
 
         // Maintain an invisible tree outline containing tree elements for all recordings.
         // The visible recording's tree element is selected when the content view changes.
