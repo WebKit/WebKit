@@ -71,6 +71,7 @@ public:
     WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>);
     
     WEBCORE_EXPORT virtual void applyLayerPositions();
+    WEBCORE_EXPORT void applyLayerPositionsAfterCommit();
 
     virtual Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
     
@@ -84,8 +85,9 @@ public:
     virtual void scrollingTreeNodeRequestsScroll(ScrollingNodeID, const FloatPoint& /*scrollPosition*/, bool /*representsProgrammaticScroll*/) { }
 
     // Delegated scrolling/zooming has caused the viewport to change, so update viewport-constrained layers
-    // (but don't cause scroll events to be fired).
-    WEBCORE_EXPORT virtual void mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
+    WEBCORE_EXPORT void mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
+
+    void didScrollByDelegatedScrolling() { m_wasScrolledByDelegatedScrollingSincePreviousCommit = true; }
 
     void notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScrollingNode& changedNode);
 
@@ -209,6 +211,7 @@ private:
     bool m_isHandlingProgrammaticScroll { false };
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
+    bool m_wasScrolledByDelegatedScrollingSincePreviousCommit { false };
 };
     
 } // namespace WebCore

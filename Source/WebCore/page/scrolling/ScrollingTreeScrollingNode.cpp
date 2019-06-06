@@ -196,10 +196,9 @@ void ScrollingTreeScrollingNode::applyLayerPositions()
 
 void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport)
 {
-    // Even if position and overrideLayoutViewport haven't changed for this node, other nodes may have received new constraint data
-    // via a commit, so the call to notifyRelatedNodesAfterScrollPositionChange() is necessary. We could avoid this if we knew that
-    // no commits had happened.
     bool scrollPositionChanged = !scrollPositionAndLayoutViewportMatch(position, overrideLayoutViewport);
+    if (!scrollPositionChanged)
+        return;
 
     m_currentScrollPosition = adjustedScrollPosition(position, ScrollPositionClamp::None);
     updateViewportForCurrentScrollPosition(overrideLayoutViewport);
@@ -207,9 +206,8 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
     repositionRelatedLayers();
 
     scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
-    
-    if (scrollPositionChanged)
-        scrollingTree().scrollingTreeNodeDidScroll(*this);
+    scrollingTree().scrollingTreeNodeDidScroll(*this);
+    scrollingTree().didScrollByDelegatedScrolling();
 }
 
 LayoutPoint ScrollingTreeScrollingNode::parentToLocalPoint(LayoutPoint point) const

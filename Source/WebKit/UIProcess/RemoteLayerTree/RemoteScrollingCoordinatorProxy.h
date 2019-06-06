@@ -61,7 +61,7 @@ public:
     // Called externally when native views move around.
     void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
 
-    void applyScrollingTreeLayerPositions();
+    void applyScrollingTreeLayerPositionsAfterCommit();
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical);
 

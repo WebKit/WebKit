@@ -254,6 +254,16 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     node->commitStateAfterChildren(*stateNode);
 }
 
+void ScrollingTree::applyLayerPositionsAfterCommit()
+{
+    // Scrolling tree needs to make adjustments only if the UI side positions have changed.
+    if (!m_wasScrolledByDelegatedScrollingSincePreviousCommit)
+        return;
+    m_wasScrolledByDelegatedScrollingSincePreviousCommit = false;
+
+    applyLayerPositions();
+}
+
 void ScrollingTree::applyLayerPositions()
 {
     ASSERT(isMainThread());

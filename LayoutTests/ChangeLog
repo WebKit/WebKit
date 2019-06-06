@@ -1,3 +1,14 @@
+2019-06-06  Antti Koivisto  <antti@apple.com>
+
+        Position fixed is buggy with overflow:auto scrolling inside iframes
+        https://bugs.webkit.org/show_bug.cgi?id=154399
+        <rdar://problem/24742251>
+
+        Reviewed by Frederic Wang and Simon Fraser.
+
+        * scrollingcoordinator/ios/fixed-frame-overflow-swipe-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-frame-overflow-swipe.html: Added.
+
 2019-06-06  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Add support for chorded button interactions

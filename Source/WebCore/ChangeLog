@@ -1,3 +1,35 @@
+2019-06-06  Antti Koivisto  <antti@apple.com>
+
+        Position fixed is buggy with overflow:auto scrolling inside iframes
+        https://bugs.webkit.org/show_bug.cgi?id=154399
+        <rdar://problem/24742251>
+
+        Reviewed by Frederic Wang and Simon Fraser.
+
+        Test: scrollingcoordinator/ios/fixed-frame-overflow-swipe.html
+
+        After layer tree commit we were calling mainFrameViewportChangedViaDelegatedScrolling (even if viewport did not change)
+        and expecting it to apply UI side scrolling deltas. However optimization prevents it from descending into subframes
+        and we fail to update those properly.
+
+        In reality we only need to to apply scrolling tree positiong after commit if there has been delegated scrolling after the last
+        one. Track this and do full update when needed.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::applyLayerPositionsAfterCommit):
+
+        Add specific function for this. Don't do anything unless needed.
+
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::didScrollByDelegatedScrolling):
+
+        Track if there has been any delegated scrolling.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+
+        We can now bail out if nothing changes since we no longer rely on this for post-commit updates.
+
 2019-06-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Layout and preferred width computation should both call placeInlineItems().

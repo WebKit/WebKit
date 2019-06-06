@@ -217,15 +217,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     m_webPageProxy.didCommitLayerTree(layerTreeTransaction);
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (m_webPageProxy.scrollingCoordinatorProxy()->hasFixedOrSticky()) {
-#if PLATFORM(IOS_FAMILY)
-        // If we got a new layer for a fixed or sticky node, its position from the WebProcess is probably stale. We need to re-run the "viewport" changed logic to udpate it with our UI-side state.
-        FloatRect layoutViewport = m_webPageProxy.computeCustomFixedPositionRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.unobscuredContentRectRespectingInputViewBounds(), m_webPageProxy.customFixedPositionRect(), m_webPageProxy.displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
-        m_webPageProxy.scrollingCoordinatorProxy()->viewportChangedViaDelegatedScrolling(m_webPageProxy.unobscuredContentRect().location(), layoutViewport, m_webPageProxy.displayedContentScale());
-#else
-        m_webPageProxy.scrollingCoordinatorProxy()->applyScrollingTreeLayerPositions();
-#endif
-    }
+    m_webPageProxy.scrollingCoordinatorProxy()->applyScrollingTreeLayerPositionsAfterCommit();
 
     // Handle requested scroll position updates from the scrolling tree transaction after didCommitLayerTree()
     // has updated the view size based on the content size.
