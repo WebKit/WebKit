@@ -140,8 +140,8 @@
     --cpu-worker-thread-stroke-color: hsl(59, 79%, 37%);
     --cpu-overlay-color: var(--cpu-main-thread-stroke-color);
 
-    --cpu-script-fill-color: hsl(269, 65%, 75%);
-    --cpu-script-stroke-color: hsl(269, 33%, 50%);
+    --cpu-javascript-fill-color: hsl(269, 65%, 75%);
+    --cpu-javascript-stroke-color: hsl(269, 33%, 50%);
     --cpu-style-fill-color: hsl(22, 60%, 70%);
     --cpu-style-stroke-color: hsl(22, 40%, 50%);
     --cpu-layout-fill-color: hsl(0, 65%, 75%);

@@ -1,5 +1,28 @@
 2019-06-06  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r245833): Timelines: CPU: JavaScript label is missing and JavaScript section of pie chart is black
+        https://bugs.webkit.org/show_bug.cgi?id=198627
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.displayNameForSampleType):
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-javascript):
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-javascript): Added.
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-script): Deleted.
+        * UserInterface/Views/CPUUsageCombinedView.css:
+        (.cpu-usage-combined-view > .graph > .range-chart .sample-type-javascript): Added.
+        (.cpu-usage-combined-view > .graph > .range-chart .sample-type-script): Deleted.
+        Use the enum string added in r245833 (`sample-type-javascript`) instead of what was there
+        before (`sample-type-script`).
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Rename `--cpu-script-*` to `--cpu-javascript-*`.
+
+2019-06-06  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Formatter: pretty-print CSS using a Worker
         https://bugs.webkit.org/show_bug.cgi?id=197829
         <rdar://problem/36891532>

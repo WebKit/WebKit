@@ -127,9 +127,9 @@ body[dir=rtl] .cpu-usage-combined-view > .graph {
     stroke-opacity: 0.25;
 }
 
-.cpu-usage-combined-view > .graph > .range-chart .sample-type-script {
-    stroke: var(--cpu-script-stroke-color);
-    fill: var(--cpu-script-fill-color);
+.cpu-usage-combined-view > .graph > .range-chart .sample-type-javascript {
+    stroke: var(--cpu-javascript-stroke-color);
+    fill: var(--cpu-javascript-fill-color);
 }
 
 .cpu-usage-combined-view > .graph > .range-chart .sample-type-style {

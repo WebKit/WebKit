@@ -150,8 +150,8 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
 }
 
 .timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-javascript {
-    border: 1px solid var(--cpu-script-stroke-color);
-    background-color: var(--cpu-script-fill-color);
+    border: 1px solid var(--cpu-javascript-stroke-color);
+    background-color: var(--cpu-javascript-fill-color);
 }
 
 .timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-style {
@@ -174,9 +174,9 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
     fill: var(--cpu-idle-fill-color);
 }
 
-.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-script {
-    stroke: var(--cpu-script-stroke-color);
-    fill: var(--cpu-script-fill-color);
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-javascript {
+    stroke: var(--cpu-javascript-stroke-color);
+    fill: var(--cpu-javascript-fill-color);
 }
 
 .timeline-view.cpu .circle-chart > svg > path.segment.sample-type-style {

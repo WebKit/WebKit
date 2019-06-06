@@ -54,7 +54,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     static displayNameForSampleType(type)
     {
         switch (type) {
-        case CPUTimelineView.SampleType.Script:
+        case CPUTimelineView.SampleType.JavaScript:
             return WI.UIString("JavaScript");
         case CPUTimelineView.SampleType.Layout:
             return WI.repeatedUIString.timelineRecordLayout();
