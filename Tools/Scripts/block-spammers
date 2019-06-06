@@ -85,8 +85,7 @@ def can_use_this_tool():
 
 def disable_user(user_id, reason):
     response = requests.put('https://bugs.webkit.org/rest/user/' + str(user_id),
-        json={'email_enabled': False, 'login_denied_text': reason},
-        params = {'email_enabled': False, 'login_denied_text': reason, 'token': bugzilla_token})
+        params = {'email_enabled': 0, 'login_denied_text': reason, 'token': bugzilla_token})
     response.raise_for_status()
 
 
