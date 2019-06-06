@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+constexpr auto httpsUpgradeCheckerQuery = "SELECT host FROM hosts WHERE host = ?"_s;
+
 static const String& networkHTTPSUpgradeCheckerDatabasePath()
 {
     static NeverDestroyed<String> networkHTTPSUpgradeCheckerDatabasePath;
@@ -55,8 +57,6 @@ static const String& networkHTTPSUpgradeCheckerDatabasePath()
 
 NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
     : m_workQueue(WorkQueue::create("HTTPS Upgrade Checker Thread"))
-    , m_database(makeUniqueRef<WebCore::SQLiteDatabase>())
-    , m_statement(makeUniqueRef<WebCore::SQLiteStatement>(m_database.get(), "SELECT host FROM hosts WHERE host = ?;"_s))
 {
     ASSERT(RunLoop::isMain());
 
@@ -67,6 +67,7 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
             return;
         }
 
+        m_database = std::make_unique<SQLiteDatabase>();
         bool isDatabaseOpen = m_database->open(path, WebCore::SQLiteDatabase::OpenMode::ReadOnly);
         if (!isDatabaseOpen) {
 #if PLATFORM(COCOA)
@@ -79,6 +80,7 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
         // Since we are using a workerQueue, the sequential dispatch blocks may be called by different threads.
         m_database->disableThreadingChecks();
 
+        m_statement = std::make_unique<SQLiteStatement>(*m_database, httpsUpgradeCheckerQuery);
         int isStatementPrepared = (m_statement->prepare() == SQLITE_OK);
         ASSERT(isStatementPrepared);
         if (!isStatementPrepared)
@@ -90,8 +92,8 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
 
 NetworkHTTPSUpgradeChecker::~NetworkHTTPSUpgradeChecker()
 {
-    // This object should be owned by a singleton object.
-    ASSERT_NOT_REACHED();
+    if (m_database)
+        m_workQueue->dispatch([database = WTFMove(m_database), statement = WTFMove(m_statement)] { });
 }
 
 void NetworkHTTPSUpgradeChecker::query(String&& host, PAL::SessionID sessionID, CompletionHandler<void(bool)>&& callback)

@@ -44,7 +44,7 @@ namespace WebKit {
 class NetworkHTTPSUpgradeChecker {
 public:
     NetworkHTTPSUpgradeChecker();
-    NO_RETURN_DUE_TO_ASSERT ~NetworkHTTPSUpgradeChecker();
+    ~NetworkHTTPSUpgradeChecker();
 
     // Returns `true` after internal setup is successfully completed. If there is an error with setup, or if setup is in-progress, it will return `false`.
     bool didSetupCompleteSuccessfully() const { return m_didSetupCompleteSuccessfully; };
@@ -54,8 +54,8 @@ public:
 
 private:
     Ref<WorkQueue> m_workQueue;
-    UniqueRef<WebCore::SQLiteDatabase> m_database;
-    UniqueRef<WebCore::SQLiteStatement> m_statement;
+    std::unique_ptr<WebCore::SQLiteDatabase> m_database;
+    std::unique_ptr<WebCore::SQLiteStatement> m_statement;
     std::atomic<bool> m_didSetupCompleteSuccessfully { false };
 };
 
