@@ -1587,7 +1587,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_potentialTapInProgress)
         return;
 
-    if (_page->preferences().fastClicksEverywhere()) {
+    if (_page->preferences().fastClicksEverywhere() && _page->allowsFastClicksEverywhere()) {
         RELEASE_LOG(ViewGestures, "Potential tap found an element and fast taps are forced on. Trigger click. (%p)", self);
         [self _setDoubleTapGesturesEnabled:NO];
         return;
