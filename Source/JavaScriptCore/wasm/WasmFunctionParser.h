@@ -281,6 +281,24 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         return { };
     }
 
+    case TableGet: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        ExpressionType result, idx;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(idx, "table.get");
+        WASM_TRY_ADD_TO_CONTEXT(addTableGet(idx, result));
+        m_expressionStack.append(result);
+        return { };
+    }
+
+    case TableSet: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        ExpressionType val, idx;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(val, "table.set");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(idx, "table.set");
+        WASM_TRY_ADD_TO_CONTEXT(addTableSet(idx, val));
+        return { };
+    }
+
     case RefNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         m_expressionStack.append(m_context.addConstant(Anyref, JSValue::encode(jsNull())));
@@ -373,6 +391,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't get call_indirect's reserved byte");
         WASM_PARSER_FAIL_IF(reserved, "call_indirect's 'reserved' varuint1 must be 0x0");
         WASM_PARSER_FAIL_IF(m_info.usedSignatures.size() <= signatureIndex, "call_indirect's signature index ", signatureIndex, " exceeds known signatures ", m_info.usedSignatures.size());
+        WASM_PARSER_FAIL_IF(m_info.tableInformation.type() != TableElementType::Funcref, "call_indirect is only valid when a table has type anyfunc");
 
         const Signature& calleeSignature = m_info.usedSignatures[signatureIndex].get();
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's index.
@@ -654,12 +673,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case TableGet:
+    case TableSet:
+    case RefIsNull:
     case RefNull: {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        return { };
-    }
-
-    case RefIsNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         return { };
     }

@@ -54,6 +54,11 @@ namespace Wasm {
 struct CompilationContext;
 struct ModuleInformation;
 
+enum class TableElementType : uint8_t {
+    Anyref,
+    Funcref
+};
+
 inline bool isValueType(Type type)
 {
     switch (type) {
@@ -214,11 +219,12 @@ public:
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, Optional<uint32_t> maximum, bool isImport)
+    TableInformation(uint32_t initial, Optional<uint32_t> maximum, bool isImport, TableElementType type)
         : m_initial(initial)
         , m_maximum(maximum)
         , m_isImport(isImport)
         , m_isValid(true)
+        , m_type(type)
     {
         ASSERT(*this);
     }
@@ -227,12 +233,14 @@ public:
     bool isImport() const { return m_isImport; }
     uint32_t initial() const { return m_initial; }
     Optional<uint32_t> maximum() const { return m_maximum; }
+    TableElementType type() const { return m_type; }
 
 private:
     uint32_t m_initial;
     Optional<uint32_t> m_maximum;
     bool m_isImport { false };
     bool m_isValid { false };
+    TableElementType m_type;
 };
     
 struct CustomSection {

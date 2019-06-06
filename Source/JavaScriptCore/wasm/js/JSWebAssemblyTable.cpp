@@ -47,6 +47,7 @@ JSWebAssemblyTable* JSWebAssemblyTable::create(ExecState* exec, VM& vm, Structur
     }
 
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm.heap)) JSWebAssemblyTable(vm, structure, WTFMove(table));
+    instance->table()->setOwner(instance);
     instance->finishCreation(vm);
     return instance;
 }
@@ -60,12 +61,6 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, Ref<Wasm::T
     : Base(vm, structure)
     , m_table(WTFMove(table))
 {
-    // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
-    // But for now, we're not doing that.
-    // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_jsFunctions = MallocPtr<WriteBarrier<JSObject>>::malloc((sizeof(WriteBarrier<JSObject>) * Checked<size_t>(allocatedLength())).unsafeGet());
-    for (uint32_t i = 0; i < allocatedLength(); ++i)
-        new(&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
 }
 
 void JSWebAssemblyTable::finishCreation(VM& vm)
@@ -85,55 +80,49 @@ void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-
-    for (unsigned i = 0; i < thisObject->length(); ++i)
-        visitor.append(thisObject->m_jsFunctions.get()[i]);
+    thisObject->table()->visitChildren(visitor);
 }
 
 bool JSWebAssemblyTable::grow(uint32_t delta)
 {
     if (delta == 0)
         return true;
-
-    size_t oldLength = length();
-
-    auto grew = m_table->grow(delta);
-    if (!grew)
-        return false;
-
-    size_t newLength = grew.value();
-    if (newLength > m_table->allocatedLength(oldLength))
-        // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-        m_jsFunctions.realloc((sizeof(WriteBarrier<JSObject>) * Checked<size_t>(m_table->allocatedLength(newLength))).unsafeGet());
-
-    for (size_t i = oldLength; i < m_table->allocatedLength(newLength); ++i)
-        new (&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
-
-    return true;
+    return !!m_table->grow(delta);
 }
 
-JSObject* JSWebAssemblyTable::getFunction(uint32_t index)
+JSValue JSWebAssemblyTable::get(uint32_t index)
 {
     RELEASE_ASSERT(index < length());
-    return m_jsFunctions.get()[index & m_table->mask()].get();
+    return m_table->get(index);
 }
 
-void JSWebAssemblyTable::clearFunction(uint32_t index)
+void JSWebAssemblyTable::set(uint32_t index, JSValue value)
 {
-    m_table->clearFunction(index);
-    m_jsFunctions.get()[index & m_table->mask()] = WriteBarrier<JSObject>();
+    RELEASE_ASSERT(index < length());
+    RELEASE_ASSERT(m_table->isAnyrefTable());
+    m_table->set(index, value);
 }
 
-void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyFunction* function)
+void JSWebAssemblyTable::set(uint32_t index, WebAssemblyFunction* function)
 {
-    m_table->setFunction(index, function->importableFunction(), &function->instance()->instance());
-    m_jsFunctions.get()[index & m_table->mask()].set(vm, this, function);
+    RELEASE_ASSERT(index < length());
+    RELEASE_ASSERT(m_table->asFuncrefTable());
+    auto& subThis = *static_cast<Wasm::FuncRefTable*>(&m_table.get());
+    subThis.setFunction(index, function, function->importableFunction(), &function->instance()->instance());
 }
 
-void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyWrapperFunction* function)
+void JSWebAssemblyTable::set(uint32_t index, WebAssemblyWrapperFunction* function)
 {
-    m_table->setFunction(index, function->importableFunction(), &function->instance()->instance());
-    m_jsFunctions.get()[index & m_table->mask()].set(vm, this, function);
+    RELEASE_ASSERT(index < length());
+    RELEASE_ASSERT(m_table->asFuncrefTable());
+    auto& subThis = *static_cast<Wasm::FuncRefTable*>(&m_table.get());
+    subThis.setFunction(index, function, function->importableFunction(), &function->instance()->instance());
+}
+
+void JSWebAssemblyTable::clear(uint32_t index)
+{
+    RELEASE_ASSERT(index < length());
+    m_table->clear(index);
 }
 
 } // namespace JSC

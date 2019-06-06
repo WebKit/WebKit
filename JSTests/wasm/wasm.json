@@ -18,7 +18,7 @@
     },
     "value_type": ["i32", "i64", "f32", "f64", "anyref"],
     "block_type": ["i32", "i64", "f32", "f64", "void", "anyref"],
-    "elem_type": ["anyfunc"],
+    "elem_type": ["anyfunc","anyref"],
     "external_kind": {
         "Function": { "type": "uint8", "value": 0 },
         "Table":    { "type": "uint8", "value": 1 },
@@ -66,6 +66,8 @@
         "tee_local":           { "category": "special",    "value":  34, "return": ["any"],      "parameter": ["any"],                  "immediate": [{"name": "local_index",    "type": "varuint32"}],                                            "description": "write a local variable or parameter and return the same value" },
         "get_global":          { "category": "special",    "value":  35, "return": ["any"],      "parameter": [],                       "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "read a global variable" },
         "set_global":          { "category": "special",    "value":  36, "return": [],           "parameter": ["any"],                  "immediate": [{"name": "global_index",   "type": "varuint32"}],                                            "description": "write a global variable" },
+        "table.get":           { "category": "special",    "value":  37, "return": ["anyref"],   "parameter": ["i32"],                  "immediate": [],                                                                                           "description": "get a table value" },
+        "table.set":           { "category": "special",    "value":  38, "return": [],           "parameter": ["i32", "anyref"],        "immediate": [],                                                                                           "description": "set a table value" },
         "call":                { "category": "call",       "value":  16, "return": ["call"],     "parameter": ["call"],                 "immediate": [{"name": "function_index", "type": "varuint32"}],                                            "description": "call a function by its index" },
         "call_indirect":       { "category": "call",       "value":  17, "return": ["call"],     "parameter": ["call"],                 "immediate": [{"name": "type_index",     "type": "varuint32"}, {"name": "reserved", "type": "varuint1"}],  "description": "call a function indirect with an expected signature" },
         "i32.load8_s":         { "category": "memory",     "value":  44, "return": ["i32"],      "parameter": ["addr"],                 "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "description": "load from memory" },

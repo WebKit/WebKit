@@ -1,5 +1,83 @@
 2019-06-05  Justin Michaud  <justin_michaud@apple.com>
 
+        [WASM-References] Add support for Anyref tables, Table.get and Table.set (for Anyref only).
+        https://bugs.webkit.org/show_bug.cgi?id=198398
+
+        Reviewed by Saam Barati.
+
+        Create a new table subtype called FuncRefTable (note: Anyfunc was renamed to Funcref in the references spec).
+        Table now write-barriers and visits its children's wrapper objects. FuncRefTable caches some extra data to
+        support calling from wasm. A JSWebAssemblyTable is required to set an anyref element, but this is only because
+        we need to write barrier it (so it should not restrict how we implement threads). This patch does, however,
+        restrict the implementation of function references to require every Ref.func to have an associated wrapper. This
+        can be done statically, so this too should not restrict our threads implementation. 
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addLocal):
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::TableInformation::TableInformation):
+        (JSC::Wasm::TableInformation::type const):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseTableHelper):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::Table::tryCreate):
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::clear):
+        (JSC::Wasm::Table::set):
+        (JSC::Wasm::Table::get):
+        (JSC::Wasm::Table::visitChildren):
+        (JSC::Wasm::FuncRefTable::FuncRefTable):
+        (JSC::Wasm::FuncRefTable::setFunction):
+        (JSC::Wasm::Table::~Table): Deleted.
+        (JSC::Wasm::Table::clearFunction): Deleted.
+        (JSC::Wasm::Table::setFunction): Deleted.
+        * wasm/WasmTable.h:
+        (JSC::Wasm::Table::length const):
+        (JSC::Wasm::Table::type const):
+        (JSC::Wasm::Table::setOwner):
+        (JSC::Wasm::FuncRefTable::offsetOfFunctions):
+        (JSC::Wasm::FuncRefTable::offsetOfInstances):
+        (JSC::Wasm::Table::offsetOfFunctions): Deleted.
+        (JSC::Wasm::Table::offsetOfInstances): Deleted.
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addTableGet):
+        (JSC::Wasm::Validate::addTableSet):
+        (JSC::Wasm::Validate::addCallIndirect):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::finishCreation):
+        (JSC::JSWebAssemblyTable::visitChildren):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::get):
+        (JSC::JSWebAssemblyTable::set):
+        (JSC::JSWebAssemblyTable::clear):
+        (JSC::JSWebAssemblyTable::getFunction): Deleted.
+        (JSC::JSWebAssemblyTable::clearFunction): Deleted.
+        (JSC::JSWebAssemblyTable::setFunction): Deleted.
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncGet):
+        (JSC::webAssemblyTableProtoFuncSet):
+        * wasm/wasm.json:
+
+2019-06-05  Justin Michaud  <justin_michaud@apple.com>
+
         WebAssembly: pow functions returns 0 when exponent 1.0 or -1.0
         https://bugs.webkit.org/show_bug.cgi?id=198106
 

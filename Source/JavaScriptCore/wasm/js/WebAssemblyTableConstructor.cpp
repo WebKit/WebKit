@@ -58,14 +58,19 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
         memoryDescriptor = jsCast<JSObject*>(argument);
     }
 
+    Wasm::TableElementType type;
     {
         Identifier elementIdent = Identifier::fromString(&vm, "element");
         JSValue elementValue = memoryDescriptor->get(exec, elementIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (elementString != "anyfunc")
-            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its 'element' field to be the string 'anyfunc'"_s)));
+        if (elementString == "anyfunc")
+            type = Wasm::TableElementType::Funcref;
+        else if (elementString == "anyref")
+            type = Wasm::TableElementType::Anyref;
+        else
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its 'element' field to be the string 'anyfunc' or 'anyref'"_s)));
     }
 
     Identifier initialIdent = Identifier::fromString(&vm, "initial");
@@ -90,7 +95,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
         }
     }
 
-    RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(initial, maximum);
+    RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(initial, maximum, type);
     if (!wasmTable) {
         return JSValue::encode(throwException(exec, throwScope,
             createRangeError(exec, "couldn't create Table"_s)));

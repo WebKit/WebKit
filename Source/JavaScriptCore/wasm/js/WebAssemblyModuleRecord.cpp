@@ -280,6 +280,11 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
                     return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "Imported Table", "'maximum' is larger than the module's expected 'maximum'")));
             }
 
+            auto expectedType = moduleInformation.tableInformation.type();
+            auto actualType = table->table()->type();
+            if (expectedType != actualType)
+                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "Table import", "provided a 'type' that is wrong")));
+
             // ii. Append v to tables.
             // iii. Append v.[[Table]] to imports.
             m_instance->setTable(vm, table);
@@ -301,7 +306,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         if (!!moduleInformation.tableInformation && !hasTableImport) {
             RELEASE_ASSERT(!moduleInformation.tableInformation.isImport());
             // We create a Table when it's a Table definition.
-            RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
+            RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum(), moduleInformation.tableInformation.type());
             if (!wasmTable)
                 return exception(createJSWebAssemblyLinkError(exec, vm, "couldn't create Table"));
             JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());
@@ -536,12 +541,12 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                     // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
                     // the only type this could be is WebAssemblyFunction.
                     RELEASE_ASSERT(wasmFunction);
-                    table->setFunction(vm, tableIndex, wasmFunction);
+                    table->set(tableIndex, wasmFunction);
                     ++tableIndex;
                     continue;
                 }
 
-                table->setFunction(vm, tableIndex,
+                table->set(tableIndex,
                     WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndex, m_instance.get(), signatureIndex));
                 ++tableIndex;
                 continue;
@@ -557,7 +562,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             WebAssemblyFunction* function = WebAssemblyFunction::create(
                 vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
 
-            table->setFunction(vm, tableIndex, function);
+            table->set(tableIndex, function);
             ++tableIndex;
         }
     });

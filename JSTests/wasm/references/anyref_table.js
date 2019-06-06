@@ -1,0 +1,100 @@
+import * as assert from '../assert.js';
+import Builder from '../Builder.js';
+
+const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
+      .Type().End()
+      .Function().End()
+      .Table()
+            .Table({initial: 20, maximum: 30, element: "anyref"})
+      .End()
+      .Export()
+          .Function("set_tbl")
+          .Function("get_tbl")
+          .Function("tbl_is_null")
+          .Function("set_tbl_null")
+          .Table("tbl", 0)
+      .End()
+      .Code()
+        .Function("set_tbl", { params: ["anyref"], ret: "void" })
+          .I32Const(0)
+          .GetLocal(0)
+          .TableSet()
+        .End()
+
+        .Function("get_tbl", { params: [], ret: "anyref" })
+          .I32Const(0)
+          .TableGet()
+        .End()
+
+        .Function("tbl_is_null", { params: [], ret: "i32" })
+            .Call(1)
+            .RefIsNull()
+        .End()
+
+        .Function("set_tbl_null", { params: [], ret: "void" })
+            .RefNull()
+            .Call(0)
+        .End()
+      .End().WebAssembly().get()));
+
+fullGC()
+
+assert.eq($1.exports.get_tbl(), null)
+assert.eq($1.exports.tbl_is_null(), 1)
+
+$1.exports.set_tbl("hi")
+fullGC()
+assert.eq($1.exports.get_tbl(), "hi")
+assert.eq($1.exports.tbl_is_null(), 0)
+
+assert.eq($1.exports.tbl.get(0), "hi")
+assert.eq($1.exports.tbl.get(1), null)
+
+$1.exports.tbl.set(0, { test: "test" });
+fullGC()
+assert.eq($1.exports.get_tbl().test, "test")
+
+assert.eq($1.exports.tbl.grow(10), 20)
+assert.eq($1.exports.tbl.grow(0), 30)
+assert.eq($1.exports.get_tbl().test, "test")
+fullGC()
+assert.eq($1.exports.get_tbl().test, "test")
+
+function doGCSet() {
+    fullGC()
+    $1.exports.set_tbl({ test: -1 })
+    fullGC()
+}
+
+function doGCTest() {
+    for (let i=0; i<1000; ++i) {
+        assert.eq($1.exports.get_tbl().test, -1)
+        fullGC()
+    }
+}
+
+doGCSet()
+doGCTest()
+
+let count = 0
+
+function doBarrierSet() {
+    ++count
+    $1.exports.set_tbl({ test: -count })
+}
+
+function doBarrierTest() {
+    let garbage = { val: "hi", val2: 5, arr: [] }
+    for (let i=0; i<100; ++i) garbage.arr += ({ field: i })
+
+    for (let j=0; j<1000; ++j) {
+        assert.eq($1.exports.get_tbl().test, -count)
+        edenGC()
+    }
+}
+
+for (let i=0; i<5; ++i) {
+    doBarrierSet()
+    doBarrierTest()
+    doBarrierTest()
+}

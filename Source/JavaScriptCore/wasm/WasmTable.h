@@ -29,6 +29,7 @@
 
 #include "WasmFormat.h"
 #include "WasmLimits.h"
+#include "WriteBarrier.h"
 #include <wtf/MallocPtr.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
@@ -37,39 +38,77 @@
 namespace JSC { namespace Wasm {
 
 class Instance;
+class FuncRefTable;
 
 class Table : public ThreadSafeRefCounted<Table> {
+    WTF_MAKE_NONCOPYABLE(Table);
+    WTF_MAKE_FAST_ALLOCATED(Table);
 public:
-    static RefPtr<Table> tryCreate(uint32_t initial, Optional<uint32_t> maximum);
+    static RefPtr<Table> tryCreate(uint32_t initial, Optional<uint32_t> maximum, TableElementType);
 
-    JS_EXPORT_PRIVATE ~Table();
+    JS_EXPORT_PRIVATE ~Table() = default;
 
     Optional<uint32_t> maximum() const { return m_maximum; }
     uint32_t length() const { return m_length; }
-    Optional<uint32_t> grow(uint32_t delta) WARN_UNUSED_RETURN;
-    void clearFunction(uint32_t);
-    void setFunction(uint32_t, WasmToWasmImportableFunction, Instance*);
 
-    static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(Table, m_importableFunctions); }
-    static ptrdiff_t offsetOfInstances() { return OBJECT_OFFSETOF(Table, m_instances); }
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
     static ptrdiff_t offsetOfMask() { return OBJECT_OFFSETOF(Table, m_mask); }
 
     static uint32_t allocatedLength(uint32_t length);
     uint32_t mask() const { return m_mask; }
+
+    void setOwner(JSObject* owner)
+    {
+        ASSERT(!m_owner);
+        ASSERT(owner);
+        m_owner = owner;
+    }
+
+    TableElementType type() const { return m_type; }
+    bool isAnyrefTable() const { return m_type == TableElementType::Anyref; }
+    FuncRefTable* asFuncrefTable();
+
     static bool isValidLength(uint32_t length) { return length < maxTableEntries; }
 
-private:
-    Table(uint32_t initial, Optional<uint32_t> maximum);
+    void clear(uint32_t);
+    void set(uint32_t, JSValue);
+    JSValue get(uint32_t) const;
+
+    Optional<uint32_t> grow(uint32_t delta);
+
+    void visitChildren(SlotVisitor&);
+
+protected:
+    Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType = TableElementType::Anyref);
 
     void setLength(uint32_t);
+
+    uint32_t m_length;
+    uint32_t m_mask;
+    const TableElementType m_type;
+    const Optional<uint32_t> m_maximum;
+
+    MallocPtr<WriteBarrier<Unknown>> m_jsValues;
+    JSObject* m_owner;
+};
+
+class FuncRefTable : public Table {
+public:
+    JS_EXPORT_PRIVATE ~FuncRefTable() = default;
+
+    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
+
+    static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
+    static ptrdiff_t offsetOfInstances() { return OBJECT_OFFSETOF(FuncRefTable, m_instances); }
+
+private:
+    FuncRefTable(uint32_t initial, Optional<uint32_t> maximum);
 
     MallocPtr<WasmToWasmImportableFunction> m_importableFunctions;
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
     MallocPtr<Instance*> m_instances;
-    uint32_t m_length;
-    uint32_t m_mask;
-    Optional<uint32_t> m_maximum;
+
+    friend class Table;
 };
 
 } } // namespace JSC::Wasm

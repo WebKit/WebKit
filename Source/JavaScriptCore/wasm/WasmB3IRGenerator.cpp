@@ -185,7 +185,12 @@ public:
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
 
+    // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+
+    // Tables
+    PartialResult WARN_UNUSED_RETURN addTableGet(ExpressionType& idx, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addTableSet(ExpressionType& idx, ExpressionType& value);
 
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -558,6 +563,36 @@ auto B3IRGenerator::addArguments(const Signature& signature) -> PartialResult
 auto B3IRGenerator::addRefIsNull(ExpressionType& value, ExpressionType& result) -> PartialResult
 {
     result = m_currentBlock->appendNew<Value>(m_proc, B3::Equal, origin(), value, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull())));
+    return { };
+}
+
+auto B3IRGenerator::addTableGet(ExpressionType& idx, ExpressionType& result) -> PartialResult
+{
+    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+    uint64_t (*doGet)(Instance*, int32_t) = [] (Instance* instance, int32_t idx) -> uint64_t {
+        return JSValue::encode(instance->table()->get(idx));
+    };
+
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Anyref), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(doGet, B3CCallPtrTag)),
+        instanceValue(), idx);
+
+    return { };
+}
+
+auto B3IRGenerator::addTableSet(ExpressionType& idx, ExpressionType& value) -> PartialResult
+{
+    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+    void (*doSet)(Instance*, int32_t, uint64_t value) = [] (Instance* instance, int32_t idx, uint64_t value) -> void {
+        // FIXME: We need to box wasm Funcrefs once they are supported here.
+        // <https://bugs.webkit.org/show_bug.cgi?id=198157>
+        instance->table()->set(idx, JSValue::decode(value));
+    };
+
+    m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(doSet, B3CCallPtrTag)),
+        instanceValue(), idx, value);
+
     return { };
 }
 
@@ -1263,9 +1298,9 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             instanceValue(), safeCast<int32_t>(Instance::offsetOfTable()));
         callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(Table::offsetOfFunctions()));
+            table, safeCast<int32_t>(FuncRefTable::offsetOfFunctions()));
         instancesBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(Table::offsetOfInstances()));
+            table, safeCast<int32_t>(FuncRefTable::offsetOfInstances()));
         callableFunctionBufferLength = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
             table, safeCast<int32_t>(Table::offsetOfLength()));
         mask = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(),

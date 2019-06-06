@@ -1,5 +1,26 @@
 2019-06-05  Justin Michaud  <justin_michaud@apple.com>
 
+        [WASM-References] Add support for Anyref tables, Table.get and Table.set (for Anyref only).
+        https://bugs.webkit.org/show_bug.cgi?id=198398
+
+        Reviewed by Saam Barati.
+
+        * wasm/references/anyref_table.js: Added.
+        (string_appeared_here.doGCSet):
+        (doGCTest):
+        (doGCSet.doGCTest.let.count.0.doBarrierSet):
+        * wasm/references/anyref_table_import.js: Added.
+        (makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl.makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        * wasm/references/is_null_error.js: Removed.
+        * wasm/references/validation.js: Added.
+        (assert.throws.new.WebAssembly.Module.bin):
+        (assert.throws):
+        * wasm/wasm.json:
+
+2019-06-05  Justin Michaud  <justin_michaud@apple.com>
+
         WebAssembly: pow functions returns 0 when exponent 1.0 or -1.0
         https://bugs.webkit.org/show_bug.cgi?id=198106
 

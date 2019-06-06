@@ -100,7 +100,12 @@ public:
     Result WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type type, uint64_t) { return type; }
 
+    // References
     Result WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
+
+    // Tables
+    Result WARN_UNUSED_RETURN addTableGet(ExpressionType& idx, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addTableSet(ExpressionType& idx, ExpressionType& value);
 
     // Locals
     Result WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -168,6 +173,24 @@ auto Validate::addArguments(const Signature& signature) -> Result
 {
     for (size_t i = 0; i < signature.argumentCount(); ++i)
         WASM_FAIL_IF_HELPER_FAILS(addLocal(signature.argument(i), 1));
+    return { };
+}
+
+auto Validate::addTableGet(ExpressionType& idx, ExpressionType& result) -> Result
+{
+    result = Type::Anyref;
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != idx, "table.get index to type ", idx, " expected ", Type::I32);
+    WASM_VALIDATOR_FAIL_IF(TableElementType::Anyref != m_module.tableInformation.type(), "table.get expects the table to have type ", Type::Anyref);
+
+    return { };
+}
+
+auto Validate::addTableSet(ExpressionType& idx, ExpressionType& value) -> Result
+{
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != idx, "table.set index to type ", idx, " expected ", Type::I32);
+    WASM_VALIDATOR_FAIL_IF(Type::Anyref != value, "table.set value to type ", value, " expected ", Type::Anyref);
+    WASM_VALIDATOR_FAIL_IF(TableElementType::Anyref != m_module.tableInformation.type(), "table.set expects the table to have type ", Type::Anyref);
+
     return { };
 }
 
@@ -346,6 +369,7 @@ auto Validate::addCall(unsigned, const Signature& signature, const Vector<Expres
 
 auto Validate::addCallIndirect(const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
+    WASM_VALIDATOR_FAIL_IF(m_module.tableInformation.type() != TableElementType::Funcref, "Table must have type Anyfunc to call");
     const auto argumentCount = signature.argumentCount();
     WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
 
