@@ -1409,7 +1409,7 @@ void InspectorDOMAgent::setInspectedNode(ErrorString& errorString, int nodeId)
 
     m_inspectedNode = node;
 
-    if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).commandLineAPIHost())
+    if (auto& commandLineAPIHost = static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(std::make_unique<InspectableNode>(node));
 
     m_suppressEventListenerChangedEvent = false;

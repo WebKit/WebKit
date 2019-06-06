@@ -57,6 +57,10 @@ InjectedScriptManager::~InjectedScriptManager()
 {
 }
 
+void InjectedScriptManager::connect()
+{
+}
+
 void InjectedScriptManager::disconnect()
 {
     discardInjectedScripts();

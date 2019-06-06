@@ -109,10 +109,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     auto consoleAgent = std::make_unique<PageConsoleAgent>(pageContext);
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
     m_agents.append(WTFMove(consoleAgent));
-
-    ASSERT(m_injectedScriptManager->commandLineAPIHost());
-    if (auto* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
 }
 
 InspectorController::~InspectorController()
@@ -150,6 +146,8 @@ void InspectorController::createLazyAgents()
 
     m_didCreateLazyAgents = true;
 
+    m_injectedScriptManager->connect();
+
     auto pageContext = pageAgentContext();
 
     ensureInspectorAgent();
@@ -186,6 +184,9 @@ void InspectorController::createLazyAgents()
     m_agents.append(std::make_unique<PageAuditAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorCanvasAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorTimelineAgent>(pageContext));
+
+    if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
 }
 
 void InspectorController::inspectedPageDestroyed()

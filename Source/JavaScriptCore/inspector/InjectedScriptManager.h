@@ -49,6 +49,7 @@ public:
     InjectedScriptManager(InspectorEnvironment&, Ref<InjectedScriptHost>&&);
     virtual ~InjectedScriptManager();
 
+    virtual void connect();
     virtual void disconnect();
     virtual void discardInjectedScripts();
 

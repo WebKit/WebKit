@@ -1,3 +1,15 @@
+2019-06-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create CommandLineAPIHost lazily like the other agents
+        https://bugs.webkit.org/show_bug.cgi?id=196047
+        <rdar://problem/49087835>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::connect): Added.
+
 2019-06-06  Keith Miller  <keith_miller@apple.com>
 
         Fix typo in cageWithoutUntagging
