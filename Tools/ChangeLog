@@ -1,5 +1,14 @@
 2019-06-06  Jonathan Bedard  <jbedard@apple.com>
 
+        Remove obsolete TOOLCHAINS overrides from as asan.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=198613
+
+        Reviewed by Alexey Proskuryakov.
+
+        * asan/asan.xcconfig: XCBuild doesn't support overriding toolchains.
+
+2019-06-06  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpluginhost: Support ASan as a style
         https://bugs.webkit.org/show_bug.cgi?id=198586
         <rdar://problem/51459088>
