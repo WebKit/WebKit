@@ -46,6 +46,8 @@ public:
         : m_stringView(stringView)
     {
         skipWhitespaceAndComments();
+        m_ringBuffer[0] = consumeTokenFromStream();
+        m_ringBuffer[1] = consumeTokenFromStream();
     }
 
     Lexer(const Lexer&) = delete;
@@ -177,37 +179,57 @@ public:
 
     Optional<Token> consumeToken()
     {
-        if (!m_stack.isEmpty())
-            return m_stack.takeLast();
-        return consumeTokenFromStream();
+        auto result = m_ringBuffer[m_ringBufferIndex];
+        m_ringBuffer[m_ringBufferIndex] = consumeTokenFromStream();
+        m_ringBufferIndex = (m_ringBufferIndex + 1) % 2;
+        return result;
     }
 
-    void unconsumeToken(Token&& token)
+    Optional<Token> peek()
     {
-        m_stack.append(WTFMove(token));
+        return m_ringBuffer[m_ringBufferIndex];
     }
 
+    Optional<Token> peekFurther()
+    {
+        return m_ringBuffer[(m_ringBufferIndex + 1) % 2];
+    }
+
+    // FIXME: We should not need this
+    // https://bugs.webkit.org/show_bug.cgi?id=198357
     struct State {
-        Vector<Token> stack;
+        Optional<Token> ringBuffer[2];
+        unsigned ringBufferIndex;
         unsigned offset;
         unsigned lineNumber;
     };
 
     State state() const
     {
-        return { m_stack, m_offset, m_lineNumber };
+        State state;
+        state.ringBuffer[0] = m_ringBuffer[0];
+        state.ringBuffer[1] = m_ringBuffer[1];
+        state.ringBufferIndex = m_ringBufferIndex;
+        state.offset = m_offset;
+        state.lineNumber = m_lineNumber;
+        return state;
     }
 
     void setState(const State& state)
     {
-        m_stack = state.stack;
+        m_ringBuffer[0] = state.ringBuffer[0];
+        m_ringBuffer[1] = state.ringBuffer[1];
+        m_ringBufferIndex = state.ringBufferIndex;
         m_offset = state.offset;
         m_lineNumber = state.lineNumber;
+
     }
 
     void setState(State&& state)
     {
-        m_stack = WTFMove(state.stack);
+        m_ringBuffer[0] = WTFMove(state.ringBuffer[0]);
+        m_ringBuffer[1] = WTFMove(state.ringBuffer[1]);
+        m_ringBufferIndex = WTFMove(state.ringBufferIndex);
         m_offset = WTFMove(state.offset);
         m_lineNumber = WTFMove(state.lineNumber);
     }
@@ -253,7 +275,8 @@ private:
     Optional<unsigned> operatorName(unsigned) const;
 
     StringView m_stringView;
-    Vector<Token> m_stack;
+    Optional<Token> m_ringBuffer[2];
+    unsigned m_ringBufferIndex { 0 };
     unsigned m_offset { 0 };
     unsigned m_lineNumber { 0 };
 };

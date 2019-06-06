@@ -96,6 +96,7 @@
 #include "WHLSLWhileLoop.h"
 #include <wtf/Expected.h>
 #include <wtf/Optional.h>
+#include <wtf/PrintStream.h>
 
 namespace WebCore {
 
@@ -115,11 +116,18 @@ public:
         }
 
         String error;
+
+        void dump(PrintStream& out) const
+        {
+            out.print(error);
+        }
     };
 
     Optional<Error> parse(Program&, StringView, Mode);
 
 private:
+    // FIXME: We should not need this
+    // https://bugs.webkit.org/show_bug.cgi?id=198357
     template<typename T> T backtrackingScope(std::function<T()> callback)
     {
         auto state = m_lexer.state();
@@ -136,10 +144,12 @@ private:
     };
     Unexpected<Error> fail(const String& message, TryToPeek = TryToPeek::Yes);
     Expected<Lexer::Token, Error> peek();
+    Expected<Lexer::Token, Error> peekFurther();
+    bool peekTypes(const Vector<Lexer::Token::Type>&);
     Optional<Lexer::Token> tryType(Lexer::Token::Type);
-    Optional<Lexer::Token> tryTypes(Vector<Lexer::Token::Type>);
+    Optional<Lexer::Token> tryTypes(const Vector<Lexer::Token::Type>&);
     Expected<Lexer::Token, Error> consumeType(Lexer::Token::Type);
-    Expected<Lexer::Token, Error> consumeTypes(Vector<Lexer::Token::Type>);
+    Expected<Lexer::Token, Error> consumeTypes(const Vector<Lexer::Token::Type>&);
 
     Expected<Variant<int, unsigned>, Error> consumeIntegralLiteral();
     Expected<unsigned, Error> consumeNonNegativeIntegralLiteral();
@@ -165,7 +175,7 @@ private:
     Expected<AST::ResourceSemantic, Error> parseResourceSemantic();
     Expected<AST::SpecializationConstantSemantic, Error> parseSpecializationConstantSemantic();
     Expected<AST::StageInOutSemantic, Error> parseStageInOutSemantic();
-    Expected<AST::Semantic, Error> parseSemantic();
+    Expected<Optional<AST::Semantic>, Error> parseSemantic();
     AST::Qualifiers parseQualifiers();
     Expected<AST::StructureElement, Error> parseStructureElement();
     Expected<AST::StructureDefinition, Error> parseStructureDefinition();
@@ -176,7 +186,8 @@ private:
     Expected<AST::AttributeBlock, Error> parseAttributeBlock();
     Expected<AST::VariableDeclaration, Error> parseParameter();
     Expected<AST::VariableDeclarations, Error> parseParameters();
-    Expected<AST::FunctionDeclaration, Error> parseEntryPointFunctionDeclaration();
+    Expected<AST::FunctionDeclaration, Error> parseComputeFunctionDeclaration();
+    Expected<AST::FunctionDeclaration, Error> parseVertexOrFragmentFunctionDeclaration();
     Expected<AST::FunctionDeclaration, Error> parseRegularFunctionDeclaration();
     Expected<AST::FunctionDeclaration, Error> parseOperatorFunctionDeclaration();
     Expected<AST::FunctionDeclaration, Error> parseFunctionDeclaration();
@@ -184,7 +195,7 @@ private:
     Expected<AST::NativeFunctionDeclaration, Error> parseNativeFunctionDeclaration();
 
     Expected<AST::Block, Error> parseBlock();
-    AST::Block parseBlockBody(Lexer::Token&& origin);
+    Expected<AST::Block, Error> parseBlockBody(Lexer::Token&& origin);
     Expected<AST::IfStatement, Error> parseIfStatement();
     Expected<AST::SwitchStatement, Error> parseSwitchStatement();
     Expected<AST::SwitchCase, Error> parseSwitchCase();
@@ -197,8 +208,6 @@ private:
 
     Expected<UniqueRef<AST::Expression>, Error> parseEffectfulExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseEffectfulAssignment();
-    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulPrefix();
-    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulSuffix();
     struct SuffixExpression {
         SuffixExpression(UniqueRef<AST::Expression>&& result, bool success)
             : result(WTFMove(result))
@@ -214,16 +223,21 @@ private:
     SuffixExpression parseSuffixOperator(UniqueRef<AST::Expression>&&);
 
     Expected<UniqueRef<AST::Expression>, Error> parseExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseTernaryConditional();
-    Expected<UniqueRef<AST::Expression>, Error> parseAssignment();
     Expected<UniqueRef<AST::Expression>, Error> parsePossibleTernaryConditional();
+    Expected<UniqueRef<AST::Expression>, Error> completeTernaryConditional(Lexer::Token&& origin, UniqueRef<AST::Expression>&& predicate);
+    Expected<UniqueRef<AST::Expression>, Error> completeAssignment(Lexer::Token&& origin, UniqueRef<AST::Expression>&& left);
     Expected<UniqueRef<AST::Expression>, Error> parsePossibleLogicalBinaryOperation();
+    Expected<UniqueRef<AST::Expression>, Error> completePossibleLogicalBinaryOperation(UniqueRef<AST::Expression>&& previous);
     Expected<UniqueRef<AST::Expression>, Error> parsePossibleRelationalBinaryOperation();
+    Expected<UniqueRef<AST::Expression>, Error> completePossibleRelationalBinaryOperation(UniqueRef<AST::Expression>&& previous);
     Expected<UniqueRef<AST::Expression>, Error> parsePossibleShift();
+    Expected<UniqueRef<AST::Expression>, Error> completePossibleShift(UniqueRef<AST::Expression>&& previous);
     Expected<UniqueRef<AST::Expression>, Error> parsePossibleAdd();
+    Expected<UniqueRef<AST::Expression>, Error> completePossibleAdd(UniqueRef<AST::Expression>&& previous);
     Expected<UniqueRef<AST::Expression>, Error> parsePossibleMultiply();
-    Expected<UniqueRef<AST::Expression>, Error> parsePossiblePrefix();
-    Expected<UniqueRef<AST::Expression>, Error> parsePossibleSuffix();
+    Expected<UniqueRef<AST::Expression>, Error> completePossibleMultiply(UniqueRef<AST::Expression>&& previous);
+    Expected<UniqueRef<AST::Expression>, Error> parsePossiblePrefix(bool *isEffectful = nullptr);
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleSuffix(bool *isEffectful = nullptr);
     Expected<UniqueRef<AST::Expression>, Error> parseCallExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseTerm();
 

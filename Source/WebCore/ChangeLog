@@ -1,3 +1,116 @@
+2019-06-05  Robin Morisset  <rmorisset@apple.com>
+
+        [WHLSL] Parsing and lexing the standard library is slow
+        https://bugs.webkit.org/show_bug.cgi?id=192890
+        <rdar://problem/50746335>
+
+        Reviewed by Myles Maxfield.
+
+        The main idea is to avoid backtracking by instead peeking at the next token (and occasionally at the one after that).
+        This implies a few things:
+        - We can replace the stack of tokens by a trivial ring buffer of size 2 (holding the next token and the one after, or WTF::nullopt if we are at the end of the file).
+        - We now have "completeFooExpression" functions, to avoid having to reparse the prefix of some expression, if we find half-way through what it is.
+
+        I also fixed the following parser bug:
+        - https://bugs.webkit.org/show_bug.cgi?id=198305 [WHLSL] Multiple variables with initializers in a declaration statement crashes the compiler
+            which was due to a mistake I made in the grammar
+
+        Finally I added two new macros: CONSUME_TYPE and PARSE to eliminate about 500 lines of error propagation boilerplate.
+
+        There are still lots of ways of improving the parser and lexer, such as:
+        - finishing the conversion of tokens in the lexer, not bothering with allocating string views
+        - make two special tokens Invalid and EOF, to remove the overhead of Optional
+        - make peekTypes and consumeTypes use templates to avoid constructing a Vector and calling find on it.
+        - Turn the entire lexer into a proper automata, not going through the same characters again and again (this is certainly the largest win by far)
+        - Remove the last few pieces of backtracking from the parser.
+
+        The current patch is already enough to make parsing the full standard library (something like 85k lines) approximately 260ms.
+        This is still longer than I would like, but nowhere near the bottleneck any longer because of some other parts of the compiler.
+
+        * Modules/webgpu/WHLSL/WHLSLLexer.h:
+        (WebCore::WHLSL::Lexer::Lexer):
+        (WebCore::WHLSL::Lexer::consumeToken):
+        (WebCore::WHLSL::Lexer::peek):
+        (WebCore::WHLSL::Lexer::peekFurther):
+        (WebCore::WHLSL::Lexer::state const):
+        (WebCore::WHLSL::Lexer::setState):
+        (WebCore::WHLSL::Lexer::unconsumeToken): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::parse):
+        (WebCore::WHLSL::Parser::peek):
+        (WebCore::WHLSL::Parser::peekTypes):
+        (WebCore::WHLSL::Parser::tryType):
+        (WebCore::WHLSL::Parser::tryTypes):
+        (WebCore::WHLSL::Parser::consumeTypes):
+        (WebCore::WHLSL::Parser::parseConstantExpression):
+        (WebCore::WHLSL::Parser::parseTypeArgument):
+        (WebCore::WHLSL::Parser::parseTypeArguments):
+        (WebCore::WHLSL::Parser::parseTypeSuffixAbbreviated):
+        (WebCore::WHLSL::Parser::parseTypeSuffixNonAbbreviated):
+        (WebCore::WHLSL::Parser::parseType):
+        (WebCore::WHLSL::Parser::parseTypeDefinition):
+        (WebCore::WHLSL::Parser::parseResourceSemantic):
+        (WebCore::WHLSL::Parser::parseSpecializationConstantSemantic):
+        (WebCore::WHLSL::Parser::parseStageInOutSemantic):
+        (WebCore::WHLSL::Parser::parseSemantic):
+        (WebCore::WHLSL::Parser::parseQualifiers):
+        (WebCore::WHLSL::Parser::parseStructureElement):
+        (WebCore::WHLSL::Parser::parseStructureDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationMember):
+        (WebCore::WHLSL::Parser::parseNativeTypeDeclaration):
+        (WebCore::WHLSL::Parser::parseNumThreadsFunctionAttribute):
+        (WebCore::WHLSL::Parser::parseAttributeBlock):
+        (WebCore::WHLSL::Parser::parseParameter):
+        (WebCore::WHLSL::Parser::parseParameters):
+        (WebCore::WHLSL::Parser::parseFunctionDefinition):
+        (WebCore::WHLSL::Parser::parseComputeFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseVertexFragmentFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseRegularFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseOperatorFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseNativeFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseBlock):
+        (WebCore::WHLSL::Parser::parseBlockBody):
+        (WebCore::WHLSL::Parser::parseIfStatement):
+        (WebCore::WHLSL::Parser::parseSwitchStatement):
+        (WebCore::WHLSL::Parser::parseSwitchCase):
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseWhileLoop):
+        (WebCore::WHLSL::Parser::parseDoWhileLoop):
+        (WebCore::WHLSL::Parser::parseVariableDeclaration):
+        (WebCore::WHLSL::Parser::parseVariableDeclarations):
+        (WebCore::WHLSL::Parser::parseStatement):
+        (WebCore::WHLSL::Parser::parseEffectfulExpression):
+        (WebCore::WHLSL::Parser::parseEffectfulAssignment):
+        (WebCore::WHLSL::Parser::parseExpression):
+        (WebCore::WHLSL::Parser::parseTernaryConditional): Deleted.
+        (WebCore::WHLSL::Parser::completeTernaryConditional):
+        (WebCore::WHLSL::Parser::parseAssignment): Deleted.
+        (WebCore::WHLSL::Parser::completeAssignment):
+        (WebCore::WHLSL::Parser::parsePossibleTernaryConditional):
+        (WebCore::WHLSL::Parser::parsePossibleLogicalBinaryOperation):
+        (WebCore::WHLSL::Parser::completePossibleLogicalBinaryOperation):
+        (WebCore::WHLSL::Parser::parsePossibleRelationalBinaryOperation):
+        (WebCore::WHLSL::Parser::completePossibleRelationalBinaryOperation):
+        (WebCore::WHLSL::Parser::parsePossibleShift):
+        (WebCore::WHLSL::Parser::completePossibleShift):
+        (WebCore::WHLSL::Parser::parsePossibleAdd):
+        (WebCore::WHLSL::Parser::completePossibleAdd):
+        (WebCore::WHLSL::Parser::parsePossibleMultiply):
+        (WebCore::WHLSL::Parser::completePossibleMultiply):
+        (WebCore::WHLSL::Parser::parsePossiblePrefix):
+        (WebCore::WHLSL::Parser::parsePossibleSuffix):
+        (WebCore::WHLSL::Parser::parseCallExpression):
+        (WebCore::WHLSL::Parser::parseTerm):
+        (WebCore::WHLSL::Parser::parseAddressSpaceType): Deleted.
+        (WebCore::WHLSL::Parser::parseNonAddressSpaceType): Deleted.
+        (WebCore::WHLSL::Parser::parseEntryPointFunctionDeclaration): Deleted.
+        (WebCore::WHLSL::Parser::parseEffectfulPrefix): Deleted.
+        (WebCore::WHLSL::Parser::parseEffectfulSuffix): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        (WebCore::WHLSL::Parser::Error::dump const):
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Revert part of r246126

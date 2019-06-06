@@ -58,7 +58,7 @@ namespace WHLSL {
 static constexpr bool dumpASTBeforeEachPass = false;
 static constexpr bool dumpASTAfterParsing = false;
 static constexpr bool dumpASTAtEnd = false;
-static constexpr bool alwaysDumpPassFailures = false;
+static constexpr bool alwaysDumpPassFailures = true;
 static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
 
 static bool dumpASTIfNeeded(bool shouldDump, Program& program, const char* message)
@@ -103,10 +103,16 @@ static Optional<Program> prepareShared(String& whlslSource)
     Program program;
     Parser parser;
     auto standardLibrary = String::fromUTF8(WHLSLStandardLibrary, sizeof(WHLSLStandardLibrary));
-    auto failure = static_cast<bool>(parser.parse(program, standardLibrary, Parser::Mode::StandardLibrary));
-    ASSERT_UNUSED(failure, !failure);
-    if (parser.parse(program, whlslSource, Parser::Mode::User))
+    auto parseStdLibFailure = parser.parse(program, standardLibrary, Parser::Mode::StandardLibrary);
+    if (!ASSERT_DISABLED && parseStdLibFailure) {
+        dataLogLn("failed to parse the standard library: ", *parseStdLibFailure);
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    if (auto parseFailure = parser.parse(program, whlslSource, Parser::Mode::User)) {
+        if (dumpPassFailure)
+            dataLogLn("failed to parse the program: ", *parseFailure);
         return WTF::nullopt;
+    }
 
     if (!dumpASTBetweenEachPassIfNeeded(program, "AST after parsing"))
         dumpASTAfterParsingIfNeeded(program);
