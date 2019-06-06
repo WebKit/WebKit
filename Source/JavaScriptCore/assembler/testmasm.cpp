@@ -1036,7 +1036,7 @@ static void testCagePreservesPACFailureBit()
 
     auto cageWithoutAuthentication = compile([] (CCallHelpers& jit) {
         jit.emitFunctionPrologue();
-        jit.cageWithoutUntaging(Gigacage::Primitive, GPRInfo::argumentGPR0);
+        jit.cageWithoutUntagging(Gigacage::Primitive, GPRInfo::argumentGPR0);
         jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
         jit.emitFunctionEpilogue();
         jit.ret();

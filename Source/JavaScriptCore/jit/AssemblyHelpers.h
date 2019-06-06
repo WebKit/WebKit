@@ -1555,7 +1555,7 @@ public:
         ok.link(this);
     }
 
-    void cageWithoutUntaging(Gigacage::Kind kind, GPRReg storage)
+    void cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)
     {
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
@@ -1600,7 +1600,7 @@ public:
             return;
         
         if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageDisabled())
-            cageWithoutUntaging(kind, storage);
+            cageWithoutUntagging(kind, storage);
         else {
             loadPtr(&Gigacage::basePtr(kind), scratch);
             Jump done = branchTestPtr(Zero, scratch);

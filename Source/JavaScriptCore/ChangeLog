@@ -1,3 +1,20 @@
+2019-06-06  Keith Miller  <keith_miller@apple.com>
+
+        Fix typo in cageWithoutUntagging
+        https://bugs.webkit.org/show_bug.cgi?id=198617
+
+        Reviewed by Saam Barati.
+
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageWithoutUntagging):
+        (JSC::AssemblyHelpers::cageConditionally):
+        (JSC::AssemblyHelpers::cageWithoutUntaging): Deleted.
+
 2019-06-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.parse throws incorrect exception when called w/o arguments

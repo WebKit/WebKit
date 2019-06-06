@@ -6779,7 +6779,7 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
             return;
     }
     
-    m_jit.cageWithoutUntaging(Gigacage::Primitive, storageReg);
+    m_jit.cageWithoutUntagging(Gigacage::Primitive, storageReg);
 #endif
 }
 
@@ -6843,7 +6843,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     JITCompiler::Jump nullVector = m_jit.branchTestPtr(JITCompiler::Zero, vectorGPR);
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
-    m_jit.cageWithoutUntaging(Gigacage::JSValue, dataGPR);
+    m_jit.cageWithoutUntagging(Gigacage::JSValue, dataGPR);
 
     cageTypedArrayStorage(baseGPR, vectorGPR);
 
