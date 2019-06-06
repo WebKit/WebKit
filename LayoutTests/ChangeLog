@@ -1,3 +1,12 @@
+2019-06-06  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] Add support for chorded button interactions
+        https://bugs.webkit.org/show_bug.cgi?id=198462
+
+        Unreviewed, rebaselining this test for WK1.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover-expected.txt:
+
 2019-06-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Report all request headers to web inspector.
