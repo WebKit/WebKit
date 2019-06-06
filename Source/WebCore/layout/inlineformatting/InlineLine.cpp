@@ -121,22 +121,13 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::
 
 void Line::appendInlineContainerStart(const InlineItem& inlineItem, InlineItemSize runSize)
 {
+    if (runSize.logicalHeight)
+        adjustBaselineAndLineHeight(inlineItem, *runSize.logicalHeight);
+
     auto& layoutBox = inlineItem.layoutBox();
-    auto& style = layoutBox.style();
-    auto& fontMetrics = style.fontMetrics();
-
-    auto alignAndAdjustLineHeight = [&] {
-        LayoutUnit inlineBoxHeight = style.computedLineHeight();
-
-        auto halfLeading = halfLeadingMetrics(fontMetrics, inlineBoxHeight);
-        if (halfLeading.depth > 0)
-            m_logicalHeight.depth = std::max(m_logicalHeight.depth, halfLeading.depth);
-        if (halfLeading.height > 0)
-            m_logicalHeight.height = std::max(m_logicalHeight.height, halfLeading.height);
-    };
-
-    alignAndAdjustLineHeight();
+    auto& fontMetrics = layoutBox.style().fontMetrics();
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
+
     auto logicalTop = -fontMetrics.ascent() - displayBox.borderTop() - displayBox.paddingTop().valueOr(0);
     auto logicalRect = Display::Rect { logicalTop, contentLogicalRight(), runSize.logicalWidth, runSize.logicalHeight.valueOr(0) };
     appendNonBreakableSpace(inlineItem, logicalRect);
@@ -191,23 +182,10 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, InlineItemSize ru
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineItemSize runSize)
 {
-    auto inlineBoxHeight = runSize.logicalHeight.valueOr(0);
-    auto alignAndAdjustLineHeight = [&] {
-        // FIXME: We need to look inside the inline-block's formatting context and check the lineboxes (if any) to be able to baseline align.
-        if (inlineItem.layoutBox().establishesInlineFormattingContext()) {
-            if (inlineBoxHeight == logicalHeight())
-                return;
-            // FIXME: This fails when the line height difference comes from font-size diff.
-            m_logicalHeight.depth = std::max<LayoutUnit>(0, m_logicalHeight.depth);
-            m_logicalHeight.height = std::max(inlineBoxHeight, m_logicalHeight.height);
-            return;
-        }
-        // 0 descent -> baseline aligment for now.
-        m_logicalHeight.depth = std::max<LayoutUnit>(0, m_logicalHeight.depth);
-        m_logicalHeight.height = std::max(inlineBoxHeight, m_logicalHeight.height);
-    };
+    if (runSize.logicalHeight)
+        adjustBaselineAndLineHeight(inlineItem, *runSize.logicalHeight);
 
-    alignAndAdjustLineHeight();
+    auto inlineBoxHeight = runSize.logicalHeight.valueOr(0);
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(inlineItem.layoutBox());
     auto logicalTop = -inlineBoxHeight;
     auto horizontalMargin = displayBox.horizontalMargin();
@@ -229,6 +207,36 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
     auto ascent = inlineItem.layoutBox().style().fontMetrics().ascent();
     auto logicalRect = Display::Rect { -ascent, contentLogicalRight(), { }, logicalHeight() };
     m_content->runs().append(std::make_unique<Content::Run>(Display::Run { logicalRect }, inlineItem, false, false));
+}
+
+void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit runHeight)
+{
+    ASSERT(!inlineItem.isContainerEnd() && !inlineItem.isText());
+    auto& layoutBox = inlineItem.layoutBox();
+    auto& style = layoutBox.style();
+
+    if (inlineItem.isContainerStart()) {
+        auto& fontMetrics = style.fontMetrics();
+        auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
+        if (halfLeading.depth > 0)
+            m_logicalHeight.depth = std::max(m_logicalHeight.depth, halfLeading.depth);
+        if (halfLeading.height > 0)
+            m_logicalHeight.height = std::max(m_logicalHeight.height, halfLeading.height);
+        return;
+    }
+    // Replaced and non-replaced inline level box.
+    // FIXME: We need to look inside the inline-block's formatting context and check the lineboxes (if any) to be able to baseline align.
+    if (layoutBox.establishesInlineFormattingContext()) {
+        if (runHeight == logicalHeight())
+            return;
+        // FIXME: This fails when the line height difference comes from font-size diff.
+        m_logicalHeight.depth = std::max<LayoutUnit>(0, m_logicalHeight.depth);
+        m_logicalHeight.height = std::max(runHeight, m_logicalHeight.height);
+        return;
+    }
+    // 0 descent -> baseline aligment for now.
+    m_logicalHeight.depth = std::max<LayoutUnit>(0, m_logicalHeight.depth);
+    m_logicalHeight.height = std::max(runHeight, m_logicalHeight.height);
 }
 
 Line::UsedHeightAndDepth Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)

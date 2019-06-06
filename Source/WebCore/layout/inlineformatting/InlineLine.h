@@ -116,6 +116,8 @@ private:
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void removeTrailingTrimmableContent();
 
+    void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);
+
     const LayoutState& m_layoutState;
     std::unique_ptr<Content> m_content;
     ListHashSet<Content::Run*> m_trimmableContent;
