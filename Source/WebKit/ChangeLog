@@ -1,5 +1,17 @@
 2019-06-06  Antoine Quint  <graouts@apple.com>
 
+        Remove duplicated websiteDataStoreParameters code from WebsitePoliciesData::applyToDocumentLoader()
+        https://bugs.webkit.org/show_bug.cgi?id=198608
+
+        Reviewed by Wenson Hsieh.
+
+        Due to a rebasing error, r244218 re-introduced code that was removed in r244197. This patch removes this code for good.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+
+2019-06-06  Antoine Quint  <graouts@apple.com>
+
         Restrict fast clicks everywhere to desktop content mode
         https://bugs.webkit.org/show_bug.cgi?id=198610
         <rdar://problem/50114230>

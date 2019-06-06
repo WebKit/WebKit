@@ -256,13 +256,6 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     }
 
-    if (websitePolicies.websiteDataStoreParameters) {
-        if (auto* frame = documentLoader.frame()) {
-            if (auto* page = frame->page())
-                page->setSessionID(websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID);
-        }
-    }
-
     auto* frame = documentLoader.frame();
     if (!frame)
         return;
