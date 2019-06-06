@@ -1074,8 +1074,6 @@
 		5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */; };
 		5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C7FB47021E97DC5009E3241 /* WebCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */; };
 		5C8BC797218CBB4800813886 /* SafeBrowsing.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C8BC796218CB58A00813886 /* SafeBrowsing.xcassets */; };
 		5C8DD3801FE4521600F2A556 /* WebsiteAutoplayPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */; };
@@ -3578,12 +3576,6 @@
 		5CD2864E1E722F440094FDC8 /* WKContentRuleListStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentRuleListStore.mm; sourceTree = "<group>"; };
 		5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStoreInternal.h; sourceTree = "<group>"; };
 		5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStorePrivate.h; sourceTree = "<group>"; };
-		5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContextMenuElementInfo.cpp; sourceTree = "<group>"; };
-		5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuElementInfo.h; sourceTree = "<group>"; };
-		5CE0C368229F2D4A003695F0 /* WKContextMenuElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContextMenuElementInfo.mm; sourceTree = "<group>"; };
-		5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfo.h; sourceTree = "<group>"; };
-		5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoPrivate.h; sourceTree = "<group>"; };
-		5CE0C36B229F2D4B003695F0 /* WKContextMenuElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoInternal.h; sourceTree = "<group>"; };
 		5CE85B1F1C88E6430070BFCE /* PingLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoad.h; sourceTree = "<group>"; };
 		5CE9120B2293C1E0005BEC78 /* WKMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMain.h; sourceTree = "<group>"; };
 		5CE9120C2293C1E0005BEC78 /* WKMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKMain.mm; sourceTree = "<group>"; };
@@ -6265,10 +6257,6 @@
 				5CD2864E1E722F440094FDC8 /* WKContentRuleListStore.mm */,
 				5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */,
 				5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */,
-				5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */,
-				5CE0C368229F2D4A003695F0 /* WKContextMenuElementInfo.mm */,
-				5CE0C36B229F2D4B003695F0 /* WKContextMenuElementInfoInternal.h */,
-				5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */,
 				1AF4592D19464B2000F9D4A2 /* WKError.h */,
 				1AF4592C19464B2000F9D4A2 /* WKError.mm */,
 				1A2D252A194688FD004537B0 /* WKErrorInternal.h */,
@@ -7735,8 +7723,6 @@
 				7C3A06A51AAB903E009D74BA /* APIContentRuleListStore.cpp */,
 				7C3A06A61AAB903E009D74BA /* APIContentRuleListStore.h */,
 				076E884D1A13CADF005E90FC /* APIContextMenuClient.h */,
-				5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */,
-				5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */,
 				5C5D238A227A1D9B000B9BDA /* APICustomHeaderFields.h */,
 				7A821F4F1E2F7A5C00604577 /* APICustomProtocolManagerClient.h */,
 				83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */,
@@ -9913,8 +9899,6 @@
 				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
 				1A445BA1184D5FC1004B3414 /* WKContextHistoryClient.h in Headers */,
 				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
-				5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */,
-				5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */,
 				51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */,
 				51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */,
 				A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */,

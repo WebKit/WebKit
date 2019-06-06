@@ -54,7 +54,7 @@ class WebProcessPool;
 @interface WKContentView : WKApplicationStateTrackingView {
 @package
     RefPtr<WebKit::WebPageProxy> _page;
-    WKWebView *_webView; // FIXME: This should be made a WeakObjCPtr once everything that refers to it is moved to OpenSource.
+    WKWebView *_webView;
 }
 
 #pragma clang diagnostic push

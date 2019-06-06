@@ -140,7 +140,6 @@ class WebEditCommandProxy;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessPool;
-class WebProcessProxy;
 struct ColorSpaceData;
 struct WebHitTestResultData;
 

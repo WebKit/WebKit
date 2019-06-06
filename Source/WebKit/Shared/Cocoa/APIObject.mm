@@ -33,7 +33,6 @@
 #import "WKConnectionInternal.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
-#import "WKContextMenuElementInfoInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
@@ -313,12 +312,6 @@ void* Object::newObject(size_t size, Type type)
     case Type::ContentRuleListStore:
         wrapper = [WKContentRuleListStore alloc];
         break;
-
-#if PLATFORM(IOS_FAMILY)
-    case Type::ContextMenuElementInfo:
-        wrapper = [WKContextMenuElementInfo alloc];
-        break;
-#endif
 
     case Type::CustomHeaderFields:
         wrapper = [_WKCustomHeaderFields alloc];

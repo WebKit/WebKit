@@ -300,7 +300,6 @@ UIProcess/API/APIAttachment.cpp
 UIProcess/API/APIContentRuleList.cpp
 UIProcess/API/APIContentRuleListAction.cpp
 UIProcess/API/APIContentRuleListStore.cpp
-UIProcess/API/APIContextMenuElementInfo.cpp
 UIProcess/API/APIExperimentalFeature.cpp
 UIProcess/API/APIFrameInfo.cpp
 UIProcess/API/APIHTTPCookieStore.cpp

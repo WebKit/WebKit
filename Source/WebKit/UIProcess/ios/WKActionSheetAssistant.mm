@@ -529,7 +529,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeOpen assistant:self]];
 }
 
-- (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo
+- (RetainPtr<NSArray>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo
 {
     NSURL *targetURL = [elementInfo URL];
     if (!targetURL)
@@ -556,7 +556,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return defaultActions;
 }
 
-- (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo
+- (RetainPtr<NSArray>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo
 {
     NSURL *targetURL = [elementInfo URL];
 

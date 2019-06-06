@@ -38,7 +38,6 @@ struct InteractionInformationAtPosition;
 
 @class WKActionSheetAssistant;
 @class _WKActivatedElementInfo;
-@class _WKElementAction;
 @protocol WKActionSheetDelegate;
 
 @protocol WKActionSheetAssistantDelegate <NSObject>
@@ -77,8 +76,8 @@ struct InteractionInformationAtPosition;
 - (void)showDataDetectorsSheet;
 - (void)cleanupSheet;
 - (void)updateSheetPosition;
-- (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo;
-- (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo;
+- (RetainPtr<NSArray>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo;
+- (RetainPtr<NSArray>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo;
 - (BOOL)isShowingSheet;
 - (void)interactionDidStartWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)information;
 - (NSArray *)currentAvailableActionTitles;
