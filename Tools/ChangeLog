@@ -1,3 +1,31 @@
+2019-06-05  Andy Estes  <aestes@apple.com>
+
+        [macOS] Stop calling -[NSDraggingItem setItem:]
+        https://bugs.webkit.org/show_bug.cgi?id=198588
+        <rdar://problem/48297453>
+
+        On macOS Catalina, use -[NSDraggingItem _initWithItem:] instead.
+
+        Reviewed by Wenson Hsieh.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Fixed up file paths in the
+        TestRunnerShared group.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (-[DumpRenderTreeDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        Changed to call -[NSDraggingItem _initWithItem:] when available.
+
+        * TestRunnerShared/spi/AppKitTestSPI.h: Renamed from
+        Tools/DumpRenderTree/mac/AppKitTestSPI.h and moved NSDraggingItem internal interface
+        declarations here from DumpRenderTree.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Added TestRunnerShared/spi/AppKitTestSPI.h.
+
+        * TestWebKitAPI/mac/TestDraggingInfo.mm:
+        (-[TestDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        Changed to call -[NSDraggingItem _initWithItem:] when available.
+
 2019-06-05  Jer Noble  <jer.noble@apple.com>
 
         -[WKWebView _suspendAllMediaPlayback] does not persist across navigation.

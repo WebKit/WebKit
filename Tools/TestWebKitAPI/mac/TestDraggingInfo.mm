@@ -28,13 +28,10 @@
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
+#import "AppKitTestSPI.h"
 #import "DragAndDropSimulator.h"
 #import "TestFilePromiseReceiver.h"
 #import <wtf/WeakObjCPtr.h>
-
-@interface NSDraggingItem ()
-@property (nonatomic, strong) id item;
-@end
 
 @implementation TestDraggingInfo {
     WeakObjCPtr<id> _source;
@@ -85,7 +82,8 @@
 
 - (void)enumerateDraggingItemsWithOptions:(NSDraggingItemEnumerationOptions)enumerationOptions forView:(NSView *)view classes:(NSArray<Class> *)classes searchOptions:(NSDictionary<NSString *, id> *)searchOptions usingBlock:(void (^)(NSDraggingItem *, NSInteger, BOOL *))block
 {
-    // FIXME: Much of this can be shared with existing drag and drop testing code in DumpRenderTree.
+    // FIXME: Much of this can be shared with existing drag and drop testing code in DumpRenderTree,
+    // perhaps by putting it in Tools/TestRunnerShared.
 
     if (enumerationOptions) {
         [NSException raise:@"DragAndDropSimulator" format:@"Dragging item enumeration options are currently unsupported. (got: %tu)", enumerationOptions];
@@ -115,8 +113,12 @@
         [receiver setDraggingSource:_source.get().get()];
         [_filePromiseReceivers addObject:receiver.get()];
 
+#if HAVE(NSDRAGGINGITEM_INITWITHITEM)
+        auto item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+#else
         auto item = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:(id <NSPasteboardWriting>)receiver.get()]); // FIXME: <https://webkit.org/b/194060> Pass an object of the right type.
         [item setItem:receiver.get()];
+#endif
 
         block(item.get(), 0, &stop);
         if (stop)

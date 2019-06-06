@@ -2030,6 +2030,7 @@
 		A17991861E1C994E00A505ED /* SharedBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedBuffer.mm; sourceTree = "<group>"; };
 		A17991891E1CA24100A505ED /* SharedBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferTest.cpp; sourceTree = "<group>"; };
 		A179918A1E1CA24100A505ED /* SharedBufferTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferTest.h; sourceTree = "<group>"; };
+		A17A5A3422A887EC0065C5F0 /* AppKitTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKitTestSPI.h; sourceTree = "<group>"; };
 		A17EAC542083056E0084B41B /* find.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = find.pdf; path = Tests/WebKit/find.pdf; sourceTree = SOURCE_ROOT; };
 		A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunOpenPanel.mm; sourceTree = "<group>"; };
 		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
@@ -2492,6 +2493,7 @@
 				BC575944126E733C006F0F12 /* InjectedBundle */,
 				2E9660DC16C07D7B00371B42 /* ios */,
 				BCA61C3A11700B9400460D1E /* mac */,
+				A17A5A3122A887610065C5F0 /* TestRunnerShared */,
 				BC131A9E1171317C00B69727 /* config.h */,
 				7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */,
 				7C6BBD8A19CEA54300C1F5E0 /* Counters.h */,
@@ -3162,6 +3164,23 @@
 				2E131C171D83A97E001BA36C /* wide-autoplaying-video-with-audio.html */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		A17A5A3122A887610065C5F0 /* TestRunnerShared */ = {
+			isa = PBXGroup;
+			children = (
+				A17A5A3322A887CE0065C5F0 /* spi */,
+			);
+			name = TestRunnerShared;
+			path = ../TestRunnerShared;
+			sourceTree = "<group>";
+		};
+		A17A5A3322A887CE0065C5F0 /* spi */ = {
+			isa = PBXGroup;
+			children = (
+				A17A5A3422A887EC0065C5F0 /* AppKitTestSPI.h */,
+			);
+			path = spi;
 			sourceTree = "<group>";
 		};
 		A1C4FB6F1BACCEFA003742D0 /* Resources */ = {
