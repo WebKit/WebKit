@@ -78,8 +78,9 @@ InlineFormattingContext::LineLayout::LineInput::HorizontalConstraint::Horizontal
 {
 }
 
-InlineFormattingContext::LineLayout::LineInput::LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, unsigned firstInlineItemIndex, const InlineItems& inlineItems)
+InlineFormattingContext::LineLayout::LineInput::LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, SkipVerticalAligment skipVerticalAligment, unsigned firstInlineItemIndex, const InlineItems& inlineItems)
     : horizontalConstraint(logicalTopLeft, availableLogicalWidth)
+    , skipVerticalAligment(skipVerticalAligment)
     , firstInlineItemIndex(firstInlineItemIndex)
     , inlineItems(inlineItems)
 {
@@ -220,15 +221,17 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
             ++committedInlineItemCount;
             continue;
         }
-        if (inlineItem->isHardLineBreak()) {
-            uncommittedContent.add(*inlineItem, { itemLogicalWidth, inlineItemHeight(layoutState(), *inlineItem) });
-            commitPendingContent();
-            return closeLine();
-        }
 
-        uncommittedContent.add(*inlineItem, { itemLogicalWidth, inlineItemHeight(layoutState(), *inlineItem) });
+        Optional<LayoutUnit> itemLogicalHeight;
+        if (lineInput.skipVerticalAligment == LineInput::SkipVerticalAligment::No)
+            itemLogicalHeight = inlineItemHeight(layoutState(), *inlineItem);
+        uncommittedContent.add(*inlineItem, { itemLogicalWidth, itemLogicalHeight });
+
         if (breakingContext.isAtBreakingOpportunity)
             commitPendingContent();
+
+        if (inlineItem->isHardLineBreak())
+            return closeLine();
     }
     commitPendingContent();
     return closeLine();
@@ -275,7 +278,7 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
     auto& inlineItems = m_formattingState.inlineItems();
     unsigned currentInlineItemIndex = 0;
     while (currentInlineItemIndex < inlineItems.size()) {
-        auto lineInput = LineInput { { lineLogicalLeft, lineLogicalTop }, widthConstraint, currentInlineItemIndex, inlineItems };
+        auto lineInput = LineInput { { lineLogicalLeft, lineLogicalTop }, widthConstraint, LineInput::SkipVerticalAligment::No, currentInlineItemIndex, inlineItems };
         applyFloatConstraint(lineInput.horizontalConstraint);
         auto lineContent = placeInlineItems(lineInput);
         createDisplayRuns(*lineContent.runs, lineContent.floats, widthConstraint);
@@ -288,31 +291,18 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
 
 LayoutUnit InlineFormattingContext::LineLayout::computedIntrinsicWidth(LayoutUnit widthConstraint) const
 {
-    // FIXME: Consider running it through layout().
     LayoutUnit maximumLineWidth;
-    LayoutUnit lineLogicalRight;
-    LayoutUnit trimmableTrailingWidth;
-
-    LineBreaker lineBreaker;
-    auto& inlineContent = m_formattingState.inlineItems();
-    for (auto& inlineItem : inlineContent) {
-        auto logicalWidth = inlineItemWidth(layoutState(), *inlineItem, lineLogicalRight);
-        auto breakingContext = lineBreaker.breakingContext(*inlineItem, logicalWidth, { widthConstraint, lineLogicalRight, !lineLogicalRight });
-        if (breakingContext.breakingBehavior == LineBreaker::BreakingBehavior::Wrap) {
-            maximumLineWidth = std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
-            trimmableTrailingWidth = { };
-            lineLogicalRight = { };
-        }
-        if (TextUtil::isTrimmableContent(*inlineItem)) {
-            // Skip leading whitespace.
-            if (!lineLogicalRight)
-                continue;
-            trimmableTrailingWidth += logicalWidth;
-        } else
-            trimmableTrailingWidth = { };
-        lineLogicalRight += logicalWidth;
+    auto& inlineItems = m_formattingState.inlineItems();
+    unsigned currentInlineItemIndex = 0;
+    while (currentInlineItemIndex < inlineItems.size()) {
+        auto lineContent = placeInlineItems({ { }, widthConstraint, LineInput::SkipVerticalAligment::Yes, currentInlineItemIndex, inlineItems });
+        currentInlineItemIndex = *lineContent.lastInlineItemIndex + 1;
+        LayoutUnit floatsWidth;
+        for (auto& floatItem : lineContent.floats)
+            floatsWidth += layoutState().displayBoxForLayoutBox(floatItem->layoutBox()).marginBoxWidth();
+        maximumLineWidth = std::max(maximumLineWidth, floatsWidth + lineContent.runs->logicalWidth());
     }
-    return std::max(maximumLineWidth, lineLogicalRight - trimmableTrailingWidth);
+    return maximumLineWidth;
 }
 
 void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content& lineContent, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const

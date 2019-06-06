@@ -66,7 +66,8 @@ private:
         };
 
         struct LineInput {
-            LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, unsigned firstInlineItemIndex, const InlineItems&);
+            enum class SkipVerticalAligment { No, Yes };
+            LineInput(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth, SkipVerticalAligment, unsigned firstInlineItemIndex, const InlineItems&);
             struct HorizontalConstraint {
                 HorizontalConstraint(LayoutPoint logicalTopLeft, LayoutUnit availableLogicalWidth);
 
@@ -74,6 +75,8 @@ private:
                 LayoutUnit availableLogicalWidth;
             };
             HorizontalConstraint horizontalConstraint;
+            // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
+            SkipVerticalAligment skipVerticalAligment;
             unsigned firstInlineItemIndex { 0 };
             const InlineItems& inlineItems;
         };
