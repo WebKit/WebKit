@@ -36,6 +36,7 @@
 #include "WHLSLDereferenceExpression.h"
 #include "WHLSLDoWhileLoop.h"
 #include "WHLSLDotExpression.h"
+#include "WHLSLEntryPointType.h"
 #include "WHLSLForLoop.h"
 #include "WHLSLGatherEntryPointItems.h"
 #include "WHLSLIfStatement.h"
@@ -354,7 +355,7 @@ static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinit
         Vector<ResolvingType> argumentTypes;
         Vector<std::reference_wrapper<ResolvingType>> argumentTypeReferences;
         for (size_t i = 0; i < numExpectedParameters - 1; ++i)
-            argumentTypes.append((*functionDefinition.parameters()[0]->type())->clone());
+            argumentTypes.append((*functionDefinition.parameters()[i]->type())->clone());
         for (auto& argumentType : argumentTypes)
             argumentTypeReferences.append(argumentType);
         auto* overload = resolveFunctionOverloadImpl(*getterFuncs, argumentTypeReferences, nullptr);
@@ -490,6 +491,8 @@ private:
     void visit(AST::CommaExpression&) override;
     void visit(AST::TernaryExpression&) override;
     void visit(AST::CallExpression&) override;
+
+    void finishVisiting(AST::PropertyAccessExpression&, ResolvingType* additionalArgumentType = nullptr);
 
     HashMap<AST::Expression*, ResolvingType> m_typeMap;
     HashMap<AST::Expression*, AST::TypeAnnotation> m_typeAnnotations;
@@ -966,9 +969,9 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
     assignType(makeArrayReferenceExpression, makeUniqueRef<AST::ArrayReferenceType>(Lexer::Token(makeArrayReferenceExpression.origin()), *leftAddressSpace, leftValueType->clone()));
 }
 
-void Checker::visit(AST::DotExpression& dotExpression)
+void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpression, ResolvingType* additionalArgumentType)
 {
-    auto baseInfo = recurseAndGetInfo(dotExpression.base());
+    auto baseInfo = recurseAndGetInfo(propertyAccessExpression.base());
     if (!baseInfo)
         return;
     auto baseUnnamedType = commit(baseInfo->resolvingType);
@@ -979,65 +982,89 @@ void Checker::visit(AST::DotExpression& dotExpression)
     AST::UnnamedType* getterReturnType = nullptr;
     {
         Vector<std::reference_wrapper<ResolvingType>> getterArgumentTypes { baseInfo->resolvingType };
-        getterFunction = resolveFunctionOverloadImpl(dotExpression.possibleGetterOverloads(), getterArgumentTypes, nullptr);
-        if (getterFunction)
+        if (additionalArgumentType)
+            getterArgumentTypes.append(*additionalArgumentType);
+        if ((getterFunction = resolveFunctionOverloadImpl(propertyAccessExpression.possibleGetterOverloads(), getterArgumentTypes, nullptr)))
             getterReturnType = &getterFunction->type();
     }
 
     AST::FunctionDeclaration* anderFunction = nullptr;
     AST::UnnamedType* anderReturnType = nullptr;
-    if (auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace()) {
-        auto argumentType = makeUniqueRef<AST::PointerType>(Lexer::Token(dotExpression.origin()), *leftAddressSpace, baseUnnamedType->get().clone());
-        Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { baseInfo->resolvingType };
-        anderFunction = resolveFunctionOverloadImpl(dotExpression.possibleAnderOverloads(), anderArgumentTypes, nullptr);
-        if (anderFunction)
+    auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace();
+    if (leftAddressSpace) {
+        ResolvingType argumentType = { makeUniqueRef<AST::PointerType>(Lexer::Token(propertyAccessExpression.origin()), *leftAddressSpace, baseUnnamedType->get().clone()) };
+        Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { argumentType };
+        if (additionalArgumentType)
+            anderArgumentTypes.append(*additionalArgumentType);
+        if ((anderFunction = resolveFunctionOverloadImpl(propertyAccessExpression.possibleAnderOverloads(), anderArgumentTypes, nullptr)))
             anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
     }
 
     AST::FunctionDeclaration* threadAnderFunction = nullptr;
     AST::UnnamedType* threadAnderReturnType = nullptr;
     {
-        auto argumentType = makeUniqueRef<AST::PointerType>(Lexer::Token(dotExpression.origin()), AST::AddressSpace::Thread, baseUnnamedType->get().clone());
-        Vector<std::reference_wrapper<ResolvingType>> threadAnderArgumentTypes { baseInfo->resolvingType };
-        threadAnderFunction = resolveFunctionOverloadImpl(dotExpression.possibleAnderOverloads(), threadAnderArgumentTypes, nullptr);
-        if (threadAnderFunction)
+        ResolvingType argumentType = { makeUniqueRef<AST::PointerType>(Lexer::Token(propertyAccessExpression.origin()), AST::AddressSpace::Thread, baseUnnamedType->get().clone()) };
+        Vector<std::reference_wrapper<ResolvingType>> threadAnderArgumentTypes { argumentType };
+        if (additionalArgumentType)
+            threadAnderArgumentTypes.append(*additionalArgumentType);
+        if ((threadAnderFunction = resolveFunctionOverloadImpl(propertyAccessExpression.possibleAnderOverloads(), threadAnderArgumentTypes, nullptr)))
             threadAnderReturnType = &downcast<AST::PointerType>(threadAnderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
     }
 
-    if (!getterFunction && !anderFunction) {
+    if (leftAddressSpace && !anderFunction && !getterFunction) {
         setError();
         return;
     }
-    if (getterFunction && anderFunction) {
+
+    if (!leftAddressSpace && !threadAnderFunction && !getterFunction) {
         setError();
         return;
     }
+
+    if (threadAnderFunction && getterFunction) {
+        setError();
+        return;
+    }
+
     if (anderFunction && threadAnderFunction && !matches(*anderReturnType, *threadAnderReturnType)) {
         setError();
         return;
     }
 
-    AST::UnnamedType* fieldType = getterReturnType ? getterReturnType : anderReturnType;
+    if (getterFunction && anderFunction && !matches(*getterReturnType, *anderReturnType)) {
+        setError();
+        return;
+    }
+
+    if (getterFunction && threadAnderFunction && !matches(*getterReturnType, *threadAnderReturnType)) {
+        setError();
+        return;
+    }
+
+    AST::UnnamedType* fieldType = getterReturnType ? getterReturnType : anderReturnType ? anderReturnType : threadAnderReturnType;
 
     AST::FunctionDeclaration* setterFunction = nullptr;
     AST::UnnamedType* setterReturnType = nullptr;
     {
         ResolvingType fieldResolvingType(fieldType->clone());
-        Vector<std::reference_wrapper<ResolvingType>> setterArgumentTypes { baseInfo->resolvingType, fieldResolvingType };
-        setterFunction = resolveFunctionOverloadImpl(dotExpression.possibleSetterOverloads(), setterArgumentTypes, nullptr);
+        Vector<std::reference_wrapper<ResolvingType>> setterArgumentTypes { baseInfo->resolvingType };
+        if (additionalArgumentType)
+            setterArgumentTypes.append(*additionalArgumentType);
+        setterArgumentTypes.append(fieldResolvingType);
+        setterFunction = resolveFunctionOverloadImpl(propertyAccessExpression.possibleSetterOverloads(), setterArgumentTypes, nullptr);
         if (setterFunction)
             setterReturnType = &setterFunction->type();
     }
 
-    if (setterFunction && anderFunction) {
+    if (setterFunction && !getterFunction) {
         setError();
         return;
     }
 
-    dotExpression.setGetterFunction(getterFunction);
-    dotExpression.setAnderFunction(anderFunction);
-    dotExpression.setThreadAnderFunction(threadAnderFunction);
-    dotExpression.setSetterFunction(setterFunction);
+    propertyAccessExpression.setGetterFunction(getterFunction);
+    propertyAccessExpression.setAnderFunction(anderFunction);
+    propertyAccessExpression.setThreadAnderFunction(threadAnderFunction);
+    propertyAccessExpression.setSetterFunction(setterFunction);
 
     AST::TypeAnnotation typeAnnotation = AST::RightValue();
     if (auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace()) {
@@ -1045,14 +1072,22 @@ void Checker::visit(AST::DotExpression& dotExpression)
             typeAnnotation = AST::LeftValue { *leftAddressSpace };
         else if (setterFunction)
             typeAnnotation = AST::AbstractLeftValue();
-    } else if (!baseInfo->typeAnnotation.isRightValue() && (setterFunction || anderFunction))
+    } else if (!baseInfo->typeAnnotation.isRightValue() && (setterFunction || threadAnderFunction))
         typeAnnotation = AST::AbstractLeftValue();
-    assignType(dotExpression, fieldType->clone(), WTFMove(typeAnnotation));
+    assignType(propertyAccessExpression, fieldType->clone(), WTFMove(typeAnnotation));
 }
 
-void Checker::visit(AST::IndexExpression&)
+void Checker::visit(AST::DotExpression& dotExpression)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198163 Implement this.
+    finishVisiting(dotExpression);
+}
+
+void Checker::visit(AST::IndexExpression& indexExpression)
+{
+    auto baseInfo = recurseAndGetInfo(indexExpression.indexExpression());
+    if (!baseInfo)
+        return;
+    finishVisiting(indexExpression, &baseInfo->resolvingType);
 }
 
 void Checker::visit(AST::VariableReference& variableReference)
@@ -1362,7 +1397,7 @@ void Checker::visit(AST::CommaExpression& commaExpression)
     if (error())
         return;
     auto lastInfo = getInfo(commaExpression.list().last());
-    forwardType(commaExpression, lastInfo->resolvingType, lastInfo->typeAnnotation);
+    forwardType(commaExpression, lastInfo->resolvingType);
 }
 
 void Checker::visit(AST::TernaryExpression& ternaryExpression)

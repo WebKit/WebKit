@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<canvas id="canvas" width="400" height="400"></canvas>
+<script>
+async function start() {
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+    context.fillStyle = "blue";
+    context.fillRect(0, 0, 400, 400);
+    context.fillStyle = "white";
+    context.fillRect(100, 100, 200, 200);
+}
+window.addEventListener("load", start);
+</script>
+</body>
+</html>
