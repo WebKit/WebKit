@@ -1,3 +1,30 @@
+2019-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [Cocoa] REGRESSION(r244182): Inspector thinks CA commits can be nested
+        https://bugs.webkit.org/show_bug.cgi?id=198497
+
+        Reviewed by Simon Fraser.
+
+        WebInspecter should coalesce nested composites as one recorded composite.
+        This can be done by ensuring that we only process CA preCommit and postCommit
+        once per nested commits.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willComposite):
+        * inspector/InspectorController.h:
+        Export willComposite(). We want to call willComposite()/ didComposite()
+        from CA preCommit and postCommit handlers in flushLayers().
+
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didComposite):
+        Unrelated change: didComposite() should not assert that we're in the middle
+        of a composite. Web Inspector may connect in the middle of a composite.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::flushCompositingStateIncludingSubframes):
+        InspectorController::willComposite() will be called form CA preCommit
+        handler of flushLayers().
+
 2019-06-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Educate the property resolver about IndexExpressions

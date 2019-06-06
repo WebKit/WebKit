@@ -88,6 +88,7 @@ private:
 
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones) override;
 
+    void addCommitHandlers();
     enum class FlushType { Normal, TransientZoom };
     void flushLayers(FlushType = FlushType::Normal);
 

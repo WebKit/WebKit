@@ -325,6 +325,29 @@ bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushT
     }
     return true;
 }
+    
+void RemoteLayerTreeDrawingArea::addCommitHandlers()
+{
+    if (m_webPage.firstFlushAfterCommit())
+        return;
+
+    [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
+        if (Page* corePage = retainedPage->corePage()) {
+            if (Frame* coreFrame = retainedPage->mainFrame())
+                corePage->inspectorController().willComposite(*coreFrame);
+        }
+    } forPhase:kCATransactionPhasePreCommit];
+    
+    [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
+        if (Page* corePage = retainedPage->corePage()) {
+            if (Frame* coreFrame = retainedPage->mainFrame())
+                corePage->inspectorController().didComposite(*coreFrame);
+        }
+        retainedPage->setFirstFlushAfterCommit(false);
+    } forPhase:kCATransactionPhasePostCommit];
+    
+    m_webPage.setFirstFlushAfterCommit(true);
+}
 
 void RemoteLayerTreeDrawingArea::flushLayers()
 {
@@ -356,13 +379,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     if (m_scrolledViewExposedRect)
         visibleRect.intersect(m_scrolledViewExposedRect.value());
 
-    RefPtr<WebPage> protectedWebPage = &m_webPage;
-    [CATransaction addCommitHandler:[protectedWebPage] {
-        if (Page* corePage = protectedWebPage->corePage()) {
-            if (Frame* coreFrame = protectedWebPage->mainFrame())
-                corePage->inspectorController().didComposite(*coreFrame);
-        }
-    } forPhase:kCATransactionPhasePostCommit];
+    addCommitHandlers();
 
     if (m_nextFlushIsForImmediatePaint)
         m_webPage.mainFrameView()->invalidateImagesWithAsyncDecodes();

@@ -431,6 +431,31 @@ void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callback
     scheduleCompositingLayerFlush();
 }
 
+void TiledCoreAnimationDrawingArea::addCommitHandlers()
+{
+    if (m_webPage.firstFlushAfterCommit())
+        return;
+
+    [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
+        if (Page* corePage = retainedPage->corePage()) {
+            if (Frame* coreFrame = retainedPage->mainFrame())
+                corePage->inspectorController().willComposite(*coreFrame);
+        }
+    } forPhase:kCATransactionPhasePreCommit];
+
+    [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
+        if (Page* corePage = retainedPage->corePage()) {
+            if (Frame* coreFrame = retainedPage->mainFrame())
+                corePage->inspectorController().didComposite(*coreFrame);
+        }
+        if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
+            drawingArea->sendPendingNewlyReachedPaintingMilestones();
+        retainedPage->setFirstFlushAfterCommit(false);
+    } forPhase:kCATransactionPhasePostCommit];
+    
+    m_webPage.setFirstFlushAfterCommit(true);
+}
+
 void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
 {
     if (layerTreeStateIsFrozen())
@@ -455,16 +480,8 @@ void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
         if (m_viewOverlayRootLayer)
             m_viewOverlayRootLayer->flushCompositingState(visibleRect);
 
-        RefPtr<WebPage> retainedPage = &m_webPage;
-        [CATransaction addCommitHandler:[retainedPage] {
-            if (Page* corePage = retainedPage->corePage()) {
-                if (Frame* coreFrame = retainedPage->mainFrame())
-                    corePage->inspectorController().didComposite(*coreFrame);
-            }
-            if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
-                drawingArea->sendPendingNewlyReachedPaintingMilestones();
-        } forPhase:kCATransactionPhasePostCommit];
-
+        addCommitHandlers();
+        
         bool didFlushAllFrames = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 
 #if ENABLE(ASYNC_SCROLLING)

@@ -97,6 +97,7 @@ public:
 
     WEBCORE_EXPORT void setIndicating(bool);
 
+    WEBCORE_EXPORT void willComposite(Frame&);
     WEBCORE_EXPORT void didComposite(Frame&);
 
     bool isUnderTest() const { return m_isUnderTest; }

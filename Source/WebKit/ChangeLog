@@ -1,3 +1,26 @@
+2019-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [Cocoa] REGRESSION(r244182): Inspector thinks CA commits can be nested
+        https://bugs.webkit.org/show_bug.cgi?id=198497
+
+        Reviewed by Simon Fraser.
+
+        Call InspectorController::willComposite() from the CA preCommit handler
+        similar to the call to InspectorController::didComposite() in the CA
+        postCommit handler. Ensure these calls will be once for nested commits.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::addCommitHandlers):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::firstFlushAfterCommit const):
+        (WebKit::WebPage::setFirstFlushAfterCommit):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::addCommitHandlers):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Introduce new SPI for context menus on iOS

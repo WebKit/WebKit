@@ -1206,6 +1206,9 @@ public:
     bool userIsInteracting() const { return m_userIsInteracting; }
     void setUserIsInteracting(bool userIsInteracting) { m_userIsInteracting = userIsInteracting; }
 
+    bool firstFlushAfterCommit() const { return m_firstFlushAfterCommit; }
+    void setFirstFlushAfterCommit(bool f) { m_firstFlushAfterCommit = f; }
+    
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1933,6 +1936,7 @@ private:
     OptionSet<LayerTreeFreezeReason> m_layerTreeFreezeReasons;
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
+    bool m_firstFlushAfterCommit { false };
 #if PLATFORM(COCOA)
     WeakPtr<RemoteObjectRegistry> m_remoteObjectRegistry;
 #endif

@@ -507,6 +507,11 @@ JSC::VM& InspectorController::vm()
     return commonVM();
 }
 
+void InspectorController::willComposite(Frame& frame)
+{
+    InspectorInstrumentation::willComposite(frame);
+}
+
 void InspectorController::didComposite(Frame& frame)
 {
     InspectorInstrumentation::didComposite(frame);
