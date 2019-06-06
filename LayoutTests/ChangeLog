@@ -1,3 +1,14 @@
+2019-06-06  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r243270) [ iOS Sim Release ] Layout Test imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=198573
+        <rdar://problem/51447519>
+
+        Unreviewed.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        Marking test as slow.
+
 2019-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r243121): Load event should not be fired while animating the 'externalResourcesRequired' attribute 

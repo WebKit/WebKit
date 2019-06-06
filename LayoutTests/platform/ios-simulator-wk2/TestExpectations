@@ -104,4 +104,4 @@ webkit.org/b/192501 animations/play-state-in-shorthand.html [ Pass Failure ]
 
 webkit.org/b/182849 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm [ Pass Failure ]
 
-webkit.org/b/198573 [ Release ] imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Slow ]
