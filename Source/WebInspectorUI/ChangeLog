@@ -1,1 +1,13 @@
+2019-06-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: print/rulers/compositing/paint navigation items shouldn't be visible if the inspected target doesn't have a PageAgent
+        https://bugs.webkit.org/show_bug.cgi?id=198410
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        (WI.DOMTreeContentView.prototype._showRulersChanged):
+
 == Rolled over to ChangeLog-2019-06-05 ==

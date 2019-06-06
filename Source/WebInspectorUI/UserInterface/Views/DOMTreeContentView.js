@@ -31,17 +31,21 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         super(representedObject);
 
-        this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
-        this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
-        this._compositingBordersButtonNavigationItem.enabled = !!PageAgent.getCompositingBordersVisible;
-        this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        if (InspectorBackend.domains.Page) {
+            this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
+            this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
+            this._compositingBordersButtonNavigationItem.enabled = !!PageAgent.getCompositingBordersVisible;
+            this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        }
 
-        WI.settings.showPaintRects.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
-        this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
-        this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
-        this._paintFlashingButtonNavigationItem.enabled = !!PageAgent.setShowPaintRects;
-        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.settings.showPaintRects.value;
-        this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        if (InspectorBackend.domains.Page) {
+            WI.settings.showPaintRects.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
+            this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
+            this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
+            this._paintFlashingButtonNavigationItem.enabled = !!PageAgent.setShowPaintRects;
+            this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.settings.showPaintRects.value;
+            this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        }
 
         WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
         this._showsShadowDOMButtonNavigationItem = new WI.ActivateButtonNavigationItem("shows-shadow-DOM", WI.UIString("Show shadow DOM nodes"), WI.UIString("Hide shadow DOM nodes"), "Images/ShadowDOM.svg", 13, 13);
@@ -49,16 +53,21 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showsShadowDOMButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showShadowDOMSettingChanged();
 
-        this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force Print Media Styles"), WI.UIString("Use Default Media Styles"), "Images/Printer.svg", 16, 16);
-        this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
-        this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._showPrintStylesChanged();
+        if (InspectorBackend.domains.Page) {
+            this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force Print Media Styles"), WI.UIString("Use Default Media Styles"), "Images/Printer.svg", 16, 16);
+            this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
+            this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._showPrintStylesChanged();
+        }
 
-        WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
-        this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show Rulers"), WI.UIString("Hide Rulers"), "Images/Rulers.svg", 16, 16);
-        this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);
-        this._showRulersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._showRulersChanged();
+        // COMPATIBILITY (iOS 11.3)
+        if (InspectorBackend.domains.Page && InspectorBackend.domains.Page.setShowRulers) {
+            WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
+            this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show Rulers"), WI.UIString("Hide Rulers"), "Images/Rulers.svg", 16, 16);
+            this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);
+            this._showRulersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._showRulersChanged();
+        }
 
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
@@ -106,17 +115,26 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     get navigationItems()
     {
-        let items = [this._showPrintStylesButtonNavigationItem, this._showsShadowDOMButtonNavigationItem];
+        let items = [];
+
+        if (this._showPrintStylesButtonNavigationItem)
+            items.push(this._showPrintStylesButtonNavigationItem);
+
+        items.push(this._showsShadowDOMButtonNavigationItem);
 
         if (this._forceAppearanceButtonNavigationItem)
-            items.unshift(this._forceAppearanceButtonNavigationItem);
+            items.push(this._forceAppearanceButtonNavigationItem);
 
-        // COMPATIBILITY (iOS 11.3)
-        if (window.PageAgent && PageAgent.setShowRulers)
-            items.unshift(this._showRulersButtonNavigationItem);
+        if (this._showRulersButtonNavigationItem)
+           items.unshift(this._showRulersButtonNavigationItem);
 
-        if (!WI.settings.experimentalEnableLayersTab.value)
-            items.push(this._compositingBordersButtonNavigationItem, this._paintFlashingButtonNavigationItem);
+        if (!WI.settings.experimentalEnableLayersTab.value) {
+            if (this._compositingBordersButtonNavigationItem)
+                items.push(this._compositingBordersButtonNavigationItem);
+
+            if (this._paintFlashingButtonNavigationItem)
+                items.push(this._paintFlashingButtonNavigationItem);
+       }
 
         return items;
     }
@@ -690,11 +708,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _showRulersChanged()
     {
-        this._showRulersButtonNavigationItem.activated = WI.settings.showRulers.value;
+        console.assert(PageAgent.setShowRulers);
 
-        // COMPATIBILITY (iOS 11.3)
-        if (!PageAgent.setShowRulers)
-            return;
+        this._showRulersButtonNavigationItem.activated = WI.settings.showRulers.value;
 
         PageAgent.setShowRulers(this._showRulersButtonNavigationItem.activated);
     }
