@@ -134,6 +134,8 @@ private:
     void finalizeTransfer();
     void invokeCancel();
 
+    int didReceiveDebugInfo(curl_infotype, char*, size_t);
+
     // For setup 
     void appendAcceptLanguageHeader(HTTPHeaderMap&);
     void setupPOST(ResourceRequest&);
@@ -163,6 +165,7 @@ private:
     static size_t willSendDataCallback(char*, size_t, size_t, void*);
     static size_t didReceiveHeaderCallback(char*, size_t, size_t, void*);
     static size_t didReceiveDataCallback(char*, size_t, size_t, void*);
+    static int didReceiveDebugInfoCallback(CURL*, curl_infotype, char*, size_t, void*);
 
 
     CurlRequestClient* m_client { };
@@ -211,6 +214,7 @@ private:
     CertificateInfo m_certificateInfo;
     bool m_captureExtraMetrics;
     NetworkLoadMetrics m_networkLoadMetrics;
+    HTTPHeaderMap m_requestHeaders;
     MonotonicTime m_requestStartTime { MonotonicTime::nan() };
     MonotonicTime m_performStartTime;
     size_t m_totalReceivedSize { 0 };

@@ -234,6 +234,9 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);
     m_curlHandle->setWriteCallbackFunction(didReceiveDataCallback, this);
 
+    if (m_captureExtraMetrics)
+        m_curlHandle->setDebugCallbackFunction(didReceiveDebugInfoCallback, this);
+
     m_curlHandle->setTimeout(timeoutInterval());
 
     if (m_shouldSuspend)
@@ -491,6 +494,31 @@ void CurlRequest::finalizeTransfer()
     m_curlHandle = nullptr;
 }
 
+int CurlRequest::didReceiveDebugInfo(curl_infotype type, char* data, size_t size)
+{
+    if (!data)
+        return 0;
+
+    if (type == CURLINFO_HEADER_OUT) {
+        String requestHeader(data, size);
+        auto headerFields = requestHeader.split("\r\n");
+        // Remove the request line
+        if (headerFields.size())
+            headerFields.remove(0);
+
+        for (auto& header : headerFields) {
+            auto pos = header.find(":");
+            if (pos != notFound) {
+                auto key = header.left(pos).stripWhiteSpace();
+                auto value = header.substring(pos + 1).stripWhiteSpace();
+                m_requestHeaders.add(key, value);
+            }
+        }
+    }
+
+    return 0;
+}
+
 void CurlRequest::appendAcceptLanguageHeader(HTTPHeaderMap& header)
 {
     for (const auto& language : userPreferredLanguages())
@@ -696,7 +724,7 @@ void CurlRequest::updateNetworkLoadMetrics()
 
         if (m_captureExtraMetrics) {
             m_curlHandle->addExtraNetworkLoadMetrics(m_networkLoadMetrics);
-            m_networkLoadMetrics.requestHeaders = m_request.httpHeaderFields();
+            m_networkLoadMetrics.requestHeaders = m_requestHeaders;
             m_networkLoadMetrics.responseBodyDecodedSize = m_totalReceivedSize;
         }
     }
@@ -764,6 +792,11 @@ size_t CurlRequest::didReceiveHeaderCallback(char* ptr, size_t blockSize, size_t
 size_t CurlRequest::didReceiveDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)
 {
     return static_cast<CurlRequest*>(userData)->didReceiveData(SharedBuffer::create(ptr, blockSize * numberOfBlocks));
+}
+
+int CurlRequest::didReceiveDebugInfoCallback(CURL*, curl_infotype type, char* data, size_t size, void* userData)
+{
+    return static_cast<CurlRequest*>(userData)->didReceiveDebugInfo(type, data, size);
 }
 
 }

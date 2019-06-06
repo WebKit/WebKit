@@ -1,3 +1,13 @@
+2019-06-05  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Report all request headers to web inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=191653
+
+        Reviewed by Fujii Hironori.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/http/tests/inspector/network/resource-request-headers-expected.txt: Added.
+
 2019-06-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Educate the property resolver about IndexExpressions

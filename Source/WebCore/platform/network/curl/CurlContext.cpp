@@ -638,6 +638,13 @@ void CurlHandle::setSslCtxCallbackFunction(curl_ssl_ctx_callback callbackFunc, v
     curl_easy_setopt(m_handle, CURLOPT_SSL_CTX_FUNCTION, callbackFunc);
 }
 
+void CurlHandle::setDebugCallbackFunction(curl_debug_callback callbackFunc, void* userData)
+{
+    curl_easy_setopt(m_handle, CURLOPT_DEBUGFUNCTION, callbackFunc);
+    curl_easy_setopt(m_handle, CURLOPT_DEBUGDATA, userData);
+    curl_easy_setopt(m_handle, CURLOPT_VERBOSE, 1L);
+}
+
 void CurlHandle::enableConnectionOnly()
 {
     curl_easy_setopt(m_handle, CURLOPT_CONNECT_ONLY, 1L);

@@ -891,7 +891,10 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html [ Pass Failur
 http/tests/history [ Skip ]
 http/tests/images [ Skip ]
 http/tests/incremental [ Skip ]
+
 http/tests/inspector [ Skip ]
+http/tests/inspector/network/resource-request-headers.html [ Pass ]
+
 http/tests/loading [ Skip ]
 http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
