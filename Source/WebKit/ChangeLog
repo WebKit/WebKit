@@ -1,3 +1,12 @@
+2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable PSON
+        https://bugs.webkit.org/show_bug.cgi?id=194979
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/WebPreferencesDefaultValues.h:
+
 2019-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [Cocoa] REGRESSION(r244182): Inspector thinks CA commits can be nested

@@ -1,3 +1,17 @@
+2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable PSON
+        https://bugs.webkit.org/show_bug.cgi?id=194979
+
+        Reviewed by Žan Doberšek.
+
+        Add WPEBackend-fdo patch required for PSON to work. It can be removed once we have a new version to depend on.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/wpebackend-fdo-Handle-the-case-of-new-target-created-for-the-same-v.patch: Added.
+        * wpe/jhbuild.modules:
+        * wpe/patches/wpebackend-fdo-Handle-the-case-of-new-target-created-for-the-same-v.patch: Added.
+
 2019-06-05  Andy Estes  <aestes@apple.com>
 
         [macOS] Stop calling -[NSDraggingItem setItem:]
