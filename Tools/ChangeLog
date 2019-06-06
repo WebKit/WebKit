@@ -1,3 +1,19 @@
+2019-06-06  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] TypeError: cannot concatenate 'str' and 'int' objects when prettify SecurityOrigin with
+        non-default port number
+        https://bugs.webkit.org/show_bug.cgi?id=198618
+
+        Reviewed by Brent Fulgham.
+
+        WebCoreSecurityOriginProvider.port() returns an int data type. We need to explicitly convert this to
+        a string before we concatenate it with another string when building the string representation
+        for the WebCore::SecurityOrigin object. Otherwise, Python complains that we are concatenating a str
+        with an int and we don't get a pretty-printed representation for WebCore::SecurityOrigin.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreSecurityOriginProvider.to_string): Call str() on the port before concatenting it.
+
 2019-06-06  Jonathan Bedard  <jbedard@apple.com>
 
         Remove obsolete TOOLCHAINS overrides from as asan.xcconfig

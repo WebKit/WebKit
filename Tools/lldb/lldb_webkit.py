@@ -691,7 +691,7 @@ class WebCoreSecurityOriginProvider:
             return 'file://'
         result = '{}://{}'.format(scheme, host)
         if port:
-            result += ':' + port
+            result += ':' + str(port)
         return result
 
 
