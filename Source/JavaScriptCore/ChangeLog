@@ -1,3 +1,10 @@
+2019-06-06  Keith Miller  <keith_miller@apple.com>
+
+        Unrevied build fix for FTL without Gigacage.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+
 2019-06-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         aarch64: ‘JSC::ARM64Assembler::LinkRecord::<unnamed union>::RealTypes::m_compareRegister’ is too small to hold all values of ‘JSC::ARM64Assembler::RegisterID’ {aka ‘enum JSC::ARM64Registers::RegisterID’}

@@ -14210,6 +14210,7 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=175493
         return m_out.opaque(result);
 #endif
+        return ptr;
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)
