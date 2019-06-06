@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#pragma once
 
-#if TARGET_OS_IPHONE
+#if PLATFORM(IOS_FAMILY)
 
-#import <Foundation/Foundation.h>
+#include "APIObject.h"
+#include "InteractionInformationAtPosition.h"
 
-NS_ASSUME_NONNULL_BEGIN
+namespace API {
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContextMenuElementInfo", ios(10.0, WK_IOS_TBA))
-@interface WKPreviewElementInfo : NSObject <NSCopying>
+class ContextMenuElementInfo final : public ObjectImpl<Object::Type::ContextMenuElementInfo> {
+public:
+    template<typename... Args> static Ref<ContextMenuElementInfo> create(Args&&... args)
+    {
+        return adoptRef(*new ContextMenuElementInfo(std::forward<Args>(args)...));
+    }
+    
+    const WTF::URL& url() const { return m_interactionInformation.url; }
 
-@property (nonatomic, readonly, nullable) NSURL *linkURL;
+    const WebKit::InteractionInformationAtPosition& interactionInformation() const { return m_interactionInformation; }
 
-@end
+private:
+    ContextMenuElementInfo(const WebKit::InteractionInformationAtPosition&);
+    
+    WebKit::InteractionInformationAtPosition m_interactionInformation;
+};
 
-NS_ASSUME_NONNULL_END
+} // namespace API
 
 #endif

@@ -42,6 +42,7 @@
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
+#import "WKContextMenuElementInfoInternal.h"
 #import "WKDatePickerViewController.h"
 #import "WKDrawingCoordinator.h"
 #import "WKError.h"
@@ -7515,7 +7516,9 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
             if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
                 RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:animatedImageElementInfo.get()];
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [uiDelegate _webView:_webView previewViewControllerForAnimatedImageAtURL:targetURL defaultActions:actions.get() elementInfo:animatedImageElementInfo.get() imageSize:_positionInformation.image->size()];
+                ALLOW_DEPRECATED_DECLARATIONS_END
             }
         }
 
@@ -7537,11 +7540,14 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
             ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get()];
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
         return nil;
     }
 
@@ -7562,12 +7568,16 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() userInfo:imageInfo.get()]);
         _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
 
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
             [uiDelegate _webView:_webView willPreviewImageWithURL:targetURL];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         auto defaultActions = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
         if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:)]) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             UIViewController *previewViewController = [uiDelegate _webView:_webView previewViewControllerForImage:uiImage.get() alternateURL:alternateURL.get() defaultActions:defaultActions.get() elementInfo:elementInfo.get()];
+            ALLOW_DEPRECATED_DECLARATIONS_END
             if (previewViewController)
                 return previewViewController;
         }
@@ -7586,7 +7596,9 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
             const URL& imageURL = _positionInformation.imageURL;
             if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data")))
                 return;
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [uiDelegate _webView:_webView commitPreviewedImageWithURL:(NSURL *)imageURL];
+            ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
         return;
@@ -7600,7 +7612,9 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     }
 
     if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [uiDelegate _webView:_webView commitPreviewedViewController:viewController];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
@@ -7624,11 +7638,13 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 - (void)_previewItemController:(UIPreviewItemController *)controller didDismissPreview:(UIViewController *)viewController committing:(BOOL)committing
 {
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:committing:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController committing:committing];
     else if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
-    
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
     [_webView _didDismissForcePressPreview];
 }
 

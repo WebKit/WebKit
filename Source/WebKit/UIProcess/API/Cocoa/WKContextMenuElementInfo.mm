@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "WKContextMenuElementInfoInternal.h"
 
-#if TARGET_OS_IPHONE
+#if PLATFORM(IOS_FAMILY)
 
-#import <Foundation/Foundation.h>
+#import "_WKActivatedElementInfoInternal.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation WKContextMenuElementInfo
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContextMenuElementInfo", ios(10.0, WK_IOS_TBA))
-@interface WKPreviewElementInfo : NSObject <NSCopying>
+- (NSURL *)linkURL
+{
+    return _elementInfo->url();
+}
 
-@property (nonatomic, readonly, nullable) NSURL *linkURL;
+- (API::Object&)_apiObject
+{
+    return *_elementInfo;
+}
 
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation WKContextMenuElementInfo (WKPrivate)
+
+- (_WKActivatedElementInfo *)_activatedElementInfo
+{
+    return [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:_elementInfo->interactionInformation()];
+}
+
+@end
 
 #endif
+
