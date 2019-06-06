@@ -107,11 +107,12 @@ sub get_param_list {
    checker => \&check_regexp
   },
 
+  # WEBKIT_CHANGES
   {
    name => 'password_complexity',
    type => 's',
    choices => [ 'no_constraints', 'mixed_letters', 'letters_numbers',
-                'letters_numbers_specialchars' ],
+                'letters_numbers_specialchars', 'zxcvbn_password_checker' ],
    default => 'no_constraints',
    checker => \&check_multi
   },

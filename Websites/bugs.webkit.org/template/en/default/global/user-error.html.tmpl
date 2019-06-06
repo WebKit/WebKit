@@ -1462,6 +1462,15 @@
       request a new password</a> in order to log in again.
     [% END %]
 
+  [%# WEBKIT_CHANGES %]
+  [% ELSIF error.search("Password is weak") %]
+    [% title = "Password Is Weak" %]
+    [% error FILTER html %]
+    [% IF locked_user %]
+      You must <a href="token.cgi?a=reqpw&amp;loginname=[% locked_user.email FILTER uri %]&amp;token=[% issue_hash_token(['reqpw']) FILTER uri %]">
+      request a new password</a> in order to log in again.
+    [% END %]
+
   [% ELSIF error == "password_not_complex" %]
     [% title = "Password Fails Requirements" %]
     [% passregex = Param('password_complexity') %]

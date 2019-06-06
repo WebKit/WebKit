@@ -161,6 +161,12 @@ sub REQUIRED_MODULES {
         # 2.0 is the first version that will work with JSON::RPC.
         version => '2.01',
     },
+    # WEBKIT_CHANGES
+    {
+        package => 'Data-Password-zxcvbn',
+        module  => 'Data::Password::zxcvbn',
+        version => 0
+    },
     );
 
     if (ON_WINDOWS) {

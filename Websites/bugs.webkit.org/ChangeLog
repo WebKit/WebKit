@@ -1,3 +1,20 @@
+2019-06-05  Ling Ho  <lingcherd_ho@apple.com>
+
+        Add support of zxcvbn password strength checker to bugs.webkit.org website.
+        https://bugs.webkit.org/show_bug.cgi?id=198391
+        rdar://problem/51278166
+
+        Reviewed by David Kilzer.
+
+        * Bugzilla/Config/Auth.pm:
+        (get_param_list):
+        * Bugzilla/Install/Requirements.pm:
+        (REQUIRED_MODULES):
+        * Bugzilla/User.pm:
+        (validate_password_check):
+        * template/en/default/admin/params/auth.html.tmpl:
+        * template/en/default/global/user-error.html.tmpl:
+
 2019-05-13  Jer Noble  <jer.noble@apple.com>
 
         Bugzilla should convert "r12345" to a trac.webkit.org link

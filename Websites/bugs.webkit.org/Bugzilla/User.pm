@@ -31,6 +31,8 @@ use Storable qw(dclone);
 use URI;
 use URI::QueryParam;
 
+use Data::Password::zxcvbn qw(password_strength); # WEBKIT_CHANGES
+
 use parent qw(Bugzilla::Object Exporter);
 @Bugzilla::User::EXPORT = qw(is_available_username
     login_to_id validate_password validate_password_check
@@ -2486,6 +2488,12 @@ sub validate_password_check {
     } elsif ($complexity_level eq 'mixed_letters') {
         return 'password_not_complex'
           if ($password !~ /[[:lower:]]/ || $password !~ /[[:upper:]]/);
+    # WEBKIT_CHANGES
+    } elsif ($complexity_level eq 'zxcvbn_password_checker') {
+        my %opts = (score_for_feedback => 3);
+        my $est_strength = password_strength($password, \%opts);
+        return 'Password is weak. ' . $est_strength->{feedback}->{warning}
+          if ($est_strength->{score} < 4);
     }
 
     # Having done these checks makes us consider the password untainted.
