@@ -1,7 +1,7 @@
 function (jsonObject){
         return jsonObject.parse();
     }
-PASS tests[i](nativeJSON) threw exception Error: JSON.parse requires at least one parameter.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected identifier "undefined".
 function (jsonObject){
         return jsonObject.parse('');
     }

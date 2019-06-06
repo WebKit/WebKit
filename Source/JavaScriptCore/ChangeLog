@@ -1,3 +1,16 @@
+2019-06-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.parse throws incorrect exception when called w/o arguments
+        https://bugs.webkit.org/show_bug.cgi?id=198574
+
+        Reviewed by Yusuke Suzuki.
+
+        Always coerce first argument to string and attempt to parse it.
+        (steps 1-2 of https://tc39.github.io/ecma262/#sec-json.parse)
+
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse): Remove argumentCount check.
+
 2019-06-06  Keith Miller  <keith_miller@apple.com>
 
         Unrevied build fix for FTL without Gigacage.
