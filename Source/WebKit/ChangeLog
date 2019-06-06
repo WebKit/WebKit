@@ -1,3 +1,17 @@
+2019-06-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Clean up use of initiatingPageID in implementation of webkit_uri_scheme_request_get_web_view()
+        https://bugs.webkit.org/show_bug.cgi?id=198564
+
+        Reviewed by Carlos Garcia Campos.
+
+        Note that we have to use RefPtr rather than Ref here because the priv struct has to remain
+        default-constructible.
+
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate):
+        (webkit_uri_scheme_request_get_web_view):
+
 2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable PSON

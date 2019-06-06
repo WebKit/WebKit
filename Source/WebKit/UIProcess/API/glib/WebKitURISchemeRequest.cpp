@@ -84,8 +84,12 @@ WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitW
     request->priv->webContext = webContext;
     request->priv->manager = &manager;
     request->priv->uri = resourceRequest.url().string().utf8();
-    request->priv->initiatingPage = WebProcessProxy::webPage(*resourceRequest.initiatingPageID());
     request->priv->requestID = requestID;
+
+    ASSERT(resourceRequest.initiatingPageID());
+    request->priv->initiatingPage = WebProcessProxy::webPage(*resourceRequest.initiatingPageID());
+    ASSERT(request->priv->initiatingPage);
+
     return request;
 }
 
@@ -166,8 +170,7 @@ WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* re
 {
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), 0);
 
-    // FIXME: initiatingPage is now always null, we need to re-implement this somehow.
-    return request->priv->initiatingPage ? webkitWebContextGetWebViewForPage(request->priv->webContext, request->priv->initiatingPage.get()) : nullptr;
+    return webkitWebContextGetWebViewForPage(request->priv->webContext, request->priv->initiatingPage.get());
 }
 
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)
