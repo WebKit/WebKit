@@ -1,3 +1,26 @@
+2019-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r243121): Load event should not be fired while animating the 'externalResourcesRequired' attribute 
+        https://bugs.webkit.org/show_bug.cgi?id=198576
+
+        Reviewed by Simon Fraser.
+
+        Firing the load event should only happen when dynamic update changes the
+        attribute 'externalResourcesRequired'. Animating this attribute should
+        not fire the load event.
+
+        When stopping the animations, applyAnimatedPropertyChange() should be
+        called first then stopAnimation() is called second. The target element
+        should know that its svgAttributeChanged() is called because of animating
+        the attribute. So it can differentiate this case from the dynamic update.
+
+        Test: svg/animations/animate-externalResourcesRequired-no-load-event.html
+
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::svgAttributeChanged):
+        * svg/properties/SVGAnimatedPropertyAnimator.h:
+
+2019-06-05  Saam Barati  <sbarati@apple.com>
 2019-06-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move baseline and line height computation to a dedicated function

@@ -55,7 +55,7 @@ void SVGExternalResourcesRequired::svgAttributeChanged(const QualifiedName& attr
     // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
     // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
     // in the document, the SVGLoad event has already been dispatched.
-    if (!externalResourcesRequired() && !haveFiredLoadEvent() && !isParserInserted()) {
+    if (!externalResourcesRequiredAnimated().isAnimating() && !externalResourcesRequired() && !haveFiredLoadEvent() && !isParserInserted()) {
         setHaveFiredLoadEvent(true);
 
         ASSERT(m_contextElement.haveLoadedRequiredResources());

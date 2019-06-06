@@ -85,13 +85,13 @@ public:
         if (!m_animated->isAnimating())
             return;
 
-        m_animated->stopAnimation();
-        for (auto& instance : m_animatedInstances)
-            instance->instanceStopAnimation();
-
         applyAnimatedPropertyChange(targetElement);
         if (isAnimatedStylePropertyAniamtor(targetElement))
             removeAnimatedStyleProperty(targetElement);
+
+        m_animated->stopAnimation();
+        for (auto& instance : m_animatedInstances)
+            instance->instanceStopAnimation();
     }
 
     Optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
