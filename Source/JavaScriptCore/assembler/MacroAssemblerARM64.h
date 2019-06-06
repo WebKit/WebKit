@@ -2459,7 +2459,7 @@ public:
     void moveDoubleConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
     {
         m_assembler.cmp<32>(left, right);
-        m_assembler.fcsel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+        m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     void moveDoubleConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)

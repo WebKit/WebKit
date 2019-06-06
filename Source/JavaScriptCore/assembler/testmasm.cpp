@@ -935,6 +935,74 @@ void testByteSwap()
 #endif
 }
 
+void testMoveDoubleConditionally32()
+{
+#if CPU(X86_64) | CPU(ARM64)
+    double arg1 = 0;
+    double arg2 = 0;
+    const double zero = -0;
+
+    const double chosenDouble = 6.00000059604644775390625;
+    CHECK_EQ(static_cast<double>(static_cast<float>(chosenDouble)) == chosenDouble, false);
+
+    auto sel = compile([&] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&zero), FPRInfo::returnValueFPR);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT1);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT2);
+
+        jit.move(MacroAssembler::TrustedImm32(-1), GPRInfo::regT0);
+        jit.moveDoubleConditionally32(MacroAssembler::Equal, GPRInfo::regT0, GPRInfo::regT0, FPRInfo::fpRegT1, FPRInfo::fpRegT2, FPRInfo::returnValueFPR);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    arg1 = chosenDouble;
+    arg2 = 43;
+    CHECK_EQ(invoke<double>(sel), chosenDouble);
+
+    arg1 = 43;
+    arg2 = chosenDouble;
+    CHECK_EQ(invoke<double>(sel), 43.0);
+
+#endif
+}
+
+void testMoveDoubleConditionally64()
+{
+#if CPU(X86_64) | CPU(ARM64)
+    double arg1 = 0;
+    double arg2 = 0;
+    const double zero = -0;
+
+    const double chosenDouble = 6.00000059604644775390625;
+    CHECK_EQ(static_cast<double>(static_cast<float>(chosenDouble)) == chosenDouble, false);
+
+    auto sel = compile([&] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&zero), FPRInfo::returnValueFPR);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg1), FPRInfo::fpRegT1);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&arg2), FPRInfo::fpRegT2);
+
+        jit.move(MacroAssembler::TrustedImm64(-1), GPRInfo::regT0);
+        jit.moveDoubleConditionally64(MacroAssembler::Equal, GPRInfo::regT0, GPRInfo::regT0, FPRInfo::fpRegT1, FPRInfo::fpRegT2, FPRInfo::returnValueFPR);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    arg1 = chosenDouble;
+    arg2 = 43;
+    CHECK_EQ(invoke<double>(sel), chosenDouble);
+
+    arg1 = 43;
+    arg2 = chosenDouble;
+    CHECK_EQ(invoke<double>(sel), 43.0);
+
+#endif
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -1017,6 +1085,8 @@ void run(const char* filter)
 #endif // ENABLE(MASM_PROBE)
 
     RUN(testByteSwap());
+    RUN(testMoveDoubleConditionally32());
+    RUN(testMoveDoubleConditionally64());
 
     if (tasks.isEmpty())
         usage();

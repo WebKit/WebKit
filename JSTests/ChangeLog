@@ -1,3 +1,14 @@
+2019-06-05  Justin Michaud  <justin_michaud@apple.com>
+
+        WebAssembly: pow functions returns 0 when exponent 1.0 or -1.0
+        https://bugs.webkit.org/show_bug.cgi?id=198106
+
+        Reviewed by Saam Barati.
+
+        * wasm/regress/selectf64.js: Added.
+        * wasm/regress/selectf64.wasm: Added.
+        * wasm/regress/selectf64.wat: Added.
+
 2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Argument elimination should check transitive dependents for interference

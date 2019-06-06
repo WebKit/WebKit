@@ -1,3 +1,15 @@
+2019-06-05  Justin Michaud  <justin_michaud@apple.com>
+
+        WebAssembly: pow functions returns 0 when exponent 1.0 or -1.0
+        https://bugs.webkit.org/show_bug.cgi?id=198106
+
+        Reviewed by Saam Barati.
+
+        Fix bug caused by using fcsel sX instead of fcsel dX on an f64 value in moveDoubleConditionally32.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::moveDoubleConditionally32):
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards resurrecting Mac CMake build
