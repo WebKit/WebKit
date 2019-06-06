@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <wtf/Optional.h>
 
+#if HAVE(SSL)
 extern "C" {
 
 struct BIO;
@@ -58,9 +59,11 @@ int SSL_accept(SSL*);
 int SSL_set_fd(SSL*, int);
 
 } // extern "C"
+#endif // HAVE(SSL)
 
 namespace TestWebKitAPI {
 
+#if HAVE(SSL)
 template<typename> struct deleter;
 template<> struct deleter<BIO> {
     void operator()(BIO* bio)
@@ -92,6 +95,7 @@ template<> struct deleter<EVP_PKEY> {
         EVP_PKEY_free(key);
     }
 };
+#endif // HAVE(SSL)
 
 TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connections)
     : m_connectionHandler(WTFMove(connectionHandler))
@@ -99,6 +103,7 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
     listenForConnections(connections);
 }
 
+#if HAVE(SSL)
 TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler)
 {
     auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler)] (Socket socket) {
@@ -184,6 +189,7 @@ TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionH
     }
     listenForConnections(1);
 }
+#endif // HAVE(SSL)
 
 void TCPServer::listenForConnections(size_t connections)
 {

@@ -315,6 +315,7 @@ TEST(Challenge, BasicProposedCredential)
     Util::run(&removedCredential);
 }
 
+#if HAVE(SSL)
 static void verifyCertificateAndPublicKey(SecTrustRef trust)
 {
     EXPECT_NOT_NULL(trust);
@@ -431,3 +432,5 @@ TEST(WebKit, ServerTrust)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // HAVE(SSL)

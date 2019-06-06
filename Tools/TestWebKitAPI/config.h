@@ -100,3 +100,7 @@
 #if !PLATFORM(IOS_FAMILY) && !defined(BUILDING_JSCONLY__)
 #define WK_HAVE_C_SPI 1
 #endif
+
+#if !PLATFORM(APPLETV)
+#define HAVE_SSL 1
+#endif

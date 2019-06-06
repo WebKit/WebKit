@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if HAVE(SSL)
+
 #import "TCPServer.h"
 #import "Utilities.h"
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -85,3 +87,4 @@ TEST(WebKit, HTTPSProxy)
 
 } // namespace TestWebKitAPI
 
+#endif // HAVE(SSL)

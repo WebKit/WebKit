@@ -29,11 +29,13 @@
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
+#if HAVE(SSL)
 extern "C" {
 struct SSL;
 int SSL_read(SSL*, void*, int);
 int SSL_write(SSL*, const void*, int);
 }
+#endif // HAVE(SSL)
 
 namespace TestWebKitAPI {
 
@@ -44,10 +46,12 @@ public:
     static constexpr Port InvalidPort = 0;
     
     TCPServer(Function<void(Socket)>&&, size_t connections = 1);
+#if HAVE(SSL)
     enum class Protocol : bool {
         HTTPS, HTTPSProxy
     };
     TCPServer(Protocol, Function<void(SSL*)>&&);
+#endif // HAVE(SSL)
     ~TCPServer();
     
     Port port() const { return m_port; }
