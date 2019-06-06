@@ -156,3 +156,9 @@ class ConfigTest(unittest.TestCase):
         c = self.make_config(exception=ScriptError())
         actual = c.default_configuration()
         self.assertEqual(actual, 'Release')
+
+    def test_asan(self):
+        config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release', 'foo/ASan': 'YES'})
+        self.assertEqual(config.asan, True)
+        config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release'})
+        self.assertEqual(config.asan, False)

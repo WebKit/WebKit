@@ -1,3 +1,24 @@
+2019-06-06  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpluginhost: Support ASan as a style
+        https://bugs.webkit.org/show_bug.cgi?id=198586
+        <rdar://problem/51459088>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.configuration_for_upload): Add ASan as a style.
+        * Scripts/webkitpy/port/config.py:
+        (Config._read_configuration):
+        (Config):
+        (Config.asan): Add property to check if the ASan configuration is active.
+        * Scripts/webkitpy/port/config_unittest.py:
+        (ConfigTest.test_default_configuration__scripterror):
+        (ConfigTest):
+        (ConfigTest.test_asan):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Add Asan as a style.
+
 2019-06-06  Alexey Proskuryakov  <ap@apple.com>
 
         block-spammers tool doesn't block e-mail

@@ -1583,12 +1583,19 @@ class Port(object):
         configuration = self.test_configuration()
         host = self.host or host
 
+        if self.get_option('guard_malloc'):
+            style = 'guard-malloc'
+        elif self._config.asan:
+            style = 'asan'
+        else:
+            style = configuration.build_type
+
         return Upload.create_configuration(
             platform=host.platform.os_name,
             version=str(host.platform.os_version),
             version_name=host.platform.os_version_name(INTERNAL_TABLE) or host.platform.os_version_name(),
             architecture=configuration.architecture,
-            style='guard-malloc' if self.get_option('guard_malloc') else configuration.build_type,
+            style=style,
             sdk=host.platform.build_version(),
         )
 

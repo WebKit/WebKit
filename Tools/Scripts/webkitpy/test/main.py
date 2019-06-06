@@ -190,6 +190,7 @@ class Tester(object):
         start_time = time.time()
         config = Config(_host.executive, self.finder.filesystem)
         configuration_to_use = self._options.configuration or config.default_configuration()
+
         if will_run_lldb_webkit_tests:
             self.printer.write_update('Building lldbWebKitTester ...')
             build_lldbwebkittester = self.finder.filesystem.join(_webkit_root, 'Tools', 'Scripts', 'build-lldbwebkittester')
@@ -260,7 +261,7 @@ class Tester(object):
                     platform=_host.platform.os_name,
                     version=str(_host.platform.os_version),
                     version_name=_host.platform.os_version_name(),
-                    style=configuration_to_use,
+                    style='asan' if config.asan else configuration_to_use,
                     sdk=_host.platform.build_version(),
                 ),
                 details=Upload.create_details(options=self._options),
