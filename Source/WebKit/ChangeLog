@@ -1,3 +1,24 @@
+2019-06-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Crash using WKHTTPCookieStore when you use WKWebView and UIWebView in the same app
+        https://bugs.webkit.org/show_bug.cgi?id=198622
+
+        Reviewed by Chris Dumez.
+
+        Today in a WWDC lab, I saw some crash reports from an app that mixed
+        WKWebView and UIWebView. The proximate cause of the crash is that
+        WKHTTPCookieStore queues a callOnMainThread function, and then
+        UIWebView dequeues it on the WebThread.
+
+        No test because this crash depends on mixing WKWebView and UIWebView and
+        getting (un)lucky on the timing.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::setCookies):
+        (API::HTTPCookieStore::deleteCookie): Avoid using callOnMainThread
+        becuase it is prohibited in the UI process.
+
 2019-06-06  Antoine Quint  <graouts@apple.com>
 
         Remove duplicated websiteDataStoreParameters code from WebsitePoliciesData::applyToDocumentLoader()

@@ -62,7 +62,7 @@ void HTTPCookieStore::cookies(CompletionHandler<void(const Vector<WebCore::Cooki
             allCookies = getAllDefaultUIProcessCookieStoreCookies();
         allCookies.appendVector(m_owningDataStore->pendingCookies());
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler), allCookies] () mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), allCookies] () mutable {
             completionHandler(allCookies);
         });
         return;
@@ -86,7 +86,7 @@ void HTTPCookieStore::setCookies(const Vector<WebCore::Cookie>& cookies, Complet
                 m_owningDataStore->addPendingCookie(cookie);
         }
 
-        callOnMainThread(WTFMove(completionHandler));
+        RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -105,7 +105,7 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHand
         else
             m_owningDataStore->removePendingCookie(cookie);
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler();
         });
         return;
