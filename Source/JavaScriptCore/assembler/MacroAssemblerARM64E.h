@@ -39,6 +39,8 @@ using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerARM64E : public MacroAssemblerARM64 {
 public:
+    static constexpr unsigned numberOfPACBits = 25;
+
     ALWAYS_INLINE void tagReturnAddress()
     {
         tagPtr(ARM64Registers::sp, ARM64Registers::lr);

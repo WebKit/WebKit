@@ -434,10 +434,19 @@ end
 
 macro loadCagedPrimitive(source, dest, scratchOrLength)
     loadp source, dest
-    if GIGACAGE_ENABLED
-        uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, dest, scratchOrLength)
-    elsif ARM64E
+    if ARM64E
+        const result = t7
         untagArrayPtr scratchOrLength, dest
+        move dest, result
+    else
+        const result = dest
+    end
+    if GIGACAGE_ENABLED
+        uncage(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr Gigacage::primitiveGigacageMask, result, scratchOrLength)
+        if ARM64E
+            const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
+            bfiq result, 0, 64 - numberOfPACBits, dest
+        end
     end
 end
 
