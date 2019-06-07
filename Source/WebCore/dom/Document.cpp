@@ -3933,6 +3933,7 @@ void Document::addAudioProducer(MediaProducer& audioProducer)
 
 void Document::removeAudioProducer(MediaProducer& audioProducer)
 {
+    RELEASE_ASSERT(isMainThread());
     m_audioProducers.remove(audioProducer);
     updateIsPlayingMedia();
 }
