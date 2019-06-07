@@ -63,6 +63,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_taskQueue(context)
+    , m_isCaptureTrack(m_private->isCaptureTrack())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     suspendIfNeeded();

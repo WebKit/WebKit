@@ -1,5 +1,25 @@
 2019-06-07  Youenn Fablet  <youenn@apple.com>
 
+        A MediaStreamTrack cannot modify whether being a capture track or not
+        https://bugs.webkit.org/show_bug.cgi?id=198669
+
+        Reviewed by Eric Carlson.
+
+        Add a boolean in MediaStreamTrack to store whether a track is a capture one or not.
+        This removes the need to always go through the private and its source.
+        As a track might change of source (for non capture track cases), this
+        also removes the possibility for a track to be capture and then no
+        longer capture.
+        No change of behavior.
+        See also rdar://problem/49444622.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        * Modules/mediastream/MediaStreamTrack.h:
+        (WebCore::MediaStreamTrack::isCaptureTrack const):
+
+2019-06-07  Youenn Fablet  <youenn@apple.com>
+
         Add a RELEASE_ASSERT that removeAudioProducer should always be done in the main thread
         https://bugs.webkit.org/show_bug.cgi?id=198668
 

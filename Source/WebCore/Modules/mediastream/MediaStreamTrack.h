@@ -93,7 +93,7 @@ public:
     enum class StopMode { Silently, PostEvent };
     void stopTrack(StopMode = StopMode::Silently);
 
-    bool isCaptureTrack() const { return m_private->isCaptureTrack(); }
+    bool isCaptureTrack() const { return m_isCaptureTrack; }
 
     struct TrackSettings {
         Optional<int> width;
@@ -202,6 +202,7 @@ private:
     GenericTaskQueue<Timer> m_eventTaskQueue;
 
     bool m_ended { false };
+    bool m_isCaptureTrack { false };
 };
 
 typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;
