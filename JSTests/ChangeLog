@@ -1,3 +1,15 @@
+2019-06-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI should get GetterSetter structure from the base's GlobalObject for GetGetterSetterByOffset
+        https://bugs.webkit.org/show_bug.cgi?id=198581
+        <rdar://problem/51099753>
+
+        Reviewed by Saam Barati.
+
+        * stress/global-object-proto-getter.js: Added.
+        (f):
+        (test):
+
 2019-06-05  Justin Michaud  <justin_michaud@apple.com>
 
         [WASM-References] Add support for Anyref tables, Table.get and Table.set (for Anyref only).

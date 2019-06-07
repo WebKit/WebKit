@@ -1,3 +1,20 @@
+2019-06-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI should get GetterSetter structure from the base's GlobalObject for GetGetterSetterByOffset
+        https://bugs.webkit.org/show_bug.cgi?id=198581
+        <rdar://problem/51099753>
+
+        Reviewed by Saam Barati.
+
+        For GetGetterSetterByOffset, when the abstract interpreter fails to read the property
+        from the object, it gets the GetterSetter structure from the CodeBlock's global object.
+        However, that's not correct, since the global object for the base object might differ
+        from the CodeBlock's. Instead, we try to get the global object from the base, when it's
+        a constant object. Otherwise, we can't infer the value and only set the type.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-06-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create CommandLineAPIHost lazily like the other agents
