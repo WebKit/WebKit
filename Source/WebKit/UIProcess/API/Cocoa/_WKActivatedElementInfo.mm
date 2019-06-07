@@ -51,6 +51,7 @@
 #if PLATFORM(MAC)
     RetainPtr<NSImage> _nsImage;
 #endif
+    BOOL _animatedImage;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -81,6 +82,7 @@
     
     _image = information.image;
     _ID = information.idAttribute;
+    _animatedImage = information.isAnimatedImage;
     
     return self;
 }
@@ -134,6 +136,11 @@
 - (CGPoint)_interactionLocation
 {
     return _interactionLocation;
+}
+
+- (BOOL)isAnimatedImage
+{
+    return _animatedImage;
 }
 
 #if PLATFORM(IOS_FAMILY)

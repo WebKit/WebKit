@@ -1,3 +1,43 @@
+2019-06-05  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce new SPI for context menus on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=198590
+
+        Reviewed by Tim Horton.
+
+        Also introduce WKContextMenuElementInfo which is API.
+        This is part of <rdar://problem/51003503>
+
+        * Shared/API/APIObject.h:
+        * Shared/API/Cocoa/WebKit.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIContextMenuElementInfo.cpp: Added.
+        (API::ContextMenuElementInfo::ContextMenuElementInfo):
+        * UIProcess/API/APIContextMenuElementInfo.h: Added.
+        * UIProcess/API/Cocoa/WKContextMenuElementInfo.h: Added.
+        * UIProcess/API/Cocoa/WKContextMenuElementInfo.mm: Added.
+        (-[WKContextMenuElementInfo linkURL]):
+        (-[WKContextMenuElementInfo _apiObject]):
+        (-[WKContextMenuElementInfo _activatedElementInfo]):
+        * UIProcess/API/Cocoa/WKContextMenuElementInfoInternal.h: Added.
+        * UIProcess/API/Cocoa/WKContextMenuElementInfoPrivate.h: Added.
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithInteractionInformationAtPosition:]):
+        (-[_WKActivatedElementInfo isAnimatedImage]):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-06-07  Antoine Quint  <graouts@apple.com>
 
         Restrict fast clicks everywhere to desktop content mode

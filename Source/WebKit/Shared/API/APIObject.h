@@ -109,6 +109,9 @@ public:
         ContentRuleList,
         ContentRuleListAction,
         ContentRuleListStore,
+#if PLATFORM(IOS_FAMILY)
+        ContextMenuElementInfo,
+#endif
         ContextMenuListener,
         CookieManager,
         CustomHeaderFields,
