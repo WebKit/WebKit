@@ -1,3 +1,26 @@
+2019-06-07  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] Pretty-print all kinds of Documents
+        https://bugs.webkit.org/show_bug.cgi?id=198620
+
+        Reviewed by Simon Fraser.
+
+        Register formatters for all classes derived from WebCore::Document so we get nice summaries
+        without having to drill down in Xcode- or casting- to the base class, Document.
+
+        Older LLDB versions use to do this automatically, but this functionality was removed in newer
+        versions:
+            [[
+                Warning: previous versions of LLDB defined cascading to mean not only going through typedef
+                chains, but also through inheritance chains. This feature has been removed since it
+                significantly degrades performance. You need to set up your formatters for every type in
+                inheritance chains to which you want the formatter to apply.
+            ]]
+            <https://lldb.llvm.org/use/variable.html> (as of 06/06/2019)
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+
 2019-06-07  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Support reporting results for uncommon test configurations
