@@ -88,3 +88,18 @@ function encodeBasicCommands(renderPassEncoder, renderPipeline, vertexBuffer) {
     renderPassEncoder.draw(4, 1, 0, 0);
     renderPassEncoder.endPass();
 }
+
+function createBufferWithData(device, descriptor, data, offset = 0) {
+    const mappedBuffer = device.createBufferMapped(descriptor);
+    const dataArray = new Uint8Array(mappedBuffer[1]);
+    dataArray.set(new Uint8Array(data), offset);
+    mappedBuffer[0].unmap();
+    return mappedBuffer[0];
+}
+
+async function mapWriteDataToBuffer(buffer, data, offset = 0) {
+    const arrayBuffer = await buffer.mapWriteAsync();
+    const writeArray = new Uint8Array(arrayBuffer);
+    writeArray.set(new Uint8Array(data), offset);
+    buffer.unmap();
+}

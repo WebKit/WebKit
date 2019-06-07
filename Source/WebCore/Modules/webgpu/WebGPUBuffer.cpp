@@ -42,14 +42,6 @@ WebGPUBuffer::WebGPUBuffer(RefPtr<GPUBuffer>&& buffer)
 {
 }
 
-void WebGPUBuffer::setSubData(uint64_t offset, const JSC::ArrayBuffer& data)
-{
-    if (!m_buffer)
-        LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
-    else
-        m_buffer->setSubData(offset, data);
-}
-
 void WebGPUBuffer::mapReadAsync(BufferMappingPromise&& promise)
 {
     rejectOrRegisterPromiseCallback(WTFMove(promise), true);

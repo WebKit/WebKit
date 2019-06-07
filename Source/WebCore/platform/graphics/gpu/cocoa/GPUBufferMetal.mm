@@ -62,7 +62,7 @@ bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBuffer
     return true;
 }
 
-RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor)
+RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor, bool isMappedOnCreation)
 {
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger size = 0;
@@ -74,6 +74,17 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
     auto usage = OptionSet<GPUBufferUsage::Flags>::fromRaw(descriptor.usage);
     if (!validateBufferUsage(device.get(), usage))
         return nullptr;
+
+#if PLATFORM(MAC)
+    // copyBufferToBuffer calls require 4-byte alignment. "Unmapping" a mapped-on-creation GPUBuffer
+    // that is otherwise unmappable requires such a copy to upload data.
+    if (isMappedOnCreation
+        && !usage.containsAny({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })
+        && descriptor.size % 4) {
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Data must be aligned to a multiple of 4 bytes!");
+        return nullptr;
+    }
+#endif
 
     // FIXME: Metal best practices: Read-only one-time-use data less than 4 KB should not allocate a MTLBuffer and be used in [MTLCommandEncoder set*Bytes] calls instead.
 
@@ -95,14 +106,15 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), size, usage, WTFMove(device)));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), WTFMove(device), size, usage, isMappedOnCreation));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, size_t size, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, Ref<GPUDevice>&& device, size_t size, OptionSet<GPUBufferUsage::Flags> usage, bool isMapped)
     : m_platformBuffer(WTFMove(buffer))
     , m_device(WTFMove(device))
     , m_byteLength(size)
     , m_usage(usage)
+    , m_isMappedFromCreation(isMapped)
 {
 }
 
@@ -120,69 +132,16 @@ GPUBuffer::State GPUBuffer::state() const
 {
     if (!m_platformBuffer)
         return State::Destroyed;
-    if (m_mappingCallback)
+    if (m_isMappedFromCreation || m_mappingCallback)
         return State::Mapped;
 
     return State::Unmapped;
 }
 
-void GPUBuffer::setSubData(uint64_t offset, const JSC::ArrayBuffer& data)
+JSC::ArrayBuffer* GPUBuffer::mapOnCreation()
 {
-    MTLCommandQueue *queue;
-    if (!m_device->tryGetQueue() || !(queue = m_device->tryGetQueue()->platformQueue()))
-        return;
-    
-    if (!isTransferDestination() || state() != State::Unmapped) {
-        LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
-        return;
-    }
-
-#if PLATFORM(MAC)
-    if (offset % 4 || data.byteLength() % 4) {
-        LOG(WebGPU, "GPUBuffer::setSubData(): Data must be aligned to a multiple of 4 bytes!");
-        return;
-    }
-#endif
-    // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
-    auto subDataLength = checkedSum<NSUInteger>(data.byteLength(), offset);
-    if (subDataLength.hasOverflowed() || subDataLength.unsafeGet() > m_byteLength) {
-        LOG(WebGPU, "GPUBuffer::setSubData(): Invalid offset or data size!");
-        return;
-    }
-
-    if (m_subDataBuffers.isEmpty()) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        m_subDataBuffers.append(adoptNS([m_platformBuffer.get().device newBufferWithLength:static_cast<NSUInteger>(m_byteLength) options:MTLResourceCPUCacheModeDefaultCache]));
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
-
-    __block auto stagingMtlBuffer = m_subDataBuffers.takeLast();
-
-    if (!stagingMtlBuffer || stagingMtlBuffer.get().length < data.byteLength()) {
-        LOG(WebGPU, "GPUBuffer::setSubData(): Unable to get staging buffer for provided data!");
-        return;
-    }
-
-    memcpy(stagingMtlBuffer.get().contents, data.data(), data.byteLength());
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    auto commandBuffer = retainPtr([queue commandBuffer]);
-    auto blitEncoder = retainPtr([commandBuffer blitCommandEncoder]);
-
-    [blitEncoder copyFromBuffer:stagingMtlBuffer.get() sourceOffset:0 toBuffer:m_platformBuffer.get() destinationOffset:static_cast<NSUInteger>(offset) size:stagingMtlBuffer.get().length];
-    [blitEncoder endEncoding];
-
-    if (isMappable())
-        commandBufferCommitted(commandBuffer.get());
-
-    auto protectedThis = makeRefPtr(this);
-    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        protectedThis->reuseSubDataBuffer(WTFMove(stagingMtlBuffer));
-    }];
-    [commandBuffer commit];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
+    ASSERT(m_isMappedFromCreation);
+    return stagingBufferForWrite();
 }
 
 #if USE(METAL)
@@ -209,11 +168,6 @@ void GPUBuffer::commandBufferCompleted()
     }
 
     --m_numScheduledCommandBuffers;
-}
-
-void GPUBuffer::reuseSubDataBuffer(RetainPtr<MTLBuffer>&& buffer)
-{
-    m_subDataBuffers.append(WTFMove(buffer));
 }
 #endif // USE(METAL)
 
@@ -266,16 +220,54 @@ JSC::ArrayBuffer* GPUBuffer::stagingBufferForWrite()
     return m_stagingBuffer.get();
 }
 
-void GPUBuffer::unmap()
+void GPUBuffer::copyStagingBufferToGPU()
 {
-    if (!isMappable()) {
-        LOG(WebGPU, "GPUBuffer::unmap(): Buffer is not mappable!");
+    MTLCommandQueue *queue;
+    if (!m_device->tryGetQueue() || !(queue = m_device->tryGetQueue()->platformQueue()))
+        return;
+
+    RetainPtr<MTLBuffer> stagingMtlBuffer;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    // GPUBuffer creation validation ensures m_byteSize fits in NSUInteger.
+    stagingMtlBuffer = adoptNS([m_device->platformDevice() newBufferWithLength:static_cast<NSUInteger>(m_byteLength) options:MTLResourceCPUCacheModeDefaultCache]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!stagingMtlBuffer) {
+        LOG(WebGPU, "GPUBuffer::unmap(): Unable to create staging buffer!");
         return;
     }
 
-    if (m_stagingBuffer && isMapWrite()) {
-        ASSERT(m_platformBuffer);
-        memcpy(m_platformBuffer.get().contents, m_stagingBuffer->data(), m_byteLength);
+    memcpy(stagingMtlBuffer.get().contents, m_stagingBuffer->data(), m_byteLength);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    auto commandBuffer = retainPtr([queue commandBuffer]);
+    auto blitEncoder = retainPtr([commandBuffer blitCommandEncoder]);
+
+    [blitEncoder copyFromBuffer:stagingMtlBuffer.get() sourceOffset:0 toBuffer:m_platformBuffer.get() destinationOffset:0 size:static_cast<NSUInteger>(m_byteLength)];
+    [blitEncoder endEncoding];
+    [commandBuffer commit];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void GPUBuffer::unmap()
+{
+    if (!m_isMappedFromCreation && !isMappable()) {
+        LOG(WebGPU, "GPUBuffer::unmap(): Invalid operation: buffer is not mappable!");
+        return;
+    }
+
+    if (m_stagingBuffer) {
+        if (isMappable()) {
+            // MAP_WRITE and MAP_READ buffers have shared, CPU-accessible storage.
+            ASSERT(m_platformBuffer && m_platformBuffer.get().contents);
+            memcpy(m_platformBuffer.get().contents, m_stagingBuffer->data(), m_byteLength);
+        } else if (m_isMappedFromCreation)
+            copyStagingBufferToGPU();
+
+        m_isMappedFromCreation = false;
         m_stagingBuffer = nullptr;
     }
 

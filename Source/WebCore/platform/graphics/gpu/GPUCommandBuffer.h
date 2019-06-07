@@ -108,7 +108,7 @@ private:
     PlatformCommandBufferSmartPtr m_platformCommandBuffer;
     Vector<Ref<GPUBuffer>> m_usedBuffers;
     Vector<Ref<GPUTexture>> m_usedTextures;
-    bool m_isEncodingPass = false;
+    bool m_isEncodingPass { false };
 #if USE(METAL)
     MTLBlitCommandEncoder *blitEncoder() const;
     mutable RetainPtr<MTLBlitCommandEncoder> m_blitEncoder;

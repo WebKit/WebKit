@@ -24,6 +24,8 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
+typedef sequence<any> GPUMappedBuffer;  // [GPUBuffer, ArrayBuffer]
+
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
@@ -33,6 +35,7 @@
     readonly attribute WebGPUAdapter adapter;
 
     WebGPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+    [CallWith=ExecState] GPUMappedBuffer createBufferMapped(GPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(GPUTextureDescriptor descriptor);
     WebGPUSampler createSampler(GPUSamplerDescriptor descriptor);
 

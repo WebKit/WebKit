@@ -1,3 +1,40 @@
+2019-06-07  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Remove GPUBuffer.setSubData and implement GPUDevice.createBufferMapped
+        https://bugs.webkit.org/show_bug.cgi?id=198591
+
+        Reviewed by Myles C. Maxfield.
+
+        Remove GPUBuffer.setSubData from the WebGPU API.
+        Add GPUDevice.createBufferMapped to the WebGPU API. 
+
+        Existing tests have been updated.
+
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::setSubData): Deleted.
+        * Modules/webgpu/WebGPUBuffer.h:
+        * Modules/webgpu/WebGPUBuffer.idl:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBufferMapped const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::state const):
+        (WebCore::GPUBuffer::mapOnCreation):
+        (WebCore::GPUBuffer::commandBufferCompleted):
+        (WebCore::GPUBuffer::copyStagingBufferToGPU):
+                Required to unmap GPUBuffers created with GPU-private storage.
+        (WebCore::GPUBuffer::unmap):
+        (WebCore::GPUBuffer::setSubData): Deleted.
+        (WebCore::GPUBuffer::reuseSubDataBuffer): Deleted.
+
 2019-06-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix non-iOS build after r246205

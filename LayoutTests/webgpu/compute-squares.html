@@ -39,8 +39,7 @@ promise_test(async () => {
     const computeStageDescriptor = { module: shaderModule, entryPoint: "compute" };
     const pipeline = device.createComputePipeline({ computeStage: computeStageDescriptor });
     
-    const dataBuffer = device.createBuffer({ size: data.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ });
-    dataBuffer.setSubData(0, data.buffer);
+    const dataBuffer = createBufferWithData(device, { size: data.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ }, data.buffer);
     
     const bgLayoutBinding = { binding: dataBinding, visibility: GPUShaderStageBit.COMPUTE, type: "storage-buffer" };
     const bgLayout = device.createBindGroupLayout({ bindings: [bgLayoutBinding] });

@@ -65,7 +65,7 @@ class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice>
 public:
     static RefPtr<GPUDevice> tryCreate(const Optional<GPURequestAdapterOptions>&);
 
-    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&);
+    RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, bool isMappedOnCreation = false);
     RefPtr<GPUTexture> tryCreateTexture(const GPUTextureDescriptor&) const;
     RefPtr<GPUSampler> tryCreateSampler(const GPUSamplerDescriptor&) const;
 

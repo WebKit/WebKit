@@ -42,22 +42,22 @@ fragment float4 fragment_main(VertexOut v [[stage_in]])
 `
 
 function createVertexBuffer(device) {
-    const bufferSize = 4 * 5 * 4;
-    const buffer = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    const vertexArrayBuffer0 = new Float32Array([
+    const vertexArray = new Float32Array([
         // float4 xyzw, float g
         -1, 1, 0, 1, 1,
-        -1, -1, 0, 1, 1
-    ]).buffer;
-    const vertexArrayBuffer1 = new Float32Array([
+        -1, -1, 0, 1, 1,
         1, 1, 0, 1, 1,
         1, -1, 0, 1, 1
-    ]).buffer;
+    ]);
 
-    buffer.setSubData(0, vertexArrayBuffer0);
-    buffer.setSubData(4 * 5 * 2, vertexArrayBuffer1);
-
-    return buffer;
+    return createBufferWithData(
+        device, 
+        { 
+            size: vertexArray.byteLength, 
+            usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE
+        },
+        vertexArray.buffer
+    );
 }
 
 function createVertexInputDescriptor() {

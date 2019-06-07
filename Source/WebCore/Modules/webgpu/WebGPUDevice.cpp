@@ -41,12 +41,13 @@
 #include "GPUSamplerDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUTextureDescriptor.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSWebGPUBuffer.h"
 #include "Logging.h"
 #include "WebGPUBindGroup.h"
 #include "WebGPUBindGroupBinding.h"
 #include "WebGPUBindGroupDescriptor.h"
 #include "WebGPUBindGroupLayout.h"
-#include "WebGPUBuffer.h"
 #include "WebGPUBufferBinding.h"
 #include "WebGPUCommandEncoder.h"
 #include "WebGPUComputePipeline.h"
@@ -82,6 +83,22 @@ Ref<WebGPUBuffer> WebGPUDevice::createBuffer(const GPUBufferDescriptor& descript
 {
     auto buffer = m_device->tryCreateBuffer(descriptor);
     return WebGPUBuffer::create(WTFMove(buffer));
+}
+
+Vector<JSC::JSValue> WebGPUDevice::createBufferMapped(JSC::ExecState& state, const GPUBufferDescriptor& descriptor) const
+{
+    JSC::JSValue wrappedArrayBuffer = JSC::jsNull();
+
+    auto buffer = m_device->tryCreateBuffer(descriptor, true);
+    if (buffer) {
+        auto arrayBuffer = buffer->mapOnCreation();
+        wrappedArrayBuffer = toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), arrayBuffer);
+    }
+
+    auto webBuffer = WebGPUBuffer::create(WTFMove(buffer));
+    auto wrappedWebBuffer = toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), webBuffer);
+
+    return { wrappedWebBuffer, wrappedArrayBuffer };
 }
 
 Ref<WebGPUTexture> WebGPUDevice::createTexture(const GPUTextureDescriptor& descriptor) const

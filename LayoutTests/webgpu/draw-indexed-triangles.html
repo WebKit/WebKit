@@ -53,10 +53,7 @@ function createVertexBuffer(device) {
         1, -1, 0, 1, 0,
         1, -1, 0, 1, 1
     ]);
-    const buffer = device.createBuffer({ size: vertexArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    buffer.setSubData(0, vertexArray.buffer);
-
-    return buffer;
+    return createBufferWithData(device, { size: vertexArray.byteLength, usage: GPUBufferUsage.VERTEX }, vertexArray.buffer);
 }
 
 const indexBufferOffset = 2048; // Test a buffer offset for index array.
@@ -65,8 +62,15 @@ const indexOffset = -9001; // Test a base index to add to index array values.
 function createIndexBuffer(device) {
     const offsetArray = [1, 3, 5, 3, 5, 7].map(v => { return v - indexOffset; });
     const indexArray = new Uint32Array([1, 3, 5, 3, 5, 7].map(v => { return v - indexOffset; }));
-    const buffer = device.createBuffer({ size: indexArray.byteLength + indexBufferOffset, usage: GPUBufferUsage.INDEX | GPUBufferUsage.TRANSFER_DST });
-    buffer.setSubData(indexBufferOffset, indexArray.buffer);
+    const buffer = createBufferWithData(
+        device, 
+        { 
+            size: indexArray.byteLength + indexBufferOffset, 
+            usage: GPUBufferUsage.INDEX 
+        },
+        indexArray.buffer,
+        indexBufferOffset
+    );
 
     return buffer;
 }

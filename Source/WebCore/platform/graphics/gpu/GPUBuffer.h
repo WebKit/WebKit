@@ -68,7 +68,7 @@ public:
 
     ~GPUBuffer();
 
-    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, const GPUBufferDescriptor&);
+    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, const GPUBufferDescriptor&, bool isMappedOnCreation);
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
     size_t byteLength() const { return m_byteLength; }
@@ -82,14 +82,13 @@ public:
     bool isMappable() const { return m_usage.containsAny({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead }); }
     State state() const;
 
+    JSC::ArrayBuffer* mapOnCreation();
+
 #if USE(METAL)
     void commandBufferCommitted(MTLCommandBuffer *);
     void commandBufferCompleted();
-
-    void reuseSubDataBuffer(RetainPtr<MTLBuffer>&&);
 #endif
 
-    void setSubData(uint64_t, const JSC::ArrayBuffer&);
     using MappingCallback = WTF::Function<void(JSC::ArrayBuffer*)>;
     void registerMappingCallback(MappingCallback&&, bool);
     void unmap();
@@ -108,13 +107,13 @@ private:
         PendingMappingCallback(MappingCallback&&);
     };
 
+    GPUBuffer(PlatformBufferSmartPtr&&, Ref<GPUDevice>&&, size_t, OptionSet<GPUBufferUsage::Flags>, bool);
     static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>);
-
-    GPUBuffer(PlatformBufferSmartPtr&&, size_t, OptionSet<GPUBufferUsage::Flags>, Ref<GPUDevice>&&);
 
     JSC::ArrayBuffer* stagingBufferForRead();
     JSC::ArrayBuffer* stagingBufferForWrite();
     void runMappingCallback();
+    void copyStagingBufferToGPU();
 
     bool isMapWrite() const { return m_usage.contains(GPUBufferUsage::Flags::MapWrite); }
     bool isMapRead() const { return m_usage.contains(GPUBufferUsage::Flags::MapRead); }
@@ -124,10 +123,6 @@ private:
     PlatformBufferSmartPtr m_platformBuffer;
     Ref<GPUDevice> m_device;
 
-#if USE(METAL)
-    Vector<RetainPtr<MTLBuffer>> m_subDataBuffers;
-#endif
-
     RefPtr<JSC::ArrayBuffer> m_stagingBuffer;
     RefPtr<PendingMappingCallback> m_mappingCallback;
     DeferrableTask<Timer> m_mappingCallbackTask;
@@ -135,6 +130,7 @@ private:
     size_t m_byteLength;
     OptionSet<GPUBufferUsage::Flags> m_usage;
     unsigned m_numScheduledCommandBuffers { 0 };
+    bool m_isMappedFromCreation { false };
 };
 
 } // namespace WebCore

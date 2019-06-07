@@ -1,3 +1,29 @@
+2019-06-07  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Remove GPUBuffer.setSubData and implement GPUDevice.createBufferMapped
+        https://bugs.webkit.org/show_bug.cgi?id=198591
+
+        Reviewed by Myles C. Maxfield.
+
+        GPUBuffer.setSubData has been removed from the WebGPU implementation.
+        GPUDevice.createBufferMapped has been added to the WebGPU implementation.
+        Replace all setSubData calls with appropriate replacements.
+
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/blit-commands.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/compute-squares.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/draw-indexed-triangles.html:
+        * webgpu/js/webgpu-functions.js:
+        (createBufferWithData):
+        (async.mapWriteDataToBuffer):
+        * webgpu/map-read-buffers-expected.txt:
+        * webgpu/map-read-buffers.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+
 2019-06-07  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/fire-mousedown-while-pressing-mouse-button.html is failing

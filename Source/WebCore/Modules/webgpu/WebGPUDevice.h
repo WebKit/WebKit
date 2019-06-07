@@ -34,6 +34,12 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
+namespace JSC {
+class ArrayBuffer;
+class JSValue;
+}
 
 namespace WebCore {
 
@@ -69,6 +75,7 @@ public:
     const GPUDevice& device() const { return m_device.get(); }
 
     Ref<WebGPUBuffer> createBuffer(const GPUBufferDescriptor&) const;
+    Vector<JSC::JSValue> createBufferMapped(JSC::ExecState&, const GPUBufferDescriptor&) const;
     Ref<WebGPUTexture> createTexture(const GPUTextureDescriptor&) const;
     Ref<WebGPUSampler> createSampler(const GPUSamplerDescriptor&) const;
 

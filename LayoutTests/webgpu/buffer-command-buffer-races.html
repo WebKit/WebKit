@@ -63,10 +63,8 @@ function createVertexInputDescriptor() {
 }
 
 function createAndSetVertexBuffer(device, vertices) {
-    const floatArray = new Float32Array(vertices);
-    const buffer = device.createBuffer({ size: floatArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    buffer.setSubData(0, floatArray.buffer);
-    return buffer;
+    const vertexArray = new Float32Array(vertices)
+    return createBufferWithData(device, { size: vertexArray.byteLength, usage: GPUBufferUsage.VERTEX }, vertexArray.buffer);
 }
 
 function drawAndSubmitCommands(device, pipeline, attachment, vertexBuffer, colorBuffer) {
@@ -97,8 +95,7 @@ async function test() {
     const greenArray = new Float32Array(green);
     const blueArray = new Float32Array(blue);
 
-    const colorBuffer = device.createBuffer({ size: greenArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_WRITE });
-    colorBuffer.setSubData(0, greenArray.buffer);
+    const colorBuffer = createBufferWithData(device, { size: greenArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE }, greenArray.buffer);
 
     const attachment = {
         attachment: swapChain.getCurrentTexture().createDefaultView(),
@@ -126,12 +123,12 @@ async function test() {
     /* colorBuffer does not actually contain "green" again until this call. */
     colorBuffer.unmap();
 
-    /* setSubData immediately after a submit should not affect the preceding draw call. */
+    /* Writing data immediately after a submit should not affect the preceding draw call. */
     drawAndSubmitCommands(device, pipeline, attachment, middleBuffer, colorBuffer);
-    colorBuffer.setSubData(0, blueArray.buffer);
+    await mapWriteDataToBuffer(colorBuffer, blueArray.buffer);
 
     /* destroy right after a submit should not affect the draw call. */
-    colorBuffer.setSubData(0, greenArray.buffer);
+    await mapWriteDataToBuffer(colorBuffer, greenArray.buffer);
     drawAndSubmitCommands(device, pipeline, attachment, upperRightBuffer, colorBuffer);
     upperRightBuffer.destroy();
 

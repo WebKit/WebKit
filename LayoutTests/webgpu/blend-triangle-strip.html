@@ -75,8 +75,7 @@ async function test() {
         1, 1, 0, 1,
         1, -1, 0, 1
     ]);
-    const vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    vertexBuffer.setSubData(0, vertexData.buffer);
+    const vertexBuffer = createBufferWithData(device, { size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX }, vertexData.buffer);
 
     const context = canvas.getContext("gpu");
     const swapChain = context.configureSwapChain({ device: device, format: "bgra8unorm" });

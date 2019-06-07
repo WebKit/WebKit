@@ -89,8 +89,7 @@ async function test() {
         1, 1, 0, 1, 
         1, -1, 0, 1
     ]);
-    const positionBuffer = device.createBuffer({ size: positionArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    positionBuffer.setSubData(0, positionArray.buffer);
+    const positionBuffer = createBufferWithData(device, { size: positionArray.byteLength, usage: GPUBufferUsage.VERTEX }, positionArray.buffer);
 
     const texCoordsArray = new Float32Array([
         // float2 texCoords
@@ -99,8 +98,7 @@ async function test() {
         1, 0,
         1, 1
     ]);
-    const textureCoordBuffer = device.createBuffer({ size: texCoordsArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    textureCoordBuffer.setSubData(0, texCoordsArray.buffer);
+    const textureCoordBuffer = createBufferWithData(device, { size: texCoordsArray.byteLength, usage: GPUBufferUsage.VERTEX }, texCoordsArray.buffer);
 
     const vertexInputDescriptor = createVertexInputDescriptor();
 
@@ -122,10 +120,9 @@ async function test() {
 
     const textureBufferDescriptor = {
         size: imageData.data.length,
-        usage: GPUBufferUsage.TRANSFER_SRC | GPUBufferUsage.TRANSFER_DST
+        usage: GPUBufferUsage.TRANSFER_SRC
     };
-    const textureBuffer = device.createBuffer(textureBufferDescriptor);
-    textureBuffer.setSubData(0, imageData.data.buffer);
+    const textureBuffer = createBufferWithData(device, textureBufferDescriptor, imageData.data.buffer);
 
     // Create GPUTexture
     const textureSize = {

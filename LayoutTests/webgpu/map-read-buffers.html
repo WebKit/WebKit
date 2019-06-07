@@ -1,6 +1,6 @@
 <!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <meta charset=utf-8>
-<title>Tests for setSubData and mapReadAsync on a GPUBuffer.</title>
+<title>Tests for createBufferMapped and mapReadAsync on a GPUBuffer.</title>
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
@@ -11,24 +11,14 @@ async function runTests() {
 
     // Basic mapReadAsync functionality
     promise_test(async () => {
-        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ });
+        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_READ });
         assert_true(buffer instanceof GPUBuffer, "createBuffer returned a GPUBuffer");
-
-        let array = new Float32Array([1, 2, 3, 4]);
-        buffer.setSubData(0, array.buffer);
 
         let arrayBuffer = await buffer.mapReadAsync();
         assert_true(arrayBuffer instanceof ArrayBuffer, "first mapReadAsync resolved successfully");
 
         const readArray = new Float32Array(arrayBuffer);
-        assert_equals(readArray[3], 4, "successfully map-read value set by setSubData");
-
-        buffer.unmap();
-
-        buffer.setSubData(4 * 3, array.slice(0, 1).buffer);
-        let arrayBuffer1 = await buffer.mapReadAsync();
-        const readArray1 = new Float32Array(arrayBuffer1);
-        assert_equals(readArray[3], 1, "successfully setSubData with an offset");
+        assert_equals(readArray[0], 0, "successfully access a value from a map read");
 
         buffer.unmap();
 
@@ -40,7 +30,41 @@ async function runTests() {
             assert_unreached("Buffer was destroyed!");
         }, () => {});
 
-    }, "setSubData, mapReadAsync, unmap, and destroy on a GPUBuffer.");
+    }, "mapReadAsync, unmap, and destroy on a GPUBuffer.");
+
+    // GPUDevice.createBufferMapped
+    promise_test(async () => {
+        const bufferResult = device.createBufferMapped({ size: 16, usage: GPUBufferUsage.MAP_READ });
+        const buffer = bufferResult[0];
+        const arrayBuffer = bufferResult[1];
+
+        assert_true(buffer instanceof GPUBuffer, "createBufferMapped returned a GPUBuffer");
+        assert_true(arrayBuffer instanceof ArrayBuffer, "createBufferMapped returned an ArrayBuffer");
+
+        let array = new Float32Array(arrayBuffer);
+        array.set([1, 2, 3, 4]);
+
+        // Buffer should already be "mapped".
+        await buffer.mapReadAsync().then(() => {
+            assert_unreached("GPUBuffer created via GPUBufferMapped cannot be mapped until after first unmap!");
+        }, () => {});
+
+        buffer.unmap();
+
+        // Buffer should not be re-mappable for writes.
+        await buffer.mapWriteAsync().then(() => {
+            assert_unreached("Buffer was not created with MAP_WRITE!");
+        }, () => {});
+
+        // Read results of original writes.
+        let resultArrayBuffer = await buffer.mapReadAsync();
+        const resultArray = new Float32Array(resultArrayBuffer);
+        resultArray.forEach((v, i) => {
+            assert_equals(v, array[i], "Successfully map-read value written to GPUBuffer mapped on creation");
+        })
+        
+        buffer.destroy();
+    }, "GPUBuffer.mapReadAsync on a buffer created via GPUDevice.createBufferMapped.");
 
     /* Basic validation */
     // FIXME: Test invalid combinations of GPUBufferUsage after implementing error handling.
