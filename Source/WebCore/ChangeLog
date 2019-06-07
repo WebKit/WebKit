@@ -1,3 +1,17 @@
+2019-06-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] videorate issues with v4l2src
+        https://bugs.webkit.org/show_bug.cgi?id=198614
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Configure videorate to cope with the live stream provided by the
+        source element. Not doing so might lead to errors in the v4l2
+        buffer allocator.
+
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+        (WebCore::GStreamerVideoCapturer::createConverter):
+
 2019-06-06  Andy Estes  <aestes@apple.com>
 
         process-swap-on-navigation error when loading blocked website on iOS 12.2 only.
