@@ -1,3 +1,45 @@
+2019-06-06  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r246096. rdar://problem/51375055
+
+    [ContentChangeObserver] Gmail text editing controls require two taps
+    https://bugs.webkit.org/show_bug.cgi?id=198541
+    <rdar://problem/51375055>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    When the animation completes we should also check if the newly visible content is also clickable and report it accordingly.
+    When the animated content is not clickable, we need to proceed with click instead of stopping at hover.
+    
+    Test: fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove-no-clickable.html
+    
+    * page/ios/ContentChangeObserver.cpp:
+    (WebCore::isConsideredClickable):
+    (WebCore::ContentChangeObserver::didFinishTransition):
+    (WebCore::ContentChangeObserver::adjustObservedState):
+    (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+    (WebCore::ContentChangeObserver::StyleChangeScope::isConsideredClickable const): Deleted. -> Turn it into a static function so that didFinishTransition could call it as well.
+    * page/ios/ContentChangeObserver.h:
+    
+    LayoutTests:
+    
+    * fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove-no-clickable.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246096 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-04  Zalan Bujtas  <zalan@apple.com>
+
+            [ContentChangeObserver] Gmail text editing controls require two taps
+            https://bugs.webkit.org/show_bug.cgi?id=198541
+            <rdar://problem/51375055>
+
+            Reviewed by Simon Fraser.
+
+            * fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove-no-clickable.html: Added.
+
 2019-06-02  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r245989. rdar://problem/51283532

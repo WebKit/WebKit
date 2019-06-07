@@ -83,6 +83,33 @@ static bool isConsideredHidden(const Element& element)
     return false;
 }
 
+enum class ElementHadRenderer { No, Yes };
+static bool isConsideredClickable(const Element& newlyVisibleElement, ElementHadRenderer hadRenderer)
+{
+    auto& element = const_cast<Element&>(newlyVisibleElement);
+    if (element.isInUserAgentShadowTree())
+        return false;
+
+    if (is<HTMLIFrameElement>(element))
+        return true;
+
+    if (is<HTMLImageElement>(element)) {
+        // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
+        return element.Element::willRespondToMouseClickEvents();
+    }
+
+    auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
+    if (hadRenderer == ElementHadRenderer::No || willRespondToMouseClickEvents)
+        return willRespondToMouseClickEvents;
+    // In case when the visible content already had renderers it's not sufficient to check the "newly visible" element only since it might just be the container for the clickable content.  
+    for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
+        if (!descendant.element())
+            continue;
+        if (descendant.element()->willRespondToMouseClickEvents())
+            return true;
+    }
+    return false;
+}
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
     , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
@@ -159,7 +186,11 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
-    adjustObservedState(isConsideredHidden(element) ? Event::EndedTransition : Event::CompletedTransition);
+    if (isConsideredHidden(element)) {
+        adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
+        return;
+    }
+    adjustObservedState(isConsideredClickable(element, ElementHadRenderer::Yes) ? Event::CompletedTransitionWithClickableContent : Event::CompletedTransitionWithoutClickableContent);
 }
 
 void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPropertyID propertyID)
@@ -472,7 +503,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         if (!isObservationTimeWindowActive())
             adjustStateAndNotifyContentChangeIfNeeded();
         break;
-    case Event::EndedTransition:
+    case Event::EndedTransitionButFinalStyleIsNotDefiniteYet:
         // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
         // asynchronously right before the style update is issued. It also means we don't know whether this animation ends up producing visible content yet. 
         if (m_document.inStyleRecalc()) {
@@ -481,9 +512,11 @@ void ContentChangeObserver::adjustObservedState(Event event)
         } else
             setShouldObserveNextStyleRecalc(true);
         break;
-    case Event::CompletedTransition:
+    case Event::CompletedTransitionWithClickableContent:
         // Set visibility flag on and report visible change synchronously or asynchronously depending whether we are in the middle of style recalc.
         contentVisibilityDidChange();
+        FALLTHROUGH;
+    case Event::CompletedTransitionWithoutClickableContent:
         if (m_document.inStyleRecalc())
             m_isInObservedStyleRecalc = true;
         else if (!isObservationTimeWindowActive())
@@ -520,36 +553,8 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
         return m_wasHidden && !isConsideredHidden(m_element);
     };
 
-    if (changedFromHiddenToVisible() && isConsideredClickable())
+    if (changedFromHiddenToVisible() && isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
         m_contentChangeObserver.contentVisibilityDidChange();
-}
-
-bool ContentChangeObserver::StyleChangeScope::isConsideredClickable() const
-{
-    if (m_element.isInUserAgentShadowTree())
-        return false;
-
-    auto& element = const_cast<Element&>(m_element);
-    if (is<HTMLIFrameElement>(element))
-        return true;
-
-    if (is<HTMLImageElement>(element)) {
-        // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
-        return element.Element::willRespondToMouseClickEvents();
-    }
-
-    auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
-    if (!m_hadRenderer || willRespondToMouseClickEvents)
-        return willRespondToMouseClickEvents;
-    // In case when the visible content already had renderers it's not sufficient to check the "newly visible" element only since it might just be the container for the clickable content.  
-    ASSERT(m_element.renderer());
-    for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
-        if (!descendant.element())
-            continue;
-        if (descendant.element()->willRespondToMouseClickEvents())
-            return true;
-    }
-    return false;
 }
 
 #if ENABLE(TOUCH_EVENTS)
