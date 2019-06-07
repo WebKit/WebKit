@@ -1,3 +1,21 @@
+2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r243094): [GTK][WPE] Stale content after restoring the web view session
+        https://bugs.webkit.org/show_bug.cgi?id=198561
+
+        Reviewed by Chris Dumez.
+
+        This is another regression of delaying the web process launch until the first load. If the session is restored
+        before anything has been loaded, which is the normal way, the RestoreSession message is just ignored and the
+        state is sent to the WebPage on creation via creation parameters. The WebPage considers that restoring a session
+        from creation parameters only happens when re-launching a process after a crash or in case of process swap. In
+        those cases, the history item is not marked as restored from session. We need to ensure the session is restored
+        in the web process from the IPC message handler, by launching the initial process before the session is
+        restored.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+
 2019-06-06  Youenn Fablet  <youenn@apple.com>
 
         Use an enumeration in UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo callback
