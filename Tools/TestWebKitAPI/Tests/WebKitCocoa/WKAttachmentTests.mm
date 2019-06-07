@@ -1010,10 +1010,10 @@ TEST(WKAttachmentTests, MovePastedImageByDragging)
 
 TEST(WKAttachmentTests, InsertPastedAttributedStringContainingImage)
 {
+    auto webView = webViewForTestingAttachments();
     platformCopyRichTextWithImage();
 
     RetainPtr<_WKAttachment> attachment;
-    auto webView = webViewForTestingAttachments();
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
@@ -1036,12 +1036,12 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingImage)
 
 TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachments)
 {
+    auto webView = webViewForTestingAttachments();
     platformCopyRichTextWithMultipleAttachments();
 
     RetainPtr<_WKAttachment> imageAttachment;
     RetainPtr<_WKAttachment> zipAttachment;
     RetainPtr<_WKAttachment> pdfAttachment;
-    auto webView = webViewForTestingAttachments();
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];

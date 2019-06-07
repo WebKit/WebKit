@@ -1,3 +1,28 @@
+2019-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] At least 6 API tests are failing due to an exception when writing NSAttributedString to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=198641
+        <rdar://problem/51266310>
+
+        Reviewed by Tim Horton.
+
+        Work around a bug in a lower-level framework, which currently prevents NSAttributedStrings from being written to
+        UIPasteboard by way of -[NSItemProvider registerObject:visibility:]. This is because, when saving a
+        representation of "public.rtfd" to disk, the default suggested filename (determined using CoreServices APIs
+        _UTTypeCreateSuggestedFilename and UTTypeCopyDescription) ends up being nil; UIKit then subsequently tries to
+        append nil as a path component using -URLByAppendingPathComponent:, which throws an exception. This only
+        reproduces on iOS simulator.
+
+        To work around this for the time being, simply avoid writing a representation of "public.rtfd" to disk. This
+        representation is actually ignored by most clients anyways (including WebKit), in favor of using
+        "com.apple.flat-rtfd".
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (applyWorkaroundToAllowWritingAttributedStringsToItemProviders):
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+
 2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r244857): [GTK][WPE] Many tests are no longer run in the bots after r244857
