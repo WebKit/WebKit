@@ -795,13 +795,13 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._propertyNameToEffectivePropertyMap = {};
 
-        this._markOverriddenProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
         this._associateRelatedProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
+        this._markOverriddenProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
 
         for (let pseudoElementInfo of this._pseudoElements.values()) {
             pseudoElementInfo.orderedStyles = this._collectStylesInCascadeOrder(pseudoElementInfo.matchedRules, null, null);
-            this._markOverriddenProperties(pseudoElementInfo.orderedStyles);
             this._associateRelatedProperties(pseudoElementInfo.orderedStyles);
+            this._markOverriddenProperties(pseudoElementInfo.orderedStyles);
         }
     }
 
@@ -847,6 +847,25 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     {
         propertyNameToEffectiveProperty = propertyNameToEffectiveProperty || {};
 
+        function isOverriddenByRelatedShorthand(property) {
+            let shorthand = property.relatedShorthandProperty;
+            if (!shorthand)
+                return false;
+
+            if (property.important && !shorthand.important)
+                return false;
+
+            if (!property.important && shorthand.important)
+                return true;
+
+            if (property.ownerStyle === shorthand.ownerStyle)
+                return shorthand.index > property.index;
+
+            let propertyStyleIndex = styles.indexOf(property.ownerStyle);
+            let shorthandStyleIndex = styles.indexOf(shorthand.ownerStyle);
+            return shorthandStyleIndex > propertyStyleIndex;
+        }
+
         for (var i = 0; i < styles.length; ++i) {
             var style = styles[i];
             var properties = style.enabledProperties;
@@ -885,7 +904,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                     }
                 }
 
-                property.overridden = false;
+                if (isOverriddenByRelatedShorthand(property)) {
+                    property.overridden = true;
+                    property.overridingProperty = property.relatedShorthandProperty;
+                } else
+                    property.overridden = false;
 
                 propertyNameToEffectiveProperty[canonicalName] = property;
             }

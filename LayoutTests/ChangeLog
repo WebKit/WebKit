@@ -1,3 +1,14 @@
+2019-06-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: longhand CSS properties overridden by shorthands miss strikethrough
+        https://bugs.webkit.org/show_bug.cgi?id=198629
+        <rdar://problem/51504160>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/overridden-property-expected.txt:
+        * inspector/css/overridden-property.html:
+
 2019-06-07  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Remove GPUBuffer.setSubData and implement GPUDevice.createBufferMapped

@@ -1,3 +1,26 @@
+2019-06-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: longhand CSS properties overridden by shorthands miss strikethrough
+        https://bugs.webkit.org/show_bug.cgi?id=198629
+        <rdar://problem/51504160>
+
+        Reviewed by Devin Rousso.
+
+        Longhand CSS properties (e.g. "font-size") overriden by shorthands (e.g. "font") now have strikethroughs.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.set overridingProperty):
+        (WI.CSSProperty):
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._updateStyleCascade):
+        Call _associateRelatedProperties before _markOverriddenProperties because
+        _associateRelatedProperties sets relatedShorthandProperty property, which
+        is now used by _markOverriddenProperties.
+
+        (WI.DOMNodeStyles.prototype._markOverriddenProperties.isOverriddenBy):
+        (WI.DOMNodeStyles.prototype._markOverriddenProperties):
+
 2019-06-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: remove always disabled details sidebar navigation item
