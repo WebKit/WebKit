@@ -247,7 +247,7 @@ static bool supportsClientSideAttachmentData(const Frame& frame)
 
 #endif
 
-static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Document& document, Ref<SharedBuffer>&& buffer, const String& contentType, Optional<FloatSize> preferredSize)
+static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Document& document, Ref<SharedBuffer>&& buffer, const String& contentType, PresentationSize preferredSize)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -261,10 +261,10 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
             auto image = HTMLImageElement::create(document);
             image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, Blob::create(buffer.get(), contentType)));
             image->setAttachmentElement(WTFMove(attachment));
-            if (preferredSize) {
-                image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(preferredSize->width()));
-                image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(preferredSize->height()));
-            }
+            if (preferredSize.width)
+                image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+            if (preferredSize.height)
+                image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
             fragment->appendChild(WTFMove(image));
         } else {
             attachment->updateAttributes(buffer->size(), contentType, defaultImageAttachmentName);
@@ -681,7 +681,7 @@ bool WebContentReader::readPlainText(const String& text)
     return true;
 }
 
-bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type, Optional<FloatSize> preferredPresentationSize)
+bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
 {
     ASSERT(frame.document());
     auto& document = *frame.document();
@@ -704,7 +704,7 @@ static String typeForAttachmentElement(const String& contentType)
     return mimeType.isEmpty() ? contentType : mimeType;
 }
 
-static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, Optional<FloatSize> preferredSize, const String& explicitContentType)
+static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, PresentationSize preferredSize, const String& explicitContentType)
 {
     auto document = makeRef(*frame.document());
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -738,10 +738,10 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
         auto image = HTMLImageElement::create(document);
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
         image->setAttachmentElement(WTFMove(attachment));
-        if (preferredSize) {
-            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(preferredSize->width()));
-            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(preferredSize->height()));
-        }
+        if (preferredSize.width)
+            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+        if (preferredSize.height)
+            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
         return image;
     }
 
@@ -749,7 +749,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
     return attachment;
 }
 
-static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, const String& contentType, const String& name, Optional<FloatSize> preferredSize)
+static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, const String& contentType, const String& name, PresentationSize preferredSize)
 {
     auto document = makeRef(*frame.document());
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -775,10 +775,10 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
         auto image = HTMLImageElement::create(document);
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(Blob::create(buffer, WTFMove(attachmentType)), WTFMove(fileName))));
         image->setAttachmentElement(WTFMove(attachment));
-        if (preferredSize) {
-            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(preferredSize->width()));
-            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(preferredSize->height()));
-        }
+        if (preferredSize.width)
+            image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomicString::number(*preferredSize.width));
+        if (preferredSize.height)
+            image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomicString::number(*preferredSize.height));
         return image;
     }
 
@@ -788,7 +788,7 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-bool WebContentReader::readFilePath(const String& path, Optional<FloatSize> preferredPresentationSize, const String& contentType)
+bool WebContentReader::readFilePath(const String& path, PresentationSize preferredPresentationSize, const String& contentType)
 {
     if (path.isEmpty() || !frame.document())
         return false;
@@ -847,7 +847,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     return true;
 }
 
-bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize)
+bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, const String& name, PresentationSize preferredPresentationSize)
 {
     if (buffer.isEmpty())
         return false;

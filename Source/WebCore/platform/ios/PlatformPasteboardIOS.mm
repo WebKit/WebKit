@@ -31,6 +31,7 @@
 #import "Color.h"
 #import "Image.h"
 #import "Pasteboard.h"
+#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebItemProviderPasteboard.h"
@@ -155,8 +156,15 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
 #if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
 #endif
-    if (!CGSizeEqualToSize(itemProvider.preferredPresentationSize, CGSizeZero))
-        info.preferredPresentationSize = FloatSize { itemProvider.preferredPresentationSize };
+    if (!CGSizeEqualToSize(itemProvider.preferredPresentationSize, CGSizeZero)) {
+        auto adjustedPreferredPresentationHeight = [](auto height) -> Optional<double> {
+            if (!IOSApplication::isMobileMail())
+                return { height };
+            // Mail's max-width: 100%; default style is in conflict with the preferred presentation size and can lead to unexpectedly stretched images. Not setting the height forces layout to preserve the aspect ratio.
+            return { };
+        };
+        info.preferredPresentationSize = PresentationSize { itemProvider.preferredPresentationSize.width, adjustedPreferredPresentationHeight(itemProvider.preferredPresentationSize.height) };
+    }
     info.containsFileURLAndFileUploadContent = itemProvider.web_containsFileURLAndFileUploadContent;
     info.suggestedFileName = itemProvider.suggestedName;
     NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
