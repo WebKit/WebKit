@@ -1,3 +1,23 @@
+2019-06-07  Andy Estes  <aestes@apple.com>
+
+        process-swap-on-navigation error when loading blocked website on iOS 12.2 only.
+        https://bugs.webkit.org/show_bug.cgi?id=196930
+        <rdar://problem/47819301>
+
+        Reviewed by Chris Dumez.
+
+        The ContentFilterDidBlockLoadForFrame message needs to be handled by ProvisionalPageProxy in
+        order to look up the blocked frame in the correct WebProcessProxy.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::contentFilterDidBlockLoadForFrame):
+        (WebKit::WebPageProxy::contentFilterDidBlockLoadForFrameShared):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::contentFilterDidBlockLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.h:
+
 2019-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix api used to release wpe_fdo_egl_exported_image in GTK

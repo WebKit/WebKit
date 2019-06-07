@@ -118,6 +118,9 @@ private:
 #if PLATFORM(COCOA)
     void registerWebProcessAccessibilityToken(const IPC::DataReference&);
 #endif
+#if ENABLE(CONTENT_FILTERING)
+    void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler&, uint64_t frameID);
+#endif
 
     void initializeWebPage();
     bool validateInput(uint64_t frameID, const Optional<uint64_t>& navigationID = WTF::nullopt);
