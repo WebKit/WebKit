@@ -50,7 +50,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     TextDecorationThickness thickness;
     unsigned bitfields[4];
     short pagedMediaShorts[2];
-    unsigned unsigneds[1];
+    TabSize tabSize;
     short hyphenationShorts[3];
 
 #if PLATFORM(IOS_FAMILY)

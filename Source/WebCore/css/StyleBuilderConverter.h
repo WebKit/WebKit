@@ -53,6 +53,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
+#include "TabSize.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
 #include <wtf/Optional.h>
@@ -66,6 +67,7 @@ public:
     static Length convertLengthOrAuto(const StyleResolver&, const CSSValue&);
     static Length convertLengthSizing(const StyleResolver&, const CSSValue&);
     static Length convertLengthMaxSizing(const StyleResolver&, const CSSValue&);
+    static TabSize convertTabSize(const StyleResolver&, const CSSValue&);
     template<typename T> static T convertComputedLength(StyleResolver&, const CSSValue&);
     template<typename T> static T convertLineWidth(StyleResolver&, const CSSValue&);
     static float convertSpacing(StyleResolver&, const CSSValue&);
@@ -253,6 +255,14 @@ inline Length StyleBuilderConverter::convertLengthMaxSizing(const StyleResolver&
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return Length(Undefined);
     return convertLengthSizing(styleResolver, value);
+}
+
+inline TabSize StyleBuilderConverter::convertTabSize(const StyleResolver& styleResolver, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isNumber())
+        return TabSize(primitiveValue.floatValue(), SpaceValueType);
+    return TabSize(primitiveValue.computeLength<float>(styleResolver.state().cssToLengthConversionData()), LengthValueType);
 }
 
 template<typename T>

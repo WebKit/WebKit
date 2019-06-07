@@ -1,3 +1,23 @@
+2019-06-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Implement tab-size with units
+        https://bugs.webkit.org/show_bug.cgi?id=179022
+
+        Reviewed by Simon Fraser.
+
+        This change is ported from Blink.
+        The committed revision is https://src.chromium.org/viewvc/blink?revision=189430&view=revision.
+
+        Additionally, this patch lets css "number" value be allowed as tab-size's property value,
+        not css "integer" value,
+        according to https://drafts.csswg.org/css-text-3/#tab-size-property.
+
+        * TestExpectations:
+        * css3/tab-size-expected.txt: Added.
+        * css3/tab-size.html: Added.
+        * fast/css/tab-size-expected.html:
+        * fast/css/tab-size.html:
+
 2019-06-06  Youenn Fablet  <youenn@apple.com>
 
         Allow WebKitTestRunner to terminate network process after it finishes service worker file operations

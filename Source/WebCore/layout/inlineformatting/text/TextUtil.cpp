@@ -57,7 +57,7 @@ LayoutUnit TextUtil::width(const InlineBox& inlineBox, unsigned from, unsigned t
     if (measureWithEndSpace)
         ++to;
     LayoutUnit width;
-    auto tabWidth = style.collapseWhiteSpace() ? 0 : style.tabSize();
+    auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
 
     WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
     if (tabWidth)

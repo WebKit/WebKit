@@ -1,3 +1,54 @@
+2019-06-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Implement tab-size with units
+        https://bugs.webkit.org/show_bug.cgi?id=179022
+
+        Reviewed by Simon Fraser.
+
+        This change is ported from Blink.
+        The committed revision is https://src.chromium.org/viewvc/blink?revision=189430&view=revision.
+
+        Additionally, this patch lets css "number" value be allowed as tab-size's property value,
+        not css "integer" value,
+        according to https://drafts.csswg.org/css-text-3/#tab-size-property.
+
+        Tests: css3/tab-size.html
+               imported/w3c/web-platform-tests/css/css-values/calc-numbers.html
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTabSize):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTabSize):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::tabWidth const):
+        * platform/graphics/TabSize.h: Added.
+        (WebCore::TabSize::TabSize):
+        (WebCore::TabSize::isSpaces const):
+        (WebCore::TabSize::widthInPixels const):
+        (WebCore::TabSize::operator bool const):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/graphics/TextRun.cpp:
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::tabSize const):
+        (WebCore::TextRun::setTabSize):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::tabSize const):
+        (WebCore::RenderStyle::setTabSize):
+        (WebCore::RenderStyle::initialTabSize):
+        * rendering/style/StyleRareInheritedData.cpp:
+        * rendering/style/StyleRareInheritedData.h:
+
 2019-06-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] videorate issues with v4l2src

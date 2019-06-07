@@ -28,6 +28,7 @@
 #include "DataRef.h"
 #include "Length.h"
 #include "StyleCustomPropertyData.h"
+#include "TabSize.h"
 #include "TextDecorationThickness.h"
 #include "TextUnderlineOffset.h"
 #include <wtf/RefCounted.h>
@@ -172,7 +173,7 @@ public:
     DataRef<StyleFilterData> appleColorFilter;
 
     AtomicString lineGrid;
-    unsigned tabSize;
+    TabSize tabSize;
 
 #if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;

@@ -1,3 +1,22 @@
+2019-06-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Implement tab-size with units
+        https://bugs.webkit.org/show_bug.cgi?id=179022
+
+        Reviewed by Simon Fraser.
+
+        This change is ported from Blink.
+        The committed revision is https://src.chromium.org/viewvc/blink?revision=189430&view=revision.
+
+        Additionally, this patch lets css "number" value be allowed as tab-size's property value,
+        not css "integer" value,
+        according to https://drafts.csswg.org/css-text-3/#tab-size-property.
+
+        * web-platform-tests/css/css-text/inheritance-expected.txt:
+        * web-platform-tests/css/css-text/parsing/tab-size-valid-expected.txt:
+        * web-platform-tests/css/css-values/calc-numbers-expected.txt: Added.
+        * web-platform-tests/css/css-values/calc-numbers.html: Added.
+
 2019-06-05  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] Fire pointerout and pointerleave events after firing pointercancel

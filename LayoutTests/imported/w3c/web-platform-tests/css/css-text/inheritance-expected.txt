@@ -10,7 +10,7 @@ PASS Property line-break inherits
 PASS Property overflow-wrap has initial value normal 
 FAIL Property overflow-wrap inherits assert_equals: expected "break-word" but got "normal"
 PASS Property tab-size has initial value 8 
-FAIL Property tab-size inherits assert_equals: expected "10px" but got "8"
+PASS Property tab-size inherits 
 PASS Property text-align-all has initial value start 
 PASS Property text-align-all inherits 
 PASS Property text-align-last has initial value auto 

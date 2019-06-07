@@ -1,0 +1,27 @@
+Test tab-size measurements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pxTabLength is pxExpected
+PASS emTabLength is emExpected
+PASS intTabLength is intExpected
+PASS fractionTabLength is fractionExpected
+PASS pxTabLength is pxExpected
+PASS emTabLength is emExpected
+PASS intTabLength is intExpected
+PASS fractionTabLength is fractionExpected
+PASS successfullyParsed is true
+
+TEST COMPLETE
+	leading text, tab-size in px.
+	leading text, tab-size in em.
+	leading text, tab-size in spaces.
+	leading text, tab-size in fraction.
+leading text	trailing text, tab-size in px.
+leading text	trailing text, tab-size in em.
+leading text	trailing text, tab-size in spaces.
+leading text	trailing text, tab-size in fraction.
+Some spaces... '         ' ... for size reference.
+A space... ' ' ... for size reference.
+'leading text', for size reference.

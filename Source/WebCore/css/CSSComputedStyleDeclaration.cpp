@@ -3026,7 +3026,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
             return zoomAdjustedPixelValue(style.columnWidth(), style);
         case CSSPropertyTabSize:
-            return cssValuePool.createValue(style.tabSize(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool.createValue(style.tabSize().widthInPixels(1.0), style.tabSize().isSpaces() ? CSSPrimitiveValue::CSS_NUMBER : CSSPrimitiveValue::CSS_PX);
         case CSSPropertyCursor: {
             RefPtr<CSSValueList> list;
             auto* cursors = style.cursors();

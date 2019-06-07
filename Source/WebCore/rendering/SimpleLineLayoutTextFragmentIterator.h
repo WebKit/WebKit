@@ -118,7 +118,7 @@ public:
         bool breakNBSP;
         bool keepAllWordsForCJK;
         float wordSpacing;
-        unsigned tabWidth;
+        TabSize tabWidth;
         bool shouldHyphenate;
         float hyphenStringWidth;
         unsigned hyphenLimitBefore;

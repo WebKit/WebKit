@@ -661,7 +661,7 @@ public:
     TextCombine textCombine() const { return static_cast<TextCombine>(m_rareNonInheritedData->textCombine); }
     bool hasTextCombine() const { return textCombine() != TextCombine::None; }
 
-    unsigned tabSize() const { return m_rareInheritedData->tabSize; }
+    const TabSize& tabSize() const { return m_rareInheritedData->tabSize; }
 
     // End CSS3 Getters
 
@@ -1190,7 +1190,7 @@ public:
     void setBackdropFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, backdropFilter, operations, ops); }
 #endif
 
-    void setTabSize(unsigned size) { SET_VAR(m_rareInheritedData, tabSize, size); }
+    void setTabSize(TabSize size) { SET_VAR(m_rareInheritedData, tabSize, size); }
 
     void setBreakBefore(BreakBetween breakBehavior) { SET_VAR(m_rareNonInheritedData, breakBefore, static_cast<unsigned>(breakBehavior)); }
     void setBreakAfter(BreakBetween breakBehavior) { SET_VAR(m_rareNonInheritedData, breakAfter, static_cast<unsigned>(breakBehavior)); }
@@ -1672,7 +1672,7 @@ public:
     static GridPosition initialGridItemRowStart() { return GridPosition(); }
     static GridPosition initialGridItemRowEnd() { return GridPosition(); }
 
-    static unsigned initialTabSize() { return 8; }
+    static TabSize initialTabSize() { return 8; }
 
     static const AtomicString& initialLineGrid() { return nullAtom(); }
     static LineSnap initialLineSnap() { return LineSnap::None; }

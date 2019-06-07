@@ -1121,9 +1121,12 @@ static RefPtr<CSSValue> consumeWordSpacing(CSSParserTokenRange& range, CSSParser
     return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
 }
     
-static RefPtr<CSSValue> consumeTabSize(CSSParserTokenRange& range, CSSParserMode)
+static RefPtr<CSSValue> consumeTabSize(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    return consumeInteger(range, 0);
+    auto tabSize = consumeNumber(range, ValueRangeNonNegative);
+    if (tabSize)
+        return tabSize;
+    return consumeLength(range, cssParserMode, ValueRangeNonNegative);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

@@ -30,7 +30,7 @@ namespace WebCore {
 
 struct ExpectedTextRunSize {
     String text;
-    unsigned integer1;
+    TabSize tabSize;
     float float1;
     float float2;
     float float3;

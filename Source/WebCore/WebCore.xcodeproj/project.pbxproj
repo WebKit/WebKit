@@ -1021,6 +1021,7 @@
 		38F23AB31E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F23AB01E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h */; };
 		38F23AB51E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F23AB21E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h */; };
 		3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC648B1129E146500C3EB25 /* EditingBoundary.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB6B80F22A7D311003A2A69 /* TabSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3F2B33EF165AF15600E3987C /* JSWebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */; };
 		3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7165,6 +7166,7 @@
 		38F23AB11E8E83D000CE46F5 /* JSWebGPUComputePipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUComputePipelineState.cpp; sourceTree = "<group>"; };
 		38F23AB21E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUComputePipelineState.h; sourceTree = "<group>"; };
 		3AC648B1129E146500C3EB25 /* EditingBoundary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBoundary.h; sourceTree = "<group>"; };
+		3BB6B80F22A7D311003A2A69 /* TabSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabSize.h; sourceTree = "<group>"; };
 		3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerModelObject.h; sourceTree = "<group>"; };
 		3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerModelObject.cpp; sourceTree = "<group>"; };
 		3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSViewportRule.idl; sourceTree = "<group>"; };
@@ -24549,6 +24551,7 @@
 				849F77750EFEC6200090849D /* StrokeStyleApplier.h */,
 				087558C313B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp */,
 				087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */,
+				3BB6B80F22A7D311003A2A69 /* TabSize.h */,
 				376DCCE013B4F966002EBEFC /* TextRun.cpp */,
 				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
 				CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */,
@@ -31799,6 +31802,7 @@
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
+				3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */,
 				463EB6231B8789E00096ED51 /* TagCollection.h in Headers */,
 				F55B3DD61251F12D003EF269 /* TelephoneInputType.h in Headers */,
 				7CC564B818BABEA6001B9652 /* TelephoneNumberDetector.h in Headers */,

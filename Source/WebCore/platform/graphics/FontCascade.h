@@ -149,8 +149,8 @@ public:
 
     const FontMetrics& fontMetrics() const { return primaryFont().fontMetrics(); }
     float spaceWidth() const { return primaryFont().spaceWidth() + m_letterSpacing; }
-    float tabWidth(const Font&, unsigned tabSize, float position) const;
-    float tabWidth(unsigned tabSize, float position) const { return tabWidth(primaryFont(), tabSize, position); }
+    float tabWidth(const Font&, const TabSize&, float) const;
+    float tabWidth(const TabSize& tabSize, float position) const { return tabWidth(primaryFont(), tabSize, position); }
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 
@@ -354,13 +354,13 @@ inline FontSelector* FontCascade::fontSelector() const
     return m_fonts ? m_fonts->fontSelector() : nullptr;
 }
 
-inline float FontCascade::tabWidth(const Font& font, unsigned tabSize, float position) const
+inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, float position) const
 {
-    if (!tabSize)
+    float baseTabWidth = tabSize.widthInPixels(font.spaceWidth());
+    if (!baseTabWidth)
         return letterSpacing();
-    float tabWidth = tabSize * font.spaceWidth() + letterSpacing();
-    float tabDeltaWidth = tabWidth - fmodf(position, tabWidth);
-    return (tabDeltaWidth < font.spaceWidth() / 2) ? tabWidth : tabDeltaWidth;
+    float tabDeltaWidth = baseTabWidth - fmodf(position, baseTabWidth);
+    return (tabDeltaWidth < font.spaceWidth() / 2) ? baseTabWidth : tabDeltaWidth;
 }
 
 }
