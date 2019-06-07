@@ -289,12 +289,16 @@
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
     (iokit-property "compatible-device-fallback") ;; <rdar://problem/49497720>
+    (iokit-property "device-colors") ;; <rdar://problem/51322072>
     (iokit-property "device-id")
     (iokit-property "device-perf-memory-class")
+    (iokit-property "display-corner-radius") ;; <rdar://problem/50602737>
     (iokit-property "emu")
     (iokit-property "graphics-featureset-class") ;; <rdar://problem/49497720>
+    (iokit-property "graphics-featureset-fallbacks") ;; <rdar://problem/51322072>
     (iokit-property "hdcp-hoover-protocol")
     (iokit-property "iommu-present")
+    (iokit-property "oled-display") ;; <rdar://problem/51322072>
     (iokit-property "product-description") ;; <rdar://problem/49497788>
     (iokit-property "product-id")
     (iokit-property "software-behavior")
