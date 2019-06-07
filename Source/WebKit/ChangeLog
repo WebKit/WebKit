@@ -1,3 +1,12 @@
+2019-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix api used to release wpe_fdo_egl_exported_image in GTK
+
+        We are using the old deprecated API in AcceleratedBackingStoreWayland::displayBuffer().
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::displayBuffer):
+
 2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r243094): [GTK][WPE] Stale content after restoring the web view session

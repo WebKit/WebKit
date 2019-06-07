@@ -222,7 +222,7 @@ void AcceleratedBackingStoreWayland::displayBuffer(struct wpe_fdo_egl_exported_i
     }
 
     if (m_pendingImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_image(m_exportable, m_pendingImage);
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_pendingImage);
     m_pendingImage = image;
 
     m_webPage.setViewNeedsDisplay(IntRect(IntPoint::zero(), m_webPage.viewSize()));
