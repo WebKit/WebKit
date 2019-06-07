@@ -121,11 +121,18 @@ void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
     if (!m_page.hasRunningProcess() || !m_page.mainFrame())
         return;
 
-    auto handler = [this](Optional<bool> originHasPersistentAccess) mutable {
-        if (!originHasPersistentAccess || !m_page.hasRunningProcess())
+    auto handler = [this](PermissionInfo permissionInfo) mutable {
+        switch (permissionInfo) {
+        case PermissionInfo::Error:
             return;
-
-        if (m_grantedRequests.isEmpty() && !*originHasPersistentAccess)
+        case PermissionInfo::Unknown:
+            if (m_grantedRequests.isEmpty())
+                return;
+            break;
+        case PermissionInfo::Granted:
+            break;
+        }
+        if (!m_page.hasRunningProcess())
             return;
 
         m_page.process().send(Messages::WebPage::CaptureDevicesChanged(), m_page.pageID());
@@ -379,26 +386,27 @@ void UserMediaPermissionRequestManagerProxy::startProcessingUserMediaPermissionR
 
     auto& userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
     auto& topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
-    getUserMediaPermissionInfo(m_currentUserMediaRequest->frameID(), userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, request = m_currentUserMediaRequest](Optional<bool> hasPersistentAccess) mutable {
+    getUserMediaPermissionInfo(m_currentUserMediaRequest->frameID(), userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, request = m_currentUserMediaRequest](auto permissionInfo) mutable {
         if (!request->isPending())
             return;
 
-        if (!hasPersistentAccess) {
-            denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure);
+        switch (permissionInfo) {
+        case PermissionInfo::Error:
+            this->denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure);
             return;
+        case PermissionInfo::Unknown:
+            break;
+        case PermissionInfo::Granted:
+            m_currentUserMediaRequest->setHasPersistentAccess();
+            break;
         }
-
-        ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", persistent access: ", *hasPersistentAccess);
-        processUserMediaPermissionRequest(*hasPersistentAccess);
+        this->processUserMediaPermissionRequest();
     });
 }
 
-void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest(bool hasPersistentAccess)
+void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID());
-
-    if (hasPersistentAccess)
-        m_currentUserMediaRequest->setHasPersistentAccess();
+    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", persistent access: ", m_currentUserMediaRequest->hasPersistentAccess());
 
     auto& userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
     auto& topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
@@ -504,7 +512,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), *m_currentUserMediaRequest);
 }
 
-void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(Optional<bool>)>&& handler)
+void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&& handler)
 {
     auto* webFrame = m_page.process().webFrame(frameID);
     if (!webFrame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topLevelDocumentOrigin.get())) {
@@ -518,12 +526,10 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
     auto requestID = generateRequestID();
     m_pendingDeviceRequests.add(requestID);
 
-    auto request = UserMediaPermissionCheckProxy::create(frameID, [this, weakThis = makeWeakPtr(*this), requestID, handler = WTFMove(handler)](Optional<bool> allowed) mutable {
-        if (!weakThis || !m_pendingDeviceRequests.remove(requestID) || !allowed) {
-            handler({ });
-            return;
-        }
-        handler(*allowed);
+    auto request = UserMediaPermissionCheckProxy::create(frameID, [this, weakThis = makeWeakPtr(*this), requestID, handler = WTFMove(handler)](auto permissionInfo) mutable {
+        if (!weakThis || !m_pendingDeviceRequests.remove(requestID))
+            permissionInfo = PermissionInfo::Error;
+        handler(permissionInfo);
     }, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));
 
     // FIXME: Remove webFrame, userMediaOrigin and topLevelOrigin from this uiClient API call.
@@ -594,9 +600,19 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
 #if ENABLE(MEDIA_STREAM)
     ALWAYS_LOG(LOGIDENTIFIER, userMediaID);
 
-    auto completionHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](Optional<bool> originHasPersistentAccess) mutable {
-        if (!originHasPersistentAccess)
+    auto completionHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](PermissionInfo permissionInfo) mutable {
+
+        bool originHasPersistentAccess;
+        switch (permissionInfo) {
+        case PermissionInfo::Error:
             return;
+        case PermissionInfo::Unknown:
+            originHasPersistentAccess = false;
+            break;
+        case PermissionInfo::Granted:
+            originHasPersistentAccess = true;
+            break;
+        }
 
         if (!m_page.hasRunningProcess())
             return;
@@ -606,7 +622,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
 
         auto& requestOrigin = userMediaDocumentOrigin.get();
         auto& topOrigin = topLevelDocumentOrigin.get();
-        m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(requestOrigin, topOrigin, [this, weakThis = makeWeakPtr(*this), requestID, frameID, userMediaID, userMediaDocumentOrigin = WTFMove(userMediaDocumentOrigin), topLevelDocumentOrigin = WTFMove(topLevelDocumentOrigin), originHasPersistentAccess = *originHasPersistentAccess] (String&& deviceIDHashSalt) {
+        m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(requestOrigin, topOrigin, [this, weakThis = makeWeakPtr(*this), requestID, frameID, userMediaID, userMediaDocumentOrigin = WTFMove(userMediaDocumentOrigin), topLevelDocumentOrigin = WTFMove(topLevelDocumentOrigin), originHasPersistentAccess] (String&& deviceIDHashSalt) {
             if (!weakThis || !m_pendingDeviceRequests.remove(requestID))
                 return;
 

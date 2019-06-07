@@ -100,7 +100,8 @@ private:
     const UserMediaPermissionRequestProxy* searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const;
     bool wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture);
 
-    void getUserMediaPermissionInfo(uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(Optional<bool>)>&&);
+    using PermissionInfo = UserMediaPermissionCheckProxy::PermissionInfo;
+    void getUserMediaPermissionInfo(uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&&);
 
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 
@@ -108,7 +109,7 @@ private:
 
     Vector<WebCore::CaptureDevice> computeFilteredDeviceList(bool revealIdsAndLabels, const String& deviceIDHashSalt);
 
-    void processUserMediaPermissionRequest(bool hasPersistentAccess);
+    void processUserMediaPermissionRequest();
     void processUserMediaPermissionInvalidRequest(const String& invalidConstraint);
     void processUserMediaPermissionValidRequest(Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, String&& deviceIdentifierHashSalt);
     void startProcessingUserMediaPermissionRequest(Ref<UserMediaPermissionRequestProxy>&&);

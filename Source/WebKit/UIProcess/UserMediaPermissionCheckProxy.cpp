@@ -49,16 +49,16 @@ UserMediaPermissionCheckProxy::~UserMediaPermissionCheckProxy()
 void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(bool allowed)
 {
     ASSERT(m_completionHandler);
-    complete(allowed);
+    complete(allowed ? PermissionInfo::Granted : PermissionInfo::Unknown);
 }
 
-void UserMediaPermissionCheckProxy::complete(Optional<bool> allowed)
+void UserMediaPermissionCheckProxy::complete(PermissionInfo info)
 {
     if (!m_completionHandler)
         return;
 
     auto completionHandler = WTFMove(m_completionHandler);
-    completionHandler(allowed);
+    completionHandler(info);
 }
 
 } // namespace WebKit

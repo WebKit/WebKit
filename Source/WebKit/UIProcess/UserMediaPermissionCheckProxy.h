@@ -38,8 +38,8 @@ namespace WebKit {
 
 class UserMediaPermissionCheckProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionCheck> {
 public:
-
-    using CompletionHandler = WTF::CompletionHandler<void(Optional<bool> allowed)>;
+    enum class PermissionInfo { Error, Unknown, Granted };
+    using CompletionHandler = WTF::CompletionHandler<void(PermissionInfo)>;
 
     static Ref<UserMediaPermissionCheckProxy> create(uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     {
@@ -48,7 +48,7 @@ public:
 
     void deny() { setUserMediaAccessInfo(false); }
     void setUserMediaAccessInfo(bool);
-    void invalidate() { complete({ }); }
+    void invalidate() { complete(PermissionInfo::Error); }
 
     uint64_t frameID() const { return m_frameID; }
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
@@ -58,7 +58,7 @@ private:
     UserMediaPermissionCheckProxy(uint64_t frameID, CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
     ~UserMediaPermissionCheckProxy();
 
-    void complete(Optional<bool> allowed);
+    void complete(PermissionInfo);
     
     uint64_t m_frameID;
     CompletionHandler m_completionHandler;
