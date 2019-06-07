@@ -1,3 +1,29 @@
+2019-06-07  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][GStreamer] Avoid QUOTA_EXCEEDED_ERR when seeking to a buffered range just before the buffered one
+        https://bugs.webkit.org/show_bug.cgi?id=166620
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch is fixing a seek to unbuffered range just before the buffered one.
+        For example, supposing a [120, 176) append has filled all the memory and then
+        a seek to 115.0 is done, a subsequent [115, 120) append would fail without
+        this fix. EvictCodedFrames() would return without actually evicting anything,
+        and appendBufferInternal will print "buffer full, failing with
+        QUOTA_EXCEEDED_ERR error" on GStreamer platforms instead of letting the new
+        [115, 120) append succeed.
+
+        This patch is based on an original patch by iivlev <iivlev@productengine.com>
+
+        Test: media/media-source/media-source-append-before-last-range-no-quota-exceeded.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::evictCodedFrames):
+        Removed the "only if there are buffered ranges *containing* the currentTime" condition
+        to enter into the second part of the eviction algorithm, which removes frames
+        starting from the duration of the media and going backwards down to currentPosition + 30.
+        The loop break condition has also been changed to deal with notFound currentTimeRange.
+
 2019-06-07  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] AVC1 decoding capabilities probing support

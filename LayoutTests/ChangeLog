@@ -1,3 +1,22 @@
+2019-06-07  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][GStreamer] Avoid QUOTA_EXCEEDED_ERR when seeking to a buffered range just before the buffered one
+        https://bugs.webkit.org/show_bug.cgi?id=166620
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added a test to check that, after the memory is filled by appending a continuous
+        range, a seek right before it and a new append can be done without getting a
+        QuotaExceededError on GStreamer ports. On the rest of the ports, QuotaExceededError
+        is never thrown and the expectations just check that the right buffered ranges
+        remain.
+
+        * media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt: Added.
+        * media/media-source/media-source-append-before-last-range-no-quota-exceeded.html: Added.
+        * platform/gtk/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt: Added.
+        * platform/wpe/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt: Added.
+
+
 2019-06-07  Joonghun Park  <jh718.park@samsung.com>
 
         Implement tab-size with units

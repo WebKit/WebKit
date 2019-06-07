@@ -991,7 +991,7 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     // currenTime whichever we hit first.
     auto buffered = m_buffered->ranges();
     size_t currentTimeRange = buffered.find(currentTime);
-    if (currentTimeRange == notFound || currentTimeRange == buffered.length() - 1) {
+    if (currentTimeRange == buffered.length() - 1) {
 #if !RELEASE_LOG_DISABLED
         ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - extraMemoryCost());
 #endif
@@ -1006,9 +1006,9 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
 
         // Do not evict data from the time range that contains currentTime.
         size_t startTimeRange = buffered.find(rangeStart);
-        if (startTimeRange == currentTimeRange) {
+        if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
             size_t endTimeRange = buffered.find(rangeEnd);
-            if (endTimeRange == currentTimeRange)
+            if (currentTimeRange != notFound && endTimeRange == currentTimeRange)
                 break;
 
             rangeEnd = buffered.start(endTimeRange);
