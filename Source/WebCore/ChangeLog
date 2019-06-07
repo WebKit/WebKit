@@ -37,10 +37,8 @@
 
 2019-06-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
-        Fix non-iOS build after r246205
+        Unreviewed, fix non-iOS build after r246205
         https://bugs.webkit.org/show_bug.cgi?id=198657
-
-        Reviewed by Brent Fulgham.
         <rdar://problem/51345064>
 
         * page/Quirks.cpp:
