@@ -1,3 +1,15 @@
+2019-06-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Use const TabSize& instead of TabSize to avoid unnecessary copy.
+
+        Using const reference is a c++ feature to extend the life time of
+        a temporary object to the life time of the const reference which refers to it.
+
+        No behavioral changes.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setTabSize):
+
 2019-06-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] GLContextEGL.h must be built with @no-unify

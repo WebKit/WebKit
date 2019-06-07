@@ -1190,7 +1190,7 @@ public:
     void setBackdropFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, backdropFilter, operations, ops); }
 #endif
 
-    void setTabSize(TabSize size) { SET_VAR(m_rareInheritedData, tabSize, size); }
+    void setTabSize(const TabSize& size) { SET_VAR(m_rareInheritedData, tabSize, size); }
 
     void setBreakBefore(BreakBetween breakBehavior) { SET_VAR(m_rareNonInheritedData, breakBefore, static_cast<unsigned>(breakBehavior)); }
     void setBreakAfter(BreakBetween breakBehavior) { SET_VAR(m_rareNonInheritedData, breakAfter, static_cast<unsigned>(breakBehavior)); }
