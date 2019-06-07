@@ -878,6 +878,15 @@ void SWServer::Connection::whenRegistrationReady(uint64_t registrationReadyReque
     m_registrationReadyRequests.append({ topOrigin, clientURL, registrationReadyRequestIdentifier });
 }
 
+void SWServer::Connection::storeRegistrationsOnDisk(CompletionHandler<void()>&& callback)
+{
+    if (!m_server.m_registrationStore) {
+        callback();
+        return;
+    }
+    m_server.m_registrationStore->closeDatabase(WTFMove(callback));
+}
+
 void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration& registration)
 {
     m_registrationReadyRequests.removeAllMatching([&](auto& request) {

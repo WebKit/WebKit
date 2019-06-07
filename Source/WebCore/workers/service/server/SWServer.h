@@ -101,6 +101,8 @@ public:
         WEBCORE_EXPORT void syncTerminateWorker(ServiceWorkerIdentifier);
         WEBCORE_EXPORT void whenRegistrationReady(uint64_t registrationReadyRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL);
 
+        WEBCORE_EXPORT void storeRegistrationsOnDisk(CompletionHandler<void()>&&);
+
     private:
         // Messages to the client WebProcess
         virtual void rejectJobInClient(ServiceWorkerJobIdentifier, const ExceptionData&) = 0;

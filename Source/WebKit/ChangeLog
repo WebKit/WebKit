@@ -1,3 +1,17 @@
+2019-06-06  Youenn Fablet  <youenn@apple.com>
+
+        Allow WebKitTestRunner to terminate network process after it finishes service worker file operations
+        https://bugs.webkit.org/show_bug.cgi?id=198584
+
+        Reviewed by Geoffrey Garen.
+
+        Add IPC binding to new internal API.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::storeRegistrationsOnDiskForTesting):
+        * WebProcess/Storage/WebSWClientConnection.h:
+
 2019-06-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246165.

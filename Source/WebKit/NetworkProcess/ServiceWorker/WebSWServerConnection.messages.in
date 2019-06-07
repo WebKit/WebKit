@@ -46,6 +46,7 @@ messages -> WebSWServerConnection {
     SyncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Synchronous
 
     SetThrottleState(bool isThrottleable)
+    StoreRegistrationsOnDisk() -> () Async
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -718,6 +718,8 @@ public:
     double preferredAudioBufferSize() const;
     bool audioSessionActive() const;
 
+    void storeRegistrationsOnDisk(DOMPromiseDeferred<void>&&);
+
     void clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&);
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);
     void setResponseSizeWithPadding(FetchResponse&, uint64_t size);

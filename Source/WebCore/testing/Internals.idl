@@ -692,6 +692,7 @@ enum CompositingPolicy {
     boolean isAnyWorkletGlobalScopeAlive();
 
     DOMString serviceWorkerClientIdentifier(Document document);
+    Promise<void> storeRegistrationsOnDisk();
 
     Promise<void> clearCacheStorageMemoryRepresentation();
     Promise<DOMString> cacheStorageEngineRepresentation();

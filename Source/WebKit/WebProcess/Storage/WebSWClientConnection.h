@@ -93,6 +93,7 @@ private:
     void didResolveRegistrationPromise(const WebCore::ServiceWorkerRegistrationKey&) final;
     void updateThrottleState() final;
     bool isThrottleable() const final { return m_isThrottleable; }
+    void storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&&) final;
 
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 

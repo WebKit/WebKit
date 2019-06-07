@@ -45,6 +45,9 @@ promise_test(async (test) => {
 }, "Frame being controlled");
 
 promise_test(async (test) => {
+    if (window.internals)
+        await internals.storeRegistrationsOnDisk();
+
     if (window.testRunner && window.testRunner.terminateNetworkProcess)
         testRunner.terminateNetworkProcess();
 

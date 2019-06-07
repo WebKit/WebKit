@@ -48,10 +48,11 @@ public:
     explicit RegistrationStore(SWServer&, String&& databaseDirectory);
     ~RegistrationStore();
 
-    void clearAll(WTF::CompletionHandler<void()>&&);
-    void flushChanges(WTF::CompletionHandler<void()>&&);
+    void clearAll(CompletionHandler<void()>&&);
+    void flushChanges(CompletionHandler<void()>&&);
 
-    void startSuspension(WTF::CompletionHandler<void()>&&);
+    void closeDatabase(CompletionHandler<void()>&&);
+    void startSuspension(CompletionHandler<void()>&&);
     void endSuspension();
 
     // Callbacks from the SWServer

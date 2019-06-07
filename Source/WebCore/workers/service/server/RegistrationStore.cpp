@@ -87,6 +87,11 @@ void RegistrationStore::flushChanges(WTF::CompletionHandler<void()>&& completion
 void RegistrationStore::startSuspension(WTF::CompletionHandler<void()>&& completionHandler)
 {
     m_isSuspended = true;
+    closeDatabase(WTFMove(completionHandler));
+}
+
+void RegistrationStore::closeDatabase(CompletionHandler<void()>&& completionHandler)
+{
     m_database->close(WTFMove(completionHandler));
 }
 

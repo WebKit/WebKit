@@ -269,6 +269,12 @@ void WebSWClientConnection::updateThrottleState()
     ensureConnectionAndSend(Messages::WebSWServerConnection::SetThrottleState { m_isThrottleable });
 }
 
+void WebSWClientConnection::storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback)
+{
+    initializeConnectionIfNeeded();
+    sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)
