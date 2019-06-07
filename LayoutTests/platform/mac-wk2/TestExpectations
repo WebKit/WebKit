@@ -959,3 +959,5 @@ webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-
 webkit.org/b/196240 [ Mojave ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 
 webkit.org/b/198661 scrollingcoordinator/mac/nested-sticky.html [ Pass ImageOnlyFailure Timeout ]
+
+webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass  Timeout ]

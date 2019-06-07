@@ -1,5 +1,14 @@
 2019-06-07  Shawn Roberts  <sroberts@apple.com>
 
+        http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=198663
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating expectations for flaky test
+
+2019-06-07  Shawn Roberts  <sroberts@apple.com>
+
         scrollingcoordinator/mac/nested-sticky.html is a flaky Timeout and ImageOnlyFailure
         https://bugs.webkit.org/show_bug.cgi?id=198661
 
