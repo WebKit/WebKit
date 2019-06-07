@@ -268,74 +268,39 @@
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
     (iokit-property "APTDevice")
     (iokit-property "AVCSupported")
+    (iokit-property-regex #"^AppleJPEG(NumCores|Supports(AppleInterchangeFormats|MissingEOI|RSTLogging))")
+    (iokit-property "BaseAddressAlignmentRequirement")
+    (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
     (iokit-property "HEVCSupported")
+    (iokit-property-regex #"^IOGL(|ES(|Metal))BundleName")
+    (iokit-property "IOGLESDefaultUseMetal")
     (iokit-property-regex #"IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler)")
     (iokit-property "IOClassNameOverride")
     (iokit-property "IOPlatformUUID")
+    (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
+    (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
+    (iokit-property "Protocol Characteristics")
+    (iokit-property "artwork-device-idiom") ;; <rdar://problem/49497720>
+    (iokit-property "artwork-device-subtype")
+    (iokit-property "artwork-display-gamut") ;; <rdar://problem/49497788>
+    (iokit-property "artwork-dynamic-displaymode") ;; <rdar://problem/49497720>
+    (iokit-property "artwork-scale-factor") ;; <rdar://problem/49497788>
+    (iokit-property-regex #"(canvas-height|canvas-width)")
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
+    (iokit-property "compatible-device-fallback") ;; <rdar://problem/49497720>
     (iokit-property "device-id")
     (iokit-property "device-perf-memory-class")
     (iokit-property "emu")
+    (iokit-property "graphics-featureset-class") ;; <rdar://problem/49497720>
+    (iokit-property "hdcp-hoover-protocol")
+    (iokit-property "iommu-present")
+    (iokit-property "product-description") ;; <rdar://problem/49497788>
+    (iokit-property "product-id")
+    (iokit-property "software-behavior")
     (iokit-property "vendor-id")
+    (iokit-property "ui-pip") ;; <rdar://problem/48867037>
 )
-
-(with-filter (iokit-registry-entry-class "AppleARMIODevice")
-    (allow iokit-get-properties
-        (iokit-property
-            "canvas-height"
-            "canvas-width"
-)))
-
-(with-filter (iokit-registry-entry-class "AppleJPEGDriver")
-    (allow iokit-get-properties
-        (iokit-property-prefix "AppleJPEG")
-))
-
-(with-filter (iokit-registry-entry-class "IOAcceleratorES")
-    (allow iokit-get-properties
-        (iokit-property "BaseAddressAlignmentRequirement")
-        (iokit-property-prefix "IOGLES")
-        (iokit-property "MetalPluginName")
-        (iokit-property "MetalPluginClassName")
-))
-
-(with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
-    (allow iokit-get-properties
-        (iokit-property
-            "DisplayPipePlaneBaseAlignment"
-            "DisplayPipeStrideRequirements"
-            "hdcp-hoover-protocol"
-)))
-
-(with-filter (iokit-registry-entry-class "IOPlatformDevice")
-    (allow iokit-get-properties
-        (iokit-property
-            "artwork-device-idiom"          ;; <rdar://problem/49497720>
-            "artwork-device-subtype"        ;; <rdar://problem/49497720>
-            "artwork-display-gamut"         ;; <rdar://problem/49497788>
-            "artwork-dynamic-displaymode"   ;; <rdar://problem/49497720>
-            "artwork-scale-factor"          ;; <rdar://problem/49497788>
-            "compatible-device-fallback"    ;; <rdar://problem/49497720>
-            "device-colors"                 ;; <rdar://problem/51322072>
-            "device-perf-memory-class"      ;; <rdar://problem/51322072>
-            "display-corner-radius"         ;; <rdar://problem/50602737>
-            "graphics-featureset-class"     ;; <rdar://problem/49497720>
-            "graphics-featureset-fallbacks" ;; <rdar://problem/51322072>
-            "iommu-present"
-            "oled-display"                  ;; <rdar://problem/51322072>
-            "product-description"           ;; <rdar://problem/49497788>
-            "product-id"                    ;; <rdar://problem/49497788>
-            "ui-pip"                        ;; <rdar://problem/48867037>
-)))
-
-(with-filter (iokit-registry-entry-class "IOService")
-    (allow iokit-get-properties
-        (iokit-property
-            "IOSurfaceAcceleratorCapabilitiesDict"
-            "Protocol Characteristics"
-            "software-behavior"
-)))
 
 ;; Read-only preferences and data
 (mobile-preferences-read
