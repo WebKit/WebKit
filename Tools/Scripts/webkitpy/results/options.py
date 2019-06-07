@@ -30,4 +30,5 @@ def upload_options():
         optparse.make_option('--builder-name', help='The name of the buildbot builder tests were run on.'),
         optparse.make_option('--build-number', help='The buildbot build number tests are associated with.'),
         optparse.make_option('--buildbot-worker', help='The buildbot worker tests were run on.'),
+        optparse.make_option('--result-report-flavor', help='Optional flag for categorizing test runs which do not fit into other configuration options.'),
     ]

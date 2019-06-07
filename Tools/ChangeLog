@@ -1,3 +1,20 @@
+2019-06-07  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Support reporting results for uncommon test configurations
+        https://bugs.webkit.org/show_bug.cgi?id=198662
+        <rdar://problem/51524128>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Override wk1 and wk2 flavors with specified flavor.
+        * Scripts/webkitpy/port/base.py:
+        (Port.configuration_for_upload): Set flavor based on options.
+        * Scripts/webkitpy/results/options.py:
+        (upload_options): Add result-report-flavor option.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Set flavor based on options.
+
 2019-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] At least 6 API tests are failing due to an exception when writing NSAttributedString to the pasteboard

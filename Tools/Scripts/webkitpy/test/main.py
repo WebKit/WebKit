@@ -263,6 +263,7 @@ class Tester(object):
                     version_name=_host.platform.os_version_name(),
                     style='asan' if config.asan else configuration_to_use,
                     sdk=_host.platform.build_version(),
+                    flavor=self._options.result_report_flavor,
                 ),
                 details=Upload.create_details(options=self._options),
                 commits=[Upload.create_commit(
