@@ -1,3 +1,28 @@
+2019-06-06  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT hit in CachedFrame constructor
+        https://bugs.webkit.org/show_bug.cgi?id=198625
+        <rdar://problem/49877867>
+
+        Reviewed by Geoffrey Garen.
+
+        This is a speculative fix, it appears the document is already detached from its
+        frame by the time we construct a CachedFrame for it when entering PageCache.
+
+        No new tests, because we do not know yet how this can be reproduced.
+
+        * history/PageCache.cpp:
+        (WebCore::canCacheFrame):
+        Make a frame as ineligible for PageCache if:
+        1. It does not have a document
+        or
+        2. Its document is already detached from the frame
+
+        (WebCore::PageCache::addIfCacheable):
+        Destroy the render tree *before* we check if the page can enter page cache, in case
+        destroying the render tree has any side effects that could make the page ineligible
+        for Page Cache.
+
 2019-06-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: only complete Composite records if the m_startedComposite (followup to r246142)

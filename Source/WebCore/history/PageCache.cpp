@@ -90,6 +90,17 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         return false;
     }
 
+    if (!frame.document()) {
+        PCLOG("   -Frame has no document");
+        return false;
+    }
+
+    if (!frame.document()->frame()) {
+        PCLOG("   -Document is detached from frame");
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
     DocumentLoader* documentLoader = frameLoader.documentLoader();
     if (!documentLoader) {
         PCLOG("   -There is no DocumentLoader object");
@@ -445,14 +456,14 @@ bool PageCache::addIfCacheable(HistoryItem& item, Page* page)
     // Fire the pagehide event in all frames.
     firePageHideEventRecursively(page->mainFrame());
 
+    destroyRenderTree(page->mainFrame());
+
     // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
     // could have altered the page in a way that could prevent caching.
     if (!canCache(*page)) {
         setPageCacheState(*page, Document::NotInPageCache);
         return false;
     }
-
-    destroyRenderTree(page->mainFrame());
 
     setPageCacheState(*page, Document::InPageCache);
 
