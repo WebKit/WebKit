@@ -40,7 +40,7 @@ else:
     import subprocess
 
 class TestRunner(object):
-    TEST_DIRS = []
+    TEST_TARGETS = []
 
     def __init__(self, port, options, tests=[]):
         self._options = options
@@ -89,9 +89,12 @@ class TestRunner(object):
             return tests
 
         tests = []
-        for test_dir in self.TEST_DIRS:
-            absolute_test_dir = os.path.join(self._test_programs_base_dir(), test_dir)
-            tests.extend(self._get_tests_from_dir(absolute_test_dir))
+        for test_target in self.TEST_TARGETS:
+            absolute_test_target = os.path.join(self._test_programs_base_dir(), test_target)
+            if test_target.lower().startswith("test") and os.path.isfile(absolute_test_target) and os.access(absolute_test_target, os.X_OK):
+                tests.append(absolute_test_target)
+            else:
+                tests.extend(self._get_tests_from_dir(absolute_test_target))
         return tests
 
     def _create_driver(self, port_options=[]):

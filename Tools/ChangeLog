@@ -1,3 +1,27 @@
+2019-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r244857): [GTK][WPE] Many tests are no longer run in the bots after r244857
+        https://bugs.webkit.org/show_bug.cgi?id=198607
+
+        Reviewed by Michael Catanzaro.
+
+        Since r244857 several test executables are compiled in the base tests directory instead of using their own sub
+        directory. Our scripts to run the tests rely on the tests location to decide whether to run them or not, or
+        determine the type of the tests.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner): Rename TEST_DIRS as TEST_TARGETS and use the executable names for tests not in a subdirectory.
+        (GtkTestRunner._setup_testing_environment): Fix TestWebKitAccessibility directory name.
+        (GtkTestRunner.is_glib_test): Use the test name for the ones not using a subdirectory.
+        (GtkTestRunner.is_google_test): Ditto.
+        * Scripts/run-wpe-tests:
+        (WPETestRunner): Rename TEST_DIRS as TEST_TARGETS and use the executable names for tests not in a subdirectory.
+        (WPETestRunner.is_glib_test): Use the test name for the ones not using a subdirectory.
+        (WPETestRunner.is_google_test): Ditto.
+        * glib/api_test_runner.py:
+        (TestRunner): Rename TEST_DIRS as TEST_TARGETS.
+        (TestRunner._get_tests): Handle test targets which can now contain directories and executables.
+
 2019-06-06  Keith Rollin  <krollin@apple.com>
 
         Remove SSL-based tests from TestWebKitAPI on some configurations
