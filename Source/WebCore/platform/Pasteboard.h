@@ -136,14 +136,14 @@ public:
 
 #if PLATFORM(COCOA)
     virtual bool readWebArchive(SharedBuffer&) = 0;
-    virtual bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }, const String& contentType = { }) = 0;
+    virtual bool readFilePath(const String&, PresentationSize preferredPresentationSize = { }, const String& contentType = { }) = 0;
     virtual bool readFilePaths(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
     virtual bool readRTFD(SharedBuffer&) = 0;
     virtual bool readRTF(SharedBuffer&) = 0;
-    virtual bool readImage(Ref<SharedBuffer>&&, const String& type, Optional<FloatSize> preferredPresentationSize = { }) = 0;
+    virtual bool readImage(Ref<SharedBuffer>&&, const String& type, PresentationSize preferredPresentationSize = { }) = 0;
     virtual bool readURL(const URL&, const String& title) = 0;
-    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize = { }) = 0;
+    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) = 0;
 #endif
     virtual bool readPlainText(const String&) = 0;
 };

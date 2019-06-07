@@ -71,14 +71,14 @@ public:
 private:
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
-    bool readFilePath(const String&, Optional<FloatSize> preferredPresentationSize = { }, const String& contentType = { }) override;
+    bool readFilePath(const String&, PresentationSize preferredPresentationSize = { }, const String& contentType = { }) override;
     bool readFilePaths(const Vector<String>&) override;
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readImage(Ref<SharedBuffer>&&, const String& type, Optional<FloatSize> preferredPresentationSize = { }) override;
+    bool readImage(Ref<SharedBuffer>&&, const String& type, PresentationSize preferredPresentationSize = { }) override;
     bool readURL(const URL&, const String& title) override;
-    bool readDataBuffer(SharedBuffer&, const String& type, const String& name, Optional<FloatSize> preferredPresentationSize = { }) override;
+    bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) override;
 #endif
     bool readPlainText(const String&) override;
 };
@@ -95,14 +95,14 @@ public:
 private:
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
-    bool readFilePath(const String&, Optional<FloatSize> = { }, const String& = { }) override { return false; }
+    bool readFilePath(const String&, PresentationSize = { }, const String& = { }) override { return false; }
     bool readFilePaths(const Vector<String>&) override { return false; }
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readImage(Ref<SharedBuffer>&&, const String&, Optional<FloatSize> = { }) override { return false; }
+    bool readImage(Ref<SharedBuffer>&&, const String&, PresentationSize = { }) override { return false; }
     bool readURL(const URL&, const String&) override { return false; }
-    bool readDataBuffer(SharedBuffer&, const String&, const String&, Optional<FloatSize> = { }) override { return false; }
+    bool readDataBuffer(SharedBuffer&, const String&, const String&, PresentationSize = { }) override { return false; }
 #endif
     bool readPlainText(const String&) override { return false; }
 };

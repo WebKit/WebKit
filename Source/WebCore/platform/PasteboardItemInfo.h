@@ -37,12 +37,39 @@ enum class PasteboardItemPresentationStyle {
     Attachment
 };
 
+struct PresentationSize {
+    Optional<double> width;
+    Optional<double> height;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<PresentationSize> decode(Decoder&);
+};
+
+template<class Encoder>
+void PresentationSize::encode(Encoder& encoder) const
+{
+    encoder << width << height;
+}
+
+template<class Decoder>
+Optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
+{
+    PresentationSize result;
+    if (!decoder.decode(result.width))
+        return WTF::nullopt;
+
+    if (!decoder.decode(result.height))
+        return WTF::nullopt;
+
+    return WTFMove(result);
+}
+
 struct PasteboardItemInfo {
     Vector<String> pathsForFileUpload;
     Vector<String> contentTypesForFileUpload;
     Vector<String> contentTypesByFidelity;
     String suggestedFileName;
-    Optional<FloatSize> preferredPresentationSize;
+    PresentationSize preferredPresentationSize;
     bool isNonTextType { false };
     bool containsFileURLAndFileUploadContent { false };
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };

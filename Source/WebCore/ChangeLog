@@ -1,5 +1,43 @@
 2019-06-07  Zalan Bujtas  <zalan@apple.com>
 
+        Images are not resizing correctly when dragged to a message in 1/3 view
+        https://bugs.webkit.org/show_bug.cgi?id=198623
+        <rdar://problem/51185518>
+
+        Reviewed by Wenson Hsieh.
+
+        Mail's max-width: 100%; default style is in conflict with the preferred presentation size. This patch preserves the existing behaviour for Mail by
+        not setting the height (and rely on the width + aspect ratio). 
+
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::WebContentReader::readImage):
+        (WebCore::attachmentForFilePath):
+        (WebCore::attachmentForData):
+        (WebCore::WebContentReader::readFilePath):
+        (WebCore::WebContentReader::readDataBuffer):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::createFragmentFromPasteboardData):
+        * editing/markup.cpp:
+        (WebCore::createFragmentForImageAndURL):
+        * editing/markup.h:
+        * platform/Pasteboard.h:
+        (WebCore::PasteboardWebContentReader::readFilePath):
+        (WebCore::PasteboardWebContentReader::readImage):
+        (WebCore::PasteboardWebContentReader::readDataBuffer):
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readPasteboardWebContentDataForType):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
+2019-06-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Line should skip all vertical adjustment when running preferred width computation
         https://bugs.webkit.org/show_bug.cgi?id=198642
         <rdar://problem/51511043>
