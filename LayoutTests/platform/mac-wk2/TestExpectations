@@ -957,3 +957,5 @@ webkit.org/b/198195 [ Release ] fast/css/sticky/sticky-left-percentage.html [ Pa
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/196240 [ Mojave ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
+
+webkit.org/b/198661 scrollingcoordinator/mac/nested-sticky.html [ Pass ImageOnlyFailure Timeout ]
