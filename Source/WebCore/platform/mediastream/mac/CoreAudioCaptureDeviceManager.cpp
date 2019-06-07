@@ -102,6 +102,18 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
     return !device.label().isEmpty() && !device.label().startsWith("VPAUAggregateAudioDevice");
 }
 
+static inline Optional<CoreAudioCaptureDevice> getDefaultCaptureInputDevice()
+{
+    AudioObjectPropertyAddress address { kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    UInt32 propertySize = sizeof(AudioDeviceID);
+    AudioDeviceID deviceID = kAudioDeviceUnknown;
+    auto err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, nullptr, &propertySize, &deviceID);
+
+    if (err != noErr || deviceID == kAudioDeviceUnknown)
+        return { };
+    return CoreAudioCaptureDevice::create(deviceID);
+}
+
 Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureDevices()
 {
     static bool initialized;
@@ -128,7 +140,12 @@ Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureD
         AudioObjectPropertyAddress address = { kAudioHardwarePropertyDevices, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
         auto err = AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &address, dispatch_get_main_queue(), m_listenerBlock);
         if (err)
-            LOG_ERROR("CoreAudioCaptureDeviceManager::devices(%p) AudioObjectAddPropertyListener returned error %d (%.4s)", this, (int)err, (char*)&err);
+            LOG_ERROR("CoreAudioCaptureDeviceManager::devices(%p) AudioObjectAddPropertyListener for kAudioHardwarePropertyDevices returned error %d (%.4s)", this, (int)err, (char*)&err);
+
+        address = { kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+        err = AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &address, dispatch_get_main_queue(), m_listenerBlock);
+        if (err)
+            LOG_ERROR("CoreAudioCaptureDeviceManager::devices(%p) AudioObjectAddPropertyListener for kAudioHardwarePropertyDefaultInputDevice returned error %d (%.4s)", this, (int)err, (char*)&err);
     }
 
     return m_coreAudioCaptureDevices;
@@ -142,7 +159,6 @@ Optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceW
     }
     return WTF::nullopt;
 }
-
 
 void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged notify)
 {
@@ -162,7 +178,13 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
         return;
     }
 
+    auto defaultInputDevice = getDefaultCaptureInputDevice();
     bool haveDeviceChanges = false;
+    if (defaultInputDevice && !m_coreAudioCaptureDevices.isEmpty() && m_coreAudioCaptureDevices.first().deviceID() != defaultInputDevice->deviceID()) {
+        m_coreAudioCaptureDevices = Vector<CoreAudioCaptureDevice>::from(WTFMove(*defaultInputDevice));
+        haveDeviceChanges = true;
+    }
+
     for (size_t i = 0; i < deviceCount; i++) {
         AudioObjectID deviceID = deviceIDs[i];
         if (!deviceHasInputStreams(deviceID))

@@ -122,6 +122,29 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 
 }
 
+static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device)
+{
+    CaptureDevice captureDevice { device.uniqueID, CaptureDevice::DeviceType::Camera, device.localizedName };
+    captureDevice.setEnabled(deviceIsAvailable(device));
+    return captureDevice;
+}
+
+bool AVCaptureDeviceManager::isMatchingExistingCaptureDevice(AVCaptureDevice *device)
+{
+    auto existingCaptureDevice = captureDeviceFromPersistentID(device.uniqueID);
+    if (!existingCaptureDevice)
+        return false;
+
+    return deviceIsAvailable(device) == existingCaptureDevice.enabled();
+}
+
+static inline bool isDefaultVideoCaptureDeviceFirst(const Vector<CaptureDevice>& devices, const String& defaultDeviceID)
+{
+    if (devices.isEmpty())
+        return false;
+    return devices[0].persistentId() == defaultDeviceID;
+}
+
 void AVCaptureDeviceManager::refreshCaptureDevices()
 {
     if (!m_avCaptureDevices) {
@@ -131,22 +154,27 @@ void AVCaptureDeviceManager::refreshCaptureDevices()
 
     updateCachedAVCaptureDevices();
 
-    bool deviceHasChanged = false;
     auto* currentDevices = [PAL::getAVCaptureDeviceClass() devices];
     Vector<CaptureDevice> deviceList;
-    for (AVCaptureDevice *platformDevice in currentDevices) {
 
+    auto* defaultVideoDevice = [PAL::getAVCaptureDeviceClass() defaultDeviceWithMediaType: AVMediaTypeVideo];
+
+    bool deviceHasChanged = false;
+    if (defaultVideoDevice) {
+        deviceList.append(toCaptureDevice(defaultVideoDevice));
+        deviceHasChanged = !isDefaultVideoCaptureDeviceFirst(captureDevices(), defaultVideoDevice.uniqueID);
+    }
+    for (AVCaptureDevice *platformDevice in currentDevices) {
         if (![platformDevice hasMediaType:AVMediaTypeVideo] && ![platformDevice hasMediaType:AVMediaTypeMuxed])
             continue;
 
-        CaptureDevice captureDevice(platformDevice.uniqueID, CaptureDevice::DeviceType::Camera, platformDevice.localizedName);
-        captureDevice.setEnabled(deviceIsAvailable(platformDevice));
-
-        CaptureDevice existingCaptureDevice = captureDeviceFromPersistentID(platformDevice.uniqueID);
-        if (!existingCaptureDevice || (existingCaptureDevice && existingCaptureDevice.type() == CaptureDevice::DeviceType::Camera && captureDevice.enabled() != existingCaptureDevice.enabled()))
+        if (!deviceHasChanged && !isMatchingExistingCaptureDevice(platformDevice))
             deviceHasChanged = true;
 
-        deviceList.append(WTFMove(captureDevice));
+        if (platformDevice.uniqueID == defaultVideoDevice.uniqueID)
+            continue;
+
+        deviceList.append(toCaptureDevice(platformDevice));
     }
 
     if (deviceHasChanged || m_devices.size() != deviceList.size()) {

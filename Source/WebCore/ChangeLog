@@ -1,5 +1,31 @@
 2019-06-07  Youenn Fablet  <youenn@apple.com>
 
+        mediaDevices.enumerateDevices() doesn't list the system default audio devices with deviceId as "default"
+        https://bugs.webkit.org/show_bug.cgi?id=198577
+        <rdar://problem/51454067>
+
+        Reviewed by Eric Carlson.
+
+        Make the system default microphone/camera be the first in the list.
+        This ensures that getUserMedia without constraints will pick these devices.
+        This also ensures enumerateDevices will show these default devices as first in the list.
+        Make sure that a default device change will refresh the list.
+
+        For CoreAudioCaptureSource, we always add the default system input device in the list of capture devices.
+
+        Covered by manual testing.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::toCaptureDevice):
+        (WebCore::AVCaptureDeviceManager::isMatchingExistingCaptureDevice):
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDevices):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::getDefaultDeviceID):
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+
+2019-06-07  Youenn Fablet  <youenn@apple.com>
+
         A MediaStreamTrack cannot modify whether being a capture track or not
         https://bugs.webkit.org/show_bug.cgi?id=198669
 
