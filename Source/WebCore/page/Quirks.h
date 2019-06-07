@@ -49,7 +49,7 @@ public:
     bool shouldAutoplayForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
     bool hasWebSQLSupportQuirk() const;
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents() const;
     bool shouldDispatchSimulatedMouseEventsOnTarget(EventTarget*) const;
 #endif

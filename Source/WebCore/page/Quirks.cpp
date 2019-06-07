@@ -282,7 +282,7 @@ bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAr
     return shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS)
 bool Quirks::shouldDispatchSimulatedMouseEvents() const
 {
     if (!needsQuirks())
