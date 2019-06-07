@@ -2427,6 +2427,35 @@ CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
     return CachePolicyVerify;
 }
 
+void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError& error)
+{
+    m_provisionalLoadErrorBeingHandledURL = provisionalDocumentLoader.url();
+
+#if ENABLE(CONTENT_FILTERING)
+    auto contentFilter = provisionalDocumentLoader.contentFilter();
+    auto contentFilterWillContinueLoading = false;
+#endif
+
+    auto willContinueLoading = WillContinueLoading::No;
+    if (history().provisionalItem())
+        willContinueLoading = WillContinueLoading::Yes;
+#if ENABLE(CONTENT_FILTERING)
+    if (contentFilter && contentFilter->willHandleProvisionalLoadFailure(error)) {
+        willContinueLoading = WillContinueLoading::Yes;
+        contentFilterWillContinueLoading = true;
+    }
+#endif
+
+    m_client.dispatchDidFailProvisionalLoad(error, willContinueLoading);
+
+#if ENABLE(CONTENT_FILTERING)
+    if (contentFilterWillContinueLoading)
+        contentFilter->handleProvisionalLoadFailure(error);
+#endif
+
+    m_provisionalLoadErrorBeingHandledURL = { };
+}
+
 void FrameLoader::checkLoadCompleteForThisFrame()
 {
     ASSERT(m_client.hasWebView());
@@ -2465,15 +2494,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             bool shouldReset = !history().provisionalItem();
             if (!pdl->isLoadingInAPISense() || pdl->isStopping()) {
                 RELEASE_LOG_IF_ALLOWED("checkLoadCompleteForThisFrame: Failed provisional load (frame = %p, main = %d, isTimeout = %d, isCancellation = %d, errorCode = %d)", &m_frame, m_frame.isMainFrame(), error.isTimeout(), error.isCancellation(), error.errorCode());
-                m_provisionalLoadErrorBeingHandledURL = m_provisionalDocumentLoader->url();
 
-                m_client.dispatchDidFailProvisionalLoad(error, history().provisionalItem() ? WillContinueLoading::Yes : WillContinueLoading::No);
-#if ENABLE(CONTENT_FILTERING)
-                if (auto contentFilter = pdl->contentFilter())
-                    contentFilter->handleProvisionalLoadFailure(error);
-#endif
-                m_provisionalLoadErrorBeingHandledURL = { };
-
+                dispatchDidFailProvisionalLoad(*pdl, error);
                 ASSERT(!pdl->isLoading());
 
                 // If we're in the middle of loading multipart data, we need to restore the document loader.

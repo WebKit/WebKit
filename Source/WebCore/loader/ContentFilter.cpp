@@ -274,15 +274,21 @@ bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& act
     return true;
 }
 
-void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
+bool ContentFilter::willHandleProvisionalLoadFailure(const ResourceError& error) const
 {
     if (m_state != State::Blocked)
-        return;
+        return false;
 
     if (m_blockedError.errorCode() != error.errorCode() || m_blockedError.domain() != error.domain())
-        return;
+        return false;
 
     ASSERT(m_blockedError.failingURL() == error.failingURL());
+    return true;
+}
+
+void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
+{
+    ASSERT(willHandleProvisionalLoadFailure(error));
 
     RefPtr<SharedBuffer> replacementData { m_blockingContentFilter->replacementData() };
     ResourceResponse response { URL(), "text/html"_s, static_cast<long long>(replacementData->size()), "UTF-8"_s };

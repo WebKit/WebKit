@@ -62,6 +62,7 @@ public:
     bool continueAfterNotifyFinished(CachedResource&);
 
     static bool continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData&);
+    bool willHandleProvisionalLoadFailure(const ResourceError&) const;
     void handleProvisionalLoadFailure(const ResourceError&);
 
 private:

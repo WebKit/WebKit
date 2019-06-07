@@ -361,6 +361,7 @@ private:
     bool shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType, const URL&);
     void scrollToFragmentWithParentBoundary(const URL&, bool isNewNavigation = true);
 
+    void dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError&);
     void checkLoadCompleteForThisFrame();
 
     void setDocumentLoader(DocumentLoader*);
