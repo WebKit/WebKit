@@ -518,6 +518,8 @@ public:
 
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
+    bool allowsFastClicksEverywhere() const { return m_allowsFastClicksEverywhere; }
+
     void setIsUsingHighPerformanceWebGL(bool value) { m_isUsingHighPerformanceWebGL = value; }
     bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
 
@@ -2481,6 +2483,7 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
     bool m_isUsingHighPerformanceWebGL { false };
     bool m_openedByDOM { false };
     bool m_hasCommittedAnyProvisionalLoads { false };
+    bool m_allowsFastClicksEverywhere { false };
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;

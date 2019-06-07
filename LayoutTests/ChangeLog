@@ -1,3 +1,25 @@
+2019-06-07  Antoine Quint  <graouts@apple.com>
+
+        Restrict fast clicks everywhere to desktop content mode
+        https://bugs.webkit.org/show_bug.cgi?id=198610
+        <rdar://problem/50114230>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that enables fast clicks but also sets a mobile content mode.
+        
+        We also mark fast/visual-viewport/ios/min-scale-greater-than-one.html as non-flaky
+        since the flakiness was due to the fast clicks everywhere behavior being enabled on iPhone.
+
+        Finally, we can now remove the hack where ui.tap() in the Pointer Events utility returned
+        a promise with a one-second delay since the issue of double-taps being recognized instead of
+        two consecutive single taps across two tests has been resolved.
+
+        * fast/events/ios/ipad/fast-click-always-mobile-content-mode-expected.txt: Added.
+        * fast/events/ios/ipad/fast-click-always-mobile-content-mode.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * pointerevents/utils.js:
+
 2019-06-07  Shawn Roberts  <sroberts@apple.com>
 
         http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html is a flaky timeout

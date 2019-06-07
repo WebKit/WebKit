@@ -1587,7 +1587,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_potentialTapInProgress)
         return;
 
-    if (_page->preferences().fastClicksEverywhere()) {
+    if (_page->preferences().fastClicksEverywhere() && _page->allowsFastClicksEverywhere()) {
         RELEASE_LOG(ViewGestures, "Potential tap found an element and fast taps are forced on. Trigger click. (%p)", self);
         [self _setDoubleTapGesturesEnabled:NO];
         return;
@@ -3791,6 +3791,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     // Reset the double tap gesture recognizer to prevent any double click that is in the process of being recognized.
     [_doubleTapGestureRecognizerForDoubleClick setEnabled:NO];
     [_doubleTapGestureRecognizerForDoubleClick setEnabled:YES];
+    // We also need to disable the double-tap gesture recognizers that are enabled for double-tap-to-zoom and which
+    // are enabled when a single tap is first recognized. This avoids tests running in sequence and simulating taps
+    // in the same location to trigger double-tap recognition.
+    [self _setDoubleTapGesturesEnabled:NO];
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)

@@ -1,3 +1,28 @@
+2019-06-07  Antoine Quint  <graouts@apple.com>
+
+        Restrict fast clicks everywhere to desktop content mode
+        https://bugs.webkit.org/show_bug.cgi?id=198610
+        <rdar://problem/50114230>
+
+        Reviewed by Dean Jackson.
+
+        We now set a new allowsFastClicksEverywhere property on the WebPageProxy when the content mode changes, set to true
+        when we're in desktop browsing mode. We now check on this property to opt into the fast clicks everywhere behavior.
+
+        This patch had been reverted once because it yielded some regressions in existing tests, notably under
+        fast/events/touch/ios/content-observation. This updated patch addresses this by ensuring the gesture recognizers
+        used for double-tap-to-zoom are disabled in -[WKContentViewInteraction _didStartProvisionalLoadForMainFrame]
+        to ensure that two tests dispatching a tap at the same location don't yield the recognition of a double-tap
+        rathern than the recognition of two single taps. 
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::allowsFastClicksEverywhere const):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleSmartMagnificationInformationForPotentialTap:renderRect:fitEntireRect:viewportMinimumScale:viewportMaximumScale:]):
+        (_didStartProvisionalLoadForMainFrame):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+
 2019-06-07  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Update sandboxes to address iokit-get-property errors
