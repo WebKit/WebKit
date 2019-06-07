@@ -39,15 +39,21 @@ class Line {
     WTF_MAKE_ISO_ALLOCATED(Line);
 public:
     Line(const LayoutState&, const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimumLineHeight, LayoutUnit baselineOffset);
+    Line(const LayoutState&, LayoutUnit logicalLeft, LayoutUnit availableWidth);
 
     class Content {
     public:
         struct Run {
-            Run(Display::Run, const InlineItem&, bool isCollapsed, bool canBeExtended);
+            struct TextContext {
+                unsigned start { 0 };
+                unsigned length { 0 };
+            };
+            Run(const InlineItem&, const Display::Rect&, TextContext, bool isCollapsed, bool canBeExtended);
 
-            // Relative to the baseline.
-            Display::Run inlineRun;
             const InlineItem& inlineItem;
+            // Relative to the baseline.
+            Display::Rect logicalRect;
+            Optional<TextContext> textContext;
             bool isCollapsed { false };
             bool canBeExtended { false };
         };
@@ -75,15 +81,11 @@ public:
     };
     std::unique_ptr<Content> close();
 
-    struct InlineItemSize {
-        LayoutUnit logicalWidth;
-        Optional<LayoutUnit> logicalHeight;
-    };
-    void appendTextContent(const InlineTextItem&, InlineItemSize);
-    void appendNonReplacedInlineBox(const InlineItem&, InlineItemSize);
-    void appendReplacedInlineBox(const InlineItem&, InlineItemSize);
-    void appendInlineContainerStart(const InlineItem&, InlineItemSize);
-    void appendInlineContainerEnd(const InlineItem&, InlineItemSize);
+    void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
+    void appendNonReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
+    void appendReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
+    void appendInlineContainerStart(const InlineItem&, LayoutUnit logicalWidth);
+    void appendInlineContainerEnd(const InlineItem&, LayoutUnit logicalWidth);
     void appendHardLineBreak(const InlineItem&);
 
     bool hasContent() const { return !m_content->isVisuallyEmpty(); }
@@ -117,6 +119,7 @@ private:
     void removeTrailingTrimmableContent();
 
     void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);
+    LayoutUnit inlineItemHeight(const InlineItem&) const;
 
     const LayoutState& m_layoutState;
     std::unique_ptr<Content> m_content;
@@ -127,6 +130,7 @@ private:
 
     UsedHeightAndDepth m_logicalHeight;
     LayoutUnit m_lineLogicalWidth;
+    bool m_skipVerticalAligment { false };
 };
 
 }
