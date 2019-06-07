@@ -33,6 +33,7 @@
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
+#import "ScrollingTreePositionedNode.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
@@ -69,21 +70,24 @@ void ScrollingTreeFixedNode::applyLayerPositions()
 {
     auto computeLayerPosition = [&] {
         FloatSize overflowScrollDelta;
-        // FIXME: This code is wrong in complex cases where the fixed element is inside a positioned node as
-        //        the scroll container order does not match the scrolling tree ancestor order.
-        for (auto* node = parent(); node; node = node->parent()) {
-            if (is<ScrollingTreeFrameScrollingNode>(*node)) {
+        for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+            if (is<ScrollingTreePositionedNode>(*ancestor)) {
+                auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
+                if (positioningAncestor.layer() != m_layer)
+                    overflowScrollDelta -= positioningAncestor.scrollDeltaSinceLastCommit();
+            }
+
+            if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
                 // Fixed nodes are positioned relative to the containing frame scrolling node.
                 // We bail out after finding one.
-                auto layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(*node).layoutViewport();
+                auto layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(*ancestor).layoutViewport();
                 return m_constraints.layerPositionForViewportRect(layoutViewport) - overflowScrollDelta;
             }
 
-            if (is<ScrollingTreeOverflowScrollingNode>(*node)) {
+            if (is<ScrollingTreeOverflowScrollingNode>(*ancestor)) {
                 // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
-                auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*node);
-                auto localDelta = overflowNode.lastCommittedScrollPosition() - overflowNode.currentScrollPosition();
-                overflowScrollDelta += localDelta;
+                auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*ancestor);
+                overflowScrollDelta -= overflowNode.scrollDeltaSinceLastCommit();
             }
         }
         ASSERT_NOT_REACHED();

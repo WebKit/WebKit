@@ -97,7 +97,7 @@ void ScrollingTreeStickyNode::applyLayerPositions()
 
                     if (positioningAncestor.layer() == m_layer) {
                         // We'll also do the adjustment the positioning node would do.
-                        position -= positioningAncestor.scrollOffsetSinceLastCommit();
+                        position -= positioningAncestor.scrollDeltaSinceLastCommit();
                     }
                     
                     return position;

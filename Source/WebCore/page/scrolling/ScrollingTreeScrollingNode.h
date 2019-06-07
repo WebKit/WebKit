@@ -55,6 +55,7 @@ public:
 
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
+    FloatSize scrollDeltaSinceLastCommit() const { return m_currentScrollPosition - m_lastCommittedScrollPosition; }
 
     // These are imperative; they adjust the scrolling layers.
     void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);

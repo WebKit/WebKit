@@ -46,7 +46,7 @@ public:
     ScrollPositioningBehavior scrollPositioningBehavior() const { return m_constraints.scrollPositioningBehavior(); }
     const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
 
-    FloatSize scrollOffsetSinceLastCommit() const;
+    FloatSize scrollDeltaSinceLastCommit() const;
 
 private:
     ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);

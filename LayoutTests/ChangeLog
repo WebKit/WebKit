@@ -1,3 +1,18 @@
+2019-06-07  Antti Koivisto  <antti@apple.com>
+
+        position:fixed inside overflow positioning nodes is jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=198647
+        <rdar://problem/51514437>
+
+        Reviewed by Frédéric Wang.
+
+        * scrollingcoordinator/ios/fixed-overflow-no-stacking-context-1-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-overflow-no-stacking-context-1.html: Added.
+        * scrollingcoordinator/ios/fixed-overflow-no-stacking-context-2-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-overflow-no-stacking-context-2.html: Added.
+        * scrollingcoordinator/ios/fixed-overflow-stacking-context-stationary-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-overflow-stacking-context-stationary.html: Added.
+
 2019-06-07  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE][GStreamer] Avoid QUOTA_EXCEEDED_ERR when seeking to a buffered range just before the buffered one

@@ -1,3 +1,32 @@
+2019-06-07  Antti Koivisto  <antti@apple.com>
+
+        position:fixed inside overflow positioning nodes is jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=198647
+        <rdar://problem/51514437>
+
+        Reviewed by Frédéric Wang.
+
+        Tests: scrollingcoordinator/ios/fixed-overflow-no-stacking-context-1.html
+               scrollingcoordinator/ios/fixed-overflow-no-stacking-context-2.html
+               scrollingcoordinator/ios/fixed-overflow-stacking-context-stationary.html
+
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::applyLayerPositions):
+
+        Take deltas from positioning nodes into account.
+
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.h:
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        (WebCore::ScrollingTreePositionedNode::scrollDeltaSinceLastCommit const):
+
+        Rename since 'scrollOffset' has other meaning.
+
+        (WebCore::ScrollingTreePositionedNode::applyLayerPositions):
+        (WebCore::ScrollingTreePositionedNode::scrollOffsetSinceLastCommit const): Deleted.
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::applyLayerPositions):
+
 2019-06-07  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE][GStreamer] Avoid QUOTA_EXCEEDED_ERR when seeking to a buffered range just before the buffered one
