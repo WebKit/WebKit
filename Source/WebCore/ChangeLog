@@ -1,3 +1,19 @@
+2019-06-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: only complete Composite records if the m_startedComposite (followup to r246142)
+        https://bugs.webkit.org/show_bug.cgi?id=198639
+
+        Reviewed by Matt Baker.
+
+        In r246142, an `ASSERT` was removed because it is possible for Web Inspector to be opened in
+        between `willComposite` and `didComposite`, meaning that previously the `ASSERT` would fire.
+
+        In order to properly handle this, we should replace the `ASSERT` with an `if` so that Web
+        Inspector doesn't even try to complete a `Composite` record if it was opened in that case.
+
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didComposite):
+
 2019-06-06  Youenn Fablet  <youenn@apple.com>
 
         Allow WebKitTestRunner to terminate network process after it finishes service worker file operations
