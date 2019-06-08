@@ -828,6 +828,11 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
+const String& NetworkSessionCocoa::boundInterfaceIdentifier() const
+{
+    return m_boundInterfaceIdentifier;
+}
+
 const String& NetworkSessionCocoa::sourceApplicationBundleIdentifier() const
 {
     return m_sourceApplicationBundleIdentifier;

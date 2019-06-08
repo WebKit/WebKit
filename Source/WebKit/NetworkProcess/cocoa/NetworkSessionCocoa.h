@@ -50,6 +50,7 @@ public:
 
     void initializeEphemeralStatelessCookielessSession();
 
+    const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
     // Must be called before any NetworkSession has been created.

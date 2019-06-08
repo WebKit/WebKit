@@ -1,3 +1,15 @@
+2019-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] If we have a bound interface identifier, set it on new PKPaymentRequests
+        https://bugs.webkit.org/show_bug.cgi?id=198690
+        <rdar://problem/48041803>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/PassKitSPI.h: Included PKPaymentRequest_WebKit.h to declare some
+        WebKit-specific PKPaymentRequest SPIs for internal SDKs, and re-declared these SPIs - now
+        including the boundInterfaceIdentifier property - for public SDKs.
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards resurrecting Mac CMake build

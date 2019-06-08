@@ -52,6 +52,13 @@ UIViewController *NetworkConnectionToWebProcess::paymentCoordinatorPresentingVie
     return nil;
 }
 
+const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
+{
+    if (auto session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))
+        return session->boundInterfaceIdentifier();
+    return emptyString();
+}
+
 const String& NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
 {
     if (auto session = static_cast<NetworkSessionCocoa*>(m_networkProcess->networkSession(sessionID)))

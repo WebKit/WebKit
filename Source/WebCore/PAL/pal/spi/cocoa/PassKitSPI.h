@@ -42,6 +42,7 @@ WTF_EXTERN_C_END
 #import <PassKit/PassKit.h>
 #import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKit/PKPaymentRequest_Private.h>
+#import <PassKitCore/PKPaymentRequest_WebKit.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <PassKit/PKPaymentAuthorizationController_Private.h>
@@ -296,9 +297,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
 @end
 
+@interface PKPaymentRequest ()
+@property (nonatomic, strong) NSArray *thumbnailURLs;
+@property (nonatomic, retain) NSURL *originatingURL;
+@property (nonatomic, assign) BOOL expectsMerchantSession;
+@property (nonatomic, strong) NSString *sourceApplicationBundleIdentifier;
+@property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
+@property (nonatomic, strong) NSString *CTDataConnectionServiceType;
+@end
+
 #if HAVE(PASSKIT_API_TYPE)
 @interface PKPaymentRequest ()
 @property (nonatomic, assign) PKPaymentRequestAPIType APIType;
+@end
+#endif
+
+#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
+@interface PKPaymentRequest ()
+@property (nonatomic, copy) NSString *boundInterfaceIdentifier;
 @end
 #endif
 
@@ -368,12 +384,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface PKPaymentMethod () <NSSecureCoding>
-@end
-
-@interface PKPaymentRequest ()
-@property (nonatomic, strong) NSString *sourceApplicationBundleIdentifier;
-@property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
-@property (nonatomic, strong) NSString *CTDataConnectionServiceType;
 @end
 
 typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);

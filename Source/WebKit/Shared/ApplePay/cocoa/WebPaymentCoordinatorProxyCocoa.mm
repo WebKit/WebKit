@@ -37,18 +37,17 @@
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 
-// FIXME: Once rdar://problem/24420024 has been fixed, import PKPaymentRequest_Private.h instead.
+// FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be removed.
 @interface PKPaymentRequest ()
-@property (nonatomic, retain) NSURL *originatingURL;
-@end
-
-@interface PKPaymentRequest ()
-// FIXME: Remove this once it's in an SDK.
-@property (nonatomic, strong) NSArray *thumbnailURLs;
 @property (nonatomic, strong) NSURL *thumbnailURL;
-
-@property (nonatomic, assign) BOOL expectsMerchantSession;
 @end
+
+#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
+// FIXME: Remove once rdar://problem/48041516 is widely available in SDKs.
+@interface PKPaymentRequest (Staging)
+@property (nonatomic, copy) NSString *boundInterfaceIdentifier;
+@end
+#endif
 
 namespace WebKit {
 
@@ -249,6 +248,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setOriginatingURL:originatingURL];
 
+    // FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be simplified.
     if ([result respondsToSelector:@selector(setThumbnailURLs:)]) {
         auto thumbnailURLs = adoptNS([[NSMutableArray alloc] init]);
         for (auto& linkIconURL : linkIconURLs)
@@ -304,6 +304,13 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
 #if HAVE(PASSKIT_GRANULAR_ERRORS)
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
+#endif
+
+#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
+    // FIXME: Remove -respondsToSelector: check once rdar://problem/48041516 is widely available in SDKs.
+    auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this, sessionID);
+    if (!boundInterfaceIdentifier.isEmpty() && [result respondsToSelector:@selector(setBoundInterfaceIdentifier:)])
+        [result setBoundInterfaceIdentifier:boundInterfaceIdentifier];
 #endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.

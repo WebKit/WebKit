@@ -225,6 +225,12 @@ IPC::Connection* WebPageProxy::paymentCoordinatorConnection(const WebPaymentCoor
     return messageSenderConnection();
 }
 
+const String& WebPageProxy::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
+{
+    ASSERT_UNUSED(sessionID, sessionID == websiteDataStore().sessionID());
+    return websiteDataStore().boundInterfaceIdentifier();
+}
+
 const String& WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
 {
     ASSERT_UNUSED(sessionID, sessionID == websiteDataStore().sessionID());

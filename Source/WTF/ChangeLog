@@ -1,3 +1,14 @@
+2019-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] If we have a bound interface identifier, set it on new PKPaymentRequests
+        https://bugs.webkit.org/show_bug.cgi?id=198690
+        <rdar://problem/48041803>
+
+        Reviewed by Tim Horton.
+
+        * wtf/FeatureDefines.h: Defined HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER, and cleaned up some
+        other PassKit HAVEs.
+
 2019-06-06  Caio Lima  <ticaiolima@gmail.com>
 
         [JSCOnly] JSCOnly port is not building on macOS
