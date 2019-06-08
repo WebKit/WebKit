@@ -53,7 +53,7 @@ public:
     ReferenceType(const ReferenceType&) = delete;
     ReferenceType(ReferenceType&&) = default;
 
-    bool isReferenceType() const override { return true; }
+    bool isReferenceType() const override { return false; }
 
     AddressSpace addressSpace() const { return m_addressSpace; }
     const UnnamedType& elementType() const { return m_elementType; }

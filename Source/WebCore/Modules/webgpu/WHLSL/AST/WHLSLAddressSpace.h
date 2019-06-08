@@ -43,7 +43,7 @@ enum class AddressSpace : uint8_t {
     Thread
 };
 
-ALWAYS_INLINE String toString(AddressSpace addressSpace)
+static ALWAYS_INLINE String toString(AddressSpace addressSpace)
 {
     switch (addressSpace) {
     case AddressSpace::Constant:
