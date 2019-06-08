@@ -1,1 +1,13 @@
+2019-06-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244182) [WK1]: Page updates should always scheduleCompositingLayerFlush() immediately
+        https://bugs.webkit.org/show_bug.cgi?id=198664
+
+        Reviewed by Simon Fraser.
+
+        WK1 has to skip using DisplayRefreshMonitor when layers need to be updated.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::needsImmediateScheduleCompositingLayerFlush):
+
 == Rolled over to ChangeLog-2019-06-05 ==

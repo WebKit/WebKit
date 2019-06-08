@@ -1,3 +1,14 @@
+2019-06-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244182) [WK1]: Page updates should always scheduleCompositingLayerFlush() immediately
+        https://bugs.webkit.org/show_bug.cgi?id=198664
+
+        Reviewed by Simon Fraser.
+
+        Delete repeated entries which were submitted by mistake.
+
+        * Tracing/SystemTracePoints.plist:
+
 2019-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow clients to vend custom -inputView and -inputAccessoryView by overriding WKWebView methods

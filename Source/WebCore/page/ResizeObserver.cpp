@@ -73,7 +73,7 @@ void ResizeObserver::observe(Element& target)
 
     if (m_document) {
         m_document->addResizeObserver(*this);
-        m_document->scheduleRenderingUpdate();
+        m_document->scheduleTimedRenderingUpdate();
     }
 }
 

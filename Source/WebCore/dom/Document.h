@@ -1380,7 +1380,7 @@ public:
     void addAppearanceDependentPicture(HTMLPictureElement&);
     void removeAppearanceDependentPicture(HTMLPictureElement&);
 
-    void scheduleRenderingUpdate();
+    void scheduleTimedRenderingUpdate();
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void addIntersectionObserver(IntersectionObserver&);

@@ -121,7 +121,7 @@ void ServicesOverlayController::Highlight::notifyFlushRequired(const GraphicsLay
     if (!m_controller)
         return;
 
-    m_controller->page().renderingUpdateScheduler().scheduleRenderingUpdate();
+    m_controller->page().renderingUpdateScheduler().scheduleTimedRenderingUpdate();
 }
 
 void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, OptionSet<GraphicsLayerPaintingPhase>, const FloatRect&, GraphicsLayerPaintBehavior)

@@ -540,7 +540,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #endif
 #if ENABLE(INTERSECTION_OBSERVER)
     , m_intersectionObserversNotifyTimer(*this, &Document::notifyIntersectionObserversTimerFired)
-    , m_intersectionObserversInitialUpdateTimer(*this, &Document::scheduleRenderingUpdate)
+    , m_intersectionObserversInitialUpdateTimer(*this, &Document::scheduleTimedRenderingUpdate)
 #endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -7292,10 +7292,10 @@ void Document::removeAppearanceDependentPicture(HTMLPictureElement& picture)
     m_appearanceDependentPictures.remove(&picture);
 }
 
-void Document::scheduleRenderingUpdate()
+void Document::scheduleTimedRenderingUpdate()
 {
     if (auto page = this->page())
-        page->renderingUpdateScheduler().scheduleRenderingUpdate();
+        page->renderingUpdateScheduler().scheduleTimedRenderingUpdate();
 }
 
 #if ENABLE(INTERSECTION_OBSERVER)
@@ -7523,7 +7523,7 @@ void Document::notifyIntersectionObserversTimerFired()
 void Document::scheduleInitialIntersectionObservationUpdate()
 {
     if (m_readyState == Complete)
-        scheduleRenderingUpdate();
+        scheduleTimedRenderingUpdate();
     else if (!m_intersectionObserversInitialUpdateTimer.isActive())
         m_intersectionObserversInitialUpdateTimer.startOneShot(intersectionObserversInitialUpdateDelay);
 }
@@ -7605,7 +7605,7 @@ void Document::updateResizeObservations(Page& page)
         getParserLocation(url, line, column);
         reportException("ResizeObserver loop completed with undelivered notifications.", line, column, url, nullptr, nullptr);
         // Starting a new schedule the next round of notify.
-        scheduleRenderingUpdate();
+        scheduleTimedRenderingUpdate();
     }
 }
 #endif

@@ -42,14 +42,14 @@ RenderingUpdateScheduler::RenderingUpdateScheduler(Page& page)
 #endif
 }
 
-void RenderingUpdateScheduler::scheduleRenderingUpdate()
+void RenderingUpdateScheduler::scheduleTimedRenderingUpdate()
 {
     if (isScheduled())
         return;
 
     // Optimize the case when an invisible page wants just to schedule layer flush.
     if (!m_page.isVisible()) {
-        scheduleCompositingLayerFlush();
+        scheduleImmediateRenderingUpdate();
         return;
     }
 
@@ -102,12 +102,20 @@ void RenderingUpdateScheduler::displayRefreshFired()
     tracePoint(TriggerRenderingUpdate);
 
     clearScheduled();
-    scheduleCompositingLayerFlush();
+    scheduleImmediateRenderingUpdate();
 }
 
-void RenderingUpdateScheduler::scheduleCompositingLayerFlush()
+void RenderingUpdateScheduler::scheduleImmediateRenderingUpdate()
 {
     m_page.chrome().client().scheduleCompositingLayerFlush();
+}
+
+void RenderingUpdateScheduler::scheduleRenderingUpdate()
+{
+    if (m_page.chrome().client().needsImmediateRenderingUpdate())
+        scheduleImmediateRenderingUpdate();
+    else
+        scheduleTimedRenderingUpdate();
 }
 
 }

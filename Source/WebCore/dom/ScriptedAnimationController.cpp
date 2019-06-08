@@ -256,7 +256,7 @@ void ScriptedAnimationController::scheduleAnimation()
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (!m_isUsingTimer && !isThrottled()) {
         if (auto* page = this->page()) {
-            page->renderingUpdateScheduler().scheduleRenderingUpdate();
+            page->renderingUpdateScheduler().scheduleTimedRenderingUpdate();
             return;
         }
 

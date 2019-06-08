@@ -1,3 +1,59 @@
+2019-06-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244182) [WK1]: Page updates should always scheduleCompositingLayerFlush() immediately
+        https://bugs.webkit.org/show_bug.cgi?id=198664
+
+        Reviewed by Simon Fraser.
+
+        Because WK1 is a single process, scheduleCompositingLayerFlush() has to 
+        be called immediately when layers' update is needed. Otherwise no content
+        will be drawn for the current frame. Doing this will get smooth scrolling
+        back to WK1.
+
+        RenderingUpdateScheduler now has three different scheduling methods:
+
+        1. scheduleTimedRenderingUpdate(): This is a two-steps scheduling method.
+           DisplayRefreshMonitor has to fire before scheduleCompositingLayerFlush()
+           is called. This is used by rAF, WebAnimations and intersection and
+           resize observers.
+
+        2. scheduleImmediateRenderingUpdate(): This is a one-step scheduling method.
+           layerTreeAsText() calls this method because it has to process the rendering
+           update within the current frame.
+
+        3. scheduleRenderingUpdate(): RenderLayerCompositor::scheduleLayerFlush()
+           calls this function to decide either immediately flush layers or wait
+           for the next timed frame. scheduleImmediateRenderingUpdate() will be
+           called for WK1. scheduleTimedRenderingUpdate() will be called for WK2.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleTimedRenderingUpdate):
+        (WebCore::Document::scheduleInitialIntersectionObservationUpdate):
+        (WebCore::Document::updateResizeObservations):
+        (WebCore::Document::scheduleRenderingUpdate): Deleted.
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * page/ChromeClient.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::notifyFlushRequired):
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::scheduleTimedRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::displayRefreshFired):
+        (WebCore::RenderingUpdateScheduler::scheduleImmediateRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::scheduleCompositingLayerFlush): Deleted.
+        * page/RenderingUpdateScheduler.h:
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::observe):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+
 2019-06-07  Megan Gardner  <megan_gardner@apple.com>
 
         Extend quirks to emulate bold/italic/underline in hidden editable areas

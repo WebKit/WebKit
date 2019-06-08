@@ -318,7 +318,7 @@ void DocumentTimeline::scheduleAnimationResolution()
     if (!m_document || !m_document->page())
         return;
     
-    m_document->page()->renderingUpdateScheduler().scheduleRenderingUpdate();
+    m_document->page()->renderingUpdateScheduler().scheduleTimedRenderingUpdate();
     m_animationResolutionScheduled = true;
 }
 

@@ -46,8 +46,9 @@ public:
     }
 
     RenderingUpdateScheduler(Page&);
+    void scheduleTimedRenderingUpdate();
+    void scheduleImmediateRenderingUpdate();
     void scheduleRenderingUpdate();
-    void scheduleCompositingLayerFlush();
 
 private:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
