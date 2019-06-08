@@ -21,12 +21,16 @@ function successCallback()
 }
 
 var dbname;
+var resolveTransactionPromise;
+var transactionPromise = new Promise(resolve => resolveTransactionPromise = resolve);
+
 function prepareDatabase(e)
 {
     debug("Initial upgrade old version - " + e.oldVersion + " new version - " + e.newVersion);
     
     event.target.onerror = function(e) {
         debug("Open request error: " + event.target.error.name);
+        resolveTransactionPromise();
     }
 
     var versionTransaction = event.target.transaction;
@@ -76,8 +80,9 @@ function continueTest1()
 {
     debug("Requesting deleteDatabase");
     var request = window.indexedDB.deleteDatabase(dbname);
-    request.onsuccess = function(e)
+    request.onsuccess = async function(e)
     {
+        await transactionPromise;
         debug("Delete database success: oldVersion " + e.oldVersion + ", newVersion " + e.newVersion);
         continueTest2();
     }
