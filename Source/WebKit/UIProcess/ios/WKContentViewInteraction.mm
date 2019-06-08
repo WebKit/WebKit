@@ -1715,6 +1715,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (UIView *)inputView
 {
+    return [_webView inputView];
+}
+
+- (UIView *)inputViewForWebView
+{
     if (!hasFocusedElement(_focusedElementInformation))
         return nil;
 
@@ -2572,6 +2577,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 }
 
 - (UIView *)inputAccessoryView
+{
+    return [_webView inputAccessoryView];
+}
+
+- (UIView *)inputAccessoryViewForWebView
 {
     if (![self requiresAccessoryView])
         return nil;

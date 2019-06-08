@@ -148,6 +148,36 @@ static CGRect rounded(CGRect rect)
 
 @end
 
+@interface CustomInputWebView : TestWKWebView
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration inputView:(UIView *)inputView inputAccessoryView:(UIView *)inputAccessoryView;
+@end
+
+@implementation CustomInputWebView {
+    RetainPtr<UIView> _customInputView;
+    RetainPtr<UIView> _customInputAccessoryView;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration inputView:(UIView *)inputView inputAccessoryView:(UIView *)inputAccessoryView
+{
+    if (self = [super initWithFrame:frame configuration:configuration]) {
+        _customInputView = inputView;
+        _customInputAccessoryView = inputAccessoryView;
+    }
+    return self;
+}
+
+- (UIView *)inputView
+{
+    return _customInputView.get();
+}
+
+- (UIView *)inputAccessoryView
+{
+    return _customInputAccessoryView.get();
+}
+
+@end
+
 static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<TestInputDelegate>& inputDelegate)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -429,6 +459,18 @@ TEST(KeyboardInputTests, KeyboardTypeForInput)
             }
         }
     }
+}
+
+TEST(KeyboardInputTests, OverrideInputViewAndInputAccessoryView)
+{
+    auto inputView = adoptNS([[UIView alloc] init]);
+    auto inputAccessoryView = adoptNS([[UIView alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[CustomInputWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration.get() inputView:inputView.get() inputAccessoryView:inputAccessoryView.get()]);
+    auto contentView = [webView textInputContentView];
+
+    EXPECT_EQ(inputAccessoryView.get(), [contentView inputAccessoryView]);
+    EXPECT_EQ(inputView.get(), [contentView inputView]);
 }
 
 } // namespace TestWebKitAPI

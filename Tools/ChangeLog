@@ -1,3 +1,19 @@
+2019-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow clients to vend custom -inputView and -inputAccessoryView by overriding WKWebView methods
+        https://bugs.webkit.org/show_bug.cgi?id=198631
+        <rdar://problem/51505431>
+
+        Reviewed by Tim Horton.
+
+        Add an API test that overrides -[WKWebView inputView] and -[WKWebView inputAccessoryView].
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (-[CustomInputWebView initWithFrame:configuration:inputView:inputAccessoryView:]):
+        (-[CustomInputWebView inputView]):
+        (-[CustomInputWebView inputAccessoryView]):
+        (TestWebKitAPI::TEST):
+
 2019-06-07  Daniel Bates  <dabates@apple.com>
 
         [lldb-webkit] Pretty-print all kinds of Documents

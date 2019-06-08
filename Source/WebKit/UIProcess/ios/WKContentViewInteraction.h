@@ -383,6 +383,8 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) const WebKit::FocusedElementInformation& focusedElementInformation;
 @property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
 @property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
+@property (nonatomic, readonly) UIView *inputViewForWebView;
+@property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
 #if ENABLE(POINTER_EVENTS)
 @property (nonatomic, readonly) BOOL preventsPanningInXAxis;
 @property (nonatomic, readonly) BOOL preventsPanningInYAxis;

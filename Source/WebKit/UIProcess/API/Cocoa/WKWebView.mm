@@ -4585,6 +4585,16 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         [_contentView _setTextColorForWebView:color sender:sender];
 }
 
+- (UIView *)inputAccessoryView
+{
+    return [_contentView inputAccessoryViewForWebView];
+}
+
+- (UIView *)inputView
+{
+    return [_contentView inputViewForWebView];
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_isEditable
