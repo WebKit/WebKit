@@ -130,6 +130,10 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 #endif
     CGFloat _keyboardBottomInsetAdjustment;
+    BOOL _scrollEnabledByClient;
+    BOOL _scrollEnabledInternal;
+    BOOL _zoomEnabledByClient;
+    BOOL _zoomEnabledInternal;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -138,6 +142,11 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
     if (!self)
         return nil;
+
+    _scrollEnabledByClient = YES;
+    _scrollEnabledInternal = YES;
+    _zoomEnabledByClient = YES;
+    _zoomEnabledInternal = YES;
 
     self.alwaysBounceVertical = YES;
     self.directionalLockEnabled = YES;
@@ -352,6 +361,40 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         systemContentInset.bottom += _keyboardBottomInsetAdjustment;
 
     return systemContentInset;
+}
+
+- (void)setScrollEnabled:(BOOL)value
+{
+    _scrollEnabledByClient = value;
+    [self _updateScrollability];
+}
+
+- (void)_setScrollEnabledInternal:(BOOL)value
+{
+    _scrollEnabledInternal = value;
+    [self _updateScrollability];
+}
+
+- (void)_updateScrollability
+{
+    [super setScrollEnabled:(_scrollEnabledByClient && _scrollEnabledInternal)];
+}
+
+- (void)setZoomEnabled:(BOOL)value
+{
+    _zoomEnabledByClient = value;
+    [self _updateZoomability];
+}
+
+- (void)_setZoomEnabledInternal:(BOOL)value
+{
+    _zoomEnabledInternal = value;
+    [self _updateZoomability];
+}
+
+- (void)_updateZoomability
+{
+    [super setZoomEnabled:(_zoomEnabledByClient && _zoomEnabledInternal)];
 }
 
 #if PLATFORM(WATCHOS)

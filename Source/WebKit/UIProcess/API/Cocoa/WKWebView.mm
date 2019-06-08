@@ -1986,11 +1986,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
-    [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
+    [_scrollView _setZoomEnabledInternal:layerTreeTransaction.allowsUserScaling()];
 #if ENABLE(ASYNC_SCROLLING)
     bool hasDockedInputView = !CGRectIsEmpty(_inputViewBounds);
     bool isZoomed = layerTreeTransaction.pageScaleFactor() > layerTreeTransaction.initialScaleFactor();
-    [_scrollView setScrollEnabled:_page->scrollingCoordinatorProxy()->hasScrollableMainFrame() || hasDockedInputView || isZoomed];
+    [_scrollView _setScrollEnabledInternal:_page->scrollingCoordinatorProxy()->hasScrollableMainFrame() || hasDockedInputView || isZoomed];
 #endif
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && [_scrollView zoomScale] != layerTreeTransaction.pageScaleFactor()) {
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());

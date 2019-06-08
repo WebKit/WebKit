@@ -1,3 +1,25 @@
+2019-06-07  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r245006): Setting scrollview.scrollEnabled clobbers any scrollEnabled set by a client
+        https://bugs.webkit.org/show_bug.cgi?id=198656
+        <rdar://problem/51494585>
+
+        Reviewed by Tim Horton.
+
+        Allow client to disable scrolling and zooming.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+        (-[WKScrollView setScrollEnabled:]):
+        (-[WKScrollView _setScrollEnabledInternal:]):
+        (-[WKScrollView _updateScrollability]):
+        (-[WKScrollView setZoomEnabled:]):
+        (-[WKScrollView _setZoomEnabledInternal:]):
+        (-[WKScrollView _updateZoomability]):
+
 2019-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow clients to vend custom -inputView and -inputAccessoryView by overriding WKWebView methods
