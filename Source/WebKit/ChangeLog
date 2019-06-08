@@ -1,3 +1,14 @@
+2019-06-07  Tim Horton  <timothy_horton@apple.com>
+
+        Disable focus rings on WKContentView for PLATFORM(IOSMAC)
+        https://bugs.webkit.org/show_bug.cgi?id=198685
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+
 2019-06-07  Megan Gardner  <megan_gardner@apple.com>
 
         Extend quirks to emulate bold/italic/underline in hidden editable areas

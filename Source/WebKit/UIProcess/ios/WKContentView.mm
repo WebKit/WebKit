@@ -176,6 +176,10 @@
 
     self.layer.hitTestsAsOpaque = YES;
 
+#if PLATFORM(IOSMAC)
+    [self _setFocusRingType:UIFocusRingTypeNone];
+#endif
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _setupVisibilityPropagationView];
 #endif

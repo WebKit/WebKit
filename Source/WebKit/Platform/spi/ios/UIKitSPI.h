@@ -514,6 +514,12 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
     _UIBackdropMaskViewAll = _UIBackdropMaskViewGrayscaleTint | _UIBackdropMaskViewColorTint | _UIBackdropMaskViewFilters,
 };
 
+#if PLATFORM(IOSMAC)
+typedef NS_ENUM(NSUInteger, UIFocusRingType) {
+    UIFocusRingTypeNone = 1,
+};
+#endif
+
 @interface UIView ()
 + (BOOL)_isInAnimationBlock;
 - (CGSize)size;
@@ -528,6 +534,9 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
+#if PLATFORM(IOSMAC)
+@property (nonatomic, getter=_focusRingType, setter=_setFocusRingType:) UIFocusRingType focusRingType;
+#endif
 @end
 
 @protocol UISelectionInteractionAssistant
