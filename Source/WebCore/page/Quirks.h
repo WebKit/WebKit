@@ -58,7 +58,7 @@ public:
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;
-    WEBCORE_EXPORT bool shouldEmulateUndoRedoInHiddenEditableAreas() const;
+    WEBCORE_EXPORT bool shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
 

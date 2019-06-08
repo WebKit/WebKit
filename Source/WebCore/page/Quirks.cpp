@@ -238,7 +238,7 @@ static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAre
 #endif
 }
 
-static bool shouldEmulateUndoRedoInHiddenEditableAreasForHost(const StringView& host)
+static bool shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreasForHost(const StringView& host)
 {
 #if PLATFORM(IOS_FAMILY)
     return equalLettersIgnoringASCIICase(host, "docs.google.com");
@@ -266,12 +266,12 @@ bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
     return false;
 }
 
-bool Quirks::shouldEmulateUndoRedoInHiddenEditableAreas() const
+bool Quirks::shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreas() const
 {
     if (!needsQuirks())
         return false;
 
-    return shouldEmulateUndoRedoInHiddenEditableAreasForHost(m_document->topDocument().url().host());
+    return shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
 bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const

@@ -1,3 +1,27 @@
+2019-06-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Extend quirks to emulate bold/italic/underline in hidden editable areas
+        https://bugs.webkit.org/show_bug.cgi?id=198681
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+        * Shared/SyntheticEditingCommandType.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView undoManager]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (shouldSynthezieKeyEvents):
+        (-[WKContentView toggleBoldfaceForWebView:]):
+        (-[WKContentView toggleItalicsForWebView:]):
+        (-[WKContentView toggleUnderlineForWebView:]):
+        (-[WKContentView _elementDidBlur]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::generateSyntheticEditingCommand):
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Introduce new SPI for context menus on iOS

@@ -29,7 +29,10 @@ namespace WebKit {
     
 enum class SyntheticEditingCommandType : uint8_t  {
     Undo,
-    Redo
+    Redo,
+    ToggleBoldface,
+    ToggleItalic,
+    ToggleUnderline
 };
 
 } // namespace WebKit
@@ -40,7 +43,10 @@ template<> struct EnumTraits<WebKit::SyntheticEditingCommandType> {
     using values = EnumValues <
     WebKit::SyntheticEditingCommandType,
     WebKit::SyntheticEditingCommandType::Undo,
-    WebKit::SyntheticEditingCommandType::Redo
+    WebKit::SyntheticEditingCommandType::Redo,
+    WebKit::SyntheticEditingCommandType::ToggleBoldface,
+    WebKit::SyntheticEditingCommandType::ToggleItalic,
+    WebKit::SyntheticEditingCommandType::ToggleUnderline
     >;
 };
 

@@ -443,7 +443,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (NSUndoManager *)undoManager
 {
-    if (self.focusedElementInformation.shouldSynthesizeKeyEventsForUndoAndRedo && self.hasHiddenContentEditable) {
+    if (self.focusedElementInformation.shouldSynthesizeKeyEventsForEditing && self.hasHiddenContentEditable) {
         if (!_quirkyUndoManager)
             _quirkyUndoManager = adoptNS([[WKQuirkyNSUndoManager alloc] initWithContentView:self]);
         return _quirkyUndoManager.get();

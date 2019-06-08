@@ -3118,12 +3118,22 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     _page->selectAll();
 }
 
+- (BOOL)shouldSynthesizeKeyEvents
+{
+    if (_focusedElementInformation.shouldSynthesizeKeyEventsForEditing && self.hasHiddenContentEditable)
+        return true;
+    return false;
+}
+
 - (void)toggleBoldfaceForWebView:(id)sender
 {
     if (!_page->editorState().isContentRichlyEditable)
         return;
 
     [self executeEditCommandWithCallback:@"toggleBold"];
+
+    if (self.shouldSynthesizeKeyEvents)
+        _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleBoldface);
 }
 
 - (void)toggleItalicsForWebView:(id)sender
@@ -3132,6 +3142,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return;
 
     [self executeEditCommandWithCallback:@"toggleItalic"];
+
+    if (self.shouldSynthesizeKeyEvents)
+        _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleItalic);
 }
 
 - (void)toggleUnderlineForWebView:(id)sender
@@ -3140,6 +3153,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return;
 
     [self executeEditCommandWithCallback:@"toggleUnderline"];
+
+    if (self.shouldSynthesizeKeyEvents)
+        _page->generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType::ToggleUnderline);
 }
 
 - (void)_showTextStyleOptionsForWebView:(id)sender
@@ -5224,7 +5240,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     BOOL editableChanged = [self setIsEditable:NO];
 
     _focusedElementInformation.elementType = WebKit::InputType::None;
-    _focusedElementInformation.shouldSynthesizeKeyEventsForUndoAndRedo = false;
+    _focusedElementInformation.shouldSynthesizeKeyEventsForEditing = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
 

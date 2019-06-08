@@ -615,6 +615,36 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
 #endif
         @"U+0059", 89, false, false, false, modifiers, WallTime::now());
         break;
+    case SyntheticEditingCommandType::ToggleBoldface:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "b", "b",
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+        "b",
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        "KeyB"_s,
+#endif
+        @"U+0042", 66, false, false, false, modifiers, WallTime::now());
+        break;
+    case SyntheticEditingCommandType::ToggleItalic:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "i", "i",
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+        "i",
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        "KeyI"_s,
+#endif
+        @"U+0049", 73, false, false, false, modifiers, WallTime::now());
+        break;
+    case SyntheticEditingCommandType::ToggleUnderline:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "u", "u",
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+        "u",
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        "KeyU"_s,
+#endif
+        @"U+0055", 85, false, false, false, modifiers, WallTime::now());
+        break;
     default:
         break;
     }
@@ -2877,7 +2907,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             information.isAutocorrect = focusedElement.shouldAutocorrect();
             information.autocapitalizeType = focusedElement.autocapitalizeType();
             information.inputMode = focusedElement.canonicalInputMode();
-            information.shouldSynthesizeKeyEventsForUndoAndRedo = focusedElement.document().quirks().shouldEmulateUndoRedoInHiddenEditableAreas();
+            information.shouldSynthesizeKeyEventsForEditing = focusedElement.document().quirks().shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreas();
         } else {
             information.isAutocorrect = true;
             information.autocapitalizeType = AutocapitalizeTypeDefault;

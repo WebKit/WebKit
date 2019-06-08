@@ -104,7 +104,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << suggestedColors;
 #endif
 #endif
-    encoder << shouldSynthesizeKeyEventsForUndoAndRedo;
+    encoder << shouldSynthesizeKeyEventsForEditing;
 }
 
 bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
@@ -223,7 +223,7 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 #endif
 #endif
-    if (!decoder.decode(result.shouldSynthesizeKeyEventsForUndoAndRedo))
+    if (!decoder.decode(result.shouldSynthesizeKeyEventsForEditing))
         return false;
 
     return true;
