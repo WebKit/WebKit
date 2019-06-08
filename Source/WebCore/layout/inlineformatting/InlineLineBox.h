@@ -34,7 +34,12 @@ namespace Layout {
 
 class LineBox {
 public:
-    LineBox(Display::Rect);
+    struct Baseline {
+        LayoutUnit ascent;
+        LayoutUnit descent;
+        LayoutUnit offset; // baseline offset from line logical top. Note that offset does not necessarily equal to ascent.
+    };
+    LineBox(Display::Rect, const Baseline&);
     
     LayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
 
@@ -46,12 +51,16 @@ public:
     LayoutUnit logicalWidth() const { return m_rect.width(); }
     LayoutUnit logicalHeight() const { return m_rect.height(); }
 
+    Baseline baseline() const { return m_baseline; }
+
 private:
     Display::Rect m_rect;
+    Baseline m_baseline;
 };
 
-inline LineBox::LineBox(Display::Rect rect)
+inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline)
     : m_rect(rect)
+    , m_baseline(baseline)
 {
 }
 

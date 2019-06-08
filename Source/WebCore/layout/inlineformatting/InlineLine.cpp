@@ -69,7 +69,8 @@ Line::Line(const LayoutState& layoutState, const LayoutPoint& topLeft, LayoutUni
     : m_layoutState(layoutState)
     , m_content(std::make_unique<Line::Content>())
     , m_logicalTopLeft(topLeft)
-    , m_logicalHeight({ baselineOffset, minimumHeight - baselineOffset })
+    , m_baseline({ baselineOffset, minimumHeight - baselineOffset, { } })
+    , m_contentLogicalHeight(minimumHeight)
     , m_lineLogicalWidth(availableWidth)
 {
 }
@@ -80,11 +81,12 @@ std::unique_ptr<Line::Content> Line::close()
     if (!m_skipVerticalAligment) {
         // Convert inline run geometry from relative to the baseline to relative to logical top.
         for (auto& run : m_content->runs()) {
-            auto adjustedLogicalTop = run->logicalRect.top() + m_logicalHeight.height + m_logicalTopLeft.y();
+            auto adjustedLogicalTop = run->logicalRect.top() + baselineOffset();
             run->logicalRect.setTop(adjustedLogicalTop);
         }
     }
     m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
+    m_content->setBaseline(m_baseline);
     return WTFMove(m_content);
 }
 
@@ -245,10 +247,11 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
     if (inlineItem.isContainerStart()) {
         auto& fontMetrics = style.fontMetrics();
         auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
-        if (halfLeading.depth > 0)
-            m_logicalHeight.depth = std::max(m_logicalHeight.depth, halfLeading.depth);
-        if (halfLeading.height > 0)
-            m_logicalHeight.height = std::max(m_logicalHeight.height, halfLeading.height);
+        if (halfLeading.descent > 0)
+            m_baseline.descent = std::max(m_baseline.descent, halfLeading.descent);
+        if (halfLeading.ascent > 0)
+            m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
+        m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
         return;
     }
     // Replaced and non-replaced inline level box.
@@ -257,13 +260,15 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
         if (runHeight == logicalHeight())
             return;
         // FIXME: This fails when the line height difference comes from font-size diff.
-        m_logicalHeight.depth = std::max<LayoutUnit>(0, m_logicalHeight.depth);
-        m_logicalHeight.height = std::max(runHeight, m_logicalHeight.height);
+        m_baseline.descent = std::max<LayoutUnit>(0, m_baseline.descent);
+        m_baseline.ascent = std::max(runHeight, m_baseline.ascent);
+        m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
         return;
     }
     // 0 descent -> baseline aligment for now.
-    m_logicalHeight.depth = std::max<LayoutUnit>(0, m_logicalHeight.depth);
-    m_logicalHeight.height = std::max(runHeight, m_logicalHeight.height);
+    m_baseline.descent = std::max<LayoutUnit>(0, m_baseline.descent);
+    m_baseline.ascent = std::max(runHeight, m_baseline.ascent);
+    m_contentLogicalHeight = std::max(m_contentLogicalHeight, baselineAlignedContentHeight());
 }
 
 LayoutUnit Line::inlineItemHeight(const InlineItem& inlineItem) const
@@ -290,7 +295,7 @@ LayoutUnit Line::inlineItemHeight(const InlineItem& inlineItem) const
     return displayBox.height();
 }
 
-Line::UsedHeightAndDepth Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)
+LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)
 {
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();
@@ -299,7 +304,7 @@ Line::UsedHeightAndDepth Line::halfLeadingMetrics(const FontMetrics& fontMetrics
     // Inline tree is all integer based.
     auto adjustedAscent = std::max((ascent + leading / 2).floor(), 0);
     auto adjustedDescent = std::max((descent + leading / 2).ceil(), 0);
-    return { adjustedAscent, adjustedDescent };
+    return { adjustedAscent, adjustedDescent, adjustedAscent };
 }
 
 }

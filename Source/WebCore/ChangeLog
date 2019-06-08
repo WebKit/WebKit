@@ -1,3 +1,32 @@
+2019-06-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce Baseline to LineBox
+        https://bugs.webkit.org/show_bug.cgi?id=198686
+        <rdar://problem/51545175>
+
+        Reviewed by Antti Koivisto.
+
+        Make baselines alignment explicit in Line.
+        This is in preparation for adding non-baseline vertical alignment support.
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::placeInlineItems const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::halfLeadingMetrics):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Content::baseline const):
+        (WebCore::Layout::Line::Content::setBaseline):
+        (WebCore::Layout::Line::logicalHeight const):
+        (WebCore::Layout::Line::baselineAlignedContentHeight const):
+        (WebCore::Layout::Line::baselineOffset const):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::baseline const):
+        (WebCore::Layout::LineBox::LineBox):
+
 2019-06-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r244182) [WK1]: Page updates should always scheduleCompositingLayerFlush() immediately

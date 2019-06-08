@@ -69,14 +69,17 @@ public:
         LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
         LayoutUnit logicalWidth() const { return m_logicalRect.width(); }
         LayoutUnit logicalHeight() const { return m_logicalRect.height(); }
+        LineBox::Baseline baseline() const { return m_baseline; }
 
     private:
         friend class Line;
 
         void setLogicalRect(const Display::Rect& logicalRect) { m_logicalRect = logicalRect; }
+        void setBaseline(LineBox::Baseline baseline) { m_baseline = baseline; }
         Runs& runs() { return m_runs; }
 
         Display::Rect m_logicalRect;
+        LineBox::Baseline m_baseline;
         Runs m_runs;
     };
     std::unique_ptr<Content> close();
@@ -100,20 +103,18 @@ public:
     LayoutUnit logicalTop() const { return m_logicalTopLeft.y(); }
     LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
 
-    struct UsedHeightAndDepth {
-        LayoutUnit height;
-        LayoutUnit depth;
-    };
-    static UsedHeightAndDepth halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
+    static LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
 private:
     LayoutUnit logicalLeft() const { return m_logicalTopLeft.x(); }
     LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
     LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    LayoutUnit logicalHeight() const { return m_logicalHeight.height + m_logicalHeight.depth; }
+    LayoutUnit logicalHeight() const { return m_contentLogicalHeight; }
 
     LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
+    LayoutUnit baselineAlignedContentHeight() const { return m_baseline.ascent + m_baseline.descent; }
+    LayoutUnit baselineOffset() const { return m_baseline.offset; }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void removeTrailingTrimmableContent();
@@ -128,7 +129,8 @@ private:
     LayoutPoint m_logicalTopLeft;
     LayoutUnit m_contentLogicalWidth;
 
-    UsedHeightAndDepth m_logicalHeight;
+    LineBox::Baseline m_baseline;
+    LayoutUnit m_contentLogicalHeight;
     LayoutUnit m_lineLogicalWidth;
     bool m_skipVerticalAligment { false };
 };
