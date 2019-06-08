@@ -692,17 +692,13 @@ css2.1/20110323/absolute-non-replaced-max-height-010.htm
 css2.1/20110323/absolute-non-replaced-max-height-011.htm
 css2.1/20110323/absolute-non-replaced-max-height-012.htm
 css2.1/20110323/absolute-non-replaced-width-001.htm
-css2.1/20110323/absolute-non-replaced-width-002.htm
 css2.1/20110323/absolute-non-replaced-width-003.htm
 css2.1/20110323/absolute-non-replaced-width-004.htm
 css2.1/20110323/absolute-non-replaced-width-005.htm
 css2.1/20110323/absolute-non-replaced-width-006.htm
-css2.1/20110323/absolute-non-replaced-width-007.htm
 css2.1/20110323/absolute-non-replaced-width-008.htm
-css2.1/20110323/absolute-non-replaced-width-009.htm
 css2.1/20110323/absolute-non-replaced-width-010.htm
 css2.1/20110323/absolute-non-replaced-width-011.htm
-css2.1/20110323/absolute-non-replaced-width-012.htm
 css2.1/20110323/absolute-non-replaced-width-013.htm
 css2.1/20110323/absolute-non-replaced-width-014.htm
 css2.1/20110323/absolute-non-replaced-width-015.htm

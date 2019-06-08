@@ -1,3 +1,11 @@
+2019-06-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Unreviewed test gardening.
+
+        Remove rtl tests. They were mistakenly marked as pass.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-06-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r244182) [WK1]: Page updates should always scheduleCompositingLayerFlush() immediately
