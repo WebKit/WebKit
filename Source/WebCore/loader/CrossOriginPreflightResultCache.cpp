@@ -68,21 +68,22 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
     return true;
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, String& errorDescription) const
+bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy, String& errorDescription) const
 {
-    if (m_methods.contains(method) || isOnAccessControlSimpleRequestMethodWhitelist(method))
+    if (m_methods.contains(method) || (m_methods.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodWhitelist(method))
         return true;
 
     errorDescription = "Method " + method + " is not allowed by Access-Control-Allow-Methods.";
     return false;
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, String& errorDescription) const
+bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy, String& errorDescription) const
 {
+    bool validWildcard = m_headers.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use;
     for (const auto& header : requestHeaders) {
         if (header.keyAsHTTPHeaderName && isCrossOriginSafeRequestHeader(header.keyAsHTTPHeaderName.value(), header.value))
             continue;
-        if (!m_headers.contains(header.key)) {
+        if (!m_headers.contains(header.key) && !validWildcard) {
             errorDescription = "Request header field " + header.key + " is not allowed by Access-Control-Allow-Headers.";
             return false;
         }
@@ -97,9 +98,9 @@ bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentialsPolicy 
         return false;
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
         return false;
-    if (!allowsCrossOriginMethod(method, ignoredExplanation))
+    if (!allowsCrossOriginMethod(method, storedCredentialsPolicy, ignoredExplanation))
         return false;
-    if (!allowsCrossOriginHeaders(requestHeaders, ignoredExplanation))
+    if (!allowsCrossOriginHeaders(requestHeaders, storedCredentialsPolicy, ignoredExplanation))
         return false;
     return true;
 }

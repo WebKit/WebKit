@@ -1,3 +1,27 @@
+2019-06-09  Rob Buis  <rbuis@igalia.com>
+
+        Add wildcard to Access-Control-Allow-Methods and Access-Control-Allow-Headers
+        https://bugs.webkit.org/show_bug.cgi?id=165508
+
+        Reviewed by Frédéric Wang.
+
+        According to the spec [1] step 6.5, a wildcard for method
+        and request's credentials mode should be taken into account, so
+        add this to the check. Same for Access-Control-Allow-Headers (step 6.7).
+
+        [1] https://fetch.spec.whatwg.org/#cors-preflight-fetch
+
+        Tests: web-platform-tests/fetch/api/cors/cors-preflight-star.any.html
+               web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::validatePreflightResponse):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod const):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders const):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsRequest const):
+        * loader/CrossOriginPreflightResultCache.h:
+
 2019-06-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Introduce Baseline to LineBox

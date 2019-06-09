@@ -1,3 +1,13 @@
+2019-06-09  Rob Buis  <rbuis@igalia.com>
+
+        Add wildcard to Access-Control-Allow-Methods and Access-Control-Allow-Headers
+        https://bugs.webkit.org/show_bug.cgi?id=165508
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker-expected.txt:
+
 2019-06-07  Joonghun Park  <jh718.park@samsung.com>
 
         Implement tab-size with units
