@@ -286,9 +286,9 @@ private:
                     changed |= mergePrediction(SpecBigInt);
                 else if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right))
-                    setPrediction(SpecBytecodeDouble);
+                    changed |= mergePrediction(SpecBytecodeDouble);
                 else
-                    setPrediction(SpecBytecodeDouble | SpecBigInt);
+                    changed |= mergePrediction(SpecBytecodeDouble | SpecBigInt);
             }
             break;
         }
