@@ -39,7 +39,6 @@
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
-#include <wtf/PtrTag.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringCommon.h>
 
@@ -107,15 +106,6 @@ template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
         crashLock.lock();                                               \
         dataLog("FAILED while testing " #_actual ": expected: ", _expected, ", actual: ", _actual, "\n"); \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "CHECK_EQ("#_actual ", " #_expected ")"); \
-        CRASH();                                                        \
-    } while (false)
-
-#define CHECK_NOT_EQ(_actual, _expected) do {                               \
-        if ((_actual) != (_expected))                                   \
-            break;                                                      \
-        crashLock.lock();                                               \
-        dataLog("FAILED while testing " #_actual ": expected not: ", _expected, ", actual: ", _actual, "\n"); \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "CHECK_NOT_EQ("#_actual ", " #_expected ")"); \
         CRASH();                                                        \
     } while (false)
 
@@ -1013,47 +1003,6 @@ void testMoveDoubleConditionally64()
 #endif
 }
 
-static void testCagePreservesPACFailureBit()
-{
-    auto cage = compile([] (CCallHelpers& jit) {
-        jit.emitFunctionPrologue();
-        jit.cageConditionally(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
-        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
-        jit.emitFunctionEpilogue();
-        jit.ret();
-    });
-
-    void* ptr = Gigacage::tryMalloc(Gigacage::Primitive, 1);
-    void* taggedPtr = tagArrayPtr(ptr, 1);
-    dataLogLn("starting test");
-    if (isARM64E()) {
-        // FIXME: This won't work if authentication failures trap but I don't know how to test for that right now.
-        CHECK_NOT_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-    } else
-        CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-
-    CHECK_EQ(invoke<void*>(cage, taggedPtr, 1), ptr);
-
-    auto cageWithoutAuthentication = compile([] (CCallHelpers& jit) {
-        jit.emitFunctionPrologue();
-        jit.cageWithoutUntagging(Gigacage::Primitive, GPRInfo::argumentGPR0);
-        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
-        jit.emitFunctionEpilogue();
-        jit.ret();
-    });
-
-    if (isARM64E()) {
-        // FIXME: This won't work if authentication failures trap but I don't know how to test for that right now.
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, untagArrayPtr(taggedPtr, 2)), ptr);
-    } else
-        CHECK_EQ(invoke<void*>(cageWithoutAuthentication, untagArrayPtr(taggedPtr, 2)), ptr);
-
-    CHECK_EQ(untagArrayPtr(taggedPtr, 1), ptr);
-    CHECK_EQ(invoke<void*>(cageWithoutAuthentication, untagArrayPtr(taggedPtr, 1)), ptr);
-
-    Gigacage::free(Gigacage::Primitive, ptr);
-}
-
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -1138,8 +1087,6 @@ void run(const char* filter)
     RUN(testByteSwap());
     RUN(testMoveDoubleConditionally32());
     RUN(testMoveDoubleConditionally64());
-
-    RUN(testCagePreservesPACFailureBit());
 
     if (tasks.isEmpty())
         usage();

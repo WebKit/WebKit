@@ -67,11 +67,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.
     {
-        GPRReg scratchOrSize = !Gigacage::isEnabled(Gigacage::Primitive) ? pinnedRegs.sizeRegister : wasmCallingConventionAir().prologueScratch(1);
+        GPRReg scratchOrSize = isARM64E() ? pinnedRegs.sizeRegister : wasmCallingConventionAir().prologueScratch(1);
 
         jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
         jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemory()), baseMemory); // Wasm::Memory::TaggedArrayStoragePtr<void> (void*).
-        jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs.sizeRegister, scratchOrSize);
+        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
     }
 
     // Tail call into the callee WebAssembly function.

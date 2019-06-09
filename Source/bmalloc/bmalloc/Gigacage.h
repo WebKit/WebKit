@@ -34,8 +34,7 @@
 #include <cstddef>
 #include <inttypes.h>
 
-#if ((BOS(DARWIN) || BOS(LINUX)) && \
-    (BCPU(X86_64) || (BCPU(ARM64) && !defined(__ILP32__) && (!BPLATFORM(IOS_FAMILY) || BPLATFORM(IOS)))))
+#if ((BOS(DARWIN) || BOS(LINUX)) && BCPU(X86_64))
 #define GIGACAGE_ENABLED 1
 #else
 #define GIGACAGE_ENABLED 0
