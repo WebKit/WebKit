@@ -111,8 +111,8 @@ public:
     bool allowSiteSpecificQuirksToOverrideContentMode() const { return m_allowSiteSpecificQuirksToOverrideContentMode; }
     void setAllowSiteSpecificQuirksToOverrideContentMode(bool value) { m_allowSiteSpecificQuirksToOverrideContentMode = value; }
 
-    WTF::String applicationNameForUserAgentWithModernCompatibility() const { return m_applicationNameForUserAgentWithModernCompatibility; }
-    void setApplicationNameForUserAgentWithModernCompatibility(const WTF::String& applicationName) { m_applicationNameForUserAgentWithModernCompatibility = applicationName; }
+    WTF::String applicationNameForDesktopUserAgent() const { return m_applicationNameForDesktopUserAgent; }
+    void setApplicationNameForDesktopUserAgent(const WTF::String& applicationName) { m_applicationNameForDesktopUserAgent = applicationName; }
 
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, Vector<WebCore::CustomHeaderFields>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
@@ -136,7 +136,7 @@ private:
     WebKit::WebsiteSimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Default };
     WebKit::WebsiteLegacyOverflowScrollingTouchPolicy m_legacyOverflowScrollingTouchPolicy { WebKit::WebsiteLegacyOverflowScrollingTouchPolicy::Default };
     bool m_allowSiteSpecificQuirksToOverrideContentMode { false };
-    WTF::String m_applicationNameForUserAgentWithModernCompatibility;
+    WTF::String m_applicationNameForDesktopUserAgent;
 };
 
 } // namespace API

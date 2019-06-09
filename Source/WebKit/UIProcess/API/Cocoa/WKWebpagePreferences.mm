@@ -318,12 +318,12 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (NSString *)_applicationNameForUserAgentWithModernCompatibility
 {
-    return _websitePolicies->applicationNameForUserAgentWithModernCompatibility();
+    return _websitePolicies->applicationNameForDesktopUserAgent();
 }
 
 - (void)_setApplicationNameForUserAgentWithModernCompatibility:(NSString *)applicationName
 {
-    _websitePolicies->setApplicationNameForUserAgentWithModernCompatibility(applicationName);
+    _websitePolicies->setApplicationNameForDesktopUserAgent(applicationName);
 }
 
 - (API::Object&)_apiObject

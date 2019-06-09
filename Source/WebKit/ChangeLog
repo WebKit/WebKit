@@ -1,3 +1,57 @@
+2019-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The default application name for user agent when requesting desktop content is still "Mobile/15E148"
+        https://bugs.webkit.org/show_bug.cgi?id=198693
+        <rdar://problem/51555371>
+
+        Reviewed by Tim Horton.
+
+        Fixes the bug by introducing an applicationNameForDesktopUserAgent member to WebPageProxy. This
+        applicationNameForDesktopUserAgent is set alongside the regular applicationNameForUserAgent; however, in the
+        case where it is being set via WKWebViewConfiguration, use WKWebViewConfiguration's
+        _applicationNameForDesktopUserAgent instead. See below for more details.
+
+        Tested by adding to the existing API test PreferredContentMode.ApplicationNameForDesktopUserAgent.
+
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        * UIProcess/API/APIWebsitePolicies.h:
+
+        Drive-by fix: rename applicationNameForUserAgentWithModernCompatibility to applicationNameForDesktopUserAgent in
+        a few places.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController setApplicationNameForUserAgent:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setApplicationNameForUserAgent:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+
+        Change _applicationNameForUserAgent into an Optional<RetainPtr<NSString>>. A value of WTF::nullopt allows us to
+        know that the default application name should be used (which is different when requesting desktop content).
+
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _applicationNameForDesktopUserAgent]):
+
+        Add _applicationNameForDesktopUserAgent to the web view configuration. This behaves like
+        applicationNameForUserAgent, with one exception: in the case where the default applicationNameForUserAgent is
+        used (i.e. the client has not specified any application name), default to `nil` as the application name for user
+        agent, rather than "Mobile/15E148".
+
+        (-[WKWebViewConfiguration applicationNameForUserAgent]):
+        (-[WKWebViewConfiguration setApplicationNameForUserAgent:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _applicationNameForUserAgentWithModernCompatibility]):
+        (-[WKWebpagePreferences _setApplicationNameForUserAgentWithModernCompatibility:]):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setApplicationNameForDesktopUserAgent):
+        (WebKit::WebPageProxy::applicationNameForDesktopUserAgent const):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+
 2019-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] If we have a bound interface identifier, set it on new PKPaymentRequests

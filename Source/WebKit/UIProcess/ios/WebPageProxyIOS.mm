@@ -1382,9 +1382,9 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         return WebContentMode::Mobile;
 
     if (policies.customUserAgent().isEmpty() && customUserAgent().isEmpty()) {
-        auto applicationName = policies.applicationNameForUserAgentWithModernCompatibility();
+        auto applicationName = policies.applicationNameForDesktopUserAgent();
         if (applicationName.isEmpty())
-            applicationName = applicationNameForUserAgent();
+            applicationName = applicationNameForDesktopUserAgent();
         policies.setCustomUserAgent(standardUserAgentWithApplicationName(applicationName, UserAgentType::Desktop));
     }
 

@@ -199,6 +199,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
+    _page->setApplicationNameForDesktopUserAgent(applicationNameForUserAgent);
     _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 }
 

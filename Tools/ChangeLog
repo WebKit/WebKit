@@ -1,3 +1,24 @@
+2019-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The default application name for user agent when requesting desktop content is still "Mobile/15E148"
+        https://bugs.webkit.org/show_bug.cgi?id=198693
+        <rdar://problem/51555371>
+
+        Reviewed by Tim Horton.
+
+        Augment an existing API test to exercise three additional scenarios:
+            -   The web view configuration's application name is never set; the default should not include
+                "Mobile/15E148" in desktop mode.
+            -   The application name is explicitly set to nil; the default application name should still not include
+                "Mobile/15E148".
+            -   The application name is explicitly set to the default value, "Mobile/15E148". WKWebView should honor
+                this when generating the user agent, even in desktop mode.
+
+        * TestWebKitAPI/ios/PreferredContentMode.mm:
+        (TestWebKitAPI::setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate):
+        (TestWebKitAPI::setUpWebViewForPreferredContentModeTesting):
+        (TestWebKitAPI::TEST):
+
 2019-06-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Unreviewed test gardening.

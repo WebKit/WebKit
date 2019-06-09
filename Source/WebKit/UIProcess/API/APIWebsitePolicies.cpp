@@ -75,7 +75,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
         customHeaderFields.uncheckedAppend(field);
     policies->setCustomHeaderFields(WTFMove(customHeaderFields));
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
-    policies->setApplicationNameForUserAgentWithModernCompatibility(m_applicationNameForUserAgentWithModernCompatibility);
+    policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
     return policies;
 }
 

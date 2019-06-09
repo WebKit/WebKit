@@ -855,6 +855,8 @@ public:
     const String& userAgent() const { return m_userAgent; }
     void setApplicationNameForUserAgent(const String&);
     const String& applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
+    void setApplicationNameForDesktopUserAgent(const String& applicationName) { m_applicationNameForDesktopUserAgent = applicationName; }
+    const String& applicationNameForDesktopUserAgent() const { return m_applicationNameForDesktopUserAgent; }
     void setCustomUserAgent(const String&);
     const String& customUserAgent() const { return m_customUserAgent; }
     static String standardUserAgent(const String& applicationName = String());
@@ -2145,6 +2147,7 @@ private:
 
     String m_userAgent;
     String m_applicationNameForUserAgent;
+    String m_applicationNameForDesktopUserAgent;
     String m_customUserAgent;
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;

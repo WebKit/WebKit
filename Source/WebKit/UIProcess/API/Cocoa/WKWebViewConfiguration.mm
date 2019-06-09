@@ -122,7 +122,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     WeakObjCPtr<WKWebView> _relatedWebView;
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
-    LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
+    Optional<RetainPtr<NSString>> _applicationNameForUserAgent;
     NSTimeInterval _incrementalRenderingSuppressionTimeout;
     BOOL _respectsImageOrientation;
     BOOL _printsBackgrounds;
@@ -286,7 +286,10 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     [coder encodeObject:self.websiteDataStore forKey:@"websiteDataStore"];
 
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
-    [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
+
+    if (_applicationNameForUserAgent.hasValue())
+        [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
+
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
 
     [coder encodeBool:self._drawsBackground forKey:@"drawsBackground"];
@@ -320,7 +323,10 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     self.websiteDataStore = decodeObjectOfClassForKeyFromCoder([WKWebsiteDataStore class], @"websiteDataStore", coder);
 
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
-    self.applicationNameForUserAgent = decodeObjectOfClassForKeyFromCoder([NSString class], @"applicationNameForUserAgent", coder);
+
+    if ([coder containsValueForKey:@"applicationNameForUserAgent"])
+        self.applicationNameForUserAgent = decodeObjectOfClassForKeyFromCoder([NSString class], @"applicationNameForUserAgent", coder);
+
     self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
 
     if ([coder containsValueForKey:@"drawsBackground"])
@@ -366,7 +372,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
-    configuration.applicationNameForUserAgent = self.applicationNameForUserAgent;
+    configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
     configuration->_respectsImageOrientation = self->_respectsImageOrientation;
     configuration->_printsBackgrounds = self->_printsBackgrounds;
@@ -495,14 +501,19 @@ static NSString *defaultApplicationNameForUserAgent()
 #endif
 }
 
+- (NSString *)_applicationNameForDesktopUserAgent
+{
+    return _applicationNameForUserAgent.valueOr(nil).get();
+}
+
 - (NSString *)applicationNameForUserAgent
 {
-    return _applicationNameForUserAgent.get([] { return defaultApplicationNameForUserAgent(); });
+    return _applicationNameForUserAgent.valueOr(defaultApplicationNameForUserAgent()).get();
 }
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
-    _applicationNameForUserAgent.set(adoptNS([applicationNameForUserAgent copy]));
+    _applicationNameForUserAgent.emplace(adoptNS(applicationNameForUserAgent.copy));
 }
 
 - (_WKVisitedLinkStore *)_visitedLinkStore

@@ -748,6 +748,8 @@ static void validate(WKWebViewConfiguration *configuration)
     if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
         _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 
+    _page->setApplicationNameForDesktopUserAgent(configuration._applicationNameForDesktopUserAgent);
+
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
     _page->setNavigationClient(_navigationState->createNavigationClient());
 
@@ -4782,6 +4784,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
     _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
+    _page->setApplicationNameForDesktopUserAgent(applicationNameForUserAgent);
 }
 
 - (NSString *)_customUserAgent
