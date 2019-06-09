@@ -1,3 +1,23 @@
+2019-06-08  Dean Jackson  <dino@apple.com>
+
+        Drag starting state can get stuck even though the drag has ended
+        https://bugs.webkit.org/show_bug.cgi?id=198696
+        <rdar://problem/51556045>
+
+        Reviewed by Wenson Hsieh.
+
+        In iOS 13, we're seeing cases of the DragSession not
+        correctly ending, and thus leaving m_isStartingDrag in
+        an incorrect state. Temporarily force this to be reset
+        in ::dragEnded while investigating
+
+        * UIProcess/ios/WKContentViewInteraction.mm: Add some more release logging
+        while here.
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView dragInteraction:item:willAnimateCancelWithAnimator:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dragEnded):
+
 2019-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] The default application name for user agent when requesting desktop content is still "Mobile/15E148"

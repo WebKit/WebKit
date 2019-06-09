@@ -3911,6 +3911,8 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     m_page->mainFrame().eventHandler().dragSourceEndedAt(event, (DragOperation)operation);
 
     send(Messages::WebPageProxy::DidEndDragging());
+
+    m_isStartingDrag = false;
 }
 
 void WebPage::willPerformLoadDragDestinationAction()
