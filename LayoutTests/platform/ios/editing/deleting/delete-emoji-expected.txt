@@ -35,12 +35,8 @@ Dump of markup 8:
 
 Dump of markup 9:
 | "
-👦🏻👦🏾<#selection-caret>"
-
-Dump of markup 10:
-| "
 👦🏻<#selection-caret>"
 
-Dump of markup 11:
+Dump of markup 10:
 | <#selection-caret>
 | <br>

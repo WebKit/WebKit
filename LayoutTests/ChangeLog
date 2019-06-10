@@ -1,3 +1,14 @@
+2019-06-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ iOS Sim WK2 ] Layout Test editing/deleting/delete-emoji* is failing
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Remove failure expectation.
+        * platform/ios/editing/deleting/delete-emoji-1-expected.txt: Rebaseline test.
+        * platform/ios/editing/deleting/delete-emoji-9-expected.txt: Ditto.
+        * platform/ios/editing/deleting/delete-emoji-expected.txt: Ditto.
+
 2019-06-10  Antti Koivisto  <antti@apple.com>
 
         Event region should be set on scrolledContentsLayer if it exists
