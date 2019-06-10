@@ -706,17 +706,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-
-void WebChromeClient::annotatedRegionsChanged()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), [m_webView _dashboardRegions]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-#endif
-
 #if ENABLE(INPUT_TYPE_COLOR)
 
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)

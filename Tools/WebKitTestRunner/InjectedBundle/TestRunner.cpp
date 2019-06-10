@@ -536,16 +536,6 @@ void TestRunner::setPrivateBrowsingEnabled(bool enabled)
     WKBundleSetPrivateBrowsingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
-void TestRunner::setUseDashboardCompatibilityMode(bool enabled)
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetUseDashboardCompatibilityMode(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-    
 void TestRunner::setPopupBlockingEnabled(bool enabled)
 {
     auto& injectedBundle = InjectedBundle::singleton();

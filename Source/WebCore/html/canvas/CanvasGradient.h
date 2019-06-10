@@ -47,18 +47,11 @@ public:
 
     ExceptionOr<void> addColorStop(float value, const String& color);
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    void setDashboardCompatibilityMode() { m_dashboardCompatibilityMode = true; }
-#endif
-
 private:
     CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
     CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
 
     Ref<Gradient> m_gradient;
-#if ENABLE(DASHBOARD_SUPPORT)
-    bool m_dashboardCompatibilityMode { false };
-#endif
 };
 
 }

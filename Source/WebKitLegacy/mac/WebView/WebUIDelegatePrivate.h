@@ -203,6 +203,7 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments;
 
 #if ENABLE_DASHBOARD_SUPPORT
+// FIXME: Remove this method once it is verified no one is dependent on it.
 // regions is an dictionary whose keys are regions label and values are arrays of WebDashboardRegions.
 - (void)webView:(WebView *)webView dashboardRegionsChanged:(NSDictionary *)regions;
 #endif

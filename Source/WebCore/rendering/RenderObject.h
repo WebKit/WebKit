@@ -85,24 +85,6 @@ enum class ShouldAllowCrossOriginScrolling { No, Yes };
 
 struct ScrollRectToVisibleOptions;
 
-#if ENABLE(DASHBOARD_SUPPORT)
-struct AnnotatedRegionValue {
-    bool operator==(const AnnotatedRegionValue& o) const
-    {
-        return type == o.type && bounds == o.bounds && clip == o.clip && label == o.label;
-    }
-    bool operator!=(const AnnotatedRegionValue& o) const
-    {
-        return !(*this == o);
-    }
-
-    LayoutRect bounds;
-    String label;
-    LayoutRect clip;
-    int type;
-};
-#endif
-
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient, public CanMakeWeakPtr<RenderObject> {
     WTF_MAKE_ISO_ALLOCATED(RenderObject);
@@ -568,11 +550,6 @@ public:
     // used for element state updates that cannot be fixed with a
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
-
-#if ENABLE(DASHBOARD_SUPPORT)
-    virtual void addAnnotatedRegions(Vector<AnnotatedRegionValue>&);
-    void collectAnnotatedRegions(Vector<AnnotatedRegionValue>&);
-#endif
 
     bool isComposited() const;
 

@@ -1614,55 +1614,6 @@ int RenderObject::innerLineHeight() const
     return style().computedLineHeight();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
-{
-    // Convert the style regions to absolute coordinates.
-    if (style().visibility() != Visibility::Visible || !is<RenderBox>(*this))
-        return;
-    
-    auto& box = downcast<RenderBox>(*this);
-    FloatPoint absPos = localToAbsolute();
-
-    const Vector<StyleDashboardRegion>& styleRegions = style().dashboardRegions();
-    for (const auto& styleRegion : styleRegions) {
-        LayoutUnit w = box.width();
-        LayoutUnit h = box.height();
-
-        AnnotatedRegionValue region;
-        region.label = styleRegion.label;
-        region.bounds = LayoutRect(styleRegion.offset.left().value(),
-                                   styleRegion.offset.top().value(),
-                                   w - styleRegion.offset.left().value() - styleRegion.offset.right().value(),
-                                   h - styleRegion.offset.top().value() - styleRegion.offset.bottom().value());
-        region.type = styleRegion.type;
-
-        region.clip = computeAbsoluteRepaintRect(region.bounds);
-        if (region.clip.height() < 0) {
-            region.clip.setHeight(0);
-            region.clip.setWidth(0);
-        }
-
-        region.bounds.setX(absPos.x() + styleRegion.offset.left().value());
-        region.bounds.setY(absPos.y() + styleRegion.offset.top().value());
-
-        regions.append(region);
-    }
-}
-
-void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
-{
-    // RenderTexts don't have their own style, they just use their parent's style,
-    // so we don't want to include them.
-    if (is<RenderText>(*this))
-        return;
-
-    addAnnotatedRegions(regions);
-    for (RenderObject* current = downcast<RenderElement>(*this).firstChild(); current; current = current->nextSibling())
-        current->collectAnnotatedRegions(regions);
-}
-#endif
-
 int RenderObject::caretMinOffset() const
 {
     return 0;

@@ -84,10 +84,6 @@
 #include "CSSGridTemplateAreasValue.h"
 #include "RenderGrid.h"
 
-#if ENABLE(DASHBOARD_SUPPORT)
-#include "DashboardRegion.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSComputedStyleDeclaration);
@@ -304,9 +300,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyColumnWidth,
 #if ENABLE(CURSOR_VISIBILITY)
     CSSPropertyWebkitCursorVisibility,
-#endif
-#if ENABLE(DASHBOARD_SUPPORT)
-    CSSPropertyWebkitDashboardRegion,
 #endif
     CSSPropertyAlignContent,
     CSSPropertyAlignItems,
@@ -3559,38 +3552,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (style.boxSizing() == BoxSizing::ContentBox)
                 return cssValuePool.createIdentifierValue(CSSValueContentBox);
             return cssValuePool.createIdentifierValue(CSSValueBorderBox);
-#if ENABLE(DASHBOARD_SUPPORT)
-        case CSSPropertyWebkitDashboardRegion:
-        {
-            const Vector<StyleDashboardRegion>& regions = style.dashboardRegions();
-            unsigned count = regions.size();
-            if (count == 1 && regions[0].type == StyleDashboardRegion::None)
-                return cssValuePool.createIdentifierValue(CSSValueNone);
-
-            RefPtr<DashboardRegion> firstRegion;
-            DashboardRegion* previousRegion = nullptr;
-            for (unsigned i = 0; i < count; i++) {
-                auto region = DashboardRegion::create();
-                StyleDashboardRegion styleRegion = regions[i];
-
-                region->m_label = styleRegion.label;
-                LengthBox offset = styleRegion.offset;
-                region->setTop(zoomAdjustedPixelValue(offset.top().value(), style));
-                region->setRight(zoomAdjustedPixelValue(offset.right().value(), style));
-                region->setBottom(zoomAdjustedPixelValue(offset.bottom().value(), style));
-                region->setLeft(zoomAdjustedPixelValue(offset.left().value(), style));
-                region->m_isRectangle = (styleRegion.type == StyleDashboardRegion::Rectangle);
-                region->m_isCircle = (styleRegion.type == StyleDashboardRegion::Circle);
-
-                if (previousRegion)
-                    previousRegion->m_next = region.copyRef();
-                else
-                    firstRegion = region.copyRef();
-                previousRegion = region.ptr();
-            }
-            return cssValuePool.createValue(WTFMove(firstRegion));
-        }
-#endif
         case CSSPropertyAnimationDelay:
             return delayValue(style.animations());
         case CSSPropertyAnimationDirection: {

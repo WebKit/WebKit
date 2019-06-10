@@ -1,3 +1,12 @@
+2019-06-10  Sam Weinig  <weinig@apple.com>
+
+        Remove Dashboard support
+        https://bugs.webkit.org/show_bug.cgi?id=198615
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-06-10  Timothy Hatcher  <timothy@apple.com>
 
         Integrate dark mode support for iOS.

@@ -6886,14 +6886,6 @@
             },
             "status": "non-standard"
         },
-        "-webkit-dashboard-region": {
-            "codegen-properties": {
-                "name-for-methods": "DashboardRegions",
-                "custom": "Value",
-                "enable-if": "ENABLE_DASHBOARD_SUPPORT"
-            },
-            "status": "non-standard"
-        },
         "-webkit-overflow-scrolling": {
             "inherited": true,
             "values": [

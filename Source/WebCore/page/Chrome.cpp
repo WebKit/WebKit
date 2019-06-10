@@ -525,12 +525,6 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 #endif
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-void ChromeClient::annotatedRegionsChanged()
-{
-}
-#endif
-
 bool ChromeClient::shouldReplaceWithGeneratedFileForUpload(const String&, String&)
 {
     return false;

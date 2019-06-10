@@ -223,9 +223,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && perspectiveOriginY == o.perspectiveOriginY
         && lineClamp == o.lineClamp
         && initialLetter == o.initialLetter
-#if ENABLE(DASHBOARD_SUPPORT)
-        && dashboardRegions == o.dashboardRegions
-#endif
         && deprecatedFlexibleBox == o.deprecatedFlexibleBox
         && flexibleBox == o.flexibleBox
         && marquee == o.marquee

@@ -143,9 +143,6 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSPrimitiveValue::CSS_PROPERTY_ID:
     case CSSPrimitiveValue::CSS_VALUE_ID:
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
-#endif
         return false;
     };
     ASSERT_NOT_REACHED();

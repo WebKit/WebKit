@@ -591,13 +591,6 @@ void TestRunner::setPagePaused(bool paused)
 }
 #endif
 
-void TestRunner::setUseDashboardCompatibilityMode(bool flag)
-{
-#if !PLATFORM(IOS_FAMILY)
-    [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
-#endif
-}
-
 void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
     [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];

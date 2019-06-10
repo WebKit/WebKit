@@ -49,13 +49,8 @@ ExceptionOr<void> CanvasGradient::addColorStop(float value, const String& colorS
     // Passing null for canvas ensures that currentColor is treated as black,
     // as required by the standard.
     Color color = parseColorOrCurrentColor(colorString, nullptr /*canvas*/);
-    if (!color.isValid()) {
-#if ENABLE(DASHBOARD_SUPPORT)
-        if (m_dashboardCompatibilityMode)
-            return { };
-#endif
+    if (!color.isValid())
         return Exception { SyntaxError };
-    }
 
     m_gradient->addColorStop(value, color);
     return { };

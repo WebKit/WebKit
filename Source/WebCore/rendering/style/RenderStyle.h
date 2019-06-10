@@ -77,10 +77,6 @@
 #include "StyleGridData.h"
 #include "StyleGridItemData.h"
 
-#if ENABLE(DASHBOARD_SUPPORT)
-#include "StyleDashboardRegion.h"
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextSizeAdjustment.h"
 #endif
@@ -833,12 +829,6 @@ public:
     void setMaxWidth(Length&& length) { SET_VAR(m_boxData, m_maxWidth, WTFMove(length)); }
     void setMinHeight(Length&& length) { SET_VAR(m_boxData, m_minHeight, WTFMove(length)); }
     void setMaxHeight(Length&& length) { SET_VAR(m_boxData, m_maxHeight, WTFMove(length)); }
-
-#if ENABLE(DASHBOARD_SUPPORT)
-    const Vector<StyleDashboardRegion>& dashboardRegions() const { return m_rareNonInheritedData->dashboardRegions; }
-    void setDashboardRegions(const Vector<StyleDashboardRegion>& regions) { SET_VAR(m_rareNonInheritedData, dashboardRegions, regions); }
-    void setDashboardRegion(int type, const String& label, Length&& top, Length&& right, Length&& bottom, Length&& left, bool append);
-#endif
 
     void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
     void resetBorderTop() { SET_VAR(m_surroundData, border.m_top, BorderValue()); }
@@ -1692,11 +1682,6 @@ public:
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     static bool initialUseTouchOverflowScrolling() { return false; }
-#endif
-
-#if ENABLE(DASHBOARD_SUPPORT)
-    static const Vector<StyleDashboardRegion>& initialDashboardRegions();
-    static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
 
     static const FilterOperations& initialFilter() { static NeverDestroyed<FilterOperations> ops; return ops; }

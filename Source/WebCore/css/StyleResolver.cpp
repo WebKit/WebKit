@@ -113,13 +113,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
 
-
-#if ENABLE(DASHBOARD_SUPPORT)
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;

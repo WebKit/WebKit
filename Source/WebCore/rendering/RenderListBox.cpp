@@ -953,8 +953,6 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
 
     if (m_vBar)
         m_vBar->styleChanged();
-
-    document().invalidateScrollbarDependentRegions();
 }
 
 bool RenderListBox::scrolledToTop() const

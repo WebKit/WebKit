@@ -45,11 +45,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(DASHBOARD_SUPPORT)
-#include "DashboardRegion.h"
-#endif
-
-
 namespace WebCore {
 
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::UnitType unitType)
@@ -110,9 +105,6 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_UNKNOWN:
     case CSSPrimitiveValue::CSS_URI:
     case CSSPrimitiveValue::CSS_VALUE_ID:
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
-#endif
         return false;
     }
 
@@ -175,9 +167,6 @@ static inline bool isStringType(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_VMAX:
     case CSSPrimitiveValue::CSS_VMIN:
     case CSSPrimitiveValue::CSS_VW:
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
-#endif
         return false;
     }
 
@@ -437,15 +426,6 @@ void CSSPrimitiveValue::init(Ref<Quad>&& quad)
     m_value.quad = &quad.leakRef();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-void CSSPrimitiveValue::init(RefPtr<DashboardRegion>&& r)
-{
-    m_primitiveUnitType = CSS_DASHBOARD_REGION;
-    m_hasCachedCSSText = false;
-    m_value.region = r.leakRef();
-}
-#endif
-
 void CSSPrimitiveValue::init(Ref<Pair>&& p)
 {
     m_primitiveUnitType = CSS_PAIR;
@@ -496,12 +476,6 @@ void CSSPrimitiveValue::cleanup()
     case CSS_PAIR:
         m_value.pair->deref();
         break;
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSS_DASHBOARD_REGION:
-        if (m_value.region)
-            m_value.region->deref();
-        break;
-#endif
     case CSS_CALC:
         m_value.calc->deref();
         break;
@@ -1045,42 +1019,6 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return color().cssText();
     case CSS_PAIR:
         return pairValue()->cssText();
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSS_DASHBOARD_REGION: {
-        StringBuilder result;
-        for (DashboardRegion* region = dashboardRegionValue(); region; region = region->m_next.get()) {
-            if (!result.isEmpty())
-                result.append(' ');
-            result.appendLiteral("dashboard-region(");
-            result.append(region->m_label);
-            if (region->m_isCircle)
-                result.appendLiteral(" circle");
-            else if (region->m_isRectangle)
-                result.appendLiteral(" rectangle");
-            else
-                break;
-            if (region->top()->m_primitiveUnitType == CSS_VALUE_ID && region->top()->valueID() == CSSValueInvalid) {
-                ASSERT(region->right()->m_primitiveUnitType == CSS_VALUE_ID);
-                ASSERT(region->bottom()->m_primitiveUnitType == CSS_VALUE_ID);
-                ASSERT(region->left()->m_primitiveUnitType == CSS_VALUE_ID);
-                ASSERT(region->right()->valueID() == CSSValueInvalid);
-                ASSERT(region->bottom()->valueID() == CSSValueInvalid);
-                ASSERT(region->left()->valueID() == CSSValueInvalid);
-            } else {
-                result.append(' ');
-                result.append(region->top()->cssText());
-                result.append(' ');
-                result.append(region->right()->cssText());
-                result.append(' ');
-                result.append(region->bottom()->cssText());
-                result.append(' ');
-                result.append(region->left()->cssText());
-            }
-            result.append(')');
-        }
-        return result.toString();
-    }
-#endif
     case CSS_CALC:
         return m_value.calc->cssText();
     case CSS_SHAPE:
@@ -1175,10 +1113,6 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return color() == other.color();
     case CSS_PAIR:
         return m_value.pair && other.m_value.pair && m_value.pair->equals(*other.m_value.pair);
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSS_DASHBOARD_REGION:
-        return m_value.region && other.m_value.region && m_value.region->equals(*other.m_value.region);
-#endif
     case CSS_CALC:
         return m_value.calc && other.m_value.calc && m_value.calc->equals(*other.m_value.calc);
     case CSS_SHAPE:

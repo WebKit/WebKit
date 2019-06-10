@@ -1,3 +1,58 @@
+2019-06-10  Sam Weinig  <weinig@apple.com>
+
+        Remove Dashboard support
+        https://bugs.webkit.org/show_bug.cgi?id=198615
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        * cssom/cssvalue-comparison-expected.txt:
+        * cssom/cssvalue-comparison.html:
+        * fast/canvas/canvas-gradient-addStop-error-expected.txt:
+        * fast/canvas/canvas-gradient-addStop-error.html:
+        * fast/canvas/fill-stroke-clip-reset-path-expected.txt:
+        * fast/canvas/fill-stroke-clip-reset-path.html:
+        * fast/css/dashboard-regions-attr-crash-expected.txt: Removed.
+        * fast/css/dashboard-regions-attr-crash.html: Removed.
+        * fast/css/dashboard-regions-undefined-length-assertion-expected.txt: Removed.
+        * fast/css/dashboard-regions-undefined-length-assertion.html: Removed.
+        * fast/xmlhttprequest/set-dangerous-headers-in-dashboard-expected.txt: Removed.
+        * fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html: Removed.
+        * http/tests/xmlhttprequest/default-content-type-dashboard-expected.txt: Removed.
+        * http/tests/xmlhttprequest/default-content-type-dashboard.html: Removed.
+        * http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard-expected.txt: Removed.
+        * http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html: Removed.
+        * legacy-animation-engine/cssom/cssvalue-comparison-expected.txt:
+        * legacy-animation-engine/cssom/cssvalue-comparison.html:
+        * mathml/mathml-in-dashboard-expected.txt: Removed.
+        * mathml/mathml-in-dashboard.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/mathml/mathml-in-dashboard-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/css/dashboard-region-parser-expected.txt: Removed.
+        * platform/mac/fast/css/dashboard-region-parser.html: Removed.
+        * platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk-expected.txt: Removed.
+        * platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html: Removed.
+        * platform/mac/mathml/mathml-in-dashboard-expected.png: Removed.
+        * platform/mac/mathml/mathml-in-dashboard-expected.txt: Removed.
+        * platform/mac/svg/custom/embedded-svg-disallowed-in-dashboard-expected.png: Removed.
+        * platform/mac/svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard-expected.png: Removed.
+        * platform/mac/svg/custom/manually-parsed-svg-disallowed-in-dashboard-expected.png: Removed.
+        * platform/mac/svg/custom/svg-disallowed-in-dashboard-object-expected.png: Removed.
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * svg/custom/embedded-svg-allowed-in-dashboard-expected.txt: Removed.
+        * svg/custom/embedded-svg-allowed-in-dashboard.xml: Removed.
+        * svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard-expected.txt: Removed.
+        * svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html: Removed.
+        * svg/custom/manually-parsed-svg-allowed-in-dashboard-expected.txt: Removed.
+        * svg/custom/manually-parsed-svg-allowed-in-dashboard.html: Removed.
+        * svg/custom/svg-allowed-in-dashboard-object-expected.txt: Removed.
+        * svg/custom/svg-allowed-in-dashboard-object.html: Removed.
+
 2019-06-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ iOS Sim WK2 ] Layout Test editing/deleting/delete-emoji* is failing

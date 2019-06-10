@@ -80,7 +80,7 @@ using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasEle
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
 public:
-    CanvasRenderingContext2DBase(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
+    CanvasRenderingContext2DBase(CanvasBase&, bool usesCSSCompatibilityParseMode);
     virtual ~CanvasRenderingContext2DBase();
 
     float lineWidth() const;
@@ -366,8 +366,6 @@ protected:
 
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
-    void prepareGradientForDashboard(CanvasGradient&) const;
-
     ExceptionOr<RefPtr<ImageData>> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh) const;
     void putImageData(ImageData&, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
@@ -379,15 +377,10 @@ protected:
     PlatformLayer* platformLayer() const override;
 #endif
 
-    void clearPathForDashboardBackwardCompatibilityMode();
-
     static const unsigned MaxSaveCount = 1024 * 16;
     Vector<State, 1> m_stateStack;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
-#if ENABLE(DASHBOARD_SUPPORT)
-    bool m_usesDashboardCompatibilityMode;
-#endif
     bool m_usesDisplayListDrawing { false };
     bool m_tracksDisplayListReplay { false };
     mutable std::unique_ptr<struct DisplayListDrawingContext> m_recordingContext;

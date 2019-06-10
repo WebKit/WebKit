@@ -1059,15 +1059,6 @@ webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure 
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
 webkit.org/b/168366 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html
 
-# DASHBOARD_SUPPORT is mac only
-http/tests/xmlhttprequest/default-content-type-dashboard.html [ Skip ]
-http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Skip ]
-svg/custom/embedded-svg-allowed-in-dashboard.xml [ Skip ]
-svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Skip ]
-svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Skip ]
-svg/custom/svg-allowed-in-dashboard-object.html [ Skip ]
-mathml/mathml-in-dashboard.html [ Skip ]
-
 # No embedded PDF support
 fast/hidpi/pdf-image-scaled.html [ Skip ]
 fast/images/displaced-non-cached-pdf.html [ Skip ]

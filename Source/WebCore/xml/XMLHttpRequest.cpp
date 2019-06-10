@@ -148,17 +148,6 @@ SecurityOrigin* XMLHttpRequest::securityOrigin() const
     return scriptExecutionContext()->securityOrigin();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-
-bool XMLHttpRequest::usesDashboardBackwardCompatibilityMode() const
-{
-    if (scriptExecutionContext()->isWorkerGlobalScope())
-        return false;
-    return document()->settings().usesDashboardBackwardCompatibilityMode();
-}
-
-#endif
-
 ExceptionOr<OwnedString> XMLHttpRequest::responseText()
 {
     if (responseType() != ResponseType::EmptyString && responseType() != ResponseType::Text)
@@ -465,13 +454,8 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
 
     if (m_method != "GET" && m_method != "HEAD") {
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
-#if ENABLE(DASHBOARD_SUPPORT)
-            if (usesDashboardBackwardCompatibilityMode())
-                m_requestHeaders.set(HTTPHeaderName::ContentType, "application/x-www-form-urlencoded"_s);
-            else
-#endif
-                // FIXME: this should include the charset used for encoding.
-                m_requestHeaders.set(HTTPHeaderName::ContentType, document.isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
+            // FIXME: this should include the charset used for encoding.
+            m_requestHeaders.set(HTTPHeaderName::ContentType, document.isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
         } else {
             String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
             replaceCharsetInMediaTypeIfNeeded(contentType);
@@ -496,12 +480,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD") {
         String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
         if (contentType.isNull()) {
-#if ENABLE(DASHBOARD_SUPPORT)
-            if (usesDashboardBackwardCompatibilityMode())
-                m_requestHeaders.set(HTTPHeaderName::ContentType, "application/x-www-form-urlencoded"_s);
-            else
-#endif
-                m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::textPlainContentType());
+            m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::textPlainContentType());
         } else {
             replaceCharsetInMediaTypeIfNeeded(contentType);
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
@@ -801,23 +780,14 @@ ExceptionOr<void> XMLHttpRequest::overrideMimeType(const String& mimeType)
 
 ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const String& value)
 {
-    if (readyState() != OPENED || m_sendFlag) {
-#if ENABLE(DASHBOARD_SUPPORT)
-        if (usesDashboardBackwardCompatibilityMode())
-            return { };
-#endif
+    if (readyState() != OPENED || m_sendFlag)
         return Exception { InvalidStateError };
-    }
 
     String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
         return Exception { SyntaxError };
 
     bool allowUnsafeHeaderField = false;
-#if ENABLE(DASHBOARD_SUPPORT)
-    allowUnsafeHeaderField = usesDashboardBackwardCompatibilityMode();
-#endif
-
     // FIXME: The allowSettingAnyXHRHeaderFromFileURLs setting currently only applies to Documents, not workers.
     if (securityOrigin()->canLoadLocalResources() && scriptExecutionContext()->isDocument() && document()->settings().allowSettingAnyXHRHeaderFromFileURLs())
         allowUnsafeHeaderField = true;

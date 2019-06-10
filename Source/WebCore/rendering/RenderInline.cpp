@@ -51,10 +51,6 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 
-#if ENABLE(DASHBOARD_SUPPORT)
-#include "Frame.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderInline);
@@ -1393,48 +1389,5 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSBottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
 }
-
-#if ENABLE(DASHBOARD_SUPPORT)
-void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
-{
-    // Convert the style regions to absolute coordinates.
-    if (style().visibility() != Visibility::Visible)
-        return;
-
-    const Vector<StyleDashboardRegion>& styleRegions = style().dashboardRegions();
-    unsigned i, count = styleRegions.size();
-    for (i = 0; i < count; i++) {
-        StyleDashboardRegion styleRegion = styleRegions[i];
-
-        LayoutRect linesBoundingBox = this->linesBoundingBox();
-        LayoutUnit w = linesBoundingBox.width();
-        LayoutUnit h = linesBoundingBox.height();
-
-        AnnotatedRegionValue region;
-        region.label = styleRegion.label;
-        region.bounds = LayoutRect(linesBoundingBox.x() + styleRegion.offset.left().value(),
-                                linesBoundingBox.y() + styleRegion.offset.top().value(),
-                                w - styleRegion.offset.left().value() - styleRegion.offset.right().value(),
-                                h - styleRegion.offset.top().value() - styleRegion.offset.bottom().value());
-        region.type = styleRegion.type;
-
-        RenderObject* container = containingBlock();
-        if (!container)
-            container = this;
-
-        region.clip = container->computeAbsoluteRepaintRect(region.bounds);
-        if (region.clip.height() < 0) {
-            region.clip.setHeight(0);
-            region.clip.setWidth(0);
-        }
-
-        FloatPoint absPos = container->localToAbsolute();
-        region.bounds.setX(absPos.x() + region.bounds.x());
-        region.bounds.setY(absPos.y() + region.bounds.y());
-
-        regions.append(region);
-    }
-}
-#endif
 
 } // namespace WebCore

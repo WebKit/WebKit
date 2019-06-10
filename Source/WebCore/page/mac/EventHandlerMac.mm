@@ -752,11 +752,6 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 
 bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 {
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (m_frame.settings().usesDashboardBackwardCompatibilityMode())
-        return true;
-#endif
-        
     if (m_frame.settings().needsKeyboardEventDisambiguationQuirks())
         return true;
 

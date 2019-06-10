@@ -4052,48 +4052,8 @@ void Document::elementInActiveChainDidDetach(Element& element)
         m_activeElement = m_activeElement->parentElement();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-const Vector<AnnotatedRegionValue>& Document::annotatedRegions() const
+void Document::invalidateRenderingDependentRegions()
 {
-    return m_annotatedRegions;
-}
-
-void Document::setAnnotatedRegions(const Vector<AnnotatedRegionValue>& regions)
-{
-    m_annotatedRegions = regions;
-    setAnnotatedRegionsDirty(false);
-}
-
-void Document::updateAnnotatedRegions()
-{
-    if (!hasAnnotatedRegions())
-        return;
-
-    Vector<AnnotatedRegionValue> newRegions;
-    renderBox()->collectAnnotatedRegions(newRegions); // FIXME.
-    if (newRegions == annotatedRegions())
-        return;
-
-    setAnnotatedRegions(newRegions);
-    
-    if (Page* page = this->page())
-        page->chrome().client().annotatedRegionsChanged();
-}
-#endif
-
-void Document::invalidateRenderingDependentRegions(AnnotationsAction annotationsAction)
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    // FIXME: we don't have a good invalidation/update policy for Dashboard regions. They get eagerly updated
-    // on forced layouts, and don't need to be.
-    if (annotationsAction == AnnotationsAction::Update)
-        updateAnnotatedRegions();
-    else
-        setAnnotatedRegionsDirty();
-#else
-    UNUSED_PARAM(annotationsAction);
-#endif
-
 #if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
     setTouchEventRegionsNeedUpdate();
 #endif
@@ -4105,22 +4065,6 @@ void Document::invalidateRenderingDependentRegions(AnnotationsAction annotations
                 scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
         }
     }
-#endif
-}
-
-void Document::invalidateScrollbarDependentRegions()
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (hasAnnotatedRegions())
-        setAnnotatedRegionsDirty();
-#endif
-}
-
-void Document::updateZOrderDependentRegions()
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (annotatedRegionsDirty())
-        updateAnnotatedRegions();
 #endif
 }
 

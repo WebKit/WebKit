@@ -692,11 +692,6 @@ void TestRunner::setTabKeyCyclesThroughElements(bool shouldCycle)
     viewPrivate->setTabKeyCyclesThroughElements(shouldCycle ? TRUE : FALSE);
 }
 
-void TestRunner::setUseDashboardCompatibilityMode(bool flag)
-{
-    // Not implemented on Windows.
-}
-
 void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
     COMPtr<IWebView> webView;

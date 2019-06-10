@@ -137,17 +137,11 @@ private:
     CanvasRenderingContext2DBase* m_canvasContext;
 };
 
-CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
+CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, bool usesCSSCompatibilityParseMode)
     : CanvasRenderingContext(canvas)
     , m_stateStack(1)
     , m_usesCSSCompatibilityParseMode(usesCSSCompatibilityParseMode)
-#if ENABLE(DASHBOARD_SUPPORT)
-    , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
-#endif
 {
-#if !ENABLE(DASHBOARD_SUPPORT)
-    ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
-#endif
 }
 
 void CanvasRenderingContext2DBase::unwindStateStack()
@@ -1057,19 +1051,16 @@ static WindRule toWindRule(CanvasFillRule rule)
 void CanvasRenderingContext2DBase::fill(CanvasFillRule windingRule)
 {
     fillInternal(m_path, windingRule);
-    clearPathForDashboardBackwardCompatibilityMode();
 }
 
 void CanvasRenderingContext2DBase::stroke()
 {
     strokeInternal(m_path);
-    clearPathForDashboardBackwardCompatibilityMode();
 }
 
 void CanvasRenderingContext2DBase::clip(CanvasFillRule windingRule)
 {
     clipInternal(m_path, windingRule);
-    clearPathForDashboardBackwardCompatibilityMode();
 }
 
 void CanvasRenderingContext2DBase::fill(Path2D& path, CanvasFillRule windingRule)
@@ -1879,16 +1870,6 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     compositeBuffer(*buffer, bufferRect, op);
 }
 
-void CanvasRenderingContext2DBase::prepareGradientForDashboard(CanvasGradient& gradient) const
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (m_usesDashboardCompatibilityMode)
-        gradient.setDashboardCompatibilityMode();
-#else
-    UNUSED_PARAM(gradient);
-#endif
-}
-
 static CanvasRenderingContext2DBase::Style toStyle(const CanvasStyle& style)
 {
     if (auto gradient = style.canvasGradient())
@@ -1931,9 +1912,7 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createLinearGradi
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1))
         return Exception { NotSupportedError };
 
-    auto gradient = CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
-    prepareGradientForDashboard(gradient.get());
-    return gradient;
+    return CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
 }
 
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
@@ -1944,9 +1923,7 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradi
     if (r0 < 0 || r1 < 0)
         return Exception { IndexSizeError };
 
-    auto gradient = CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
-    prepareGradientForDashboard(gradient.get());
-    return gradient;
+    return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, const String& repetition)
@@ -2368,14 +2345,6 @@ void CanvasRenderingContext2DBase::setPath(Path2D& path)
 Ref<Path2D> CanvasRenderingContext2DBase::getPath() const
 {
     return Path2D::create(m_path);
-}
-
-inline void CanvasRenderingContext2DBase::clearPathForDashboardBackwardCompatibilityMode()
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (m_usesDashboardCompatibilityMode)
-        m_path.clear();
-#endif
 }
 
 } // namespace WebCore

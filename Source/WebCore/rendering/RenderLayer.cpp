@@ -2522,7 +2522,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
         }
 
         // Update regions, scrolling may change the clip of a particular region.
-        renderer().document().invalidateRenderingDependentRegions(Document::AnnotationsAction::Update);
+        renderer().document().invalidateRenderingDependentRegions();
         DebugPageOverlays::didLayout(renderer().frame());
     }
 
@@ -3339,8 +3339,6 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
         m_hBar->styleChanged();
     if (m_vBar)
         m_vBar->styleChanged();
-
-    renderer().document().invalidateScrollbarDependentRegions();
 }
 
 void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
@@ -3366,8 +3364,6 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
         m_hBar->styleChanged();
     if (m_vBar)
         m_vBar->styleChanged();
-
-    renderer().document().invalidateScrollbarDependentRegions();
 }
 
 ScrollableArea* RenderLayer::enclosingScrollableArea() const
@@ -3638,7 +3634,6 @@ void RenderLayer::updateScrollbarsAfterLayout()
 
         updateSelfPaintingLayer();
 
-        renderer().document().invalidateScrollbarDependentRegions();
         renderer().repaint();
 
         if (renderer().style().overflowX() == Overflow::Auto || renderer().style().overflowY() == Overflow::Auto) {

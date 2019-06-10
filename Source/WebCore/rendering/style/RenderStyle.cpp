@@ -616,12 +616,6 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         || first.gridItem != second.gridItem)
         return true;
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    // If regions change, trigger a relayout to re-calc regions.
-    if (first.dashboardRegions != second.dashboardRegions)
-        return true;
-#endif
-
     if (!arePointingToEqualData(first.willChange, second.willChange)) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::WillChange);
         // Don't return; keep looking for another change
@@ -1538,27 +1532,6 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
     return nullAtom();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-
-const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
-{
-    static NeverDestroyed<Vector<StyleDashboardRegion>> emptyList;
-    return emptyList;
-}
-
-const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
-{
-    static NeverDestroyed<Vector<StyleDashboardRegion>> noneList;
-    static bool noneListInitialized = false;
-    if (!noneListInitialized) {
-        noneList.get().append(StyleDashboardRegion { emptyString(), { }, StyleDashboardRegion::None });
-        noneListInitialized = true;
-    }
-    return noneList;
-}
-
-#endif
-
 void RenderStyle::adjustAnimations()
 {
     auto* animationList = m_rareNonInheritedData->animations.get();
@@ -2402,17 +2375,6 @@ bool RenderStyle::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
     return !isLeftToRightDirection() && isHorizontalWritingMode();
 }
-
-#if ENABLE(DASHBOARD_SUPPORT)
-
-void RenderStyle::setDashboardRegion(int type, const String& label, Length&& top, Length&& right, Length&& bottom, Length&& left, bool append)
-{
-    if (!append)
-        m_rareNonInheritedData.access().dashboardRegions.clear();
-    m_rareNonInheritedData.access().dashboardRegions.append({ label, { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) }, type });
-}
-
-#endif
 
 Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
 {

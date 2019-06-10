@@ -37,7 +37,6 @@ class CSSBasicShape;
 class CSSCalcValue;
 class CSSToLengthConversionData;
 class Counter;
-class DashboardRegion;
 class DeprecatedCSSOMPrimitiveValue;
 class Pair;
 class Quad;
@@ -112,9 +111,6 @@ public:
         CSS_DPCM = 32,
         CSS_FR = 33,
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
-#if ENABLE(DASHBOARD_SUPPORT)
-        CSS_DASHBOARD_REGION = 101, // FIXME: Dashboard region should not be a primitive value.
-#endif
         CSS_UNICODE_RANGE = 102,
 
         // These are from CSS3 Values and Units, but that isn't a finished standard yet
@@ -268,10 +264,6 @@ public:
     CSSBasicShape* shapeValue() const { return m_primitiveUnitType != CSS_SHAPE ? nullptr : m_value.shape; }
     CSSValueID valueID() const { return m_primitiveUnitType == CSS_VALUE_ID ? m_value.valueID : CSSValueInvalid; }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    DashboardRegion* dashboardRegionValue() const { return m_primitiveUnitType != CSS_DASHBOARD_REGION ? nullptr : m_value.region; }
-#endif
-
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
     String customCSSText() const;
@@ -321,10 +313,6 @@ private:
     void init(Ref<Quad>&&);
     void init(Ref<Rect>&&);
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    void init(RefPtr<DashboardRegion>&&); // FIXME: Dashboard region should not be a primitive value.
-#endif
-
     Optional<double> doubleValueInternal(UnitType targetUnitType) const;
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
@@ -342,7 +330,6 @@ private:
         Quad* quad;
         const Color* color;
         Pair* pair;
-        DashboardRegion* region;
         CSSBasicShape* shape;
         CSSCalcValue* calc;
         const CSSFontFamily* fontFamily;

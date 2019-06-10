@@ -63,11 +63,6 @@ void HTMLImageLoader::dispatchLoadEvent()
 
 String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 {
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (element().document().settings().usesDashboardBackwardCompatibilityMode() && attr.length() > 7 && attr.startsWith("url(\"") && attr.endsWith("\")"))
-        return attr.string().substring(5, attr.length() - 7);
-#endif
-
     return stripLeadingAndTrailingHTMLSpaces(attr);
 }
 

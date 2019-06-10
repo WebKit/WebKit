@@ -775,15 +775,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
     cacheStorage.storeUpdatedQuotaForOrigin(&origin, newQuota);
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-
-void WebChromeClient::annotatedRegionsChanged()
-{
-    notImplemented();
-}
-
-#endif
-
 bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
 {
     generatedFilename = m_page.injectedBundleUIClient().shouldGenerateFileForUpload(&m_page, path);

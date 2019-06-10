@@ -304,10 +304,6 @@
 #import <wtf/FastMalloc.h>
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT)
-#import <WebKitLegacy/WebDashboardRegion.h>
-#endif
-
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
 #if PLATFORM(IOS_FAMILY)
@@ -2799,14 +2795,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     // Mail.app must continue to display HTML email that contains quirky markup.
     static bool isAppleMail = MacApplication::isAppleMail();
 
-    return isApplicationNeedingParserQuirks
-        || isAppleMail
-#if ENABLE(DASHBOARD_SUPPORT)
-        // Pre-HTML5 parser quirks are required to remain compatible with many
-        // Dashboard widgets. See <rdar://problem/8175982>.
-        || (_private->page && _private->page->settings().usesDashboardBackwardCompatibilityMode())
-#endif
-        || [[self preferences] usePreHTML5ParserQuirks];
+    return isApplicationNeedingParserQuirks || isAppleMail || [[self preferences] usePreHTML5ParserQuirks];
 #else
     return [[self preferences] usePreHTML5ParserQuirks];
 #endif
@@ -3057,8 +3046,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     // This parses the user stylesheet synchronously so anything that may affect it should be done first.
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
-        if ([location isEqualToString:@"apple-dashboard://stylesheet"])
-            location = @"file:///System/Library/PrivateFrameworks/DashboardClient.framework/Resources/widget.css";
         settings.setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
         settings.setUserStyleSheetLocation([NSURL URLWithString:@""]);
@@ -3768,178 +3755,23 @@ IGNORE_WARNINGS_END
 
 #if ENABLE(DASHBOARD_SUPPORT)
 
-#define DASHBOARD_CONTROL_LABEL @"control"
-
-- (void)_addControlRect:(NSRect)bounds clip:(NSRect)clip fromView:(NSView *)view toDashboardRegions:(NSMutableDictionary *)regions
-{
-    NSRect adjustedBounds = bounds;
-    adjustedBounds.origin = [self convertPoint:bounds.origin fromView:view];
-    adjustedBounds.origin.y = [self bounds].size.height - adjustedBounds.origin.y;
-    adjustedBounds.size = bounds.size;
-
-    NSRect adjustedClip;
-    adjustedClip.origin = [self convertPoint:clip.origin fromView:view];
-    adjustedClip.origin.y = [self bounds].size.height - adjustedClip.origin.y;
-    adjustedClip.size = clip.size;
-
-    WebDashboardRegion *region = [[WebDashboardRegion alloc] initWithRect:adjustedBounds 
-        clip:adjustedClip type:WebDashboardRegionTypeScrollerRectangle];
-    NSMutableArray *scrollerRegions = [regions objectForKey:DASHBOARD_CONTROL_LABEL];
-    if (!scrollerRegions) {
-        scrollerRegions = [[NSMutableArray alloc] init];
-        [regions setObject:scrollerRegions forKey:DASHBOARD_CONTROL_LABEL];
-        [scrollerRegions release];
-    }
-    [scrollerRegions addObject:region];
-    [region release];
-}
-
-- (void)_addScrollerDashboardRegionsForFrameView:(FrameView*)frameView dashboardRegions:(NSMutableDictionary *)regions
-{    
-    NSView *documentView = [[kit(&frameView->frame()) frameView] documentView];
-
-    for (const auto& widget: frameView->children()) {
-        if (is<FrameView>(widget)) {
-            [self _addScrollerDashboardRegionsForFrameView:&downcast<FrameView>(widget.get()) dashboardRegions:regions];
-            continue;
-        }
-
-        if (!widget->isScrollbar())
-            continue;
-
-        // FIXME: This should really pass an appropriate clip, but our first try got it wrong, and
-        // it's not common to need this to be correct in Dashboard widgets.
-        NSRect bounds = widget->frameRect();
-        [self _addControlRect:bounds clip:bounds fromView:documentView toDashboardRegions:regions];
-    }
-}
-
-- (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions from:(NSArray *)views
-{
-    // Add scroller regions for NSScroller and WebCore scrollbars
-    NSUInteger count = [views count];
-    for (NSUInteger i = 0; i < count; i++) {
-        NSView *view = [views objectAtIndex:i];
-        
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            if (Frame* coreFrame = core([(WebHTMLView*)view _frame])) {
-                if (FrameView* coreView = coreFrame->view())
-                    [self _addScrollerDashboardRegionsForFrameView:coreView dashboardRegions:regions];
-            }
-        } else if ([view isKindOfClass:[NSScroller class]]) {
-            // AppKit places absent scrollers at -100,-100
-            if ([view frame].origin.y < 0)
-                continue;
-            [self _addControlRect:[view bounds] clip:[view visibleRect] fromView:view toDashboardRegions:regions];
-        }
-        [self _addScrollerDashboardRegions:regions from:[view subviews]];
-    }
-}
+// FIXME: Remove these once it is verified no one is dependent on it.
 
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions
 {
-    [self _addScrollerDashboardRegions:regions from:[self subviews]];
 }
 
 - (NSDictionary *)_dashboardRegions
 {
-    // Only return regions from main frame.
-    Frame* mainFrame = [self _mainCoreFrame];
-    if (!mainFrame)
-        return nil;
-
-    const Vector<AnnotatedRegionValue>& regions = mainFrame->document()->annotatedRegions();
-    size_t size = regions.size();
-
-    NSMutableDictionary *webRegions = [NSMutableDictionary dictionaryWithCapacity:size];
-    for (size_t i = 0; i < size; i++) {
-        const AnnotatedRegionValue& region = regions[i];
-
-        if (region.type == StyleDashboardRegion::None)
-            continue;
-
-        NSString *label = region.label;
-        WebDashboardRegionType type = WebDashboardRegionTypeNone;
-        if (region.type == StyleDashboardRegion::Circle)
-            type = WebDashboardRegionTypeCircle;
-        else if (region.type == StyleDashboardRegion::Rectangle)
-            type = WebDashboardRegionTypeRectangle;
-        NSMutableArray *regionValues = [webRegions objectForKey:label];
-        if (!regionValues) {
-            regionValues = [[NSMutableArray alloc] initWithCapacity:1];
-            [webRegions setObject:regionValues forKey:label];
-            [regionValues release];
-        }
-
-        WebDashboardRegion *webRegion = [[WebDashboardRegion alloc] initWithRect:snappedIntRect(region.bounds) clip:snappedIntRect(region.clip) type:type];
-        [regionValues addObject:webRegion];
-        [webRegion release];
-    }
-
-    [self _addScrollerDashboardRegions:webRegions];
-
-    return webRegions;
+    return nil;
 }
 
 - (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag
 {
-    // FIXME: Remove this blanket assignment once Dashboard and Dashcode implement 
-    // specific support for the backward compatibility mode flag.
-    if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO && _private->page)
-        _private->page->settings().setUsesDashboardBackwardCompatibilityMode(true);
-    
-    switch (behavior) {
-        case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
-            _private->dashboardBehaviorAlwaysSendMouseEventsToAllWindows = flag;
-            break;
-        }
-        case WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns: {
-            _private->dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns = flag;
-            break;
-        }
-        case WebDashboardBehaviorAlwaysAcceptsFirstMouse: {
-            _private->dashboardBehaviorAlwaysAcceptsFirstMouse = flag;
-            break;
-        }
-        case WebDashboardBehaviorAllowWheelScrolling: {
-            _private->dashboardBehaviorAllowWheelScrolling = flag;
-            break;
-        }
-        case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            if (_private->page)
-                _private->page->settings().setUsesDashboardBackwardCompatibilityMode(flag);
-#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-            RuntimeEnabledFeatures::sharedFeatures().setLegacyCSSVendorPrefixesEnabled(flag);
-#endif
-            break;
-        }
-    }
-
-    // Pre-HTML5 parser quirks should be enabled if Dashboard is in backward
-    // compatibility mode. See <rdar://problem/8175982>.
-    if (_private->page)
-        _private->page->settings().setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
 }
 
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior
 {
-    switch (behavior) {
-        case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
-            return _private->dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
-        }
-        case WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns: {
-            return _private->dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
-        }
-        case WebDashboardBehaviorAlwaysAcceptsFirstMouse: {
-            return _private->dashboardBehaviorAlwaysAcceptsFirstMouse;
-        }
-        case WebDashboardBehaviorAllowWheelScrolling: {
-            return _private->dashboardBehaviorAllowWheelScrolling;
-        }
-        case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            return _private->page && _private->page->settings().usesDashboardBackwardCompatibilityMode();
-        }
-    }
     return NO;
 }
 

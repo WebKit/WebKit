@@ -1276,7 +1276,7 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
         cache->postNotification(layoutRoot.get(), AXObjectCache::AXLayoutComplete);
 #endif
 
-    frame().document()->invalidateRenderingDependentRegions(Document::AnnotationsAction::Update);
+    frame().document()->invalidateRenderingDependentRegions();
 
     updateCanBlitOnScrollRecursively();
 
@@ -4106,9 +4106,6 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
 
     m_paintBehavior = paintingState.paintBehavior;
     m_lastPaintTime = MonotonicTime::now();
-
-    // Regions may have changed as a result of the visibility/z-index of element changing.
-    frame().document()->updateZOrderDependentRegions();
 
     if (paintingState.isTopLevelPainter)
         sCurrentPaintTimeStamp = MonotonicTime();

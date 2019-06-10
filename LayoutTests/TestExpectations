@@ -87,9 +87,6 @@ fast/forms/search/search-results-hidden-crash.html [ Skip ]
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 
-# Only Mac supports Dashboard widgets.
-fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html [ WontFix ]
-
 # Only applicable on macOS
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]

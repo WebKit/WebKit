@@ -151,10 +151,6 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    void addAnnotatedRegions(Vector<AnnotatedRegionValue>&) final;
-#endif
-
     void paintOutlineForLine(GraphicsContext&, const LayoutPoint&, const LayoutRect& prevLine, const LayoutRect& thisLine, const LayoutRect& nextLine, const Color&);
 
     bool willChangeCreatesStackingContext() const

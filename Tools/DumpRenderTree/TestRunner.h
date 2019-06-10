@@ -118,7 +118,6 @@ public:
     void setPopupBlockingEnabled(bool);
     void setPrivateBrowsingEnabled(bool);
     void setTabKeyCyclesThroughElements(bool);
-    void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
     void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);

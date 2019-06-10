@@ -1223,7 +1223,6 @@ repeating-conic-gradient
 -webkit-named-image
 filter
 -webkit-filter
-dashboard-region
 #if defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API
 paint
 #endif

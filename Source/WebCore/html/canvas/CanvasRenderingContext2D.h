@@ -40,7 +40,7 @@ class TextMetrics;
 class CanvasRenderingContext2D final : public CanvasRenderingContext2DBase {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2D);
 public:
-    static std::unique_ptr<CanvasRenderingContext2D> create(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
+    static std::unique_ptr<CanvasRenderingContext2D> create(CanvasBase&, bool usesCSSCompatibilityParseMode);
 
     virtual ~CanvasRenderingContext2D();
 
@@ -70,7 +70,7 @@ public:
     bool is2d() const override { return true; }
 
 private:
-    CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
+    CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode);
 
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the State.
@@ -79,8 +79,6 @@ private:
     void drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
 
     void drawFocusIfNeededInternal(const Path&, Element&);
-
-    void prepareGradientForDashboard(CanvasGradient& gradient) const;
 
     TextDirection toTextDirection(CanvasRenderingContext2DBase::Direction, const RenderStyle** computedStyle = nullptr) const;
 

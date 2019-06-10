@@ -165,25 +165,9 @@ using namespace WebCore;
 - (NSRect)_focusRingVisibleRect
 {
     NSRect rect = [self visibleRect];
-    if (_haveAdditionalClip) {
+    if (_haveAdditionalClip)
         rect = NSIntersectionRect(rect, _additionalClip);
-    }
     return rect;
-}
-
-- (void)scrollWheel:(NSEvent *)event
-{
-    NSView *docView = [self documentView];
-    if ([docView respondsToSelector:@selector(_webView)]) {
-#if ENABLE(DASHBOARD_SUPPORT)
-        WebView *wv = [docView _webView];
-        if ([wv _dashboardBehavior:WebDashboardBehaviorAllowWheelScrolling]) {
-            [super scrollWheel:event];
-        }
-#endif
-        return;
-    }
-    [super scrollWheel:event];
 }
 
 @end

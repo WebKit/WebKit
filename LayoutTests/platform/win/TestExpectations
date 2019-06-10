@@ -142,15 +142,6 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 # testRunner.setAlwaysAcceptCookies() is not implemented on Windows.
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 
-# No Dashboard compatibility mode on Windows.
-http/tests/xmlhttprequest/default-content-type-dashboard.html [ Skip ]
-http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Skip ]
-svg/custom/embedded-svg-allowed-in-dashboard.xml [ Skip ]
-svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Skip ]
-svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Skip ]
-svg/custom/svg-allowed-in-dashboard-object.html [ Skip ]
-mathml/mathml-in-dashboard.html [ Skip ]
-
 # Dark mode not supported on Windows
 css-dark-mode [ Skip ]
 

@@ -60,7 +60,6 @@ class StyleScrollSnapPort;
 class StyleTransformData;
 
 struct LengthSize;
-struct StyleDashboardRegion;
 
 // Page size type.
 // StyleRareNonInheritedData::pageSize is meaningful only when
@@ -106,10 +105,6 @@ public:
     LineClampValue lineClamp; // An Apple extension.
     
     IntSize initialLetter;
-
-#if ENABLE(DASHBOARD_SUPPORT)
-    Vector<StyleDashboardRegion> dashboardRegions;
-#endif
 
     DataRef<StyleDeprecatedFlexibleBoxData> deprecatedFlexibleBox; // Flexible box properties
     DataRef<StyleFlexibleBoxData> flexibleBox;

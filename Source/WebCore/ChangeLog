@@ -1,3 +1,119 @@
+2019-06-10  Sam Weinig  <weinig@apple.com>
+
+        Remove Dashboard support
+        https://bugs.webkit.org/show_bug.cgi?id=198615
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::hasDoubleValue):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        (WebCore::CSSPrimitiveValue::equals const):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/DashboardRegion.h: Removed.
+        * css/StyleBuilderCustom.h:
+        (WebCore::convertToIntLength): Deleted.
+        (WebCore::StyleBuilderCustom::applyValueWebkitDashboardRegion): Deleted.
+        * css/StyleResolver.cpp:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::consumeWebkitDashboardRegion): Deleted.
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::createForUpdatingDropTarget):
+        * dom/Document.cpp:
+        (WebCore::Document::invalidateRenderingDependentRegions):
+        (WebCore::Document::annotatedRegions const): Deleted.
+        (WebCore::Document::setAnnotatedRegions): Deleted.
+        (WebCore::Document::updateAnnotatedRegions): Deleted.
+        (WebCore::Document::invalidateScrollbarDependentRegions): Deleted.
+        (WebCore::Document::updateZOrderDependentRegions): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::setHasAnnotatedRegions): Deleted.
+        (WebCore::Document::setAnnotatedRegionsDirty): Deleted.
+        (WebCore::Document::annotatedRegionsDirty const): Deleted.
+        (WebCore::Document::hasAnnotatedRegions const): Deleted.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createContext2d):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI const):
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        * html/canvas/CanvasGradient.h:
+        (WebCore::CanvasGradient::setDashboardCompatibilityMode): Deleted.
+        (): Deleted.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::create):
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::CanvasRenderingContext2DBase):
+        (WebCore::CanvasRenderingContext2DBase::fill):
+        (WebCore::CanvasRenderingContext2DBase::stroke):
+        (WebCore::CanvasRenderingContext2DBase::clip):
+        (WebCore::CanvasRenderingContext2DBase::createLinearGradient):
+        (WebCore::CanvasRenderingContext2DBase::createRadialGradient):
+        (WebCore::CanvasRenderingContext2DBase::prepareGradientForDashboard const): Deleted.
+        (WebCore::CanvasRenderingContext2DBase::clearPathForDashboardBackwardCompatibilityMode): Deleted.
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D):
+        * html/canvas/PaintRenderingContext2D.cpp:
+        (WebCore::PaintRenderingContext2D::PaintRenderingContext2D):
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::annotatedRegionsChanged): Deleted.
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didLayout):
+        (WebCore::FrameView::didPaintContents):
+        * page/Settings.yaml:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addAnnotatedRegions): Deleted.
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addAnnotatedRegions): Deleted.
+        (WebCore::RenderObject::collectAnnotatedRegions): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::AnnotatedRegionValue::operator== const): Deleted.
+        (WebCore::AnnotatedRegionValue::operator!= const): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+        (WebCore::RenderStyle::initialDashboardRegions): Deleted.
+        (WebCore::RenderStyle::noneDashboardRegions): Deleted.
+        (WebCore::RenderStyle::setDashboardRegion): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::dashboardRegions const): Deleted.
+        (WebCore::RenderStyle::setDashboardRegions): Deleted.
+        * rendering/style/StyleDashboardRegion.h: Removed.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::usesDashboardBackwardCompatibilityMode const): Deleted.
+        * xml/XMLHttpRequest.h:
+
 2019-06-10  Antti Koivisto  <antti@apple.com>
 
         Event region should be set on scrolledContentsLayer if it exists

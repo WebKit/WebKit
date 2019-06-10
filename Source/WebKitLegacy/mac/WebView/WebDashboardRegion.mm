@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: Remove this file once it is verified no one is dependent on it.
+
 #import "WebDashboardRegion.h"
 
 #if ENABLE(DASHBOARD_SUPPORT)

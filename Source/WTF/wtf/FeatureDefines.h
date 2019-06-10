@@ -225,10 +225,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_CONTENT_EXTENSIONS 1
 #endif
 
-#if !defined(ENABLE_DASHBOARD_SUPPORT)
-#define ENABLE_DASHBOARD_SUPPORT 1
-#endif
-
 #if !defined(ENABLE_FULLSCREEN_API)
 #define ENABLE_FULLSCREEN_API 1
 #endif
@@ -468,10 +464,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_DARK_MODE_CSS)
 #define ENABLE_DARK_MODE_CSS 0
-#endif
-
-#if !defined(ENABLE_DASHBOARD_SUPPORT)
-#define ENABLE_DASHBOARD_SUPPORT 0
 #endif
 
 #if !defined(ENABLE_DATALIST_ELEMENT)

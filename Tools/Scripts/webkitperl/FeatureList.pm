@@ -80,7 +80,6 @@ my (
     $cursorVisibilitySupport,
     $customSchemeHandlerSupport,
     $darkModeCSSSupport,
-    $dashboardSupportSupport,
     $dataInteractionSupport,
     $datacueValueSupport,
     $datalistElementSupport,
@@ -278,9 +277,6 @@ my @features = (
 
     { option => "dark-mode-css", desc => "Toggle Dark Mode CSS support",
       define => "ENABLE_DARK_MODE_CSS", value => \$darkModeCSSSupport },
-
-    { option => "dashboard-support", desc => "Toggle dashboard support",
-      define => "ENABLE_DASHBOARD_SUPPORT", value => \$dashboardSupportSupport },
 
     { option => "datacue-value", desc => "Toggle datacue value support",
       define => "ENABLE_DATACUE_VALUE", value => \$datacueValueSupport },

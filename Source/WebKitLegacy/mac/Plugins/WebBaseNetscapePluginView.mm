@@ -96,17 +96,7 @@ using namespace WebCore;
     _baseURL = adoptNS([baseURL copy]);
     _MIMEType = adoptNS([MIME copy]);
 
-    // Enable "kiosk mode" when instantiating the QT plug-in inside of Dashboard. See <rdar://problem/6878105>
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.dashboard.client"] &&
-        [_pluginPackage.get() bundleIdentifier] == "com.apple.QuickTime Plugin.plugin") {
-        RetainPtr<NSMutableArray> mutableKeys = adoptNS([keys mutableCopy]);
-        RetainPtr<NSMutableArray> mutableValues = adoptNS([values mutableCopy]);
-
-        [mutableKeys.get() addObject:@"kioskmode"];
-        [mutableValues.get() addObject:@"true"];
-        [self setAttributeKeys:mutableKeys.get() andValues:mutableValues.get()];
-    } else
-         [self setAttributeKeys:keys andValues:values];
+    [self setAttributeKeys:keys andValues:values];
 
     if (loadManually)
         _mode = NP_FULL;

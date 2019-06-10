@@ -115,7 +115,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         static const char* const documentBrowserIDs[] = {
             "com.apple.Dictionary",
             "com.apple.Xcode",
-            "com.apple.dashboard.client", 
             "com.apple.helpviewer",
             "com.culturedcode.xyle",
             "com.macrabbit.CSSEdit",

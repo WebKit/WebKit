@@ -1983,14 +1983,9 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             // If it is one of those cases where the page is not active and the mouse is not pressed, then we can
             // fire a much more restricted and efficient scrollbars-only version of the event.
 
-            if ([[self window] isKeyWindow] 
-                || mouseEventIsPartOfClickOrDrag(event)
-#if ENABLE(DASHBOARD_SUPPORT)
-                || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
-#endif
-                ) {
+            if ([[self window] isKeyWindow] || mouseEventIsPartOfClickOrDrag(event))
                 coreFrame->eventHandler().mouseMoved(event, [[self _webView] _pressureEvent]);
-            } else {
+            else {
                 [self removeAllToolTips];
                 coreFrame->eventHandler().passMouseMovedEventToScrollbars(event, [[self _webView] _pressureEvent]);
             }
@@ -4147,12 +4142,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
-    
-#if ENABLE(DASHBOARD_SUPPORT)
-    if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse])
-        return YES;
-#endif
-    
+
     if (hitHTMLView) {
         bool result = false;
         if (Frame* coreFrame = core([hitHTMLView _frame])) {
@@ -4687,11 +4677,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 #if PLATFORM(MAC)
     if (!_private->installedTrackingArea) {
         NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
-        if (_NSRecommendedScrollerStyle() == NSScrollerStyleLegacy
-#if ENABLE(DASHBOARD_SUPPORT)
-            || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
-#endif
-            )
+        if (_NSRecommendedScrollerStyle() == NSScrollerStyleLegacy)
             options |= NSTrackingActiveAlways;
         else
             options |= NSTrackingActiveInKeyWindow;

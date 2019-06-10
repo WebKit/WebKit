@@ -1,3 +1,13 @@
+2019-06-10  Sam Weinig  <weinig@apple.com>
+
+        Remove Dashboard support
+        https://bugs.webkit.org/show_bug.cgi?id=198615
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2019-06-10  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] Port to new wpe_fdo_egl_exported_image API

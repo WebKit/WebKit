@@ -269,13 +269,6 @@ private:
     BOOL hasSpellCheckerDocumentTag;
     NSInteger spellCheckerDocumentTag;
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
-    BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
-    BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
-    BOOL dashboardBehaviorAllowWheelScrolling;
-#endif
-    
 #if PLATFORM(IOS_FAMILY)
     BOOL isStopping;
 
