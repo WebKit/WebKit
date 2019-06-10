@@ -179,6 +179,13 @@ static void testWebExtensionWindowObjectCleared(WebViewTest* test, gconstpointer
     g_assert_no_error(error.get());
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("var f = new GFile('.'); f.path();", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> currentDirectory(g_get_current_dir());
+    g_assert_cmpstr(valueString.get(), ==, currentDirectory.get());
 }
 
 static gboolean scriptDialogCallback(WebKitWebView*, WebKitScriptDialog* dialog, gpointer)

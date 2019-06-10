@@ -428,6 +428,11 @@ static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, W
     g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
     GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(jsContext.get(), "echo", G_CALLBACK(echoCallback), NULL, NULL, G_TYPE_STRING, 1, G_TYPE_STRING));
     jsc_context_set_value(jsContext.get(), "echo", function.get());
+
+    auto* fileClass = jsc_context_register_class(jsContext.get(), "GFile", nullptr, nullptr, static_cast<GDestroyNotify>(g_object_unref));
+    GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(fileClass, "GFile", G_CALLBACK(g_file_new_for_path), nullptr, nullptr, G_TYPE_OBJECT, 1, G_TYPE_STRING));
+    jsc_class_add_method(fileClass, "path", G_CALLBACK(g_file_get_path), nullptr, nullptr, G_TYPE_STRING, 0, G_TYPE_NONE);
+    jsc_context_set_value(jsContext.get(), "GFile", constructor.get());
 }
 
 static WebKitWebPage* getWebPage(WebKitWebExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)

@@ -878,7 +878,7 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
     g_return_val_if_fail(object && !*object, nullptr);
 
     JSRetainPtr<JSGlobalContextRef> objectContext(Adopt,
-        instance ? jscClassCreateContextWithJSWrapper(objectClass, instance) : JSGlobalContextCreateInGroup(jscVirtualMachineGetContextGroup(context->priv->vm.get()), nullptr));
+        instance ? jscClassCreateContextWithJSWrapper(objectClass, context, instance) : JSGlobalContextCreateInGroup(jscVirtualMachineGetContextGroup(context->priv->vm.get()), nullptr));
     JSC::ExecState* exec = toJS(objectContext.get());
     JSC::VM& vm = exec->vm();
     auto* jsObject = vm.vmEntryGlobalObject(exec);
