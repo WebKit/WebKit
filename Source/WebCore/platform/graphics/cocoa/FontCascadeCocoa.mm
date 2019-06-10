@@ -129,8 +129,8 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const F
         styleConfiguration.useSimplifiedEffect = YES;
     }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/FontCascadeCocoaAdditions.mm>)
-#include <WebKitAdditions/FontCascadeCocoaAdditions.mm>
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    styleConfiguration.appearanceName = coreContext.useDarkAppearance() ? @"UIAppearanceDark" : @"UIAppearanceLight";
 #endif
 
     CGContextSetFont(context, adoptCF(CTFontCopyGraphicsFont(ctFont, nullptr)).get());

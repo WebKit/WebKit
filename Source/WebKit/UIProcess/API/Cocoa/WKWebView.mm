@@ -473,11 +473,21 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
     return _focusPreservationCount || _activeFocusedStateRetainCount;
 }
 
-#endif
+- (BOOL)_effectiveAppearanceIsDark
+{
+    return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+}
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKWebViewInternalAdditions.mm>
+- (BOOL)_effectiveAppearanceIsInactive
+{
+#if HAVE(OS_DARK_MODE_SUPPORT) && !PLATFORM(WATCHOS)
+    return self.traitCollection.userInterfaceLevel != UIUserInterfaceLevelElevated;
+#else
+    return NO;
 #endif
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 static bool shouldRequireUserGestureToLoadVideo()
 {
@@ -7257,11 +7267,15 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView _simulateTextEntered:text];
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+- (void)_dynamicUserInterfaceTraitDidChange
+{
+    if (!_page)
+        return;
+    _page->effectiveAppearanceDidChange();
+    [self _updateScrollViewBackground];
+}
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKWebViewAdditions.mm>
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_beginBackSwipeForTesting
 {

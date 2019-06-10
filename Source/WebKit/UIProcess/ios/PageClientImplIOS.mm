@@ -476,9 +476,15 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
 #endif // ENABLE(REVEAL)
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PageClientImplIOSAdditions.mm>
-#endif
+bool PageClientImpl::effectiveAppearanceIsDark() const
+{
+    return [m_webView _effectiveAppearanceIsDark];
+}
+
+bool PageClientImpl::effectiveAppearanceIsInactive() const
+{
+    return [m_webView _effectiveAppearanceIsInactive];
+}
 
 void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {

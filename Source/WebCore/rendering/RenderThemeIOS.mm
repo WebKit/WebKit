@@ -52,6 +52,7 @@
 #import "HTMLSelectElement.h"
 #import "IOSurface.h"
 #import "Icon.h"
+#import "LocalCurrentTraitCollection.h"
 #import "LocalizedDateCache.h"
 #import "NodeRenderStyle.h"
 #import "Page.h"
@@ -78,10 +79,6 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSAdditions.mm>)
-#include <WebKitAdditions/RenderThemeIOSAdditions.mm>
-#endif
 
 @interface WebCoreRenderThemeBundle : NSObject
 @end
@@ -1446,16 +1443,54 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>)
-#include <WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>
-#endif
+        const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
+        const bool useInactiveAppearance = options.contains(StyleColor::Options::UseInactiveAppearance);
+        LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useInactiveAppearance);
 
         auto cssColorToSelector = [cssValueID] () -> SEL {
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSColorToSelectorAdditions.mm>)
-#include <WebKitAdditions/RenderThemeIOSColorToSelectorAdditions.mm>
-#endif
-
             switch (cssValueID) {
+#if HAVE(OS_DARK_MODE_SUPPORT)
+            case CSSValueText:
+            case CSSValueAppleSystemLabel:
+            case CSSValueAppleSystemHeaderText:
+                return @selector(labelColor);
+            case CSSValueAppleSystemSecondaryLabel:
+                return @selector(secondaryLabelColor);
+            case CSSValueAppleSystemTertiaryLabel:
+                return @selector(tertiaryLabelColor);
+            case CSSValueAppleSystemQuaternaryLabel:
+                return @selector(quaternaryLabelColor);
+            case CSSValueAppleSystemPlaceholderText:
+                return @selector(placeholderTextColor);
+            case CSSValueWebkitControlBackground:
+            case CSSValueAppleSystemControlBackground:
+            case CSSValueAppleSystemTextBackground:
+            case CSSValueAppleSystemBackground:
+                return @selector(systemBackgroundColor);
+            case CSSValueAppleSystemSecondaryBackground:
+                return @selector(secondarySystemBackgroundColor);
+            case CSSValueAppleSystemTertiaryBackground:
+                return @selector(tertiarySystemBackgroundColor);
+            case CSSValueAppleSystemGroupedBackground:
+                return @selector(systemGroupedBackgroundColor);
+            case CSSValueAppleSystemSecondaryGroupedBackground:
+                return @selector(secondarySystemGroupedBackgroundColor);
+            case CSSValueAppleSystemTertiaryGroupedBackground:
+                return @selector(tertiarySystemGroupedBackgroundColor);
+            case CSSValueAppleSystemGrid:
+            case CSSValueAppleSystemSeparator:
+            case CSSValueAppleSystemContainerBorder:
+                return @selector(separatorColor);
+            case CSSValueAppleSystemSelectedContentBackground:
+            case CSSValueAppleSystemUnemphasizedSelectedContentBackground:
+                return @selector(tableCellDefaultSelectionTintColor);
+            case CSSValueAppleSystemBrown:
+                return @selector(systemBrownColor);
+            case CSSValueAppleSystemIndigo:
+                return @selector(systemIndigoColor);
+#endif
+            case CSSValueAppleSystemTeal:
+                return @selector(systemTealColor);
             case CSSValueAppleWirelessPlaybackTargetActive:
             case CSSValueAppleSystemBlue:
                 return @selector(systemBlueColor);

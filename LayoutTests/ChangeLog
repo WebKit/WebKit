@@ -1,3 +1,13 @@
+2019-06-10  Timothy Hatcher  <timothy@apple.com>
+
+        Integrate dark mode support for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=198687
+        rdar://problem/51545643
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/TestExpectations:
+
 2019-06-10  Youenn Fablet  <youenn@apple.com>
 
         Call was negotiated with H264 Base Profile 42e01f but encoded in High Profile

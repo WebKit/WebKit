@@ -141,9 +141,8 @@ private:
         
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PageClientImplIOSAdditions.h>
-#endif
+    bool effectiveAppearanceIsDark() const override;
+    bool effectiveAppearanceIsInactive() const override;
 
     void couldNotRestorePageState() override;
     void restorePageState(Optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatBoxExtent&, double) override;

@@ -116,6 +116,7 @@ typedef enum {
 + (UIColor *)systemPurpleColor;
 + (UIColor *)systemRedColor;
 + (UIColor *)systemYellowColor;
++ (UIColor *)systemTealColor;
 
 + (UIColor *)_disambiguated_due_to_CIImage_colorWithCGColor:(CGColorRef)cgColor;
 
@@ -158,6 +159,12 @@ NS_ASSUME_NONNULL_END
 + (CGFloat)cornerRadius;
 + (CGFloat)maxAlpha;
 + (CGFloat)alphaThreshold;
+@end
+#endif
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+@interface UIColor (UIColorInternal)
++ (UIColor *)tableCellDefaultSelectionTintColor;
 @end
 #endif
 

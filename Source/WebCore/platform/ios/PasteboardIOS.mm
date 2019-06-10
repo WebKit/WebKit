@@ -41,7 +41,7 @@
 #import <wtf/URL.h>
 #import <wtf/text/StringHash.h>
 
-@interface NSAttributedString (NSAttributedStringKitAdditions)
+@interface NSAttributedString (NSAttributedStringInternal)
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
 - (id)initWithRTFD:(NSData *)data documentAttributes:(NSDictionary **)dict;
 - (NSData *)RTFFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;

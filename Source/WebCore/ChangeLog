@@ -1,3 +1,26 @@
+2019-06-10  Timothy Hatcher  <timothy@apple.com>
+
+        Integrate dark mode support for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=198687
+        rdar://problem/51545643
+
+        Reviewed by Tim Horton.
+
+        Tests: css-dark-mode
+
+        * Configurations/FeatureDefines.xcconfig:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+        * platform/ios/LocalCurrentTraitCollection.h: Added.
+        * platform/ios/LocalCurrentTraitCollection.mm: Added.
+        * platform/ios/PasteboardIOS.mm:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2019-06-10  Ali Juma  <ajuma@chromium.org>
 
         REGRESSION (r245396): Page load time performance regression

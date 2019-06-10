@@ -1,3 +1,13 @@
+2019-06-10  Timothy Hatcher  <timothy@apple.com>
+
+        Integrate dark mode support for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=198687
+        rdar://problem/51545643
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2019-06-10  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: xcrun simctl spawn *** launchctl print system output is not utf-8

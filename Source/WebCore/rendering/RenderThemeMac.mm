@@ -713,6 +713,12 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(windowFrameTextColor);
             case CSSValueAppleSystemHeaderText:
                 return @selector(headerTextColor);
+            case CSSValueAppleSystemBackground:
+            case CSSValueAppleSystemSecondaryBackground:
+            case CSSValueAppleSystemTertiaryBackground:
+            case CSSValueAppleSystemGroupedBackground:
+            case CSSValueAppleSystemSecondaryGroupedBackground:
+            case CSSValueAppleSystemTertiaryGroupedBackground:
             case CSSValueAppleSystemTextBackground:
                 return @selector(textBackgroundColor);
             case CSSValueAppleSystemControlBackground:

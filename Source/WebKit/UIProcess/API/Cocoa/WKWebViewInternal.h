@@ -169,11 +169,10 @@ struct PrintInfo;
 @property (nonatomic, readonly) UIEdgeInsets _computedObscuredInset;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
-#endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKWebViewInternalAdditions.h>
-#endif
+- (BOOL)_effectiveAppearanceIsDark;
+- (BOOL)_effectiveAppearanceIsInactive;
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_didRemoveAttachment:(API::Attachment&)attachment;

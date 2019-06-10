@@ -621,6 +621,7 @@
 		1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C21E57B183ED1FF001C289D /* IOSurfacePool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C24EEA51C729CE40080F8FC /* FontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C24EEA31C729CE40080F8FC /* FontFaceSet.h */; };
 		1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */; };
+		1C43DE6B22AB4B8A001527D9 /* LocalCurrentTraitCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */; };
 		1C6626111C6E7CA600AB527C /* FontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66260F1C6E7CA600AB527C /* FontFace.h */; };
 		1C73A7132185757E004CCEA5 /* TextUnderlineOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB6B4FB217B83940093B9CD /* TextUnderlineOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C73A71521857587004CCEA5 /* TextDecorationThickness.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB6B4F8217B83930093B9CD /* TextDecorationThickness.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6381,6 +6382,8 @@
 		1C33277121CF0BE1000DC9F2 /* WHLSLNamedType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNamedType.h; sourceTree = "<group>"; };
 		1C33277221CF0D2E000DC9F2 /* WHLSLUnnamedType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLUnnamedType.h; sourceTree = "<group>"; };
 		1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCacheCoreText.cpp; sourceTree = "<group>"; };
+		1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentTraitCollection.h; sourceTree = "<group>"; };
+		1C43DE6A22AB4B8A001527D9 /* LocalCurrentTraitCollection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentTraitCollection.mm; sourceTree = "<group>"; };
 		1C59B0182238687900853805 /* WHLSLScopedSetAdder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLScopedSetAdder.h; sourceTree = "<group>"; };
 		1C66260E1C6E7CA600AB527C /* FontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFace.cpp; sourceTree = "<group>"; };
 		1C66260F1C6E7CA600AB527C /* FontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFace.h; sourceTree = "<group>"; };
@@ -22331,6 +22334,8 @@
 				E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */,
 				E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */,
 				E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */,
+				1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */,
+				1C43DE6A22AB4B8A001527D9 /* LocalCurrentTraitCollection.mm */,
 				46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */,
 				E45390190EAFCACA003695C8 /* PasteboardIOS.mm */,
 				26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */,
@@ -30521,6 +30526,7 @@
 				51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */,
 				8A12E35D11FA33280025836A /* LoadTiming.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
+				1C43DE6B22AB4B8A001527D9 /* LocalCurrentTraitCollection.h in Headers */,
 				445775E520472F73008DCE5D /* LocalDefaultSystemAppearance.h in Headers */,
 				F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */,
 				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,

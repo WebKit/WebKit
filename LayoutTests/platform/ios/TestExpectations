@@ -1144,6 +1144,9 @@ fast/css/variables/env/ios [ Pass ]
 # Dark mode not supported on iOS
 css-dark-mode [ Skip ]
 
+# Test Dark Mode CSS support for light mode on older systems.
+css-dark-mode/older-systems [ Pass ]
+
 ###
 # Known failures
 ##
