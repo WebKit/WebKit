@@ -1,3 +1,44 @@
+2019-06-10  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Blob URLs should inherit their CSP policy
+        https://bugs.webkit.org/show_bug.cgi?id=198579
+        <rdar://problem/51366878>
+
+        Reviewed by Brent Fulgham.
+
+        As per <https://w3c.github.io/webappsec-csp/#security-inherit-csp> (Editor's Draft, 28 February 2019) blob
+        URLs should inherit their CSP policy from their parent (if they have one).
+
+        Test: http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html
+              http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldInheritContentSecurityPolicyFromOwner const): Return true if the document's URL
+        is a Blob URL.
+        (WebCore::Document::initContentSecurityPolicy): Take a pointer to a ContentSecurityPolicy object that
+        represents the previous document's CSP. We only make us of this if the current URL is a Blob URL or a data
+        URL. Otherwise, do what we do now and take the policy from the owner frame.
+        * dom/Document.h:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin): Extend the lifetime of the previous document temporarily so that we can
+        pass its CSP to FrameLoader::didBeginDocument(). We need to do this extension because this function calls
+        FrameLoader::clear(), which can destroy the previous document and its ContentSecurityPolicy object. This
+        extension is also no different than if this function was called with a non-null ownerDocument except that
+        in that case it is the caller that extends the previous document's lifetime. Although it is tempting to
+        make use of ownerDocument to fix this bug by having the caller of begin() pass the previous document as
+        the ownerDocument when the new document's url (the one we are begin()ing) is a Blob URL. The ownerDocument
+        concept would privilege the Blob URL more than necessary; we only need to inherit the CSP policy from the
+        previous document for a Blob URL, not inherit the cookie URL or strict mixed content checking bit, etc. 
+        We could make ContentSecurityPolicy ref-counted or even steal the ContentSecurityPolicy object from the
+        previous document. The latter is not of the question as a future enhancement, but the former seemed excessive
+        as a way to avoid extending the lifetime of the previous document because this would be the *only* call site
+        that actaully takes out a second ref of a ContentSecurityPolicy object. In general, shared ownership of
+        a ContentSecurityPolicy object does not make sense.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument): Pass the specified content security policy through to
+        Document::initContentSecurityPolicy().
+        * loader/FrameLoader.h:
+
 2019-06-10  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Auto initialize local variables

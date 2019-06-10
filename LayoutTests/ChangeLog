@@ -1,3 +1,19 @@
+2019-06-10  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Blob URLs should inherit their CSP policy
+        https://bugs.webkit.org/show_bug.cgi?id=198579
+        <rdar://problem/51366878>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that a self navigation to a Blob or Data URL inherits its CSP policy from
+        its parent document.
+
+        * http/tests/security/contentSecurityPolicy/navigate-self-to-blob-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html: Added.
+        * http/tests/security/contentSecurityPolicy/navigate-self-to-data-url-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html: Added.
+
 2019-06-10  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Auto initialize local variables

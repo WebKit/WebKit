@@ -5904,12 +5904,13 @@ void Document::initSecurityContext()
     setSecurityOriginPolicy(ownerFrame->document()->securityOriginPolicy());
 }
 
-bool Document::shouldInheritContentSecurityPolicyFromOwner() const
+// FIXME: The current criterion is stricter than <https://www.w3.org/TR/CSP3/#security-inherit-csp> (Editor's Draft, 28 February 2019).
+bool Document::shouldInheritContentSecurityPolicy() const
 {
     ASSERT(m_frame);
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(m_url))
         return true;
-    if (m_url.protocolIsData())
+    if (m_url.protocolIsData() || m_url.protocolIsBlob())
         return true;
     if (!isPluginDocument())
         return false;
@@ -5921,7 +5922,7 @@ bool Document::shouldInheritContentSecurityPolicyFromOwner() const
     return openerFrame->document()->securityOrigin().canAccess(securityOrigin());
 }
 
-void Document::initContentSecurityPolicy()
+void Document::initContentSecurityPolicy(ContentSecurityPolicy* previousPolicy)
 {
     // 1. Inherit Upgrade Insecure Requests
     Frame* parentFrame = m_frame->tree().parent();
@@ -5929,19 +5930,27 @@ void Document::initContentSecurityPolicy()
         contentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*parentFrame->document()->contentSecurityPolicy());
 
     // 2. Inherit Content Security Policy (without copying Upgrade Insecure Requests state).
-    if (!shouldInheritContentSecurityPolicyFromOwner())
+    if (!shouldInheritContentSecurityPolicy())
         return;
-    Frame* ownerFrame = parentFrame;
-    if (!ownerFrame)
-        ownerFrame = m_frame->loader().opener();
-    if (!ownerFrame)
+    ContentSecurityPolicy* ownerPolicy = nullptr;
+    if (previousPolicy && (m_url.protocolIsData() || m_url.protocolIsBlob()))
+        ownerPolicy = previousPolicy;
+    if (!ownerPolicy) {
+        Frame* ownerFrame = parentFrame;
+        if (!ownerFrame)
+            ownerFrame = m_frame->loader().opener();
+        if (ownerFrame)
+            ownerPolicy = ownerFrame->document()->contentSecurityPolicy();
+    }
+    if (!ownerPolicy)
         return;
-    // FIXME: The CSP 3 spec. implies that only plugin documents delivered with a local scheme (e.g. blob, file, data)
-    // should inherit a policy.
+    // FIXME: We are stricter than the CSP 3 spec. with regards to plugins: we prefer to inherit the full policy unless the plugin
+    // document is opened in a new window. The CSP 3 spec. implies that only plugin documents delivered with a local scheme (e.g. blob,
+    // file, data) should inherit a policy.
     if (isPluginDocument() && m_frame->loader().opener())
-        contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*ownerFrame->document()->contentSecurityPolicy());
+        contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*ownerPolicy);
     else
-        contentSecurityPolicy()->copyStateFrom(ownerFrame->document()->contentSecurityPolicy());
+        contentSecurityPolicy()->copyStateFrom(ownerPolicy);
 }
 
 bool Document::isContextThread() const
