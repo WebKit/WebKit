@@ -1,3 +1,17 @@
+2019-06-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] 2.25.1 does not build on 32-bit ARM due to bit-packing assertion, requires -DENABLE_DARK_MODE_CSS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=198274
+
+        Reviewed by Timothy Hatcher.
+
+        Rather than reorder everything in StyleRareInheritedData, let's slightly increase the size
+        of GreaterThanOrSameSizeAsStyleRareInheritedData to allow the static assert to pass.
+
+        At the same time, remove an obsolote iOS-specific member that is probably no longer needed.
+
+        * rendering/style/StyleRareInheritedData.cpp:
+
 2019-06-10  Sam Weinig  <weinig@apple.com>
 
         Remove Dashboard support
