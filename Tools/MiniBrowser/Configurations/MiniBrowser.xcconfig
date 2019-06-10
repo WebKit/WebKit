@@ -28,3 +28,4 @@ GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch
 INFOPLIST_FILE = mac/Info.plist
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework WebKit
+STRIP_STYLE = debugging;

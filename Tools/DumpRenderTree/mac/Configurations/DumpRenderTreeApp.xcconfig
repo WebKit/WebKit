@@ -31,6 +31,8 @@ OTHER_LDFLAGS = $(PLATFORM_OTHER_LDFLAGS) $(ASAN_OTHER_LDFLAGS);
 PLATFORM_OTHER_LDFLAGS[sdk=iphone*] = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework QuartzCore -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework GraphicsServices -framework ImageIO -framework MobileCoreServices -framework UIKit -framework WebCore -framework JavaScriptCore -framework WebKit $(OTHER_LDFLAGS_FONTS);
 PLATFORM_OTHER_LDFLAGS[sdk=macosx*] = -framework JavaScriptCore;
 
+STRIP_STYLE = debugging;
+
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/*;

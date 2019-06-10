@@ -30,6 +30,7 @@ LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 PRODUCT_NAME = WebKitTestRunner;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -lWebKitTestRunner -framework Carbon -framework Cocoa -framework JavaScriptCore -framework WebKit;
+STRIP_STYLE = debugging;
 SKIP_INSTALL[sdk=iphone*] = YES;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = mac/*;
 INCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = mac/main.mm;

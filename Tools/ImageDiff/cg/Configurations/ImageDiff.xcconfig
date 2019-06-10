@@ -28,3 +28,4 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 PRODUCT_NAME = ImageDiff;
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework QuartzCore;
 OTHER_LDFLAGS[sdk=iphone*] = $(inherited) -framework CoreFoundation -framework CoreGraphics -framework MobileCoreServices -framework ImageIO;
+STRIP_STYLE = debugging;

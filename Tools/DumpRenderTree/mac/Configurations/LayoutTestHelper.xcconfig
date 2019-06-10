@@ -26,3 +26,4 @@
 #include "BaseTarget.xcconfig"
 
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework OpenGL -framework IOKit;
+STRIP_STYLE = debugging;

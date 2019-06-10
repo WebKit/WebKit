@@ -1,3 +1,24 @@
+2019-06-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Tool binaries like WebKitTestRunner have too aggressive stripping, resulting in non-symbolicated crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=198616
+        rdar://problem/36386573
+
+        Reviewed by David Kilzer.
+
+        Adding an explicit STRIP_STYLE to appropriate xcconfigs.
+
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+        * DumpRenderTree/mac/Configurations/LayoutTestHelper.xcconfig:
+        * ImageDiff/cg/Configurations/ImageDiff.xcconfig:
+        * MiniBrowser/Configurations/MiniBrowser.xcconfig:
+        * MobileMiniBrowser/Configurations/MobileMiniBrowser.xcconfig:
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+
 2019-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] fast/xsl tests are flaky when run after certain viewport shrink-to-fit tests

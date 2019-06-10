@@ -32,6 +32,8 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lWebCoreTestSupport -framework JavaScriptCore -framework CoreGraphics -framework QuartzCore -framework ImageIO -framework IOKit -framework UIKit -framework WebKit -framework Foundation -framework GraphicsServices;
 
+STRIP_STYLE = debugging;
+
 SKIP_INSTALL[sdk=macosx*] = YES;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/* AppDelegate.m;
