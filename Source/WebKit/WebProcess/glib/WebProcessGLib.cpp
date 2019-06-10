@@ -28,7 +28,11 @@
 #include "WebProcess.h"
 
 #include "WebProcessCreationParameters.h"
+
+#if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
+#endif
+
 #include <WebCore/MemoryCache.h>
 
 #if PLATFORM(WAYLAND)

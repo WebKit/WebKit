@@ -31,7 +31,11 @@
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
+
+#if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
+#endif
+
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 
