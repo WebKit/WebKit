@@ -353,7 +353,7 @@ private:
 };
 
 #if ENABLE(INTERSECTION_OBSERVER)
-static const Seconds intersectionObserversInitialUpdateDelay { 500_ms };
+static const Seconds intersectionObserversInitialUpdateDelay { 2000_ms };
 #endif
 
 // DOM Level 2 says (letters added):
@@ -7294,6 +7294,9 @@ void Document::removeAppearanceDependentPicture(HTMLPictureElement& picture)
 
 void Document::scheduleTimedRenderingUpdate()
 {
+#if ENABLE(INTERSECTION_OBSERVER)
+    m_intersectionObserversInitialUpdateTimer.stop();
+#endif
     if (auto page = this->page())
         page->renderingUpdateScheduler().scheduleTimedRenderingUpdate();
 }
