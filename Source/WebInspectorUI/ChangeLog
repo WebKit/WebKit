@@ -1,3 +1,21 @@
+2019-06-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r244268): Web Inspector: Styles: navigating from Computed to Styles doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=198508
+        <rdar://problem/51375503>
+
+        Reviewed by Matt Baker.
+
+        It didn't work because the detached sidebar panel tried to access its parent view (this.parentSidebar).
+
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js:
+        (WI.ComputedStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty): Added.
+        (WI.ComputedStyleDetailsSidebarPanel):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty): Deleted.
+        Move computedStyleDetailsPanelShowProperty to ComputedStyleDetailsSidebarPanel since it's the only
+        panel where it's needed.
+
 2019-06-10  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Web Inspector: "Copy Path to Property" doesn't work with multiline keys

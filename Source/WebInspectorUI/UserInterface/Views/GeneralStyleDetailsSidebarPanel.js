@@ -67,23 +67,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._panel.markAsNeedsRefresh(this.domNode);
     }
 
-    computedStyleDetailsPanelShowProperty(property)
-    {
-        this.parentSidebar.selectedSidebarPanel = "style-rules";
-
-        let styleRulesPanel = null;
-        for (let sidebarPanel of this.parentSidebar.sidebarPanels) {
-            if (!(sidebarPanel instanceof WI.RulesStyleDetailsSidebarPanel))
-                continue;
-
-            styleRulesPanel = sidebarPanel;
-            break;
-        }
-
-        console.assert(styleRulesPanel, "Styles panel is missing.");
-        styleRulesPanel.panel.scrollToSectionAndHighlightProperty(property);
-    }
-
     // StyleDetailsPanel delegate
 
     styleDetailsPanelFocusLastPseudoClassCheckbox(styleDetailsPanel)
