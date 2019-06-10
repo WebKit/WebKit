@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "APIContextMenuElementInfo.h"
+#import "WKContextMenuElementInfo.h"
+#import "WKObject.h"
 
-#if TARGET_OS_IPHONE
+#if PLATFORM(IOS_FAMILY)
 
-#import <Foundation/Foundation.h>
+namespace WebKit {
 
-NS_ASSUME_NONNULL_BEGIN
+template<> struct WrapperTraits<API::ContextMenuElementInfo> {
+    using WrapperClass = WKContextMenuElementInfo;
+};
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContextMenuElementInfo", ios(10.0, WK_IOS_TBA))
-@interface WKPreviewElementInfo : NSObject <NSCopying>
+}
 
-@property (nonatomic, readonly, nullable) NSURL *linkURL;
-
+@interface WKContextMenuElementInfo () <WKObject> {
+@package
+    API::ObjectStorage<API::ContextMenuElementInfo> _elementInfo;
+}
 @end
 
-NS_ASSUME_NONNULL_END
-
-#endif
+#endif // PLATFORM(IOS_FAMILY)

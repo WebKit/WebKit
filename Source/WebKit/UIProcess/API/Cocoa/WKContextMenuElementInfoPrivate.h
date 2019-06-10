@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKBackForwardList.h>
-#import <WebKit/WKBackForwardListItem.h>
-#import <WebKit/WKContentRuleList.h>
-#import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKContextMenuElementInfo.h>
-#import <WebKit/WKError.h>
-#import <WebKit/WKFoundation.h>
-#import <WebKit/WKFrameInfo.h>
-#import <WebKit/WKHTTPCookieStore.h>
-#import <WebKit/WKNavigation.h>
-#import <WebKit/WKNavigationAction.h>
-#import <WebKit/WKNavigationDelegate.h>
-#import <WebKit/WKNavigationResponse.h>
-#import <WebKit/WKOpenPanelParameters.h>
-#import <WebKit/WKPreferences.h>
-#import <WebKit/WKPreviewActionItem.h>
-#import <WebKit/WKPreviewActionItemIdentifiers.h>
-#import <WebKit/WKPreviewElementInfo.h>
-#import <WebKit/WKProcessPool.h>
-#import <WebKit/WKScriptMessage.h>
-#import <WebKit/WKScriptMessageHandler.h>
-#import <WebKit/WKSecurityOrigin.h>
-#import <WebKit/WKSnapshotConfiguration.h>
-#import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKURLSchemeHandler.h>
-#import <WebKit/WKURLSchemeTask.h>
-#import <WebKit/WKUserContentController.h>
-#import <WebKit/WKUserScript.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWebpagePreferences.h>
-#import <WebKit/WKWebsiteDataRecord.h>
-#import <WebKit/WKWebsiteDataStore.h>
-#import <WebKit/WKWindowFeatures.h>
-#import <WebKit/WebKitLegacy.h>
+
+@class _WKActivatedElementInfo;
+
+@interface WKContextMenuElementInfo (WKPrivate)
+
+@property (nonatomic, copy, readonly) _WKActivatedElementInfo *_activatedElementInfo;
+
+@end

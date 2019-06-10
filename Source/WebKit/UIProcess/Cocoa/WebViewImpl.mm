@@ -1569,7 +1569,7 @@ void WebViewImpl::takeFocus(WebCore::FocusDirection direction)
 {
     NSView *webView = m_view.getAutoreleased();
 
-    if (direction == FocusDirectionForward) {
+    if (direction == WebCore::FocusDirectionForward) {
         // Since we're trying to move focus out of m_webView, and because
         // m_webView may contain subviews within it, we ask it for the next key
         // view of the last view in its key view loop. This makes m_webView
@@ -3611,7 +3611,7 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
     if ([attribute isEqualToString:@"AXConvertRelativeFrame"]) {
         if ([parameter isKindOfClass:[NSValue class]]) {
             NSRect rect = [(NSValue *)parameter rectValue];
-            return [NSValue valueWithRect:m_pageClient->rootViewToScreen(IntRect(rect))];
+            return [NSValue valueWithRect:m_pageClient->rootViewToScreen(WebCore::IntRect(rect))];
         }
     }
     
