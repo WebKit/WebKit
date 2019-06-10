@@ -1,3 +1,13 @@
+2019-06-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][Flatpak] webkit-build fails due to missing libwpe in Flatpak environment
+        https://bugs.webkit.org/show_bug.cgi?id=198711
+
+        Reviewed by Philippe Normand.
+
+        * flatpak/org.webkit.GTK.yaml: Also include modules from
+        org.webkit.WPEModules.yaml, which brings in libwpe and WPEBackend-fdo
+
 2019-06-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r246148. Add another WPEBackend-fdo patch that

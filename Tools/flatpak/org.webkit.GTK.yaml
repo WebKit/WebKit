@@ -131,6 +131,8 @@
   - "/lib/pkgconfig"
   - "/lib/python2.7/site-packages/gi/*.la"
 
+- org.webkit.WPEModules.yaml
+
 - name: org.webkit.GTK
   buildsystem: simple
   build-commands:
