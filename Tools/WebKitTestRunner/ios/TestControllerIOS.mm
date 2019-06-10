@@ -134,6 +134,7 @@ void TestController::platformResetPreferencesToConsistentValues()
     WKPreferencesRef preferences = platformPreferences();
     WKPreferencesSetTextAutosizingEnabled(preferences, false);
     WKPreferencesSetContentChangeObserverEnabled(preferences, false);
+    [(__bridge WKPreferences *)preferences _setShouldIgnoreMetaViewport:NO];
 }
 
 void TestController::platformResetStateToConsistentValues(const TestOptions& options)
@@ -189,7 +190,8 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
     TestRunnerWKWebView *webView = mainWebView()->platformView();
 
-    webView.configuration.preferences._shouldIgnoreMetaViewport = test.options().shouldIgnoreMetaViewport;
+    if (test.options().shouldIgnoreMetaViewport)
+        webView.configuration.preferences._shouldIgnoreMetaViewport = YES;
 
     if (!test.options().useFlexibleViewport)
         return;

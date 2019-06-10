@@ -1,3 +1,22 @@
+2019-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] fast/xsl tests are flaky when run after certain viewport shrink-to-fit tests
+        https://bugs.webkit.org/show_bug.cgi?id=198699
+        <rdar://problem/50501718>
+
+        Reviewed by Simon Fraser.
+
+        Lift logic that sets the "IsKnownToLayOutWiderThanViewport" flag out of resetViewportDefaultConfiguration, and
+        into didCommitLoad instead (along with other logic for resetting viewport arguments). The previous method,
+        resetViewportDefaultConfiguration, was being triggered very frequently undo didReceiveMobileDocType, causing the
+        shrink-to-fit heuristic to sometimes take no effect. The original intention here was simply to reset the flag
+        upon page load.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+
 2019-06-10  Timothy Hatcher  <timothy@apple.com>
 
         Integrate dark mode support for iOS.

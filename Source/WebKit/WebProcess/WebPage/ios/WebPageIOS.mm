@@ -3210,7 +3210,6 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
     else
         m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
-    m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
 
     if (auto overriddenViewLayoutWidth = document->quirks().overriddenViewLayoutWidth(m_viewportConfiguration.layoutWidth()))
         m_viewportConfiguration.setViewLayoutSize(FloatSize(*overriddenViewLayoutWidth, m_viewportConfiguration.layoutHeight()));

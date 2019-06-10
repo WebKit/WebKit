@@ -1,3 +1,20 @@
+2019-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] fast/xsl tests are flaky when run after certain viewport shrink-to-fit tests
+        https://bugs.webkit.org/show_bug.cgi?id=198699
+        <rdar://problem/50501718>
+
+        Reviewed by Simon Fraser.
+
+        Add logic to platformResetPreferencesToConsistentValues, to reset the "ShouldIgnoreMetaViewport" preference.
+        While this is already being adjusted in platformConfigureViewForTest using the correct, TestOptions, this might
+        happen too late, allowing the shrink-to-fit-content heuristic to unexpectedly kick in on tests where testing
+        viewport parameters are used.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        (WTR::TestController::platformConfigureViewForTest):
+
 2019-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] UnlinkedCodeBlock should be eventually jettisoned in VM mini mode

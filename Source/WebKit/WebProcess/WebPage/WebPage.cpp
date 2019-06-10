@@ -5755,6 +5755,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (m_viewportConfiguration.setViewportArguments(coreFrame->document()->viewportArguments()))
         viewportChanged = true;
 
+    if (m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false))
+        viewportChanged = true;
+
     if (viewportChanged)
         viewportConfigurationChanged();
 #endif
