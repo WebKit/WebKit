@@ -361,7 +361,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
             for (auto& ipAddress : certificateSummaryInfo.value().ipAddresses)
                 ipAddressesPayload->addItem(ipAddress);
             if (ipAddressesPayload->length())
-                certificatePayload->setDnsNames(WTFMove(ipAddressesPayload));
+                certificatePayload->setIpAddresses(WTFMove(ipAddressesPayload));
 
             securityPayload->setCertificate(WTFMove(certificatePayload));
         }
