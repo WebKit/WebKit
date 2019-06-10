@@ -1,3 +1,13 @@
+2019-06-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r246148. Add another WPEBackend-fdo patch that
+        avoids double-free condition that's causing bots to exit early.
+
+        * gtk/jhbuild.modules:
+        * gtk/wpebackend-fdo-view-backend-exportable-private-don-t-double-free-ca.patch: Added.
+        * wpe/jhbuild.modules:
+        * wpe/wpebackend-fdo-view-backend-exportable-private-don-t-double-free-ca.patch: Added.
+
 2019-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MiniBrowser] Disable MediaCapabilities until it's ready
