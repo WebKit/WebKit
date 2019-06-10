@@ -33,14 +33,14 @@
 // Macro taken from WTF/wtf/Platform.h
 #if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
 
-#if (defined(TARGET_IPHONE_SIMULATOR)  && TARGET_IPHONE_SIMULATOR)
+#if (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR)
 #define ENABLE_VCP_ENCODER 0
 #define ENABLE_VCP_VTB_ENCODER 0
-#elif (defined(TARGET_OS_IPHONE)  && TARGET_OS_IPHONE)
-#define ENABLE_VCP_ENCODER __MAC_OS_X_VERSION_MAX_ALLOWED < 101500
+#elif (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)
+#define ENABLE_VCP_ENCODER 1
 #define ENABLE_VCP_VTB_ENCODER __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 #elif (defined(TARGET_OS_MAC) && TARGET_OS_MAC)
-#define ENABLE_VCP_ENCODER (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500)
+#define ENABLE_VCP_ENCODER __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #define ENABLE_VCP_VTB_ENCODER __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 #endif
 
@@ -145,6 +145,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionCrea
 SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionInvalidate, void, (VCPCompressionSessionRef session), (session))
 #define VCPCompressionSessionInvalidate softLink_VideoProcessing_VCPCompressionSessionInvalidate
 
+#else
+using VCPCompressionSessionRef = void*;
 #endif // ENABLE_VCP_ENCODER
 
 #endif // __APPLE__

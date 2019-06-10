@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing H264 baseline and high profile</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+function grabFrameData(x, y, w, h)
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    canvas.getContext('2d').drawImage(video, x, y, w, h, x, y, w, h);
+    return canvas.getContext('2d').getImageData(x, y, w, h).data;
+}
+
+function testImage()
+{
+    const data = grabFrameData(10, 325, 250, 1);
+
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
+
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
+
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
+}
+
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : (offer) => {
+            offer.sdp = offer.sdp.replace("640c1f", "42e01f");
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    testImage();
+}, "Baseline H264");
+
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : (offer) => {
+            offer.sdp = offer.sdp.replace("42e01f", "640c1f");
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    testImage();
+}, "High H264");
+        </script>
+    </body>
+</html>

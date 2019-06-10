@@ -35,12 +35,19 @@ std::string CFStringToString(const CFStringRef cf_string) {
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(CompressionSessionRef session,
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
                           CFStringRef key,
                           int32_t value) {
+  RTC_DCHECK(vtSession || vcpSession);
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value);
-  OSStatus status = CompressionSessionSetProperty(session, key, cfNum);
+  OSStatus status = noErr;
+  if (vtSession)
+    status = VTSessionSetProperty(vtSession, key, cfNum);
+#if ENABLE_VCP_ENCODER
+  else
+    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cfNum);
+#endif
   CFRelease(cfNum);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
@@ -50,13 +57,20 @@ void SetVTSessionProperty(CompressionSessionRef session,
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(CompressionSessionRef session,
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
                           CFStringRef key,
                           uint32_t value) {
+  RTC_DCHECK(vtSession || vcpSession);
   int64_t value_64 = value;
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value_64);
-  OSStatus status = CompressionSessionSetProperty(session, key, cfNum);
+  OSStatus status = noErr;
+  if (vtSession)
+    status = VTSessionSetProperty(vtSession, key, cfNum);
+#if ENABLE_VCP_ENCODER
+  else
+    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cfNum);
+#endif
   CFRelease(cfNum);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
@@ -66,9 +80,16 @@ void SetVTSessionProperty(CompressionSessionRef session,
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, bool value) {
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession, CFStringRef key, bool value) {
+  RTC_DCHECK(vtSession || vcpSession);
   CFBooleanRef cf_bool = (value) ? kCFBooleanTrue : kCFBooleanFalse;
-  OSStatus status = CompressionSessionSetProperty(session, key, cf_bool);
+  OSStatus status = noErr;
+  if (vtSession)
+    status = VTSessionSetProperty(vtSession, key, cf_bool);
+#if ENABLE_VCP_ENCODER
+  else
+    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cf_bool);
+#endif
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
     RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
@@ -77,10 +98,17 @@ void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, bool v
 }
 
 // Convenience function for setting a VT property.
-void SetVTSessionProperty(CompressionSessionRef session,
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
                           CFStringRef key,
                           CFStringRef value) {
-  OSStatus status = CompressionSessionSetProperty(session, key, value);
+  RTC_DCHECK(vtSession || vcpSession);
+  OSStatus status = noErr;
+  if (vtSession)
+    status = VTSessionSetProperty(vtSession, key, value);
+#if ENABLE_VCP_ENCODER
+  else
+    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, value);
+#endif
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
     std::string val_string = CFStringToString(value);

@@ -1,3 +1,31 @@
+2019-06-10  Youenn Fablet  <youenn@apple.com>
+
+        Call was negotiated with H264 Base Profile 42e01f but encoded in High Profile
+        https://bugs.webkit.org/show_bug.cgi?id=195124
+        <rdar://problem/48453085>
+
+        Reviewed by Eric Carlson.
+
+        Use VTB directly instead of VCP when baseline is requested.
+        For platforms supporting the VCP-in-VTB API, use VCP for high profile, VTB for baseline.
+        For platforms not supporting the VCP-in-VTB API, use regular VTB for both baseline and high profile.
+        On MacOS, if VTB session creation fails, use VCP as a fallback.
+        Keep VTB-only code path for non internal builds.
+
+        * Source/webrtc/sdk/WebKit/EncoderUtilities.h: Removed.
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCSingleVideoEncoderH264 initWithCodecInfo:simulcastIndex:]):
+        (-[RTCSingleVideoEncoderH264 hasCompressionSession]):
+        (-[RTCSingleVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionIfNeededWithFrame:]):
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (-[RTCSingleVideoEncoderH264 configureCompressionSession]):
+        (-[RTCSingleVideoEncoderH264 destroyCompressionSession]):
+        (-[RTCSingleVideoEncoderH264 setEncoderBitrateBps:]):
+        * Source/webrtc/sdk/objc/components/video_codec/helpers.cc:
+        * Source/webrtc/sdk/objc/components/video_codec/helpers.h:
+
 2019-05-28  Youenn Fablet  <youenn@apple.com>
 
         createAnswer() SDP Rejected by setLocalDescription()
