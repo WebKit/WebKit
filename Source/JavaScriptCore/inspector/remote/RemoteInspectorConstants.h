@@ -37,7 +37,8 @@
 #define WIRServiceEnabledNotification           "com.apple.webinspectord.enabled"
 #define WIRServiceDisabledNotification          "com.apple.webinspectord.disabled"
 #define WIRAutomaticInspectionEnabledState      "com.apple.webinspectord.automatic_inspection_enabled"
-
+#define WIRRemoteAutomationEnabledNotification  "com.apple.webinspectord.remote_automation_enabled"
+#define WIRRemoteAutomationDisabledNotification "com.apple.webinspectord.remote_automation_disabled"
 
 #define WIRApplicationIdentifierKey             @"WIRApplicationIdentifierKey"
 #define WIRApplicationBundleIdentifierKey       @"WIRApplicationBundleIdentifierKey"
