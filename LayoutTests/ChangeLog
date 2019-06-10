@@ -1,3 +1,15 @@
+2019-06-10  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Auto initialize local variables
+        https://bugs.webkit.org/show_bug.cgi?id=198426
+
+        Reviewed by Myles Maxfield.
+
+        * webgpu/whlsl-zero-initialize-values-2-expected.html: Added.
+        * webgpu/whlsl-zero-initialize-values-2.html: Added.
+        * webgpu/whlsl-zero-initialize-values-expected.html: Added.
+        * webgpu/whlsl-zero-initialize-values.html: Added.
+
 2019-06-10  Timothy Hatcher  <timothy@apple.com>
 
         Integrate dark mode support for iOS.

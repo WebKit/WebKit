@@ -142,6 +142,7 @@ MAKE_PRINT_ADAPTOR(StatementDumper, AST::Statement&, dumpASTNode);
 MAKE_PRINT_ADAPTOR(ProgramDumper, Program&, dumpASTNode);
 MAKE_PRINT_ADAPTOR(StructureDefinitionDumper, AST::StructureDefinition&, dumpASTNode);
 MAKE_PRINT_ADAPTOR(FunctionDefinitionDumper, AST::FunctionDefinition&, dumpASTNode);
+MAKE_PRINT_ADAPTOR(TypeDumper, AST::UnnamedType&, dumpASTNode);
 
 
 static ALWAYS_INLINE void dumpAST(Program& program)

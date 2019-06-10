@@ -54,6 +54,7 @@ Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::ResolvableType&, AST::
 Optional<UniqueRef<AST::UnnamedType>> commit(AST::ResolvableType&);
 bool inferTypesForTypeArguments(AST::NamedType& possibleType, AST::TypeArguments&);
 bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, const AST::NamedType* castReturnType);
+bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, const AST::UnnamedType* castReturnType);
 
 }
 

@@ -27,26 +27,13 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLResolvingType.h"
-#include "WHLSLTypeArgument.h"
-#include <functional>
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+class Program;
 
-class FunctionDeclaration;
-class NamedType;
-
-}
-
-AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes);
-AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NamedType* castReturnType);
-AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::UnnamedType* castReturnType);
-AST::NamedType* resolveTypeOverloadImpl(Vector<std::reference_wrapper<AST::NamedType>, 1>&, AST::TypeArguments&);
+void autoInitializeVariables(Program&);
 
 }
 

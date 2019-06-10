@@ -1,3 +1,56 @@
+2019-06-10  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Auto initialize local variables
+        https://bugs.webkit.org/show_bug.cgi?id=198426
+
+        Reviewed by Myles Maxfield.
+
+        This patch implements zero-filling for local variables in two parts:
+        1. We add a new pass, autoInitializeVariables, which makes any variable declaration
+        without an initializer call the default constructor for the variable's type.
+        Since we auto generate the default constructor, it's a native function whose
+        implementation we control.
+        
+        2. Each native constructor is implemented as a memset(&value, sizeof(value), 0).
+        This memset is an inlined loop in each constructor. The reason this turns
+        everything into zero is that for every primitive type, the "zero" value is
+        represented as all zeroes in memory: float, int, pointers, etc.
+        
+        Since our ability to test some of this is limited, I opened a follow-up bug to
+        test this more:
+        https://bugs.webkit.org/show_bug.cgi?id=198413
+
+        Tests: webgpu/whlsl-zero-initialize-values-2.html
+               webgpu/whlsl-zero-initialize-values.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h:
+        (WebCore::WHLSL::AST::VariableDeclaration::setInitializer):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h:
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.cpp: Added.
+        (WebCore::WHLSL::AutoInitialize::AutoInitialize):
+        (WebCore::WHLSL::AutoInitialize::visit):
+        (WebCore::WHLSL::autoInitializeVariables):
+        * Modules/webgpu/WHLSL/WHLSLAutoInitializeVariables.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp:
+        (WebCore::WHLSL::inferTypesForCallImpl):
+        (WebCore::WHLSL::inferTypesForCall):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h:
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp:
+        (WebCore::WHLSL::resolveFunctionOverloadImpl):
+        (WebCore::WHLSL::resolveFunctionOverload):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-06-10  Timothy Hatcher  <timothy@apple.com>
 
         Integrate dark mode support for iOS.

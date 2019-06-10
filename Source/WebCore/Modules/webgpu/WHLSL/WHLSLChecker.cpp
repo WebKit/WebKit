@@ -357,7 +357,7 @@ static bool checkOperatorOverload(const AST::FunctionDefinition& functionDefinit
             argumentTypes.append((*functionDefinition.parameters()[0]->type())->clone());
         for (auto& argumentType : argumentTypes)
             argumentTypeReferences.append(argumentType);
-        auto* overload = resolveFunctionOverloadImpl(*getterFuncs, argumentTypeReferences, nullptr);
+        auto* overload = resolveFunctionOverload(*getterFuncs, argumentTypeReferences);
         if (!overload)
             return false;
         auto& resultType = overload->type();
@@ -979,7 +979,7 @@ void Checker::visit(AST::DotExpression& dotExpression)
     AST::UnnamedType* getterReturnType = nullptr;
     {
         Vector<std::reference_wrapper<ResolvingType>> getterArgumentTypes { baseInfo->resolvingType };
-        getterFunction = resolveFunctionOverloadImpl(dotExpression.possibleGetterOverloads(), getterArgumentTypes, nullptr);
+        getterFunction = resolveFunctionOverload(dotExpression.possibleGetterOverloads(), getterArgumentTypes);
         if (getterFunction)
             getterReturnType = &getterFunction->type();
     }
@@ -989,7 +989,7 @@ void Checker::visit(AST::DotExpression& dotExpression)
     if (auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace()) {
         auto argumentType = makeUniqueRef<AST::PointerType>(Lexer::Token(dotExpression.origin()), *leftAddressSpace, baseUnnamedType->get().clone());
         Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { baseInfo->resolvingType };
-        anderFunction = resolveFunctionOverloadImpl(dotExpression.possibleAnderOverloads(), anderArgumentTypes, nullptr);
+        anderFunction = resolveFunctionOverload(dotExpression.possibleAnderOverloads(), anderArgumentTypes);
         if (anderFunction)
             anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
     }
@@ -999,7 +999,7 @@ void Checker::visit(AST::DotExpression& dotExpression)
     {
         auto argumentType = makeUniqueRef<AST::PointerType>(Lexer::Token(dotExpression.origin()), AST::AddressSpace::Thread, baseUnnamedType->get().clone());
         Vector<std::reference_wrapper<ResolvingType>> threadAnderArgumentTypes { baseInfo->resolvingType };
-        threadAnderFunction = resolveFunctionOverloadImpl(dotExpression.possibleAnderOverloads(), threadAnderArgumentTypes, nullptr);
+        threadAnderFunction = resolveFunctionOverload(dotExpression.possibleAnderOverloads(), threadAnderArgumentTypes);
         if (threadAnderFunction)
             threadAnderReturnType = &downcast<AST::PointerType>(threadAnderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
     }
@@ -1024,7 +1024,7 @@ void Checker::visit(AST::DotExpression& dotExpression)
     {
         ResolvingType fieldResolvingType(fieldType->clone());
         Vector<std::reference_wrapper<ResolvingType>> setterArgumentTypes { baseInfo->resolvingType, fieldResolvingType };
-        setterFunction = resolveFunctionOverloadImpl(dotExpression.possibleSetterOverloads(), setterArgumentTypes, nullptr);
+        setterFunction = resolveFunctionOverload(dotExpression.possibleSetterOverloads(), setterArgumentTypes);
         if (setterFunction)
             setterReturnType = &setterFunction->type();
     }
@@ -1397,7 +1397,7 @@ void Checker::visit(AST::CallExpression& callExpression)
     // We don't want to recurse to the same node twice.
 
     ASSERT(callExpression.hasOverloads());
-    auto* function = resolveFunctionOverloadImpl(*callExpression.overloads(), types, callExpression.castReturnType());
+    auto* function = resolveFunctionOverload(*callExpression.overloads(), types, callExpression.castReturnType());
     if (!function) {
         if (auto newFunction = resolveByInstantiation(callExpression, types, m_intrinsics)) {
             m_program.append(WTFMove(*newFunction));

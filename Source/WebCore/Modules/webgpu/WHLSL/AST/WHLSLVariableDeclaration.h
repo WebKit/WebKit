@@ -70,6 +70,11 @@ public:
     Expression* initializer() { return m_initializer ? &*m_initializer : nullptr; }
     bool isAnonymous() const { return m_name.isNull(); }
     Optional<UniqueRef<Expression>> takeInitializer() { return WTFMove(m_initializer); }
+    void setInitializer(UniqueRef<Expression> expression)
+    {
+        ASSERT(!initializer());
+        m_initializer = WTFMove(expression);
+    }
 
 private:
     Qualifiers m_qualifiers;

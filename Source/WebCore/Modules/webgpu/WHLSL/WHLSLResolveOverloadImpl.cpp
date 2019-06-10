@@ -51,7 +51,8 @@ static unsigned conversionCost(AST::FunctionDeclaration& candidate, const Vector
     return conversionCost;
 }
 
-AST::FunctionDeclaration* resolveFunctionOverloadImpl(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NamedType* castReturnType)
+template <typename TypeKind>
+AST::FunctionDeclaration* resolveFunctionOverloadImpl(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, TypeKind* castReturnType)
 {
     Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1> candidates;
     for (auto& possibleFunction : possibleFunctions) {
@@ -74,6 +75,21 @@ AST::FunctionDeclaration* resolveFunctionOverloadImpl(Vector<std::reference_wrap
     if (minimumCostCandidates.size() == 1)
         return &minimumCostCandidates[0].get();
     return nullptr;
+}
+
+AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes)
+{
+    return resolveFunctionOverloadImpl(possibleFunctions, argumentTypes, static_cast<AST::NamedType*>(nullptr));
+}
+
+AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NamedType* castReturnType)
+{
+    return resolveFunctionOverloadImpl(possibleFunctions, argumentTypes, castReturnType);
+}
+
+AST::FunctionDeclaration* resolveFunctionOverload(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::UnnamedType* castReturnType)
+{
+    return resolveFunctionOverloadImpl(possibleFunctions, argumentTypes, castReturnType);
 }
 
 AST::NamedType* resolveTypeOverloadImpl(Vector<std::reference_wrapper<AST::NamedType>, 1>& possibleTypes, AST::TypeArguments& typeArguments)

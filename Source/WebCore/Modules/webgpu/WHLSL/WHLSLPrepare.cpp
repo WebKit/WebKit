@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLASTDumper.h"
+#include "WHLSLAutoInitializeVariables.h"
 #include "WHLSLCheckDuplicateFunctions.h"
 #include "WHLSLChecker.h"
 #include "WHLSLFunctionStageChecker.h"
@@ -58,7 +59,7 @@ namespace WHLSL {
 static constexpr bool dumpASTBeforeEachPass = false;
 static constexpr bool dumpASTAfterParsing = false;
 static constexpr bool dumpASTAtEnd = false;
-static constexpr bool alwaysDumpPassFailures = true;
+static constexpr bool alwaysDumpPassFailures = false;
 static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
 
 static bool dumpASTIfNeeded(bool shouldDump, Program& program, const char* message)
@@ -130,6 +131,7 @@ static Optional<Program> prepareShared(String& whlslSource)
     RUN_PASS(check, program);
 
     checkLiteralTypes(program);
+    autoInitializeVariables(program);
     resolveProperties(program);
     findHighZombies(program);
     RUN_PASS(checkStatementBehavior, program);

@@ -477,10 +477,8 @@ void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclarati
     if (variableDeclaration.initializer()) {
         checkErrorAndVisit(*variableDeclaration.initializer());
         m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", m_stack.takeLast(), ";\n"));
-    } else {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Zero-fill the variable.
+    } else
         m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, ";\n"));
-    }
 }
 
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)

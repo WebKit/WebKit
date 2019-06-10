@@ -104,7 +104,8 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         if (!nativeFunctionDeclaration.parameters().size()) {
             stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, "() {\n"));
             stringBuilder.append(makeString("    ", metalReturnName, " x;\n"));
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Zero-fill
+            stringBuilder.append("    thread char* ptr = static_cast<thread char*>(static_cast<thread void*>(&x));\n");
+            stringBuilder.append(makeString("    for (size_t i = 0; i < sizeof(", metalReturnName, "); ++i) ptr[i] = 0;\n"));
             stringBuilder.append("    return x;\n");
             stringBuilder.append("}\n");
             return stringBuilder.toString();
