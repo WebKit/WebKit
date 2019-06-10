@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValueInlines.h"
 #include "WasmFunctionParser.h"
 #include <wtf/CommaPrinter.h>
 

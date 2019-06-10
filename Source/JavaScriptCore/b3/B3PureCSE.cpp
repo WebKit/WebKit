@@ -31,6 +31,7 @@
 #include "B3Dominators.h"
 #include "B3PhaseScope.h"
 #include "B3Value.h"
+#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 

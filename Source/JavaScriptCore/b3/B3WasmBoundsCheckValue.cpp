@@ -29,6 +29,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3ValueInlines.h"
+
 namespace JSC { namespace B3 {
 
 WasmBoundsCheckValue::~WasmBoundsCheckValue()

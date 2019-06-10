@@ -1,3 +1,28 @@
+2019-06-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [JSC] Linker fails when unified sources are not in use
+        https://bugs.webkit.org/show_bug.cgi?id=198722
+
+        Reviewed by Keith Miller.
+
+        Added missing inclusions of headers in several files which make use of inline functions.
+
+        * b3/B3AtomicValue.cpp:
+        * b3/B3BlockInsertionSet.cpp:
+        * b3/B3FenceValue.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3PureCSE.cpp:
+        * b3/B3StackmapValue.cpp:
+        * b3/B3SwitchValue.cpp:
+        * b3/B3UseCounts.cpp:
+        * b3/B3VariableValue.cpp:
+        * b3/B3WasmAddressValue.cpp:
+        * b3/B3WasmBoundsCheckValue.cpp:
+        * ftl/FTLCompile.cpp:
+        * wasm/WasmSectionParser.cpp:
+        * wasm/WasmTable.cpp:
+        * wasm/WasmValidate.cpp:
+
 2019-06-10  Keith Miller  <keith_miller@apple.com>
 
         Make new Symbol/Promise API public

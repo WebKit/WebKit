@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "B3FenceValue.h"
+#include "B3ValueInlines.h"
 
 #if ENABLE(B3_JIT)
 

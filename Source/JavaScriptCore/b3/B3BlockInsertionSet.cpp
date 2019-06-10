@@ -31,6 +31,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3InsertionSet.h"
 #include "B3ProcedureInlines.h"
+#include "B3ValueInlines.h"
 #include <wtf/BubbleSort.h>
 
 namespace JSC { namespace B3 {
