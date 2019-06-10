@@ -118,11 +118,7 @@ const ui = new (class UIController {
 
     tap(options)
     {
-        // Add a delay to ensure sequence of tap() calls don't yield double taps.
-        const delay = 1000;
-        return this._run(`uiController.singleTapAtPoint(${options.x}, ${options.y})`).then(() => {
-            return new Promise(resolve => setTimeout(resolve, delay));
-        });
+        return this._run(`uiController.singleTapAtPoint(${options.x}, ${options.y})`);
     }
 
     pinchOut(options)

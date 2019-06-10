@@ -52,8 +52,6 @@ webkit.org/b/196228 http/tests/cache-storage/cache-records-persistency.https.htm
 
 webkit.org/b/196233 fast/viewport/ios/initial-scale-after-changing-view-scale.html [ Pass Timeout ]
 
-webkit.org/b/196236 [ Debug ] fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
-
 webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html [ Pass Timeout ]
 webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html [ Pass Timeout ]
 webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html [ Pass Timeout ]
@@ -62,8 +60,6 @@ webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie
 webkit.org/b/191709 editing/deleting/delete-emoji-1.html [ Pass Failure ]
 webkit.org/b/191709 editing/deleting/delete-emoji-9.html [ Pass Failure ]
 webkit.org/b/191709 editing/deleting/delete-emoji.html [ Pass Failure ]
-
-webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
 
 webkit.org/b/196298 fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [ Pass Failure ]
 

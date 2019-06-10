@@ -1,5 +1,74 @@
 2019-06-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r246213. rdar://problem/50114230
+
+    Restrict fast clicks everywhere to desktop content mode
+    https://bugs.webkit.org/show_bug.cgi?id=198610
+    <rdar://problem/50114230>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebKit:
+    
+    We now set a new allowsFastClicksEverywhere property on the WebPageProxy when the content mode changes, set to true
+    when we're in desktop browsing mode. We now check on this property to opt into the fast clicks everywhere behavior.
+    
+    This patch had been reverted once because it yielded some regressions in existing tests, notably under
+    fast/events/touch/ios/content-observation. This updated patch addresses this by ensuring the gesture recognizers
+    used for double-tap-to-zoom are disabled in -[WKContentViewInteraction _didStartProvisionalLoadForMainFrame]
+    to ensure that two tests dispatching a tap at the same location don't yield the recognition of a double-tap
+    rathern than the recognition of two single taps.
+    
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::allowsFastClicksEverywhere const):
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _handleSmartMagnificationInformationForPotentialTap:renderRect:fitEntireRect:viewportMinimumScale:viewportMaximumScale:]):
+    (_didStartProvisionalLoadForMainFrame):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+    
+    LayoutTests:
+    
+    Add a new test that enables fast clicks but also sets a mobile content mode.
+    
+    We also mark fast/visual-viewport/ios/min-scale-greater-than-one.html as non-flaky
+    since the flakiness was due to the fast clicks everywhere behavior being enabled on iPhone.
+    
+    Finally, we can now remove the hack where ui.tap() in the Pointer Events utility returned
+    a promise with a one-second delay since the issue of double-taps being recognized instead of
+    two consecutive single taps across two tests has been resolved.
+    
+    * fast/events/ios/ipad/fast-click-always-mobile-content-mode-expected.txt: Added.
+    * fast/events/ios/ipad/fast-click-always-mobile-content-mode.html: Added.
+    * platform/ios-simulator-wk2/TestExpectations:
+    * pointerevents/utils.js:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246213 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-07  Antoine Quint  <graouts@apple.com>
+
+            Restrict fast clicks everywhere to desktop content mode
+            https://bugs.webkit.org/show_bug.cgi?id=198610
+            <rdar://problem/50114230>
+
+            Reviewed by Dean Jackson.
+
+            Add a new test that enables fast clicks but also sets a mobile content mode.
+
+            We also mark fast/visual-viewport/ios/min-scale-greater-than-one.html as non-flaky
+            since the flakiness was due to the fast clicks everywhere behavior being enabled on iPhone.
+
+            Finally, we can now remove the hack where ui.tap() in the Pointer Events utility returned
+            a promise with a one-second delay since the issue of double-taps being recognized instead of
+            two consecutive single taps across two tests has been resolved.
+
+            * fast/events/ios/ipad/fast-click-always-mobile-content-mode-expected.txt: Added.
+            * fast/events/ios/ipad/fast-click-always-mobile-content-mode.html: Added.
+            * platform/ios-simulator-wk2/TestExpectations:
+            * pointerevents/utils.js:
+
+2019-06-09  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r246118. rdar://problem/50114230
 
     Upstream content mode support into open source from WebKitAdditions
