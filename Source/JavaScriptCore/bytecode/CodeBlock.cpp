@@ -1390,7 +1390,11 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
             count = m_jitExecuteCounter.count();
             break;
         case JITType::DFGJIT:
+#if ENABLE(DFG_JIT)
             count = static_cast<DFG::JITCode*>(jitCode)->tierUpCounter.count();
+#else
+            alwaysActive = true;
+#endif
             break;
         case JITType::FTLJIT:
             alwaysActive = true;
