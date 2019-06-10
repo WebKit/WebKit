@@ -1637,7 +1637,7 @@ function isTextLikelyMinified(content)
 
 function doubleQuotedString(str)
 {
-    return "\"" + str.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\"";
+    return JSON.stringify(str);
 }
 
 function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)
