@@ -627,3 +627,58 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolEphemeralSession)
     [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     TestWebKitAPI::Util::run(&finished);
 }
+
+static bool areCookiesEqual(NSHTTPCookie *first, NSHTTPCookie *second)
+{
+    return [first.name isEqual:second.name] && [first.domain isEqual:second.domain] && [first.path isEqual:second.path] && [first.value isEqual:second.value];
+}
+
+TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolDuplicates)
+{
+    RetainPtr<WKHTTPCookieStore> httpCookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
+    RetainPtr<NSHTTPCookie> sessionCookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"SessionCookieName",
+        NSHTTPCookieValue: @"CookieValue",
+        NSHTTPCookieDomain: @"127.0.0.1",
+    }];
+
+    auto properties = adoptNS([sessionCookie.get().properties mutableCopy]);
+    properties.get()[NSHTTPCookieDomain] = @"localhost";
+    RetainPtr<NSHTTPCookie> sessionCookieDifferentDomain = [NSHTTPCookie cookieWithProperties:properties.get()];
+    properties.get()[NSHTTPCookieValue] = @"OtherCookieValue";
+    RetainPtr<NSHTTPCookie> sessionCookieDifferentValue = [NSHTTPCookie cookieWithProperties:properties.get()];
+    finished = false;
+    
+    [httpCookieStore.get() setCookie:sessionCookie.get() completionHandler:^{
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    [httpCookieStore.get() setCookie:sessionCookieDifferentDomain.get() completionHandler:^{
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    [httpCookieStore.get() setCookie:sessionCookieDifferentValue.get() completionHandler:^{
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    [httpCookieStore.get() getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ(2u, cookies.count);
+        bool sessionCookieExists = false, otherSessionCookieExists = false;
+        for (NSHTTPCookie* cookie in cookies) {
+            if (areCookiesEqual(cookie, sessionCookie.get()))
+                sessionCookieExists = true;
+            else if (areCookiesEqual(cookie, sessionCookieDifferentValue.get()))
+                otherSessionCookieExists = true;
+        }
+        EXPECT_TRUE(sessionCookieExists && otherSessionCookieExists);
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+}

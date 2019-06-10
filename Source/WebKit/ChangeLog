@@ -1,3 +1,25 @@
+2019-06-10  Sihui Liu  <sihui_liu@apple.com>
+
+        [WKHTTPCookieStore getAllCookies:] may return duplicate cookies
+        https://bugs.webkit.org/show_bug.cgi?id=198635
+        <rdar://problem/46010232>
+
+        Reviewed by Ryosuke Niwa.
+
+        When there is no process pool, we store cookies set in memory with HashSet m_pendingCookies of WebsiteDataStore.
+
+        HashSet does not contain duplicate Cookies that are completely identical, but it may contain Cookies that have 
+        all the other properties identical other than value. This is not correct because Cookies with same name, domain
+        and path should be treated as the same cookie. When a cookie is set via API, we should either insert the 
+        cookie into m_pendingCookies if the cookie does not exist, or update the cookie value if it already exists.
+
+        Note that we still use HashSet with CookieHash for m_pendingCookies because in cookie deletion, we only delete 
+        cookie when there is a complete match. If some cookie from m_pendingCookies has all other properties the same as
+        the cookie specified in the deletion function, but the value is different, it will not be removed.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::addPendingCookie):
+
 2019-06-10  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] Port to new wpe_fdo_egl_exported_image API

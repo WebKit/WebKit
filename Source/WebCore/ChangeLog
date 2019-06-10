@@ -1,3 +1,17 @@
+2019-06-10  Sihui Liu  <sihui_liu@apple.com>
+
+        [WKHTTPCookieStore getAllCookies:] may return duplicate cookies
+        https://bugs.webkit.org/show_bug.cgi?id=198635
+        <rdar://problem/46010232>
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: WebKit.WKHTTPCookieStoreWithoutProcessPoolDuplicates
+
+        * platform/Cookie.h:
+        (WebCore::Cookie::isKeyEqual const):
+        (WTF::HashTraits<WebCore::Cookie>::isEmptyValue):
+
 2019-06-09  Rob Buis  <rbuis@igalia.com>
 
         Add wildcard to Access-Control-Allow-Methods and Access-Control-Allow-Headers

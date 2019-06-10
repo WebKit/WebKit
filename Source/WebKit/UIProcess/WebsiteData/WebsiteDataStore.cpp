@@ -1941,6 +1941,9 @@ Vector<WebCore::Cookie> WebsiteDataStore::pendingCookies() const
 
 void WebsiteDataStore::addPendingCookie(const WebCore::Cookie& cookie)
 {
+    m_pendingCookies.removeIf([&cookie](auto& pendingCookie) {
+        return pendingCookie.isKeyEqual(cookie);
+    });
     m_pendingCookies.add(cookie);
 }
 

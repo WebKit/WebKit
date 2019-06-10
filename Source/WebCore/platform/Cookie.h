@@ -76,6 +76,13 @@ struct Cookie {
             && commentURL.isNull();
     }
     
+    bool isKeyEqual(const Cookie& otherCookie) const
+    {
+        return name == otherCookie.name
+            && domain == otherCookie.domain
+            && path == otherCookie.path;
+    }
+
     String name;
     String value;
     String domain;
@@ -169,6 +176,9 @@ namespace WTF {
         static WebCore::Cookie emptyValue() { return { }; }
         static void constructDeletedValue(WebCore::Cookie& slot) { slot = WebCore::Cookie(WTF::HashTableDeletedValue); }
         static bool isDeletedValue(const WebCore::Cookie& slot) { return slot.name.isHashTableDeletedValue(); }
+
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const WebCore::Cookie& slot) { return slot.isNull(); }
     };
     template<> struct EnumTraits<WebCore::Cookie::SameSitePolicy> {
     using values = EnumValues<
