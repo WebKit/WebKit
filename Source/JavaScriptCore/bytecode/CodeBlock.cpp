@@ -1373,6 +1373,37 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
     }
 #endif // ENABLE(DFG_JIT)
 
+    auto updateActivity = [&] {
+        if (!VM::useUnlinkedCodeBlockJettisoning())
+            return;
+        JITCode* jitCode = m_jitCode.get();
+        double count = 0;
+        bool alwaysActive = false;
+        switch (JITCode::jitTypeFor(jitCode)) {
+        case JITType::None:
+        case JITType::HostCallThunk:
+            return;
+        case JITType::InterpreterThunk:
+            count = m_llintExecuteCounter.count();
+            break;
+        case JITType::BaselineJIT:
+            count = m_jitExecuteCounter.count();
+            break;
+        case JITType::DFGJIT:
+            count = static_cast<DFG::JITCode*>(jitCode)->tierUpCounter.count();
+            break;
+        case JITType::FTLJIT:
+            alwaysActive = true;
+            break;
+        }
+        if (alwaysActive || m_previousCounter < count) {
+            // CodeBlock is active right now, so resetting UnlinkedCodeBlock's age.
+            m_unlinkedCode->resetAge();
+        }
+        m_previousCounter = count;
+    };
+    updateActivity();
+
     VM::SpaceAndSet::setFor(*subspace()).remove(this);
 }
 

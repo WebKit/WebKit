@@ -632,7 +632,15 @@ public:
     };
 
     static JS_EXPORT_PRIVATE bool canUseAssembler();
-    static JS_EXPORT_PRIVATE bool isInMiniMode();
+    static bool isInMiniMode()
+    {
+        return !canUseJIT() || Options::forceMiniVMMode();
+    }
+
+    static bool useUnlinkedCodeBlockJettisoning()
+    {
+        return Options::useUnlinkedCodeBlockJettisoning() || isInMiniMode();
+    }
 
     static void computeCanUseJIT();
     ALWAYS_INLINE static bool canUseJIT()

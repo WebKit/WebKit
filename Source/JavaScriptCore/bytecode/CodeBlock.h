@@ -1010,6 +1010,7 @@ private:
     RefPtr<MetadataTable> m_metadata;
 
     MonotonicTime m_creationTime;
+    double m_previousCounter { 0 };
 
     std::unique_ptr<RareData> m_rareData;
 };

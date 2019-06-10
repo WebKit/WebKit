@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum CodeSpecializationKind { CodeForCall, CodeForConstruct };
+enum CodeSpecializationKind : uint8_t { CodeForCall, CodeForConstruct };
 
 inline CodeSpecializationKind specializationFromIsCall(bool isCall)
 {

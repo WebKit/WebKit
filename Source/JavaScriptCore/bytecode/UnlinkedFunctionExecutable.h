@@ -114,8 +114,6 @@ public:
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
     void setInvalidTypeProfilingOffsets();
 
-    UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(CodeSpecializationKind);
-
     UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(
         VM&, const SourceCode&, CodeSpecializationKind, OptionSet<CodeGenerationMode>,
         ParserError&, SourceParseMode);
@@ -189,6 +187,8 @@ public:
         ensureRareData().m_sourceMappingURLDirective = sourceMappingURL;
     }
 
+    void finalizeUnconditionally(VM&);
+
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
@@ -202,7 +202,14 @@ private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, Optional<CompactVariableMap::Handle>,  JSC::DerivedContextType, bool isBuiltinDefaultClassConstructor);
     UnlinkedFunctionExecutable(Decoder&, const CachedFunctionExecutable&);
 
-    void decodeCachedCodeBlocks();
+    void decodeCachedCodeBlocks(VM&);
+
+    bool codeBlockEdgeMayBeWeak() const
+    {
+        // Currently, bytecode cache assumes that the tree of UnlinkedFunctionExecutable and UnlinkedCodeBlock will not be destroyed while the parent is live.
+        // Bytecode cache uses this asumption to avoid duplicate materialization by bookkeeping the heap cells in the offste-to-pointer map.
+        return VM::useUnlinkedCodeBlockJettisoning() && !m_isGeneratedFromCache;
+    }
 
     unsigned m_firstLineOffset : 31;
     unsigned m_isInStrictContext : 1;
@@ -228,6 +235,7 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 2; // FunctionMode
     unsigned m_derivedContextType: 2;
+    unsigned m_isGeneratedFromCache : 1;
 
     union {
         WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;

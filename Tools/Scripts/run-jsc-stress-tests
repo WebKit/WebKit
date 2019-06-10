@@ -780,12 +780,17 @@ def runShadowChicken(*optionalTestSpecificOptions)
     run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true", *optionalTestSpecificOptions)
 end
 
+def runMiniMode(*optionalTestSpecificOptions)
+    run("mini-mode", "--forceMiniVMMode=true", *optionalTestSpecificOptions)
+end
+
 def defaultRun
     if $mode == "quick"
         defaultQuickRun
     else
         runDefault
         runBytecodeCache
+        runMiniMode
         if $jitTests
             runNoLLInt
             runNoCJITValidatePhases

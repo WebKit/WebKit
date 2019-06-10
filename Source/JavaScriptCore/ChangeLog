@@ -1,3 +1,100 @@
+2019-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] UnlinkedCodeBlock should be eventually jettisoned in VM mini mode
+        https://bugs.webkit.org/show_bug.cgi?id=198023
+
+        Reviewed by Saam Barati.
+
+        While CodeBlock is periodically jettisoned, UnlinkedCodeBlock and UnlinkedFunctionExecutable can be retained almost forever in certain type of applications.
+        When we execute a program, which has UnlinkedProgramCodeBlock retained in CodeCache. And UnlinkedProgramCodeBlock holds array of UnlinkedFunctionExecutable.
+        And UnlinkedFunctionExecutables hold UnlinkedFunctionCodeBlocks once it is generated. So eventually, this tree gets larger and larger until we purge
+        UnlinkedProgramCodeBlock from CodeCache. This is OK in the browser case. We navigate to various other pages, and UnlinkedProgramCodeBlocks should eventually
+        be pruned from CodeCache with the new ones. So this tree won't be retained forever. But the behavior is different in the other applications that do not have
+        navigations. If they only have one program which holds all, we basically retain this tree during executing this application. The same thing can happen in
+        web applications which does not have navigation and keeps alive for a long time. Once we hit CodeCache limit by periodically executing a new script, we will
+        hit the uppermost of memory footprint. But until that, we increase our memory footprint.
+
+        However, destroying these UnlinkedCodeBlocks and UnlinkedFunctionExecutables causes a tricky problem. In the browser environment, navigation can happen at any
+        time. So even if the given UnlinkedCodeBlock seems unused in the current page, it can be used when navigating to a new page which is under the same domain.
+        One example is initializing function in a script. It is only executed once per page. So once it is executed, it seems that this UnlinkedCodeBlock is unused.
+        But this will be used when we navigate to a new page. Pruning code blocks based on usage could cause performance regression.
+
+        But if our VM is mini VM mode, the story is different. In mini VM mode, we focus on memory footprint rather than performance e.g. daemons. The daemon never
+        reuse these CodeCache since we do not have the navigation.
+
+        This patch logically makes UnlinkedFunctionExecutable -> UnlinkedCodeBlock reference weak when VM is mini mode. If UnlinkedCodeBlock is used in previous GC
+        cycle, we retain it. But if it is not used, and if UnlinkedFunctionExecutable is only the cell keeping UnlinkedCodeBlock alive, we destroy it. It is a
+        heuristic. In a super pathological case, it could increase memory footprint. Consider the following example.
+
+            UnlinkedFunctionExecutable(A1) -> UnlinkedCodeBlock(B1) -> UnlinkedFunctionExecutable(C1) -> UnlinkedCodeBlock(D1)
+                                                                                                             ^
+                                                                                                         CodeBlock(E1)
+
+        We could delete A1, B1, and C1 while keeping D1. But if we eventually re-execute the same code corresponding to A1, B1, C1, they will be newly created, and
+        we will create duplicate UnlinkedCodeBlock and instructions stream for D1.
+
+                                                                                                         UnlinkedCodeBlock(D1)
+                                                                                                             ^
+                                                                                                         CodeBlock(E1)
+
+            UnlinkedFunctionExecutable(A2) -> UnlinkedCodeBlock(B2) -> UnlinkedFunctionExecutable(C2) -> UnlinkedCodeBlock(D2)
+
+        But this does not happen in practice and even it happens, we eventually discard D1 and D2 since CodeBlock E1 will be jettisoned anyway. So in practice, we do
+        not see memory footprint increase. We tested it in Gmail and the target application, but both said memory footprint reduction (30 MB / 400 MB and 1 MB /6 MB).
+        While this affects on performance much on tests which has navigation (1-3 % regression in Speedometer2, note that JetStream2 does not show regression in x64,
+        while it is not enabling mini mode), we do not apply this to non mini mode VM until we come up with a good strategy to fasten performance of re-generation.
+        Personally I think flushing destroyed UnlinkedCodeBlock to the disk sounds promising.
+
+        If UnlinkedCodeBlock is generated from bytecode cache, we do not make UnlinkedFunctionExecutable -> UnlinkedCodeBlock link weak because the decoder of the bytecode
+        cache assumes that generated JSCells won't be destroyed while the parent cells of that cell are live. This is true in the current implementation, and this assumption
+        will be broken with this patch. So, for now, we do not make this link weak. Currently, our target application does not use bytecode cache so it is OK.
+
+        This patch also introduce simple heuristic. We are counting UnlinkedCodeBlock's age. And once the age becomes maximum size, we make UnlinkedFunctionExecutable ->
+        UnlinkedCodeBlock link weak. We also use execution counter information to reset this age: CodeBlock will reset undelying UnlinkedCodeBlock's age if it has executed
+        While this heuristic is quite simple, it has some effect in practice. Basically what happens with this heuristic is that UnlinkedFunctionExecutable ->
+        UnlinkedCodeBlock link strong. When GC happens, we are executing some CodeBlocks, which become live. And ScriptExecutables -> UnlinkedFunctionExecutables held
+        by this CodeBlock become also live. Then UnlinkedFunctionExecutables can mark the child UnlinkedCodeBlocks if it is not so old.
+        If some of parent UnlinkedFunctionExecutable becomes dead, child UnlinkedCodeBlocks tends to be dead unless some live CodeBlock holds it. But it is OK for a first
+        heuristics since this means that parent code block is now considered old, reachable UnlinkedCodeBlock will be used when the parent is executed again. So destroying
+        the tree is OK even if the tree may include some new UnlinkedCodeBlock. While we could make more sophisticated mechanism to manage these lifetime, I think this is a
+        good starting point.
+
+        Based on measurement, we pick 7 as a maximum age. If we pick 0, we can get more memory reduction (1 - 1.5 MB!), while we ends up reparsing codes so many times.
+        It seems that 7 can reduce fair amount of memory while doing small # of reparsing on average (usually, 1, 2. Sometimes, 100. But not 300, which is the case in 0).
+        If we want to get more memory reduction for the sake of performance, we could decrease this age limit.
+
+        Since we do not have an automated script right now so it is a bit difficult to measure memory footprint precisely. But manual testing shows that this patch improves
+        memory footprint of our target application from about 6.5 MB to about 5.9 MB.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::age const):
+        (JSC::UnlinkedCodeBlock::resetAge):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        (JSC::UnlinkedFunctionExecutable::decodeCachedCodeBlocks):
+        (JSC::UnlinkedFunctionExecutable::finalizeUnconditionally):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * runtime/CachedTypes.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * runtime/CodeSpecializationKind.h:
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::isInMiniMode): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::isInMiniMode):
+        (JSC::VM::useUnlinkedCodeBlockJettisoning):
+
 2019-06-10  Timothy Hatcher  <timothy@apple.com>
 
         Integrate dark mode support for iOS.

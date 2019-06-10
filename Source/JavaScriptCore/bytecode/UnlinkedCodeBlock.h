@@ -339,6 +339,11 @@ public:
     TriState didOptimize() const { return static_cast<TriState>(m_didOptimize); }
     void setDidOptimize(TriState didOptimize) { m_didOptimize = static_cast<unsigned>(didOptimize); }
 
+    static constexpr unsigned maxAge = 7;
+
+    unsigned age() const { return m_age; }
+    void resetAge() { m_age = 0; }
+
     void dump(PrintStream&) const;
 
     BytecodeLivenessAnalysis& livenessAnalysis(CodeBlock* codeBlock)
@@ -404,6 +409,7 @@ private:
     void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
     BytecodeLivenessAnalysis& livenessAnalysisSlow(CodeBlock*);
 
+
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
 
@@ -424,6 +430,8 @@ private:
     unsigned m_evalContextType : 2;
     unsigned m_codeType : 2;
     unsigned m_didOptimize : 2;
+    unsigned m_age : 3;
+    static_assert(((1U << 3) - 1) >= maxAge);
 public:
     ConcurrentJSLock m_lock;
 private:

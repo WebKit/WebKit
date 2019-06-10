@@ -520,6 +520,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(double, validateAbstractInterpreterStateProbability, 0.5, Normal, nullptr) \
     v(optionString, dumpJITMemoryPath, nullptr, Restricted, nullptr) \
     v(double, dumpJITMemoryFlushInterval, 10, Restricted, "Maximum time in between flushes of the JIT memory dump in seconds.") \
+    v(bool, useUnlinkedCodeBlockJettisoning, false, Normal, "If true, UnlinkedCodeBlock can be jettisoned.") \
 
 
 enum OptionEquivalence {

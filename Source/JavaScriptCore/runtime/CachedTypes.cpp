@@ -2031,6 +2031,7 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_codeType(cachedCodeBlock.codeType())
 
     , m_didOptimize(static_cast<unsigned>(MixedTriState))
+    , m_age(0)
 
     , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
@@ -2158,6 +2159,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_constructorKind(cachedExecutable.constructorKind())
     , m_functionMode(cachedExecutable.functionMode())
     , m_derivedContextType(cachedExecutable.derivedContextType())
+    , m_isGeneratedFromCache(true)
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
 

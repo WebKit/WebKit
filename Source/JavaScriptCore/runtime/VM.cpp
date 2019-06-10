@@ -232,11 +232,6 @@ void VM::computeCanUseJIT()
 #endif
 }
 
-bool VM::isInMiniMode()
-{
-    return !canUseJIT() || Options::forceMiniVMMode();
-}
-
 inline unsigned VM::nextID()
 {
     for (;;) {

@@ -107,6 +107,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_constructorKind(static_cast<unsigned>(node->constructorKind()))
     , m_functionMode(static_cast<unsigned>(node->functionMode()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
+    , m_isGeneratedFromCache(false)
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
     , m_name(node->ident())
@@ -142,7 +143,19 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    if (!thisObject->m_isCached) {
+
+    if (thisObject->codeBlockEdgeMayBeWeak()) {
+        auto markIfProfitable = [&] (WriteBarrier<UnlinkedFunctionCodeBlock>& unlinkedCodeBlock) {
+            if (!unlinkedCodeBlock)
+                return;
+            if (unlinkedCodeBlock->didOptimize() == TrueTriState)
+                visitor.append(unlinkedCodeBlock);
+            else if (unlinkedCodeBlock->age() < UnlinkedCodeBlock::maxAge)
+                visitor.append(unlinkedCodeBlock);
+        };
+        markIfProfitable(thisObject->m_unlinkedCodeBlockForCall);
+        markIfProfitable(thisObject->m_unlinkedCodeBlockForConstruct);
+    } else if (!thisObject->m_isCached) {
         visitor.append(thisObject->m_unlinkedCodeBlockForCall);
         visitor.append(thisObject->m_unlinkedCodeBlockForConstruct);
     }
@@ -197,24 +210,12 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     return executable;
 }
 
-UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(CodeSpecializationKind specializationKind)
-{
-    switch (specializationKind) {
-    case CodeForCall:
-        return m_unlinkedCodeBlockForCall.get();
-    case CodeForConstruct:
-        return m_unlinkedCodeBlockForConstruct.get();
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
     OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, SourceParseMode parseMode)
 {
     if (m_isCached)
-        decodeCachedCodeBlocks();
+        decodeCachedCodeBlocks(vm);
     switch (specializationKind) {
     case CodeForCall:
         if (UnlinkedFunctionCodeBlock* codeBlock = m_unlinkedCodeBlockForCall.get())
@@ -246,7 +247,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     return result;
 }
 
-void UnlinkedFunctionExecutable::decodeCachedCodeBlocks()
+void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
 {
     ASSERT(m_isCached);
     ASSERT(m_decoder);
@@ -256,7 +257,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks()
     int32_t cachedCodeBlockForCallOffset = m_cachedCodeBlockForCallOffset;
     int32_t cachedCodeBlockForConstructOffset = m_cachedCodeBlockForConstructOffset;
 
-    DeferGC deferGC(decoder->vm().heap);
+    DeferGC deferGC(vm.heap);
 
     // No need to clear m_unlinkedCodeBlockForCall here, since we moved the decoder out of the same slot
     if (cachedCodeBlockForCallOffset)
@@ -268,7 +269,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks()
 
     WTF::storeStoreFence();
     m_isCached = false;
-    decoder->vm().heap.writeBarrier(this);
+    vm.heap.writeBarrier(this);
 }
 
 UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareDataSlow()
@@ -282,6 +283,27 @@ void UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets()
 {
     m_typeProfilingStartOffset = std::numeric_limits<unsigned>::max();
     m_typeProfilingEndOffset = std::numeric_limits<unsigned>::max();
+}
+
+void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm)
+{
+    if (codeBlockEdgeMayBeWeak()) {
+        bool isCleared = false;
+        bool isStillValid = false;
+        auto clearIfDead = [&] (WriteBarrier<UnlinkedFunctionCodeBlock>& unlinkedCodeBlock) {
+            if (!unlinkedCodeBlock)
+                return;
+            if (!vm.heap.isMarked(unlinkedCodeBlock.get())) {
+                unlinkedCodeBlock.clear();
+                isCleared = true;
+            } else
+                isStillValid = true;
+        };
+        clearIfDead(m_unlinkedCodeBlockForCall);
+        clearIfDead(m_unlinkedCodeBlockForConstruct);
+        if (isCleared && !isStillValid)
+            vm.unlinkedFunctionExecutableSpace.set.remove(this);
+    }
 }
 
 } // namespace JSC
