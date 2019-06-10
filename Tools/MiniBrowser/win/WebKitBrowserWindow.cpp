@@ -114,6 +114,7 @@ Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, boo
     WKPageConfigurationSetPageGroup(conf.get(), pageGroup.get());
     WKPageGroupSetPreferences(pageGroup.get(), prefs.get());
 
+    WKPreferencesSetMediaCapabilitiesEnabled(prefs.get(), false);
     WKPreferencesSetDeveloperExtrasEnabled(prefs.get(), true);
     WKPageConfigurationSetPreferences(conf.get(), prefs.get());
 

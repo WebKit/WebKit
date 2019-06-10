@@ -1,3 +1,16 @@
+2019-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MiniBrowser] Disable MediaCapabilities until it's ready
+        https://bugs.webkit.org/show_bug.cgi?id=198655
+
+        Reviewed by Ross Kirsling.
+
+        MediaCapabilities is enabled by default for WK2, but WinCairo
+        doesn't implemented yet. Disable it in MiniBrowser.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::create):
+
 2019-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] The default application name for user agent when requesting desktop content is still "Mobile/15E148"
