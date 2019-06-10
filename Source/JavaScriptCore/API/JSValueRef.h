@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ typedef enum {
     kJSTypeNumber,
     kJSTypeString,
     kJSTypeObject,
-    kJSTypeSymbol JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA))
+    kJSTypeSymbol JSC_API_AVAILABLE(macos(10.15), ios(13.0))
 } JSType;
 
 /*!
@@ -141,6 +141,15 @@ JS_EXPORT bool JSValueIsNumber(JSContextRef ctx, JSValueRef value);
 @result         true if value's type is the string type, otherwise false.
 */
 JS_EXPORT bool JSValueIsString(JSContextRef ctx, JSValueRef value);
+
+/*!
+@function
+@abstract       Tests whether a JavaScript value's type is the symbol type.
+@param ctx      The execution context to use.
+@param value    The JSValue to test.
+@result         true if value's type is the symbol type, otherwise false.
+*/
+JS_EXPORT bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
 @function
@@ -269,6 +278,15 @@ JS_EXPORT JSValueRef JSValueMakeNumber(JSContextRef ctx, double number);
 @result         A JSValue of the string type, representing the value of string.
 */
 JS_EXPORT JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string);
+
+/*!
+ @function
+ @abstract            Creates a JavaScript value of the symbol type.
+ @param ctx           The execution context to use.
+ @param description   A description of the newly created symbol value.
+ @result              A unique JSValue of the symbol type, whose description matches the one provided.
+ */
+JS_EXPORT JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description) JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /* Converting to and from JSON formatted strings */
 
