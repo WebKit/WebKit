@@ -939,7 +939,7 @@ void NavigationState::NavigationClient::renderingProgressDidChange(WebPageProxy&
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView renderingProgressDidChange:renderingProgressEvents(layoutMilestones)];
 }
 
-bool NavigationState::NavigationClient::shouldBypassCompatibilityModeSafeguards() const
+bool NavigationState::NavigationClient::shouldBypassContentModeSafeguards() const
 {
     return m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler;
 }

@@ -27,9 +27,21 @@
 
 #import <Foundation/Foundation.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesAdditionsBefore.h>
-#endif
+/*! @enum WKContentMode
+ @abstract A content mode represents the type of content to load, as well as
+ additional layout and rendering adaptations that are applied as a result of
+ loading the content
+ @constant WKContentModeRecommended  The recommended content mode for the current platform
+ @constant WKContentModeMobile       Represents content targeting mobile browsers
+ @constant WKContentModeDesktop      Represents content targeting desktop browsers
+ @discussion WKContentModeRecommended behaves like WKContentModeMobile on iPhone and iPad mini
+ and WKContentModeDesktop on other iPad models as well as Mac.
+ */
+typedef NS_ENUM(NSInteger, WKContentMode) {
+    WKContentModeRecommended,
+    WKContentModeMobile,
+    WKContentModeDesktop
+} WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 /*! A WKWebpagePreferences object is a collection of properties that
  determine the preferences to use when loading and rendering a page.
@@ -38,8 +50,11 @@
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface WKWebpagePreferences : NSObject
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesAdditionsAfter.h>
-#endif
+/*! @abstract A WKContentMode indicating the content mode to prefer
+ when loading and rendering a webpage.
+ @discussion The default value is WKContentModeRecommended. The stated
+ preference is ignored on subframe navigation
+ */
+@property (nonatomic) WKContentMode preferredContentMode WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @end

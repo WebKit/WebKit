@@ -36,8 +36,9 @@
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKNavigation : NSObject
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKNavigationAdditions.h>
-#endif
+/*! The content mode used when loading this webpage.
+ @discussion The value is either WKContentModeMobile or WKContentModeDesktop.
+ */
+@property (nonatomic, readonly) WKContentMode effectiveContentMode WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @end

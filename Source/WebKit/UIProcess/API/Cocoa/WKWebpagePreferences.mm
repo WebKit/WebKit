@@ -29,14 +29,46 @@
 #import "APICustomHeaderFields.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
-#import "WebCompatibilityMode.h"
+#import "WebContentMode.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <wtf/RetainPtr.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesAdditionsBefore.mm>
-#endif
+#if PLATFORM(IOS_FAMILY)
+
+namespace WebKit {
+
+WKContentMode contentMode(WebKit::WebContentMode contentMode)
+{
+    switch (contentMode) {
+    case WebKit::WebContentMode::Recommended:
+        return WKContentModeRecommended;
+    case WebKit::WebContentMode::Mobile:
+        return WKContentModeMobile;
+    case WebKit::WebContentMode::Desktop:
+        return WKContentModeDesktop;
+    }
+    ASSERT_NOT_REACHED();
+    return WKContentModeRecommended;
+}
+
+WebKit::WebContentMode webContentMode(WKContentMode contentMode)
+{
+    switch (contentMode) {
+    case WKContentModeRecommended:
+        return WebKit::WebContentMode::Recommended;
+    case WKContentModeMobile:
+        return WebKit::WebContentMode::Mobile;
+    case WKContentModeDesktop:
+        return WebKit::WebContentMode::Desktop;
+    }
+    ASSERT_NOT_REACHED();
+    return WebKit::WebContentMode::Recommended;
+}
+
+} // namespace WebKit
+
+#endif // PLATFORM(IOS_FAMILY)
 
 @implementation WKWebpagePreferences
 
@@ -276,12 +308,12 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (BOOL)_allowSiteSpecificQuirksToOverrideCompatibilityMode
 {
-    return _websitePolicies->allowSiteSpecificQuirksToOverrideCompatibilityMode();
+    return _websitePolicies->allowSiteSpecificQuirksToOverrideContentMode();
 }
 
 - (void)_setAllowSiteSpecificQuirksToOverrideCompatibilityMode:(BOOL)value
 {
-    _websitePolicies->setAllowSiteSpecificQuirksToOverrideCompatibilityMode(value);
+    _websitePolicies->setAllowSiteSpecificQuirksToOverrideContentMode(value);
 }
 
 - (NSString *)_applicationNameForUserAgentWithModernCompatibility
@@ -299,8 +331,18 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return *_websitePolicies;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesAdditionsAfter.mm>
-#endif
+#if PLATFORM(IOS_FAMILY)
+
+- (void)setPreferredContentMode:(WKContentMode)contentMode
+{
+    _websitePolicies->setPreferredContentMode(WebKit::webContentMode(contentMode));
+}
+
+- (WKContentMode)preferredContentMode
+{
+    return WebKit::contentMode(_websitePolicies->preferredContentMode());
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 @end

@@ -99,8 +99,7 @@ class MediaController
         if (this.host && this.host.compactMode)
             return LayoutTraits.Compact;
 
-        // The window.navigator.platform !== "MacIntel" is strictly used for the test infrastructure since touch events are off for open-source bots.
-        let traits = GestureRecognizer.SupportsTouches || window.navigator.platform !== "MacIntel" ? LayoutTraits.iOS : LayoutTraits.macOS;
+        let traits = window.isIOSFamily ? LayoutTraits.iOS : LayoutTraits.macOS;
         if (this.isFullscreen)
             return traits | LayoutTraits.Fullscreen;
         return traits;

@@ -200,6 +200,5 @@ Classes:
 Tags:
 - Name: WKErrorCode
   NSErrorDomain: WKErrorDomain
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebKitAdditions.apinotes>
-#endif
+- Name: WKContentMode
+  SwiftName: WKWebpagePreferences.ContentMode

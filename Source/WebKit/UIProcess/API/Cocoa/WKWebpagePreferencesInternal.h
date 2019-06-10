@@ -36,8 +36,9 @@ template<> struct WrapperTraits<API::WebsitePolicies> {
     using WrapperClass = WKWebpagePreferences;
 };
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesInternalAdditions.h>
+#if PLATFORM(IOS_FAMILY)
+WKContentMode contentMode(WebContentMode);
+WebContentMode webContentMode(WKContentMode);
 #endif
 
 }

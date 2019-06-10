@@ -1,3 +1,150 @@
+2019-06-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r246118. rdar://problem/50114230
+
+    Upstream content mode support into open source from WebKitAdditions
+    https://bugs.webkit.org/show_bug.cgi?id=198484
+    <rdar://problem/51355671>
+    
+    Reviewed by Andy Estes.
+    
+    Source/WebCore:
+    
+    * Modules/modern-media-controls/media/media-controller.js:
+    (MediaController.prototype.get layoutTraits):
+    
+    Adjust modern media controls code to use iOS-style controls on PLATFORM(IOS_FAMILY), instead of depending on the
+    navigator's platform name or the presence of touch events.
+    
+    * page/Quirks.cpp:
+    (WebCore::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost):
+    (WebCore::shouldEmulateUndoRedoInHiddenEditableAreasForHost):
+    * page/SettingsBase.h:
+    * rendering/RenderThemeIOS.mm:
+    (WebCore::RenderThemeIOS::mediaControlsScript):
+    
+    Source/WebCore/PAL:
+    
+    Add some new constants to MobileGestaltSPI.h.
+    
+    * pal/spi/ios/MobileGestaltSPI.h:
+    
+    Source/WebKit:
+    
+    Move code for handling WKContentMode into open source. No change in behavior, for internal builds.
+    
+    * Shared/API/Cocoa/WebKit.apinotes:
+    * Shared/WebContentMode.h: Renamed from Source/WebKit/Shared/WebCompatibilityMode.h.
+    * Shared/WebPreferences.yaml:
+    * UIProcess/API/APINavigation.h:
+    (API::Navigation::setEffectiveContentMode):
+    (API::Navigation::effectiveContentMode const):
+    (API::Navigation::setEffectiveCompatibilityMode): Deleted.
+    (API::Navigation::effectiveCompatibilityMode const): Deleted.
+    * UIProcess/API/APINavigationClient.h:
+    (API::NavigationClient::shouldBypassContentModeSafeguards const):
+    (API::NavigationClient::shouldBypassCompatibilityModeSafeguards const): Deleted.
+    * UIProcess/API/APIWebsitePolicies.cpp:
+    (API::WebsitePolicies::copy const):
+    * UIProcess/API/APIWebsitePolicies.h:
+    * UIProcess/API/Cocoa/WKNavigation.h:
+    * UIProcess/API/Cocoa/WKNavigation.mm:
+    (-[WKNavigation effectiveContentMode]):
+    * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+    * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+    (WebKit::contentMode):
+    (WebKit::webContentMode):
+    (-[WKWebpagePreferences _allowSiteSpecificQuirksToOverrideCompatibilityMode]):
+    (-[WKWebpagePreferences _setAllowSiteSpecificQuirksToOverrideCompatibilityMode:]):
+    (-[WKWebpagePreferences setPreferredContentMode:]):
+    (-[WKWebpagePreferences preferredContentMode]):
+    * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h:
+    * UIProcess/Cocoa/NavigationState.h:
+    * UIProcess/Cocoa/NavigationState.mm:
+    (WebKit::NavigationState::NavigationClient::shouldBypassContentModeSafeguards const):
+    (WebKit::NavigationState::NavigationClient::shouldBypassCompatibilityModeSafeguards const): Deleted.
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+    (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+    (WebKit::WebPageProxy::effectiveCompatibilityModeAfterAdjustingPolicies): Deleted.
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::desktopClassBrowsingSupported):
+    (WebKit::webViewSizeIsNarrow):
+    (WebKit::desktopClassBrowsingRecommendedForRequest):
+    (WebKit::desktopClassBrowsingRecommended):
+    (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Tools:
+    
+    Change the "useModernCompatibilityMode" layout test option to instead be "contentMode", with values of either
+    "mobile" or "desktop".
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/ios/PreferredCompatibilityMode.mm: Removed.
+    * TestWebKitAPI/ios/PreferredContentMode.mm: Added.
+    (-[ContentModeNavigationDelegate setDecidePolicyForNavigationActionWithPreferences:]):
+    (-[ContentModeNavigationDelegate decidePolicyForNavigationActionWithPreferences]):
+    (-[ContentModeNavigationDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+    (+[WKWebpagePreferences preferencesWithContentMode:]):
+    (-[WKWebView navigatorUserAgent]):
+    (-[WKWebView navigatorPlatform]):
+    (-[WKWebView loadTestPageNamed:withPolicyDecisionHandler:]):
+    (-[WKWebView loadHTMLString:withPolicyDecisionHandler:]):
+    (-[WKWebView loadTestPageNamed:andExpectEffectiveContentMode:withPolicyDecisionHandler:]):
+    (-[NSString shouldContainStrings:]):
+    (IPhoneUserInterfaceSwizzler::IPhoneUserInterfaceSwizzler):
+    (IPhoneUserInterfaceSwizzler::phoneUserInterfaceIdiom):
+    (TestWebKitAPI::setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate):
+    (TestWebKitAPI::setUpWebViewForPreferredContentModeTesting):
+    (TestWebKitAPI::makeContentModeDecisionHandler):
+    (TestWebKitAPI::TEST):
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::updateTestOptionsFromTestHeader):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestOptions.h:
+    (WTR::TestOptions::hasSameInitializationOptions const):
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::platformCreateWebView):
+    (WTR::TestController::configureContentMode):
+    (WTR::TestController::enableModernCompatibilityMode): Deleted.
+    
+    LayoutTests:
+    
+    Explicitly opt a few tests into desktop or mobile content mode.
+    
+    * fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html:
+    * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode-expected.html:
+    * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html:
+    * media/modern-media-controls/media-controller/ios/media-controller-ios-layout-traits-modern-compatibility-mode.html:
+    * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html:
+    * platform/ipad/fast/viewport/empty-meta.html:
+    * platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html:
+    * platform/ipad/media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246118 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Upstream content mode support into open source from WebKitAdditions
+            https://bugs.webkit.org/show_bug.cgi?id=198484
+            <rdar://problem/51355671>
+
+            Reviewed by Andy Estes.
+
+            Explicitly opt a few tests into desktop or mobile content mode.
+
+            * fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html:
+            * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode-expected.html:
+            * fast/scrolling/ipad/overflow-scrolling-touch-enabled-stacking-modern-compatibility-mode.html:
+            * media/modern-media-controls/media-controller/ios/media-controller-ios-layout-traits-modern-compatibility-mode.html:
+            * platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html:
+            * platform/ipad/fast/viewport/empty-meta.html:
+            * platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html:
+            * platform/ipad/media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html:
+
 2019-06-06  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r246096. rdar://problem/51375055

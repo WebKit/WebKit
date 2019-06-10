@@ -91,7 +91,7 @@ public:
     virtual void renderingProgressDidChange(WebKit::WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) { }
 
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling); }
-    virtual bool shouldBypassCompatibilityModeSafeguards() const { return false; }
+    virtual bool shouldBypassContentModeSafeguards() const { return false; }
 
     // FIXME: These function should not be part of this client.
     virtual bool processDidTerminate(WebKit::WebPageProxy&, WebKit::ProcessTerminationReason) { return false; }
