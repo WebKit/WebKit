@@ -1,3 +1,15 @@
+2019-06-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] ResourceLoadStatistics state is not properly relayed to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=198692
+        <rdar://problem/51538088>
+
+        Reviewed by Maciej Stachowiak.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setResourceLoadStatisticsEnabled): Message the NetworkProcess
+        on state change.
+
 2019-06-08  Dean Jackson  <dino@apple.com>
 
         Drag starting state can get stuck even though the drag has ended

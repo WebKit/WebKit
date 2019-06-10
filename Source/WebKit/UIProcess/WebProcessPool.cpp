@@ -1488,6 +1488,9 @@ void WebProcessPool::setShouldUseFontSmoothing(bool useFontSmoothing)
 void WebProcessPool::setResourceLoadStatisticsEnabled(bool enabled)
 {
     sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(enabled));
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(enabled));
+#endif
 }
 
 void WebProcessPool::clearResourceLoadStatistics()
