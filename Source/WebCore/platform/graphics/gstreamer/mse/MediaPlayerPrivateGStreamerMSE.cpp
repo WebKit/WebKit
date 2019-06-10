@@ -520,24 +520,9 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
                 m_readyState = MediaPlayer::HaveMetadata;
                 // FIXME: Should we manage NetworkState too?
                 GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-            } else if (m_buffering) {
-                if (m_bufferingPercentage == 100) {
-                    GST_DEBUG("[Buffering] Complete.");
-                    m_buffering = false;
-                    m_readyState = MediaPlayer::HaveEnoughData;
-                    GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-                    m_networkState = m_downloadFinished ? MediaPlayer::Idle : MediaPlayer::Loading;
-                } else {
-                    m_readyState = MediaPlayer::HaveCurrentData;
-                    GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-                    m_networkState = MediaPlayer::Loading;
-                }
-            } else if (m_downloadFinished) {
-                m_readyState = MediaPlayer::HaveEnoughData;
-                GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-                m_networkState = MediaPlayer::Loaded;
             } else {
-                m_readyState = MediaPlayer::HaveFutureData;
+                if (m_readyState < MediaPlayer::HaveFutureData)
+                    m_readyState = MediaPlayer::HaveFutureData;
                 GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
                 m_networkState = MediaPlayer::Loading;
             }
@@ -559,14 +544,14 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
                 m_volumeAndMuteInitialized = true;
             }
 
-            if (!seeking() && !m_buffering && !m_paused && m_playbackRate) {
+            if (!seeking() && !m_paused && m_playbackRate) {
                 GST_DEBUG("[Buffering] Restarting playback.");
                 changePipelineState(GST_STATE_PLAYING);
             }
         } else if (state == GST_STATE_PLAYING) {
             m_paused = false;
 
-            if ((m_buffering && !isLiveStream()) || !m_playbackRate) {
+            if (!m_playbackRate) {
                 GST_DEBUG("[Buffering] Pausing stream for buffering.");
                 changePipelineState(GST_STATE_PAUSED);
             }
