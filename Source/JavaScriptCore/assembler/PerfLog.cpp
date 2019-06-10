@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER) && OS(LINUX)
 
+#include <array>
 #include <elf.h>
 #include <fcntl.h>
 #include <mutex>

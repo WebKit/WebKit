@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "FloatSize.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLInterchange.h"
 #include <wtf/Forward.h>

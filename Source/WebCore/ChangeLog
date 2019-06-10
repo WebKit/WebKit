@@ -1,3 +1,14 @@
+2019-05-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix a few missing header inclusions often masked by by unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=198180
+
+        Reviewed by Eric Carlson.
+
+        * editing/markup.h: Add missing "FloatSize.h" inclusion.
+        * html/FeaturePolicy.cpp: Add missing "HTMLParserIdioms.h" inclusion.
+        * platform/text/TextCodec.cpp: Add missing <cstdio> inclusion.
+
 2019-04-01  Pablo Saavedra  <psaavedra@igalia.com>
 
         Build failure after r243644 in GTK Linux 64-bit stable builds
