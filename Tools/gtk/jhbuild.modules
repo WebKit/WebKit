@@ -419,12 +419,9 @@
       <dep package="libxml2"/>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/~hadess/shared-mime-info-${version}.tar.xz" version="1.5"
+    <branch module="/~hadess/shared-mime-info-${version}.tar.xz" version="1.10"
             repo="freedesktop.org"
-            hash="sha256:d6412840eb265bf36e61fd7b6fc6bea21b0f58cb22bed16f2ccccdd54bea4180">
-      <patch file="shared-mime-info-xht-glob.patch" strip="1"/>
-      <patch file="shared-mime-info-xhtml-magic.patch" strip="1"/>
-    </branch>
+            hash="sha256:c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf"/>
   </autotools>
 
   <autotools id="icu"

@@ -1,3 +1,14 @@
+2019-06-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [JHBuild] Bump shared-mime-info to version ≥ 1.6
+        https://bugs.webkit.org/show_bug.cgi?id=198714
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules: Bump shared-mime-info version to 1.10.
+        * gtk/patches/shared-mime-info-xht-glob.patch: Removed.
+        * gtk/patches/shared-mime-info-xhtml-magic.patch: Removed.
+
 2019-06-10  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] Port to new wpe_fdo_egl_exported_image API
