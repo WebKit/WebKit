@@ -431,8 +431,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     initializeCallingContextTrees(stackTraces, sampleDurations)
     {
-        this._exportDataSampleStackTraces.concat(stackTraces);
-        this._exportDataSampleDurations.concat(sampleDurations);
+        this._exportDataSampleStackTraces = this._exportDataSampleStackTraces.concat(stackTraces);
+        this._exportDataSampleDurations = this._exportDataSampleDurations.concat(sampleDurations);
 
         for (let i = 0; i < stackTraces.length; i++) {
             this._topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
