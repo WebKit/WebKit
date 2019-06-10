@@ -172,7 +172,7 @@ if (ENABLE_WPE_QT_API)
     find_package(Qt5 REQUIRED COMPONENTS Core Quick Gui)
     find_package(Qt5Test REQUIRED)
     find_package(PkgConfig)
-    pkg_check_modules(WPE_BACKEND_FDO REQUIRED wpebackend-fdo-1.0)
+    find_package(WPEBackend-fdo 1.3.0 REQUIRED)
 endif ()
 
 add_definitions(-DBUILDING_WPE__=1)

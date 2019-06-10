@@ -61,14 +61,13 @@ public:
     struct wpe_view_backend* backend() const { return wpe_view_backend_exportable_fdo_get_view_backend(m_exportable); };
 
 private:
-    void displayImage(EGLImageKHR);
+    void displayImage(struct wpe_fdo_egl_exported_image*);
     uint32_t modifiers() const;
 
     EGLDisplay m_eglDisplay { nullptr };
     EGLContext m_eglContext { nullptr };
     struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
-
-    EGLImageKHR m_lockedImage { EGL_NO_IMAGE_KHR };
+    struct wpe_fdo_egl_exported_image* m_lockedImage { nullptr };
 
     QPointer<WPEQtView> m_view;
     QOffscreenSurface m_surface;

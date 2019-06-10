@@ -1,3 +1,13 @@
+2019-06-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][Qt] Port to new wpe_fdo_egl_exported_image API
+        https://bugs.webkit.org/show_bug.cgi?id=198713
+
+        Reviewed by Carlos Garcia Campos.
+
+        * flatpak/org.webkit.WPEModules.yaml: Include wpebackend-fdo
+        patches currently used in JHBuild.
+
 2019-06-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][Flatpak] webkit-build fails due to missing libwpe in Flatpak environment
