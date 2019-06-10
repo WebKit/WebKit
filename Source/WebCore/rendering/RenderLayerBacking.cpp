@@ -841,8 +841,6 @@ bool RenderLayerBacking::updateConfiguration()
     } else
         updateRootLayerConfiguration();
 
-    updateEventRegion();
-
     // Requires layout.
     if (contentsInfo.isDirectlyCompositedImage())
         updateImageContents(contentsInfo);
@@ -1526,10 +1524,12 @@ void RenderLayerBacking::updateEventRegion()
     for (auto& layer : m_backingSharingLayers)
         layer->paintLayerWithEffects(nullContext, paintingInfo, paintFlags);
 
-    auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
-    eventRegion.translate(contentOffset);
-    m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
+    GraphicsLayer& layerForEventRegion = m_scrolledContentsLayer ? *m_scrolledContentsLayer : *m_graphicsLayer;
 
+    auto layerOffset = toIntSize(layerForEventRegion.scrollOffset()) - roundedIntSize(layerForEventRegion.offsetFromRenderer());
+    eventRegion.translate(layerOffset);
+
+    layerForEventRegion.setEventRegion(WTFMove(eventRegion));
 #endif
 }
 

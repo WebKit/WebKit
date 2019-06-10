@@ -1,3 +1,15 @@
+2019-06-10  Antti Koivisto  <antti@apple.com>
+
+        Event region should be set on scrolledContentsLayer if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=198717
+        <rdar://problem/51572169>
+
+        Reviewed by Simon Fraser.
+
+        * pointerevents/ios/touch-action-region-backing-sharing-expected.txt:
+        * pointerevents/ios/touch-action-region-overflow-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-overflow.html: Added.
+
 2019-06-10  Daniel Bates  <dabates@apple.com>
 
         [CSP] Blob URLs should inherit their CSP policy

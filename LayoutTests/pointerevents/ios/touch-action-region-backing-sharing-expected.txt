@@ -1,7 +1,6 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
-  (deep color 1)
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
@@ -9,15 +8,10 @@
       (event region
         (rect (0,0) width=800 height=600)
       )
-      (deep color 1)
       (children 2
         (GraphicsLayer
           (position 8.00 13.00)
           (bounds 200.00 200.00)
-          (event region
-            (rect (0,0) width=500 height=500)
-          )
-          (deep color 1)
           (children 1
             (GraphicsLayer
               (bounds 200.00 200.00)
@@ -26,7 +20,9 @@
                   (anchor 0.00 0.00)
                   (bounds 500.00 500.00)
                   (drawsContent 1)
-                  (deep color 1)
+                  (event region
+                    (rect (0,0) width=500 height=500)
+                  )
                 )
               )
             )
@@ -48,7 +44,6 @@
               )
             )
           )
-          (deep color 1)
         )
       )
     )
