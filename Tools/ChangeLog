@@ -1,5 +1,11 @@
 2019-06-11  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Unreviewed, add myself to the JavaScriptCore watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2019-06-11  Tadeu Zagallo  <tzagallo@apple.com>
+
         Unreviewed, change my status to be a WebKit reviewer
 
         * Scripts/webkitpy/common/config/contributors.json:
