@@ -256,13 +256,20 @@ class DevicePort(DarwinPort):
             if version_name:
                 break
 
+        if self.get_option('guard_malloc'):
+            style = 'guard-malloc'
+        elif self._config.asan:
+            style = 'asan'
+        else:
+            style = configuration.build_type
+
         return Upload.create_configuration(
             platform=device_type.software_variant.lower(),
             is_simulator=self.DEVICE_MANAGER == SimulatedDeviceManager,
             version=str(version),
             version_name=version_name,
             architecture=configuration.architecture,
-            style='guard-malloc' if self.get_option('guard_malloc') else configuration.build_type,
+            style=style,
             model=model,
             sdk=host.build_version if host else None,
         )

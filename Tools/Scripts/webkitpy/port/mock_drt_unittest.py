@@ -89,6 +89,9 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def test_check_build(self):
         pass
 
+    def test_asan_upload_configuration(self):
+        pass
+
 
 class MockDRTTest(unittest.TestCase):
     def input_line(self, port, test_name, checksum=None):

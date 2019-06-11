@@ -53,6 +53,7 @@ def clear_cached_configuration():
     global _have_determined_configuration, _configuration
     _have_determined_configuration = False
     _configuration = "Release"
+    Config.asan.fget._results_cache = {}
 
 
 @memoized

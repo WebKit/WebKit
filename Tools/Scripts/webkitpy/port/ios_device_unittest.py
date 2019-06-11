@@ -25,6 +25,7 @@ import time
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.common.version import Version
+from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.ios_device import IOSDevicePort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
@@ -159,3 +160,13 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 
     def test_max_child_processes(self):
         pass
+
+    def test_default_upload_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port()
+        configuration = port.configuration_for_upload()
+        self.assertEqual(configuration['architecture'], port.architecture())
+        self.assertEqual(configuration['is_simulator'], False)
+        self.assertEqual(configuration['platform'], port.host.platform.os_name)
+        self.assertEqual(configuration['style'], 'release')
+        self.assertEqual(configuration['version_name'], 'iOS {}'.format(port.device_version()))

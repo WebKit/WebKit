@@ -23,6 +23,7 @@
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.version import Version
+from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.watch_simulator import WatchSimulatorPort
 from webkitpy.port import watch_testcase
 from webkitpy.tool.mocktool import MockOptions
@@ -79,3 +80,13 @@ class WatchSimulatorTest(watch_testcase.WatchTest):
     def test_max_child_processes(self):
         port = self.make_port()
         self.assertEqual(port.max_child_processes(DeviceType.from_string('iPhone')), 0)
+
+    def test_default_upload_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port()
+        configuration = port.configuration_for_upload()
+        self.assertEqual(configuration['architecture'], port.architecture())
+        self.assertEqual(configuration['is_simulator'], True)
+        self.assertEqual(configuration['platform'], 'watchos')
+        self.assertEqual(configuration['style'], 'release')
+        self.assertEqual(configuration['version_name'], 'watchOS {}'.format(port.device_version()))

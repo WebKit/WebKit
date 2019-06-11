@@ -45,7 +45,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import INTERNAL_TABLE
 from webkitpy.port.base import Port
-from webkitpy.port.config import apple_additions
+from webkitpy.port.config import apple_additions, clear_cached_configuration
 from webkitpy.port.image_diff import ImageDiffer
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
@@ -662,6 +662,33 @@ MOCK output of child process
         self.assertEqual(port.baseline_search_path()[0], '/tmp/foo')
 
     def test_max_child_processes(self):
+
         port = self.make_port()
         self.assertEqual(port.max_child_processes(True), 0)
         self.assertEqual(port.max_child_processes(), float('inf'))
+
+    def test_default_upload_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port()
+        configuration = port.configuration_for_upload()
+        self.assertEqual(configuration['architecture'], port.architecture())
+        self.assertEqual(configuration['is_simulator'], False)
+        self.assertEqual(configuration['platform'], port.host.platform.os_name)
+        self.assertEqual(configuration['style'], 'release')
+        self.assertEqual(configuration['version_name'], port.host.platform.os_version_name())
+
+    def test_debug_upload_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port(options=MockOptions(configuration='Debug'))
+        self.assertEqual(port.configuration_for_upload()['style'], 'debug')
+
+    def test_asan_upload_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port()
+        port.host.filesystem.write_text_file('/mock-build/ASan', 'YES')
+        self.assertEqual(port.configuration_for_upload()['style'], 'asan')
+
+    def test_guard_malloc_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port(options=MockOptions(guard_malloc=True))
+        self.assertEqual(port.configuration_for_upload()['style'], 'guard-malloc')
