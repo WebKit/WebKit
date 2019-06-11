@@ -1405,6 +1405,7 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
     g_return_if_fail(directory);
 
     context->priv->webExtensionsDirectory = directory;
+    context->priv->processPool->addSandboxPath(directory, SandboxPermission::ReadOnly);
 }
 
 /**
