@@ -958,4 +958,6 @@ webkit.org/b/196240 [ Mojave ] http/tests/websocket/tests/hybi/handshake-ok-with
 
 webkit.org/b/198661 scrollingcoordinator/mac/nested-sticky.html [ Pass ImageOnlyFailure Timeout ]
 
-webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass  Timeout ]
+webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
+
+webkit.org/b/198757 [ Mojave+ ] compositing/fixed-with-main-thread-scrolling.html [ Pass Timeout ]
