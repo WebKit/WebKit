@@ -1932,12 +1932,6 @@ webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 [ Mojave+ ] webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object.html [ Failure ]
 
 # <rdar://problem/47088939>
-[ Mojave+ ] webrtc/audio-peer-connection-webaudio.html [ Failure ]
-[ Mojave+ ] webrtc/audio-replace-track.html [ Failure ]
 [ Mojave+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html  [ Failure ]
-[ Mojave+ ] webrtc/peer-connection-remote-audio-mute.html [ Skip ]
-[ Mojave+ ] webrtc/peer-connection-audio-mute2.html [ Failure ]
-[ Mojave+ ] webrtc/peer-connection-audio-mute.html [ Skip ]
-[ Mojave+ ] webrtc/peer-connection-remote-audio-mute2.html [ Pass Failure ]
 [ Mojave+ ] webaudio/realtimeanalyser-fft-scaling.html [ Pass Failure ]
 [ Mojave+ ] webaudio/oscillator-sine.html [ Skip ]

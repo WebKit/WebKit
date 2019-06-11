@@ -1,3 +1,16 @@
+2019-06-11  Youenn Fablet  <youenn@apple.com>
+
+        MediaStreamAudioSourceNode::setFormat should check for m_sourceSampleRate equality
+        https://bugs.webkit.org/show_bug.cgi?id=198740
+        <rdar://problem/47088939>
+
+        Reviewed by Eric Carlson.
+
+        Covered by tests that are now passing.
+
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+
 2019-06-11  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] Replace gdk_screen_get_monitor_geometry and gdk_screen_get_monitor_workarea

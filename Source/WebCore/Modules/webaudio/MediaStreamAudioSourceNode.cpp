@@ -72,7 +72,7 @@ MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode()
 void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
     float sampleRate = this->sampleRate();
-    if (numberOfChannels == m_sourceNumberOfChannels && sourceSampleRate == sampleRate)
+    if (numberOfChannels == m_sourceNumberOfChannels && sourceSampleRate == m_sourceSampleRate)
         return;
 
     // The sample-rate must be equal to the context's sample-rate.

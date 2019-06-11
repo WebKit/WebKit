@@ -1,3 +1,13 @@
+2019-06-11  Youenn Fablet  <youenn@apple.com>
+
+        MediaStreamAudioSourceNode::setFormat should check for m_sourceSampleRate equality
+        https://bugs.webkit.org/show_bug.cgi?id=198740
+        <rdar://problem/47088939>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
 2019-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [cairo][SVG] Putting multiple path elements in clippath causes rendering artifacts
