@@ -1,3 +1,9 @@
+2019-06-11  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Unreviewed, change my status to be a WebKit reviewer
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Use new exported image API from fdo backend
