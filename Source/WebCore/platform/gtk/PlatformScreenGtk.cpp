@@ -150,10 +150,12 @@ void setScreenDPIObserverHandler(Function<void()>&& handler, void* context)
     }
 }
 
+#if !GTK_CHECK_VERSION(3, 22, 0)
 static GdkScreen* getScreen(GtkWidget* widget)
 {
     return gtk_widget_has_screen(widget) ? gtk_widget_get_screen(widget) : gdk_screen_get_default();
 }
+#endif
 
 FloatRect screenRect(Widget* widget)
 {
@@ -161,14 +163,24 @@ FloatRect screenRect(Widget* widget)
     if (container)
         container = getToplevel(container);
 
+    GdkRectangle geometry;
+#if GTK_CHECK_VERSION(3, 22, 0)
+    GdkDisplay* display = container ? gtk_widget_get_display(container) : gdk_display_get_default();
+    if (!display)
+        return FloatRect();
+
+    GdkMonitor* monitor = container ? gdk_display_get_monitor_at_window(display, gtk_widget_get_window(container)) : gdk_display_get_monitor(display, 0);
+
+    gdk_monitor_get_geometry(monitor, &geometry);
+#else
     GdkScreen* screen = container ? getScreen(container) : gdk_screen_get_default();
     if (!screen)
         return FloatRect();
 
     gint monitor = container ? gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(container)) : 0;
 
-    GdkRectangle geometry;
     gdk_screen_get_monitor_geometry(screen, monitor, &geometry);
+#endif // !GTK_CHECK_VERSION(3, 22, 0)
 
     return FloatRect(geometry.x, geometry.y, geometry.width, geometry.height);
 }
@@ -179,14 +191,24 @@ FloatRect screenAvailableRect(Widget* widget)
     if (container && !gtk_widget_get_realized(container))
         return screenRect(widget);
 
+    GdkRectangle workArea;
+#if GTK_CHECK_VERSION(3, 22, 0)
+    GdkDisplay* display = container ? gtk_widget_get_display(container) : gdk_display_get_default();
+    if (!display)
+        return FloatRect();
+
+    GdkMonitor* monitor = container ? gdk_display_get_monitor_at_window(display, gtk_widget_get_window(container)) : gdk_display_get_monitor(display, 0);
+
+    gdk_monitor_get_workarea(monitor, &workArea);
+#else
     GdkScreen* screen = container ? getScreen(container) : gdk_screen_get_default();
     if (!screen)
         return FloatRect();
 
     gint monitor = container ? gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(container)) : 0;
 
-    GdkRectangle workArea;
     gdk_screen_get_monitor_workarea(screen, monitor, &workArea);
+#endif // !GTK_CHECK_VERSION(3, 22, 0)
 
     return FloatRect(workArea.x, workArea.y, workArea.width, workArea.height);
 
