@@ -97,9 +97,11 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
         return true;
 
     // Microsoft Outlook Web App forces users with WebKitGTK+'s standard user
-    // agent to use the light version. Earlier versions even blocks users from
+    // agent to use the light version. Earlier versions even block users from
     // accessing the calendar.
-    if (domain == "outlook.live.com" || domain == "mail.ntu.edu.tw")
+    if (domain == "outlook.live.com"
+        || domain == "mail.ntu.edu.tw"
+        || domain == "exchange.tu-berlin.de")
         return true;
 
     // Google Docs shows a scary unsupported browser warning with WebKitGTK+'s
