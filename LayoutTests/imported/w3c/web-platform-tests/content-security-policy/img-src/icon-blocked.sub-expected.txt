@@ -1,0 +1,8 @@
+Use callbacks to show that favicons are not loaded in violation of CSP when link tags are dynamically added to the page.
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test that image does not load 
+NOTRUN Test that spv event is fired 
+

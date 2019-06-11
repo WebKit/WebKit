@@ -1,0 +1,8 @@
+Blocked access to external URL http://www1.localhost:8800/content-security-policy/support/postmessage-fail.html
+
+  
+Tests that blocking a POST form with a redirect works correctly. If this test passes, a CSP violation will be generated.
+
+
+FAIL Expecting logs: ["violated-directive=form-action","TEST COMPLETE"] assert_unreached: Logging timeout, expected logs violated-directive=form-action not sent. Reached unreachable code
+

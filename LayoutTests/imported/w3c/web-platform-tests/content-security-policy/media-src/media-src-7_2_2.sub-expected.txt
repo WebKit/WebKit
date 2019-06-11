@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Refused to load http://www2.localhost:8800/media/sound_5.oga because it does not appear in the media-src directive of the Content Security Policy.
+Audio element src attribute must match src list - negative test
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Disallaowed audio src 
+PASS Disallowed audio source element 
+NOTRUN Test that securitypolicyviolation events are fired 
+  

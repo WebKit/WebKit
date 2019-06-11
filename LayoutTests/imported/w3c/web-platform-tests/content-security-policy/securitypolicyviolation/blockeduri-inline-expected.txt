@@ -1,0 +1,3 @@
+
+FAIL Inline violations have a blockedURI of 'inline' assert_equals: expected "inline" but got ""
+

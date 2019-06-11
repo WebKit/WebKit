@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to load http://www.localhost:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Non-redirected cross-origin URLs are not stripped. Test timed out
+

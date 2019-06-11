@@ -1,0 +1,7 @@
+The beacon should not follow the redirect to http://www1.localhost:8800/content-security-policy/support/fail.png and send a CSP violation report.
+
+Verify that a CSP connect-src directive blocks redirects.
+
+
+FAIL Expecting logs: ["violated-directive=connect-src"] assert_unreached: Logging timeout, expected logs violated-directive=connect-src not sent. Reached unreachable code
+

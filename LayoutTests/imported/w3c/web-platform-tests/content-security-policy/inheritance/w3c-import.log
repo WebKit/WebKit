@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-child-frame-self-navigate-inherits.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/document-write-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes-inherit-self.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-srcdoc-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/inherited-csp-list-modifications-are-local.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/sandboxed-blob-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/sandboxed-blob-scheme.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/sandboxed-data-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/sandboxed-data-scheme.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/unsandboxed-blob-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/unsandboxed-blob-scheme.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/unsandboxed-data-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/unsandboxed-data-scheme.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/window.html

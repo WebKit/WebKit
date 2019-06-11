@@ -1,0 +1,17 @@
+Blocked access to external URL http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js
+Blocked access to external URL http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js
+External scripts with matching SRI hash should be allowed.
+
+
+PASS Load all the tests. 
+FAIL matching integrity assert_unreached: Script should load! http://localhost:8800/content-security-policy/script-src/simpleSourcedScript.js Reached unreachable code
+FAIL multiple matching integrity assert_unreached: Script should load! http://localhost:8800/content-security-policy/script-src/simpleSourcedScript.js Reached unreachable code
+PASS no integrity 
+FAIL matching plus unsupported integrity assert_unreached: Script should load! http://localhost:8800/content-security-policy/script-src/simpleSourcedScript.js Reached unreachable code
+PASS mismatched integrity 
+PASS multiple mismatched integrity 
+PASS partially matching integrity 
+FAIL crossorigin no integrity but whitelisted host assert_unreached: Script should load! http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js Reached unreachable code
+FAIL crossorigin mismatched integrity but whitelisted host assert_unreached: Script should load! http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js Reached unreachable code
+FAIL External script in a script tag with matching SRI hash should run. assert_true: External script ran. expected true got false
+

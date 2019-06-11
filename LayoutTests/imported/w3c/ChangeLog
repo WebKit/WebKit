@@ -1,3 +1,64 @@
+2019-06-11  Daniel Bates  <dabates@apple.com>
+
+        Import Content Security Policy Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=198676
+        <rdar://problem/51533785>
+
+        Reviewed by Youenn Fablet.
+
+        Import tests as of 3840f46213d9a991acc9288e3863530f7502c05e (origin/master).
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/content-security-policy/META.yml: Added.
+        * web-platform-tests/content-security-policy/README.css: Added.
+        (.code):
+        (.codeTitle):
+        (.highlight1):
+        (.highlight2):
+        (body):
+        * web-platform-tests/content-security-policy/README.html: Added.
+        * web-platform-tests/content-security-policy/base-uri/base-uri-allow.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/base-uri/base-uri-allow.sub.html: Added.
+        * web-platform-tests/content-security-policy/base-uri/base-uri-deny.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/base-uri/base-uri-deny.sub.html: Added.
+        * web-platform-tests/content-security-policy/base-uri/base-uri_iframe_sandbox.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/base-uri/base-uri_iframe_sandbox.sub.html: Added.
+        * web-platform-tests/content-security-policy/base-uri/report-uri-does-not-respect-base-uri.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/base-uri/report-uri-does-not-respect-base-uri.sub.html: Added.
+        * web-platform-tests/content-security-policy/base-uri/report-uri-does-not-respect-base-uri.sub.html.sub.headers: Added.
+        * web-platform-tests/content-security-policy/base-uri/w3c-import.log: Added.
+        * web-platform-tests/content-security-policy/blob/blob-urls-do-not-match-self.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/blob/blob-urls-do-not-match-self.sub.html: Added.
+        * web-platform-tests/content-security-policy/blob/blob-urls-match-blob.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/blob/blob-urls-match-blob.sub.html: Added.
+        * web-platform-tests/content-security-policy/blob/self-doesnt-match-blob.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/blob/self-doesnt-match-blob.sub.html: Added.
+        * web-platform-tests/content-security-policy/blob/star-doesnt-match-blob.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/blob/star-doesnt-match-blob.sub.html: Added.
+        * web-platform-tests/content-security-policy/blob/w3c-import.log: Added.
+        * web-platform-tests/content-security-policy/child-src/child-src-about-blank-allowed-by-default.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/child-src/child-src-about-blank-allowed-by-default.sub.html: Added.
+        * web-platform-tests/content-security-policy/child-src/child-src-about-blank-allowed-by-scheme.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/child-src/child-src-about-blank-allowed-by-scheme.sub.html: Added.
+        * web-platform-tests/content-security-policy/child-src/child-src-allowed.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/child-src/child-src-allowed.sub.html: Added.
+        [...]
+        * web-platform-tests/content-security-policy/worker-src/service-worker-src-script-fallback.https.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/service-worker-src-self-fallback.https.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/service-worker-src-self-fallback.https.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-child.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-fallback.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-list.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-none.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-self.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-child-fallback-blocked.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-child-fallback.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-default-fallback.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-script-fallback.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-self-fallback.sub.html: Added.
+        * web-platform-tests/content-security-policy/worker-src/w3c-import.log: Added.
+
 2019-06-09  Rob Buis  <rbuis@igalia.com>
 
         Add wildcard to Access-Control-Allow-Methods and Access-Control-Allow-Headers

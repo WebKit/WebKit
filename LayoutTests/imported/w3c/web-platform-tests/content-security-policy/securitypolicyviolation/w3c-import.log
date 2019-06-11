@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/constructor-required-fields.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-shared-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/script-sample-no-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/script-sample.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image-from-script.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image-from-script.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample-no-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/targeting.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/upgrade-insecure-requests-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/upgrade-insecure-requests-reporting.https.html.headers

@@ -1,0 +1,3 @@
+
+PASS Style with correct nonce should load 
+Lorem ipsum

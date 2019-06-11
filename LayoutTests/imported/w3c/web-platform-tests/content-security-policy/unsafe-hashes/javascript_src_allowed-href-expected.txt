@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''unsafe-hashes''. It will be ignored.
+CONSOLE MESSAGE: line 23: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Test that the javascript: src is allowed to run 
+

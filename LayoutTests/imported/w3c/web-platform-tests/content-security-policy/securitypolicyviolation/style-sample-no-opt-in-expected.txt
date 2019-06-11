@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 39: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Inline style blocks should not have a sample. Test timed out
+TIMEOUT Inline style attributes should not have a sample. Test timed out
+

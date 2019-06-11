@@ -1,0 +1,4 @@
+
+
+PASS A 'frame-ancestors' CSP directive with a URL matching this origin should allow rendering. 
+

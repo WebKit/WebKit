@@ -1,5 +1,20 @@
 2019-06-11  Daniel Bates  <dabates@apple.com>
 
+        Import Content Security Policy Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=198676
+        <rdar://problem/51533785>
+
+        Reviewed by Youenn Fablet.
+
+        Import tests as of 3840f46213d9a991acc9288e3863530f7502c05e (origin/master).
+
+        * TestExpectations: Skip some tests for features we do not support.
+        * platform/mac-wk1/TestExpectations: Skip some tests.
+        * platform/win/TestExpectations: Ditto.
+        * tests-options.json:
+
+2019-06-11  Daniel Bates  <dabates@apple.com>
+
         Skip test http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html as
         testRunner.queueLoad() does not support loading data URLs in Legacy WebKit on Mac and iOS
 

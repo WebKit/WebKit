@@ -1,0 +1,3 @@
+
+PASS Test that anchor navigation is allowed regardless of the `navigate-to` directive 
+

@@ -1,0 +1,51 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/alert-pass.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/alertAssert.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/checkReport.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/dedicated-worker-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/document-write-alert-fail.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/echo-policy.py
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/fail.asis
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/fail.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/fail.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/fail.png
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/file-prefetch-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/fonts.css
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/import-scripts.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/inject-image.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/inject-image.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/logTest.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/manifest.json
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/nonce-should-be-blocked.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/pass.png
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/pass2.png
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/ping.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/post-message.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/postmessage-fail.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/postmessage-pass-to-opener.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/postmessage-pass.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-subresource.css
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/prefetch-subresource.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/report.py
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/resource.py
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/service-worker-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/shared-worker-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/siblingPath.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/testharness-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/support/var-a.js

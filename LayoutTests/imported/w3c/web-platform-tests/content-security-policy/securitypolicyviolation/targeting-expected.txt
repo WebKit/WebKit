@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 70: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 75: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 79: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 96: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 144: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 147: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 169: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+Click me!
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN These tests should not fail. 
+FAIL Inline violations target the right element. assert_equals: expected "inline" but got ""
+TIMEOUT Correct targeting inside shadow tree (inline handler). Test timed out
+TIMEOUT Correct targeting inside shadow tree (style). Test timed out
+TIMEOUT Elements created in this document, but pushed into a same-origin frame trigger on that frame's document, not on this frame's document. Test timed out
+PASS Inline event handlers for disconnected elements target the document. 
+PASS Inline event handlers for elements disconnected after triggering target the document. 
+PASS Inline event handlers for elements in a DocumentFragment target the document. 
+

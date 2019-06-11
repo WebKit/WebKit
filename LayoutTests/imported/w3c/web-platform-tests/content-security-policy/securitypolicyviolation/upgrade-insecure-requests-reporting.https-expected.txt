@@ -1,0 +1,5 @@
+
+FAIL Upgraded image is reported Can't find variable: generateURL
+FAIL Upgraded iframe is reported Can't find variable: generateURL
+FAIL Navigated iframe is upgraded and reported Can't find variable: generateURL
+

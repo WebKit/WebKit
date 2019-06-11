@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to load data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7 because it does not appear in the img-src directive of the Content Security Policy.
+The origin of an URL is called "unique" when it is considered to be different from every origin, including itself. The origin of a data-url is unique. When the current origin is unique, the CSP source 'self' must not match any URL.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Image's url must not match with 'self'. Image must be blocked. Test timed out
+

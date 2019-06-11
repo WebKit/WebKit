@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''report-sample''. It will be ignored.
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 94: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''report-sample''. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''report-sample''. It will be ignored.
+CONSOLE MESSAGE: line 75: Refused to execute a script because 'unsafe-eval' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 89: Refused to execute a script because 'unsafe-eval' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 1: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Inline script should have a sample. Test timed out
+TIMEOUT Inline event handlers should have a sample. Test timed out
+TIMEOUT JavaScript URLs in iframes should have a sample. Test timed out
+TIMEOUT eval() should have a sample. Test timed out
+TIMEOUT setInterval() should have a sample. Test timed out
+TIMEOUT setTimeout() should have a sample. Test timed out
+

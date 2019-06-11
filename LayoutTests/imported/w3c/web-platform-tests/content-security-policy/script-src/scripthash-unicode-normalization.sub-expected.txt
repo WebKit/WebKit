@@ -1,0 +1,8 @@
+This tests Unicode normalization. While appearing the same, the strings in the scripts are different Unicode points, but through normalization, should be the same when the hash is taken.
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Should fire securitypolicyviolation 
+FAIL Only matching content runs even with NFC normalization. assert_unreached: nonMatchingContent script ran Reached unreachable code
+

@@ -1,0 +1,8 @@
+filesystem: URLs are same-origin with the page in which they were created, but explicitly do not match the 'self' or '*' source in CSP directives because they are more akin to 'unsafe-inline' content..
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Expecting logs: ["violated-directive=script-src-elem"] 
+NOTRUN filesystem-urls-do-not-match-self No filesystem:// support, cannot run test.
+
