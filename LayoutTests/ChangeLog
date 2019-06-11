@@ -1,3 +1,13 @@
+2019-06-11  Daniel Bates  <dabates@apple.com>
+
+        Fix up test result following r245161.
+        <rdar://problem/51032967>
+
+        Until we get UIKit support, almost all keys, including the numpad comma key (on JIS keyboards)
+        report Dead for their key property and Unidentified for their keyIdentifier property.
+
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt:
+
 2019-06-11  Truitt Savell  <tsavell@apple.com>
 
         r246018 introduced a falkey test on WK1

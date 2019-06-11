@@ -45,7 +45,7 @@ type: keyup, key: Control, code: ControlRight, keyIdentifier: Control, keyCode: 
 type: keydown, key: Shift, code: ShiftRight, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16
 type: keyup, key: Shift, code: ShiftRight, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16
 type: keydown, key: ,, code: NumpadComma, keyIdentifier: U+002C, keyCode: 108, charCode: 0, keyCode: 108, which: 108
-type: keyup, key: ,, code: NumpadComma, keyIdentifier: U+002C, keyCode: 108, charCode: 0, keyCode: 108, which: 108
+type: keyup, key: Dead, code: NumpadComma, keyIdentifier: Unidentified, keyCode: 108, charCode: 0, keyCode: 108, which: 108
 type: keydown, key: , code: F1, keyIdentifier: U+0010, keyCode: 112, charCode: 0, keyCode: 112, which: 112
 type: keyup, key: Dead, code: F1, keyIdentifier: Unidentified, keyCode: 112, charCode: 0, keyCode: 112, which: 112
 type: keydown, key: , code: F2, keyIdentifier: U+0010, keyCode: 113, charCode: 0, keyCode: 113, which: 113
