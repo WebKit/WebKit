@@ -1,3 +1,12 @@
+2019-06-11  Devin Rousso  <drousso@apple.com>
+
+        Include `touch-action` in the computed styles list
+        https://bugs.webkit.org/show_bug.cgi?id=198742
+
+        Reviewed by Antoine Quint.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+
 2019-06-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         tu-berlin university email web interface (Outlook Web App) goes directly to the light version instead of the normal web app

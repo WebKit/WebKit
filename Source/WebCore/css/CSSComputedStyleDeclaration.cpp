@@ -458,7 +458,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyGlyphOrientationVertical,
     CSSPropertyVectorEffect,
     CSSPropertyX,
-    CSSPropertyY
+    CSSPropertyY,
+#if ENABLE(POINTER_EVENTS)
+    CSSPropertyTouchAction,
+#endif
 };
 
 const unsigned numComputedProperties = WTF_ARRAY_LENGTH(computedProperties);
