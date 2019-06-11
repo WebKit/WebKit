@@ -26,10 +26,15 @@ function log(message)
 
 function logKeyEvent(event)
 {
-    let pieces = [];
-    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which"])
-        pieces.push(`${propertyName}: ${event[propertyName]}`);
-    log(pieces.join(", "));
+    // Ignore Shift keyups, if they are dispatched, as not all versions of iOS dispatch them.
+    if (event.key == "Shift")
+        ++numberOfFiredKeyEventsForTestComplete;
+    if (event.key !== "Shift") {
+        let pieces = [];
+        for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which"])
+            pieces.push(`${propertyName}: ${event[propertyName]}`);
+        log(pieces.join(", "));
+    }
     if (++numberOfFiredKeyEvents >= numberOfFiredKeyEventsForTestComplete && window.testRunner)
         testRunner.notifyDone();
 }
