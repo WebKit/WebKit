@@ -1,3 +1,19 @@
+2019-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [cairo][SVG] Putting multiple path elements in clippath causes rendering artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=198701
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        Unskipped svg/gradients/spreadMethodDiagonal3.svg and svg/gradients/spreadMethodDiagonal4.svg.
+
+        * svg/clip-path/clip-opacity-expected.html: Added.
+        * svg/clip-path/clip-opacity.html: Added.
+        * svg/clip-path/svg-in-html-expected.html: Added.
+        * svg/clip-path/svg-in-html.html: Added.
+
 2019-06-10  Daniel Bates  <dabates@apple.com>
 
         [CSP] Blob URLs should inherit their CSP policy

@@ -110,24 +110,7 @@ void PlatformContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRe
     // Cairo doesn't support the notion of an image clip, so we push a group here
     // and then paint it to the surface with an image mask (which is an immediate
     // operation) during restorePlatformState.
-
-    // We want to allow the clipped elements to composite with the surface as it
-    // is now, but they are isolated in another group. To make this work, we're
-    // going to blit the current surface contents onto the new group once we push it.
-    cairo_surface_t* currentTarget = cairo_get_target(m_cr.get());
-    cairo_surface_flush(currentTarget);
-
-    // Pushing a new group ensures that only things painted after this point are clipped.
     cairo_push_group(m_cr.get());
-    cairo_set_operator(m_cr.get(), CAIRO_OPERATOR_SOURCE);
-
-    // To avoid the limit of Pixman backend, we need to reduce the size of pattern matrix
-    // See https://bugs.webkit.org/show_bug.cgi?id=154283
-    cairo_set_source_surface(m_cr.get(), currentTarget, rect.x(), rect.y());
-    cairo_translate(m_cr.get(), rect.x(), rect.y());
-    cairo_rectangle(m_cr.get(), 0, 0, rect.width(), rect.height());
-    cairo_fill(m_cr.get());
-    cairo_translate(m_cr.get(), -rect.x(), -rect.y());
 }
 
 } // namespace WebCore

@@ -1,3 +1,21 @@
+2019-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [cairo][SVG] Putting multiple path elements in clippath causes rendering artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=198701
+
+        PlatformContextCairo::pushImageMask blits wrong position of the
+        surface to the background of masking objects. And, I don't know
+        the reason why this blitting is needed. Removed the blitting.
+
+        Reviewed by Carlos Garcia Campos.
+
+        Tests: svg/clip-path/clip-opacity.html
+               svg/clip-path/svg-in-html.html
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::pushImageMask): Don't blit the
+        surface to the background.
+
 2019-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MediaFoundation] Remove the unused video window
