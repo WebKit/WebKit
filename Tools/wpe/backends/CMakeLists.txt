@@ -1,7 +1,7 @@
 find_package(Libxkbcommon 0.4.0 REQUIRED)
 find_package(Wayland REQUIRED)
 find_package(WaylandProtocols 1.12 REQUIRED)
-find_package(WPEBackend-fdo REQUIRED)
+find_package(WPEBackend-fdo 1.3.0 REQUIRED)
 
 set(DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WPEToolingBackends")
 

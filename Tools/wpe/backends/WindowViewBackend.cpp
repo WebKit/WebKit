@@ -631,12 +631,12 @@ const struct wl_callback_listener WindowViewBackend::s_frameListener = {
         wpe_view_backend_exportable_fdo_dispatch_frame_complete(window.m_exportable);
 
         if (window.m_committedImage)
-            wpe_view_backend_exportable_fdo_egl_dispatch_release_image(window.m_exportable, window.m_committedImage);
-        window.m_committedImage = EGL_NO_IMAGE_KHR;
+            wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(window.m_exportable, window.m_committedImage);
+        window.m_committedImage = nullptr;
     }
 };
 
-void WindowViewBackend::displayBuffer(EGLImageKHR image)
+void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
 {
     if (!m_eglContext)
         return;
@@ -650,7 +650,7 @@ void WindowViewBackend::displayBuffer(EGLImageKHR image)
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_viewTexture);
-    imageTargetTexture2DOES(GL_TEXTURE_2D, image);
+    imageTargetTexture2DOES(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(image));
     glUniform1i(m_textureUniform, 0);
 
     m_committedImage = image;

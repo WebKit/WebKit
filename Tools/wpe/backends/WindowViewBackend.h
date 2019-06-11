@@ -30,7 +30,6 @@
 #include <glib.h>
 #include <unordered_map>
 
-typedef void* EGLImageKHR;
 typedef void* EGLSurface;
 typedef struct wl_egl_window  *EGLNativeWindowType;
 
@@ -42,7 +41,7 @@ public:
     virtual ~WindowViewBackend();
 
 private:
-    void displayBuffer(EGLImageKHR) override;
+    void displayBuffer(struct wpe_fdo_egl_exported_image*) override;
 
     static const struct wl_registry_listener s_registryListener;
     static const struct zxdg_shell_v6_listener s_xdgWmBaseListener;
@@ -106,7 +105,7 @@ private:
     unsigned m_program { 0 };
     unsigned m_textureUniform { 0 };
     unsigned m_viewTexture { 0 };
-    EGLImageKHR m_committedImage;
+    struct wpe_fdo_egl_exported_image* m_committedImage { nullptr };
 };
 
 } // WPEToolingBackends

@@ -31,8 +31,8 @@
 typedef void* EGLConfig;
 typedef void* EGLContext;
 typedef void* EGLDisplay;
-typedef void* EGLImageKHR;
 typedef struct _AtkObject AtkObject;
+struct wpe_fdo_egl_exported_image;
 
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST
@@ -76,7 +76,7 @@ protected:
     void dispatchInputKeyboardEvent(struct wpe_input_keyboard_event*);
     void dispatchInputTouchEvent(struct wpe_input_touch_event*);
 
-    virtual void displayBuffer(EGLImageKHR) = 0;
+    virtual void displayBuffer(struct wpe_fdo_egl_exported_image*) = 0;
 
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };

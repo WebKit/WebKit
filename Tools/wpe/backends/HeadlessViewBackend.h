@@ -30,8 +30,6 @@
 #include <glib.h>
 #include <unordered_map>
 
-typedef void* EGLImageKHR;
-
 namespace WPEToolingBackends {
 
 class HeadlessViewBackend final : public ViewBackend {
@@ -42,12 +40,12 @@ public:
     cairo_surface_t* createSnapshot();
 
 private:
-    void displayBuffer(EGLImageKHR) override;
+    void displayBuffer(struct wpe_fdo_egl_exported_image*) override;
 
     void performUpdate();
 
-    EGLImageKHR m_pendingImage;
-    EGLImageKHR m_lockedImage;
+    struct wpe_fdo_egl_exported_image* m_pendingImage { nullptr };
+    struct wpe_fdo_egl_exported_image* m_lockedImage { nullptr };
 
     GSource* m_updateSource { nullptr };
     gint64 m_frameRate { G_USEC_PER_SEC / 60 };

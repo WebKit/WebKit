@@ -65,8 +65,6 @@ static EGLDisplay getEGLDisplay()
 
 HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
-    , m_pendingImage(EGL_NO_IMAGE_KHR)
-    , m_lockedImage(EGL_NO_IMAGE_KHR)
 {
     m_eglDisplay = getEGLDisplay();
     if (!initialize())
@@ -121,7 +119,7 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, nullptr);
 
-    imageTargetTexture2DOES(GL_TEXTURE_2D, m_lockedImage);
+    imageTargetTexture2DOES(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_lockedImage));
     glBindTexture(GL_TEXTURE_2D, 0);
 
     GLuint imageFramebuffer;
@@ -165,13 +163,13 @@ void HeadlessViewBackend::performUpdate()
 
     wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
     if (m_lockedImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_image(m_exportable, m_lockedImage);
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_lockedImage);
 
     m_lockedImage = m_pendingImage;
-    m_pendingImage = EGL_NO_IMAGE_KHR;
+    m_pendingImage = nullptr;
 }
 
-void HeadlessViewBackend::displayBuffer(EGLImageKHR image)
+void HeadlessViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
 {
     if (m_pendingImage)
         std::abort();
