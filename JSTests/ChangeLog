@@ -1,3 +1,13 @@
+2019-06-11  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip stress/ftl-gettypedarrayoffset-wasteful.js on Arm/Linux
+
+        Unreviewed gardening.
+
+        * stress/ftl-gettypedarrayoffset-wasteful.js:
+        Skipped on arm/linux as it always times out on the bot since a change
+        between r246270 and r246278 inclusive.
+
 2019-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] UnlinkedCodeBlock should be eventually jettisoned in VM mini mode
