@@ -1,3 +1,11 @@
+2019-06-11  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failures after r246292.
+
+        * inspector/timeline/timeline-recording.html:
+        * inspector/timeline/timeline-recording-expected.txt:
+        Filter the contents of `sampleStackTraces` and `sampleDurations` when exporting.
+
 2019-06-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (iOS): Can't scroll litter-robot.com checkout form's dropdown menus

@@ -41,13 +41,19 @@ Export Data:
     "timeline-record-type-cpu",
     "timeline-record-type-rendering-frame"
   ],
-  "records": "<filtered>",
+  "records": [
+    "<filtered>"
+  ],
   "markers": [
     "<filtered>"
   ],
   "memoryPressureEvents": [],
-  "sampleStackTraces": [],
-  "sampleDurations": []
+  "sampleStackTraces": [
+    "<filtered>"
+  ],
+  "sampleDurations": [
+    "<filtered>"
+  ]
 }
 
 -- Running test case: TimelineRecording.import

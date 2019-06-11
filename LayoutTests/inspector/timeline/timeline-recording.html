@@ -80,11 +80,12 @@ function test()
             InspectorTest.expectThat(exportData.records.length > 10, "TimelineRecording should have at least 10 Timeline Records.");
 
             InspectorTest.log("Export Data:");
-            let filterKeys = new Set(["startTime", "endTime", "time", "records", "displayName"]);
+            let filterValue = new Set(["startTime", "endTime", "time", "displayName"]);
+            let filterArray = new Set(["records", "markers", "sampleStackTraces", "sampleDurations"]);
             InspectorTest.json(exportData, (key, value) => {
-                if (filterKeys.has(key))
+                if (filterValue.has(key))
                     return "<filtered>";
-                if (key === "markers")
+                if (filterArray.has(key))
                     return ["<filtered>"];
                 return value;
             });
