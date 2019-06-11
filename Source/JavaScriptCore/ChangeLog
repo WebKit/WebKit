@@ -1,3 +1,18 @@
+2019-06-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI BitURShift's result should not be unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=198689
+        <rdar://problem/51550063>
+
+        Reviewed by Saam Barati.
+
+        Treating BitURShift's result as unsigned in the abstract interpreter incorrectly overflows it.
+        This breaks the DFG and FTL, since they assume that BitURShift's result is an int32 value, but
+        get a double constant from AI. Since the result will be converted to unsigned by UInt32ToNumber,
+        all we have to do is store the result as a signed int32.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+
 2019-06-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed build warning fixes

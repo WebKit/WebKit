@@ -1,3 +1,15 @@
+2019-06-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI BitURShift's result should not be unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=198689
+        <rdar://problem/51550063>
+
+        Reviewed by Saam Barati.
+
+        * stress/urshift-int32-overflow.js: Added.
+        (foo.):
+        (foo):
+
 2019-06-11  Guillaume Emont  <guijemont@igalia.com>
 
         Skip stress/ftl-gettypedarrayoffset-wasteful.js on Arm/Linux

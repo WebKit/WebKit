@@ -499,13 +499,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, JSValue(a ^ b));
                 break;
             case BitRShift:
-                setConstant(node, JSValue(a >> static_cast<uint32_t>(b)));
+                setConstant(node, JSValue(a >> (static_cast<uint32_t>(b) & 0x1f)));
                 break;
             case BitLShift:
-                setConstant(node, JSValue(a << static_cast<uint32_t>(b)));
+                setConstant(node, JSValue(a << (static_cast<uint32_t>(b) & 0x1f)));
                 break;
             case BitURShift:
-                setConstant(node, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
+                setConstant(node, JSValue(static_cast<int32_t>(static_cast<uint32_t>(a) >> (static_cast<uint32_t>(b) & 0x1f))));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
