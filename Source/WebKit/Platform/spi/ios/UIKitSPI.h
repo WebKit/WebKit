@@ -534,6 +534,7 @@ typedef NS_ENUM(NSUInteger, UIFocusRingType) {
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
+- (NSString *)recursiveDescription;
 #if PLATFORM(IOSMAC)
 @property (nonatomic, getter=_focusRingType, setter=_setFocusRingType:) UIFocusRingType focusRingType;
 #endif

@@ -7,6 +7,12 @@
         * UIProcess/WebProcessPool.cpp:
         (WebKit::WebProcessPool::clearWebProcessIsPlayingAudibleMedia):
 
+2019-06-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix non-internal builds after r246327.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2019-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Add logging for UI-side compositing hit-testing
