@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" role="group" id="images">
+    <img alt="cake" src="resources/cake.png"><br>
+    <img alt="" src="resources/cake.png" class="empty-string"><br>
+    <img alt="more cake" src="resources/cake.png"><br>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that img elements with alt attribute of empty string are ignored.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("images").focus();
+        var imagesGroup = accessibilityController.focusedElement;
+        // <img alt="" /> should be ignored, so the count should be 2:
+        shouldBe("imagesGroup.childrenCount", "2"); 
+        // make sure alt text is being read before and after
+        shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(0))", "cake");
+        shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(1))", "more cake");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

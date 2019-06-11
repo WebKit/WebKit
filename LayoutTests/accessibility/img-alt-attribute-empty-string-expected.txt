@@ -1,0 +1,15 @@
+
+
+
+This tests that img elements with alt attribute of empty string are ignored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imagesGroup.childrenCount is 2
+PASS platformValueForW3CName(imagesGroup.childAtIndex(0)) is "cake"
+PASS platformValueForW3CName(imagesGroup.childAtIndex(1)) is "more cake"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

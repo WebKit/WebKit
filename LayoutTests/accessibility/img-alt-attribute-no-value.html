@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" role="group" id="images">
+    <img alt="cake0" src="resources/cake.png"><br>
+    <img alt class="unassigned-alt cake1" src="resources/cake.png"><br>
+    <img class="no-alt cake2" src="resources/cake.png"><br>
+    <img alt="cake3" src="resources/cake.png"><br>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+description("This tests that img elements with an alt attribute and no assigned value are ignored.");
+if (window.accessibilityController) {
+    document.getElementById("images").focus();
+    var imagesGroup = accessibilityController.focusedElement;
+    // there are 4 images, but one has an alt attribute that is unassigned so it should be
+    // ignored. there is a second image without any alt attribute at all. this image should
+    // not be ignored. accessibilityController fails to recognize it. this has been
+    // documented in <rdar://problem/51283943>.
+    // as a result the image count is 2, but it should be 3.
+    shouldBe("imagesGroup.childrenCount", "2");
+    // make sure alt text is being read before and after
+    shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(0))", "cake0");
+    // accessiblityController should see the <img> element w/o alt attribute as an image,
+    // but it erroneously classifies it as presentation.. so it won't find the image and use the filename as alt text
+    // shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(2))", "cake.png");
+    shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(1))", "cake3");
+}
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+
