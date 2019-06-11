@@ -7565,9 +7565,11 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
             auto previewActions = adoptNS([[NSMutableArray alloc] init]);
             for (_WKElementAction *elementAction in actions.get()) {
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 WKPreviewAction *previewAction = [WKPreviewAction actionWithIdentifier:previewIdentifierForElementAction(elementAction) title:[elementAction title] style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *, UIViewController *) {
                     [elementAction runActionWithElementInfo:elementInfo.get()];
                 }];
+                ALLOW_DEPRECATED_DECLARATIONS_END
                 [previewActions addObject:previewAction];
             }
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN

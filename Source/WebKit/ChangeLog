@@ -1,3 +1,30 @@
+2019-06-10  Andy Estes  <aestes@apple.com>
+
+        [iOS] Use PDFKit SPI for taking snapshots when the hosting app is not entitled for global capture
+        https://bugs.webkit.org/show_bug.cgi?id=198731
+        <rdar://problem/46215174>
+
+        Reviewed by Tim Horton.
+
+        PDFHostViewController renders PDF contents in a view service, and apps are unable to
+        snapshot views rendered out-of-process without an entitlement.
+
+        When an app is missing this entitlement and calls WKWebView's
+        takeSnapshotWithConfiguration: API when a PDF is displayed, fall back to calling
+        PDFHostViewController's snapshotting SPI.
+
+        Testing is blocked by <https://webkit.org/b/175204>.
+
+        * Platform/spi/ios/PDFKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (+[WKPDFView web_requiresCustomSnapshotting]):
+        (-[WKPDFView web_snapshotRectInContentViewCoordinates:snapshotWidth:completionHandler:]):
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (+[WKSystemPreviewView web_requiresCustomSnapshotting]):
+
 2019-06-10  Sam Weinig  <weinig@apple.com>
 
         Remove Dashboard support

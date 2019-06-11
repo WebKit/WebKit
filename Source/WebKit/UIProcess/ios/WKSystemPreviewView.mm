@@ -144,6 +144,11 @@ static NSString *getUTIForSystemPreviewMIMEType(const String& mimeType)
     return self;
 }
 
++ (BOOL)web_requiresCustomSnapshotting
+{
+    return false;
+}
+
 - (void)web_setMinimumSize:(CGSize)size
 {
 }

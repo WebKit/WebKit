@@ -45,6 +45,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 @interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate>
@@ -357,6 +358,16 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     return self._contentView;
 }
 
++ (BOOL)web_requiresCustomSnapshotting
+{
+#if HAVE(PDFHOSTVIEWCONTROLLER_SNAPSHOTTING)
+    static bool hasGlobalCaptureEntitlement = WTF::processHasEntitlement("com.apple.QuartzCore.global-capture");
+    return !hasGlobalCaptureEntitlement;
+#else
+    return false;
+#endif
+}
+
 - (void)web_scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [_hostViewController updatePDFViewLayout];
@@ -382,6 +393,16 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [_hostViewController beginPDFViewRotation];
     updateBlock();
     [_hostViewController endPDFViewRotation];
+}
+
+- (void)web_snapshotRectInContentViewCoordinates:(CGRect)rectInContentViewCoordinates snapshotWidth:(CGFloat)snapshotWidth completionHandler:(void (^)(CGImageRef))completionHandler
+{
+#if HAVE(PDFHOSTVIEWCONTROLLER_SNAPSHOTTING)
+    CGRect rectInHostViewCoordinates = [self._contentView convertRect:rectInContentViewCoordinates toView:[_hostViewController view]];
+    [_hostViewController snapshotViewRect:rectInHostViewCoordinates snapshotWidth:@(snapshotWidth) afterScreenUpdates:NO withResult:^(UIImage *image) {
+        completionHandler(image.CGImage);
+    }];
+#endif
 }
 
 - (NSData *)web_dataRepresentation
