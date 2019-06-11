@@ -35,6 +35,9 @@ fast/events/ios/key-command-italic-dispatches-keydown.html [ Skip ]
 fast/events/ios/key-command-italic.html [ Skip ]
 fast/events/ios/type-digits-holding-control-key.html [ Skip ]
 
+# testRunner.queueLoad() does not support loading data URLs in iOS WK1
+http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
+
 # <input type=color> is not supported in WebKit1 on iOS.
 fast/forms/color/input-color-onchange-event.html [ Failure ]
 fast/forms/color/input-color-readonly.html [ Failure ]

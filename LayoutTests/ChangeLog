@@ -1,5 +1,13 @@
 2019-06-11  Daniel Bates  <dabates@apple.com>
 
+        Skip test http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html as
+        testRunner.queueLoad() does not support loading data URLs in Legacy WebKit on Mac and iOS
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+2019-06-11  Daniel Bates  <dabates@apple.com>
+
         [Win] Layout test http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=198758
 
