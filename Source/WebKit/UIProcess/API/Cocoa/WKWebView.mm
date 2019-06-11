@@ -1736,7 +1736,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (lightness <= .5 && color.isVisible())
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
     else
-        [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleDefault];
+        [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleBlack];
 }
 
 - (void)_videoControlsManagerDidChange

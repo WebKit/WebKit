@@ -1,3 +1,15 @@
+2019-06-11  Timothy Hatcher  <timothy@apple.com>
+
+        Scrollbar can show as white on white in dark mode on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=198772
+        rdar://problem/51516743
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]): Use UIScrollViewIndicatorStyleBlack instead
+        of UIScrollViewIndicatorStyleDefault to prevent getting a white scrollbar in dark mode.
+
 2019-06-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed build warning fixes
