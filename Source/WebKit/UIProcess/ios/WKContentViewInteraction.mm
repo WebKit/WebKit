@@ -4384,6 +4384,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         [_traits setAutocorrectionType:_focusedElementInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo];
     }
 
+    if (!_focusedElementInformation.isSpellCheckingEnabled) {
+        [_traits setSmartQuotesType:UITextSmartQuotesTypeNo];
+        [_traits setSmartDashesType:UITextSmartDashesTypeNo];
+    }
+
     switch (_focusedElementInformation.inputMode) {
     case WebCore::InputMode::None:
     case WebCore::InputMode::Unspecified:

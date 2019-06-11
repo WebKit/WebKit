@@ -2766,6 +2766,9 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     } else
         information.elementRect = IntRect();
 
+    if (is<HTMLElement>(m_focusedElement))
+        information.isSpellCheckingEnabled = downcast<HTMLElement>(*m_focusedElement).spellcheck();
+
     information.minimumScaleFactor = minimumPageScaleFactor();
     information.maximumScaleFactor = maximumPageScaleFactor();
     information.maximumScaleFactorIgnoringAlwaysScalable = maximumPageScaleFactorIgnoringAlwaysScalable();

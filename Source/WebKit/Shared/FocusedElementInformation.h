@@ -137,6 +137,7 @@ struct FocusedElementInformation {
 #endif
 #endif
     bool shouldSynthesizeKeyEventsForEditing { false };
+    bool isSpellCheckingEnabled { true };
 
     FocusedElementIdentifier focusedElementIdentifier { 0 };
 

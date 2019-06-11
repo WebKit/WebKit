@@ -1,3 +1,17 @@
+2019-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Quotes are always inserted as smart quotes on stackblitz.com, causing compilation errors
+        https://bugs.webkit.org/show_bug.cgi?id=198735
+        <rdar://problem/51557159>
+
+        Reviewed by Megan Gardner.
+
+        Add a test to verify that spellcheck="false" disables smart quotes and dashes, but any other value defers to the
+        user's preferences by using UITextSmartQuotesTypeDefault and UITextSmartDashesTypeDefault.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2019-06-11  Tadeu Zagallo  <tzagallo@apple.com>
 
         Unreviewed, add myself to the JavaScriptCore watchlist.

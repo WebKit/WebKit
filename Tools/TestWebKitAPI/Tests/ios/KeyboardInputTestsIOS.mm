@@ -473,6 +473,38 @@ TEST(KeyboardInputTests, OverrideInputViewAndInputAccessoryView)
     EXPECT_EQ(inputView.get(), [contentView inputView]);
 }
 
+TEST(KeyboardInputTests, DisableSmartQuotesAndDashes)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    auto checkSmartQuotesAndDashesType = [&] (UITextSmartDashesType dashesType, UITextSmartQuotesType quotesType) {
+        UITextInputTraits *traits = [[webView textInputContentView] textInputTraits];
+        EXPECT_EQ(dashesType, traits.smartDashesType);
+        EXPECT_EQ(quotesType, traits.smartQuotesType);
+    };
+
+    [webView synchronouslyLoadHTMLString:@"<div id='foo' contenteditable spellcheck='false'></div><textarea id='bar' spellcheck='false'></textarea><input id='baz' spellcheck='false'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"foo.focus()"];
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"bar.focus()"];
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"baz.focus()"];
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo);
+
+    [webView synchronouslyLoadHTMLString:@"<div id='foo' contenteditable></div><textarea id='bar' spellcheck='true'></textarea><input id='baz'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"foo.focus()"];
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"bar.focus()"];
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"baz.focus()"];
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

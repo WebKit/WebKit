@@ -105,6 +105,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
 #endif
 #endif
     encoder << shouldSynthesizeKeyEventsForEditing;
+    encoder << isSpellCheckingEnabled;
 }
 
 bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
@@ -224,6 +225,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
 #endif
 #endif
     if (!decoder.decode(result.shouldSynthesizeKeyEventsForEditing))
+        return false;
+
+    if (!decoder.decode(result.isSpellCheckingEnabled))
         return false;
 
     return true;
