@@ -70,6 +70,10 @@ public:
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
+#ifdef __OBJC__
+    WTF_EXPORT_PRIVATE TextStream& operator<<(id<NSObject>);
+#endif
+
     FormattingFlags formattingFlags() const { return m_formattingFlags; }
     void setFormattingFlags(FormattingFlags flags) { m_formattingFlags = flags; }
 
@@ -177,6 +181,20 @@ TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
             ts << ", ";
     }
 
+    return ts << "]";
+}
+
+template<typename Option>
+TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
+{
+    ts << "[";
+    bool needComma = false;
+    for (auto option : options) {
+        if (needComma)
+            ts << ", ";
+        needComma = true;
+        ts << option;
+    }
     return ts << "]";
 }
 

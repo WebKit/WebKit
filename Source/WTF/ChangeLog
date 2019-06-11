@@ -1,3 +1,21 @@
+2019-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Add logging for UI-side compositing hit-testing
+        https://bugs.webkit.org/show_bug.cgi?id=198739
+
+        Reviewed by Antti Koivisto.
+
+        Make it possible to output an Objective-C object to TextStream, which will
+        log its -description.
+
+        Also add a template for OptionSet<> printing.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/text/TextStream.h:
+        (WTF::operator<<):
+        * wtf/text/cocoa/TextStreamCocoa.mm: Added.
+        (WTF::TextStream::operator<<):
+
 2019-06-11  Saam Barati  <sbarati@apple.com>
 
         Roll out PAC cage

@@ -1077,10 +1077,16 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 {
     for (UIView *subView in [_interactionViewsContainerView.get() subviews]) {
         UIView *hitView = [subView hitTest:[subView convertPoint:point fromView:self] withEvent:event];
-        if (hitView)
+        if (hitView) {
+            LOG_WITH_STREAM(UIHitTesting, stream << self << "hitTest at " << WebCore::FloatPoint(point) << " found interaction view " << hitView);
             return hitView;
+        }
     }
-    return [super hitTest:point withEvent:event];
+
+    LOG_WITH_STREAM(UIHitTesting, stream << "hit-testing WKContentView subviews " << [[self recursiveDescription] UTF8String]);
+    UIView* hitView = [super hitTest:point withEvent:event];
+    LOG_WITH_STREAM(UIHitTesting, stream << " found view " << [hitView class] << " " << (void*)hitView);
+    return hitView;
 }
 
 - (const WebKit::InteractionInformationAtPosition&)positionInformation
@@ -1348,8 +1354,10 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         auto phase = touchPoint.phase();
         if (phase == WebKit::WebPlatformTouchPoint::TouchPressed) {
             auto touchActions = WebKit::touchActionsForPoint(self, touchPoint.location());
+            LOG_WITH_STREAM(UIHitTesting, stream << "touchActionsForPoint " << touchPoint.location() << " found " << touchActions);
             if (!touchActions || touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation }))
                 continue;
+
             scrollingCoordinator->setTouchActionsForTouchIdentifier(touchActions, touchPoint.identifier());
 
             if (!touchActions.contains(WebCore::TouchAction::PinchZoom))

@@ -40,7 +40,7 @@ enum class TouchAction : uint8_t {
     PinchZoom    = 1 << 5,
 };
 
-TextStream& operator<<(TextStream&, TouchAction);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, TouchAction);
 
 }
 

@@ -84,6 +84,7 @@ extern "C" {
     M(SessionState) \
     M(StorageAPI) \
     M(TextInput) \
+    M(UIHitTesting) \
     M(ViewGestures) \
     M(ViewState) \
     M(ViewportSizing) \

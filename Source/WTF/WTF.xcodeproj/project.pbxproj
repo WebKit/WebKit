@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30BA8A1E78708E002CA847 /* GlobalVersion.cpp */; };
 		0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB581FCDF133004B5323 /* ConcurrentPtrHashSet.cpp */; };
+		0F3492D722AF431C004F85FC /* TextStreamCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F3492D622AF42F1004F85FC /* TextStreamCocoa.mm */; };
 		0F43D8F11DB5ADDC00108FB6 /* AutomaticThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F43D8EF1DB5ADDC00108FB6 /* AutomaticThread.cpp */; };
 		0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5BF1741F23D49A0029D91D /* Gigacage.cpp */; };
 		0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */; };
@@ -202,6 +203,7 @@
 		0F30CB581FCDF133004B5323 /* ConcurrentPtrHashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentPtrHashSet.cpp; sourceTree = "<group>"; };
 		0F30CB591FCDF133004B5323 /* ConcurrentPtrHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcurrentPtrHashSet.h; sourceTree = "<group>"; };
 		0F31DD701F1308BC0072EB4A /* LockAlgorithmInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LockAlgorithmInlines.h; sourceTree = "<group>"; };
+		0F3492D622AF42F1004F85FC /* TextStreamCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextStreamCocoa.mm; sourceTree = "<group>"; };
 		0F3501631BB258C800F0A2A3 /* WeakRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakRandom.h; sourceTree = "<group>"; };
 		0F43D8EF1DB5ADDC00108FB6 /* AutomaticThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomaticThread.cpp; sourceTree = "<group>"; };
 		0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomaticThread.h; sourceTree = "<group>"; };
@@ -831,6 +833,7 @@
 				A5BA15F41824348000A82E69 /* StringImplCocoa.mm */,
 				93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */,
 				1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUCocoa.cpp */,
+				0F3492D622AF42F1004F85FC /* TextStreamCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1620,6 +1623,7 @@
 				1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */,
 				1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUCocoa.cpp in Sources */,
 				A3E4DD931F3A803400DED0B4 /* TextStream.cpp in Sources */,
+				0F3492D722AF431C004F85FC /* TextStreamCocoa.mm in Sources */,
 				E311FB171F0A568B003C08DE /* ThreadGroup.cpp in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,
 				A32D8FA521FFFAB400780662 /* ThreadingPOSIX.cpp in Sources */,

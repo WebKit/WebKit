@@ -1,3 +1,24 @@
+2019-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Add logging for UI-side compositing hit-testing
+        https://bugs.webkit.org/show_bug.cgi?id=198739
+
+        Reviewed by Antti Koivisto.
+
+        Make it easier to debug UI-side compositing hit-testing issues with a UIHitTesting log
+        channel, which logs information about the UIView hierarchy, which views are found by
+        hit-testing, and what touch-actions apply.
+
+        This log channel can be set by passing the argument '-WebKit2Logging "UIHitTesting"' when
+        launching a debug iOS MobileSafari instance.
+
+        * Platform/Logging.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hitTest:withEvent:]):
+        (-[WKContentView _handleTouchActionsForTouchEvent:]):
+
 2019-06-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (iOS): Can't scroll litter-robot.com checkout form's dropdown menus
