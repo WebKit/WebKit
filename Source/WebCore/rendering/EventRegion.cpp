@@ -157,6 +157,15 @@ void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAc
     }
 }
 
+const Region* EventRegion::regionForTouchAction(TouchAction action) const
+{
+    unsigned actionIndex = toIndex(action);
+    if (actionIndex >= m_touchActionRegions.size())
+        return nullptr;
+
+    return &m_touchActionRegions[actionIndex];
+}
+
 OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) const
 {
     OptionSet<TouchAction> actions;
@@ -196,7 +205,7 @@ TextStream& operator<<(TextStream& ts, TouchAction touchAction)
     return ts;
 }
 
-#endif
+#endif // ENABLE(POINTER_EVENTS)
 
 TextStream& operator<<(TextStream& ts, const EventRegion& eventRegion)
 {

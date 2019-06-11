@@ -1,3 +1,28 @@
+2019-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Add visualization of touch action regions
+        https://bugs.webkit.org/show_bug.cgi?id=198718
+
+        Reviewed by Antoine Quint.
+
+        Add a way to show which elements of the page have touch-action set on them by
+        painting an overlay with small text that shows the type of action(s).
+
+        The event regions are painted into GraphicsLayers at paint time in
+        RenderLayerBacking by making a pattern image and filling the region rects
+        with the pattern.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::touchEventRegionColors):
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::regionForTouchAction const):
+        * rendering/EventRegion.h:
+        (WebCore::EventRegion::region const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        (WebCore::patternForTouchAction):
+        (WebCore::RenderLayerBacking::paintContents):
+
 2019-06-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         Web Inspector: DNS names in SymmaryInfo was wrong.

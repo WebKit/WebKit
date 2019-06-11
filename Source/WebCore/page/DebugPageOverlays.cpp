@@ -162,7 +162,7 @@ static const HashMap<String, Color>& touchEventRegionColors()
         };
         HashMap<String, Color> map;
         for (auto& entry : entries)
-            map.add(entry.name, Color { entry.r, entry.g, entry.b, 80 });
+            map.add(entry.name, Color { entry.r, entry.g, entry.b, 50 });
         return map;
     }());
     return regionColors;

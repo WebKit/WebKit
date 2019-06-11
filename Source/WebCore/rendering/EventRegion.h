@@ -67,9 +67,13 @@ public:
     bool contains(const IntPoint& point) const { return m_region.contains(point); }
     bool contains(const IntRect& rect) const { return m_region.contains(rect); }
 
+    const Region& region() const { return m_region; }
+
 #if ENABLE(POINTER_EVENTS)
     bool hasTouchActions() const { return !m_touchActionRegions.isEmpty(); }
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
+
+    const Region* regionForTouchAction(TouchAction) const;
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
