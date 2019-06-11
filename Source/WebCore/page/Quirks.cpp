@@ -182,7 +182,11 @@ bool Quirks::hasWebSQLSupportQuirk() const
     m_hasWebSQLSupportQuirk = domain == "bostonglobe.com"
         || domain.endsWith(".bostonglobe.com")
         || domain == "latimes.com"
-        || domain.endsWith(".latimes.com");
+        || domain.endsWith(".latimes.com")
+        || domain == "washingtonpost.com"
+        || domain.endsWith(".washingtonpost.com")
+        || domain == "nytimes.com"
+        || domain.endsWith(".nytimes.com");
     
     return m_hasWebSQLSupportQuirk.value();
 }
