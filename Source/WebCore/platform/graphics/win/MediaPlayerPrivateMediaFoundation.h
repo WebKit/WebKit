@@ -110,10 +110,8 @@ private:
     bool m_hasVideo;
     bool m_preparingToPlay;
     float m_volume;
-    HWND m_hwndVideo;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
-    FloatRect m_lastPaintRect;
 
     class MediaPlayerListener;
     HashSet<MediaPlayerListener*> m_listeners;
@@ -151,18 +149,13 @@ private:
     void onSessionStarted();
     void onSessionEnded();
 
-    LPCWSTR registerVideoWindowClass();
-    void createVideoWindow();
-    void destroyVideoWindow();
-
+    HWND hostWindow();
     void invalidateFrameView();
 
     void addListener(MediaPlayerListener*);
     void removeListener(MediaPlayerListener*);
     void setNaturalSize(const FloatSize&);
     void notifyDeleted();
-
-    static LRESULT CALLBACK VideoViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     bool setAllChannelVolumes(float);
 
@@ -299,9 +292,6 @@ private:
         HRESULT getSwapChainPresentParameters(IMFMediaType*, D3DPRESENT_PARAMETERS* presentParams);
         HRESULT createD3DDevice();
         HRESULT createD3DSample(IDirect3DSwapChain9*, COMPtr<IMFSample>& videoSample);
-        HRESULT updateDestRect();
-
-        HRESULT presentSwapChain(IDirect3DSwapChain9*, IDirect3DSurface9*);
 
         UINT m_deviceResetToken { 0 };
         HWND m_hwnd { nullptr };

@@ -1,3 +1,33 @@
+2019-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MediaFoundation] Remove the unused video window
+        https://bugs.webkit.org/show_bug.cgi?id=198523
+
+        Reviewed by Don Olmstead.
+
+        Remove the video window which had been unused since Bug 150941.
+
+        No behavior change.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::paint):
+        (WebCore::MediaPlayerPrivateMediaFoundation::hostWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createOutputNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::setVideoWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::setDestinationRect):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::createVideoSamples):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoViewWndProc): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::registerVideoWindowClass): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::createVideoWindow): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::destroyVideoWindow): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSwapChain): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::updateDestRect): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2019-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Add visualization of touch action regions
