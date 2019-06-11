@@ -2597,7 +2597,8 @@ void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdenti
     ASSERT_UNUSED(result, result);
 
     auto* process = WebProcessProxy::processForIdentifier(processID);
-    ASSERT(process);
+    ASSERT_UNUSED(process, process);
+
     RELEASE_LOG(ProcessSuspension, "Web process pid %u is no longer playing audible media", (unsigned)process->processIdentifier());
 
     if (m_processesPlayingAudibleMedia.isEmpty()) {

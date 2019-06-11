@@ -1,3 +1,12 @@
+2019-06-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed build warning fixes
+
+        Silence -Wreturn-type warning
+
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::tryCreate):
+
 2019-06-11  Saam Barati  <sbarati@apple.com>
 
         Roll out PAC cage
