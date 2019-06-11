@@ -1,3 +1,19 @@
+2019-06-11  Keith Rollin  <krollin@apple.com>
+
+        Open up xcfilelist processing to more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=198675
+        <rdar://problem/51533238>
+
+        Reviewed by Jonathan Bedard.
+
+        Now that it's been tested, add AppleTV{OS,Simulator} to the set of
+        platforms on which to perform xcfilelist generation/updating.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (JavaScriptCoreGenerator):
+        (WebCoreGenerator):
+        (WebKitGenerator):
+
 2019-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Fix device ASan reporting, add testing for report configurations
