@@ -1,3 +1,25 @@
+2019-06-10  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend run-benchmark to allow diagnosing before closing browser on test failure.
+        https://bugs.webkit.org/show_bug.cgi?id=198729
+
+        Reviewed by Ryosuke Niwa.
+
+        Add '--diagnose-directory' option to store diagnose information when test failed.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.diagnose_test_failure): Add default no-op function to base class.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py: Added '--diagnose-directory' option.
+        (parse_args):
+        (run_benchmark_plan):
+        * Scripts/webkitpy/benchmark_runner/webdriver_benchmark_runner.py:
+        (WebDriverBenchmarkRunner._run_one_test): Added 'diagnose_test_failure' invocation on test failure.
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        (WebServerBenchmarkRunner.__init__):
+        (WebServerBenchmarkRunner._run_one_test): Added 'diagnose_test_failure' invocation on test failure.
+
 2019-06-10  Sam Weinig  <weinig@apple.com>
 
         Remove Dashboard support

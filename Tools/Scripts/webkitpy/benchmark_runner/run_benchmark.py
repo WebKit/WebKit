@@ -47,6 +47,7 @@ def parse_args():
     parser.add_argument('--local-copy', help='Path to a local copy of the benchmark (e.g. PerformanceTests/SunSpider/).')
     parser.add_argument('--device-id', default=None, help='Undocumented option for mobile device testing.')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging.')
+    parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=None, help='Directory for storing diagnose information on test failure. It\'s up to browser driver implementation when this option is not specified.')
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
 
@@ -68,7 +69,7 @@ def parse_args():
 
 def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
-    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.browser_path, args.scale_unit, args.show_iteration_values, args.device_id)
+    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.browser_path, args.scale_unit, args.show_iteration_values, args.device_id, args.diagnose_dir)
     runner.execute()
 
 

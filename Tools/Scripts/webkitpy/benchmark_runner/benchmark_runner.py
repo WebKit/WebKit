@@ -23,7 +23,7 @@ _log = logging.getLogger(__name__)
 class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None):
         try:
             plan_file = self._find_plan_file(plan_file)
             with open(plan_file, 'r') as fp:
@@ -38,6 +38,7 @@ class BenchmarkRunner(object):
                 self._browser_driver = BrowserDriverFactory.create(platform, browser)
                 self._browser_path = browser_path
                 self._build_dir = os.path.abspath(build_dir) if build_dir else None
+                self._diagnose_dir = os.path.abspath(diagnose_dir) if diagnose_dir else None
                 self._output_file = output_file
                 self._scale_unit = scale_unit
                 self._show_iteration_values = show_iteration_values

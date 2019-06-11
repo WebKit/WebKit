@@ -42,6 +42,9 @@ class BrowserDriver(object):
     def restore_env_after_all_testing(self):
         pass
 
+    def diagnose_test_failure(self, debug_directory, error):
+        pass
+
     @property
     def webdriver_binary_path(self):
         return get_driver_binary_path(self.browser_name)
