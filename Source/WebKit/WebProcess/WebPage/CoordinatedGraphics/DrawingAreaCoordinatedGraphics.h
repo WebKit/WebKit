@@ -73,11 +73,6 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 #endif
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    void setNativeSurfaceHandleForCompositing(uint64_t) override;
-    void destroyNativeSurfaceHandleForCompositing(bool&) override;
-#endif
-
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, const Vector<CallbackID>& /* callbackIDs */) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AcceleratedSurfaceX11.h"
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayX11.h>
@@ -156,4 +156,4 @@ void AcceleratedSurfaceX11::didRenderFrame()
 
 } // namespace WebKit
 
-#endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#endif // PLATFORM(X11)

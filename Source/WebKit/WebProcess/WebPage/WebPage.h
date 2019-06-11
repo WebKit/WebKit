@@ -972,10 +972,6 @@ public:
     void dispatchTouchEvent(const WebTouchEvent&, bool& handled);
 #endif
 
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
-#endif
-
     bool shouldUseCustomContentProviderForResponse(const WebCore::ResourceResponse&);
 
     bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
@@ -1681,11 +1677,6 @@ private:
 
 #if HAVE(ACCESSIBILITY) && USE(ATK)
     GRefPtr<AtkObject> m_accessibilityObject;
-#endif
-
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    // Our view's window in the UI process.
-    uint64_t m_nativeWindowHandle { 0 };
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

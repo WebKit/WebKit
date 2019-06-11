@@ -181,16 +181,8 @@ void DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState(uint64_t ba
 
     if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
         sendUpdateBackingStoreState(RespondImmediately);
-    else {
+    else
         m_hasReceivedFirstUpdate = true;
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-        if (m_pendingNativeSurfaceHandleForCompositing) {
-            setNativeSurfaceHandleForCompositing(m_pendingNativeSurfaceHandleForCompositing);
-            m_pendingNativeSurfaceHandleForCompositing = 0;
-        }
-#endif
-    }
 
 #if !PLATFORM(WPE)
     if (isInAcceleratedCompositingMode()) {
@@ -371,27 +363,6 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
         return;
     m_backingStore = nullptr;
     backingStoreStateDidChange(DoNotRespondImmediately);
-}
-#endif
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-void DrawingAreaProxyCoordinatedGraphics::setNativeSurfaceHandleForCompositing(uint64_t handle)
-{
-    if (!m_hasReceivedFirstUpdate) {
-        m_pendingNativeSurfaceHandleForCompositing = handle;
-        return;
-    }
-    send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-}
-
-void DrawingAreaProxyCoordinatedGraphics::destroyNativeSurfaceHandleForCompositing()
-{
-    if (m_pendingNativeSurfaceHandleForCompositing) {
-        m_pendingNativeSurfaceHandleForCompositing = 0;
-        return;
-    }
-    bool handled;
-    sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled));
 }
 #endif
 

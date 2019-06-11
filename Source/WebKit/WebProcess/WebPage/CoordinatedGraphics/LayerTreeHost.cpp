@@ -71,16 +71,12 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     scaledSize.scale(m_webPage.deviceScaleFactor());
     float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();
 
-    if (m_surface) {
-        TextureMapper::PaintFlags paintFlags = 0;
+    TextureMapper::PaintFlags paintFlags = 0;
+    if (m_surface->shouldPaintMirrored())
+        paintFlags |= TextureMapper::PaintingMirrored;
 
-        if (m_surface->shouldPaintMirrored())
-            paintFlags |= TextureMapper::PaintingMirrored;
-
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_webPage.corePage()->chrome().displayID(), scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
-        m_layerTreeContext.contextID = m_surface->surfaceID();
-    } else
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_webPage.corePage()->chrome().displayID(), scaledSize, scaleFactor);
+    m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_webPage.corePage()->chrome().displayID(), scaledSize, scaleFactor, paintFlags);
+    m_layerTreeContext.contextID = m_surface->surfaceID();
 
     didChangeViewport();
 }
@@ -226,7 +222,7 @@ void LayerTreeHost::sizeDidChange(const IntSize& size)
         return;
     }
 
-    if (m_surface && m_surface->hostResize(size))
+    if (m_surface->hostResize(size))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
     m_coordinator.sizeDidChange(size);
@@ -335,15 +331,6 @@ void LayerTreeHost::setIsDiscardable(bool discardable)
         didChangeViewport();
 }
 
-#if PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-void LayerTreeHost::setNativeSurfaceHandleForCompositing(uint64_t handle)
-{
-    m_layerTreeContext.contextID = handle;
-    m_compositor->setNativeSurfaceHandleForCompositing(handle);
-    scheduleLayerFlush();
-}
-#endif
-
 void LayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     if (m_isDiscardable) {
@@ -351,7 +338,7 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
         return;
     }
 
-    if (m_surface && m_surface->hostResize(m_webPage.size()))
+    if (m_surface->hostResize(m_webPage.size()))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
     m_coordinator.deviceOrPageScaleFactorChanged();
@@ -386,29 +373,23 @@ void LayerTreeHost::frameComplete()
 
 uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()
 {
-    if (!m_surface)
-        return m_layerTreeContext.contextID;
-
     m_surface->initialize();
     return m_surface->window();
 }
 
 void LayerTreeHost::didDestroyGLContext()
 {
-    if (m_surface)
-        m_surface->finalize();
+    m_surface->finalize();
 }
 
 void LayerTreeHost::willRenderFrame()
 {
-    if (m_surface)
-        m_surface->willRenderFrame();
+    m_surface->willRenderFrame();
 }
 
 void LayerTreeHost::didRenderFrame()
 {
-    if (m_surface)
-        m_surface->didRenderFrame();
+    m_surface->didRenderFrame();
 }
 
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()

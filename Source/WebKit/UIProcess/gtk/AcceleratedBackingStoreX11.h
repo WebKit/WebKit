@@ -27,7 +27,7 @@
 
 #include "AcceleratedBackingStore.h"
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/XUniqueResource.h>
@@ -43,7 +43,7 @@ public:
     ~AcceleratedBackingStoreX11();
 
 private:
-    AcceleratedBackingStoreX11(WebPageProxy&);
+    explicit AcceleratedBackingStoreX11(WebPageProxy&);
 
     void update(const LayerTreeContext&) override;
     bool paint(cairo_t*, const WebCore::IntRect&) override;
@@ -54,4 +54,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#endif // PLATFORM(X11)

@@ -29,7 +29,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
 #endif
 
@@ -65,7 +65,7 @@ HardwareAccelerationManager::HardwareAccelerationManager()
         return;
     }
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
         auto& display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay());
         Optional<int> damageBase, errorBase;

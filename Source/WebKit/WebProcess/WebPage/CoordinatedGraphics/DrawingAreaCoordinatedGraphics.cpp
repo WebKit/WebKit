@@ -333,23 +333,6 @@ RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefre
 }
 #endif
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-void DrawingAreaCoordinatedGraphics::setNativeSurfaceHandleForCompositing(uint64_t handle)
-{
-    m_nativeSurfaceHandleForCompositing = handle;
-    if (m_layerTreeHost) {
-        m_webPage.corePage()->settings().setAcceleratedCompositingEnabled(true);
-        m_layerTreeHost->setNativeSurfaceHandleForCompositing(handle);
-    }
-}
-
-void DrawingAreaCoordinatedGraphics::destroyNativeSurfaceHandleForCompositing(bool& handled)
-{
-    handled = true;
-    setNativeSurfaceHandleForCompositing(0);
-}
-#endif
-
 void DrawingAreaCoordinatedGraphics::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&)
 {
     if (changed & ActivityState::IsVisible) {
@@ -567,10 +550,6 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
             m_layerTreeHost->pauseRendering();
     }
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (m_nativeSurfaceHandleForCompositing)
-        m_layerTreeHost->setNativeSurfaceHandleForCompositing(m_nativeSurfaceHandleForCompositing);
-#endif
     if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 

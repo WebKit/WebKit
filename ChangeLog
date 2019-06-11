@@ -1,3 +1,12 @@
+2019-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove option REDIRECTED_XCOMPOSITE_WINDOW
+        https://bugs.webkit.org/show_bug.cgi?id=198748
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsGTK.cmake: Remove USE_REDIRECTED_XCOMPOSITE_WINDOW build option.
+
 2019-06-10  Sam Weinig  <weinig@apple.com>
 
         Remove Dashboard support

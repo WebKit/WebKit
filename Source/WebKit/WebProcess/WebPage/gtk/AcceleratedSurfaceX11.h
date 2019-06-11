@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 
 #include "AcceleratedSurface.h"
 #include <WebCore/XUniqueResource.h>
@@ -64,4 +64,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#endif // PLATFORM(X11)

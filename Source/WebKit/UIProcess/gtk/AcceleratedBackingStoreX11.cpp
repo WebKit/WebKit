@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AcceleratedBackingStoreX11.h"
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "LayerTreeContext.h"
@@ -202,4 +202,4 @@ bool AcceleratedBackingStoreX11::paint(cairo_t* cr, const IntRect& clipRect)
 
 } // namespace WebKit
 
-#endif // USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#endif // PLATFORM(X11)

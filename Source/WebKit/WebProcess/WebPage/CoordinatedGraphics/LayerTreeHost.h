@@ -87,10 +87,6 @@ public:
 
     void setIsDiscardable(bool);
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
-    void setNativeSurfaceHandleForCompositing(uint64_t);
-#endif
-
     void deviceOrPageScaleFactorChanged();
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

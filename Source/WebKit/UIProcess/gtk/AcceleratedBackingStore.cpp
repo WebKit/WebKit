@@ -34,7 +34,7 @@
 #include "AcceleratedBackingStoreWayland.h"
 #endif
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 #include "AcceleratedBackingStoreX11.h"
 #endif
 
@@ -47,10 +47,11 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return AcceleratedBackingStoreWayland::create(webPage);
 #endif
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
         return AcceleratedBackingStoreX11::create(webPage);
 #endif
+    RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 

@@ -1,3 +1,67 @@
+2019-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove option REDIRECTED_XCOMPOSITE_WINDOW
+        https://bugs.webkit.org/show_bug.cgi?id=198748
+
+        Reviewed by Žan Doberšek.
+
+        It's unused and untested, we kept that code path only because the redirected window caused performance issues in
+        some drivers in embedded devices. Nowadays there are much better solutions for those cases like using WPE port
+        or GTK port under wayland instead of X11.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): Remove the ShouldDoFrameSync parameter since it always receives Yes.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Ditto.
+        (WebKit::ThreadedCompositor::createGLContext): Remove the code to handle the case of ShouldDoFrameSync being No,
+        since it's always Yes.
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Remove the code for !USE(REDIRECTED_XCOMPOSITE_WINDOW).
+        (webkitWebViewBaseUnrealize): Ditto.
+        (webkitWebViewBaseDraw): acceleratedBackingStore member can't be nullptr now.
+        (webkitWebViewBaseEnterAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseUpdateAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseExitAcceleratedCompositingMode): Ditto.
+        (webkitWebViewBaseMakeGLContextCurrent): Ditto.
+        (webkitWebViewBaseDidRelaunchWebProcess): Remove the code for !USE(REDIRECTED_XCOMPOSITE_WINDOW).
+        (webkitWebViewBasePageClosed): Ditto.
+        (webkitWebViewBaseRenderHostFileDescriptor): acceleratedBackingStore member can't be nullptr now.
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState): Remove the code for !USE(REDIRECTED_XCOMPOSITE_WINDOW).
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::setNativeSurfaceHandleForCompositing): Deleted.
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::destroyNativeSurfaceHandleForCompositing): Deleted.
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h:
+        * UIProcess/gtk/AcceleratedBackingStore.cpp:
+        (WebKit::AcceleratedBackingStore::create): Add an assert to ensure we create an AcceleratedBackingStore.
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        * UIProcess/gtk/AcceleratedBackingStoreX11.h:
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager): Remove the code for !USE(REDIRECTED_XCOMPOSITE_WINDOW).
+        * WebProcess/WebPage/AcceleratedSurface.cpp:
+        (WebKit::AcceleratedSurface::create): Add an assert to ensure we create an AcceleratedSurface.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode): Remove the code for !USE(REDIRECTED_XCOMPOSITE_WINDOW).
+        (WebKit::DrawingAreaCoordinatedGraphics::setNativeSurfaceHandleForCompositing): Deleted.
+        (WebKit::DrawingAreaCoordinatedGraphics::destroyNativeSurfaceHandleForCompositing): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::LayerTreeHost): m_surface can't be nullptr now.
+        (WebKit::LayerTreeHost::sizeDidChange): Ditto.
+        (WebKit::LayerTreeHost::deviceOrPageScaleFactorChanged): Ditto.
+        (WebKit::LayerTreeHost::nativeSurfaceHandleForCompositing): Ditto.
+        (WebKit::LayerTreeHost::didDestroyGLContext): Ditto.
+        (WebKit::LayerTreeHost::willRenderFrame): Ditto.
+        (WebKit::LayerTreeHost::didRenderFrame): Ditto.
+        (WebKit::LayerTreeHost::setNativeSurfaceHandleForCompositing): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::nativeWindowHandle): Deleted.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.h:
+
 2019-06-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] bubblewrap sandbox should grant access to web extensions directory

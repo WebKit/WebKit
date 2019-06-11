@@ -45,14 +45,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, doFrameSync, paintFlags));
+    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, paintFlags));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
-    , m_doFrameSync(doFrameSync)
     , m_paintFlags(paintFlags)
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
@@ -88,14 +87,8 @@ void ThreadedCompositor::createGLContext()
     ASSERT(m_nativeSurfaceHandle);
 
     m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle), &PlatformDisplay::sharedDisplayForCompositing());
-    if (!m_context)
-        return;
-
-    if (!m_context->makeContextCurrent())
-        return;
-
-    if (m_doFrameSync == ShouldDoFrameSync::No)
-        m_context->swapInterval(0);
+    if (m_context)
+        m_context->makeContextCurrent();
 }
 
 void ThreadedCompositor::invalidate()
@@ -137,22 +130,6 @@ void ThreadedCompositor::resume()
         m_scene->setActive(true);
     });
     m_compositingRunLoop->resume();
-}
-
-void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
-{
-    m_compositingRunLoop->stopUpdates();
-    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), handle] {
-        // A new native handle can't be set without destroying the previous one first if any.
-        ASSERT(!!handle ^ !!m_nativeSurfaceHandle);
-        m_nativeSurfaceHandle = handle;
-
-        m_scene->setActive(!!m_nativeSurfaceHandle);
-        if (m_nativeSurfaceHandle)
-            createGLContext();
-        else
-            m_context = nullptr;
-    });
 }
 
 void ThreadedCompositor::setScaleFactor(float scale)

@@ -33,7 +33,7 @@
 #include "AcceleratedSurfaceWayland.h"
 #endif
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
 #include "AcceleratedSurfaceX11.h"
 #endif
 
@@ -54,7 +54,7 @@ std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage,
         return AcceleratedSurfaceWayland::create(webPage, client);
 #endif
 #endif
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
         return AcceleratedSurfaceX11::create(webPage, client);
 #endif
@@ -62,6 +62,7 @@ std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage,
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::WPE)
         return AcceleratedSurfaceLibWPE::create(webPage, client);
 #endif
+    RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 

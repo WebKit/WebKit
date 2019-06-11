@@ -49,11 +49,6 @@ public:
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    void setNativeSurfaceHandleForCompositing(uint64_t);
-    void destroyNativeSurfaceHandleForCompositing();
-#endif
-
 private:
     // DrawingAreaProxy
     void sizeDidChange() override;
@@ -129,10 +124,6 @@ private:
 
     // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
     bool m_hasReceivedFirstUpdate { false };
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    uint64_t m_pendingNativeSurfaceHandleForCompositing { 0 };
-#endif
 
 #if !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };

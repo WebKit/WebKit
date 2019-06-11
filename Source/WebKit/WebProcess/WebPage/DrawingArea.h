@@ -162,14 +162,9 @@ protected:
     DrawingAreaIdentifier m_identifier;
     WebPage& m_webPage;
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    uint64_t m_nativeSurfaceHandleForCompositing { 0 };
-#endif
-
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Message handlers.
     // FIXME: These should be pure virtual.
@@ -186,11 +181,6 @@ private:
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
 
     virtual void addTransactionCallbackID(WebKit::CallbackID) { ASSERT_NOT_REACHED(); }
-#endif
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
-    virtual void destroyNativeSurfaceHandleForCompositing(bool&) = 0;
 #endif
 
     bool m_hasRemovedMessageReceiver { false };

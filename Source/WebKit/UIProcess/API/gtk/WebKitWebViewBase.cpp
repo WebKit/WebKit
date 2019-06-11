@@ -425,25 +425,12 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
-        if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
-            drawingArea->setNativeSurfaceHandleForCompositing(GDK_WINDOW_XID(window));
-    }
-#endif
-
     gtk_im_context_set_client_window(priv->inputMethodFilter.context(), window);
 }
 
 static void webkitWebViewBaseUnrealize(GtkWidget* widget)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
-        if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webView->priv->pageProxy->drawingArea()))
-            drawingArea->destroyNativeSurfaceHandleForCompositing();
-    }
-#endif
     gtk_im_context_set_client_window(webView->priv->inputMethodFilter.context(), nullptr);
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unrealize(widget);
@@ -602,7 +589,7 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (showingNavigationSnapshot)
         cairo_push_group(cr);
 
-    if (webViewBase->priv->acceleratedBackingStore && drawingArea->isInAcceleratedCompositingMode())
+    if (drawingArea->isInAcceleratedCompositingMode())
         webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
     else {
         WebCore::Region unpaintedRegion; // This is simply unused.
@@ -1658,27 +1645,22 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
 {
-    if (webkitWebViewBase->priv->acceleratedBackingStore)
-        webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
+    webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
 }
 
 void webkitWebViewBaseUpdateAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
 {
-    if (webkitWebViewBase->priv->acceleratedBackingStore)
-        webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
+    webkitWebViewBase->priv->acceleratedBackingStore->update(layerTreeContext);
 }
 
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->acceleratedBackingStore)
-        webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
+    webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
 }
 
 bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->acceleratedBackingStore)
-        return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
-    return false;
+    return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
 }
 
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
@@ -1687,43 +1669,13 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-
-#if PLATFORM(X11) && USE(TEXTURE_MAPPER_GL) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
-        return;
-
-    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
-    ASSERT(drawingArea);
-
-    if (!gtk_widget_get_realized(GTK_WIDGET(webkitWebViewBase)))
-        return;
-
-    uint64_t windowID = GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(webkitWebViewBase)));
-    drawingArea->setNativeSurfaceHandleForCompositing(windowID);
-#else
-    UNUSED_PARAM(webkitWebViewBase);
-#endif
-
     priv->viewGestureController = std::make_unique<WebKit::ViewGestureController>(*priv->pageProxy);
     priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
 }
 
 void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->acceleratedBackingStore)
-        webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
-#if PLATFORM(X11) && USE(TEXTURE_MAPPER_GL) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
-        return;
-
-    if (!gtk_widget_get_realized(GTK_WIDGET(webkitWebViewBase)))
-        return;
-
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
-    ASSERT(drawingArea);
-    drawingArea->destroyNativeSurfaceHandleForCompositing();
-#endif
+    webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
 }
 
 RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase* webkitWebViewBase)
@@ -1832,8 +1784,6 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, con
 #if USE(WPE_RENDERER)
 int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase* webkitWebViewBase)
 {
-    if (webkitWebViewBase->priv->acceleratedBackingStore)
-        return webkitWebViewBase->priv->acceleratedBackingStore->renderHostFileDescriptor();
-    return -1;
+    return webkitWebViewBase->priv->acceleratedBackingStore->renderHostFileDescriptor();
 }
 #endif

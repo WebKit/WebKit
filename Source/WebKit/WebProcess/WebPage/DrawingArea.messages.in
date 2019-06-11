@@ -39,9 +39,4 @@ messages -> DrawingArea {
     
     AddTransactionCallbackID(WebKit::CallbackID callbackID)
 #endif
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    SetNativeSurfaceHandleForCompositing(uint64_t handle)
-    DestroyNativeSurfaceHandleForCompositing() -> (bool handled)
-#endif
 }
