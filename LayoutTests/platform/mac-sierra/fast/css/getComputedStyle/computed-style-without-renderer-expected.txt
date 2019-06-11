@@ -1,4 +1,8 @@
 Computed style of an element whose parent's 'display' value is 'none':
+align-content: normal
+align-items: normal
+align-self: auto
+alignment-baseline: auto
 background-attachment: scroll
 background-clip: border-box
 background-color: rgb(0, 128, 0)
@@ -7,6 +11,7 @@ background-origin: padding-box
 background-position: 0% 0%
 background-repeat: repeat
 background-size: auto
+baseline-shift: baseline
 border-bottom-color: rgb(0, 0, 0)
 border-bottom-left-radius: 0px
 border-bottom-right-radius: 0px
@@ -32,28 +37,77 @@ border-top-width: 16px
 bottom: auto
 box-shadow: none
 box-sizing: content-box
+buffered-rendering: auto
 caption-side: top
 clear: none
 clip: auto
+clip-path: none
+clip-rule: nonzero
 color: rgb(0, 0, 0)
+color-interpolation: sRGB
+color-interpolation-filters: linearRGB
+color-rendering: auto
+column-count: auto
+column-fill: balance
+column-gap: normal
+column-rule-color: rgb(0, 0, 0)
+column-rule-style: none
+column-rule-width: 0px
+column-span: none
+column-width: auto
+content: 
 counter-increment: none
 counter-reset: none
-content: 
 cursor: auto
 direction: ltr
 display: block
+dominant-baseline: auto
 empty-cells: show
+fill: rgb(0, 0, 0)
+fill-opacity: 1
+fill-rule: nonzero
+filter: none
+flex-basis: auto
+flex-direction: row
+flex-flow: row nowrap
+flex-grow: 0
+flex-shrink: 1
+flex-wrap: nowrap
 float: none
+flood-color: rgb(0, 0, 0)
+flood-opacity: 1
 font-size: 16px
 font-style: normal
 font-synthesis: style weight small-caps
 font-variant: normal
+font-variant-alternates: normal
+font-variant-caps: normal
+font-variant-east-asian: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-position: normal
 font-weight: normal
+glyph-orientation-horizontal: 0deg
+glyph-orientation-vertical: auto
+grid-auto-columns: auto
+grid-auto-flow: row
+grid-auto-rows: auto
+grid-column-end: auto
+grid-column-start: auto
+grid-row-end: auto
+grid-row-start: auto
+grid-template-columns: none
+grid-template-rows: none
 hanging-punctuation: none
 height: 100px
 image-rendering: auto
+justify-content: normal
+justify-items: normal
+justify-self: auto
+kerning: 0
 left: auto
 letter-spacing: normal
+lighting-color: rgb(255, 255, 255)
 line-height: 18px
 list-style-image: none
 list-style-position: outside
@@ -62,6 +116,11 @@ margin-bottom: 0px
 margin-left: auto
 margin-right: 0px
 margin-top: 0px
+marker-end: none
+marker-mid: none
+marker-start: none
+mask: none
+mask-type: luminance
 max-height: none
 max-width: none
 min-height: 0px
@@ -69,6 +128,7 @@ min-width: 0px
 object-fit: fill
 object-position: 50% 50%
 opacity: 1
+order: 0
 orphans: auto
 outline-color: rgb(0, 0, 0)
 outline-offset: 0px
@@ -84,18 +144,36 @@ padding-top: 0px
 page-break-after: auto
 page-break-before: auto
 page-break-inside: auto
+paint-order: normal
+perspective: none
+perspective-origin: 50% 50%
 pointer-events: auto
 position: static
 resize: none
 right: auto
-table-layout: auto
+shape-image-threshold: 0
+shape-margin: 0px
+shape-outside: none
+shape-rendering: auto
+stop-color: rgb(0, 0, 0)
+stop-opacity: 1
+stroke: none
+stroke-dasharray: none
+stroke-dashoffset: 0px
+stroke-linecap: butt
+stroke-linejoin: miter
+stroke-miterlimit: 4
+stroke-opacity: 1
+stroke-width: 1px
 tab-size: 8
+table-layout: auto
 text-align: start
+text-anchor: start
 text-decoration: none
 text-indent: 0px
+text-overflow: clip
 text-rendering: auto
 text-shadow: none
-text-overflow: clip
 text-transform: none
 top: auto
 transform: none
@@ -106,6 +184,7 @@ transition-duration: 0s
 transition-property: all
 transition-timing-function: ease
 unicode-bidi: normal
+vector-effect: none
 vertical-align: baseline
 visibility: visible
 white-space: normal
@@ -115,6 +194,7 @@ will-change: auto
 word-break: normal
 word-spacing: 0px
 word-wrap: normal
+writing-mode: horizontal-tb
 z-index: auto
 zoom: 1
 -webkit-appearance: none
@@ -138,48 +218,12 @@ zoom: 1
 -webkit-box-pack: start
 -webkit-box-reflect: none
 -webkit-box-shadow: none
+-webkit-column-axis: auto
 -webkit-column-break-after: auto
 -webkit-column-break-before: auto
 -webkit-column-break-inside: auto
--webkit-column-axis: auto
-column-count: auto
-column-fill: balance
-column-gap: normal
-column-rule-color: rgb(0, 0, 0)
-column-rule-style: none
-column-rule-width: 0px
-column-span: none
-column-width: auto
-align-content: normal
-align-items: normal
-align-self: auto
-filter: none
-flex-basis: auto
-flex-direction: row
-flex-flow: row nowrap
-flex-grow: 0
-flex-shrink: 1
-flex-wrap: nowrap
-justify-content: normal
-justify-self: auto
-justify-items: normal
 -webkit-font-kerning: auto
 -webkit-font-smoothing: auto
-font-variant-ligatures: normal
-font-variant-position: normal
-font-variant-caps: normal
-font-variant-numeric: normal
-font-variant-alternates: normal
-font-variant-east-asian: normal
-grid-auto-columns: auto
-grid-auto-flow: row
-grid-auto-rows: auto
-grid-column-end: auto
-grid-column-start: auto
-grid-template-columns: none
-grid-template-rows: none
-grid-row-end: auto
-grid-row-start: auto
 -webkit-hyphenate-character: auto
 -webkit-hyphenate-limit-after: auto
 -webkit-hyphenate-limit-before: auto
@@ -191,8 +235,8 @@ grid-row-start: auto
 -webkit-line-grid: none
 -webkit-line-snap: none
 -webkit-locale: auto
--webkit-margin-before-collapse: collapse
 -webkit-margin-after-collapse: collapse
+-webkit-margin-before-collapse: collapse
 -webkit-marquee-direction: auto
 -webkit-marquee-increment: 6px
 -webkit-marquee-repetition: infinite
@@ -211,9 +255,6 @@ grid-row-start: auto
 -webkit-mask-repeat: repeat
 -webkit-mask-size: auto
 -webkit-nbsp-mode: normal
-order: 0
-perspective: none
-perspective-origin: 50% 50%
 -webkit-print-color-adjust: economy
 -webkit-rtl-ordering: logical
 -webkit-text-combine: none
@@ -230,47 +271,6 @@ perspective-origin: 50% 50%
 -webkit-user-drag: auto
 -webkit-user-modify: read-only
 -webkit-user-select: text
-shape-image-threshold: 0
-shape-margin: 0px
-shape-outside: none
-shape-rendering: auto
-buffered-rendering: auto
-clip-path: none
-clip-rule: nonzero
-mask: none
-mask-type: luminance
-flood-color: rgb(0, 0, 0)
-flood-opacity: 1
-lighting-color: rgb(255, 255, 255)
-stop-color: rgb(0, 0, 0)
-stop-opacity: 1
-color-interpolation: sRGB
-color-interpolation-filters: linearRGB
-color-rendering: auto
-fill: rgb(0, 0, 0)
-fill-opacity: 1
-fill-rule: nonzero
-marker-end: none
-marker-mid: none
-marker-start: none
-paint-order: normal
-stroke: none
-stroke-dasharray: none
-stroke-dashoffset: 0px
-stroke-linecap: butt
-stroke-linejoin: miter
-stroke-miterlimit: 4
-stroke-opacity: 1
-stroke-width: 1px
-alignment-baseline: auto
-baseline-shift: baseline
-dominant-baseline: auto
-kerning: 0
-text-anchor: start
-writing-mode: horizontal-tb
-glyph-orientation-horizontal: 0deg
-glyph-orientation-vertical: auto
-vector-effect: none
 background-position-x: 0%
 background-position-y: 0%
 border-spacing: 0px 0px

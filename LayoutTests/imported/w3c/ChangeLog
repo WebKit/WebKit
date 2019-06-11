@@ -1,3 +1,12 @@
+2019-06-11  Devin Rousso  <drousso@apple.com>
+
+        Sort the computed styles list
+        https://bugs.webkit.org/show_bug.cgi?id=198743
+
+        Reviewed by Simon Fraser
+
+        * web-platform-tests/infrastructure/assumptions/html-elements-expected.txt:
+
 2019-06-11  Daniel Bates  <dabates@apple.com>
 
         Import Content Security Policy Web Platform Tests

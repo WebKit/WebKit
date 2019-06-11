@@ -6,11 +6,11 @@ font-stretch: normal;
 font-style: normal;
 font-synthesis: style weight small-caps;
 font-variant: normal;
-font-weight: normal;
-font-variant-ligatures: normal;
-font-variant-position: normal;
-font-variant-caps: normal;
-font-variant-numeric: normal;
 font-variant-alternates: normal;
+font-variant-caps: normal;
 font-variant-east-asian: normal;
+font-variant-ligatures: normal;
+font-variant-numeric: normal;
+font-variant-position: normal;
+font-weight: normal;
 
