@@ -2257,7 +2257,6 @@ webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-ori
 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Skip ] # Timeout
 http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Skip ] # Timeout
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Skip ] # Timeout
-http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ] # Timeout
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip ] # Timeout
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html [ Skip ] # Timeout
 http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Skip ] # Timeout
@@ -2279,6 +2278,10 @@ http/tests/history/replacestate-post-to-get-2.html [ Skip ] # Timeout
 http/tests/workers/text-encoding.html [ Skip ] # Timeout
 http/tests/security/cross-frame-access-protocol-explicit-domain.html [ Skip ] # Timeout
 http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
+
+# FIXME: Navigating to blob URLs timeout
+http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ]
+http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html [ Skip ]
 
 # Clear Key not implemented
 http/tests/media/clearkey/clear-key-hls-aes128.html [ Skip ] # Timeout
