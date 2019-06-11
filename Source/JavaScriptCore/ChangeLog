@@ -1,3 +1,16 @@
+2019-06-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Remove build warning from RemoteInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=198724
+
+        Reviewed by Joseph Pecoraro.
+
+        In `RemoteInspectorConnectionClient.h`, an interface was defined with empty implementation.
+        This method is to be overwritten by sub classes so that parameter name is important
+        so they are commented out rather than just removing from the definition.
+
+        * inspector/remote/RemoteInspector.h:
+
 2019-06-10  Sam Weinig  <weinig@apple.com>
 
         Remove Dashboard support
