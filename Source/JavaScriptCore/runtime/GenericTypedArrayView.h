@@ -58,7 +58,8 @@ public:
         return setRangeImpl(
             reinterpret_cast<const char*>(data),
             count * sizeof(typename Adaptor::Type),
-            offset * sizeof(typename Adaptor::Type));
+            offset * sizeof(typename Adaptor::Type),
+            internalByteLength());
     }
     
     bool zeroRange(unsigned offset, size_t count)
@@ -72,7 +73,12 @@ public:
     {
         if (isNeutered())
             return 0;
-        return byteLength() / sizeof(typename Adaptor::Type);
+        return m_length;
+    }
+    
+    unsigned byteLength() const override
+    {
+        return internalByteLength();
     }
 
     typename Adaptor::Type item(unsigned index) const
@@ -98,7 +104,8 @@ public:
         return getRangeImpl(
             reinterpret_cast<char*>(data),
             count * sizeof(typename Adaptor::Type),
-            offset * sizeof(typename Adaptor::Type));
+            offset * sizeof(typename Adaptor::Type),
+            internalByteLength());
     }
 
     bool checkInboundData(unsigned offset, size_t count) const
@@ -119,6 +126,14 @@ public:
     }
 
     JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) override;
+
+private:
+    unsigned internalByteLength() const
+    {
+        return length() * sizeof(typename Adaptor::Type);
+    }
+
+    unsigned m_length;
 };
 
 } // namespace JSC

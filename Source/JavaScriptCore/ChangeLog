@@ -1,3 +1,177 @@
+2019-06-11  Saam Barati  <sbarati@apple.com>
+
+        Roll out PAC cage
+        https://bugs.webkit.org/show_bug.cgi?id=198726
+
+        Reviewed by Keith Miller.
+
+        This patch rolls out: r245064, r245145, r245168, r245313, r245432, r245622.
+        
+        The resulting state we're in is we have Gigacage enabled on arm64.
+        There is no more PAC caging.
+
+        We're doing this because there are performance issues with PAC caging
+        that we haven't resolved yet.
+
+        * assembler/CPU.h:
+        (JSC::isARM64E): Deleted.
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::tagArrayPtr): Deleted.
+        (JSC::MacroAssemblerARM64E::untagArrayPtr): Deleted.
+        (JSC::MacroAssemblerARM64E::removeArrayPtrTag): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::addUsedRegistersTo const):
+        (JSC::B3::ValueRep::dump const):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep):
+        (JSC::B3::ValueRep::isReg const):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithSize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewGet):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewSet):
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered):
+        (JSC::FTL::DFG::LowerDFGToB3::untagArrayPtr): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::removeArrayPtrTag): Deleted.
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageConditionally):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::clearCallLinkInfo):
+        * jit/RegisterSet.h:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayBuffer.cpp:
+        (JSC::SharedArrayBufferContents::SharedArrayBufferContents):
+        (JSC::SharedArrayBufferContents::~SharedArrayBufferContents):
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::destroy):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::makeShared):
+        (JSC::ArrayBufferContents::copyTo):
+        * runtime/ArrayBuffer.h:
+        (JSC::SharedArrayBufferContents::data const):
+        (JSC::ArrayBufferContents::data const):
+        (JSC::ArrayBuffer::data):
+        (JSC::ArrayBuffer::data const):
+        (JSC::ArrayBuffer::byteLength const):
+        * runtime/ArrayBufferView.cpp:
+        (JSC::ArrayBufferView::ArrayBufferView):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::baseAddress const):
+        (JSC::ArrayBufferView::setRangeImpl):
+        (JSC::ArrayBufferView::getRangeImpl):
+        (JSC::ArrayBufferView::byteLength const): Deleted.
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedScopedArgumentsTable::encode):
+        (JSC::CachedScopedArgumentsTable::decode const):
+        * runtime/CagedBarrierPtr.h:
+        (JSC::CagedBarrierPtr::CagedBarrierPtr):
+        (JSC::CagedBarrierPtr::set):
+        (JSC::CagedBarrierPtr::get const):
+        (JSC::CagedBarrierPtr::getMayBeNull const):
+        (JSC::CagedBarrierPtr::operator== const):
+        (JSC::CagedBarrierPtr::operator!= const):
+        (JSC::CagedBarrierPtr::operator bool const):
+        (JSC::CagedBarrierPtr::setWithoutBarrier):
+        (JSC::CagedBarrierPtr::operator* const):
+        (JSC::CagedBarrierPtr::operator-> const):
+        (JSC::CagedBarrierPtr::operator[] const):
+        (JSC::CagedBarrierPtr::getUnsafe const): Deleted.
+        (JSC::CagedBarrierPtr::at const): Deleted.
+        * runtime/DataView.cpp:
+        (JSC::DataView::DataView):
+        * runtime/DataView.h:
+        (JSC::DataView::get):
+        (JSC::DataView::set):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::unmapArgument):
+        * runtime/DirectArguments.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::visitChildren):
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        (JSC::GenericArguments<Type>::setModifiedArgumentDescriptor):
+        (JSC::GenericArguments<Type>::isModifiedArgumentDescriptor):
+        * runtime/GenericTypedArrayView.h:
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::GenericTypedArrayView):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        (JSC::JSArrayBufferView::finalize):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::ConstructionContext::vector const):
+        (JSC::JSArrayBufferView::isNeutered):
+        (JSC::JSArrayBufferView::vector const):
+        (JSC::JSArrayBufferView::hasVector const): Deleted.
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::createUninitialized):
+        (JSC::JSGenericTypedArrayView<Adaptor>::estimatedSize):
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/Options.h:
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::clone):
+        (JSC::ScopedArgumentsTable::setLength):
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/SymbolTable.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::cachedMemory const):
+        (JSC::Wasm::Instance::updateCachedMemory):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::dump const):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::memory const):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-06-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Remove build warning from RemoteInspector.

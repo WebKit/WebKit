@@ -253,11 +253,10 @@ Memory::Memory(PageCount initial, PageCount maximum, Function<void(NotifyPressur
     ASSERT(!initial.bytes());
     ASSERT(m_mode == MemoryMode::BoundsChecking);
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
-    ASSERT(!memory());
 }
 
 Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode mode, Function<void(NotifyPressure)>&& notifyMemoryPressure, Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
-    : m_memory(memory, initial.bytes())
+    : m_memory(memory)
     , m_size(initial.bytes())
     , m_initial(initial)
     , m_maximum(maximum)
@@ -339,14 +338,14 @@ Memory::~Memory()
         memoryManager().freePhysicalBytes(m_size);
         switch (m_mode) {
         case MemoryMode::Signaling:
-            if (mprotect(memory(), Memory::fastMappedBytes(), PROT_READ | PROT_WRITE)) {
+            if (mprotect(m_memory, Memory::fastMappedBytes(), PROT_READ | PROT_WRITE)) {
                 dataLog("mprotect failed: ", strerror(errno), "\n");
                 RELEASE_ASSERT_NOT_REACHED();
             }
-            memoryManager().freeFastMemory(memory());
+            memoryManager().freeFastMemory(m_memory);
             break;
         case MemoryMode::BoundsChecking:
-            Gigacage::freeVirtualPages(Gigacage::Primitive, memory(), m_size);
+            Gigacage::freeVirtualPages(Gigacage::Primitive, m_memory, m_size);
             break;
         }
     }
@@ -420,26 +419,24 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
         if (!newMemory)
             return makeUnexpected(GrowFailReason::OutOfMemory);
 
-        memcpy(newMemory, memory(), m_size);
+        memcpy(newMemory, m_memory, m_size);
         if (m_memory)
-            Gigacage::freeVirtualPages(Gigacage::Primitive, memory(), m_size);
-        m_memory = CagedMemory(newMemory, desiredSize);
+            Gigacage::freeVirtualPages(Gigacage::Primitive, m_memory, m_size);
+        m_memory = newMemory;
         m_mappedCapacity = desiredSize;
         m_size = desiredSize;
-        ASSERT(memory() == newMemory);
         return success();
     }
     case MemoryMode::Signaling: {
-        RELEASE_ASSERT(memory());
+        RELEASE_ASSERT(m_memory);
         // Signaling memory must have been pre-allocated virtually.
-        uint8_t* startAddress = static_cast<uint8_t*>(memory()) + m_size;
+        uint8_t* startAddress = static_cast<uint8_t*>(m_memory) + m_size;
         
-        dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory()), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
+        dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(m_memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         if (mprotect(startAddress, extraBytes, PROT_READ | PROT_WRITE)) {
             dataLog("mprotect failed: ", strerror(errno), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
-        m_memory.recage(m_size, desiredSize);
         m_size = desiredSize;
         return success();
     }
@@ -463,7 +460,7 @@ void Memory::registerInstance(Instance* instance)
 
 void Memory::dump(PrintStream& out) const
 {
-    out.print("Memory at ", RawPointer(memory()), ", size ", m_size, "B capacity ", m_mappedCapacity, "B, initial ", m_initial, " maximum ", m_maximum, " mode ", makeString(m_mode));
+    out.print("Memory at ", RawPointer(m_memory), ", size ", m_size, "B capacity ", m_mappedCapacity, "B, initial ", m_initial, " maximum ", m_maximum, " mode ", makeString(m_mode));
 }
 
 } // namespace JSC

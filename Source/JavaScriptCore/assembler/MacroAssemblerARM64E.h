@@ -82,28 +82,6 @@ public:
         m_assembler.xpaci(target);
     }
 
-    ALWAYS_INLINE void tagArrayPtr(RegisterID length, RegisterID target)
-    {
-        m_assembler.pacdb(target, length);
-    }
-
-    ALWAYS_INLINE void untagArrayPtr(RegisterID length, RegisterID target)
-    {
-        m_assembler.autdb(target, length);
-    }
-
-    ALWAYS_INLINE void untagArrayPtr(Address length, RegisterID target)
-    {
-        auto lengthGPR = getCachedDataTempRegisterIDAndInvalidate();
-        load32(length, lengthGPR);
-        m_assembler.autdb(target, lengthGPR);
-    }
-
-    ALWAYS_INLINE void removeArrayPtrTag(RegisterID target)
-    {
-        m_assembler.xpacd(target);
-    }
-
     static const RegisterID InvalidGPR  = static_cast<RegisterID>(-1);
 
     enum class CallSignatureType {

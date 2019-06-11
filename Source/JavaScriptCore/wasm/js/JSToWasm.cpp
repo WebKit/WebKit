@@ -29,7 +29,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
-#include "DisallowMacroScratchRegisterUsage.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
@@ -212,23 +211,15 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
 
     if (!!info.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-        GPRReg scratchOrSize = wasmCallingConventionAir().prologueScratch(0);
 
         if (Context::useFastTLS())
             jit.loadWasmContextInstance(baseMemory);
 
         GPRReg currentInstanceGPR = Context::useFastTLS() ? baseMemory : wasmContextInstanceGPR;
-        if (isARM64E()) {
-            if (mode != Wasm::MemoryMode::Signaling)
-                scratchOrSize = pinnedRegs.sizeRegister;
-            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemorySize()), scratchOrSize);
-        } else {
-            if (mode != Wasm::MemoryMode::Signaling)
-                jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
-        }
+        if (mode != MemoryMode::Signaling)
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
 
         jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
     }
 
     CCallHelpers::Call call = jit.threadSafePatchableNearCall();

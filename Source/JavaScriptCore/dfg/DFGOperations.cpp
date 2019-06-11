@@ -198,7 +198,7 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size,
     }
     
     if (vector)
-        return bitwise_cast<char*>(ViewClass::createWithFastVector(exec, structure, size, untagArrayPtr(vector, size)));
+        return bitwise_cast<char*>(ViewClass::createWithFastVector(exec, structure, size, vector));
 
     RELEASE_AND_RETURN(scope, bitwise_cast<char*>(ViewClass::create(exec, structure, size)));
 }

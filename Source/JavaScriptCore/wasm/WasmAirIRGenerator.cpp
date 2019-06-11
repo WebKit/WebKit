@@ -836,8 +836,6 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
         RegisterSet clobbers;
         clobbers.set(pinnedRegs->baseMemoryPointer);
         clobbers.set(pinnedRegs->sizeRegister);
-        if (!isARM64())
-            clobbers.set(RegisterSet::macroScratchRegisters());
 
         auto* patchpoint = addPatchpoint(B3::Void);
         B3::Effects effects = B3::Effects::none();
@@ -845,18 +843,10 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
         effects.reads = B3::HeapRange::top();
         patchpoint->effects = effects;
         patchpoint->clobber(clobbers);
-        patchpoint->numGPScratchRegisters = Gigacage::isEnabled(Gigacage::Primitive) ? 1 : 0;
 
         patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            RELEASE_ASSERT(!Gigacage::isEnabled(Gigacage::Primitive) || !isARM64());
-            AllowMacroScratchRegisterUsageIf allowScratch(jit, !isARM64());
-            GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
-            GPRReg scratchOrSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs->sizeRegister;
-
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemorySize()), pinnedRegs->sizeRegister);
-            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), baseMemory);
-
-            jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
+            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), pinnedRegs->baseMemoryPointer);
         });
 
         emitPatchpoint(block, patchpoint, Tmp(), instance);
@@ -1968,8 +1958,6 @@ auto AirIRGenerator::addCallIndirect(const Signature& signature, Vector<Expressi
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
         patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        patchpoint->numGPScratchRegisters = Gigacage::isEnabled(Gigacage::Primitive) ? 1 : 0;
-
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg newContextInstance = params[0].gpr();
@@ -1983,12 +1971,8 @@ auto AirIRGenerator::addCallIndirect(const Signature& signature, Vector<Expressi
             // FIXME: We should support more than one memory size register
             //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
             ASSERT(pinnedRegs.sizeRegister != newContextInstance);
-            GPRReg scratchOrSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs.sizeRegister;
-
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
-
-            jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
         });
 
         emitPatchpoint(doContextSwitch, patchpoint, Tmp(), newContextInstance, instanceValue());

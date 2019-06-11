@@ -77,7 +77,8 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createWithFa
 }
 
 template<typename Adaptor>
-JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninitialized(ExecState* exec, Structure* structure, unsigned length)
+JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninitialized(
+    ExecState* exec, Structure* structure, unsigned length)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -506,7 +507,7 @@ size_t JSGenericTypedArrayView<Adaptor>::estimatedSize(JSCell* cell, VM& vm)
 
     if (thisObject->m_mode == OversizeTypedArray)
         return Base::estimatedSize(thisObject, vm) + thisObject->byteSize();
-    if (thisObject->m_mode == FastTypedArray && thisObject->hasVector())
+    if (thisObject->m_mode == FastTypedArray && thisObject->m_vector)
         return Base::estimatedSize(thisObject, vm) + thisObject->byteSize();
 
     return Base::estimatedSize(thisObject, vm);
@@ -525,7 +526,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     {
         auto locker = holdLock(thisObject->cellLock());
         mode = thisObject->m_mode;
-        vector = thisObject->vector();
+        vector = thisObject->m_vector.getMayBeNull();
         byteSize = thisObject->byteSize();
     }
     

@@ -25,22 +25,17 @@
 
 #include "config.h"
 #include "ArrayBufferView.h"
-#include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
 
 ArrayBufferView::ArrayBufferView(
-    RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
+    RefPtr<ArrayBuffer>&& buffer,
+    unsigned byteOffset)
         : m_byteOffset(byteOffset)
         , m_isNeuterable(true)
-        , m_byteLength(byteLength)
         , m_buffer(WTFMove(buffer))
 {
-    Checked<unsigned, CrashOnOverflow> length(byteOffset);
-    length += byteLength;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(length <= m_buffer->byteLength());
-    if (m_buffer)
-        m_baseAddress = BaseAddress(static_cast<char*>(m_buffer->data()) + m_byteOffset, byteLength);
+    m_baseAddress = m_buffer ? (static_cast<char*>(m_buffer->data()) + m_byteOffset) : 0;
 }
 
 ArrayBufferView::~ArrayBufferView()

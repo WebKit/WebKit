@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,12 +50,11 @@ String JSArrayBufferView::toStringName(const JSObject*, ExecState*)
 JSArrayBufferView::ConstructionContext::ConstructionContext(
     Structure* structure, uint32_t length, void* vector)
     : m_structure(structure)
-    , m_vector(vector, length)
+    , m_vector(vector)
     , m_length(length)
     , m_mode(FastTypedArray)
     , m_butterfly(nullptr)
 {
-    ASSERT(vector == removeArrayPtrTag(vector));
     RELEASE_ASSERT(length <= fastSizeLimit);
 }
 
@@ -75,11 +74,11 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
             return;
 
         m_structure = structure;
-        m_vector = VectorType(temp, length);
+        m_vector = temp;
         m_mode = FastTypedArray;
 
         if (mode == ZeroFill) {
-            uint64_t* asWords = static_cast<uint64_t*>(vector());
+            uint64_t* asWords = static_cast<uint64_t*>(m_vector.getMayBeNull());
             for (unsigned i = size / sizeof(uint64_t); i--;)
                 asWords[i] = 0;
         }
@@ -92,11 +91,11 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         return;
     
     size_t size = static_cast<size_t>(length) * static_cast<size_t>(elementSize);
-    m_vector = VectorType(Gigacage::tryMalloc(Gigacage::Primitive, size), length);
+    m_vector = Gigacage::tryMalloc(Gigacage::Primitive, size);
     if (!m_vector)
         return;
     if (mode == ZeroFill)
-        memset(vector(), 0, size);
+        memset(m_vector.get(), 0, size);
     
     vm.heap.reportExtraMemoryAllocated(static_cast<size_t>(length) * elementSize);
     
@@ -111,8 +110,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     , m_length(length)
     , m_mode(WastefulTypedArray)
 {
-    ASSERT(arrayBuffer->data() == removeArrayPtrTag(arrayBuffer->data()));
-    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, length);
+    m_vector = static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset;
     IndexingHeader indexingHeader;
     indexingHeader.setArrayBuffer(arrayBuffer.get());
     m_butterfly = Butterfly::create(vm, 0, 0, 0, true, indexingHeader, 0);
@@ -126,8 +124,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     , m_mode(DataViewMode)
     , m_butterfly(0)
 {
-    ASSERT(arrayBuffer->data() == removeArrayPtrTag(arrayBuffer->data()));
-    m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, length);
+    m_vector = static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset;
 }
 
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
@@ -136,8 +133,7 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     , m_mode(context.mode())
 {
     setButterfly(vm, context.butterfly());
-    ASSERT(context.vector() == removeArrayPtrTag(context.vector()));
-    m_vector.setWithoutBarrier(context.vector(), m_length);
+    m_vector.setWithoutBarrier(context.vector());
 }
 
 void JSArrayBufferView::finishCreation(VM& vm)
@@ -198,7 +194,7 @@ void JSArrayBufferView::finalize(JSCell* cell)
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);
     ASSERT(thisObject->m_mode == OversizeTypedArray || thisObject->m_mode == WastefulTypedArray);
     if (thisObject->m_mode == OversizeTypedArray)
-        Gigacage::free(Gigacage::Primitive, thisObject->vector());
+        Gigacage::free(Gigacage::Primitive, thisObject->m_vector.get());
 }
 
 JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(ExecState* exec)
@@ -287,7 +283,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     {
         auto locker = holdLock(cellLock());
         butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-        m_vector.setWithoutBarrier(buffer->data(), m_length);
+        m_vector.setWithoutBarrier(buffer->data());
         WTF::storeStoreFence();
         m_mode = WastefulTypedArray;
     }

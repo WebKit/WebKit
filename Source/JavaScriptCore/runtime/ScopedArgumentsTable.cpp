@@ -68,16 +68,16 @@ ScopedArgumentsTable* ScopedArgumentsTable::clone(VM& vm)
 {
     ScopedArgumentsTable* result = create(vm, m_length);
     for (unsigned i = m_length; i--;)
-        result->at(i) = this->at(i);
+        result->m_arguments[i] = m_arguments[i];
     return result;
 }
 
 ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength)
 {
     if (LIKELY(!m_locked)) {
-        ArgumentsPtr newArguments = ArgumentsPtr::create(newLength, newLength);
+        ArgumentsPtr newArguments = ArgumentsPtr::create(newLength);
         for (unsigned i = std::min(m_length, newLength); i--;)
-            newArguments.at(i, newLength) = this->at(i);
+            newArguments[i] = m_arguments[i];
         m_length = newLength;
         m_arguments = WTFMove(newArguments);
         return this;
@@ -85,11 +85,9 @@ ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength
     
     ScopedArgumentsTable* result = create(vm, newLength);
     for (unsigned i = std::min(m_length, newLength); i--;)
-        result->at(i) = this->at(i);
+        result->m_arguments[i] = m_arguments[i];
     return result;
 }
-
-static_assert(std::is_trivially_destructible<ScopeOffset>::value, "");
 
 ScopedArgumentsTable* ScopedArgumentsTable::set(VM& vm, uint32_t i, ScopeOffset value)
 {

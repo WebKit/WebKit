@@ -32,8 +32,9 @@ namespace JSC {
 
 template<typename Adaptor>
 GenericTypedArrayView<Adaptor>::GenericTypedArrayView(
-RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned length)
-    : ArrayBufferView(WTFMove(buffer), byteOffset, length * sizeof(typename Adaptor::Type))
+    RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned length)
+    : ArrayBufferView(WTFMove(buffer), byteOffset)
+    , m_length(length)
 {
 }
 

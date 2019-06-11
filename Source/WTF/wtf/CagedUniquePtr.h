@@ -29,30 +29,28 @@
 
 namespace WTF {
 
-template<Gigacage::Kind kind, typename T, bool shouldTag = false>
-class CagedUniquePtr : public CagedPtr<kind, T, shouldTag> {
-    static_assert(std::is_trivially_destructible<T>::value, "We expect the contents of a caged pointer to be trivially destructable.");
+template<Gigacage::Kind kind, typename T, typename Enable = void>
+class CagedUniquePtr : public CagedPtr<kind, T> {
 public:
-    using Base = CagedPtr<kind, T, shouldTag>;
-    CagedUniquePtr() = default;
-
-    CagedUniquePtr(T* ptr, unsigned size)
-        : Base(ptr, size)
-    { }
-
+    CagedUniquePtr(T* ptr = nullptr)
+        : CagedPtr<kind, T>(ptr)
+    {
+    }
+    
     CagedUniquePtr(CagedUniquePtr&& ptr)
-        : Base(std::forward<CagedUniquePtr&&>(ptr))
-    { }
+        : CagedPtr<kind, T>(ptr.m_ptr)
+    {
+        ptr.m_ptr = nullptr;
+    }
     
     CagedUniquePtr(const CagedUniquePtr&) = delete;
     
     template<typename... Arguments>
-    static CagedUniquePtr create(unsigned length, Arguments&&... arguments)
+    static CagedUniquePtr create(Arguments&&... arguments)
     {
-        T* result = static_cast<T*>(Gigacage::malloc(kind, sizeof(T) * length));
-        while (length--)
-            new (result + length) T(arguments...);
-        return CagedUniquePtr(result, length);
+        T* result = static_cast<T*>(Gigacage::malloc(kind, sizeof(T)));
+        new (result) T(std::forward<Arguments>(arguments)...);
+        return CagedUniquePtr(result);
     }
     
     CagedUniquePtr& operator=(CagedUniquePtr&& ptr)
@@ -69,16 +67,135 @@ public:
     {
         destroy();
     }
-
+    
 private:
     void destroy()
     {
-        T* ptr = Base::getUnsafe();
-        if (!ptr)
+        if (!this->m_ptr)
             return;
-        ptr->~T();
-        Gigacage::free(kind, ptr);
+        this->m_ptr->~T();
+        Gigacage::free(kind, this->m_ptr);
     }
+};
+
+template<Gigacage::Kind kind, typename T>
+class CagedUniquePtr<kind, T[], typename std::enable_if<std::is_trivially_destructible<T>::value>::type> : public CagedPtr<kind, T> {
+public:
+    CagedUniquePtr() : CagedPtr<kind, T>() { }
+    
+    CagedUniquePtr(T* ptr)
+        : CagedPtr<kind, T>(ptr)
+    {
+    }
+    
+    CagedUniquePtr(CagedUniquePtr&& ptr)
+        : CagedPtr<kind, T>(ptr.m_ptr)
+    {
+        ptr.m_ptr = nullptr;
+    }
+    
+    CagedUniquePtr(const CagedUniquePtr&) = delete;
+    
+    template<typename... Arguments>
+    static CagedUniquePtr create(size_t count, Arguments&&... arguments)
+    {
+        T* result = static_cast<T*>(Gigacage::mallocArray(kind, count, sizeof(T)));
+        while (count--)
+            new (result + count) T(std::forward<Arguments>(arguments)...);
+        return CagedUniquePtr(result);
+    }
+    
+    CagedUniquePtr& operator=(CagedUniquePtr&& ptr)
+    {
+        destroy();
+        this->m_ptr = ptr.m_ptr;
+        ptr.m_ptr = nullptr;
+        return *this;
+    }
+    
+    CagedUniquePtr& operator=(const CagedUniquePtr&) = delete;
+    
+    ~CagedUniquePtr()
+    {
+        destroy();
+    }
+    
+private:
+    void destroy()
+    {
+        if (!this->m_ptr)
+            return;
+        Gigacage::free(kind, this->m_ptr);
+    }
+};
+
+template<Gigacage::Kind kind, typename T>
+class CagedUniquePtr<kind, T[], typename std::enable_if<!std::is_trivially_destructible<T>::value>::type> : public CagedPtr<kind, T> {
+public:
+    CagedUniquePtr() : CagedPtr<kind, T>() { }
+    
+    CagedUniquePtr(T* ptr, size_t count)
+        : CagedPtr<kind, T>(ptr)
+        , m_count(count)
+    {
+    }
+    
+    CagedUniquePtr(CagedUniquePtr&& ptr)
+        : CagedPtr<kind, T>(ptr.m_ptr)
+        , m_count(ptr.m_count)
+    {
+        ptr.clear();
+    }
+    
+    CagedUniquePtr(const CagedUniquePtr&) = delete;
+    
+    template<typename... Arguments>
+    static CagedUniquePtr create(size_t count, Arguments&&... arguments)
+    {
+        T* result = static_cast<T*>(Gigacage::mallocArray(kind, count, sizeof(T)));
+        while (count--)
+            new (result + count) T(std::forward<Arguments>(arguments)...);
+        return CagedUniquePtr(result, count);
+    }
+    
+    CagedUniquePtr& operator=(CagedUniquePtr&& ptr)
+    {
+        destroy();
+        this->m_ptr = ptr.m_ptr;
+        m_count = ptr.m_count;
+        ptr.clear();
+        return *this;
+    }
+    
+    CagedUniquePtr& operator=(const CagedUniquePtr&) = delete;
+    
+    ~CagedUniquePtr()
+    {
+        destroy();
+    }
+    
+    // FIXME: It's weird that we inherit CagedPtr::operator== and friends, which don't do anything
+    // about m_count. It "works" because pointer equality is enough so long as everything is sane, but
+    // it seems like a missed opportunity to assert things.
+    // https://bugs.webkit.org/show_bug.cgi?id=175541
+    
+private:
+    void destroy()
+    {
+        if (!this->m_ptr)
+            return;
+        while (m_count--)
+            this->m_ptr[m_count].~T();
+        Gigacage::free(kind, this->m_ptr);
+    }
+    
+    void clear()
+    {
+        this->m_ptr = nullptr;
+        m_count = 0;
+    }
+    
+    size_t m_count { 0 };
 };
 
 } // namespace WTF

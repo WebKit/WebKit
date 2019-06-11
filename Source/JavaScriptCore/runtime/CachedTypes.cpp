@@ -1088,13 +1088,13 @@ public:
     void encode(Encoder& encoder, const ScopedArgumentsTable& scopedArgumentsTable)
     {
         m_length = scopedArgumentsTable.m_length;
-        m_arguments.encode(encoder, scopedArgumentsTable.m_arguments.get(m_length), m_length);
+        m_arguments.encode(encoder, scopedArgumentsTable.m_arguments.get(), m_length);
     }
 
     ScopedArgumentsTable* decode(Decoder& decoder) const
     {
         ScopedArgumentsTable* scopedArgumentsTable = ScopedArgumentsTable::create(decoder.vm(), m_length);
-        m_arguments.decode(decoder, scopedArgumentsTable->m_arguments.get(m_length), m_length);
+        m_arguments.decode(decoder, scopedArgumentsTable->m_arguments.get(), m_length);
         return scopedArgumentsTable;
     }
 
