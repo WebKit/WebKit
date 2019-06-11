@@ -1,3 +1,12 @@
+2019-06-11  Truitt Savell  <tsavell@apple.com>
+
+        r246018 introduced a falkey test on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=196508
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-06-11  Daniel Bates  <dabates@apple.com>
 
         Import Content Security Policy Web Platform Tests

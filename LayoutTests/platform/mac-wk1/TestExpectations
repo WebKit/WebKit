@@ -722,3 +722,5 @@ webkit.org/b/198177 pointerevents/mouse/compatibility-mouse-events-prevention-mo
 
 webkit.org/b/198459 [ HighSierra Debug ] inspector/canvas/recording-2d-full.html [ Slow ]
 webkit.org/b/198459 [ HighSierra Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
+
+webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
