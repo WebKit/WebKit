@@ -47,6 +47,10 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
         CGPoint subviewPoint = [view convertPoint:point fromView:parent];
 
         auto handlesEvent = [&] {
+            // FIXME: isUserInteractionEnabled is mostly redundant with event regions for web content layers.
+            //        It is currently only needed for scroll views.
+            if (!view.isUserInteractionEnabled)
+                return false;
             if (![view pointInside:subviewPoint withEvent:event])
                 return false;
             if (![view isKindOfClass:[WKCompositingView class]])
@@ -133,9 +137,6 @@ OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const Web
     WebKit::collectDescendantViewsAtPoint(viewsAtPoint, self, point, event);
 
     for (auto *view : WTF::makeReversedRange(viewsAtPoint)) {
-        if (!view.isUserInteractionEnabled)
-            continue;
-
         if ([view conformsToProtocol:@protocol(WKNativelyInteractible)]) {
             CGPoint subviewPoint = [view convertPoint:point fromView:self];
             return [view hitTest:subviewPoint withEvent:event];

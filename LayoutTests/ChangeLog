@@ -1,3 +1,14 @@
+2019-06-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (iOS): Can't scroll litter-robot.com checkout form's dropdown menus
+        https://bugs.webkit.org/show_bug.cgi?id=198753
+        <rdar://problem/51355686>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/overflow-scroll-user-interaction-disabled-expected.txt: Added.
+        * fast/scrolling/ios/overflow-scroll-user-interaction-disabled.html: Added.
+
 2019-06-11  Youenn Fablet  <youenn@apple.com>
 
         MediaStreamAudioSourceNode::setFormat should check for m_sourceSampleRate equality

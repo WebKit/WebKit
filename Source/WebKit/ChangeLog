@@ -1,3 +1,24 @@
+2019-06-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (iOS): Can't scroll litter-robot.com checkout form's dropdown menus
+        https://bugs.webkit.org/show_bug.cgi?id=198753
+        <rdar://problem/51355686>
+
+        Reviewed by Simon Fraser.
+
+        If an element with 'overflow:scroll' also had 'visibility:hidden' or 'pointer-events:none' it would
+        capture touches and prevent scrolling of any overlapped scrollers.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+
+        Filter out views with 'isUserInteractionEnabled == NO' (set for hidden and pointer-events:none layers).
+        This prevents it being considered as the first view hit when determining scrolling relationships.
+
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+
+        No need to skip here anymore.
+
 2019-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Quotes are always inserted as smart quotes on stackblitz.com, causing compilation errors

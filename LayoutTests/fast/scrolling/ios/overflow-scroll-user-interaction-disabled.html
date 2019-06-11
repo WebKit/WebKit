@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../resources/overflow-scroll-overlap.js"></script>
+<style>
+.case {
+    width: 150px;
+    height: 150px;
+    display: inline-block;
+    position: relative;
+}
+.scrollcontent {
+    width: 500px;
+    height: 500px;
+    background: green;
+}
+
+.overflowscroll {
+    overflow: scroll;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    border: 2px solid black;
+}
+.overlapping {
+    position:absolute;
+    left: 25px;
+    top: 25px;
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+.clip {
+    position:absolute;
+    width: 100px;
+    height: 100px;
+    overflow:hidden;
+}
+.large {
+    width: 3000px;
+    height: 150px;
+}
+#log {
+    position:relative;
+    white-space: pre;
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>
+Test that a 'visibility:hidden' or 'pointer-events:none' scroll layer does not block scrolling of overlapped scrollers.
+</p>
+<div class="case">
+    <div class="overflowscroll target" style="z-index:0">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overflowscroll overlapping" style="pointer-events:none">
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+<div class="case">
+    <div class="overflowscroll target" style="z-index:0">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overflowscroll overlapping" style="visibility:hidden">
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+<div id=log></div>
+
+</body>
+</html>
