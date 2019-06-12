@@ -1,3 +1,24 @@
+2019-06-11  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] ASSERTION FAILED: m_state == State::Activating under WebPaymentCoordinatorProxy::showPaymentUI
+        https://bugs.webkit.org/show_bug.cgi?id=198776
+        <rdar://problem/49123795>
+
+        Reviewed by Brian Weinstein.
+
+        It's possible that an active session is aborted before the completion handler passed to
+        platformShowPaymentUI() has executed. When that happens, m_state will be Idle even though we
+        assert that it is Activating. Fix this by returning early in the platformShowPaymentUI()
+        completion handler when m_state is Idle.
+
+        It's not possible to write a layout test for this because MockPaymentCoordinator handles
+        showing payment UI directly in the web process, so this code is not executed in layout
+        tests. The assertion can be reproduced manually by loading
+        https://w3c-test.org/payment-request/payment-is-showing.https.html and clicking the button.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+
 2019-06-11  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK] Fix a11y support in bubblewrap sandbox

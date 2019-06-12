@@ -104,17 +104,24 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
     for (const auto& linkIconURLString : linkIconURLStrings)
         linkIconURLs.append(URL(URL(), linkIconURLString));
 
-    platformShowPaymentUI(originatingURL, linkIconURLs, sessionID, paymentRequest, [weakThis = makeWeakPtr(*this)](bool result) {
+    platformShowPaymentUI(originatingURL, linkIconURLs, sessionID, paymentRequest, [this, weakThis = makeWeakPtr(*this)](bool result) {
         if (!weakThis)
             return;
 
-        ASSERT(weakThis->m_state == State::Activating);
-        if (!result) {
-            weakThis->didCancelPaymentSession();
+        if (m_state == State::Idle) {
+            ASSERT(!activePaymentCoordinatorProxy());
+            ASSERT(!m_destinationID);
+            ASSERT(m_merchantValidationState == MerchantValidationState::Idle);
             return;
         }
 
-        weakThis->m_state = State::Active;
+        ASSERT(m_state == State::Activating);
+        if (!result) {
+            didCancelPaymentSession();
+            return;
+        }
+
+        m_state = State::Active;
     });
 
     completionHandler(true);
