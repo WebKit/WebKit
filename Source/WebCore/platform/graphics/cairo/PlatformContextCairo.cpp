@@ -30,33 +30,9 @@
 
 #if USE(CAIRO)
 
-#include "CairoUtilities.h"
-#include "Gradient.h"
-#include "GraphicsContext.h"
-#include "Pattern.h"
 #include <cairo.h>
 
 namespace WebCore {
-
-// In Cairo image masking is immediate, so to emulate image clipping we must save masking
-// details as part of the context state and apply them during platform restore.
-class ImageMaskInformation {
-public:
-    void update(cairo_surface_t* maskSurface, const FloatRect& maskRect)
-    {
-        m_maskSurface = maskSurface;
-        m_maskRect = maskRect;
-    }
-
-    bool isValid() const { return m_maskSurface; }
-    cairo_surface_t* maskSurface() const { return m_maskSurface.get(); }
-    const FloatRect& maskRect() const { return m_maskRect; }
-
-private:
-    RefPtr<cairo_surface_t> m_maskSurface;
-    FloatRect m_maskRect;
-};
-
 
 // Encapsulates the additional painting state information we store for each
 // pushed graphics state.
@@ -64,7 +40,10 @@ class PlatformContextCairo::State {
 public:
     State() = default;
 
-    ImageMaskInformation m_imageMaskInformation;
+    struct {
+        RefPtr<cairo_pattern_t> pattern;
+        cairo_matrix_t matrix;
+    } m_mask;
 };
 
 PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
@@ -76,11 +55,14 @@ PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
 
 void PlatformContextCairo::restore()
 {
-    const ImageMaskInformation& maskInformation = m_state->m_imageMaskInformation;
-    if (maskInformation.isValid()) {
-        const FloatRect& maskRect = maskInformation.maskRect();
+    if (m_state->m_mask.pattern) {
         cairo_pop_group_to_source(m_cr.get());
-        cairo_mask_surface(m_cr.get(), maskInformation.maskSurface(), maskRect.x(), maskRect.y());
+
+        cairo_matrix_t matrix;
+        cairo_get_matrix(m_cr.get(), &matrix);
+        cairo_set_matrix(m_cr.get(), &m_state->m_mask.matrix);
+        cairo_mask(m_cr.get(), m_state->m_mask.pattern.get());
+        cairo_set_matrix(m_cr.get(), &matrix);
     }
 
     m_stateStack.removeLast();
@@ -105,11 +87,13 @@ void PlatformContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRe
     // We must call savePlatformState at least once before we can use image masking,
     // since we actually apply the mask in restorePlatformState.
     ASSERT(!m_stateStack.isEmpty());
-    m_state->m_imageMaskInformation.update(surface, rect);
+    m_state->m_mask.pattern = adoptRef(cairo_pattern_create_for_surface(surface));
+    cairo_get_matrix(m_cr.get(), &m_state->m_mask.matrix);
 
-    // Cairo doesn't support the notion of an image clip, so we push a group here
-    // and then paint it to the surface with an image mask (which is an immediate
-    // operation) during restorePlatformState.
+    cairo_matrix_t matrix;
+    cairo_matrix_init_translate(&matrix, -rect.x(), -rect.y());
+    cairo_pattern_set_matrix(m_state->m_mask.pattern.get(), &matrix);
+
     cairo_push_group(m_cr.get());
 }
 

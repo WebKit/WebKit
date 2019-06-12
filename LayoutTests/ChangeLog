@@ -1,3 +1,16 @@
+2019-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [cairo][SVG] Putting multiple path elements in clippath causes rendering artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=198701
+        <rdar://problem/51620347>
+
+        Reviewed by Don Olmstead.
+
+        * svg/clip-path/clip-hidpi-expected.svg: Added.
+        * svg/clip-path/clip-hidpi.svg: Added.
+        * svg/clip-path/clip-opacity-translate-expected.svg: Added.
+        * svg/clip-path/clip-opacity-translate.svg: Added.
+
 2019-06-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Some reftest fail with only one or two pixel differences in diff image
