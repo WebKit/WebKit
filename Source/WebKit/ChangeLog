@@ -1,3 +1,17 @@
+2019-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Many layout tests are failing on iPad simulator due to unexpected viewport dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=198789
+        <rdar://problem/51595519>
+
+        Reviewed by Simon Fraser.
+
+        Prevent the shrink-to-fit-content timer from activating on layout tests that use the testing viewport
+        configuration.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::immediatelyShrinkToFitContent):
+
 2019-06-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Deprecate WebSQL APIs

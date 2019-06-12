@@ -3269,6 +3269,9 @@ bool WebPage::immediatelyShrinkToFitContent()
     if (!m_page->settings().allowViewportShrinkToFitContent())
         return false;
 
+    if (m_useTestingViewportConfiguration)
+        return false;
+
     if (!shouldIgnoreMetaViewport())
         return false;
 
