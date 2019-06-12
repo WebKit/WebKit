@@ -1,3 +1,43 @@
+2019-06-12  Null  <null@apple.com>
+
+        Cherry-pick r246071. rdar://problem/51656838
+
+    Argument elimination should check for negative indices in GetByVal
+    https://bugs.webkit.org/show_bug.cgi?id=198302
+    <rdar://problem/51188095>
+    
+    Reviewed by Filip Pizlo.
+    
+    JSTests:
+    
+    * stress/eliminate-arguments-negative-rest-access.js: Added.
+    (inlinee):
+    (opt):
+    
+    Source/JavaScriptCore:
+    
+    In DFG::ArgumentEliminationPhase, the index is treated as unsigned, but there's no check
+    for overflow in the addition. In compileGetMyArgumentByVal, there's a check for overflow,
+    but the index is treated as signed, resulting in an index lower than numberOfArgumentsToSkip.
+    
+    * dfg/DFGArgumentsEliminationPhase.cpp:
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246071 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+            Argument elimination should check for negative indices in GetByVal
+            https://bugs.webkit.org/show_bug.cgi?id=198302
+            <rdar://problem/51188095>
+
+            Reviewed by Filip Pizlo.
+
+            * stress/eliminate-arguments-negative-rest-access.js: Added.
+            (inlinee):
+            (opt):
+
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r245815. rdar://problem/51264876
