@@ -1,3 +1,35 @@
+2019-06-12  Null  <null@apple.com>
+
+        Cherry-pick r246182. rdar://problem/51656840
+
+    Avoid generating new XSLT-based document when already changing the document.
+    https://bugs.webkit.org/show_bug.cgi?id=198525
+    <rdar://problem/51393787>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    We should not allow a pending XSLT transform to change the current document when
+    that current document is int he process of being replaced.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::applyPendingXSLTransformsTimerFired):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246182 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+            Avoid generating new XSLT-based document when already changing the document.
+            https://bugs.webkit.org/show_bug.cgi?id=198525
+            <rdar://problem/51393787>
+
+            Reviewed by Ryosuke Niwa.
+
+            We should not allow a pending XSLT transform to change the current document when
+            that current document is int he process of being replaced.
+
+            * dom/Document.cpp:
+            (WebCore::Document::applyPendingXSLTransformsTimerFired):
+
 2019-06-03  Alan Coon  <alancoon@apple.com>
 
         Revert r246001. rdar://problem/50871594

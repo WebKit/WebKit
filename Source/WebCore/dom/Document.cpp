@@ -5516,6 +5516,11 @@ void Document::applyPendingXSLTransformsTimerFired()
         if (transformSourceDocument() || !processingInstruction->sheet())
             return;
 
+        // If the Document has already been detached from the frame, or the frame is currently in the process of
+        // changing to a new document, don't attempt to create a new Document from the XSLT.
+        if (!frame() || frame()->documentIsBeingReplaced())
+            return;
+
         auto processor = XSLTProcessor::create();
         processor->setXSLStyleSheet(downcast<XSLStyleSheet>(processingInstruction->sheet()));
         String resultMIMEType;
