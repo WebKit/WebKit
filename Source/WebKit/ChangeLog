@@ -1,3 +1,19 @@
+2019-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Idempotent text autosizing needs to react properly to viewport changes
+        https://bugs.webkit.org/show_bug.cgi?id=198736
+        <rdar://problem/50591911>
+
+        Reviewed by Zalan Bujtas.
+
+        If idempotent text autosizing is enabled, respond to viewport initial scale changes by forcing a style recalc,
+        since the amount by which idempotent text autosizing boosts font sizes depends on the Page's initial scale.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded):
+        (WebKit::WebPage::viewportConfigurationChanged):
+
 2019-06-11  Zalan Bujtas  <zalan@apple.com>
 
         LayoutTests/fast/events/touch/ios/double-tap-for-double-click* test cases are failing

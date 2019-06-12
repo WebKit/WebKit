@@ -70,6 +70,9 @@ bool AutosizeStatus::shouldSkipSubtree() const
 
 float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
 {
+    if (pageScale >= 1)
+        return specifiedSize;
+
     // This describes a piecewise curve when the page scale is 2/3.
     FloatPoint points[] = { {0.0f, 0.0f}, {6.0f, 9.0f}, {14.0f, 17.0f} };
 

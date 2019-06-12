@@ -500,7 +500,7 @@ private:
     // the last reference to a style declaration are garbage collected.
     void sweepMatchedPropertiesCache();
 
-    void adjustRenderStyleForTextAutosizing(RenderStyle&, const Element*);
+    void adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
 
     typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;
     MatchedPropertiesCache m_matchedPropertiesCache;

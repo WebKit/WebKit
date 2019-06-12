@@ -877,16 +877,26 @@ static bool hasTextChildren(const Element& element)
     return false;
 }
 
-void StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const Element* element)
+void StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const Element& element)
 {
     auto newAutosizeStatus = AutosizeStatus::updateStatus(style);
-    auto pageScale = document().page() ? document().page()->initialScale() : 1.0f;
-    if (settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() && element && !newAutosizeStatus.shouldSkipSubtree() && !style.textSizeAdjust().isNone() && hasTextChildren(*element) && pageScale != 1.0f) {
-        auto fontDescription = style.fontDescription();
-        fontDescription.setComputedSize(AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), pageScale));
-        style.setFontDescription(WTFMove(fontDescription));
-        style.fontCascade().update(&document().fontSelector());
-    }
+    if (!settings().textAutosizingEnabled() || !settings().textAutosizingUsesIdempotentMode())
+        return;
+
+    if (!hasTextChildren(element))
+        return;
+
+    if (style.textSizeAdjust().isNone())
+        return;
+
+    if (newAutosizeStatus.shouldSkipSubtree())
+        return;
+
+    float initialScale = document().page() ? document().page()->initialScale() : 1;
+    auto fontDescription = style.fontDescription();
+    fontDescription.setComputedSize(AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale));
+    style.setFontDescription(WTFMove(fontDescription));
+    style.fontCascade().update(&document().fontSelector());
 }
 #endif
 
@@ -1140,12 +1150,12 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, parentStyle.effectiveTouchActions()));
 #endif
 
+    if (element) {
 #if ENABLE(TEXT_AUTOSIZING)
-    adjustRenderStyleForTextAutosizing(style, element);
+        adjustRenderStyleForTextAutosizing(style, *element);
 #endif
-
-    if (element)
         adjustRenderStyleForSiteSpecificQuirks(style, *element);
+    }
 }
 
 void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, const Element& element)

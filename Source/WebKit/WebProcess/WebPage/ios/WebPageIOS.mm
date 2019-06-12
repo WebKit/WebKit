@@ -3333,10 +3333,27 @@ bool WebPage::shouldIgnoreMetaViewport() const
     return m_page->settings().shouldIgnoreMetaViewport();
 }
 
+void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
+{
+    if (!m_page->settings().textAutosizingUsesIdempotentMode())
+        return;
+
+    const float minimumScaleChangeBeforeRecomputingTextAutosizing = 0.01;
+    if (std::abs(previousInitialScale - m_page->initialScale()) < minimumScaleChangeBeforeRecomputingTextAutosizing)
+        return;
+
+    if (m_page->initialScale() >= 1 && previousInitialScale >= 1)
+        return;
+
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
 void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale)
 {
+    double previousInitialScale = m_page->initialScale();
     double initialScale = m_viewportConfiguration.initialScale();
     m_page->setInitialScale(initialScale);
+    resetIdempotentTextAutosizingIfNeeded(previousInitialScale);
 
     if (setFixedLayoutSize(m_viewportConfiguration.layoutSize()))
         resetTextAutosizing();
