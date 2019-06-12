@@ -480,6 +480,27 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_setPrevalentDomain:(NSURL *)domain completionHandler:(void (^)(void))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _websiteDataStore->websiteDataStore().setPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+#endif
+    completionHandler();
+}
+
+- (void)_getIsPrevalentDomain:(NSURL *)domain completionHandler:(void (^)(BOOL))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _websiteDataStore->websiteDataStore().isPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)](bool enabled) {
+        completionHandler(enabled);
+    });
+#else
+    completionHandler(NO);
+#endif
+}
+
 - (bool)_hasRegisteredServiceWorker
 {
     return WebKit::ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(_websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory());

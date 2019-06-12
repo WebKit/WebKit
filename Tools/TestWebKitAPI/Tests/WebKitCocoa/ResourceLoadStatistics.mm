@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -204,3 +205,79 @@ TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
 
     TestWebKitAPI::Util::run(&finishedNavigation);
 }
+
+TEST(ResourceLoadStatistics, EnableDisableITP)
+{
+    // Ensure the shared process pool exists so the data store operations we're about to do work with it.
+    WKProcessPool *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool: sharedProcessPool];
+    configuration.get().websiteDataStore = dataStore;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    // ITP should be off, no URLs are prevalent.
+    static bool doneFlag;
+    [dataStore _getIsPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(BOOL prevalent) {
+        EXPECT_FALSE(prevalent);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Turn it on
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+    
+    // ITP should be on, but nothing was registered as prevalent yet.
+    doneFlag = false;
+    [dataStore _getIsPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(BOOL prevalent) {
+        EXPECT_FALSE(prevalent);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Teach ITP about a bad origin:
+    doneFlag = false;
+    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    // ITP should be on, and know about 'evil.com'
+    doneFlag = false;
+    [dataStore _getIsPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(BOOL prevalent) {
+        EXPECT_TRUE(prevalent);
+        doneFlag = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Turn it off
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
+
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    // ITP should be off, no URLs are prevalent.
+    doneFlag = false;
+    [dataStore _getIsPrevalentDomain:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(BOOL prevalent) {
+        EXPECT_FALSE(prevalent);
+        doneFlag = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&doneFlag);
+}
+

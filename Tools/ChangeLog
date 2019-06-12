@@ -1,3 +1,14 @@
+22019-06-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Add mechanism and test case to check if ITP is active
+        https://bugs.webkit.org/show_bug.cgi?id=198694
+        <rdar://problem/51557704>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2019-06-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Deprecate WebSQL APIs
