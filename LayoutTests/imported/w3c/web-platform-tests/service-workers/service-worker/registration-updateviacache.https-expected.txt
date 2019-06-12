@@ -23,4 +23,5 @@ PASS access-updateViaCache-after-unregister-undefined
 PASS access-updateViaCache-after-unregister-imports 
 PASS access-updateViaCache-after-unregister-all 
 PASS access-updateViaCache-after-unregister-none 
+FAIL updateViaCache is not updated if register() rejects assert_equals: after update attempt expected "imports" but got "none"
 

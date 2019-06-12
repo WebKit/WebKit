@@ -7,9 +7,6 @@
 <script>
 var worker = 'resources/fetch-event-test-worker.js';
 
-if (window.internals && window.internals.settings)
-    internals.settings.setAllowDisplayOfInsecureContent(true);
-
 function do_test(referrer, value, expected, name)
 {
     test(() => {

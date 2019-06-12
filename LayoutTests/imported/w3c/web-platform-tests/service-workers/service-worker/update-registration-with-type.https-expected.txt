@@ -1,6 +1,6 @@
 
-FAIL Update the registration with a different script type (classic => module). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: guid"
-FAIL Update the registration with a different script type (module => classic). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: guid"
+FAIL Update the registration with a different script type (classic => module). promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'secondWorker.postMessage')"
+FAIL Update the registration with a different script type (module => classic). promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
 PASS Update the registration with a different script type (classic => module) and with a same main script. 
 PASS Update the registration with a different script type (module => classic) and with a same main script. 
 PASS Does not update the registration with the same script type and the same main script. 

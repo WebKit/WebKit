@@ -1,3 +1,9 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancelled
 
-PASS Calling respondWith asynchronously throws an exception 
+Harness Error (FAIL), message = cancelled
+
+PASS global setup 
+PASS respondWith in a task throws InvalidStateError 
+PASS respondWith in a microtask does not throw 
+PASS global cleanup 
 
