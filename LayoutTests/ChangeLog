@@ -1,3 +1,51 @@
+2019-06-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r246040. rdar://problem/51670920
+
+    [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
+    https://bugs.webkit.org/show_bug.cgi?id=198477
+    <rdar://problem/51299504>
+    
+    Reviewed by Saam Barati.
+    
+    Source/JavaScriptCore:
+    
+    JSObject::attemptToInterceptPutByIndexOnHole uses getPrototypeDirect, but it should use getPrototype to
+    handle getPrototype methods in derived JSObject classes correctly.
+    
+    * runtime/JSArrayInlines.h:
+    (JSC::JSArray::pushInline):
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::putByIndex):
+    (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+    (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
+    (JSC::JSObject::putByIndexBeyondVectorLength):
+    
+    LayoutTests:
+    
+    Ensure that JSWindow::getPrototype is used.
+    
+    * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt: Added.
+    * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html: Added.
+    * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-in-put-test.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246040 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect
+            https://bugs.webkit.org/show_bug.cgi?id=198477
+            <rdar://problem/51299504>
+
+            Reviewed by Saam Barati.
+
+            Ensure that JSWindow::getPrototype is used.
+
+            * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt: Added.
+            * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html: Added.
+            * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-in-put-test.html: Added.
+
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r244950. rdar://problem/51271770
