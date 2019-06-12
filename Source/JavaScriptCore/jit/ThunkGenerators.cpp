@@ -183,20 +183,17 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM* vm, CallLinkInfo
     // the DFG knows that the value is definitely a cell, or definitely a function.
     
 #if USE(JSVALUE64)
-    GPRReg tagMaskRegister = GPRInfo::tagMaskRegister;
     if (callLinkInfo.isTailCall()) {
         // Tail calls could have clobbered the GPRInfo::tagMaskRegister because they
         // restore callee saved registers before getthing here. So, let's materialize
         // the TagMask in a temp register and use the temp instead.
-        tagMaskRegister = GPRInfo::regT4;
-        jit.move(CCallHelpers::TrustedImm64(TagMask), tagMaskRegister);
-    }
-    slowCase.append(
-        jit.branchTest64(CCallHelpers::NonZero, GPRInfo::regT0, tagMaskRegister));
+        slowCase.append(jit.branchIfNotCell(GPRInfo::regT0, DoNotHaveTagRegisters));
+    } else
+        slowCase.append(jit.branchIfNotCell(GPRInfo::regT0));
 #else
     slowCase.append(jit.branchIfNotCell(GPRInfo::regT1));
 #endif
-    auto notJSFunction = jit.branchIfNotType(GPRInfo::regT0, JSFunctionType);
+    auto notJSFunction = jit.branchIfNotFunction(GPRInfo::regT0);
     
     // Now we know we have a JSFunction.
 

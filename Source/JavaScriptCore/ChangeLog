@@ -1,3 +1,48 @@
+2019-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Polymorphic call stub's slow path should restore callee saves before performing tail call
+        https://bugs.webkit.org/show_bug.cgi?id=198770
+
+        Reviewed by Saam Barati.
+
+        Polymorphic call stub is a bit specially patched in JS call site. Typical JS call site for tail calls
+        are the following.
+
+            if (callee == patchableCallee) {
+                restore callee saves for tail call
+                prepare for tail call
+                jump to the target function
+            }
+            restore callee saves for slow path
+            call the slow path function
+
+        And linking patches patchableCallee, target function, and slow path function. But polymorphic call stub
+        patches the above `if` statement with the jump to the stub.
+
+            jump to the polymorphic call stub
+
+        This is because polymorphic call stub wants to use CallFrameShuffler to get scratch registers. As a result,
+        "restore callee saves for tail call" thing needs to be done in the polymorphic call stubs. While it is
+        correctly done for the major cases, we have `slowPath` skips, and that path missed restoring callee saves.
+        This skip happens if the callee is non JSCell or non JS function, so typically, InternalFunction is handled
+        in that path.
+
+        This patch does that skips after restoring callee saves.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setUpCall):
+        (JSC::CallLinkInfo::calleeGPR):
+        (JSC::CallLinkInfo::setCalleeGPR): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::revertCall):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/Repatch.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+
 2019-06-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246322.

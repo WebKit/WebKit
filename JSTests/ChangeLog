@@ -1,3 +1,13 @@
+2019-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Polymorphic call stub's slow path should restore callee saves before performing tail call
+        https://bugs.webkit.org/show_bug.cgi?id=198770
+
+        Reviewed by Saam Barati.
+
+        * stress/poly-call-stub-slow-path-should-restore-callee-saves-when-doing-tail-call.js: Added.
+        (test):
+
 2019-06-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSC should throw if proxy set returns falsish in strict mode context

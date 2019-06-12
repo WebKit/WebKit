@@ -62,7 +62,6 @@ CallLinkInfo::CallLinkInfo()
     , m_allowStubs(true)
     , m_clearedByJettison(false)
     , m_callType(None)
-    , m_calleeGPR(255)
 {
 }
 

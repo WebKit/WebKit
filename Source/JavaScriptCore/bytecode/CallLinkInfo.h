@@ -157,7 +157,7 @@ public:
     bool isLinked() { return m_stub || m_calleeOrCodeBlock; }
     void unlink(VM&);
 
-    void setUpCall(CallType callType, CodeOrigin codeOrigin, unsigned calleeGPR)
+    void setUpCall(CallType callType, CodeOrigin codeOrigin, GPRReg calleeGPR)
     {
         m_callType = callType;
         m_codeOrigin = codeOrigin;
@@ -312,12 +312,7 @@ public:
         return OBJECT_OFFSETOF(CallLinkInfo, m_slowPathCount);
     }
 
-    void setCalleeGPR(unsigned calleeGPR)
-    {
-        m_calleeGPR = calleeGPR;
-    }
-
-    unsigned calleeGPR()
+    GPRReg calleeGPR()
     {
         return m_calleeGPR;
     }
@@ -364,7 +359,7 @@ private:
     bool m_allowStubs : 1;
     bool m_clearedByJettison : 1;
     unsigned m_callType : 4; // CallType
-    unsigned m_calleeGPR : 8;
+    GPRReg m_calleeGPR { InvalidGPRReg };
     uint32_t m_slowPathCount { 0 };
 };
 
