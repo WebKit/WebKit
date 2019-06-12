@@ -1,3 +1,14 @@
+2019-06-12  Sam Weinig  <weinig@apple.com>
+
+        Remove dead code in user agent construction
+        https://bugs.webkit.org/show_bug.cgi?id=198802
+
+        Reviewed by Anders Carlsson.
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform const):
+        Drop dead architures.
+
 2019-06-12  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] GTK_STOCK_* types have been deprecated since GTK 3.10
