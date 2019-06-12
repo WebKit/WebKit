@@ -1,3 +1,13 @@
+2019-06-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Enable hyperlink auditing
+        https://bugs.webkit.org/show_bug.cgi?id=197845
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+
 2019-06-12  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] gtk_misc_set_alignment is deprecated since GTK 3.14

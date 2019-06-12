@@ -779,7 +779,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("enable-hyperlink-auditing",
                                                          _("Enable hyperlink auditing"),
                                                          _("Whether <a ping> should be able to send pings."),
-                                                         FALSE,
+                                                         TRUE,
                                                          readWriteConstructParamFlags));
 
     /**

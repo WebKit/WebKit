@@ -96,10 +96,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_javascript_can_open_windows_automatically(settings, TRUE);
     g_assert_true(webkit_settings_get_javascript_can_open_windows_automatically(settings));
 
-    // By default hyper link auditing is disabled.
-    g_assert_false(webkit_settings_get_enable_hyperlink_auditing(settings));
-    webkit_settings_set_enable_hyperlink_auditing(settings, TRUE);
+    // By default hyper link auditing is enabled.
     g_assert_true(webkit_settings_get_enable_hyperlink_auditing(settings));
+    webkit_settings_set_enable_hyperlink_auditing(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_hyperlink_auditing(settings));
 
     // Default font family is "sans-serif".
     g_assert_cmpstr(webkit_settings_get_default_font_family(settings), ==, "sans-serif");
