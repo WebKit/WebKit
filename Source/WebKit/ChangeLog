@@ -1,3 +1,13 @@
+2019-06-11  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK] Fix a11y support in bubblewrap sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=198777
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindA11y):
+
 2019-06-11  Timothy Hatcher  <timothy@apple.com>
 
         Flash when tapping compose button after switching to/from dark mode without restarting Mail.

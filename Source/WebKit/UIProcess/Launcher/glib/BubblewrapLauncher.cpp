@@ -441,8 +441,10 @@ static void bindA11y(Vector<CString>& args)
     }
 
     if (proxy.proxyPath().data()) {
+        GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy.proxyPath().data()));
         args.appendVector(Vector<CString>({
-            "--bind", proxy.proxyPath(), proxy.path(),
+            "--ro-bind", proxy.proxyPath(), proxy.proxyPath(),
+            "--setenv", "AT_SPI_BUS_ADDRESS", proxyAddress.get(),
         }));
     }
 }
