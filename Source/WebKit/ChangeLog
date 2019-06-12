@@ -1,3 +1,12 @@
+2019-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed fix after rr246360.
+
+        The current code accidentally calls the completion handler twice.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setPrevalentDomain:completionHandler:]):
+
 2019-06-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION (r245043) [Mac WK2 Debug] ASSERTION FAILED: m_services.isEmpty() && transports.size() <= maxTransportNumber seen with two http/wpt/webauthn/public-key-credential-* tests
