@@ -155,6 +155,7 @@
 #import <UIKit/UIApplication.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
+#import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/ScrollableArea.h>
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
@@ -1702,10 +1703,22 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (!webView.opaque)
         return WebCore::Color::transparent;
 
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    WebCore::LocalCurrentTraitCollection localTraitCollection(webView.traitCollection);
+#endif
+
     WebCore::Color color = baseScrollViewBackgroundColor(webView);
 
-    if (!color.isValid())
-        color = webView->_contentView ? [webView->_contentView backgroundColor].CGColor : UIColor.whiteColor.CGColor;
+    if (!color.isValid() && webView->_contentView)
+        color = [webView->_contentView backgroundColor].CGColor;
+
+    if (!color.isValid()) {
+#if HAVE(OS_DARK_MODE_SUPPORT)
+        color = UIColor.systemBackgroundColor.CGColor;
+#else
+        color = WebCore::Color::white;
+#endif
+    }
 
     CGFloat zoomScale = contentZoomScale(webView);
     CGFloat minimumZoomScale = [webView->_scrollView minimumZoomScale];

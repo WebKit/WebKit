@@ -1,3 +1,19 @@
+2019-06-11  Timothy Hatcher  <timothy@apple.com>
+
+        Flash when tapping compose button after switching to/from dark mode without restarting Mail.
+        https://bugs.webkit.org/show_bug.cgi?id=198769
+        rdar://problem/51370037
+
+        Reviewed by Tim Horton.
+
+        Accessing a dynamic color outside a normal UIView choke point without setting
+        UITraitCollection.currentTraitCollection first can cause undefined results.
+        Use LocalCurrentTraitCollection inside scrollViewBackgroundColor when accessing
+        the dynamic system UIColors. Also use systemBackgroundColor instead of white.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (scrollViewBackgroundColor):
+
 2019-06-11  Megan Gardner  <megan_gardner@apple.com>
 
         Integrate scrollbar gestures for iOS

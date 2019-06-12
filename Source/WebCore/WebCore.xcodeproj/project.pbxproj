@@ -621,7 +621,7 @@
 		1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C21E57B183ED1FF001C289D /* IOSurfacePool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C24EEA51C729CE40080F8FC /* FontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C24EEA31C729CE40080F8FC /* FontFaceSet.h */; };
 		1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */; };
-		1C43DE6B22AB4B8A001527D9 /* LocalCurrentTraitCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */; };
+		1C43DE6B22AB4B8A001527D9 /* LocalCurrentTraitCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C6626111C6E7CA600AB527C /* FontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66260F1C6E7CA600AB527C /* FontFace.h */; };
 		1C73A7132185757E004CCEA5 /* TextUnderlineOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB6B4FB217B83940093B9CD /* TextUnderlineOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C73A71521857587004CCEA5 /* TextDecorationThickness.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB6B4F8217B83930093B9CD /* TextDecorationThickness.h */; settings = {ATTRIBUTES = (Private, ); }; };
