@@ -1,3 +1,87 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Educate the property resolver about IndexExpressions
+        https://bugs.webkit.org/show_bug.cgi?id=198399
+
+        Reviewed by Saam Barati.
+
+        This is part one of two patches which will allow buffers to work. This patch
+        adds support in the property resolver for index expressions. Index expressions
+        get turned into calls to "getter indexers", "setter indexers", or "ander
+        indexers". They work almost identically to dot expressions, except there is an
+        extra "index" expression which gets turned into an extra argument to those
+        functions.
+
+        There's actually a bit of a trick here. Let's say we need to run a getter and
+        a setter separately (e.g. "foo[3]++;"). The index expression can't be duplicated
+        for both the getter and the setter (e.g. the functions are
+        int operator[](Foo, uint) and Foo operator[]=(Foo, uint, int), and we aren't
+        allowed to execute the index expression multiple times. Consider if that "3"
+        in the example is actually "bar()" with some side effect. So, we have to run
+        the index expression once at the correct time, and save its result to a temporary
+        variable, and then pass in the temporary variable into the getter and setter.
+
+        So, if the code says "foo[bar()][baz()] = quux();" the following sequence of
+        functions get run:
+
+        - bar()
+        - operator[](Foo, uint)
+        - baz()
+        - quux()
+        - operator[]=(OtherType, uint, OtherOtherType)
+        - operator[]=(Foo, uint, OtherType)
+
+        The next patch will modify the WebGPU JavaScript implementation to send buffer
+        lengths to the shader, and for the shader compiler to correctly unpack this
+        information and place it inside the array references. That should be everything
+        that's needed to get buffers to work. After that, hooking up compute should be
+        fairly trivial.
+
+        Tests: webgpu/propertyresolver/ander-abstract-lvalue.html
+               webgpu/propertyresolver/ander-lvalue-3-levels.html
+               webgpu/propertyresolver/ander-lvalue.html
+               webgpu/propertyresolver/ander.html
+               webgpu/propertyresolver/getter.html
+               webgpu/propertyresolver/indexer-ander-abstract-lvalue.html
+               webgpu/propertyresolver/indexer-ander-lvalue-3-levels.html
+               webgpu/propertyresolver/indexer-ander-lvalue.html
+               webgpu/propertyresolver/indexer-ander.html
+               webgpu/propertyresolver/indexer-getter.html
+               webgpu/propertyresolver/indexer-setter-abstract-lvalue-3-levels.html
+               webgpu/propertyresolver/indexer-setter-abstract-lvalue.html
+               webgpu/propertyresolver/indexer-setter-lvalue.html
+               webgpu/propertyresolver/indexer-setter.html
+               webgpu/propertyresolver/setter-abstract-lvalue-3-levels.html
+               webgpu/propertyresolver/setter-abstract-lvalue.html
+               webgpu/propertyresolver/setter-lvalue.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressSpace.h:
+        (WebCore::WHLSL::AST::toString):
+        * Modules/webgpu/WHLSL/AST/WHLSLEntryPointType.h:
+        (WebCore::WHLSL::AST::toString):
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h:
+        (WebCore::WHLSL::AST::IndexExpression::takeIndex):
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        (WebCore::WHLSL::Metal::convertAddressSpace): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::finishVisiting):
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::PropertyResolver::visit):
+        (WebCore::WHLSL::setterCall):
+        (WebCore::WHLSL::getterCall):
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::simplifyRightValue):
+        (WebCore::WHLSL::LeftValueSimplifier::finishVisiting):
+        (WebCore::WHLSL::LeftValueSimplifier::visit):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp:
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+
 2019-06-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: artificial context menus don't work when Web Inspector is zoomed

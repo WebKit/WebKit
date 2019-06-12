@@ -63,21 +63,6 @@ static String mapFunctionName(String& functionName)
     return functionName;
 }
 
-static String convertAddressSpace(AST::AddressSpace addressSpace)
-{
-    switch (addressSpace) {
-    case AST::AddressSpace::Constant:
-        return "constant"_str;
-    case AST::AddressSpace::Device:
-        return "device"_str;
-    case AST::AddressSpace::Threadgroup:
-        return "threadgroup"_str;
-    default:
-        ASSERT(addressSpace == AST::AddressSpace::Thread);
-        return "thread"_str;
-    }
-}
-
 static String atomicName(String input)
 {
     if (input == "Add")
@@ -376,7 +361,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             auto& fourthArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[3]->type());
             auto fourthArgumentAddressSpace = fourthArgumentPointer.addressSpace();
             auto fourthArgumentPointee = typeNamer.mangledNameForType(fourthArgumentPointer.elementType());
-            stringBuilder.append(makeString("void ", outputFunctionName, '(', convertAddressSpace(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " compare, ", thirdArgument, " desired, ", convertAddressSpace(fourthArgumentAddressSpace), ' ', fourthArgumentPointee, "* out) {\n"));
+            stringBuilder.append(makeString("void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " compare, ", thirdArgument, " desired, ", toString(fourthArgumentAddressSpace), ' ', fourthArgumentPointee, "* out) {\n"));
             stringBuilder.append("    atomic_compare_exchange_weak_explicit(object, &compare, desired, memory_order_relaxed);\n");
             stringBuilder.append("    *out = compare;\n");
             stringBuilder.append("}\n");
@@ -394,7 +379,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         auto thirdArgumentAddressSpace = thirdArgumentPointer.addressSpace();
         auto thirdArgumentPointee = typeNamer.mangledNameForType(thirdArgumentPointer.elementType());
         auto name = atomicName(nativeFunctionDeclaration.name().substring("Interlocked"_str.length()));
-        stringBuilder.append(makeString("void ", outputFunctionName, '(', convertAddressSpace(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " operand, ", convertAddressSpace(thirdArgumentAddressSpace), ' ', thirdArgumentPointee, "* out) {\n"));
+        stringBuilder.append(makeString("void ", outputFunctionName, '(', toString(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " operand, ", toString(thirdArgumentAddressSpace), ' ', thirdArgumentPointee, "* out) {\n"));
         stringBuilder.append(makeString("    *out = atomic_fetch_", name, "_explicit(object, operand, memory_order_relaxed);\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();

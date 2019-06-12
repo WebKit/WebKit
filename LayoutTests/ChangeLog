@@ -1,3 +1,45 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Educate the property resolver about IndexExpressions
+        https://bugs.webkit.org/show_bug.cgi?id=198399
+
+        Reviewed by Saam Barati.
+
+        * webgpu/propertyresolver/ander-abstract-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/ander-abstract-lvalue.html: Added.
+        * webgpu/propertyresolver/ander-expected.html: Added.
+        * webgpu/propertyresolver/ander-lvalue-3-levels-expected.html: Added.
+        * webgpu/propertyresolver/ander-lvalue-3-levels.html: Added.
+        * webgpu/propertyresolver/ander-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/ander-lvalue.html: Added.
+        * webgpu/propertyresolver/ander.html: Added.
+        * webgpu/propertyresolver/getter-expected.html: Added.
+        * webgpu/propertyresolver/getter.html: Added.
+        * webgpu/propertyresolver/indexer-ander-abstract-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/indexer-ander-abstract-lvalue.html: Added.
+        * webgpu/propertyresolver/indexer-ander-expected.html: Added.
+        * webgpu/propertyresolver/indexer-ander-lvalue-3-levels-expected.html: Added.
+        * webgpu/propertyresolver/indexer-ander-lvalue-3-levels.html: Added.
+        * webgpu/propertyresolver/indexer-ander-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/indexer-ander-lvalue.html: Added.
+        * webgpu/propertyresolver/indexer-ander.html: Added.
+        * webgpu/propertyresolver/indexer-getter-expected.html: Added.
+        * webgpu/propertyresolver/indexer-getter.html: Added.
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-3-levels-expected.html: Added.
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-3-levels.html: Added.
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue.html: Added.
+        * webgpu/propertyresolver/indexer-setter-expected.html: Added.
+        * webgpu/propertyresolver/indexer-setter-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/indexer-setter-lvalue.html: Added.
+        * webgpu/propertyresolver/indexer-setter.html: Added.
+        * webgpu/propertyresolver/setter-abstract-lvalue-3-levels-expected.html: Added.
+        * webgpu/propertyresolver/setter-abstract-lvalue-3-levels.html: Added.
+        * webgpu/propertyresolver/setter-abstract-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/setter-abstract-lvalue.html: Added.
+        * webgpu/propertyresolver/setter-lvalue-expected.html: Added.
+        * webgpu/propertyresolver/setter-lvalue.html: Added.
+
 2019-06-12  Shawn Roberts  <sroberts@apple.com>
 
         scrollbars/scrollbar-iframe-click-does-not-blur-content.html is timing out on WK1 testers

@@ -47,7 +47,6 @@ class UnnamedType;
 bool matches(const AST::UnnamedType&, const AST::UnnamedType&);
 bool matches(const AST::NamedType&, const AST::NamedType&);
 bool matches(const AST::UnnamedType&, const AST::NamedType&);
-// FIXME: Is anyone actually using the return type here?
 Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::UnnamedType&, AST::ResolvableType&);
 Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::NamedType&, AST::ResolvableType&);
 Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::ResolvableType&, AST::ResolvableType&);
