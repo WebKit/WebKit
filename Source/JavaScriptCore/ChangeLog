@@ -1,5 +1,25 @@
 2019-06-12  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r246084. rdar://problem/51670920
+
+    Unreviewed, update exception scope for putByIndexBeyondVectorLength
+    https://bugs.webkit.org/show_bug.cgi?id=198477
+    
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::putByIndexBeyondVectorLength):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@246084 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Unreviewed, update exception scope for putByIndexBeyondVectorLength
+            https://bugs.webkit.org/show_bug.cgi?id=198477
+
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::putByIndexBeyondVectorLength):
+
+2019-06-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r246040. rdar://problem/51670920
 
     [JSC] JSObject::attemptToInterceptPutByIndexOnHole should use getPrototype instead of getPrototypeDirect

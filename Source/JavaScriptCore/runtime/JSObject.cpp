@@ -2862,6 +2862,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, uns
 bool JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, bool shouldThrow)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isCopyOnWrite(indexingMode()));
 
@@ -2871,18 +2872,17 @@ bool JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES: {
         if (indexingShouldBeSparse(vm)) {
-            return putByIndexBeyondVectorLengthWithArrayStorage(
+            RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithArrayStorage(
                 exec, i, value, shouldThrow,
-                ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
+                ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm)));
         }
         if (indexIsSufficientlyBeyondLengthForSparseMap(i, 0) || i >= MIN_SPARSE_ARRAY_INDEX) {
-            return putByIndexBeyondVectorLengthWithArrayStorage(
-                exec, i, value, shouldThrow, createArrayStorage(vm, 0, 0));
+            RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithArrayStorage(exec, i, value, shouldThrow, createArrayStorage(vm, 0, 0)));
         }
         if (needsSlowPutIndexing(vm)) {
             // Convert the indexing type to the SlowPutArrayStorage and retry.
             createArrayStorage(vm, i + 1, getNewVectorLength(vm, 0, 0, 0, i + 1));
-            return putByIndex(this, exec, i, value, shouldThrow);
+            RELEASE_AND_RETURN(scope, putByIndex(this, exec, i, value, shouldThrow));
         }
         
         createInitialForValueAndSet(vm, i, value);
@@ -2895,18 +2895,17 @@ bool JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
     }
         
     case ALL_INT32_INDEXING_TYPES:
-        return putByIndexBeyondVectorLengthWithoutAttributes<Int32Shape>(exec, i, value);
+        RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithoutAttributes<Int32Shape>(exec, i, value));
         
     case ALL_DOUBLE_INDEXING_TYPES:
-        return putByIndexBeyondVectorLengthWithoutAttributes<DoubleShape>(exec, i, value);
+        RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithoutAttributes<DoubleShape>(exec, i, value));
         
     case ALL_CONTIGUOUS_INDEXING_TYPES:
-        return putByIndexBeyondVectorLengthWithoutAttributes<ContiguousShape>(exec, i, value);
+        RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithoutAttributes<ContiguousShape>(exec, i, value));
         
     case NonArrayWithSlowPutArrayStorage:
     case ArrayWithSlowPutArrayStorage: {
         // No own property present in the vector, but there might be in the sparse map!
-        auto scope = DECLARE_THROW_SCOPE(vm);
         SparseArrayValueMap* map = arrayStorage()->m_sparseMap.get();
         bool putResult = false;
         if (!(map && map->contains(i))) {
@@ -2915,13 +2914,12 @@ bool JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
             if (result)
                 return putResult;
         }
-        scope.release();
         FALLTHROUGH;
     }
 
     case NonArrayWithArrayStorage:
     case ArrayWithArrayStorage:
-        return putByIndexBeyondVectorLengthWithArrayStorage(exec, i, value, shouldThrow, arrayStorage());
+        RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithArrayStorage(exec, i, value, shouldThrow, arrayStorage()));
         
     default:
         RELEASE_ASSERT_NOT_REACHED();
