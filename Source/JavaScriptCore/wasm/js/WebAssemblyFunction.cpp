@@ -410,13 +410,20 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     if (!!moduleInformation.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+        GPRReg scratchOrSize = scratch2GPR;
+        auto mode = instance()->memoryMode();
 
-        if (instance()->memoryMode() != Wasm::MemoryMode::Signaling) {
-            ASSERT(pinnedRegs.sizeRegister != scratchGPR);
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
+        if (isARM64E()) {
+            if (mode != Wasm::MemoryMode::Signaling)
+                scratchOrSize = pinnedRegs.sizeRegister;
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), scratchOrSize);
+        } else {
+            if (mode != Wasm::MemoryMode::Signaling)
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister);
         }
 
         jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
     }
 
     // We use this callee to indicate how to unwind past these types of frames:

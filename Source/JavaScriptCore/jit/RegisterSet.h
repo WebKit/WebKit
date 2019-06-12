@@ -84,7 +84,9 @@ public:
             set(regs.tagGPR(), value);
         set(regs.payloadGPR(), value);
     }
-    
+
+    void set(const RegisterSet& other, bool value = true) { value ? merge(other) : exclude(other); }
+
     void clear(Reg reg)
     {
         ASSERT(!!reg);

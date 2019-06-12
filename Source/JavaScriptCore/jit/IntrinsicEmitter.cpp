@@ -114,8 +114,14 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
 
         jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
         jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), valueGPR);
+#if CPU(ARM64E)
+        jit.removeArrayPtrTag(valueGPR);
+#endif
         jit.loadPtr(MacroAssembler::Address(scratchGPR, Butterfly::offsetOfArrayBuffer()), scratchGPR);
         jit.loadPtr(MacroAssembler::Address(scratchGPR, ArrayBuffer::offsetOfData()), scratchGPR);
+#if CPU(ARM64E)
+        jit.removeArrayPtrTag(scratchGPR);
+#endif
         jit.subPtr(scratchGPR, valueGPR);
 
         CCallHelpers::Jump done = jit.jump();

@@ -35,87 +35,41 @@ class VM;
 
 // This is a convenient combo of AuxiliaryBarrier and CagedPtr.
 
-template<Gigacage::Kind passedKind, typename T>
+template<Gigacage::Kind passedKind, typename T, bool shouldTag = false>
 class CagedBarrierPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
-    typedef T Type;
+    using Type = T;
+    using CagedType = CagedPtr<kind, Type, shouldTag>;
     
-    CagedBarrierPtr() { }
+    CagedBarrierPtr() = default;
     
     template<typename U>
-    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value)
+    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value, unsigned size)
     {
-        m_barrier.set(vm, cell, std::forward<U>(value));
+        m_barrier.set(vm, cell, CagedType(std::forward<U>(value), size));
     }
     
     void clear() { m_barrier.clear(); }
     
     template<typename U>
-    void set(VM& vm, JSCell* cell, U&& value)
+    void set(VM& vm, JSCell* cell, U&& value, unsigned size)
     {
-        m_barrier.set(vm, cell, std::forward<U>(value));
+        m_barrier.set(vm, cell, CagedType(std::forward<U>(value), size));
     }
     
-    T* get() const { return m_barrier.get().get(); }
-    T* getMayBeNull() const { return m_barrier.get().getMayBeNull(); }
-    
-    bool operator==(const CagedBarrierPtr& other) const
-    {
-        return getMayBeNull() == other.getMayBeNull();
-    }
-    
-    bool operator!=(const CagedBarrierPtr& other) const
-    {
-        return !(*this == other);
-    }
-    
-    explicit operator bool() const
-    {
-        return *this != CagedBarrierPtr();
-    }
-    
-    template<typename U>
-    void setWithoutBarrier(U&& value) { m_barrier.setWithoutBarrier(std::forward<U>(value)); }
-    
-    T& operator*() const { return *get(); }
-    T* operator->() const { return get(); }
-    
-    template<typename IndexType>
-    T& operator[](IndexType index) const { return get()[index]; }
-    
-private:
-    AuxiliaryBarrier<CagedPtr<kind, T>> m_barrier;
-};
+    T* get(unsigned size) const { return m_barrier.get().get(size); }
+    T* getMayBeNull(unsigned size) const { return m_barrier.get().getMayBeNull(size); }
+    T* getUnsafe() const { return m_barrier.get().getUnsafe(); }
 
-template<Gigacage::Kind passedKind>
-class CagedBarrierPtr<passedKind, void> {
-public:
-    static constexpr Gigacage::Kind kind = passedKind;
-    typedef void Type;
-    
-    CagedBarrierPtr() { }
-    
-    template<typename U>
-    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value)
-    {
-        m_barrier.set(vm, cell, std::forward<U>(value));
-    }
-    
-    void clear() { m_barrier.clear(); }
-    
-    template<typename U>
-    void set(VM& vm, JSCell* cell, U&& value)
-    {
-        m_barrier.set(vm, cell, std::forward<U>(value));
-    }
-    
-    void* get() const { return m_barrier.get().get(); }
-    void* getMayBeNull() const { return m_barrier.get().getMayBeNull(); }
-    
+    // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
+    template<typename U = T>
+    typename std::enable_if<!std::is_same<void, U>::value, T>::type&
+    /* T& */ at(unsigned index, unsigned size) const { return get(size)[index]; }
+
     bool operator==(const CagedBarrierPtr& other) const
     {
-        return getMayBeNull() == other.getMayBeNull();
+        return m_barrier.get() == other.m_barrier.get();
     }
     
     bool operator!=(const CagedBarrierPtr& other) const
@@ -125,14 +79,14 @@ public:
     
     explicit operator bool() const
     {
-        return *this != CagedBarrierPtr();
+        return !!m_barrier.get();
     }
     
     template<typename U>
-    void setWithoutBarrier(U&& value) { m_barrier.setWithoutBarrier(std::forward<U>(value)); }
+    void setWithoutBarrier(U&& value, unsigned size) { m_barrier.setWithoutBarrier(CagedType(std::forward<U>(value), size)); }
     
 private:
-    AuxiliaryBarrier<CagedPtr<kind, void>> m_barrier;
+    AuxiliaryBarrier<CagedType> m_barrier;
 };
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,49 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ArrayBufferView.h"
-#include <wtf/CheckedArithmetic.h>
+#pragma once
 
-namespace JSC {
+#include <wtf/PtrTag.h>
 
-ArrayBufferView::ArrayBufferView(
-    RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
-        : m_byteOffset(byteOffset)
-        , m_isNeuterable(true)
-        , m_byteLength(byteLength)
-        , m_buffer(WTFMove(buffer))
-{
-    Checked<unsigned, CrashOnOverflow> length(byteOffset);
-    length += byteLength;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(length <= m_buffer->byteLength());
-    if (m_buffer)
-        m_baseAddress = BaseAddress(static_cast<char*>(m_buffer->data()) + m_byteOffset, byteLength);
+namespace WTF {
+
+template<typename PtrType>
+class TaggedArrayStoragePtr {
+public:
+    TaggedArrayStoragePtr()
+        : m_ptr(tagArrayPtr<PtrType>(nullptr, 0))
+    { }
+
+    TaggedArrayStoragePtr(PtrType* ptr, unsigned length)
+        : m_ptr(tagArrayPtr(ptr, length))
+    { }
+
+    PtrType* get(unsigned length) const { return untagArrayPtr(m_ptr, length); } 
+    PtrType* getUnsafe() const { return removeArrayPtrTag(m_ptr); }
+
+    void resize(unsigned oldLength, unsigned newLength)
+    {
+        m_ptr = retagArrayPtr(m_ptr, oldLength, newLength);
+    }
+    
+    explicit operator bool() const { return !!getUnsafe(); }
+
+private:
+    PtrType* m_ptr;
+};
+
 }
 
-ArrayBufferView::~ArrayBufferView()
-{
-    if (!m_isNeuterable)
-        m_buffer->unpin();
-}
-
-void ArrayBufferView::setNeuterable(bool flag)
-{
-    if (flag == m_isNeuterable)
-        return;
-    
-    m_isNeuterable = flag;
-    
-    if (!m_buffer)
-        return;
-    
-    if (flag)
-        m_buffer->unpin();
-    else
-        m_buffer->pin();
-}
-
-} // namespace JSC
+using WTF::TaggedArrayStoragePtr;

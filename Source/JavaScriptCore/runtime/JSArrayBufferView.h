@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "AuxiliaryBarrier.h"
 #include "JSObject.h"
+#include <wtf/TaggedArrayStoragePtr.h>
 
 namespace JSC {
 
@@ -96,6 +97,7 @@ class JSArrayBufferView : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned fastSizeLimit = 1000;
+    using VectorPtr = CagedBarrierPtr<Gigacage::Primitive, void, tagCagedPtr>;
     
     static size_t sizeOf(uint32_t length, uint32_t elementSize)
     {
@@ -133,14 +135,15 @@ protected:
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
-        void* vector() const { return m_vector.getMayBeNull(); }
+        void* vector() const { return m_vector.getMayBeNull(m_length); }
         uint32_t length() const { return m_length; }
         TypedArrayMode mode() const { return m_mode; }
         Butterfly* butterfly() const { return m_butterfly; }
         
     private:
         Structure* m_structure;
-        CagedPtr<Gigacage::Primitive, void> m_vector;
+        using VectorType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+        VectorType m_vector;
         uint32_t m_length;
         TypedArrayMode m_mode;
         Butterfly* m_butterfly;
@@ -164,10 +167,11 @@ public:
     JSArrayBuffer* possiblySharedJSBuffer(ExecState* exec);
     RefPtr<ArrayBufferView> unsharedImpl();
     JS_EXPORT_PRIVATE RefPtr<ArrayBufferView> possiblySharedImpl();
-    bool isNeutered() { return hasArrayBuffer() && !vector(); }
+    bool isNeutered() { return hasArrayBuffer() && !hasVector(); }
     void neuter();
-    
-    void* vector() const { return m_vector.getMayBeNull(); }
+
+    bool hasVector() const { return !!m_vector; }
+    void* vector() const { return m_vector.getMayBeNull(length()); }
     
     unsigned byteOffset();
     unsigned length() const { return m_length; }
@@ -191,7 +195,7 @@ protected:
 
     static String toStringName(const JSObject*, ExecState*);
 
-    CagedBarrierPtr<Gigacage::Primitive, void> m_vector;
+    VectorPtr m_vector;
     uint32_t m_length;
     TypedArrayMode m_mode;
 };

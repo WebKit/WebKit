@@ -27,50 +27,91 @@
 
 #include <wtf/DumbPtrTraits.h>
 #include <wtf/Gigacage.h>
+#include <wtf/PtrTag.h>
 
 namespace WTF {
 
-template<Gigacage::Kind passedKind, typename T, typename PtrTraits = DumbPtrTraits<T>>
+constexpr bool tagCagedPtr = true;
+
+template<Gigacage::Kind passedKind, typename T, bool shouldTag = false, typename PtrTraits = DumbPtrTraits<T>>
 class CagedPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
 
     CagedPtr() : CagedPtr(nullptr) { }
-    CagedPtr(std::nullptr_t) : m_ptr(nullptr) { }
+    CagedPtr(std::nullptr_t)
+        : m_ptr(shouldTag ? tagArrayPtr<T>(nullptr, 0) : nullptr)
+    { }
 
-    explicit CagedPtr(T* ptr)
-        : m_ptr(ptr)
-    {
-    }
-    
-    T* get() const
+    CagedPtr(T* ptr, unsigned size)
+        : m_ptr(shouldTag ? tagArrayPtr(ptr, size) : ptr)
+    { }
+
+
+    T* get(unsigned size) const
     {
         ASSERT(m_ptr);
-        return Gigacage::caged(kind, PtrTraits::unwrap(m_ptr));
-    }
-    
-    T* getMayBeNull() const
-    {
-        if (!m_ptr)
-            return nullptr;
-        return get();
+        T* ptr = PtrTraits::unwrap(m_ptr);
+        if (shouldTag)
+            ptr = untagArrayPtr(ptr, size);
+        return Gigacage::caged(kind, ptr);
     }
 
-    CagedPtr& operator=(T* ptr)
+    T* getMayBeNull(unsigned size) const
     {
-        m_ptr = ptr;
+        T* ptr = PtrTraits::unwrap(m_ptr);
+        if (shouldTag)
+            ptr = untagArrayPtr(ptr, size);
+        return Gigacage::cagedMayBeNull(kind, ptr);
+    }
+
+    T* getUnsafe() const
+    {
+        T* ptr = PtrTraits::unwrap(m_ptr);
+        if (shouldTag)
+            ptr = removeArrayPtrTag(ptr);
+        return Gigacage::cagedMayBeNull(kind, ptr);
+    }
+
+    // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
+    template<typename U = T>
+    typename std::enable_if<!std::is_same<void, U>::value, T>::type&
+    /* T& */ at(unsigned index, unsigned size) const { return get(size)[index]; }
+
+    void recage(unsigned oldSize, unsigned newSize)
+    {
+        auto ptr = get(oldSize);
+        ASSERT(ptr == getUnsafe());
+        *this = CagedPtr(ptr, newSize);
+    }
+
+    CagedPtr(CagedPtr& other)
+        : m_ptr(other.m_ptr)
+    {
+    }
+
+    CagedPtr& operator=(const CagedPtr& ptr)
+    {
+        m_ptr = ptr.m_ptr;
         return *this;
     }
 
-    CagedPtr& operator=(T*&& ptr)
+    CagedPtr(CagedPtr&& other)
+        : m_ptr(PtrTraits::exchange(other.m_ptr, nullptr))
     {
-        m_ptr = WTFMove(ptr);
+    }
+
+    CagedPtr& operator=(CagedPtr&& ptr)
+    {
+        m_ptr = PtrTraits::exchange(ptr.m_ptr, nullptr);
         return *this;
     }
 
     bool operator==(const CagedPtr& other) const
     {
-        return getMayBeNull() == other.getMayBeNull();
+        bool result = m_ptr == other.m_ptr;
+        ASSERT(result == (getUnsafe() == other.getUnsafe()));
+        return result;
     }
     
     bool operator!=(const CagedPtr& other) const
@@ -80,64 +121,7 @@ public:
     
     explicit operator bool() const
     {
-        return *this != CagedPtr();
-    }
-    
-    T& operator*() const { return *get(); }
-    T* operator->() const { return get(); }
-
-    template<typename IndexType>
-    T& operator[](IndexType index) const { return get()[index]; }
-    
-protected:
-    typename PtrTraits::StorageType m_ptr;
-};
-
-template<Gigacage::Kind passedKind, typename PtrTraits>
-class CagedPtr<passedKind, void, PtrTraits> {
-public:
-    static constexpr Gigacage::Kind kind = passedKind;
-
-    CagedPtr() : CagedPtr(nullptr) { }
-    CagedPtr(std::nullptr_t) : m_ptr(nullptr) { }
-
-    explicit CagedPtr(void* ptr)
-        : m_ptr(ptr)
-    {
-    }
-    
-    void* get() const
-    {
-        ASSERT(m_ptr);
-        return Gigacage::caged(kind, PtrTraits::unwrap(m_ptr));
-    }
-    
-    void* getMayBeNull() const
-    {
-        if (!m_ptr)
-            return nullptr;
-        return get();
-    }
-
-    CagedPtr& operator=(void* ptr)
-    {
-        m_ptr = ptr;
-        return *this;
-    }
-
-    bool operator==(const CagedPtr& other) const
-    {
-        return getMayBeNull() == other.getMayBeNull();
-    }
-    
-    bool operator!=(const CagedPtr& other) const
-    {
-        return !(*this == other);
-    }
-    
-    explicit operator bool() const
-    {
-        return *this != CagedPtr();
+        return getUnsafe() != nullptr;
     }
     
 protected:
@@ -147,4 +131,5 @@ protected:
 } // namespace WTF
 
 using WTF::CagedPtr;
+using WTF::tagCagedPtr;
 

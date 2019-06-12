@@ -38,7 +38,7 @@ void GenericArguments<Type>::visitChildren(JSCell* thisCell, SlotVisitor& visito
     Base::visitChildren(thisCell, visitor);
     
     if (thisObject->m_modifiedArgumentsDescriptor)
-        visitor.markAuxiliary(thisObject->m_modifiedArgumentsDescriptor.get());
+        visitor.markAuxiliary(thisObject->m_modifiedArgumentsDescriptor.getUnsafe());
 }
 
 template<typename Type>
@@ -265,7 +265,7 @@ void GenericArguments<Type>::initModifiedArgumentsDescriptor(VM& vm, unsigned ar
     if (argsLength) {
         void* backingStore = vm.gigacageAuxiliarySpace(m_modifiedArgumentsDescriptor.kind).allocateNonVirtual(vm, WTF::roundUpToMultipleOf<8>(argsLength), nullptr, AllocationFailureMode::Assert);
         bool* modifiedArguments = static_cast<bool*>(backingStore);
-        m_modifiedArgumentsDescriptor.set(vm, this, modifiedArguments);
+        m_modifiedArgumentsDescriptor.set(vm, this, modifiedArguments, argsLength);
         for (unsigned i = argsLength; i--;)
             modifiedArguments[i] = false;
     }
@@ -283,7 +283,7 @@ void GenericArguments<Type>::setModifiedArgumentDescriptor(VM& vm, unsigned inde
 {
     initModifiedArgumentsDescriptorIfNecessary(vm, length);
     if (index < length)
-        m_modifiedArgumentsDescriptor[index] = true;
+        m_modifiedArgumentsDescriptor.at(index, length) = true;
 }
 
 template<typename Type>
@@ -292,7 +292,7 @@ bool GenericArguments<Type>::isModifiedArgumentDescriptor(unsigned index, unsign
     if (!m_modifiedArgumentsDescriptor)
         return false;
     if (index < length)
-        return m_modifiedArgumentsDescriptor[index];
+        return m_modifiedArgumentsDescriptor.at(index, length);
     return false;
 }
 

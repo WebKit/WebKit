@@ -120,6 +120,7 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
         case ValueRep::SomeRegister:
         case ValueRep::SomeRegisterWithClobber:
         case ValueRep::SomeEarlyRegister:
+        case ValueRep::SomeLateRegister:
         case ValueRep::Register:
         case ValueRep::LateRegister:
             return false;

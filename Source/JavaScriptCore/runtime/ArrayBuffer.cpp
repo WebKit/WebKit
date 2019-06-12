@@ -33,15 +33,17 @@
 
 namespace JSC {
 
-SharedArrayBufferContents::SharedArrayBufferContents(void* data, ArrayBufferDestructorFunction&& destructor)
-    : m_data(data)
+SharedArrayBufferContents::SharedArrayBufferContents(void* data, unsigned size, ArrayBufferDestructorFunction&& destructor)
+    : m_data(data, size)
     , m_destructor(WTFMove(destructor))
+    , m_sizeInBytes(size)
 {
 }
 
 SharedArrayBufferContents::~SharedArrayBufferContents()
 {
-    m_destructor(m_data.getMayBeNull());
+    // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
+    m_destructor(m_data.getUnsafe());
 }
 
 ArrayBufferContents::ArrayBufferContents()
@@ -56,7 +58,7 @@ ArrayBufferContents::ArrayBufferContents(ArrayBufferContents&& other)
 }
 
 ArrayBufferContents::ArrayBufferContents(void* data, unsigned sizeInBytes, ArrayBufferDestructorFunction&& destructor)
-    : m_data(data)
+    : m_data(data, sizeInBytes)
     , m_sizeInBytes(sizeInBytes)
 {
     RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
@@ -82,7 +84,8 @@ void ArrayBufferContents::clear()
 
 void ArrayBufferContents::destroy()
 {
-    m_destructor(m_data.getMayBeNull());
+    // FIXME: We shouldn't use getUnsafe here: https://bugs.webkit.org/show_bug.cgi?id=197698
+    m_destructor(m_data.getUnsafe());
 }
 
 void ArrayBufferContents::reset()
@@ -103,26 +106,29 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
             return;
         }
     }
-    size_t size = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
-    if (!size)
-        size = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
-    m_data = Gigacage::tryMalloc(Gigacage::Primitive, size);
-    if (!m_data) {
+    size_t sizeInBytes = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
+    size_t allocationSize = sizeInBytes;
+    if (!allocationSize)
+        allocationSize = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
+
+    void* data = Gigacage::tryMalloc(Gigacage::Primitive, allocationSize);
+    m_data = DataType(data, sizeInBytes);
+    if (!data) {
         reset();
         return;
     }
     
     if (policy == ZeroInitialize)
-        memset(m_data.get(), 0, size);
+        memset(data, 0, allocationSize);
 
-    m_sizeInBytes = numElements * elementByteSize;
+    m_sizeInBytes = sizeInBytes;
     RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
 }
 
 void ArrayBufferContents::makeShared()
 {
-    m_shared = adoptRef(new SharedArrayBufferContents(m_data.getMayBeNull(), WTFMove(m_destructor)));
+    m_shared = adoptRef(new SharedArrayBufferContents(data(), sizeInBytes(), WTFMove(m_destructor)));
     m_destructor = [] (void*) { };
 }
 
@@ -143,7 +149,7 @@ void ArrayBufferContents::copyTo(ArrayBufferContents& other)
     other.tryAllocate(m_sizeInBytes, sizeof(char), ArrayBufferContents::DontInitialize);
     if (!other.m_data)
         return;
-    memcpy(other.m_data.get(), m_data.get(), m_sizeInBytes);
+    memcpy(other.data(), data(), m_sizeInBytes);
     other.m_sizeInBytes = m_sizeInBytes;
     RELEASE_ASSERT(other.m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
 }

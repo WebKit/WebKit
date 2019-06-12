@@ -1274,6 +1274,7 @@ private:
                     arg = tmp(value.value());
                 break;
             case ValueRep::SomeRegister:
+            case ValueRep::SomeLateRegister:
                 arg = tmp(value.value());
                 break;
             case ValueRep::SomeRegisterWithClobber: {

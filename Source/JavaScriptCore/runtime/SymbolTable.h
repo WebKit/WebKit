@@ -636,8 +636,9 @@ public:
     void setArgumentsLength(VM& vm, uint32_t length)
     {
         if (UNLIKELY(!m_arguments))
-            m_arguments.set(vm, this, ScopedArgumentsTable::create(vm));
-        m_arguments.set(vm, this, m_arguments->setLength(vm, length));
+            m_arguments.set(vm, this, ScopedArgumentsTable::create(vm, length));
+        else
+            m_arguments.set(vm, this, m_arguments->setLength(vm, length));
     }
     
     ScopeOffset argumentOffset(uint32_t i) const

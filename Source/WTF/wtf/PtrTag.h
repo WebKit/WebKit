@@ -122,6 +122,38 @@ constexpr bool enablePtrTagDebugAssert = true;
     } while (false)
 
 
+template<typename T>
+inline T* tagArrayPtr(std::nullptr_t ptr, size_t length)
+{
+    ASSERT(!length);
+    return ptrauth_sign_unauthenticated(static_cast<T*>(ptr), ptrauth_key_process_dependent_data, length);
+}
+
+
+template<typename T>
+inline T* tagArrayPtr(T* ptr, size_t length)
+{
+    return ptrauth_sign_unauthenticated(ptr, ptrauth_key_process_dependent_data, length);
+}
+
+template<typename T>
+inline T* untagArrayPtr(T* ptr, size_t length)
+{
+    return ptrauth_auth_data(ptr, ptrauth_key_process_dependent_data, length);
+}
+
+template<typename T>
+inline T* removeArrayPtrTag(T* ptr)
+{
+    return ptrauth_strip(ptr, ptrauth_key_process_dependent_data);
+}
+
+template<typename T>
+inline T* retagArrayPtr(T* ptr, size_t oldLength, size_t newLength)
+{
+    return ptrauth_auth_and_resign(ptr, ptrauth_key_process_dependent_data, oldLength, ptrauth_key_process_dependent_data, newLength);
+}
+
 template<typename T, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_same<T, PtrType>::value>>
 inline constexpr T removeCodePtrTag(PtrType ptr)
 {
@@ -395,6 +427,38 @@ inline bool usesPointerTagging() { return true; }
 inline void registerPtrTagLookup(PtrTagLookup*) { }
 inline void reportBadTag(const void*, PtrTag) { }
 
+template<typename T>
+inline T* tagArrayPtr(std::nullptr_t, size_t size)
+{
+    ASSERT_UNUSED(size, !size);
+    return nullptr;
+}
+
+template<typename T>
+inline T* tagArrayPtr(T* ptr, size_t)
+{
+    return ptr;
+}
+
+template<typename T>
+inline T* untagArrayPtr(T* ptr, size_t)
+{
+    return ptr;
+}
+
+template<typename T>
+inline T* removeArrayPtrTag(T* ptr)
+{
+    return ptr;
+}
+
+template<typename T>
+inline T* retagArrayPtr(T* ptr, size_t, size_t)
+{
+    return ptr;
+}
+
+
 template<typename T, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_same<T, PtrType>::value>>
 constexpr T tagCodePtr(PtrType ptr, PtrTag) { return bitwise_cast<T>(ptr); }
 
@@ -493,6 +557,11 @@ using WTF::PlatformRegistersPCPtrTag;
 using WTF::PtrTag;
 
 using WTF::reportBadTag;
+
+using WTF::tagArrayPtr;
+using WTF::untagArrayPtr;
+using WTF::retagArrayPtr;
+using WTF::removeArrayPtrTag;
 
 using WTF::tagCodePtr;
 using WTF::untagCodePtr;

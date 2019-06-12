@@ -68,6 +68,7 @@ void ConservativeRoots::grow()
 template<typename MarkHook>
 inline void ConservativeRoots::genericAddPointer(void* p, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter filter, MarkHook& markHook)
 {
+    p = removeArrayPtrTag(p);
     markHook.mark(p);
 
     HeapUtil::findGCObjectPointersForMarking(

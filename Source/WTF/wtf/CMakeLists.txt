@@ -230,6 +230,7 @@ set(WTF_PUBLIC_HEADERS
     SynchronizedFixedQueue.h
     SystemFree.h
     SystemTracing.h
+    TaggedArrayStoragePtr.h
     ThreadGroup.h
     ThreadMessage.h
     ThreadSafeRefCounted.h
