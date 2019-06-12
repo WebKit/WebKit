@@ -1,3 +1,14 @@
+2019-06-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Integrate scrollbar gestures for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=198767
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (_WKGestureRecognizerIsBuiltInScrollViewGestureRecognizer):
+        (-[WKContentView gestureRecognizer:canPreventGestureRecognizer:]):
+
 2019-06-11  Timothy Hatcher  <timothy@apple.com>
 
         Scrollbar can show as white on white in dark mode on iOS.
