@@ -1,3 +1,20 @@
+2019-06-12  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Adjust tests platform/ipad/fast/forms/{select-form-run-twice, unfocus-inside-fixed-hittest}.html following r243808
+        https://bugs.webkit.org/show_bug.cgi?id=198799
+        <rdar://problem/50181023>
+
+        Reviewed by Brent Fulgham.
+
+        Following r243808 we no longer defocus a <select> on iPad when its popover is dismissed as a
+        result of picking a value for it. This is to make the behavior of <select> on iPad like the Mac. 
+        However the tests platform/ipad/fast/forms/{select-form-run-twice, unfocus-inside-fixed-hittest}.html
+        depend on the old behavior. So, we need to update them to no longer expect a defocusing of the
+        <select>/the end of form control interaction.
+
+        * platform/ipad/fast/forms/select-form-run-twice.html:
+        * platform/ipad/fast/forms/unfocus-inside-fixed-hittest.html:
+
 2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Educate the property resolver about IndexExpressions
