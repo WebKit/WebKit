@@ -1458,6 +1458,7 @@ webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html
 webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
+webkit.org/b/168426 svg/clip-path/clip-opacity.html [ ImageOnlyFailure ]
 
 webkit.org/b/188966 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 webkit.org/b/188966 fast/images/image-map-outline-with-paint-root-offset.html [ ImageOnlyFailure ]

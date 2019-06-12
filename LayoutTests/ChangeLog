@@ -1,3 +1,14 @@
+2019-06-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Some reftest fail with only one or two pixel differences in diff image
+        https://bugs.webkit.org/show_bug.cgi?id=168426
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        svg/clip-path/clip-opacity.html results in 0.01% image diff. Marked it as ImageOnlyFailure of Bug 168426.
+
 2019-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Idempotent text autosizing needs to react properly to viewport changes
