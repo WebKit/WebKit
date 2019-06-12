@@ -132,7 +132,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
         g_value_set_string(value, webkit_website_data_manager_get_indexeddb_directory(manager));
         break;
     case PROP_WEBSQL_DIRECTORY:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         g_value_set_string(value, webkit_website_data_manager_get_websql_directory(manager));
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
@@ -317,6 +319,8 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
      * The directory where WebSQL databases will be stored.
      *
      * Since: 2.10
+     *
+     * Deprecated: 2.24. WebSQL is no longer supported. Use IndexedDB instead.
      */
     g_object_class_install_property(
         gObjectClass,
@@ -326,7 +330,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             _("WebSQL Directory"),
             _("The directory where WebSQL databases will be stored"),
             nullptr,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
     /**
      * WebKitWebsiteDataManager:is-ephemeral:
@@ -592,6 +596,8 @@ const gchar* webkit_website_data_manager_get_indexeddb_directory(WebKitWebsiteDa
  * Returns: (allow-none): the directory where WebSQL databases are stored or %NULL if @manager is ephemeral.
  *
  * Since: 2.10
+ *
+ * Deprecated: 2.24. WebSQL is no longer supported. Use IndexedDB instead.
  */
 const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataManager* manager)
 {

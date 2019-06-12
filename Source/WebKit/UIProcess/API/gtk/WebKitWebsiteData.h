@@ -40,7 +40,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE: Offline web application cache.
  * @WEBKIT_WEBSITE_DATA_SESSION_STORAGE: Session storage data.
  * @WEBKIT_WEBSITE_DATA_LOCAL_STORAGE: Local storage data.
- * @WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES: WebSQL databases.
+ * @WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES: WebSQL databases. Deprecated 2.24
  * @WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES: IndexedDB databases.
  * @WEBKIT_WEBSITE_DATA_PLUGIN_DATA: Plugins data.
  * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
