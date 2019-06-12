@@ -477,7 +477,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=["perl", "Tools/Scripts/build-webkit", '--release'],
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
                         )
             + 0,
         )
@@ -490,7 +490,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=["perl", "Tools/Scripts/build-webkit", '--debug'],
+                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -559,7 +559,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=["perl", "Tools/Scripts/build-jsc", '--release'],
+                        command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
             + 0,
         )
@@ -572,7 +572,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=["perl", "Tools/Scripts/build-jsc", '--debug'],
+                        command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,

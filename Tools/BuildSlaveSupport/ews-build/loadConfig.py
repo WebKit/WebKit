@@ -58,17 +58,17 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     for builder in config['builders']:
         builder['tags'] = getTagsForBuilder(builder)
         factory = globals()[builder['factory']]
-        builder['description'] = builder.pop("shortname")
+        builder['description'] = builder.pop('shortname')
         factorykwargs = {}
-        for key in ["platform", "configuration", "architectures", "triggers", "additionalArguments"]:
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'additionalArguments']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value
 
-        builder["factory"] = factory(**factorykwargs)
+        builder['factory'] = factory(**factorykwargs)
 
         if use_localhost_worker:
-            builder['workernames'].append("local-worker")
+            builder['workernames'].append('local-worker')
 
         c['builders'].append(builder)
 

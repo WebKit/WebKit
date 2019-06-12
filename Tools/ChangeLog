@@ -1,3 +1,13 @@
+2019-06-12  Aakash Jain  <aakash_jain@apple.com>
+
+        Replace double-quotes with single quotes in loadConfig.py
+        https://bugs.webkit.org/show_bug.cgi?id=198792
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+
 22019-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         Add mechanism and test case to check if ITP is active
