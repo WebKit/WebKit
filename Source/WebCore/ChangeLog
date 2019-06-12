@@ -1,3 +1,17 @@
+2019-06-12  Ludovico de Nittis  <ludovico.denittis@collabora.com>
+
+        [GTK] GTK_STOCK_* types have been deprecated since GTK 3.10
+        https://bugs.webkit.org/show_bug.cgi?id=198787
+
+        Reviewed by Michael Catanzaro.
+
+        No behaviour changes.
+
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::lookupIconName):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::loadMissingImageIconFromTheme):
+
 2019-06-12  Antti Koivisto  <antti@apple.com>
 
         (Async scrolling) Handle 'position:fixed' inside 'position:sticky' correctly.

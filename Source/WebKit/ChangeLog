@@ -1,3 +1,16 @@
+2019-06-12  Ludovico de Nittis  <ludovico.denittis@collabora.com>
+
+        [GTK] GTK_STOCK_* types have been deprecated since GTK 3.10
+        https://bugs.webkit.org/show_bug.cgi?id=198787
+
+        Reviewed by Michael Catanzaro.
+
+        We completely remove the gtkStockIDFromContextMenuAction function in order to get rid of the stock items.
+        This function was used only in "createActionIfNeeded" where now we pass a nullptr as a stock_id variable.
+
+        * Shared/glib/WebContextMenuItemGlib.cpp:
+        (WebKit::gtkStockIDFromContextMenuAction):
+
 2019-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed fix after rr246360.

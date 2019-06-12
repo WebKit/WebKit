@@ -64,7 +64,7 @@ static Ref<Image> loadMissingImageIconFromTheme(const char* name)
 {
     int iconSize = g_str_has_suffix(name, "@2x") ? 32 : 16;
     auto icon = BitmapImage::create();
-    GUniquePtr<GtkIconInfo> iconInfo(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), GTK_STOCK_MISSING_IMAGE, iconSize, GTK_ICON_LOOKUP_NO_SVG));
+    GUniquePtr<GtkIconInfo> iconInfo(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), "image-missing", iconSize, GTK_ICON_LOOKUP_NO_SVG));
     if (iconInfo) {
         auto buffer = loadResourceSharedBuffer(gtk_icon_info_get_filename(iconInfo.get()));
         icon->setData(WTFMove(buffer), true);

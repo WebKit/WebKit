@@ -86,7 +86,7 @@ static String lookupIconName(String MIMEType)
         if(gtk_icon_theme_has_icon(iconTheme, iconName.utf8().data()))
             return iconName;
     }
-    return GTK_STOCK_FILE;
+    return "text-x-generic";
 }
 
 // FIXME: Move the code to ChromeClient::iconForFiles().
