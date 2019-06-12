@@ -34,6 +34,8 @@ Ref<Data> Data::createWithoutCopying(RetainPtr<NSData> data)
     size_t size = [data length];
 
     return createWithoutCopying(bytes, size, [](unsigned char*, const void* data) {
+        if (!data)
+            return;
         CFRelease(data);
     }, static_cast<void*>(data.leakRef()));
 }

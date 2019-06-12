@@ -1,3 +1,43 @@
+2019-06-12  Null  <null@apple.com>
+
+        Cherry-pick r243631. rdar://problem/51656612
+
+    API::Data::createWithoutCopying should do a null check before calling CFRelease
+    https://bugs.webkit.org/show_bug.cgi?id=196276
+    <rdar://problem/48059859>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    * Shared/Cocoa/APIDataCocoa.mm:
+    (API::Data::createWithoutCopying):
+    
+    Tools:
+    
+    Add an API test that will pass a nil to API::Data::createWithoutCopying via NavigationState::NavigationClient::webCryptoMasterKey.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/navigation-client-default-crypto.html:
+    * TestWebKitAPI/Tests/WebKitCocoa/WebCryptoMasterKey.mm: Added.
+    (-[WebCryptoMasterKeyNavigationDelegate _webCryptoMasterKeyForWebView:]):
+    (-[WebCryptoMasterKeyNavigationDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243631 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+            API::Data::createWithoutCopying should do a null check before calling CFRelease
+            https://bugs.webkit.org/show_bug.cgi?id=196276
+            <rdar://problem/48059859>
+
+            Reviewed by Alex Christensen.
+
+            * Shared/Cocoa/APIDataCocoa.mm:
+            (API::Data::createWithoutCopying):
+
 2019-05-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/51264770
