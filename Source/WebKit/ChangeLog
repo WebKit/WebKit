@@ -1,3 +1,21 @@
+2019-06-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION (r245043) [Mac WK2 Debug] ASSERTION FAILED: m_services.isEmpty() && transports.size() <= maxTransportNumber seen with two http/wpt/webauthn/public-key-credential-* tests
+        https://bugs.webkit.org/show_bug.cgi?id=197917
+        <rdar://problem/51524958>
+
+        Reviewed by Brent Fulgham.
+
+        This is a race condition that when a new request comes in the middle between the previous one finishes and the clearStateAsync is queued in the main thread.
+        Therefore, when the new request starts discovery, it will still see previous request's state.
+
+        To fix this issue, clearState() will be called unconditionally for every request. And a guard is added to clearState() to prevent double clearance.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::makeCredential):
+        (WebKit::AuthenticatorManager::getAssertion):
+        (WebKit::AuthenticatorManager::clearState):
+
 2019-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Add mechanism and test case to check if ITP is active

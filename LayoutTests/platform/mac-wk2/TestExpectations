@@ -920,12 +920,6 @@ webkit.org/b/194916 fast/mediastream/MediaStream-video-element.html [ Pass Failu
 
 webkit.org/b/196376 storage/domstorage/localstorage/private-browsing-affects-storage.html [ Pass Failure ]
 
-webkit.org/b/197917 [ Debug ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
-webkit.org/b/197917 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Skip ]
-
-webkit.org/b/194780 http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Pass Failure ]
-webkit.org/b/196377 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Pass Failure ]
-
 webkit.org/b/196400 fast/mediastream/MediaStreamTrack-getSettings.html [ Pass Failure ]
 
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]

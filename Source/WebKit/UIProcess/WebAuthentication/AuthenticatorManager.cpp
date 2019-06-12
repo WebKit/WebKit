@@ -130,9 +130,9 @@ void AuthenticatorManager::makeCredential(const Vector<uint8_t>& hash, const Pub
 
     if (m_pendingCompletionHandler) {
         m_pendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
-        clearState();
         m_requestTimeOutTimer.stop();
     }
+    clearState();
 
     // 1. Save request for async operations.
     m_pendingRequestData = { hash, true, options, { } };
@@ -149,9 +149,9 @@ void AuthenticatorManager::getAssertion(const Vector<uint8_t>& hash, const Publi
 
     if (m_pendingCompletionHandler) {
         m_pendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
-        clearState();
         m_requestTimeOutTimer.stop();
     }
+    clearState();
 
     // 1. Save request for async operations.
     m_pendingRequestData = { hash, false, { }, options };
@@ -174,8 +174,9 @@ void AuthenticatorManager::clearStateAsync()
 
 void AuthenticatorManager::clearState()
 {
+    if (m_pendingCompletionHandler)
+        return;
     m_pendingRequestData = { };
-    ASSERT(!m_pendingCompletionHandler);
     m_services.clear();
     m_authenticators.clear();
 }
