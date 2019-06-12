@@ -1,5 +1,39 @@
 2019-06-12  Null  <null@apple.com>
 
+        Cherry-pick r245298. rdar://problem/51656613
+
+    Crash under WebKit::WebProcessProxy::didBecomeUnresponsive()
+    https://bugs.webkit.org/show_bug.cgi?id=197883
+    <rdar://problem/50665984>
+    
+    Reviewed by Alex Christensen.
+    
+    Protect |this| in didBecomeUnresponsive() and didExceedCPULimit() since we call client
+    delegates and those may cause |this| to get destroyed.
+    
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::didBecomeUnresponsive):
+    (WebKit::WebProcessProxy::didExceedCPULimit):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@245298 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-05-14  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebKit::WebProcessProxy::didBecomeUnresponsive()
+            https://bugs.webkit.org/show_bug.cgi?id=197883
+            <rdar://problem/50665984>
+
+            Reviewed by Alex Christensen.
+
+            Protect |this| in didBecomeUnresponsive() and didExceedCPULimit() since we call client
+            delegates and those may cause |this| to get destroyed.
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::didBecomeUnresponsive):
+            (WebKit::WebProcessProxy::didExceedCPULimit):
+
+2019-06-12  Null  <null@apple.com>
+
         Cherry-pick r243631. rdar://problem/51656612
 
     API::Data::createWithoutCopying should do a null check before calling CFRelease
