@@ -50,6 +50,7 @@ let getSetProxyNullExec = new Proxy(
         {
             getSet.push(k);
             o[k] = v;
+            return true;
         }
     });
 
@@ -78,6 +79,7 @@ let getSetProxyMatches_comma = new Proxy(
         {
             getSet.push(k);
             o[k] = v;
+            return true;
         }
     });
 
@@ -110,6 +112,7 @@ let getSetProxyReplace_phoneNumber = new Proxy(
             if (k.toString() == "lastIndex")
                 regExp_phoneNumber.lastIndex = v;
             o[k] = v;
+            return true;
         }
     });
 
@@ -141,6 +144,7 @@ let getSetProxyReplaceUnicode_digit_nonGreedy = new Proxy(
             if (k.toString() == "lastIndex")
                 regExpGlobalUnicode_digit_nonGreedy.lastIndex = v;
             o[k] = v;
+            return true;
         }
     });
 

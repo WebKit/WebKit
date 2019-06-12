@@ -409,7 +409,7 @@ bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 }
 
 template <typename PerformDefaultPutFunction>
-bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut)
+bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut, bool shouldThrow)
 {
     NO_TAIL_CALLS();
 
@@ -448,8 +448,11 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     RETURN_IF_EXCEPTION(scope, false);
     bool trapResultAsBool = trapResult.toBoolean(exec);
     RETURN_IF_EXCEPTION(scope, false);
-    if (!trapResultAsBool)
+    if (!trapResultAsBool) {
+        if (shouldThrow)
+            throwVMTypeError(exec, scope, makeString("Proxy object's 'set' trap returned falsy value for property '", String(propertyName.uid()), "'"));
         return false;
+    }
 
     PropertyDescriptor descriptor;
     bool hasProperty = target->getOwnPropertyDescriptor(exec, propertyName, descriptor);
@@ -478,7 +481,7 @@ bool ProxyObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         JSObject* target = jsCast<JSObject*>(thisObject->target());
         return target->methodTable(vm)->put(target, exec, propertyName, value, slot);
     };
-    return thisObject->performPut(exec, value, slot.thisValue(), propertyName, performDefaultPut);
+    return thisObject->performPut(exec, value, slot.thisValue(), propertyName, performDefaultPut, slot.isStrictMode());
 }
 
 bool ProxyObject::putByIndexCommon(ExecState* exec, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow)
@@ -493,7 +496,7 @@ bool ProxyObject::putByIndexCommon(ExecState* exec, JSValue thisValue, unsigned 
         PutPropertySlot slot(thisValue, isStrictMode); // We must preserve the "this" target of the putByIndex.
         return target->methodTable(vm)->put(target, exec, ident.impl(), putValue, slot);
     };
-    RELEASE_AND_RETURN(scope, performPut(exec, putValue, thisValue, ident.impl(), performDefaultPut));
+    RELEASE_AND_RETURN(scope, performPut(exec, putValue, thisValue, ident.impl(), performDefaultPut, shouldThrow));
 }
 
 bool ProxyObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)

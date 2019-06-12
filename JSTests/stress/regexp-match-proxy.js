@@ -53,6 +53,7 @@ let getSetProxyNullExec = new Proxy(
             set.push(k);
             getSet.push(k);
             o[k] = v;
+            return true;
         }
     });
 
@@ -83,6 +84,7 @@ let getSetProxyMatches_s = new Proxy(
             set.push(k);
             getSet.push(k);
             o[k] = v;
+            return true;
         }
     });
 
@@ -117,6 +119,7 @@ let getSetProxyMatches_tx_Greedy = new Proxy(
             if (k.toString() == "lastIndex")
                 regExpGlobal_tx_Greedy.lastIndex = v;
             o[k] = v;
+            return true;
         }
     });
 
@@ -152,6 +155,7 @@ let getSetProxyMatchesUnicode_digit_nonGreedy = new Proxy(
             if (k.toString() == "lastIndex")
                 regExpGlobalUnicode_digit_nonGreedy.lastIndex = v;
             o[k] = v;
+            return true;
         }
     });
 

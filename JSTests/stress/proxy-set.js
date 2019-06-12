@@ -80,6 +80,56 @@ function assert(b) {
     }
 }
 
+(function() {
+    "use strict";
+    let target = {
+        x: 30
+    };
+
+    let handler = {
+        set: function() {
+            return false;
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 1000; i++) {
+        let threw = false;
+        try {
+            proxy.x = 40;
+        } catch(e) {
+            assert(e.toString() === "TypeError: Proxy object's 'set' trap returned falsy value for property 'x'");
+            threw = true;
+        }
+        assert(threw);
+    }
+})();
+
+(function() {
+    "use strict";
+    let target = {
+        x: 30
+    };
+
+    let handler = {
+        set: function() {
+            return false;
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 1000; i++) {
+        let threw = false;
+        try {
+            proxy[42] = 40;
+        } catch(e) {
+            assert(e.toString() === "TypeError: Proxy object's 'set' trap returned falsy value for property '42'");
+            threw = true;
+        }
+        assert(threw);
+    }
+})();
+
 {
     let target = { };
     Object.defineProperty(target, "x", {

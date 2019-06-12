@@ -100,7 +100,7 @@ private:
     template <typename DefaultDeleteFunction>
     bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);
     template <typename PerformDefaultPutFunction>
-    bool performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction);
+    bool performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction, bool shouldThrow);
     bool performPreventExtensions(ExecState*);
     bool performIsExtensible(ExecState*);
     bool performDefineOwnProperty(ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
