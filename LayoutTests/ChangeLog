@@ -1,3 +1,12 @@
+2019-06-12  Shawn Roberts  <sroberts@apple.com>
+
+        scrollbars/scrollbar-iframe-click-does-not-blur-content.html is timing out on WK1 testers
+        https://bugs.webkit.org/show_bug.cgi?id=198800
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Updating expecations for test
+
 2019-06-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION (r245043) [Mac WK2 Debug] ASSERTION FAILED: m_services.isEmpty() && transports.size() <= maxTransportNumber seen with two http/wpt/webauthn/public-key-credential-* tests
