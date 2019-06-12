@@ -111,6 +111,10 @@ struct FrameState {
 #endif
 
     Vector<FrameState> children;
+
+    // This is only used to help debug <rdar://problem/48634553>.
+    bool isDestructed { false };
+    ~FrameState() { isDestructed = true; }
 };
 
 struct PageState {
