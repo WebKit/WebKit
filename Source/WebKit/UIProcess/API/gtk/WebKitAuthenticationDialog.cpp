@@ -75,7 +75,8 @@ static void authenticationCancelled(WebKitAuthenticationRequest*, WebKitAuthenti
 static GtkWidget* createLabelWithLineWrap(const char* text)
 {
     GtkWidget* label = gtk_label_new(text);
-    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_max_width_chars(GTK_LABEL(label), 40);
     return label;

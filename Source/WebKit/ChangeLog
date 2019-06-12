@@ -1,3 +1,15 @@
+2019-06-12  Ludovico de Nittis  <ludovico.denittis@collabora.com>
+
+        [GTK] gtk_misc_set_alignment is deprecated since GTK 3.14
+        https://bugs.webkit.org/show_bug.cgi?id=198785
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace the deprecated gtk_misc_set_alignment with halign and valign.
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (createLabelWithLineWrap):
+
 2019-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Idempotent text autosizing needs to react properly to viewport changes
