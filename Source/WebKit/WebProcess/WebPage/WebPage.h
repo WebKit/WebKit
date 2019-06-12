@@ -634,7 +634,7 @@ public:
     void cancelPotentialTapInFrame(WebFrame&);
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
     void didRecognizeLongPress();
-    void handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t lastLayerTreeTransactionId);
+    bool handlePotentialDoubleTapForDoubleClickAtPoint(OptionSet<WebKit::WebEvent::Modifier>, uint64_t lastLayerTreeTransactionId);
 
     void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
@@ -1848,6 +1848,8 @@ private:
     bool m_keyboardIsAttached { false };
     bool m_canShowWhileLocked { false };
     bool m_inDynamicSizeUpdate { false };
+    Seconds m_doubleTapForDoubleClickDelay { 350_ms };
+    float m_doubleTapForDoubleClickRadius { 45 };
     HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
     RefPtr<WebCore::Node> m_pendingSyntheticClickNode;
     WebCore::FloatPoint m_pendingSyntheticClickLocation;
@@ -1858,6 +1860,8 @@ private:
     Optional<DynamicViewportSizeUpdateID> m_pendingDynamicViewportSizeUpdateID;
     double m_lastTransactionPageScaleFactor { 0 };
     uint64_t m_lastTransactionIDWithScaleChange { 0 };
+    Optional<MonotonicTime> m_lastCommittedTapTimestamp;
+    Optional<WebCore::FloatPoint> m_lastCommittedTapLocation;
 
     CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
 #endif

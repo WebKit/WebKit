@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width initial-scale=1 user-scalable=no">
 <title>This tests that we do not fire dblclick event on double tap on node with touch-action: none</title>
-<script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
 <style>
 #doubleTapthis {
     width: 400px;
@@ -12,8 +12,8 @@
     touch-action: none;
 }
 #finishTest {
-    width: 10px;
-    height: 10px;
+    width: 200px;
+    height: 200px;
     border: 1px solid green;
 }
 </style>
@@ -25,9 +25,9 @@ async function test() {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
 
-    await doubleTapAtPoint(doubleTapthis.offsetLeft, doubleTapthis.offsetTop);
+    await UIHelper.humanSpeedDoubleTapAt(doubleTapthis.offsetLeft, doubleTapthis.offsetTop);
 
-    await doubleTapAtPoint(finishTest.offsetLeft, finishTest.offsetTop);
+    await UIHelper.humanSpeedDoubleTapAt(finishTest.offsetLeft + 100, finishTest.offsetTop + 100);
 }
 </script>
 </head>

@@ -416,6 +416,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_deviceOrientation(parameters.deviceOrientation)
     , m_keyboardIsAttached(parameters.keyboardIsAttached)
     , m_canShowWhileLocked(parameters.canShowWhileLocked)
+    , m_doubleTapForDoubleClickDelay(parameters.doubleTapForDoubleClickDelay)
+    , m_doubleTapForDoubleClickRadius(parameters.doubleTapForDoubleClickRadius)
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)

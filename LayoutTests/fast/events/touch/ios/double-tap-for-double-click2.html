@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width initial-scale=1 user-scalable=no">
 <title>This tests that we fire dblclick event on double tap when the content is replaced</title>
-<script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
 <style>
 #doubleTapThis {
     width: 400px;
@@ -29,7 +29,7 @@ async function test() {
     let x = rect.left + rect.width / 2;
     let y = rect.top + rect.height / 2;
 
-    await doubleTapAtPoint(x, y);
+    await UIHelper.humanSpeedDoubleTapAt(x, y);
 }
 </script>
 </head>

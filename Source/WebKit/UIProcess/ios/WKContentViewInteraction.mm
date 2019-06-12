@@ -693,6 +693,16 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 }
 
+- (void)_ensureNonBlockingDoubleTapGestureRecognizer
+{
+    if (_nonBlockingDoubleTapGestureRecognizer)
+        return;
+    _nonBlockingDoubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_nonBlockingDoubleTapRecognized:)]);
+    [_nonBlockingDoubleTapGestureRecognizer setNumberOfTapsRequired:2];
+    [_nonBlockingDoubleTapGestureRecognizer setDelegate:self];
+    [_nonBlockingDoubleTapGestureRecognizer setEnabled:NO];
+}
+
 - (void)setupInteraction
 {
     // If the page is not valid yet then delay interaction setup until the process is launched/relaunched.
@@ -739,16 +749,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
 
-    _nonBlockingDoubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_nonBlockingDoubleTapRecognized:)]);
-    [_nonBlockingDoubleTapGestureRecognizer setNumberOfTapsRequired:2];
-    [_nonBlockingDoubleTapGestureRecognizer setDelegate:self];
-    [_nonBlockingDoubleTapGestureRecognizer setEnabled:NO];
+    [self _ensureNonBlockingDoubleTapGestureRecognizer];
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
-
-    _doubleTapGestureRecognizerForDoubleClick = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognizedForDoubleClick:)]);
-    [_doubleTapGestureRecognizerForDoubleClick setNumberOfTapsRequired:2];
-    [_doubleTapGestureRecognizerForDoubleClick setDelegate:self];
-    [self addGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
 
     [self _createAndConfigureDoubleTapGestureRecognizer];
 
@@ -892,9 +894,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_nonBlockingDoubleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
 
-    [_doubleTapGestureRecognizerForDoubleClick setDelegate:nil];
-    [self removeGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
-
     [_twoFingerDoubleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 
@@ -967,7 +966,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
     [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
-    [self removeGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
@@ -984,7 +982,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
-    [self addGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
@@ -1834,15 +1831,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _nonBlockingDoubleTapGestureRecognizer.get()))
         return YES;
 
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _doubleTapGestureRecognizerForDoubleClick.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _nonBlockingDoubleTapGestureRecognizer.get(), _doubleTapGestureRecognizerForDoubleClick.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleTapGestureRecognizer.get(), _doubleTapGestureRecognizerForDoubleClick.get()))
-        return YES;
-
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _previewSecondaryGestureRecognizer.get()))
         return YES;
 
@@ -2039,7 +2027,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
         || gestureRecognizer == _doubleTapGestureRecognizer
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer
-        || gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick
         || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer) {
 
         if (hasFocusedElement(_focusedElementInformation)) {
@@ -2443,11 +2430,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     _lastInteractionLocation = gestureRecognizer.location;
     _isDoubleTapPending = YES;
-}
-
-- (void)_doubleTapRecognizedForDoubleClick:(UITapGestureRecognizer *)gestureRecognizer
-{
-    _page->handleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint(gestureRecognizer.location), WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastTouchStart);
 }
 
 - (void)_twoFingerDoubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
@@ -3825,10 +3807,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)_didStartProvisionalLoadForMainFrame
 {
-    // Reset the double tap gesture recognizer to prevent any double click that is in the process of being recognized.
-    [_doubleTapGestureRecognizerForDoubleClick setEnabled:NO];
-    [_doubleTapGestureRecognizerForDoubleClick setEnabled:YES];
-    // We also need to disable the double-tap gesture recognizers that are enabled for double-tap-to-zoom and which
+    // We need to disable the double-tap gesture recognizers that are enabled for double-tap-to-zoom and which
     // are enabled when a single tap is first recognized. This avoids tests running in sequence and simulating taps
     // in the same location to trigger double-tap recognition.
     [self _setDoubleTapGesturesEnabled:NO];
@@ -3886,6 +3865,28 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [_doubleTapGestureRecognizer setEnabled:enabled];
     [_nonBlockingDoubleTapGestureRecognizer setEnabled:!enabled];
     [self _resetIsDoubleTapPending];
+}
+
+- (double)_doubleTapForDoubleClickDelay
+{
+    static double doubleTapForDoubleClickDelay = 350;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self _ensureNonBlockingDoubleTapGestureRecognizer];
+        doubleTapForDoubleClickDelay = [_nonBlockingDoubleTapGestureRecognizer maximumIntervalBetweenSuccessiveTaps];
+    });
+    return doubleTapForDoubleClickDelay;
+}
+
+- (float)_doubleTapForDoubleClickRadius
+{
+    static float doubleTapForDoubleClickRadius = 45;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self _ensureNonBlockingDoubleTapGestureRecognizer];
+        doubleTapForDoubleClickRadius = [_nonBlockingDoubleTapGestureRecognizer allowableMovement];
+    });
+    return doubleTapForDoubleClickRadius;
 }
 
 // MARK: UIWebFormAccessoryDelegate protocol and accessory methods

@@ -243,6 +243,9 @@ private:
 
     void handleAutocorrectionContext(const WebAutocorrectionContext&) final;
 
+    Seconds doubleTapForDoubleClickDelay() final;
+    float doubleTapForDoubleClickRadius() final;
+
     void didFinishProcessingAllPendingMouseEvents() final { }
 
 #if HAVE(PENCILKIT)

@@ -1,3 +1,49 @@
+2019-06-11  Zalan Bujtas  <zalan@apple.com>
+
+        LayoutTests/fast/events/touch/ios/double-tap-for-double-click* test cases are failing
+        https://bugs.webkit.org/show_bug.cgi?id=198764
+        <rdar://problem/51035459>
+
+        Reviewed by Wenson Hsieh.
+
+        This patch replaces the existing, _doubleTapGestureRecognizerForDoubleClick based double click handling with a WebProcess based implementation using
+        the potentialTapAtPosition/commitPotentialTap infrastructure.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doubleTapForDoubleClickDelay):
+        (WebKit::PageClientImpl::doubleTapForDoubleClickRadius):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _ensureNonBlockingDoubleTapGestureRecognizer]):
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _didStartProvisionalLoadForMainFrame]):
+        (-[WKContentView _doubleTapForDoubleClickDelay]):
+        (-[WKContentView _doubleTapForDoubleClickRadius]):
+        (-[WKContentView _doubleTapRecognizedForDoubleClick:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleDoubleTapForDoubleClickAtPoint): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handlePotentialDoubleTapForDoubleClickAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+        (WebKit::WebPage::handleDoubleTapForDoubleClickAtPoint): Deleted.
+
 2019-06-11  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] ASSERTION FAILED: m_state == State::Activating under WebPaymentCoordinatorProxy::showPaymentUI

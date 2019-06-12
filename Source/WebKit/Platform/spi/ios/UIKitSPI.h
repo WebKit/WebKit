@@ -374,6 +374,7 @@ typedef enum {
 @property (nonatomic, readonly) CGPoint location;
 @property (nonatomic) CGFloat allowableMovement;
 @property (nonatomic, readonly) CGPoint centroid;
+@property (nonatomic) CFTimeInterval maximumIntervalBetweenSuccessiveTaps;
 @end
 
 @class WebEvent;

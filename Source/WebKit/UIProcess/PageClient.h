@@ -413,6 +413,9 @@ public:
     virtual void disableInspectorNodeSearch() = 0;
 
     virtual void handleAutocorrectionContext(const WebAutocorrectionContext&) = 0;
+
+    virtual Seconds doubleTapForDoubleClickDelay() = 0;
+    virtual float doubleTapForDoubleClickRadius() = 0;
 #endif
 
     // Auxiliary Client Creation
