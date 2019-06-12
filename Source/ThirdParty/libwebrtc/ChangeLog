@@ -1,3 +1,18 @@
+2019-06-12  Youenn Fablet  <youenn@apple.com>
+
+        Make sure libwebrtc ObjC codec interfaces do not conflict
+        https://bugs.webkit.org/show_bug.cgi?id=198782
+        <rdar://problem/51503247>
+
+        Reviewed by Eric Carlson.
+
+        Rename some ObjC interfaces that we are now using in libwebrtc.
+
+        * Source/webrtc/sdk/objc/api/video_codec/RTCVideoDecoderVP8.h:
+        * Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoDecoder.h:
+        * Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoEncoder.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2019-06-10  Youenn Fablet  <youenn@apple.com>
 
         Call was negotiated with H264 Base Profile 42e01f but encoded in High Profile
