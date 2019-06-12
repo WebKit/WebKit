@@ -1,3 +1,41 @@
+2019-06-12  Antti Koivisto  <antti@apple.com>
+
+        (Async scrolling) Handle 'position:fixed' inside 'position:sticky' correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=198788
+        <rdar://problem/51589759>
+
+        Reviewed by Simon Fraser.
+
+        Handle 'position:fixed' inside 'position:sticky' correctly.
+
+        Also fix nested 'position:fixed' in case where there is an overflow scroller between them.
+
+        Tests: scrollingcoordinator/ios/fixed-inside-overflow-inside-fixed.html
+               scrollingcoordinator/ios/fixed-inside-sticky-frame.html
+               scrollingcoordinator/ios/fixed-inside-sticky-no-stacking-context-2.html
+               scrollingcoordinator/ios/fixed-inside-sticky-no-stacking-context.html
+               scrollingcoordinator/ios/fixed-inside-sticky-stacking-context.html
+
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::applyLayerPositions):
+
+        Take offsets from sticky nodes into account.
+
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.h:
+        (WebCore::ScrollingTreeStickyNode::layer):
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::computeLayerPosition const):
+
+        Factor into a function.
+
+        (WebCore::ScrollingTreeStickyNode::applyLayerPositions):
+        (WebCore::ScrollingTreeStickyNode::scrollDeltaSinceLastCommit const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer const):
+
+        We need to generate a scrolling tree node for position:fixed in nested case if there is an overflow scroller
+        between the layers.
+
 2019-06-12  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r246350.

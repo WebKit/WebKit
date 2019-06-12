@@ -3052,8 +3052,10 @@ bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const Render
         return false;
 
     // FIXME: Handle fixed inside of a transform, which should not behave as fixed.
-    for (auto* stackingContext = layer.stackingContext(); stackingContext; stackingContext = stackingContext->stackingContext()) {
-        if (stackingContext->isComposited() && stackingContext->renderer().isFixedPositioned())
+    for (auto* ancestor = layer.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->hasCompositedScrollableOverflow())
+            return true;
+        if (ancestor->isStackingContext() && ancestor->isComposited() && ancestor->renderer().isFixedPositioned())
             return false;
     }
 

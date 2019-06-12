@@ -34,6 +34,7 @@
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
 #import "ScrollingTreePositionedNode.h"
+#import "ScrollingTreeStickyNode.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
@@ -70,13 +71,8 @@ void ScrollingTreeFixedNode::applyLayerPositions()
 {
     auto computeLayerPosition = [&] {
         FloatSize overflowScrollDelta;
+        ScrollingTreeStickyNode* lastStickyNode = nullptr;
         for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-            if (is<ScrollingTreePositionedNode>(*ancestor)) {
-                auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
-                if (positioningAncestor.layer() != m_layer)
-                    overflowScrollDelta -= positioningAncestor.scrollDeltaSinceLastCommit();
-            }
-
             if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
                 // Fixed nodes are positioned relative to the containing frame scrolling node.
                 // We bail out after finding one.
@@ -88,6 +84,30 @@ void ScrollingTreeFixedNode::applyLayerPositions()
                 // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
                 auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*ancestor);
                 overflowScrollDelta -= overflowNode.scrollDeltaSinceLastCommit();
+                continue;
+            }
+
+            if (is<ScrollingTreePositionedNode>(*ancestor)) {
+                auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
+                // See if sticky node already handled this positioning node.
+                // FIXME: Include positioning node information to sticky/fixed node to avoid these tests.
+                if (lastStickyNode && lastStickyNode->layer() == positioningAncestor.layer())
+                    continue;
+                if (positioningAncestor.layer() != m_layer)
+                    overflowScrollDelta -= positioningAncestor.scrollDeltaSinceLastCommit();
+                continue;
+            }
+
+            if (is<ScrollingTreeStickyNode>(*ancestor)) {
+                auto& stickyNode = downcast<ScrollingTreeStickyNode>(*ancestor);
+                overflowScrollDelta += stickyNode.scrollDeltaSinceLastCommit();
+                lastStickyNode = &stickyNode;
+                continue;
+            }
+
+            if (is<ScrollingTreeFixedNode>(*ancestor)) {
+                // The ancestor fixed node has already applied the needed corrections to say put.
+                return m_constraints.layerPositionAtLastLayout() - overflowScrollDelta;
             }
         }
         ASSERT_NOT_REACHED();

@@ -41,11 +41,17 @@ public:
 
     virtual ~ScrollingTreeStickyNode();
 
+    FloatSize scrollDeltaSinceLastCommit() const;
+
+    CALayer *layer() { return m_layer.get(); }
+
 private:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
+
+    FloatPoint computeLayerPosition() const;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
