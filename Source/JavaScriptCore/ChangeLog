@@ -1,3 +1,44 @@
+2019-06-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Yarr bytecode compilation failure should be gracefully handled
+        https://bugs.webkit.org/show_bug.cgi?id=198700
+
+        Reviewed by Michael Saboff.
+
+        Currently, we assume that Yarr bytecode compilation does not fail. But in fact it can fail.
+        We should gracefully handle this failure as a runtime error, as we did for parse errors in [1].
+        We also harden Yarr's consumed character calculation by using Checked.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=185755
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::byteCodeCompileIfNecessary):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::ByteCompiler):
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::atomCharacterClass):
+        (JSC::Yarr::ByteCompiler::atomBackReference):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionBegin):
+        (JSC::Yarr::ByteCompiler::popParenthesesStack):
+        (JSC::Yarr::ByteCompiler::closeAlternative):
+        (JSC::Yarr::ByteCompiler::closeBodyAlternative):
+        (JSC::Yarr::ByteCompiler::alternativeBodyDisjunction):
+        (JSC::Yarr::ByteCompiler::alternativeDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+
 2019-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Polymorphic call stub's slow path should restore callee saves before performing tail call

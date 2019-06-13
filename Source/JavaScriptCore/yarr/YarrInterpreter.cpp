@@ -1690,13 +1690,15 @@ public:
     ByteCompiler(YarrPattern& pattern)
         : m_pattern(pattern)
     {
-        m_currentAlternativeIndex = 0;
     }
 
-    std::unique_ptr<BytecodePattern> compile(BumpPointerAllocator* allocator, ConcurrentJSLock* lock)
+    std::unique_ptr<BytecodePattern> compile(BumpPointerAllocator* allocator, ConcurrentJSLock* lock, ErrorCode& errorCode)
     {
         regexBegin(m_pattern.m_numSubpatterns, m_pattern.m_body->m_callFrameSize, m_pattern.m_body->m_alternatives[0]->onceThrough());
-        emitDisjunction(m_pattern.m_body);
+        if (auto error = emitDisjunction(m_pattern.m_body, 0, 0)) {
+            errorCode = error.value();
+            return nullptr;
+        }
         regexEnd();
 
 #ifndef NDEBUG
@@ -1751,9 +1753,9 @@ public:
     {
         m_bodyDisjunction->terms.append(ByteTerm(characterClass, invert, inputPosition));
 
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].atom.quantityType = quantityType;
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms.last().atom.quantityType = quantityType;
+        m_bodyDisjunction->terms.last().frameLocation = frameLocation;
     }
 
     void atomBackReference(unsigned subpatternId, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType)
@@ -1762,19 +1764,19 @@ public:
 
         m_bodyDisjunction->terms.append(ByteTerm::BackReference(subpatternId, inputPosition));
 
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].atom.quantityType = quantityType;
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms.last().atom.quantityType = quantityType;
+        m_bodyDisjunction->terms.last().frameLocation = frameLocation;
     }
 
     void atomParenthesesOnceBegin(unsigned subpatternId, bool capture, unsigned inputPosition, unsigned frameLocation, unsigned alternativeFrameLocation)
     {
-        int beginTerm = m_bodyDisjunction->terms.size();
+        unsigned beginTerm = m_bodyDisjunction->terms.size();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternOnceBegin, subpatternId, capture, false, inputPosition));
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = frameLocation;
         m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = alternativeFrameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = alternativeFrameLocation;
 
         m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
         m_currentAlternativeIndex = beginTerm + 1;
@@ -1782,12 +1784,12 @@ public:
 
     void atomParenthesesTerminalBegin(unsigned subpatternId, bool capture, unsigned inputPosition, unsigned frameLocation, unsigned alternativeFrameLocation)
     {
-        int beginTerm = m_bodyDisjunction->terms.size();
+        unsigned beginTerm = m_bodyDisjunction->terms.size();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternTerminalBegin, subpatternId, capture, false, inputPosition));
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = frameLocation;
         m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = alternativeFrameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = alternativeFrameLocation;
 
         m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
         m_currentAlternativeIndex = beginTerm + 1;
@@ -1799,12 +1801,12 @@ public:
         // then fix this up at the end! - simplifying this should make it much clearer.
         // https://bugs.webkit.org/show_bug.cgi?id=50136
 
-        int beginTerm = m_bodyDisjunction->terms.size();
+        unsigned beginTerm = m_bodyDisjunction->terms.size();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpatternOnceBegin, subpatternId, capture, false, inputPosition));
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = frameLocation;
         m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = alternativeFrameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = alternativeFrameLocation;
 
         m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
         m_currentAlternativeIndex = beginTerm + 1;
@@ -1812,12 +1814,12 @@ public:
 
     void atomParentheticalAssertionBegin(unsigned subpatternId, bool invert, unsigned frameLocation, unsigned alternativeFrameLocation)
     {
-        int beginTerm = m_bodyDisjunction->terms.size();
+        unsigned beginTerm = m_bodyDisjunction->terms.size();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParentheticalAssertionBegin, subpatternId, false, invert, 0));
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = frameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = frameLocation;
         m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
-        m_bodyDisjunction->terms[m_bodyDisjunction->terms.size() - 1].frameLocation = alternativeFrameLocation;
+        m_bodyDisjunction->terms.last().frameLocation = alternativeFrameLocation;
 
         m_parenthesesStack.append(ParenthesesStackEntry(beginTerm, m_currentAlternativeIndex));
         m_currentAlternativeIndex = beginTerm + 1;
@@ -1853,10 +1855,9 @@ public:
     unsigned popParenthesesStack()
     {
         ASSERT(m_parenthesesStack.size());
-        int stackEnd = m_parenthesesStack.size() - 1;
-        unsigned beginTerm = m_parenthesesStack[stackEnd].beginTerm;
-        m_currentAlternativeIndex = m_parenthesesStack[stackEnd].savedAlternativeIndex;
-        m_parenthesesStack.shrink(stackEnd);
+        unsigned beginTerm = m_parenthesesStack.last().beginTerm;
+        m_currentAlternativeIndex = m_parenthesesStack.last().savedAlternativeIndex;
+        m_parenthesesStack.removeLast();
 
         ASSERT(beginTerm < m_bodyDisjunction->terms.size());
         ASSERT(m_currentAlternativeIndex < m_bodyDisjunction->terms.size());
@@ -1864,11 +1865,11 @@ public:
         return beginTerm;
     }
 
-    void closeAlternative(int beginTerm)
+    void closeAlternative(unsigned beginTerm)
     {
-        int origBeginTerm = beginTerm;
+        unsigned origBeginTerm = beginTerm;
         ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeAlternativeBegin);
-        int endIndex = m_bodyDisjunction->terms.size();
+        unsigned endIndex = m_bodyDisjunction->terms.size();
 
         unsigned frameLocation = m_bodyDisjunction->terms[beginTerm].frameLocation;
 
@@ -1891,10 +1892,10 @@ public:
 
     void closeBodyAlternative()
     {
-        int beginTerm = 0;
-        int origBeginTerm = 0;
+        unsigned beginTerm = 0;
+        unsigned origBeginTerm = 0;
         ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::TypeBodyAlternativeBegin);
-        int endIndex = m_bodyDisjunction->terms.size();
+        unsigned endIndex = m_bodyDisjunction->terms.size();
 
         unsigned frameLocation = m_bodyDisjunction->terms[beginTerm].frameLocation;
 
@@ -2009,7 +2010,7 @@ public:
 
     void alternativeBodyDisjunction(bool onceThrough)
     {
-        int newAlternativeIndex = m_bodyDisjunction->terms.size();
+        unsigned newAlternativeIndex = m_bodyDisjunction->terms.size();
         m_bodyDisjunction->terms[m_currentAlternativeIndex].alternative.next = newAlternativeIndex - m_currentAlternativeIndex;
         m_bodyDisjunction->terms.append(ByteTerm::BodyAlternativeDisjunction(onceThrough));
 
@@ -2018,17 +2019,17 @@ public:
 
     void alternativeDisjunction()
     {
-        int newAlternativeIndex = m_bodyDisjunction->terms.size();
+        unsigned newAlternativeIndex = m_bodyDisjunction->terms.size();
         m_bodyDisjunction->terms[m_currentAlternativeIndex].alternative.next = newAlternativeIndex - m_currentAlternativeIndex;
         m_bodyDisjunction->terms.append(ByteTerm::AlternativeDisjunction());
 
         m_currentAlternativeIndex = newAlternativeIndex;
     }
 
-    void emitDisjunction(PatternDisjunction* disjunction, unsigned inputCountAlreadyChecked = 0, unsigned parenthesesInputCountAlreadyChecked = 0)
+    Optional<ErrorCode> WARN_UNUSED_RETURN emitDisjunction(PatternDisjunction* disjunction, Checked<unsigned, RecordOverflow> inputCountAlreadyChecked, unsigned parenthesesInputCountAlreadyChecked)
     {
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
-            unsigned currentCountAlreadyChecked = inputCountAlreadyChecked;
+            auto currentCountAlreadyChecked = inputCountAlreadyChecked;
 
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
 
@@ -2046,33 +2047,35 @@ public:
             if (countToCheck) {
                 checkInput(countToCheck);
                 currentCountAlreadyChecked += countToCheck;
+                if (currentCountAlreadyChecked.hasOverflowed())
+                    return ErrorCode::OffsetTooLarge;
             }
 
             for (auto& term : alternative->m_terms) {
                 switch (term.type) {
                 case PatternTerm::TypeAssertionBOL:
-                    assertionBOL(currentCountAlreadyChecked - term.inputPosition);
+                    assertionBOL((currentCountAlreadyChecked - term.inputPosition).unsafeGet());
                     break;
 
                 case PatternTerm::TypeAssertionEOL:
-                    assertionEOL(currentCountAlreadyChecked - term.inputPosition);
+                    assertionEOL((currentCountAlreadyChecked - term.inputPosition).unsafeGet());
                     break;
 
                 case PatternTerm::TypeAssertionWordBoundary:
-                    assertionWordBoundary(term.invert(), currentCountAlreadyChecked - term.inputPosition);
+                    assertionWordBoundary(term.invert(), (currentCountAlreadyChecked - term.inputPosition).unsafeGet());
                     break;
 
                 case PatternTerm::TypePatternCharacter:
-                    atomPatternCharacter(term.patternCharacter, currentCountAlreadyChecked - term.inputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType);
+                    atomPatternCharacter(term.patternCharacter, (currentCountAlreadyChecked - term.inputPosition).unsafeGet(), term.frameLocation, term.quantityMaxCount, term.quantityType);
                     break;
 
                 case PatternTerm::TypeCharacterClass:
-                    atomCharacterClass(term.characterClass, term.invert(), currentCountAlreadyChecked- term.inputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType);
+                    atomCharacterClass(term.characterClass, term.invert(), (currentCountAlreadyChecked - term.inputPosition).unsafeGet(), term.frameLocation, term.quantityMaxCount, term.quantityType);
                     break;
 
                 case PatternTerm::TypeBackReference:
-                    atomBackReference(term.backReferenceSubpatternId, currentCountAlreadyChecked - term.inputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType);
-                        break;
+                    atomBackReference(term.backReferenceSubpatternId, (currentCountAlreadyChecked - term.inputPosition).unsafeGet(), term.frameLocation, term.quantityMaxCount, term.quantityType);
+                    break;
 
                 case PatternTerm::TypeForwardReference:
                     break;
@@ -2086,22 +2089,22 @@ public:
                             disjunctionAlreadyCheckedCount = term.parentheses.disjunction->m_minimumSize;
                         else
                             alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParenthesesOnce;
-                        ASSERT(currentCountAlreadyChecked >= term.inputPosition);
-                        unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
+                        unsigned delegateEndInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
                         atomParenthesesOnceBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, alternativeFrameLocation);
-                        emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
+                        if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount))
+                            return error;
                         atomParenthesesOnceEnd(delegateEndInputOffset, term.frameLocation, term.quantityMinCount, term.quantityMaxCount, term.quantityType);
                     } else if (term.parentheses.isTerminal) {
-                        ASSERT(currentCountAlreadyChecked >= term.inputPosition);
-                        unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
+                        unsigned delegateEndInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
                         atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, term.frameLocation + YarrStackSpaceForBackTrackInfoParenthesesTerminal);
-                        emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
+                        if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount))
+                            return error;
                         atomParenthesesTerminalEnd(delegateEndInputOffset, term.frameLocation, term.quantityMinCount, term.quantityMaxCount, term.quantityType);
                     } else {
-                        ASSERT(currentCountAlreadyChecked >= term.inputPosition);
-                        unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
+                        unsigned delegateEndInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
                         atomParenthesesSubpatternBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, 0);
-                        emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0);
+                        if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0))
+                            return error;
                         atomParenthesesSubpatternEnd(term.parentheses.lastSubpatternId, delegateEndInputOffset, term.frameLocation, term.quantityMinCount, term.quantityMaxCount, term.quantityType, term.parentheses.disjunction->m_callFrameSize);
                     }
                     break;
@@ -2109,22 +2112,25 @@ public:
 
                 case PatternTerm::TypeParentheticalAssertion: {
                     unsigned alternativeFrameLocation = term.frameLocation + YarrStackSpaceForBackTrackInfoParentheticalAssertion;
-
-                    ASSERT(currentCountAlreadyChecked >= term.inputPosition);
-                    unsigned positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
+                    unsigned positiveInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
                     unsigned uncheckAmount = 0;
                     if (positiveInputOffset > term.parentheses.disjunction->m_minimumSize) {
                         uncheckAmount = positiveInputOffset - term.parentheses.disjunction->m_minimumSize;
                         uncheckInput(uncheckAmount);
                         currentCountAlreadyChecked -= uncheckAmount;
+                        if (currentCountAlreadyChecked.hasOverflowed())
+                            return ErrorCode::OffsetTooLarge;
                     }
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invert(), term.frameLocation, alternativeFrameLocation);
-                    emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset - uncheckAmount);
+                    if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset - uncheckAmount))
+                        return error;
                     atomParentheticalAssertionEnd(0, term.frameLocation, term.quantityMaxCount, term.quantityType);
                     if (uncheckAmount) {
                         checkInput(uncheckAmount);
                         currentCountAlreadyChecked += uncheckAmount;
+                        if (currentCountAlreadyChecked.hasOverflowed())
+                            return ErrorCode::OffsetTooLarge;
                     }
                     break;
                 }
@@ -2135,6 +2141,7 @@ public:
                 }
             }
         }
+        return WTF::nullopt;
     }
 #ifndef NDEBUG
     void dumpDisjunction(ByteDisjunction* disjunction, unsigned nesting = 0)
@@ -2400,14 +2407,14 @@ public:
 private:
     YarrPattern& m_pattern;
     std::unique_ptr<ByteDisjunction> m_bodyDisjunction;
-    unsigned m_currentAlternativeIndex;
+    unsigned m_currentAlternativeIndex { 0 };
     Vector<ParenthesesStackEntry> m_parenthesesStack;
     Vector<std::unique_ptr<ByteDisjunction>> m_allParenthesesInfo;
 };
 
-std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock)
+std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator, ErrorCode& errorCode, ConcurrentJSLock* lock)
 {
-    return ByteCompiler(pattern).compile(allocator, lock);
+    return ByteCompiler(pattern).compile(allocator, lock, errorCode);
 }
 
 unsigned interpret(BytecodePattern* bytecode, const String& input, unsigned start, unsigned* output)
