@@ -1,3 +1,14 @@
+2019-06-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] HLS stream slow start
+        https://bugs.webkit.org/show_bug.cgi?id=198377
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcCreate): Cut down the adapter condition to 200 ms to
+        improve start-up times for HLS playback.
+
 2019-06-13  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] gdk_display_get_device_manager and gdk_screen_get_width/height are deprecated

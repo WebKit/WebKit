@@ -389,7 +389,9 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         unsigned retries = 0;
         size_t available = gst_adapter_available_fast(priv->adapter.get());
         while (available < size && !isAdapterDrained) {
-            priv->adapterCondition.waitFor(priv->adapterLock, Seconds(1));
+            priv->adapterCondition.waitFor(priv->adapterLock, 200_ms, [&] {
+                return gst_adapter_available_fast(priv->adapter.get()) >= size;
+            });
             retries++;
             available = gst_adapter_available_fast(priv->adapter.get());
             if (available && available < size)
