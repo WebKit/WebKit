@@ -30,6 +30,7 @@
 
 #import "GPUDevice.h"
 #import "GPULimits.h"
+#import "GPUPipelineMetalConvertLayout.h"
 #import "GPUUtils.h"
 #import "Logging.h"
 #import "WHLSLPrepare.h"
@@ -96,35 +97,6 @@ static WHLSL::VertexFormat convertVertexFormat(GPUVertexFormat vertexFormat)
         ASSERT(vertexFormat == GPUVertexFormat::Float);
         return WHLSL::VertexFormat::FloatR32;
     }
-}
-
-static OptionSet<WHLSL::ShaderStage> convertShaderStageFlags(GPUShaderStageFlags flags)
-{
-    OptionSet<WHLSL::ShaderStage> result;
-    if (flags & GPUShaderStageBit::Flags::Vertex)
-        result.add(WHLSL::ShaderStage::Vertex);
-    if (flags & GPUShaderStageBit::Flags::Fragment)
-        result.add(WHLSL::ShaderStage::Fragment);
-    if (flags & GPUShaderStageBit::Flags::Compute)
-        result.add(WHLSL::ShaderStage::Compute);
-    return result;
-}
-
-static Optional<WHLSL::Binding::BindingDetails> convertBindingType(GPUBindGroupLayout::InternalBindingDetails internalBindingDetails)
-{
-    return WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer uniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
-        return { WHLSL::UniformBufferBinding { uniformBuffer.internalLengthName } };
-    }, [&](GPUBindGroupLayout::DynamicUniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
-        return WTF::nullopt;
-    }, [&](GPUBindGroupLayout::Sampler) -> Optional<WHLSL::Binding::BindingDetails> {
-        return { WHLSL::SamplerBinding { } };
-    }, [&](GPUBindGroupLayout::SampledTexture) -> Optional<WHLSL::Binding::BindingDetails> {
-        return { WHLSL::TextureBinding { } };
-    }, [&](GPUBindGroupLayout::StorageBuffer storageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
-        return { WHLSL::StorageBufferBinding { storageBuffer.internalLengthName } };
-    }, [&](GPUBindGroupLayout::DynamicStorageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
-        return WTF::nullopt;
-    }), internalBindingDetails);
 }
 
 static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat format)
@@ -368,34 +340,6 @@ static bool trySetColorStates(const char* const functionName, const Vector<GPUCo
     return true;
 }
 
-static Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
-{
-    WHLSL::Layout result;
-    if (layout.bindGroupLayouts().size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
-    for (size_t i = 0; i < layout.bindGroupLayouts().size(); ++i) {
-        const auto& bindGroupLayout = layout.bindGroupLayouts()[i];
-        WHLSL::BindGroup bindGroup;
-        bindGroup.name = static_cast<unsigned>(i);
-        for (const auto& keyValuePair : bindGroupLayout->bindingsMap()) {
-            const auto& bindingDetails = keyValuePair.value;
-            WHLSL::Binding binding;
-            binding.visibility = convertShaderStageFlags(bindingDetails.externalBinding.visibility);
-            if (auto bindingType = convertBindingType(bindingDetails.internalBindingDetails))
-                binding.binding = *bindingType;
-            else
-                return WTF::nullopt;
-            if (bindingDetails.externalBinding.binding > std::numeric_limits<unsigned>::max())
-                return WTF::nullopt;
-            binding.externalName = bindingDetails.externalBinding.binding;
-            binding.internalName = bindingDetails.internalName;
-            bindGroup.bindings.append(WTFMove(binding));
-        }
-        result.append(WTFMove(bindGroup));
-    }
-    return result;
-}
-
 static bool trySetMetalFunctions(const char* const functionName, MTLLibrary *vertexMetalLibrary, MTLLibrary *fragmentMetalLibrary, MTLRenderPipelineDescriptor *mtlDescriptor, const String& vertexEntryPointName, const String& fragmentEntryPointName)
 {
 #if LOG_DISABLED
@@ -465,8 +409,6 @@ static bool trySetFunctions(const char* const functionName, const GPUPipelineSta
         auto whlslCompileResult = WHLSL::prepare(whlslSource, *whlslDescriptor);
         if (!whlslCompileResult)
             return false;
-
-        WTFLogAlways("Metal Source: %s", whlslCompileResult->metalSource.utf8().data());
 
         NSError *error = nil;
 
@@ -542,6 +484,11 @@ static RetainPtr<MTLRenderPipelineDescriptor> convertRenderPipelineDescriptor(co
 
 static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const char* const functionName, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
 {
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUComputePipeline::tryCreate(): Invalid GPUDevice!");
+        return nullptr;
+    }
+
     auto mtlDescriptor = convertRenderPipelineDescriptor(functionName, descriptor, device);
     if (!mtlDescriptor)
         return nullptr;
@@ -550,7 +497,7 @@ static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const c
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
+    NSError *error = nil;
     pipeline = adoptNS([device.platformDevice() newRenderPipelineStateWithDescriptor:mtlDescriptor.get() error:&error]);
     if (!pipeline)
         LOG(WebGPU, "%s: %s!", functionName, error.localizedDescription.UTF8String);

@@ -774,6 +774,8 @@ void LeftValueSimplifier::finishVisiting(AST::PropertyAccessExpression& property
     ASSERT(propertyAccessExpression.base().typeAnnotation().leftAddressSpace());
     ASSERT(propertyAccessExpression.anderFunction());
 
+    Visitor::visit(propertyAccessExpression.base());
+
     Lexer::Token origin = propertyAccessExpression.origin();
     auto* anderFunction = propertyAccessExpression.anderFunction();
 
@@ -804,7 +806,6 @@ void LeftValueSimplifier::visit(AST::DotExpression& dotExpression)
 
 void LeftValueSimplifier::visit(AST::IndexExpression& indexExpression)
 {
-    Visitor::visit(indexExpression);
     PropertyResolver().Visitor::visit(indexExpression.indexExpression());
     finishVisiting(indexExpression);
 }

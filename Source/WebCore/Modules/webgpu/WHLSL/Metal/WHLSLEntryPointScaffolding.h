@@ -129,6 +129,7 @@ private:
 
     struct NamedOutput {
         String elementName;
+        String internalTypeName;
     };
     Vector<NamedOutput> m_namedOutputs;
 };
@@ -157,6 +158,7 @@ private:
 
     struct NamedOutput {
         String elementName;
+        String internalTypeName;
     };
     Vector<NamedOutput> m_namedOutputs;
 };
