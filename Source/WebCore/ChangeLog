@@ -1,3 +1,13 @@
+2019-06-12  Antoine Quint  <graouts@apple.com>
+
+        [WHLSL] Hook up compute
+        https://bugs.webkit.org/show_bug.cgi?id=198644
+
+        Unreviewed build fix. Release iOS build would complain that pipelineState was unused.
+
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm:
+        (WebCore::GPUComputePassEncoder::dispatch):
+
 2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up compute

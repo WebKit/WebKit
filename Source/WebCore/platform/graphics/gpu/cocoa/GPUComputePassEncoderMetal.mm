@@ -92,8 +92,7 @@ void GPUComputePassEncoder::dispatch(unsigned x, unsigned y, unsigned z)
         return;
     }
 
-    auto pipelineState = m_pipeline->platformComputePipeline();
-    ASSERT(pipelineState);
+    ASSERT(m_pipeline->platformComputePipeline());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
