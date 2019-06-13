@@ -1,3 +1,21 @@
+2019-06-13  Antti Koivisto  <antti@apple.com>
+
+        twitch.tv: embedded video hovers down the screen when scrolling on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=198832
+        <rdar://problem/51541439>
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/scrolling/async-overflow-scrolling/overflow-scroll-paint-order-sibling.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
+        Overflow scroll layer may have composited descendants that are its paint order siblings. We need to invalidate
+        the tree of the paint order parent for compositing update (instead of just the tree of the overflow scroll layer).
+
+        This matches what RenderLayer::updateLayerPosition() does.
+
 2019-06-13  Youenn Fablet  <youenn@apple.com>
 
         SocketStreamHandle should not be destroyed in a background thread

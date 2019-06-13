@@ -1,3 +1,14 @@
+2019-06-13  Antti Koivisto  <antti@apple.com>
+
+        twitch.tv: embedded video hovers down the screen when scrolling on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=198832
+        <rdar://problem/51541439>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/scrolling/async-overflow-scrolling/overflow-scroll-paint-order-sibling-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/overflow-scroll-paint-order-sibling.html: Added.
+
 2019-06-13  Youenn Fablet  <youenn@apple.com>
 
         Import WPT websockets tests

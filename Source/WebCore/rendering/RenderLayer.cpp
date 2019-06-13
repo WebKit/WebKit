@@ -2515,7 +2515,11 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
             // when that completes.
             if (usesCompositedScrolling()) {
                 setNeedsCompositingGeometryUpdate();
-                setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+
+                // Scroll position can affect the location of a composited descendant (which may be a sibling in z-order),
+                // so trigger a descendant walk from the paint-order parent.
+                if (auto* paintParent = paintOrderParent())
+                    paintParent->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
             }
 
             updateCompositingLayersAfterScroll();
