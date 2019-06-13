@@ -1,19 +1,4 @@
-fast/forms/ios/ipad [ Pass ]
-
 # iPads don't zoom when form elements are focused
-fast/forms/ios/accessory-bar-navigation.html [ Skip ]
-fast/forms/ios/choose-select-option.html [ Skip ]
-fast/forms/ios/delete-in-input-in-iframe.html [ Skip ]
-fast/forms/ios/focus-input-in-fixed.html [ Skip ]
-fast/forms/ios/focus-input-in-iframe.html [ Skip ]
-fast/forms/ios/focus-input-via-button-no-scaling.html [ Skip ]
-fast/forms/ios/focus-input-via-button.html [ Skip ]
-fast/forms/ios/focus-long-textarea.html [ Skip ]
-fast/forms/ios/typing-in-input-in-iframe.html [ Skip ]
-fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Skip ]
-fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Skip ]
-fast/forms/ios/zoom-after-input-tap-wide-input.html [ Skip ]
-fast/forms/ios/zoom-after-input-tap.html [ Skip ]
 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
 
 # These tests are designed for iPhone and crash on iPad
@@ -50,5 +35,3 @@ webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-safari-type-
 webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
-
-webkit.org/b/194314 fast/forms/ios/scroll-to-reveal-focused-select.html

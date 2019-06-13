@@ -25,10 +25,6 @@ http/tests/gzip-content-encoding [ Pass ]
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-# iPad-specific tests skipped here and re-enabled in platform/ipad
-fast/events/ios/ipad [ Skip ]
-fast/forms/ios/ipad [ Skip ]
-
 ###
 # Unsupported and disabled features
 ##
@@ -3237,30 +3233,6 @@ fast/events/touch/ios/touch-events-with-modifiers.html [ Skip ]
 fast/events/touch/ios/mouse-events-with-modifiers.html [ Skip ]
 fast/events/touch/ios/pointer-events-with-modifiers.html [ Skip ]
 
-# FIXME: Unskip the following test once we have the fix for <rdar://problem/44928156>.
-fast/events/ios/key-command-delete-to-end-of-paragraph.html [ Skip ]
-fast/events/ios/key-command-transpose.html [ Skip ]
-
-# FIXME: Unskip the following tests once we ENABLE(FULL_KEYBOARD_ACCESS) is enabled by default on iOS
-fast/forms/ios/focus-button.html [ Skip ]
-fast/forms/ios/focus-checkbox.html [ Skip ]
-fast/forms/ios/focus-checked-checkbox.html [ Skip ]
-fast/forms/ios/focus-checked-radio.html [ Skip ]
-fast/forms/ios/focus-radio.html [ Skip ]
-fast/forms/ios/focus-reset-button.html [ Skip ]
-fast/forms/ios/focus-search-field.html [ Skip ]
-fast/forms/ios/focus-submit-button.html [ Skip ]
-fast/forms/ios/focus-text-field.html [ Skip ]
-fast/forms/ios/focus-textarea.html [ Skip ]
-fast/events/ios/activating-button-should-not-scroll-page.html [ Skip ]
-fast/events/ios/activating-checkbox-should-not-scroll-page.html [ Skip ]
-fast/events/ios/activating-radio-button-should-not-scroll-page.html [ Skip ]
-fast/events/ios/activating-reset-button-should-not-scroll-page.html [ Skip ]
-fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Skip ]
-
-# FIXME: Unskip the following test once we have the fix for <rdar://problem/45892362>.
-fast/events/ios/key-command-select-all-prevent-default.html [ Skip ]
-
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Skip ]
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Skip ]
 
@@ -3269,9 +3241,6 @@ webkit.org/b/191711 quicklook/numbers.html [ ImageOnlyFailure ]
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
 webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
-
-# FIXME: Unskip the following test once we have the fix for <rdar://problem/50596032>.
-fast/events/ios/submit-form-target-blank-using-return-key.html
 
 # These tests depend on the implementation of "modern compatibility mode" in WebKitAdditions.
 platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html [ Skip ]

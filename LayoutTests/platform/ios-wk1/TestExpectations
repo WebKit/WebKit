@@ -29,12 +29,6 @@ imported/w3c/web-platform-tests/pointerevents [ Skip ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
-# No support for testing key commands with modifiers in WK1
-fast/events/ios/focus-tab-previous-field.html [ Skip ]
-fast/events/ios/key-command-italic-dispatches-keydown.html [ Skip ]
-fast/events/ios/key-command-italic.html [ Skip ]
-fast/events/ios/type-digits-holding-control-key.html [ Skip ]
-
 # testRunner.queueLoad() does not support loading data URLs in iOS WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
 
