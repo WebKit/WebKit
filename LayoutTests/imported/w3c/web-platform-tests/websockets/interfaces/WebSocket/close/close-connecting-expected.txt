@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 15: WebSocket connection to 'ws://localhost:49001/sleep_10_v13' failed: WebSocket is closed before the connection is established.
+
+FAIL WebSockets: close() when connecting assert_equals: expected 2 but got 3
+

@@ -1,0 +1,102 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-1000.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-Reason-124Bytes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-undefined.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-extensions-empty.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-url-with-space.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-valid-url-array-protocols.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-valid-url-binaryType-blob.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-valid-url-protocol-setCorrectly.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-valid-url-protocol-string.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-valid-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-asciiSep-protocol-string.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-invalid-urls.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-non-absolute-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-nonAscii-protocol-string.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-on-worker-shutdown.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-protocol-with-space.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-protocols-repeated-case-insensitive.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-protocols-repeated.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-array-protocols.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-empty.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-verify-url-set-non-default-port.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-wrong-scheme.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/websockets/README.md
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-1000-reason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-1000-verify-code.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-1000.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-1005-verify-code.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-1005.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-2999-reason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-3000-reason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-3000-verify-code.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-4999-reason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-124Bytes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-onlyReason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-readyState-Closed.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-readyState-Closing.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-server-initiated-close.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Close-undefined.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-65K-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-65K-arraybuffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybuffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-float32.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-float64.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-int32.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-uint16-offset-length.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-uint32-offset.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-uint8-offset-length.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-arraybufferview-uint8-offset.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-binary-blob.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-null.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-paired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-unicode-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Secure-Send-unpaired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-0byte-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-65K-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-Unpaired-Surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-before-open.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybufferview-int16-offset.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybufferview-int8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-blob.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-data.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-null.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-unicode-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/basic-auth.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/close-invalid.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/constants.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/constructor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/eventhandlers.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/extended-payload-length.html
+/LayoutTests/imported/w3c/web-platform-tests/websockets/referrer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/websocket.sub.js

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 14: WebSocket connection to 'ws://localhost:49001/echo' failed: WebSocket is closed before the connection is established.
+
+PASS WebSockets: delete bufferedAmount 
+

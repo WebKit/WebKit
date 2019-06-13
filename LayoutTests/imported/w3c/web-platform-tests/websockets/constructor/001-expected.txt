@@ -1,0 +1,3 @@
+
+PASS WebSockets: new WebSocket() with no args 
+

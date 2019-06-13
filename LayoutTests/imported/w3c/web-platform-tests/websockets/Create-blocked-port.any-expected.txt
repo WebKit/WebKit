@@ -1,0 +1,137 @@
+CONSOLE MESSAGE: line 43: WebSocket port 1 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 7 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 9 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 11 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 13 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 15 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 17 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 19 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 20 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 21 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 22 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 23 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 25 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 37 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 42 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 43 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 53 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 77 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 79 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 87 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 95 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 101 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 102 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 103 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 104 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 109 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 110 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 111 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 113 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 115 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 117 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 119 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 123 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 135 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 139 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 143 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 179 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 389 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 427 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 465 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 512 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 513 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 514 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 515 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 526 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 530 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 531 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 532 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 540 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 548 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 556 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 563 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 587 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 601 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 636 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 993 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 995 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 2049 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 3659 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 4045 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6000 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6665 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6666 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6667 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6668 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6669 blocked
+CONSOLE MESSAGE: line 43: WebSocket port 6697 blocked
+
+PASS Basic check 
+FAIL WebSocket blocked port test 1 The operation is insecure.
+FAIL WebSocket blocked port test 7 The operation is insecure.
+FAIL WebSocket blocked port test 9 The operation is insecure.
+FAIL WebSocket blocked port test 11 The operation is insecure.
+FAIL WebSocket blocked port test 13 The operation is insecure.
+FAIL WebSocket blocked port test 15 The operation is insecure.
+FAIL WebSocket blocked port test 17 The operation is insecure.
+FAIL WebSocket blocked port test 19 The operation is insecure.
+FAIL WebSocket blocked port test 20 The operation is insecure.
+FAIL WebSocket blocked port test 21 The operation is insecure.
+FAIL WebSocket blocked port test 22 The operation is insecure.
+FAIL WebSocket blocked port test 23 The operation is insecure.
+FAIL WebSocket blocked port test 25 The operation is insecure.
+FAIL WebSocket blocked port test 37 The operation is insecure.
+FAIL WebSocket blocked port test 42 The operation is insecure.
+FAIL WebSocket blocked port test 43 The operation is insecure.
+FAIL WebSocket blocked port test 53 The operation is insecure.
+FAIL WebSocket blocked port test 77 The operation is insecure.
+FAIL WebSocket blocked port test 79 The operation is insecure.
+FAIL WebSocket blocked port test 87 The operation is insecure.
+FAIL WebSocket blocked port test 95 The operation is insecure.
+FAIL WebSocket blocked port test 101 The operation is insecure.
+FAIL WebSocket blocked port test 102 The operation is insecure.
+FAIL WebSocket blocked port test 103 The operation is insecure.
+FAIL WebSocket blocked port test 104 The operation is insecure.
+FAIL WebSocket blocked port test 109 The operation is insecure.
+FAIL WebSocket blocked port test 110 The operation is insecure.
+FAIL WebSocket blocked port test 111 The operation is insecure.
+FAIL WebSocket blocked port test 113 The operation is insecure.
+FAIL WebSocket blocked port test 115 The operation is insecure.
+FAIL WebSocket blocked port test 117 The operation is insecure.
+FAIL WebSocket blocked port test 119 The operation is insecure.
+FAIL WebSocket blocked port test 123 The operation is insecure.
+FAIL WebSocket blocked port test 135 The operation is insecure.
+FAIL WebSocket blocked port test 139 The operation is insecure.
+FAIL WebSocket blocked port test 143 The operation is insecure.
+FAIL WebSocket blocked port test 179 The operation is insecure.
+FAIL WebSocket blocked port test 389 The operation is insecure.
+FAIL WebSocket blocked port test 427 The operation is insecure.
+FAIL WebSocket blocked port test 465 The operation is insecure.
+FAIL WebSocket blocked port test 512 The operation is insecure.
+FAIL WebSocket blocked port test 513 The operation is insecure.
+FAIL WebSocket blocked port test 514 The operation is insecure.
+FAIL WebSocket blocked port test 515 The operation is insecure.
+FAIL WebSocket blocked port test 526 The operation is insecure.
+FAIL WebSocket blocked port test 530 The operation is insecure.
+FAIL WebSocket blocked port test 531 The operation is insecure.
+FAIL WebSocket blocked port test 532 The operation is insecure.
+FAIL WebSocket blocked port test 540 The operation is insecure.
+FAIL WebSocket blocked port test 548 The operation is insecure.
+FAIL WebSocket blocked port test 556 The operation is insecure.
+FAIL WebSocket blocked port test 563 The operation is insecure.
+FAIL WebSocket blocked port test 587 The operation is insecure.
+FAIL WebSocket blocked port test 601 The operation is insecure.
+FAIL WebSocket blocked port test 636 The operation is insecure.
+FAIL WebSocket blocked port test 993 The operation is insecure.
+FAIL WebSocket blocked port test 995 The operation is insecure.
+FAIL WebSocket blocked port test 2049 The operation is insecure.
+FAIL WebSocket blocked port test 3659 The operation is insecure.
+FAIL WebSocket blocked port test 4045 The operation is insecure.
+FAIL WebSocket blocked port test 6000 The operation is insecure.
+FAIL WebSocket blocked port test 6665 The operation is insecure.
+FAIL WebSocket blocked port test 6666 The operation is insecure.
+FAIL WebSocket blocked port test 6667 The operation is insecure.
+FAIL WebSocket blocked port test 6668 The operation is insecure.
+FAIL WebSocket blocked port test 6669 The operation is insecure.
+FAIL WebSocket blocked port test 6697 The operation is insecure.
+

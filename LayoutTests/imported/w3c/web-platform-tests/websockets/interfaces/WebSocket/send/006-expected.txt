@@ -1,0 +1,3 @@
+
+PASS WebSockets: send() with unpaired surrogate when readyState is OPEN 
+

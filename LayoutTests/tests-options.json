@@ -1790,6 +1790,60 @@
     "imported/w3c/web-platform-tests/webrtc/RTCRtpSender-transport.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/websockets/binary/002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/binary/004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/constructor/013.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/constructor/014.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/cookies/005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/cookies/007.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/extended-payload-length.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/016.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/010.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/keeping-connection-open/001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/opening-handshake/002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/opening-handshake/003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/unload-a-document/002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/unload-a-document/004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/unload-a-document/005.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/xhr/progress-events-response-data-gzip.htm": [
         "slow"
     ],

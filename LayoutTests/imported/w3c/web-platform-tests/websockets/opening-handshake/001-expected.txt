@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/invalid' failed: Invalid HTTP version string: FOO
+
+PASS WebSockets: invalid handshake 
+

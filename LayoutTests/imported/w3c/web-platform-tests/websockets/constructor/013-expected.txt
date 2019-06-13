@@ -1,0 +1,3 @@
+
+PASS WebSockets: multiple WebSocket objects 
+

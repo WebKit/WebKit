@@ -1,5 +1,18 @@
 2019-06-13  Youenn Fablet  <youenn@apple.com>
 
+        Import WPT websockets tests
+        https://bugs.webkit.org/show_bug.cgi?id=198774
+
+        Reviewed by Geoffrey Garen.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/abort.sub.window-expected.txt:
+        Rebasing since we now have some websockets specific handlers.
+        * web-platform-tests/websockets: Added.
+
+2019-06-13  Youenn Fablet  <youenn@apple.com>
+
         Update service worker test and expectation after revision 246363
         https://bugs.webkit.org/show_bug.cgi?id=198808
 

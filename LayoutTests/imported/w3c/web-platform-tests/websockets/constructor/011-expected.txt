@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/handshake_protocol' failed: Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch
+
+PASS WebSockets: protocol mismatch 
+

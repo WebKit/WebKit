@@ -1,3 +1,14 @@
+2019-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Import WPT websockets tests
+        https://bugs.webkit.org/show_bug.cgi?id=198774
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac-wk1/TestExpectations:
+        * TestExpectations:
+        * tests-options.json:
+
 2019-06-13  Antoine Quint  <graouts@apple.com>
 
         "display: contents" Content click does not trigger

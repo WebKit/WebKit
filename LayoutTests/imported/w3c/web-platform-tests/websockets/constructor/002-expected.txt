@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 10: Wrong url scheme for WebSocket http://localhost:8800/test
+CONSOLE MESSAGE: line 11: Invalid url for WebSocket ws://foo bar.com/
+CONSOLE MESSAGE: line 12: Invalid url for WebSocket wss://foo bar.com/
+CONSOLE MESSAGE: line 13: Wrong url scheme for WebSocket http://localhost:8800/
+CONSOLE MESSAGE: line 14: Wrong url scheme for WebSocket mailto:example@example.org
+CONSOLE MESSAGE: line 15: Wrong url scheme for WebSocket about:blank
+CONSOLE MESSAGE: line 16: URL has fragment component ws://localhost:49001/#
+CONSOLE MESSAGE: line 17: URL has fragment component ws://localhost:49001/#test
+CONSOLE MESSAGE: line 18: Wrong url scheme for WebSocket http://localhost:8800/websockets/constructor/002.html?test
+CONSOLE MESSAGE: line 19: Wrong url scheme for WebSocket http://localhost:8800/websockets/constructor/002.html#test
+
+PASS WebSockets: new WebSocket(invalid url) 
+PASS WebSockets: new WebSocket(invalid url) 1 
+PASS WebSockets: new WebSocket(invalid url) 2 
+PASS WebSockets: new WebSocket(invalid url) 3 
+PASS WebSockets: new WebSocket(invalid url) 4 
+PASS WebSockets: new WebSocket(invalid url) 5 
+PASS WebSockets: new WebSocket(invalid url) 6 
+PASS WebSockets: new WebSocket(invalid url) 7 
+PASS WebSockets: new WebSocket(invalid url) 8 
+PASS WebSockets: new WebSocket(invalid url) 9 
+

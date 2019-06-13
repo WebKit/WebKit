@@ -59,6 +59,21 @@ inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
+imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/binary/001.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/closing-handshake/002.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/closing-handshake/003.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/constructor/006.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/constructor/009.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/cookies/001.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/cookies/002.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/CloseEvent/clean-close.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/006.html [ Pass Failure ]
+
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
 
