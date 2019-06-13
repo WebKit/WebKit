@@ -30,6 +30,9 @@ function getTypingUIScript(x, y)
 var i = 0;
 var testInput = document.getElementById("testInput");
 testInput.onkeydown = function(e) {
+    // Ignore the Shift key so as to normalize the test results across different iOS versions.
+    if (e.key == "Shift")
+        return;
     event = e;
     shouldBeEqualToString("event.key", "" + tests[i][0]);
     shouldBeEqualToString("event.code", "" + tests[i][1]);

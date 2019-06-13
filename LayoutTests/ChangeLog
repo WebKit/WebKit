@@ -1,3 +1,22 @@
+2019-06-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Normalize test result of fast/events/ios/keyboard-event-key-attribute.html to handle possible modifier dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=198835
+        <rdar://problem/46082708>
+
+        Reviewed by Darin Adler.
+
+        WebKit now knows how to handle flag change events on iOS and dispatch DOM events just like Mac.
+        Until USE(UIKIT_KEYBOARD_ADDITIONS) is enabled by default WebKit does not expect to receive
+        modifier flag changes. But once this compile time flag is enabled it will and the test
+        fast/events/ios/keyboard-event-key-attribute.html will fail because it types '@' and only
+        expects to see a single keydown for '@' even though it actually requires two key downs to
+        generate an '@': Shift, and 2 (on a US keyboard layout). We have a bunch of other tests to
+        check that modifier key presses generate DOM events. So, let's just normalize the result of
+        this test to ignore Shift keydowns.
+
+        * fast/events/ios/keyboard-event-key-attribute.html:
+
 2019-06-13  Truitt Savell  <tsavell@apple.com>
 
         Test gardening after r246406
