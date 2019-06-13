@@ -75,7 +75,11 @@ static void doMouseEvent(GdkEventType type, GtkWidget* widget, const WebCore::In
     event->button.axes = 0;
     event->button.state = state;
     event->button.button = button;
+#if GTK_CHECK_VERSION(3, 20, 0)
+    event->button.device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(widget)));
+#else
     event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(widget)));
+#endif
     int xRoot, yRoot;
     gdk_window_get_root_coords(gtk_widget_get_window(widget), location.x(), location.y(), &xRoot, &yRoot);
     event->button.x_root = xRoot;
@@ -93,7 +97,11 @@ static void doMotionEvent(GtkWidget* widget, const WebCore::IntPoint& location, 
     event->motion.y = location.y();
     event->motion.axes = 0;
     event->motion.state = state;
+#if GTK_CHECK_VERSION(3, 20, 0)
+    event->motion.device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(widget)));
+#else
     event->motion.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(widget)));
+#endif
     int xRoot, yRoot;
     gdk_window_get_root_coords(gtk_widget_get_window(widget), location.x(), location.y(), &xRoot, &yRoot);
     event->motion.x_root = xRoot;
@@ -142,7 +150,12 @@ static void doKeyStrokeEvent(GdkEventType type, GtkWidget* widget, unsigned keyV
     event->key.time = GDK_CURRENT_TIME;
     event->key.window = gtk_widget_get_window(widget);
     g_object_ref(event->key.window);
+
+#if GTK_CHECK_VERSION(3, 20, 0)
+    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(widget))));
+#else
     gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(widget))));
+#endif
     event->key.state = state;
 
     // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
@@ -332,4 +345,3 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
 }
 
 } // namespace WebKit
-

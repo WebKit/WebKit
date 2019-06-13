@@ -30,7 +30,9 @@
 
 GdkDevice *getDefaultGDKPointerDevice(GdkWindow* window)
 {
-#ifndef GTK_API_VERSION_2
+#if GTK_CHECK_VERSION(3, 20, 0)
+    return gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(window)));
+#elif !defined(GTK_API_VERSION_2)
     GdkDeviceManager *manager =  gdk_display_get_device_manager(gdk_window_get_display(window));
     return gdk_device_manager_get_client_pointer(manager);
 #else
@@ -233,10 +235,20 @@ static void getScreenWorkArea(GdkScreen *screen, GdkRectangle *area)
     Atom workArea = XInternAtom(display, "_NET_WORKAREA", True);
 
     /* Defaults in case of error. */
+#if GTK_CHECK_VERSION(3, 22, 0)
+    GdkRectangle geom;
+    GdkMonitor *monitor = gdk_display_get_primary_monitor(display);
+    gdk_monitor_get_geometry(monitor, &geom);
+    area->x = geom.x;
+    area->y = geom.y;
+    area->width = geom.width;
+    area->height = geom.height;
+#else
     area->x = 0;
     area->y = 0;
     area->width = gdk_screen_get_width(screen);
     area->height = gdk_screen_get_height(screen);
+#endif
 
     if (workArea == None)
         return;
