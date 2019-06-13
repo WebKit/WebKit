@@ -1,3 +1,20 @@
+2019-06-12  Antoine Quint  <graouts@apple.com>
+
+        Show the web page URL when sharing an AR model
+        https://bugs.webkit.org/show_bug.cgi?id=198812
+        <rdar://problem/48689498>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didStart):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource initWithMIMEType:originatingPageURL:]):
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (WebKit::SystemPreviewController::start):
+        (-[_WKPreviewControllerDataSource initWithMIMEType:]): Deleted.
+        * UIProcess/SystemPreviewController.h:
+
 2019-06-12  Antti Koivisto  <antti@apple.com>
 
         Try to fix iOS build.

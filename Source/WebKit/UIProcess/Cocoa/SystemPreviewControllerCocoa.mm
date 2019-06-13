@@ -39,9 +39,22 @@
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#import <pal/spi/ios/SystemPreviewSPI.h>
+SOFT_LINK_PRIVATE_FRAMEWORK(ARKit);
+SOFT_LINK_CLASS(ARKit, ARQuickLookPreviewItem);
+SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
+SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
+#endif
+
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
     RetainPtr<NSItemProvider> _itemProvider;
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+    RetainPtr<ARQuickLookWebKitItem> _item;
+#else
     RetainPtr<QLItem> _item;
+#endif
+    URL _originatingPageURL;
     URL _downloadedURL;
 };
 
@@ -52,11 +65,12 @@
 
 @implementation _WKPreviewControllerDataSource
 
-- (instancetype)initWithMIMEType:(NSString*)mimeType
+- (instancetype)initWithMIMEType:(NSString*)mimeType originatingPageURL:(URL)url
 {
     if (!(self = [super init]))
         return nil;
 
+    _originatingPageURL = url;
     _mimeType = [mimeType copy];
 
     return self;
@@ -84,7 +98,14 @@
     // means we don't actually know the real MIME type yet.
     NSString *contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s);
 
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+    ARQuickLookPreviewItem *previewItem = [allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL];
+    previewItem.canonicalWebPageURL = _originatingPageURL;
+
+    _item = [allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem];
+#else
     _item = adoptNS([PAL::allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
+#endif
     [_item setUseLoadingTimeout:NO];
 
     WeakObjCPtr<_WKPreviewControllerDataSource> weakSelf { self };
@@ -197,7 +218,7 @@
 
 namespace WebKit {
 
-void SystemPreviewController::start(const String& mimeType, const WebCore::IntRect& fromRect)
+void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::IntRect& fromRect)
 {
     ASSERT(!m_qlPreviewController);
     if (m_qlPreviewController)
@@ -213,7 +234,7 @@ void SystemPreviewController::start(const String& mimeType, const WebCore::IntRe
     m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this fromRect:fromRect]);
     [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
 
-    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType]);
+    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType originatingPageURL:originatingPageURL]);
     [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
