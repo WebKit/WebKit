@@ -29,6 +29,7 @@
 #if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
 
 #include "Download.h"
+#include "Logging.h"
 
 namespace WebKit {
 
