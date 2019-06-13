@@ -1,3 +1,16 @@
+2019-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [cairo][SVG] If clipPath has multiple elements, clip-path doesn't work with transform
+        https://bugs.webkit.org/show_bug.cgi?id=198746
+        <rdar://problem/51620347>
+
+        Reviewed by Don Olmstead.
+
+        * svg/clip-path/clip-hidpi-expected.svg: Added.
+        * svg/clip-path/clip-hidpi.svg: Added.
+        * svg/clip-path/clip-opacity-translate-expected.svg: Added.
+        * svg/clip-path/clip-opacity-translate.svg: Added.
+
 2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Educate the property resolver about IndexExpressions

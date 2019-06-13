@@ -1,3 +1,23 @@
+2019-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [cairo][SVG] If clipPath has multiple elements, clip-path doesn't work with transform
+        https://bugs.webkit.org/show_bug.cgi?id=198746
+
+        Reviewed by Don Olmstead.
+
+        We need to save the current transformation matrix at the moment the image mask is set and set it again on
+        restore right before applying the mask. This patch also creates a pattern for the image mask surface and set its
+        transformation matrix according to the mask position, so that we don't need to save the mask rectangle too.
+
+        Tests: svg/clip-path/clip-hidpi-expected.svg
+               svg/clip-path/clip-hidpi.svg
+               svg/clip-path/clip-opacity-translate-expected.svg
+               svg/clip-path/clip-opacity-translate.svg
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::restore):
+        (WebCore::PlatformContextCairo::pushImageMask):
+
 2019-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         paddingBoxRect() is wrong with RTL scrollbars on the left
