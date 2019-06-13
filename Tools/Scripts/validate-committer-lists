@@ -121,20 +121,39 @@ class CommitterListFromMailingList(object):
 
 class CommitterListFromGit(object):
     login_to_email_address = {
+        'aboule' : 'aboule@apple.com',
+        'adachan' : 'adachan@apple.com',
+        'adele' : 'adele@apple.com',
         'aliceli1' : 'alice.liu@apple.com',
+        'alp' : 'alp@nuanti.com',
+        'andersca' : 'andersca@apple.com',
+        'antti' : 'koivisto@iki.fi',
+        'ap' : 'ap@webkit.org',
+        'aroben' : 'aroben@webkit.org',
+        'bdakin' : 'bdakin@apple.com',
         'bdash' : 'mrowe@apple.com',
         'bdibello' : 'bdibello@apple.com', # Bruce DiBello, only 4 commits: r10023, r9548, r9538, r9535
+        'beidson' : 'beidson@apple.com',
         'cblu' : 'cblu@apple.com',
         'cpeterse' : 'cpetersen@apple.com',
+        'darin' : 'darin@apple.com',
+        'ddkilzer' : 'ddkilzer@webkit.org',
+        'dsmith' : 'catfish.man@gmail.com',
         'eseidel' : 'eric@webkit.org',
         'gdennis' : 'gdennis@webkit.org',
+        'ggaren' : 'ggaren@apple.com',
         'goldsmit' : 'goldsmit@apple.com', # Debbie Goldsmith, only one commit r8839
         'gramps' : 'gramps@apple.com',
+        'harrison' : 'harrison@apple.com',
+        'hausmann' : 'hausmann@webkit.org',
         'honeycutt' : 'jhoneycutt@apple.com',
+        'hyatt' : 'hyatt@apple.com',
         'jdevalk' : 'joost@webkit.org',
         'jens' : 'jens@apple.com',
         'justing' : 'justin.garcia@apple.com',
         'kali' : 'kali@apple.com', # Christy Warren, did BIDI work, 5 commits: r8815, r8802, r8801, r8791, r8773, r8603
+        'kdecker' : 'kdecker@apple.com',
+        'kevino' : 'kevino@theolliviers.com',
         'kjk' : 'kkowalczyk@gmail.com',
         'kmccullo' : 'kmccullough@apple.com',
         'kocienda' : 'kocienda@apple.com',
@@ -143,18 +162,30 @@ class CommitterListFromGit(object):
         'lweintraub' : 'lweintraub@apple.com',
         'lypanov' : 'lypanov@kde.org',
         'mhay' : 'mhay@apple.com', # Mike Hay, 3 commits: r3813, r2552, r2548
+        'mitz' : 'mitz@webkit.org',
+        'mjs' : 'mjs@apple.com',
+        'oliver' : 'oliver@apple.com',
         'ouch' : 'ouch@apple.com', # John Louch
+        'pewtermoose' : 'dev+webkit@mattlilek.com',
         'pyeh' : 'patti@apple.com', # Patti Yeh, did VoiceOver work in WebKit
         'rjw' : 'rjw@apple.com',
+        'rwlbuis' : 'rwlbuis@gmail.com',
         'seangies' : 'seangies@apple.com', # Sean Gies?, only 5 commits: r16600, r16592, r16511, r16489, r16484
+        'sfalken' : 'sfalken@apple.com',
         'sheridan' : 'sheridan@apple.com', # Shelly Sheridan
+        'slewis' : 'slewis@apple.com',
+        'staikos' : 'staikos@kde.org',
+        'sullivan' : 'sullivan@apple.com',
         'thatcher' : 'timothy@apple.com',
         'tomernic' : 'timo@apple.com',
+        'treat' : 'manyoso@yahoo.com',
         'trey' : 'trey@usa.net',
         'tristan' : 'tristan@apple.com',
         'vicki' : 'vicki@apple.com',
         'voas' : 'voas@apple.com', # Ed Voas, did some Carbon work in WebKit
+        'weinig' : 'sam@webkit.org',
         'zack' : 'zack@kde.org',
+        'zecke' : 'zecke@selfish.org',
         'zimmermann' : 'zimmermann@webkit.org',
     }
 
@@ -303,10 +334,40 @@ class CommitterListBugzillaChecker(object):
         print_list_if_non_empty("Committers with invalid bugzilla email:", committers_with_invalid_bugzilla_email)
 
 
+def dump_mailmap(committer_list):
+    def format_email(email):
+        return "<{0}>".format(email)
+
+    def format_email_with_gitsvn_uuid(email):
+        return "<{0}@268f45cc-cd09-0410-ab3c-d52691b4dbfc>".format(email)        
+
+    email_to_legacy_username = dict(map(reversed, CommitterListFromGit.login_to_email_address.items()))
+    def map_emails_to_legacy_username(emails):
+        legacy_username = None
+        for email in emails:
+            legacy_username = email_to_legacy_username.get(email)
+            if legacy_username:
+                break
+        return legacy_username
+
+    for contributor in committer_list.contributors():
+        full_name = contributor.full_name.encode("utf-8")
+        canonical_email = contributor.bugzilla_email()
+        other_emails = contributor.emails
+        legacy_username = map_emails_to_legacy_username(contributor.emails)
+        if legacy_username:
+            other_emails.append(legacy_username)
+
+        for other_email in other_emails:
+            print full_name, format_email(canonical_email), format_email(other_email)
+            print full_name, format_email(canonical_email), format_email_with_uuid(other_email)
+
+
 def main():
     parser = OptionParser()
     parser.add_option("-b", "--check-bugzilla-emails", action="store_true", help="Check the bugzilla_email for each committer against bugs.webkit.org")
     parser.add_option("-d", "--dump", action="store_true", help="Dump the contributor list as JSON to stdout (suitable for saving to contributors.json)")
+    parser.add_option("--dump-mailmap", action="store_true", help="Dump the contributor list as a Git Mailmap to stdout")
     parser.add_option("-c", "--canonicalize", action="store_true", help="Canonicalize contributors.json, rewriting it in-place")
 
     (options, args) = parser.parse_args()
@@ -314,13 +375,17 @@ def main():
     committer_list = CommitterList()
     if options.dump:
         print committer_list.as_json()
-        return 0;
+        return 0
+
+    if options.dump_mailmap:
+        dump_mailmap(committer_list)
+        return 0
 
     if options.canonicalize:
         print "Updating contributors.json in-place..."
         committer_list.reformat_in_place()
         print "Done"
-        return 0;
+        return 0
 
     CommitterListFromMailingList().check_for_emails_missing_from_list(committer_list)
  

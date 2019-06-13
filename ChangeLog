@@ -1,3 +1,13 @@
+2019-06-13  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible for validate-committer-lists to dump a mailmap file
+        https://bugs.webkit.org/show_bug.cgi?id=198517
+
+        Reviewed by Simon Fraser.
+
+        * .gitignore:
+        Ignore .mailmap files.
+
 2019-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove option REDIRECTED_XCOMPOSITE_WINDOW

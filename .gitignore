@@ -11,6 +11,7 @@ build/
 autoinstall.cache.d
 project.xcworkspace
 xcuserdata
+.mailmap
 
 # Ignore auto-generated files by VS & VSCode.
 *.vcproj.*.user

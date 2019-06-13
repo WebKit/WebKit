@@ -1,3 +1,27 @@
+2019-06-13  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible for validate-committer-lists to dump a mailmap file
+        https://bugs.webkit.org/show_bug.cgi?id=198517
+
+        Reviewed by Simon Fraser.
+
+        Mailmaps wildly improve the output of various Git tools, including
+        `git shortlog -sne`, mapping committers to our canonical name/email pair.
+
+        * Scripts/validate-committer-lists:
+        (CommitterListFromGit):
+        (CommitterListBugzillaChecker.print_committers_with_invalid_bugzilla_emails):
+        Add some missing legacy username mappings.
+
+        (dump_mailmap):
+        (dump_mailmap.format_email):
+        (dump_mailmap.format_email_with_gitsvn_uuid):
+        (dump_mailmap.map_emails_to_legacy_username):
+        (main):
+        Add `validate-committer-lists --dump-mailmap`, which generates
+        one given committers.json and the existing mapping of legacy username
+        to email addresses that exists in validate-committer-lists.
+
 2019-06-12  Aakash Jain  <aakash_jain@apple.com>
 
         Replace double-quotes with single quotes in loadConfig.py
