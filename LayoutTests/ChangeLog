@@ -1,3 +1,9 @@
+2019-06-13  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations after r246397.
+
+        * platform/gtk/TestExpectations:
+
 2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up compute
