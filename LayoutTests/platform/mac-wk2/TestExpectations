@@ -955,3 +955,5 @@ webkit.org/b/198661 scrollingcoordinator/mac/nested-sticky.html [ Pass ImageOnly
 webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
 
 webkit.org/b/198757 [ Mojave+ ] compositing/fixed-with-main-thread-scrolling.html [ Pass Timeout ]
+
+webkit.org/b/198841 [ HighSierra ] webgpu/compute-squares.html [ Skip ]
