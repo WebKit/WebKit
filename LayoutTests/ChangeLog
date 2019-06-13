@@ -1,3 +1,16 @@
+2019-06-13  Antoine Quint  <graouts@apple.com>
+
+        "display: contents" Content click does not trigger
+        https://bugs.webkit.org/show_bug.cgi?id=198559
+        <rdar://problem/51488524>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks that tapping on an element with "display: contents" correctly gets a "click" event.
+
+        * fast/events/ios/click-event-and-display-contents-expected.txt: Added.
+        * fast/events/ios/click-event-and-display-contents.html: Added.
+
 2019-06-13  Youenn Fablet  <youenn@apple.com>
 
         Update service worker test and expectation after revision 246363

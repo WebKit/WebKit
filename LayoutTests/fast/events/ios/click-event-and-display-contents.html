@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that a tap on an element with display: contents dispatches a "click" event.</title>
+<script src="../../../resources/basic-gestures.js"></script>
+<style>
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    display: contents;
+}
+</style>
+</head>
+<body>
+<div id="target">FAIL</div>
+<script>
+
+(function() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    const target = document.getElementById("target");
+
+    target.addEventListener("click", event => {
+        document.getElementById("target").innerText = "PASS";
+        testRunner.notifyDone();
+    });
+
+    const bounds = target.getBoundingClientRect();
+    const x = bounds.left + bounds.width / 2;
+    const y = bounds.top + bounds.height / 2;
+    tapAtPoint(x, y);
+})();
+
+</script>
+</body>
+</html>

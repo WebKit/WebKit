@@ -1,3 +1,15 @@
+2019-06-13  Antoine Quint  <graouts@apple.com>
+
+        "display: contents" Content click does not trigger
+        https://bugs.webkit.org/show_bug.cgi?id=198559
+        <rdar://problem/51488524>
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/events/ios/click-event-and-display-contents.html
+
+        * dom/Element.h:
+
 2019-06-13  Takashi Komori  <Takashi.Komori@sony.com>
 
         [curl] Remove member objects of CurlRequest not to share by different threads.

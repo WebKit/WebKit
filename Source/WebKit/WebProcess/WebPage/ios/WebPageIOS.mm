@@ -1058,7 +1058,13 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64
         m_lastCommittedTapLocation = currentPotentialTapLocation;
     };
 
-    auto invalidTargetForSingleClick = !m_potentialTapNode || (!m_potentialTapNode->renderer() && !is<HTMLAreaElement>(m_potentialTapNode.get()));
+    auto invalidTargetForSingleClick = !m_potentialTapNode;
+    if (!invalidTargetForSingleClick) {
+        bool targetRenders = m_potentialTapNode->renderer();
+        if (!targetRenders && is<Element>(m_potentialTapNode.get()))
+            targetRenders = downcast<Element>(*m_potentialTapNode).renderOrDisplayContentsStyle();
+        invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode.get());
+    }
     if (invalidTargetForSingleClick) {
         // When the node has no click eventlistener, but it may have a dblclick one.
         handlePotentialDoubleTapForDoubleClickAtPoint(modifiers, lastLayerTreeTransactionId);
