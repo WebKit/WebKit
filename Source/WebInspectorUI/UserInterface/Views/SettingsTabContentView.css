@@ -24,15 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.settings {
-    padding-bottom: 6vh;
-    overflow-y: auto;
-}
-
 .content-view.settings .navigation-bar {
-    position: sticky;
-    top: 0;
-    z-index: 1;
     background-color: white;
 }
 
@@ -51,6 +43,12 @@
 
 .content-view.settings .navigation-bar .item.radio.button.text-only.selected {
     color: var(--selected-background-color)
+}
+
+.content-view.settings > .settings-view {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: calc(var(--console-prompt-min-height) + 10px);
 }
 
 .content-view.settings > .settings-view > .separator {
