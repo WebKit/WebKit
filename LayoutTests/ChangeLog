@@ -1,3 +1,20 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Implement array references
+        https://bugs.webkit.org/show_bug.cgi?id=198163
+
+        Reviewed by Saam Barati.
+
+        * webgpu/buffer-resource-triangles-expected.html: Deleted. This test doens't make any sense and triggers
+        Metal to read out-of-bounds of a vertex buffer.
+        * webgpu/buffer-resource-triangles.html: Deleted.
+        * webgpu/whlsl-buffer-fragment-expected.html: Added.
+        * webgpu/whlsl-buffer-fragment.html: Added.
+        * webgpu/whlsl-buffer-vertex-expected.html: Added.
+        * webgpu/whlsl-buffer-vertex.html: Added.
+        * webgpu/whlsl-dont-crash-parsing-enum.html:
+        * webgpu/whlsl.html:
+
 2019-06-12  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] ANGLE Extension directive location incorrectly enforced for webgl 1.0

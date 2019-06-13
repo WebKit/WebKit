@@ -114,18 +114,28 @@ enum class ShaderStage : uint8_t {
     Compute = 1 << 2
 };
 
-enum class BindingType : uint8_t {
-    UniformBuffer,
-    Sampler,
-    Texture,
-    StorageBuffer,
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198168 Add the dynamic types
+struct UniformBufferBinding {
+    unsigned lengthName;
 };
 
+struct SamplerBinding {
+};
+
+struct TextureBinding {
+};
+
+struct StorageBufferBinding {
+    unsigned lengthName;
+};
+
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=198168 Add the dynamic types
+
 struct Binding {
+    using BindingDetails = Variant<UniformBufferBinding, SamplerBinding, TextureBinding, StorageBufferBinding>;
     OptionSet<ShaderStage> visibility;
-    BindingType bindingType;
-    unsigned name;
+    BindingDetails binding;
+    unsigned internalName;
+    unsigned externalName;
 };
 
 struct BindGroup {

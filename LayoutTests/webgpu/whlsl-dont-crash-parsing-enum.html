@@ -74,10 +74,10 @@ async function start() {
     const vertexBuffer1 = device.createBuffer(vertexBuffer1Descriptor);
     const vertexBuffer1ArrayBuffer = await vertexBuffer1.mapWriteAsync();
     const vertexBuffer1Float32Array = new Float32Array(vertexBuffer1ArrayBuffer);
-    vertexBuffer1Descriptor[0] = 1;
-    vertexBuffer1Descriptor[1] = 1;
-    vertexBuffer1Descriptor[2] = 1;
-    vertexBuffer1Descriptor[3] = 1;
+    vertexBuffer1Float32Array[0] = 1;
+    vertexBuffer1Float32Array[1] = 1;
+    vertexBuffer1Float32Array[2] = 1;
+    vertexBuffer1Float32Array[3] = 1;
     vertexBuffer1.unmap();
 
     const resourceBufferDescriptor = {size: Float32Array.BYTES_PER_ELEMENT, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.MAP_WRITE};

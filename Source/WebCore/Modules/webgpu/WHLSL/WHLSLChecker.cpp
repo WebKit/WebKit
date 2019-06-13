@@ -117,29 +117,29 @@ public:
     }
 };
 
-static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(AST::CallExpression& callExpression, AST::ArrayReferenceType& firstArgument, const Intrinsics& intrinsics)
+static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(Lexer::Token origin, AST::ArrayReferenceType& firstArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
-    auto returnType = makeUniqueRef<AST::PointerType>(Lexer::Token(callExpression.origin()), firstArgument.addressSpace(), firstArgument.elementType().clone());
+    auto returnType = makeUniqueRef<AST::PointerType>(Lexer::Token(origin), firstArgument.addressSpace(), firstArgument.elementType().clone());
     AST::VariableDeclarations parameters;
-    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(callExpression.origin()), AST::Qualifiers(), firstArgument.clone(), String(), WTF::nullopt, WTF::nullopt));
-    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(callExpression.origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.uintType())), String(), WTF::nullopt, WTF::nullopt));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
+    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), firstArgument.clone(), String(), WTF::nullopt, WTF::nullopt));
+    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(AST::TypeReference::wrap(Lexer::Token(origin), intrinsics.uintType())), String(), WTF::nullopt, WTF::nullopt));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(origin), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
 }
 
-static AST::NativeFunctionDeclaration resolveWithOperatorLength(AST::CallExpression& callExpression, AST::UnnamedType& firstArgument, const Intrinsics& intrinsics)
+static AST::NativeFunctionDeclaration resolveWithOperatorLength(Lexer::Token origin, AST::UnnamedType& firstArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
-    auto returnType = AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.uintType());
+    auto returnType = AST::TypeReference::wrap(Lexer::Token(origin), intrinsics.uintType());
     AST::VariableDeclarations parameters;
-    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(callExpression.origin()), AST::Qualifiers(), firstArgument.clone(), String(), WTF::nullopt, WTF::nullopt));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
+    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), firstArgument.clone(), String(), WTF::nullopt, WTF::nullopt));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(origin), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
 }
 
-static AST::NativeFunctionDeclaration resolveWithReferenceComparator(AST::CallExpression& callExpression, ResolvingType& firstArgument, ResolvingType& secondArgument, const Intrinsics& intrinsics)
+static AST::NativeFunctionDeclaration resolveWithReferenceComparator(Lexer::Token origin, ResolvingType& firstArgument, ResolvingType& secondArgument, const Intrinsics& intrinsics)
 {
     const bool isOperator = true;
-    auto returnType = AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.boolType());
+    auto returnType = AST::TypeReference::wrap(Lexer::Token(origin), intrinsics.boolType());
     auto argumentType = firstArgument.visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> UniqueRef<AST::UnnamedType> {
         return unnamedType->clone();
     }, [&](RefPtr<ResolvableTypeReference>&) -> UniqueRef<AST::UnnamedType> {
@@ -149,13 +149,13 @@ static AST::NativeFunctionDeclaration resolveWithReferenceComparator(AST::CallEx
             // We encountered "null == null".
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198162 This can probably be generalized, using the "preferred type" infrastructure used by generic literals
             ASSERT_NOT_REACHED();
-            return AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.intType());
+            return AST::TypeReference::wrap(Lexer::Token(origin), intrinsics.intType());
         }));
     }));
     AST::VariableDeclarations parameters;
-    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(callExpression.origin()), AST::Qualifiers(), argumentType->clone(), String(), WTF::nullopt, WTF::nullopt));
-    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(callExpression.origin()), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), WTF::nullopt, WTF::nullopt));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
+    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), argumentType->clone(), String(), WTF::nullopt, WTF::nullopt));
+    parameters.append(makeUniqueRef<AST::VariableDeclaration>(Lexer::Token(origin), AST::Qualifiers(), UniqueRef<AST::UnnamedType>(WTFMove(argumentType)), String(), WTF::nullopt, WTF::nullopt));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(origin), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
 }
 
 enum class Acceptability {
@@ -164,9 +164,9 @@ enum class Acceptability {
     No
 };
 
-static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(AST::CallExpression& callExpression, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)
+static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const String& name, Lexer::Token origin, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)
 {
-    if (callExpression.name() == "operator&[]" && types.size() == 2) {
+    if (name == "operator&[]" && types.size() == 2) {
         auto* firstArgumentArrayRef = types[0].get().visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> AST::ArrayReferenceType* {
             if (is<AST::ArrayReferenceType>(static_cast<AST::UnnamedType&>(unnamedType)))
                 return &downcast<AST::ArrayReferenceType>(static_cast<AST::UnnamedType&>(unnamedType));
@@ -180,8 +180,8 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(AST::Call
             return resolvableTypeReference->resolvableType().canResolve(intrinsics.uintType());
         }));
         if (firstArgumentArrayRef && secondArgumentIsUint)
-            return resolveWithOperatorAnderIndexer(callExpression, *firstArgumentArrayRef, intrinsics);
-    } else if (callExpression.name() == "operator.length" && types.size() == 1) {
+            return resolveWithOperatorAnderIndexer(origin, *firstArgumentArrayRef, intrinsics);
+    } else if (name == "operator.length" && types.size() == 1) {
         auto* firstArgumentReference = types[0].get().visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> AST::UnnamedType* {
             if (is<AST::ArrayReferenceType>(static_cast<AST::UnnamedType&>(unnamedType)))
                 return &unnamedType;
@@ -190,8 +190,8 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(AST::Call
             return nullptr;
         }));
         if (firstArgumentReference)
-            return resolveWithOperatorLength(callExpression, *firstArgumentReference, intrinsics);
-    } else if (callExpression.name() == "operator==" && types.size() == 2) {
+            return resolveWithOperatorLength(origin, *firstArgumentReference, intrinsics);
+    } else if (name == "operator==" && types.size() == 2) {
         auto acceptability = [](ResolvingType& resolvingType) -> Acceptability {
             return resolvingType.visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> Acceptability {
                 return is<AST::ReferenceType>(static_cast<AST::UnnamedType&>(unnamedType)) ? Acceptability::Yes : Acceptability::No;
@@ -210,7 +210,7 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(AST::Call
             || (leftAcceptability == Acceptability::Yes && rightAcceptability == Acceptability::Maybe))
             success = true;
         if (success)
-            return resolveWithReferenceComparator(callExpression, types[0].get(), types[1].get(), intrinsics);
+            return resolveWithReferenceComparator(origin, types[0].get(), types[1].get(), intrinsics);
     }
     return WTF::nullopt;
 }
@@ -969,6 +969,29 @@ void Checker::visit(AST::MakeArrayReferenceExpression& makeArrayReferenceExpress
     assignType(makeArrayReferenceExpression, makeUniqueRef<AST::ArrayReferenceType>(Lexer::Token(makeArrayReferenceExpression.origin()), *leftAddressSpace, leftValueType->clone()));
 }
 
+static Optional<UniqueRef<AST::UnnamedType>> argumentTypeForAndOverload(AST::UnnamedType& baseType, AST::AddressSpace addressSpace)
+{
+    auto& unifyNode = baseType.unifyNode();
+    if (is<AST::NamedType>(unifyNode)) {
+        auto& namedType = downcast<AST::NamedType>(unifyNode);
+        return { makeUniqueRef<AST::PointerType>(Lexer::Token(namedType.origin()), addressSpace, AST::TypeReference::wrap(Lexer::Token(namedType.origin()), namedType)) };
+    }
+
+    ASSERT(is<AST::UnnamedType>(unifyNode));
+    auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
+
+    if (is<AST::ArrayReferenceType>(unnamedType))
+        return unnamedType.clone();
+
+    if (is<AST::ArrayType>(unnamedType))
+        return { makeUniqueRef<AST::ArrayReferenceType>(Lexer::Token(unnamedType.origin()), addressSpace, downcast<AST::ArrayType>(unnamedType).type().clone()) };
+
+    if (is<AST::PointerType>(unnamedType))
+        return WTF::nullopt;
+
+    return { makeUniqueRef<AST::PointerType>(Lexer::Token(unnamedType.origin()), addressSpace, unnamedType.clone()) };
+}
+
 void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpression, ResolvingType* additionalArgumentType)
 {
     auto baseInfo = recurseAndGetInfo(propertyAccessExpression.base());
@@ -992,23 +1015,35 @@ void Checker::finishVisiting(AST::PropertyAccessExpression& propertyAccessExpres
     AST::UnnamedType* anderReturnType = nullptr;
     auto leftAddressSpace = baseInfo->typeAnnotation.leftAddressSpace();
     if (leftAddressSpace) {
-        ResolvingType argumentType = { makeUniqueRef<AST::PointerType>(Lexer::Token(propertyAccessExpression.origin()), *leftAddressSpace, baseUnnamedType->get().clone()) };
-        Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { argumentType };
-        if (additionalArgumentType)
-            anderArgumentTypes.append(*additionalArgumentType);
-        if ((anderFunction = resolveFunctionOverload(propertyAccessExpression.possibleAnderOverloads(), anderArgumentTypes)))
-            anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
+        if (auto argumentTypeForAndOverload = WHLSL::argumentTypeForAndOverload(*baseUnnamedType, *leftAddressSpace)) {
+            ResolvingType argumentType = { WTFMove(*argumentTypeForAndOverload) };
+            Vector<std::reference_wrapper<ResolvingType>> anderArgumentTypes { argumentType };
+            if (additionalArgumentType)
+                anderArgumentTypes.append(*additionalArgumentType);
+            if ((anderFunction = resolveFunctionOverload(propertyAccessExpression.possibleAnderOverloads(), anderArgumentTypes)))
+                anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
+            else if (auto newFunction = resolveByInstantiation(propertyAccessExpression.anderFunctionName(), propertyAccessExpression.origin(), anderArgumentTypes, m_intrinsics)) {
+                m_program.append(WTFMove(*newFunction));
+                anderFunction = &m_program.nativeFunctionDeclarations().last();
+                anderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
+            }
+        }
     }
 
     AST::FunctionDeclaration* threadAnderFunction = nullptr;
     AST::UnnamedType* threadAnderReturnType = nullptr;
-    {
+    if (auto argumentTypeForAndOverload = WHLSL::argumentTypeForAndOverload(*baseUnnamedType, AST::AddressSpace::Thread)) {
         ResolvingType argumentType = { makeUniqueRef<AST::PointerType>(Lexer::Token(propertyAccessExpression.origin()), AST::AddressSpace::Thread, baseUnnamedType->get().clone()) };
         Vector<std::reference_wrapper<ResolvingType>> threadAnderArgumentTypes { argumentType };
         if (additionalArgumentType)
             threadAnderArgumentTypes.append(*additionalArgumentType);
         if ((threadAnderFunction = resolveFunctionOverload(propertyAccessExpression.possibleAnderOverloads(), threadAnderArgumentTypes)))
             threadAnderReturnType = &downcast<AST::PointerType>(threadAnderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
+        else if (auto newFunction = resolveByInstantiation(propertyAccessExpression.anderFunctionName(), propertyAccessExpression.origin(), threadAnderArgumentTypes, m_intrinsics)) {
+            m_program.append(WTFMove(*newFunction));
+            threadAnderFunction = &m_program.nativeFunctionDeclarations().last();
+            threadAnderReturnType = &downcast<AST::PointerType>(anderFunction->type()).elementType(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198164 Enforce the return of anders will always be a pointer
+        }
     }
 
     if (leftAddressSpace && !anderFunction && !getterFunction) {
@@ -1434,7 +1469,7 @@ void Checker::visit(AST::CallExpression& callExpression)
     ASSERT(callExpression.hasOverloads());
     auto* function = resolveFunctionOverload(*callExpression.overloads(), types, callExpression.castReturnType());
     if (!function) {
-        if (auto newFunction = resolveByInstantiation(callExpression, types, m_intrinsics)) {
+        if (auto newFunction = resolveByInstantiation(callExpression.name(), callExpression.origin(), types, m_intrinsics)) {
             m_program.append(WTFMove(*newFunction));
             function = &m_program.nativeFunctionDeclarations().last();
         }

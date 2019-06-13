@@ -110,20 +110,21 @@ static OptionSet<WHLSL::ShaderStage> convertShaderStageFlags(GPUShaderStageFlags
     return result;
 }
 
-static Optional<WHLSL::BindingType> convertBindingType(GPUBindingType type)
+static Optional<WHLSL::Binding::BindingDetails> convertBindingType(GPUBindGroupLayout::InternalBindingDetails internalBindingDetails)
 {
-    switch (type) {
-    case GPUBindingType::UniformBuffer:
-        return WHLSL::BindingType::UniformBuffer;
-    case GPUBindingType::Sampler:
-        return WHLSL::BindingType::Sampler;
-    case GPUBindingType::SampledTexture:
-        return WHLSL::BindingType::Texture;
-    case GPUBindingType::StorageBuffer:
-        return WHLSL::BindingType::StorageBuffer;
-    default:
+    return WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer uniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+        return { WHLSL::UniformBufferBinding { uniformBuffer.internalLengthName } };
+    }, [&](GPUBindGroupLayout::DynamicUniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
         return WTF::nullopt;
-    }
+    }, [&](GPUBindGroupLayout::Sampler) -> Optional<WHLSL::Binding::BindingDetails> {
+        return { WHLSL::SamplerBinding { } };
+    }, [&](GPUBindGroupLayout::SampledTexture) -> Optional<WHLSL::Binding::BindingDetails> {
+        return { WHLSL::TextureBinding { } };
+    }, [&](GPUBindGroupLayout::StorageBuffer storageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+        return { WHLSL::StorageBufferBinding { storageBuffer.internalLengthName } };
+    }, [&](GPUBindGroupLayout::DynamicStorageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+        return WTF::nullopt;
+    }), internalBindingDetails);
 }
 
 static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat format)
@@ -377,16 +378,17 @@ static Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
         WHLSL::BindGroup bindGroup;
         bindGroup.name = static_cast<unsigned>(i);
         for (const auto& keyValuePair : bindGroupLayout->bindingsMap()) {
-            const auto& gpuBindGroupLayoutBinding = keyValuePair.value;
+            const auto& bindingDetails = keyValuePair.value;
             WHLSL::Binding binding;
-            binding.visibility = convertShaderStageFlags(gpuBindGroupLayoutBinding.visibility);
-            if (auto bindingType = convertBindingType(gpuBindGroupLayoutBinding.type))
-                binding.bindingType = *bindingType;
+            binding.visibility = convertShaderStageFlags(bindingDetails.externalBinding.visibility);
+            if (auto bindingType = convertBindingType(bindingDetails.internalBindingDetails))
+                binding.binding = *bindingType;
             else
                 return WTF::nullopt;
-            if (gpuBindGroupLayoutBinding.binding > std::numeric_limits<unsigned>::max())
+            if (bindingDetails.externalBinding.binding > std::numeric_limits<unsigned>::max())
                 return WTF::nullopt;
-            binding.name = static_cast<unsigned>(gpuBindGroupLayoutBinding.binding);
+            binding.externalName = bindingDetails.externalBinding.binding;
+            binding.internalName = bindingDetails.internalName;
             bindGroup.bindings.append(WTFMove(binding));
         }
         result.append(WTFMove(bindGroup));

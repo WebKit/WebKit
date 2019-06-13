@@ -99,6 +99,7 @@ public:
     }
 
     Expression& base() { return m_base; }
+    UniqueRef<Expression>& baseReference() { return m_base; }
     UniqueRef<Expression> takeBase() { return WTFMove(m_base); }
 
 private:

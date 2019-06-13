@@ -32,6 +32,7 @@
 #include "WHLSLFunctionDefinition.h"
 #include "WHLSLGatherEntryPointItems.h"
 #include "WHLSLPipelineDescriptor.h"
+#include "WHLSLReferenceType.h"
 #include "WHLSLResourceSemantic.h"
 #include "WHLSLStageInOutSemantic.h"
 #include "WHLSLStructureDefinition.h"
@@ -108,7 +109,16 @@ EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDe
         for (size_t j = 0; j < m_layout[i].bindings.size(); ++j) {
             NamedBinding namedBinding;
             namedBinding.elementName = m_typeNamer.generateNextStructureElementName();
-            namedBinding.index = m_layout[i].bindings[j].name; // GPUBindGroupLayout::tryCreate() makes sure these don't collide.
+            namedBinding.index = m_layout[i].bindings[j].internalName;
+            WTF::visit(WTF::makeVisitor([&](UniformBufferBinding& uniformBufferBinding) {
+                LengthInformation lengthInformation { m_typeNamer.generateNextStructureElementName(), m_generateNextVariableName(), uniformBufferBinding.lengthName };
+                namedBinding.lengthInformation = lengthInformation;
+            }, [&](SamplerBinding&) {
+            }, [&](TextureBinding&) {
+            }, [&](StorageBufferBinding& storageBufferBinding) {
+                LengthInformation lengthInformation { m_typeNamer.generateNextStructureElementName(), m_generateNextVariableName(), storageBufferBinding.lengthName };
+                namedBinding.lengthInformation = lengthInformation;
+            }), m_layout[i].bindings[j].binding);
             namedBindGroup.namedBindings.uncheckedAppend(WTFMove(namedBinding));
         }
         m_namedBindGroups.uncheckedAppend(WTFMove(namedBindGroup));
@@ -137,10 +147,16 @@ String EntryPointScaffolding::resourceHelperTypes()
             auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
             if (iterator == m_resourceMap.end())
                 continue;
-            auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[iterator->value].unnamedType);
+            auto& unnamedType = *m_entryPointItems.inputs[iterator->value].unnamedType;
+            ASSERT(is<AST::ReferenceType>(unnamedType));
+            auto& referenceType = downcast<AST::ReferenceType>(unnamedType);
+            auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
+            auto addressSpace = toString(referenceType.addressSpace());
             auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
             auto index = m_namedBindGroups[i].namedBindings[j].index;
-            stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[id(", index, ")]];\n"));
+            stringBuilder.append(makeString("    ", addressSpace, " ", mangledTypeName, "* ", elementName, " [[id(", index, ")]];\n"));
+            if (auto lengthInformation = m_namedBindGroups[i].namedBindings[j].lengthInformation)
+                stringBuilder.append(makeString("    uint2 ", lengthInformation->elementName, " [[id(", lengthInformation->index, ")]];\n"));
         }
         stringBuilder.append("};\n\n");
     }
@@ -257,9 +273,28 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
             auto iterator = m_resourceMap.find(&m_layout[i].bindings[j]);
             if (iterator == m_resourceMap.end())
                 continue;
-            auto& path = m_entryPointItems.inputs[iterator->value].path;
-            auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
-            stringBuilder.append(makeString(mangledInputPath(path), " = ", variableName, '.', elementName, ";\n"));
+            if (m_namedBindGroups[i].namedBindings[j].lengthInformation) {
+                auto& path = m_entryPointItems.inputs[iterator->value].path;
+                auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
+                auto lengthElementName = m_namedBindGroups[i].namedBindings[j].lengthInformation->elementName;
+                auto lengthTemporaryName = m_namedBindGroups[i].namedBindings[j].lengthInformation->temporaryName;
+
+                auto& unnamedType = *m_entryPointItems.inputs[iterator->value].unnamedType;
+                ASSERT(is<AST::ReferenceType>(unnamedType));
+                auto& referenceType = downcast<AST::ReferenceType>(unnamedType);
+                auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
+
+                stringBuilder.append(makeString("size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".x;\n"));
+                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n"));
+                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " | ", variableName, '.', lengthElementName, ".y;\n"));
+                stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " / sizeof(", mangledTypeName, ");\n"));
+                stringBuilder.append(makeString("if (", lengthTemporaryName, " > 0xFFFFFFFF) ", lengthTemporaryName, " = 0xFFFFFFFF;\n"));
+                stringBuilder.append(makeString(mangledInputPath(path), " = { ", variableName, '.', elementName, ", static_cast<uint32_t>(", lengthTemporaryName, ") };\n"));
+            } else {
+                auto& path = m_entryPointItems.inputs[iterator->value].path;
+                auto elementName = m_namedBindGroups[i].namedBindings[j].elementName;
+                stringBuilder.append(makeString(mangledInputPath(path), " = ", variableName, '.', elementName, ";\n"));
+            }
         }
     }
 

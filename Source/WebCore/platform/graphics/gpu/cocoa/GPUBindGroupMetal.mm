@@ -72,13 +72,15 @@ static Optional<GPUBufferBinding> tryGetResourceAsBufferBinding(const GPUBinding
     return GPUBufferBinding { bufferBinding.buffer.copyRef(), bufferBinding.offset, bufferBinding.size };
 }
 
-static void setBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBufferBinding& bufferBinding, unsigned index)
+static void setBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBufferBinding& bufferBinding, unsigned name, unsigned lengthName)
 {
     ASSERT(argumentEncoder && bufferBinding.buffer->platformBuffer());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     // Bounds check when converting GPUBufferBinding ensures that NSUInteger cast of uint64_t offset is safe.
-    [argumentEncoder setBuffer:bufferBinding.buffer->platformBuffer() offset:static_cast<NSUInteger>(bufferBinding.offset) atIndex:index];
+    [argumentEncoder setBuffer:bufferBinding.buffer->platformBuffer() offset:static_cast<NSUInteger>(bufferBinding.offset) atIndex:name];
+    void* lengthPointer = [argumentEncoder constantDataAtIndex:lengthName];
+    memcpy(lengthPointer, &bufferBinding.size, sizeof(uint64_t));
     END_BLOCK_OBJC_EXCEPTIONS;
 }
     
@@ -171,12 +173,12 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
             return nullptr;
         }
         auto layoutBinding = layoutIterator->value;
-        if (layoutBinding.visibility == GPUShaderStageBit::Flags::None)
+        if (layoutBinding.externalBinding.visibility == GPUShaderStageBit::Flags::None)
             continue;
 
-        bool isForVertex = layoutBinding.visibility & GPUShaderStageBit::Flags::Vertex;
-        bool isForFragment = layoutBinding.visibility & GPUShaderStageBit::Flags::Fragment;
-        bool isForCompute = layoutBinding.visibility & GPUShaderStageBit::Flags::Compute;
+        bool isForVertex = layoutBinding.externalBinding.visibility & GPUShaderStageBit::Flags::Vertex;
+        bool isForFragment = layoutBinding.externalBinding.visibility & GPUShaderStageBit::Flags::Fragment;
+        bool isForCompute = layoutBinding.externalBinding.visibility & GPUShaderStageBit::Flags::Compute;
 
         if (isForVertex && !vertexEncoder) {
             LOG(WebGPU, "%s: No vertex argument encoder found for binding %u!", functionName, index);
@@ -191,39 +193,39 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
             return nullptr;
         }
 
-        switch (layoutBinding.type) {
-        // FIXME: Support more resource types.
-        // FIXME: We could avoid this ugly switch-on-type using virtual functions if GPUBindingResource is refactored as a base class rather than a Variant.
-        case GPUBindingType::UniformBuffer:
-        case GPUBindingType::StorageBuffer: {
+        auto handleBuffer = [&](unsigned internalLengthName) -> bool {
             auto bufferResource = tryGetResourceAsBufferBinding(resourceBinding.resource, functionName);
             if (!bufferResource)
-                return nullptr;
+                return false;
             if (isForVertex)
-                setBufferOnEncoder(vertexEncoder, *bufferResource, index);
+                setBufferOnEncoder(vertexEncoder, *bufferResource, layoutBinding.internalName, internalLengthName);
             if (isForFragment)
-                setBufferOnEncoder(fragmentEncoder, *bufferResource, index);
+                setBufferOnEncoder(fragmentEncoder, *bufferResource, layoutBinding.internalName, internalLengthName);
             if (isForCompute)
-                setBufferOnEncoder(computeEncoder, *bufferResource, index);
+                setBufferOnEncoder(computeEncoder, *bufferResource, layoutBinding.internalName, internalLengthName);
             boundBuffers.append(bufferResource->buffer.copyRef());
-            break;
-        }
-        case GPUBindingType::Sampler: {
+            return true;
+        };
+
+        auto success = WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer& uniformBuffer) -> bool {
+            return handleBuffer(uniformBuffer.internalLengthName);
+        }, [&](GPUBindGroupLayout::DynamicUniformBuffer& dynamicUniformBuffer) -> bool {
+            return handleBuffer(dynamicUniformBuffer.internalLengthName);
+        }, [&](GPUBindGroupLayout::Sampler&) -> bool {
             auto samplerState = tryGetResourceAsMtlSampler(resourceBinding.resource, functionName);
             if (!samplerState)
-                return nullptr;
+                return false;
             if (isForVertex)
                 setSamplerOnEncoder(vertexEncoder, samplerState, index);
             if (isForFragment)
                 setSamplerOnEncoder(fragmentEncoder, samplerState, index);
             if (isForCompute)
                 setSamplerOnEncoder(computeEncoder, samplerState, index);
-            break;
-        }
-        case GPUBindingType::SampledTexture: {
+            return true;
+        }, [&](GPUBindGroupLayout::SampledTexture&) -> bool {
             auto textureResource = tryGetResourceAsTexture(resourceBinding.resource, functionName);
             if (!textureResource)
-                return nullptr;
+                return false;
             if (isForVertex)
                 setTextureOnEncoder(vertexEncoder, textureResource->platformTexture(), index);
             if (isForFragment)
@@ -231,12 +233,14 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
             if (isForCompute)
                 setTextureOnEncoder(computeEncoder, textureResource->platformTexture(), index);
             boundTextures.append(textureResource.releaseNonNull());
-            break;
-        }
-        default:
-            LOG(WebGPU, "%s: Resource type not yet implemented.", functionName);
+            return true;
+        }, [&](GPUBindGroupLayout::StorageBuffer& storageBuffer) -> bool {
+            return handleBuffer(storageBuffer.internalLengthName);
+        }, [&](GPUBindGroupLayout::DynamicStorageBuffer& dynamicStorageBuffer) -> bool {
+            return handleBuffer(dynamicStorageBuffer.internalLengthName);
+        }), layoutBinding.internalBindingDetails);
+        if (!success)
             return nullptr;
-        }
     }
     
     return adoptRef(new GPUBindGroup(WTFMove(vertexArgsBuffer), WTFMove(fragmentArgsBuffer), WTFMove(computeArgsBuffer), WTFMove(boundBuffers), WTFMove(boundTextures)));

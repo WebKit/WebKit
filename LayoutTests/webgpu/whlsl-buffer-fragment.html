@@ -10,8 +10,8 @@ vertex float4 vertexShader(float4 position : attribute(0), float i : attribute(1
     return position;
 }
 
-fragment float4 fragmentShader(float4 position : SV_Position) : SV_Target 0 {
-    return position;
+fragment float4 fragmentShader(float4 position : SV_Position, constant float[] theBuffer : register(b0)) : SV_Target 0 {
+    return float4(theBuffer[0], theBuffer[0], theBuffer[0], 1.0);
 }
 `;
 async function start() {

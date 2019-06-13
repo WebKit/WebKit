@@ -1,3 +1,107 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Implement array references
+        https://bugs.webkit.org/show_bug.cgi?id=198163
+
+        Reviewed by Saam Barati.
+
+        The compiler automatically generates anders for every array reference. Luckily, the infrastructure
+        to generate those anders and emit Metal code to represent them already exists in the compiler.
+        There are two pieces remaining (which this patch implements):
+
+        1. The JavaScript compiler has a behavior where anders that are called with an array reference
+           as an argument don't wrap the argument in a MakePointerExpression. This is because the array
+           reference is already a reference type, so it's silly to operate on a pointer to a reference.
+           This patch implements this by teaching the type checker about which types should be passed
+           to the ander call, and by actually constructing those types in the property resolver.
+           The property resolver does this by placing the logic to construct an ander argument in a
+           single function which also has logic to save the argument in a temporary if the thread ander
+           will be called. The semantics about which functions are called in which situations are not
+           changed; instead, we just simply don't wrap array references with MakePointerExpressions.
+
+        2. Creating a bind group from the WebGPU API has to retain information about buffer lengths for
+           each buffer so the shader can properly perform bounds checks. This can be broken down into a
+           few pieces:
+           - Creating a bind group layout has to assign extra id indexes for each buffer which will be
+             filled in to represent the buffer's length
+           - Creating the bind group itself needs to fill in the buffer length into the Metal argument
+             buffer
+           - The shader compiler needs to emit code at the beginning of entry point to find the buffer
+             lengths and pack them together into the array reference (array references correspond to
+             a Metal struct with two fields: a pointer and a length).
+
+        This patch doesn't actually implement bounds checks themselves; it just hooks up the buffer
+        lengths so https://bugs.webkit.org/show_bug.cgi?id=198600 can implement it.
+
+        The shader compiler's API is modified to allow for this extra buffer length information to be
+        passed in from the WebGPU implementation.
+
+        Unfortunately, I don't think I could split this patch up into two pieces because both are
+        required to test the compiler with buffers.
+
+        Tests: webgpu/whlsl-buffer-fragment.html
+               webgpu/whlsl-buffer-vertex.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h:
+        (WebCore::WHLSL::AST::PropertyAccessExpression::baseReference):
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp:
+        (WebCore::WHLSL::AST::ResourceSemantic::isAcceptableType const): Arrays can't be resources
+        because the compiler has no way of guaranteeing if the resource is long enough to hold the
+        array at compile time.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::EntryPointScaffolding): Generate an extra
+        variable name to represent the buffer length. Only do it for resources which have lengths.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns): Perform
+        the appropriate math to turn byte lengths into element counts and store the element count
+        in the array reference.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer): Refactor.
+        (WebCore::WHLSL::resolveWithOperatorLength): Ditto.
+        (WebCore::WHLSL::resolveWithReferenceComparator): Ditto.
+        (WebCore::WHLSL::resolveByInstantiation): Ditto.
+        (WebCore::WHLSL::argumentTypeForAndOverload): Given an ander, what should the type of the
+        argument be?
+        (WebCore::WHLSL::Checker::finishVisiting): Call argumentTypeForAndOverload(). Also, if
+        we couldn't find an ander, try automatically generating it, the same way that function
+        calls do. (This is how array references get their anders.)
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLPipelineDescriptor.h: New WHLSL API to provide the length
+        information.
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::PropertyResolver::visit): SimplifyRightValue() can't fail any more.
+        (WebCore::WHLSL::wrapAnderCallArgument): If the ander argument should be wrapped in a
+        MakePointer or a MakeArrayReference, do that. Also, if the ander is a thread ander, save
+        the argument in a local variable and use that.
+        (WebCore::WHLSL::anderCallArgument): The equivalent of argumentTypeForAndOverload().
+        (WebCore::WHLSL::setterCall): Call anderCallArgument().
+        (WebCore::WHLSL::getterCall): Ditto.
+        (WebCore::WHLSL::modify): We used to have special-case code for handling pointer-to-argument
+        values as distinct from just the argument values themselves. However, emitting
+        chains of &* operators is valid and won't even make it through the Metal code generator
+        after https://bugs.webkit.org/show_bug.cgi?id=198600 is fixed. So, in order to simplify
+        wrapAnderCallArgument(), don't special case these values and just create &* chains instead.
+        (WebCore::WHLSL::PropertyResolver::simplifyRightValue):
+        (WebCore::WHLSL::LeftValueSimplifier::finishVisiting): Call anderCallArgument().
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp: Update to support the new compiler API.
+        (WebCore::WHLSL::matchMode):
+        (WebCore::WHLSL::matchResources):
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp: Ditto.
+        (WebCore::WebGPUBindGroupDescriptor::tryCreateGPUBindGroupDescriptor const):
+        * platform/graphics/gpu/GPUBindGroupLayout.h: Add some internal implementation data inside
+        the bindings object. Use a Variant to differentiate between the various bindings types, and
+        put the extra length field on just those members of the variant that represent buffers.
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm: Update to support the new compiler API.
+        (WebCore::argumentDescriptor):
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm: Ditto.
+        (WebCore::setBufferOnEncoder):
+        (WebCore::GPUBindGroup::tryCreate):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Ditto.
+        (WebCore::convertBindingType):
+        (WebCore::convertLayout):
+
 2019-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [cairo][SVG] If clipPath has multiple elements, clip-path doesn't work with transform

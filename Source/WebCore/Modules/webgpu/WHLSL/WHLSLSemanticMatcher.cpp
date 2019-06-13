@@ -55,19 +55,17 @@ static AST::FunctionDefinition* findEntryPoint(Vector<UniqueRef<AST::FunctionDef
     return &*iterator;
 };
 
-static bool matchMode(BindingType bindingType, AST::ResourceSemantic::Mode mode)
+static bool matchMode(Binding::BindingDetails bindingType, AST::ResourceSemantic::Mode mode)
 {
-    switch (bindingType) {
-    case BindingType::UniformBuffer:
+    return WTF::visit(WTF::makeVisitor([&](UniformBufferBinding) -> bool {
         return mode == AST::ResourceSemantic::Mode::Buffer;
-    case BindingType::Sampler:
+    }, [&](SamplerBinding) -> bool {
         return mode == AST::ResourceSemantic::Mode::Sampler;
-    case BindingType::Texture:
+    }, [&](TextureBinding) -> bool {
         return mode == AST::ResourceSemantic::Mode::Texture;
-    default:
-        ASSERT(bindingType == BindingType::StorageBuffer);
+    }, [&](StorageBufferBinding) -> bool {
         return mode == AST::ResourceSemantic::Mode::UnorderedAccessView;
-    }
+    }), bindingType);
 }
 
 static Optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>& entryPointItems, Layout& layout, ShaderStage shaderStage)
@@ -87,9 +85,9 @@ static Optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>
                 if (!WTF::holds_alternative<AST::ResourceSemantic>(semantic))
                     continue;
                 auto& resourceSemantic = WTF::get<AST::ResourceSemantic>(semantic);
-                if (!matchMode(binding.bindingType, resourceSemantic.mode()))
+                if (!matchMode(binding.binding, resourceSemantic.mode()))
                     continue;
-                if (binding.name != resourceSemantic.index())
+                if (binding.externalName != resourceSemantic.index())
                     continue;
                 if (space != resourceSemantic.space())
                     continue;

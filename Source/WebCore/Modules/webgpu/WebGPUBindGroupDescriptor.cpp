@@ -111,7 +111,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
             if (!buffer)
                 return WTF::nullopt;
 
-            if (!validateBufferBindingType(buffer, layoutBinding, functionName))
+            if (!validateBufferBindingType(buffer, layoutBinding.externalBinding, functionName))
                 return WTF::nullopt;
 
             return static_cast<GPUBindingResource>(GPUBufferBinding { makeRef(*buffer), bufferBinding.offset, bufferBinding.size });
@@ -119,7 +119,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
 
         auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);
         if (!bindingResource) {
-            LOG(WebGPU, "%s: Invalid resource for binding %u!", functionName, layoutBinding.binding);
+            LOG(WebGPU, "%s: Invalid resource for binding %u!", functionName, layoutBinding.externalBinding.binding);
             return WTF::nullopt;
         }
 

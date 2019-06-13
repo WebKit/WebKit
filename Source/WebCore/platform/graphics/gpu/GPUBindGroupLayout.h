@@ -33,6 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Variant.h>
 
 #if USE(METAL)
 OBJC_PROTOCOL(MTLArgumentEncoder);
@@ -47,7 +48,37 @@ class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
     static RefPtr<GPUBindGroupLayout> tryCreate(const GPUDevice&, const GPUBindGroupLayoutDescriptor&);
 
-    using BindingsMapType = HashMap<uint64_t, GPUBindGroupLayoutBinding, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    struct UniformBuffer {
+        unsigned internalLengthName;
+    };
+
+    struct DynamicUniformBuffer {
+        unsigned internalLengthName;
+    };
+
+    struct Sampler {
+    };
+
+    struct SampledTexture {
+    };
+
+    struct StorageBuffer {
+        unsigned internalLengthName;
+    };
+
+    struct DynamicStorageBuffer {
+        unsigned internalLengthName;
+    };
+
+    using InternalBindingDetails = Variant<UniformBuffer, DynamicUniformBuffer, Sampler, SampledTexture, StorageBuffer, DynamicStorageBuffer>;
+
+    struct Binding {
+        GPUBindGroupLayoutBinding externalBinding;
+        unsigned internalName;
+        InternalBindingDetails internalBindingDetails;
+    };
+
+    using BindingsMapType = HashMap<uint64_t, Binding, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     const BindingsMapType& bindingsMap() const { return m_bindingsMap; }
 #if USE(METAL)
     MTLArgumentEncoder *vertexEncoder() const { return m_vertexEncoder.get(); }

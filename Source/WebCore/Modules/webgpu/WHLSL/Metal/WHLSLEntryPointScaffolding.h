@@ -77,9 +77,15 @@ protected:
     Layout& m_layout;
     std::function<String()> m_generateNextVariableName;
 
+    struct LengthInformation {
+        String elementName;
+        String temporaryName;
+        unsigned index;
+    };
     struct NamedBinding {
         String elementName;
         unsigned index;
+        Optional<LengthInformation> lengthInformation;
     };
     struct NamedBindGroup {
         String structName;
