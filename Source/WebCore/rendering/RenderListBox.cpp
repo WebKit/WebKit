@@ -804,8 +804,6 @@ LayoutRect RenderListBox::controlClipRect(const LayoutPoint& additionalOffset) c
     // Clip against the padding box, to give <option>s and overlay scrollbar some extra space
     // to get painted.
     LayoutRect clipRect = paddingBoxRect();
-    if (shouldPlaceBlockDirectionScrollbarOnLeft())
-        clipRect.move(m_vBar->occupiedWidth(), 0);
     clipRect.moveBy(additionalOffset);
     return clipRect;
 }

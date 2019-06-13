@@ -658,6 +658,16 @@ RoundedRect::Radii RenderBox::borderRadii() const
     return style.getRoundedBorderFor(bounds).radii();
 }
 
+LayoutRect RenderBox::paddingBoxRect() const
+{
+    auto verticalScrollbarWidth = this->verticalScrollbarWidth();
+    LayoutUnit offsetForScrollbar = shouldPlaceBlockDirectionScrollbarOnLeft() ? verticalScrollbarWidth : 0;
+
+    return LayoutRect(borderLeft() + offsetForScrollbar, borderTop(),
+        width() - borderLeft() - borderRight() - verticalScrollbarWidth,
+        height() - borderTop() - borderBottom() - horizontalScrollbarHeight());
+}
+
 LayoutRect RenderBox::contentBoxRect() const
 {
     return { contentBoxLocation(), contentSize() };

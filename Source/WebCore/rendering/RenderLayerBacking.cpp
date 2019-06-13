@@ -1216,11 +1216,11 @@ void RenderLayerBacking::updateGeometry()
     if (m_scrollContainerLayer) {
         ASSERT(m_scrolledContentsLayer);
         auto& renderBox = downcast<RenderBox>(renderer());
-        LayoutRect paddingBoxIncludingScrollbar = renderBox.paddingBoxRectIncludingScrollbar();
+        LayoutRect paddingBox = renderBox.paddingBoxRect();
         LayoutRect parentLayerBounds = clippingLayer() ? clippingBox : compositedBounds();
 
         // FIXME: need to do some pixel snapping here.
-        m_scrollContainerLayer->setPosition(FloatPoint(paddingBoxIncludingScrollbar.location() - parentLayerBounds.location()));
+        m_scrollContainerLayer->setPosition(FloatPoint(paddingBox.location() - parentLayerBounds.location()));
         m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(renderBox.paddingBoxWidth(), renderBox.paddingBoxHeight())));
 
         ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
@@ -1230,12 +1230,12 @@ void RenderLayerBacking::updateGeometry()
 #endif
 
         FloatSize oldScrollingLayerOffset = m_scrollContainerLayer->offsetFromRenderer();
-        m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(paddingBoxIncludingScrollbar.location()));
+        m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(paddingBox.location()));
 
         if (m_childClippingMaskLayer) {
             m_childClippingMaskLayer->setPosition(m_scrollContainerLayer->position());
             m_childClippingMaskLayer->setSize(m_scrollContainerLayer->size());
-            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(paddingBoxIncludingScrollbar.location()));
+            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(paddingBox.location()));
         }
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollContainerLayer->offsetFromRenderer();
@@ -1246,7 +1246,7 @@ void RenderLayerBacking::updateGeometry()
 
         m_scrolledContentsLayer->setSize(scrollSize);
         m_scrolledContentsLayer->setScrollOffset(scrollOffset, GraphicsLayer::DontSetNeedsDisplay);
-        m_scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(paddingBoxIncludingScrollbar.location()), GraphicsLayer::DontSetNeedsDisplay);
+        m_scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(paddingBox.location()), GraphicsLayer::DontSetNeedsDisplay);
         
         adjustTiledBackingCoverage();
     }

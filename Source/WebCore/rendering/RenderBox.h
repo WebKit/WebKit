@@ -219,7 +219,7 @@ public:
 
     LayoutUnit paddingBoxWidth() const { return width() - borderLeft() - borderRight() - verticalScrollbarWidth(); }
     LayoutUnit paddingBoxHeight() const { return height() - borderTop() - borderBottom() - horizontalScrollbarHeight(); }
-    LayoutRect paddingBoxRect() const { return LayoutRect(borderLeft(), borderTop(), paddingBoxWidth(), paddingBoxHeight()); }
+    LayoutRect paddingBoxRect() const;
     LayoutRect paddingBoxRectIncludingScrollbar() const { return LayoutRect(borderLeft(), borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom()); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)

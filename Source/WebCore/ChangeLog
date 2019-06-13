@@ -1,3 +1,24 @@
+2019-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        paddingBoxRect() is wrong with RTL scrollbars on the left
+        https://bugs.webkit.org/show_bug.cgi?id=198816
+
+        Reviewed by Jon Lee.
+
+        RenderBox::paddingBoxRect() needs to offset the left side of the box for the
+        vertical scrollbar, if it's placed on the left.
+
+        Test: compositing/geometry/rtl-overflow-scroll.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paddingBoxRect const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::paddingBoxRect const): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::controlClipRect const):
+
 2019-06-12  Youenn Fablet  <youenn@apple.com>
 
         Use NSURLSession for WebSocket
