@@ -42,16 +42,9 @@ struct RenderPrepareResult {
 };
 Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescriptor&);
 
-struct ComputeDimensions {
-    unsigned width;
-    unsigned height;
-    unsigned depth;
-};
-
 struct ComputePrepareResult {
     String metalSource;
     String mangledEntryPointName;
-    ComputeDimensions computeDimensions;
 };
 Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescriptor&);
 

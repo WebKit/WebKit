@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLPrepare.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -49,13 +48,10 @@ public:
 
     const PlatformComputePipeline* platformComputePipeline() const { return m_platformComputePipeline.get(); }
 
-    WHLSL::ComputeDimensions computeDimensions() const { return m_computeDimensions; }
-
 private:
-    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions);
+    GPUComputePipeline(PlatformComputePipelineSmartPtr&&);
 
     PlatformComputePipelineSmartPtr m_platformComputePipeline;
-    WHLSL::ComputeDimensions m_computeDimensions { 0, 0, 0 };
 };
 
 } // namespace WebCore

@@ -6394,10 +6394,6 @@
 		1C840B9921EC400800D0500D /* WHLSLGatherEntryPointItems.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLGatherEntryPointItems.cpp; sourceTree = "<group>"; };
 		1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGatherEntryPointItems.h; sourceTree = "<group>"; };
 		1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLChecker.cpp; sourceTree = "<group>"; };
-		1C86CA4B22AA19FF001BF961 /* WHLSLComputeDimensions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLComputeDimensions.cpp; sourceTree = "<group>"; };
-		1C86CA4C22AA19FF001BF961 /* WHLSLComputeDimensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLComputeDimensions.h; sourceTree = "<group>"; };
-		1C86CA4E22AA23C9001BF961 /* GPUPipelineMetalConvertLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipelineMetalConvertLayout.cpp; sourceTree = "<group>"; };
-		1C86CA4F22AA23C9001BF961 /* GPUPipelineMetalConvertLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineMetalConvertLayout.h; sourceTree = "<group>"; };
 		1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C9AE5CA21ED9DF50069D5F2 /* WHLSLHighZombieFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLHighZombieFinder.cpp; sourceTree = "<group>"; };
 		1C9AE5CB21ED9DF50069D5F2 /* WHLSLHighZombieFinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLHighZombieFinder.h; sourceTree = "<group>"; };
@@ -25452,8 +25448,6 @@
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
 				1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */,
 				1C840B9721EC400700D0500D /* WHLSLChecker.h */,
-				1C86CA4B22AA19FF001BF961 /* WHLSLComputeDimensions.cpp */,
-				1C86CA4C22AA19FF001BF961 /* WHLSLComputeDimensions.h */,
 				1CA0C2E421EED12A00A11860 /* WHLSLFunctionStageChecker.cpp */,
 				1CA0C2E521EED12A00A11860 /* WHLSLFunctionStageChecker.h */,
 				1C840B9921EC400800D0500D /* WHLSLGatherEntryPointItems.cpp */,
@@ -25993,8 +25987,6 @@
 				D08903402241CE4600F3F440 /* GPUComputePassEncoderMetal.mm */,
 				D089033B224179B500F3F440 /* GPUComputePipelineMetal.mm */,
 				D087CE3C21ACA94200BDE174 /* GPUDeviceMetal.mm */,
-				1C86CA4E22AA23C9001BF961 /* GPUPipelineMetalConvertLayout.cpp */,
-				1C86CA4F22AA23C9001BF961 /* GPUPipelineMetalConvertLayout.h */,
 				D087CE3B21ACA94200BDE174 /* GPUProgrammablePassEncoderMetal.mm */,
 				D087CE3921ACA94200BDE174 /* GPUQueueMetal.mm */,
 				D087CE3A21ACA94200BDE174 /* GPURenderPassEncoderMetal.mm */,

@@ -175,8 +175,7 @@ Optional<EntryPointItems> gatherEntryPointItems(const Intrinsics& intrinsics, AS
             return WTF::nullopt;
     }
     Gatherer outputGatherer(intrinsics, functionDefinition.semantic() ? &*functionDefinition.semantic() : nullptr);
-    if (*functionDefinition.entryPointType() != AST::EntryPointType::Compute)
-        outputGatherer.checkErrorAndVisit(functionDefinition.type());
+    outputGatherer.checkErrorAndVisit(functionDefinition.type());
     if (outputGatherer.error())
         return WTF::nullopt;
 
