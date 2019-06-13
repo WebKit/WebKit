@@ -112,10 +112,13 @@ async function test() {
 
     device.getQueue().submit([commandEncoder.finish()]);
     vertexBuffer.destroy();
-
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
 
-test();
+test().then(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>

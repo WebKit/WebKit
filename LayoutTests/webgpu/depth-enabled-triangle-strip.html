@@ -108,10 +108,13 @@ async function test() {
     encoder.endPass();
 
     device.getQueue().submit([commandEncoder.finish()]);
-
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
 
-test();
+test().then(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>

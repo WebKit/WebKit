@@ -194,10 +194,13 @@ async function test() {
     positionBuffer.destroy();
     textureCoordBuffer.destroy();
     texture.destroy();
-
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
 
-test();
+test().then(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>

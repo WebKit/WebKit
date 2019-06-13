@@ -1,3 +1,64 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Educate the property resolver about IndexExpressions
+        https://bugs.webkit.org/show_bug.cgi?id=198399
+
+        Unreviewed test gardening.
+
+        Failing WebGPU tests should fail instead of time out.
+
+        * webgpu/blend-color-triangle-strip.html:
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/blit-commands.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/color-write-mask-triangle-strip.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/draw-indexed-triangles.html:
+        * webgpu/propertyresolver/ander-abstract-lvalue.html:
+        * webgpu/propertyresolver/ander-lvalue-3-levels.html:
+        * webgpu/propertyresolver/ander-lvalue.html:
+        * webgpu/propertyresolver/ander.html:
+        * webgpu/propertyresolver/getter.html:
+        * webgpu/propertyresolver/indexer-ander-abstract-lvalue.html:
+        * webgpu/propertyresolver/indexer-ander-lvalue-3-levels.html:
+        * webgpu/propertyresolver/indexer-ander-lvalue.html:
+        * webgpu/propertyresolver/indexer-ander.html:
+        * webgpu/propertyresolver/indexer-getter.html:
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue-3-levels.html:
+        * webgpu/propertyresolver/indexer-setter-abstract-lvalue.html:
+        * webgpu/propertyresolver/indexer-setter-lvalue.html:
+        * webgpu/propertyresolver/indexer-setter.html:
+        * webgpu/propertyresolver/setter-abstract-lvalue-3-levels.html:
+        * webgpu/propertyresolver/setter-abstract-lvalue.html:
+        * webgpu/propertyresolver/setter-lvalue.html:
+        * webgpu/simple-triangle-strip.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/viewport-scissor-rect-triangle-strip.html:
+        * webgpu/whlsl-arbitrary-vertex-attribute-locations.html:
+        * webgpu/whlsl-dereference-pointer-should-type-check.html:
+        * webgpu/whlsl-do-while-loop-break.html:
+        * webgpu/whlsl-do-while-loop-continue.html:
+        * webgpu/whlsl-do-while-loop.html:
+        * webgpu/whlsl-dont-crash-parsing-enum.html:
+        * webgpu/whlsl-dot-expressions.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-2.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime-3.html:
+        * webgpu/whlsl-ensure-proper-variable-lifetime.html:
+        * webgpu/whlsl-loops-break.html:
+        * webgpu/whlsl-loops-continue.html:
+        * webgpu/whlsl-loops.html:
+        * webgpu/whlsl-nested-dot-expression-rvalue.html:
+        * webgpu/whlsl-nested-loop.html:
+        * webgpu/whlsl-return-local-variable.html:
+        * webgpu/whlsl-store-to-property-updates-properly.html:
+        * webgpu/whlsl-while-loop-break.html:
+        * webgpu/whlsl-while-loop-continue.html:
+        * webgpu/whlsl-zero-initialize-values-2.html:
+        * webgpu/whlsl-zero-initialize-values.html:
+        * webgpu/whlsl.html:
+
 2019-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         paddingBoxRect() is wrong with RTL scrollbars on the left

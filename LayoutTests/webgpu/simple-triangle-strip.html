@@ -58,12 +58,13 @@ async function test() {
     const queue = device.getQueue();
 
     queue.submit([commandEncoder.finish()]);
-
-    requestAnimationFrame(() => { 
-        if (window.testRunner)
-            testRunner.notifyDone();
-    });
 }
 
-test();
+test().then(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>

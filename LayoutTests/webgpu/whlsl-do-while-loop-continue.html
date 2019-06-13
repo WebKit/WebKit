@@ -123,13 +123,18 @@ async function start() {
     renderPassEncoder.endPass();
     const commandBuffer = commandEncoder.finish();
     device.getQueue().submit([commandBuffer]);
-
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
 if (window.testRunner)
     testRunner.waitUntilDone();
-window.addEventListener("load", start);
+window.addEventListener("load", function() {
+    start().then(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
 </script>
 </body>
 </html>

@@ -196,11 +196,14 @@ async function test() {
         passEncoder.endPass();
         const queue = device.getQueue();
         queue.submit([commandEncoder.finish()]);
-
-        if (window.testRunner)
-            testRunner.notifyDone();
     });
 }
 
-test();
+test().then(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>
