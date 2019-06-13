@@ -62,15 +62,6 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void WebProcessProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
-{
-    m_contextIDForVisibilityPropagation = contextID;
-    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
-        page->didCreateContextForVisibilityPropagation(contextID);
-}
-#endif
-
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

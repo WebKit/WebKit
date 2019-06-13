@@ -301,10 +301,6 @@ public:
     void unblockAccessibilityServerIfNeeded();
 #endif
 
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID contextIDForVisibilityPropagation() { return m_contextIDForVisibilityPropagation; }
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     void processWasUnexpectedlyUnsuspended(CompletionHandler<void()>&&);
 #endif
@@ -350,10 +346,6 @@ private:
     void checkRemotePortForActivity(const WebCore::MessagePortIdentifier, uint64_t callbackIdentifier);
     void didDeliverMessagePortMessages(uint64_t messageBatchIdentifier);
     void didCheckProcessLocalPortForActivity(uint64_t callbackIdentifier, bool isLocallyReachable);
-
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
-#endif
 
     bool hasProvisionalPageWithID(WebCore::PageIdentifier) const;
     bool isAllowedToUpdateBackForwardItem(WebBackForwardListItem&) const;
@@ -459,10 +451,6 @@ private:
     BackgroundWebProcessToken m_backgroundToken;
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
     std::unique_ptr<WebCore::DeferrableOneShotTimer> m_unexpectedActivityTimer;
-#endif
-
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

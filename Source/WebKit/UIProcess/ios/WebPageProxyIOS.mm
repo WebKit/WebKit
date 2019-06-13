@@ -84,13 +84,6 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     return standardUserAgentWithApplicationName(applicationNameForUserAgent);
 }
 
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void WebPageProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
-{
-    pageClient().didCreateContextForVisibilityPropagation(contextID);
-}
-#endif
-
 void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();

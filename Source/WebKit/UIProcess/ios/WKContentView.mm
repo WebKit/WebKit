@@ -194,7 +194,7 @@
 - (void)_setupVisibilityPropagationView
 {
     auto processIdentifier = _page->process().processIdentifier();
-    auto contextID = _page->process().contextIDForVisibilityPropagation();
+    auto contextID = _page->contextIDForVisibilityPropagation();
     if (!processIdentifier || !contextID)
         return;
 

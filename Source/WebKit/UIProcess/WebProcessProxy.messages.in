@@ -80,10 +80,6 @@ messages -> WebProcessProxy LegacyReceiver {
     StopDisplayLink(unsigned observerID, uint32_t displayID)
 #endif
 
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     ProcessWasUnexpectedlyUnsuspended() -> () Async
 #endif

@@ -531,9 +531,6 @@ private:
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
     ProcessTaskStateObserver m_taskStateObserver { *this };
 #endif
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
-#endif
 
     enum PageMarkingLayersAsVolatileCounterType { };
     using PageMarkingLayersAsVolatileCounter = RefCounter<PageMarkingLayersAsVolatileCounterType>;

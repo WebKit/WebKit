@@ -568,4 +568,8 @@ messages -> WebPageProxy {
 #if PLATFORM(GTK)
     ShowEmojiPicker(WebCore::IntRect caretRect) -> (String result) Async
 #endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
+#endif
 }

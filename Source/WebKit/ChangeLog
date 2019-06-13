@@ -1,3 +1,37 @@
+2019-06-13  Tim Horton  <timothy_horton@apple.com>
+
+        No content shows up for WKWebView while locked even with _canShowWhileLocked is YES
+        https://bugs.webkit.org/show_bug.cgi?id=198819
+        <rdar://problem/51636240>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::didCreateContextForVisibilityPropagation):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::contextIDForVisibilityPropagation const):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::contextIDForVisibilityPropagation): Deleted.
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _setupVisibilityPropagationView]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCreateContextForVisibilityPropagation): Deleted.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::didCreateContextForVisibilityPropagation): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shrinkToFitContentTimer):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Move the creation of the visibility propagation context to WebPage instead of WebProcess,
+        because canShowWhileLocked is per-page, not per-process.
+
+        Also, pass canShowWhileLocked into the context creation function for the visibility
+        propagation context, not just RemoteLayerTree contexts.
+
 2019-06-13  Antoine Quint  <graouts@apple.com>
 
         "display: contents" Content click does not trigger

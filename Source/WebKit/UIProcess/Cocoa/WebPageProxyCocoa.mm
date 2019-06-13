@@ -291,4 +291,12 @@ void WebPageProxy::voicesDidChange()
 }
 #endif // ENABLE(SPEECH_SYNTHESIS)
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void WebPageProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
+{
+    m_contextIDForVisibilityPropagation = contextID;
+    pageClient().didCreateContextForVisibilityPropagation(contextID);
+}
+#endif
+
 } // namespace WebKit
