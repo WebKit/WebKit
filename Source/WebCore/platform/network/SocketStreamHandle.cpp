@@ -42,6 +42,7 @@ SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient&
     , m_client(client)
     , m_state(Connecting)
 {
+    ASSERT(isMainThread());
 }
 
 SocketStreamHandle::SocketStreamState SocketStreamHandle::state() const

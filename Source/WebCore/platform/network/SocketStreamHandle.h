@@ -47,7 +47,7 @@ typedef struct {
 #endif
 } SourceApplicationAuditToken;
 
-class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle> {
+class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle, WTF::DestructionThread::Main> {
 public:
     enum SocketStreamState { Connecting, Open, Closing, Closed };
     virtual ~SocketStreamHandle() = default;
