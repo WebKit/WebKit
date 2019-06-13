@@ -269,6 +269,11 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
     m_compositingRunLoop->scheduleUpdate();
 }
 
+void ThreadedCompositor::updateScene()
+{
+    m_compositingRunLoop->scheduleUpdate();
+}
+
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor(PlatformDisplayID)
 {

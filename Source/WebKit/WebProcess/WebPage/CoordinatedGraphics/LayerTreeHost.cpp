@@ -53,6 +53,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
+    , m_sceneIntegration(Nicosia::SceneIntegration::create(*this))
 {
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
@@ -366,9 +367,19 @@ void LayerTreeHost::commitSceneState(const CoordinatedGraphicsState& state)
     m_compositor->updateSceneState(state);
 }
 
+RefPtr<Nicosia::SceneIntegration> LayerTreeHost::sceneIntegration()
+{
+    return m_sceneIntegration.copyRef();
+}
+
 void LayerTreeHost::frameComplete()
 {
     m_compositor->frameComplete();
+}
+
+void LayerTreeHost::requestUpdate()
+{
+    m_compositor->updateScene();
 }
 
 uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()

@@ -1,3 +1,37 @@
+2019-06-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add SceneIntegration
+        https://bugs.webkit.org/show_bug.cgi?id=198791
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the SceneIntegration class to the Nicosia namespace, primarily for
+        the purpose of being able to conveniently trigger scene updates whenever
+        changes are done to the state of layers that are included in that scene.
+        Initially this would be used for layer changes done on a
+        scrolling-dedicated thread.
+
+        Each Nicosia::PlatformLayer can have a SceneIntegration object reference
+        associated. Helper createUpdateScope() method returns a
+        SceneIntegration::UpdateScope instance that triggers an update for the
+        scene when that instance is destroyed (normally when it goes out of the
+        scope).
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::PlatformLayer::setSceneIntegration):
+        (Nicosia::PlatformLayer::createUpdateScope):
+        * platform/graphics/nicosia/NicosiaSceneIntegration.cpp: Added.
+        (Nicosia::SceneIntegration::SceneIntegration):
+        (Nicosia::SceneIntegration::~SceneIntegration):
+        (Nicosia::SceneIntegration::setClient):
+        (Nicosia::SceneIntegration::invalidate):
+        (Nicosia::SceneIntegration::requestUpdate):
+        (Nicosia::SceneIntegration::createUpdateScope):
+        (Nicosia::SceneIntegration::UpdateScope::UpdateScope):
+        (Nicosia::SceneIntegration::UpdateScope::~UpdateScope):
+        * platform/graphics/nicosia/NicosiaSceneIntegration.h: Added.
+
 2019-06-13  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] HLS stream slow start

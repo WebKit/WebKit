@@ -39,6 +39,10 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 
+#if USE(COORDINATED_GRAPHICS)
+#include <WebCore/NicosiaSceneIntegration.h>
+#endif
+
 namespace WebCore {
 class IntRect;
 class IntSize;
@@ -54,7 +58,7 @@ class WebPage;
 
 class LayerTreeHost
 #if USE(COORDINATED_GRAPHICS)
-    final : public CompositingCoordinator::Client, public AcceleratedSurface::Client
+    final : public CompositingCoordinator::Client, public AcceleratedSurface::Client, public Nicosia::SceneIntegration::Client
 #endif
 {
     WTF_MAKE_FAST_ALLOCATED;
@@ -103,9 +107,13 @@ private:
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
     void notifyFlushRequired() override { scheduleLayerFlush(); };
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
+    RefPtr<Nicosia::SceneIntegration> sceneIntegration() override;
 
     // AcceleratedSurface::Client
     void frameComplete() override;
+
+    // Nicosia::SceneIntegration::Client
+    void requestUpdate() override;
 
     uint64_t nativeSurfaceHandleForCompositing();
     void didDestroyGLContext();
@@ -193,6 +201,7 @@ private:
         bool needsFreshFlush { false };
     } m_forceRepaintAsync;
     RunLoop::Timer<LayerTreeHost> m_layerFlushTimer;
+    Ref<Nicosia::SceneIntegration> m_sceneIntegration;
 #endif // USE(COORDINATED_GRAPHICS)
 };
 

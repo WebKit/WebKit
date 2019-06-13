@@ -82,6 +82,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp
         platform/graphics/nicosia/NicosiaPlatformLayer.cpp
         platform/graphics/nicosia/NicosiaScene.cpp
+        platform/graphics/nicosia/NicosiaSceneIntegration.cpp
 
         platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp
         platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp
@@ -100,6 +101,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/nicosia/NicosiaPaintingEngine.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h
         platform/graphics/nicosia/NicosiaScene.h
+        platform/graphics/nicosia/NicosiaSceneIntegration.h
 
         platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.h
         platform/graphics/nicosia/texmap/NicosiaCompositionLayerTextureMapperImpl.h

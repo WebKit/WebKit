@@ -69,6 +69,7 @@ public:
     void setViewportSize(const WebCore::IntSize&, float scale);
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
+    void updateScene();
 
     void invalidate();
 
