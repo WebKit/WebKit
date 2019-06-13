@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
+#include "NetworkLoadMetrics.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -50,6 +52,9 @@ public:
         copy.availableProxyAuth = availableProxyAuth;
         copy.httpVersion = httpVersion;
 
+        copy.certificateInfo = certificateInfo.isolatedCopy();
+        copy.networkLoadMetrics = networkLoadMetrics.isolatedCopy();
+
         return copy;
     }
 
@@ -63,6 +68,9 @@ public:
     long availableHttpAuth { 0 };
     long availableProxyAuth { 0 };
     long httpVersion { 0 };
+
+    CertificateInfo certificateInfo;
+    NetworkLoadMetrics networkLoadMetrics;
 };
 
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/CurlRequest.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
@@ -140,14 +141,15 @@ void NetworkDataTaskCurl::curlDidSendData(CurlRequest&, unsigned long long total
     m_client->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
-void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, const CurlResponse& receivedResponse)
+void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlResponse&& receivedResponse)
 {
     auto protectedThis = makeRef(*this);
     if (state() == State::Canceling || state() == State::Completed || !m_client)
         return;
 
     m_response = ResourceResponse(receivedResponse);
-    m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
+    m_response.setCertificateInfo(WTFMove(receivedResponse.certificateInfo));
+    m_response.setDeprecatedNetworkLoadMetrics(WTFMove(receivedResponse.networkLoadMetrics));
 
     handleCookieHeaders(request.resourceRequest(), receivedResponse);
 
@@ -179,23 +181,21 @@ void NetworkDataTaskCurl::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&
     m_client->didReceiveData(WTFMove(buffer));
 }
 
-void NetworkDataTaskCurl::curlDidComplete(CurlRequest& request)
+void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& networkLoadMetrics)
 {
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
-    m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
-
-    m_client->didCompleteWithError({ }, m_response.deprecatedNetworkLoadMetrics());
+    m_client->didCompleteWithError({ }, WTFMove(networkLoadMetrics));
 }
 
-void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, const ResourceError& resourceError)
+void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceError&& resourceError, CertificateInfo&& certificateInfo)
 {
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
     if (resourceError.isSSLCertVerificationError()) {
-        tryServerTrustEvaluation(AuthenticationChallenge(request.resourceRequest().url(), request.certificateInfo(), resourceError));
+        tryServerTrustEvaluation(AuthenticationChallenge(request.resourceRequest().url(), certificateInfo, resourceError));
         return;
     }
 

@@ -52,10 +52,10 @@ public:
     void deref() final;
 
     void curlDidSendData(CurlRequest&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
-    void curlDidReceiveResponse(CurlRequest&, const CurlResponse&) final;
+    void curlDidReceiveResponse(CurlRequest&, CurlResponse&&) final;
     void curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&) final;
-    void curlDidComplete(CurlRequest&) final;
-    void curlDidFailWithError(CurlRequest&, const ResourceError&) final;
+    void curlDidComplete(CurlRequest&, NetworkLoadMetrics&&) final;
+    void curlDidFailWithError(CurlRequest&, ResourceError&&, CertificateInfo&&) final;
 
 private:
     ResourceHandle& m_handle;

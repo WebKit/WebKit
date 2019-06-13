@@ -25,13 +25,11 @@
 
 #pragma once
 
-#include "CertificateInfo.h"
 #include "CurlFormDataStream.h"
 #include "CurlMultipartHandle.h"
 #include "CurlMultipartHandleClient.h"
 #include "CurlRequestSchedulerClient.h"
 #include "CurlResponse.h"
-#include "NetworkLoadMetrics.h"
 #include "ProtectionSpace.h"
 #include "ResourceRequest.h"
 #include <wtf/FileSystem.h>
@@ -42,6 +40,7 @@
 namespace WebCore {
 
 class CurlRequestClient;
+class NetworkLoadMetrics;
 class ResourceError;
 class SharedBuffer;
 
@@ -76,7 +75,7 @@ public:
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     bool isServerTrustEvaluationDisabled() { return m_shouldDisableServerTrustEvaluation; }
     void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
-    void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime; }
+    void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime.isolatedCopy(); }
 
     void start();
     void cancel();
@@ -97,9 +96,6 @@ public:
     // Download
     void enableDownloadToFile();
     const String& getDownloadedFilePath();
-
-    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
-    const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
 
 private:
     enum class Action {
@@ -154,7 +150,7 @@ private:
     void updateHandlePauseState(bool);
     bool isHandlePaused() const;
 
-    void updateNetworkLoadMetrics();
+    NetworkLoadMetrics networkLoadMetrics();
 
     // Download
     void writeDataToDownloadFileIfEnabled(const SharedBuffer&);
@@ -211,9 +207,7 @@ private:
     String m_downloadFilePath;
     FileSystem::PlatformFileHandle m_downloadFileHandle { FileSystem::invalidPlatformFileHandle };
 
-    CertificateInfo m_certificateInfo;
     bool m_captureExtraMetrics;
-    NetworkLoadMetrics m_networkLoadMetrics;
     HTTPHeaderMap m_requestHeaders;
     MonotonicTime m_requestStartTime { MonotonicTime::nan() };
     MonotonicTime m_performStartTime;

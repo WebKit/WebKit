@@ -27,7 +27,6 @@
 
 #include "NetworkDataTask.h"
 #include <WebCore/CurlRequestClient.h>
-#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceResponse.h>
 
@@ -64,10 +63,10 @@ private:
 
     Ref<WebCore::CurlRequest> createCurlRequest(WebCore::ResourceRequest&&, RequestStatus = RequestStatus::NewRequest);
     void curlDidSendData(WebCore::CurlRequest&, unsigned long long, unsigned long long) override;
-    void curlDidReceiveResponse(WebCore::CurlRequest&, const WebCore::CurlResponse&) override;
+    void curlDidReceiveResponse(WebCore::CurlRequest&, WebCore::CurlResponse&&) override;
     void curlDidReceiveBuffer(WebCore::CurlRequest&, Ref<WebCore::SharedBuffer>&&) override;
-    void curlDidComplete(WebCore::CurlRequest&) override;
-    void curlDidFailWithError(WebCore::CurlRequest&, const WebCore::ResourceError&) override;
+    void curlDidComplete(WebCore::CurlRequest&, WebCore::NetworkLoadMetrics&&) override;
+    void curlDidFailWithError(WebCore::CurlRequest&, WebCore::ResourceError&&, WebCore::CertificateInfo&&) override;
 
     void invokeDidReceiveResponse();
 

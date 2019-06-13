@@ -1,3 +1,45 @@
+2019-06-13  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [curl] Remove member objects of CurlRequest not to share by different threads.
+        https://bugs.webkit.org/show_bug.cgi?id=198747
+
+        Reviewed by Fujii Hironori.
+
+        Removed m_certificateInfo and m_networkLoadMetrics.
+        Before patch those objects were updated by different threads.
+
+        No tests needed, no functionality changes.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::curlDidReceiveResponse):
+        (WebCore::CurlDownload::curlDidReceiveBuffer):
+        (WebCore::CurlDownload::curlDidComplete):
+        (WebCore::CurlDownload::curlDidFailWithError):
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::start):
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::invokeDidReceiveResponse):
+        (WebCore::CurlRequest::networkLoadMetrics):
+        (WebCore::CurlRequest::updateNetworkLoadMetrics): Deleted.
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::setStartTime):
+        (WebCore::CurlRequest::certificateInfo const): Deleted.
+        (WebCore::CurlRequest::networkLoadMetrics const): Deleted.
+        * platform/network/curl/CurlRequestClient.h:
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::CurlResourceHandleDelegate::curlDidSendData):
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveBuffer):
+        (WebCore::CurlResourceHandleDelegate::curlDidComplete):
+        (WebCore::CurlResourceHandleDelegate::curlDidFailWithError):
+        * platform/network/curl/CurlResourceHandleDelegate.h:
+        * platform/network/curl/CurlResponse.h:
+        (WebCore::CurlResponse::isolatedCopy const):
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2019-06-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add SceneIntegration

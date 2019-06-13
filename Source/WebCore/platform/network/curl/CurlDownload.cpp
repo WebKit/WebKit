@@ -80,7 +80,7 @@ Ref<CurlRequest> CurlDownload::createCurlRequest(ResourceRequest& request)
     return curlRequest;
 }
 
-void CurlDownload::curlDidReceiveResponse(CurlRequest& request, const CurlResponse& response)
+void CurlDownload::curlDidReceiveResponse(CurlRequest& request, CurlResponse&& response)
 {
     ASSERT(isMainThread());
 
@@ -101,7 +101,7 @@ void CurlDownload::curlDidReceiveResponse(CurlRequest& request, const CurlRespon
 }
 
 
-void CurlDownload::curlDidReceiveBuffer(CurlRequest& request, Ref<SharedBuffer>&& buffer)
+void CurlDownload::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&& buffer)
 {
     ASSERT(isMainThread());
 
@@ -112,7 +112,7 @@ void CurlDownload::curlDidReceiveBuffer(CurlRequest& request, Ref<SharedBuffer>&
         m_listener->didReceiveDataOfLength(buffer->size());
 }
 
-void CurlDownload::curlDidComplete(CurlRequest& request)
+void CurlDownload::curlDidComplete(CurlRequest& request, NetworkLoadMetrics&&)
 {
     ASSERT(isMainThread());
 
@@ -128,7 +128,7 @@ void CurlDownload::curlDidComplete(CurlRequest& request)
         m_listener->didFinish();
 }
 
-void CurlDownload::curlDidFailWithError(CurlRequest& request, const ResourceError& resourceError)
+void CurlDownload::curlDidFailWithError(CurlRequest& request, ResourceError&&, CertificateInfo&&)
 {
     ASSERT(isMainThread());
 

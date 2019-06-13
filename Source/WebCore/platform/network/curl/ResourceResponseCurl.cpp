@@ -78,8 +78,10 @@ bool ResourceResponse::isAppendableHeader(const String &key)
 }
 
 ResourceResponse::ResourceResponse(const CurlResponse& response)
-    : ResourceResponseBase(response.url, "", response.expectedContentLength, "")
+    : ResourceResponseBase()
 {
+    setURL(response.url);
+    setExpectedContentLength(response.expectedContentLength);
     setHTTPStatusCode(response.statusCode ? response.statusCode : response.httpConnectCode);
 
     for (const auto& header : response.headers)
@@ -101,6 +103,7 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
     default:
         break;
     }
+
     setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
     setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)));
     setSource(ResourceResponse::Source::Network);

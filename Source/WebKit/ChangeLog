@@ -1,3 +1,16 @@
+2019-06-13  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [curl] Remove member objects of CurlRequest not to share by different threads.
+        https://bugs.webkit.org/show_bug.cgi?id=198747
+
+        Reviewed by Fujii Hironori.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveResponse):
+        (WebKit::NetworkDataTaskCurl::curlDidComplete):
+        (WebKit::NetworkDataTaskCurl::curlDidFailWithError):
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+
 2019-06-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add SceneIntegration
