@@ -53,7 +53,9 @@ class NetworkDataTask;
 class NetworkProcess;
 class NetworkResourceLoader;
 class StorageManager;
+class NetworkSocketChannel;
 class WebResourceLoadStatisticsStore;
+class WebSocketTask;
 struct NetworkSessionCreationParameters;
 
 enum class WebsiteDataType;
@@ -100,6 +102,10 @@ public:
 
     PrefetchCache& prefetchCache() { return m_prefetchCache; }
     void clearPrefetchCache() { m_prefetchCache.clear(); }
+
+    virtual std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol);
+    virtual void removeWebSocketTask(WebSocketTask&) { }
+    virtual void addWebSocketTask(WebSocketTask&) { }
 
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID, const String& localStorageDirectory, SandboxExtension::Handle&);

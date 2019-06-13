@@ -35,6 +35,7 @@
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCreationParameters.h"
+#import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/Credential.h>
 #import <WebCore/FormDataStreamMac.h>
@@ -323,7 +324,11 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 }
 #endif
 
-@interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate> {
+@interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    , NSURLSessionWebSocketDelegate
+#endif
+> {
     RefPtr<WebKit::NetworkSessionCocoa> _session;
     bool _withCredentials;
 }
@@ -807,6 +812,34 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
     }
 }
 
+#if HAVE(NSURLSESSION_WEBSOCKET)
+- (WebSocketTask*)existingWebSocketTask:(NSURLSessionWebSocketTask *)task
+{
+    if (!_session)
+        return nullptr;
+
+    if (!task)
+        return nullptr;
+
+    return _session->webSocketDataTaskForIdentifier(task.taskIdentifier);
+}
+
+
+- (void)URLSession:(NSURLSession *)session webSocketTask:(NSURLSessionWebSocketTask *)task didOpenWithProtocol:(NSString *) protocol
+{
+    if (auto* webSocketTask = [self existingWebSocketTask:task])
+        webSocketTask->didConnect();
+}
+
+- (void)URLSession:(NSURLSession *)session webSocketTask:(NSURLSessionWebSocketTask *)task didCloseWithCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason
+{
+    if (auto* webSocketTask = [self existingWebSocketTask:task]) {
+        auto reason = adoptNS([[NSString alloc] initWithData:[task closeReason] encoding:NSUTF8StringEncoding]);
+        webSocketTask->didClose(closeCode, reason.get());
+    }
+}
+#endif
+
 @end
 
 namespace WebKit {
@@ -1141,6 +1174,14 @@ bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::A
 void NetworkSessionCocoa::continueDidReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
 {
     if (!networkDataTask) {
+#if HAVE(NSURLSESSION_WEBSOCKET)
+        if (auto* webSocketTask = webSocketDataTaskForIdentifier(taskIdentifier)) {
+            // FIXME: Handle challenges for web socket.
+            completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
+            return;
+        }
+#endif
+
         auto downloadID = this->downloadID(taskIdentifier);
         if (downloadID.downloadID()) {
             if (auto* download = networkProcess().downloadManager().download(downloadID)) {
@@ -1199,4 +1240,30 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 #endif
 }
 
+#if HAVE(NSURLSESSION_WEBSOCKET)
+std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol)
+{
+    // FIXME: Use protocol.
+    RetainPtr<NSURLSessionWebSocketTask> task = [m_sessionWithCredentialStorage.get() webSocketTaskWithRequest: request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
+    return std::make_unique<WebSocketTask>(channel, WTFMove(task));
+}
+
+void NetworkSessionCocoa::addWebSocketTask(WebSocketTask& task)
+{
+    ASSERT(!m_webSocketDataTaskMap.contains(task.identifier()));
+    m_webSocketDataTaskMap.add(task.identifier(), &task);
+}
+
+void NetworkSessionCocoa::removeWebSocketTask(WebSocketTask& task)
+{
+    ASSERT(m_webSocketDataTaskMap.contains(task.identifier()));
+    m_webSocketDataTaskMap.remove(task.identifier());
+}
+
+WebSocketTask* NetworkSessionCocoa::webSocketDataTaskForIdentifier(WebSocketTask::TaskIdentifier identifier)
+{
+    return m_webSocketDataTaskMap.get(identifier);
+}
+
+#endif
 }

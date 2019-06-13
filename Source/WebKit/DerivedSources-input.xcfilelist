@@ -20,6 +20,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkContentRuleListManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
+$(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketStream.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
@@ -95,6 +96,7 @@ $(PROJECT_DIR)/WebProcess/FullScreen/WebFullScreenManager.messages.in
 $(PROJECT_DIR)/WebProcess/Geolocation/WebGeolocationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
+$(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketStream.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebMDNSRegister.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebRTCMonitor.messages.in

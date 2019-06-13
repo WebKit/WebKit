@@ -41,6 +41,8 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkResourceLoaderMessages.h"
 #include "NetworkSession.h"
+#include "NetworkSocketChannel.h"
+#include "NetworkSocketChannelMessages.h"
 #include "NetworkSocketStream.h"
 #include "NetworkSocketStreamMessages.h"
 #include "PingLoad.h"
@@ -154,6 +156,12 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
             if (decoder.messageName() == Messages::NetworkSocketStream::Close::name())
                 m_networkSocketStreams.remove(decoder.destinationID());
         }
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
+        if (auto* channel = m_networkSocketChannels.get(decoder.destinationID()))
+            channel->didReceiveMessage(connection, decoder);
         return;
     }
 
@@ -347,10 +355,17 @@ void NetworkConnectionToWebProcess::createSocketStream(URL&& url, PAL::SessionID
     m_networkSocketStreams.set(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
 }
 
-void NetworkConnectionToWebProcess::destroySocketStream(uint64_t identifier)
+void NetworkConnectionToWebProcess::createSocketChannel(PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, uint64_t identifier)
 {
-    ASSERT(m_networkSocketStreams.get(identifier));
-    m_networkSocketStreams.remove(identifier);
+    ASSERT(!m_networkSocketChannels.contains(identifier));
+    if (auto channel = NetworkSocketChannel::create(*this, sessionID, request, protocol, identifier))
+        m_networkSocketChannels.add(identifier, WTFMove(channel));
+}
+
+void NetworkConnectionToWebProcess::removeSocketChannel(uint64_t identifier)
+{
+    ASSERT(m_networkSocketChannels.contains(identifier));
+    m_networkSocketChannels.remove(identifier);
 }
 
 void NetworkConnectionToWebProcess::cleanupForSuspension(Function<void()>&& completionHandler)

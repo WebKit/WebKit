@@ -81,46 +81,28 @@ WebSocketChannel::~WebSocketChannel()
     LOG(Network, "WebSocketChannel %p dtor", this);
 }
 
-void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
+WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
 {
     LOG(Network, "WebSocketChannel %p connect()", this);
 
-    URL url = requestedURL;
-#if ENABLE(CONTENT_EXTENSIONS)
-    if (auto* page = m_document->page()) {
-        if (auto* documentLoader = m_document->loader()) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(url, ContentExtensions::ResourceType::Raw, *documentLoader);
-            if (results.summary.blockedLoad) {
-                Ref<WebSocketChannel> protectedThis(*this);
-                callOnMainThread([protectedThis = WTFMove(protectedThis)] {
-                    if (protectedThis->m_client)
-                        protectedThis->m_client->didReceiveMessageError();
-                });
-                return;
-            }
-            if (results.summary.madeHTTPS) {
-                ASSERT(url.protocolIs("ws"));
-                url.setProtocol("wss");
-                if (m_client)
-                    m_client->didUpgradeURL();
-            }
-            if (results.summary.blockedCookies)
-                m_allowCookies = false;
-        }
-    }
-#endif
-    
+    auto validatedURL = validateURL(*m_document, requestedURL);
+    if (!validatedURL)
+        return ConnectStatus::KO;
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
-    
+
+    if (validatedURL->url != requestedURL && m_client)
+        m_client->didUpgradeURL();
+
+    m_allowCookies = validatedURL->areCookiesAllowed;
     String userAgent = m_document->userAgent(m_document->url());
     String clientOrigin = m_document->securityOrigin().toString();
-    m_handshake = std::make_unique<WebSocketHandshake>(url, protocol, userAgent, clientOrigin, m_allowCookies);
+    m_handshake = std::make_unique<WebSocketHandshake>(validatedURL->url, protocol, userAgent, clientOrigin, m_allowCookies);
     m_handshake->reset();
     if (m_deflateFramer.canDeflate())
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
-        InspectorInstrumentation::didCreateWebSocket(m_document.get(), m_identifier, url);
+        InspectorInstrumentation::didCreateWebSocket(m_document.get(), m_identifier, validatedURL->url);
 
     if (Frame* frame = m_document->frame()) {
         ref();
@@ -129,6 +111,12 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
         String partition = m_document->domainForCachePartition();
         m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, sessionID, partition, frame->loader().networkingContext());
     }
+    return ConnectStatus::OK;
+}
+
+Document* WebSocketChannel::document()
+{
+    return m_document.get();
 }
 
 String WebSocketChannel::subprotocol()

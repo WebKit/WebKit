@@ -149,6 +149,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/webdatabase/DatabaseTracker.h
     Modules/webdatabase/OriginLock.h
 
+    Modules/websockets/ThreadableWebSocketChannel.h
+    Modules/websockets/WebSocketChannel.h
+    Modules/websockets/WebSocketChannelClient.h
+    Modules/websockets/WebSocketDeflateFramer.h
+    Modules/websockets/WebSocketDeflater.h
+    Modules/websockets/WebSocketExtensionDispatcher.h
+    Modules/websockets/WebSocketExtensionProcessor.h
+    Modules/websockets/WebSocketFrame.h
+    Modules/websockets/WebSocketHandshake.h
+
     accessibility/AXObjectCache.h
     accessibility/AXTextStateChangeIntent.h
     accessibility/AccessibilityListBox.h
@@ -506,6 +516,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     fileapi/BlobPropertyBag.h
     fileapi/File.h
     fileapi/FileList.h
+    fileapi/FileReaderLoaderClient.h
 
     history/BackForwardClient.h
     history/BackForwardController.h

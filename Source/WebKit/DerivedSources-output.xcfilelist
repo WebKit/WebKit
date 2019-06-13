@@ -48,6 +48,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCSocketMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkRTCSocketMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkResourceLoaderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkResourceLoaderMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkSocketChannelMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkSocketChannelMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkSocketStreamMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkSocketStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/PlaybackSessionManagerMessageReceiver.cpp
@@ -192,6 +194,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSWServerConnectionMessageReceive
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSWServerConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSWServerToContextConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSWServerToContextConnectionMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketChannelMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketChannelMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketStreamMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSocketStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerMessageReceiver.cpp

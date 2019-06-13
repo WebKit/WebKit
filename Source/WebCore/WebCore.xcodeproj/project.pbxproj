@@ -2828,10 +2828,10 @@
 		97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0314FA09D5007457AE /* WebSocketChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0414FA09D5007457AE /* WebSocketChannelClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD2114FA09D5007457AE /* WebSocketDeflater.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0614FA09D5007457AE /* WebSocketDeflater.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97AABD2314FA09D5007457AE /* WebSocketExtensionDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0814FA09D5007457AE /* WebSocketExtensionDispatcher.h */; };
+		97AABD2314FA09D5007457AE /* WebSocketExtensionDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0814FA09D5007457AE /* WebSocketExtensionDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD2414FA09D5007457AE /* WebSocketExtensionProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0914FA09D5007457AE /* WebSocketExtensionProcessor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD2514FA09D5007457AE /* WebSocketFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0A14FA09D5007457AE /* WebSocketFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */; };
+		97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B8FFCF16AE7F920038388D /* CharacterReferenceParserInlines.h */; };
 		97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */; };

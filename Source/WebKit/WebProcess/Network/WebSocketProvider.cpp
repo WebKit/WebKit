@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebSocketProvider.h"
 
+#include "WebProcess.h"
+#include "WebSocketChannelManager.h"
 #include "WebSocketStream.h"
 
 namespace WebKit {
@@ -39,6 +41,11 @@ using namespace WebCore;
 Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, const StorageSessionProvider*)
 {
     return WebSocketStream::create(url, client, sessionID, credentialPartition);
+}
+
+RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client)
+{
+    return WebProcess::singleton().webSocketChannelManager().createWebSocketChannel(document, client);
 }
 
 } // namespace WebKit

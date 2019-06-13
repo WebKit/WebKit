@@ -420,7 +420,7 @@ WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
-WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp
+WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
 
 WebProcess/glib/WebProcessGLib.cpp
 

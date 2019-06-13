@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,24 @@
 
 #pragma once
 
-#include <pal/SessionID.h>
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/WTFString.h>
+#if PLATFORM(COCOA) && HAVE(NSURLSESSION_WEBSOCKET)
+#include "WebSocketTaskCocoa.h"
+#else
 
-namespace WebCore {
+namespace WebKit {
 
-class ThreadableWebSocketChannel;
-class ScriptExecutionContext;
-class StorageSessionProvider;
-class ScriptExecutionContext;
-class SocketStreamHandle;
-class SocketStreamHandleClient;
-class WebSocketChannelClient;
-
-class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
+class WebSocketTask {
 public:
-    static Ref<SocketProvider> create() { return adoptRef(*new SocketProvider); }
-    virtual Ref<SocketStreamHandle> createSocketStreamHandle(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, const StorageSessionProvider*);
+    typedef uint64_t TaskIdentifier;
 
-    virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&);
+    void sendString(const String&, CompletionHandler<void()>&&) { }
+    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&) { }
+    void close(int32_t code, const String& reason) { }
 
-    virtual ~SocketProvider() { };
+    void cancel() { }
+    void resume() { }
 };
 
-}
+} // namespace WebKit
+
+#endif

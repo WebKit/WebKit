@@ -1316,6 +1316,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 
     m_webLoaderStrategy.networkProcessCrashed();
     WebSocketStream::networkProcessCrashed();
+    m_webSocketChannelManager.networkProcessCrashed();
 
     for (auto& page : m_pageMap.values()) {
         page->stopAllURLSchemeTasks();

@@ -205,6 +205,21 @@ ExceptionOr<void> WebSocket::connect(const String& url, const String& protocol)
     return connect(url, Vector<String> { 1, protocol });
 }
 
+void WebSocket::failAsynchronously()
+{
+    m_pendingActivity = makePendingActivity(*this);
+
+    // We must block this connection. Instead of throwing an exception, we indicate this
+    // using the error event. But since this code executes as part of the WebSocket's
+    // constructor, we have to wait until the constructor has completed before firing the
+    // event; otherwise, users can't connect to the event.
+
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
+        this->dispatchOrQueueErrorEvent();
+        this->stop();
+    });
+}
+
 ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& protocols)
 {
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
@@ -291,18 +306,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         Document& document = downcast<Document>(context);
         RefPtr<Frame> frame = document.frame();
         if (!frame || !frame->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
-            m_pendingActivity = makePendingActivity(*this);
-
-            // We must block this connection. Instead of throwing an exception, we indicate this
-            // using the error event. But since this code executes as part of the WebSocket's
-            // constructor, we have to wait until the constructor has completed before firing the
-            // event; otherwise, users can't connect to the event.
-
-            document.postTask([this, protectedThis = makeRef(*this)](auto&) {
-                this->dispatchOrQueueErrorEvent();
-                this->stop();
-            });
-
+            failAsynchronously();
             return { };
         }
     }
@@ -311,7 +315,11 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     if (!protocols.isEmpty())
         protocolString = joinStrings(protocols, subprotocolSeparator());
 
-    m_channel->connect(m_url, protocolString);
+    if (m_channel->connect(m_url, protocolString) == ThreadableWebSocketChannel::ConnectStatus::KO) {
+        failAsynchronously();
+        return { };
+    }
+
     m_pendingActivity = makePendingActivity(*this);
 
     return { };

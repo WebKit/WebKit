@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebSocketChannelManager.h"
 
-#include <pal/SessionID.h>
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/WTFString.h>
+namespace WebKit {
 
-namespace WebCore {
-
-class ThreadableWebSocketChannel;
-class ScriptExecutionContext;
-class StorageSessionProvider;
-class ScriptExecutionContext;
-class SocketStreamHandle;
-class SocketStreamHandleClient;
-class WebSocketChannelClient;
-
-class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
-public:
-    static Ref<SocketProvider> create() { return adoptRef(*new SocketProvider); }
-    virtual Ref<SocketStreamHandle> createSocketStreamHandle(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, const StorageSessionProvider*);
-
-    virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&);
-
-    virtual ~SocketProvider() { };
-};
-
+RefPtr<WebCore::ThreadableWebSocketChannel> WebSocketChannelManager::createWebSocketChannel(WebCore::Document& document, WebCore::WebSocketChannelClient& client)
+{
+    auto channel = WebSocketChannel::create(document, client);
+    m_channels.add(channel->identifier(), channel.copyRef());
+    return channel;
 }
+
+void WebSocketChannelManager::networkProcessCrashed()
+{
+    auto channels = WTFMove(m_channels);
+    for (auto& channel : channels.values())
+        channel->networkProcessCrashed();
+}
+
+void WebSocketChannelManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    auto iterator = m_channels.find(decoder.destinationID());
+    if (iterator != m_channels.end())
+        iterator->value->didReceiveMessage(connection, decoder);
+}
+
+} // namespace WebKit

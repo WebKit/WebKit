@@ -31,10 +31,12 @@ OBJC_CLASS NSURLSession;
 OBJC_CLASS NSURLSessionDownloadTask;
 OBJC_CLASS NSOperationQueue;
 OBJC_CLASS WKNetworkSessionDelegate;
+OBJC_CLASS WKNetworkSessionWebSocketDelegate;
 
 #include "DownloadID.h"
 #include "NetworkDataTaskCocoa.h"
 #include "NetworkSession.h"
+#include "WebSocketTask.h"
 #include <WebCore/NetworkLoadMetrics.h>
 #include <wtf/HashMap.h>
 
@@ -63,6 +65,8 @@ public:
     NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentialsPolicy);
     NSURLSessionDownloadTask* downloadTaskWithResumeData(NSData*);
 
+    WebSocketTask* webSocketDataTaskForIdentifier(WebSocketTask::TaskIdentifier);
+
     void addDownloadID(NetworkDataTaskCocoa::TaskIdentifier, DownloadID);
     DownloadID downloadID(NetworkDataTaskCocoa::TaskIdentifier);
     DownloadID takeDownloadID(NetworkDataTaskCocoa::TaskIdentifier);
@@ -83,10 +87,19 @@ private:
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
     Seconds loadThrottleLatency() const override { return m_loadThrottleLatency; }
 
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
+    void addWebSocketTask(WebSocketTask&) final;
+    void removeWebSocketTask(WebSocketTask&) final;
+#endif
+
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithCredentials;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithoutState;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapEphemeralStatelessCookieless;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, DownloadID> m_downloadMap;
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    HashMap<NetworkDataTaskCocoa::TaskIdentifier, WebSocketTask*> m_webSocketDataTaskMap;
+#endif
 
     RetainPtr<NSURLSession> m_sessionWithCredentialStorage;
     RetainPtr<WKNetworkSessionDelegate> m_sessionWithCredentialStorageDelegate;

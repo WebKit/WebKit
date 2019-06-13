@@ -39,6 +39,7 @@ NetworkProcess/NetworkResourceLoadMap.cpp
 NetworkProcess/NetworkResourceLoader.cpp
 NetworkProcess/NetworkSession.cpp
 NetworkProcess/NetworkSessionCreationParameters.cpp
+NetworkProcess/NetworkSocketChannel.cpp
 NetworkProcess/NetworkSocketStream.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
@@ -482,6 +483,8 @@ WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 WebProcess/Network/NetworkProcessConnection.cpp
 WebProcess/Network/WebLoaderStrategy.cpp
 WebProcess/Network/WebResourceLoader.cpp
+WebProcess/Network/WebSocketChannel.cpp
+WebProcess/Network/WebSocketChannelManager.cpp
 WebProcess/Network/WebSocketProvider.cpp
 WebProcess/Network/WebSocketStream.cpp
 

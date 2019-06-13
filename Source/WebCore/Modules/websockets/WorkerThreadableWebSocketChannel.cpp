@@ -63,10 +63,12 @@ WorkerThreadableWebSocketChannel::~WorkerThreadableWebSocketChannel()
         m_bridge->disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::connect(const URL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::connect(const URL& url, const String& protocol)
 {
     if (m_bridge)
         m_bridge->connect(url, protocol);
+    // connect is called asynchronously, so we do not have any possibility for synchronous errors.
+    return ConnectStatus::OK;
 }
 
 String WorkerThreadableWebSocketChannel::subprotocol()
@@ -155,12 +157,12 @@ WorkerThreadableWebSocketChannel::Peer::~Peer()
         m_mainWebSocketChannel->disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, const String& protocol)
 {
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel)
-        return;
-    m_mainWebSocketChannel->connect(url, protocol);
+        return WorkerThreadableWebSocketChannel::ConnectStatus::KO;
+    return m_mainWebSocketChannel->connect(url, protocol);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(const String& message)
@@ -403,7 +405,8 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->connect(url, protocol);
+        if (peer->connect(url, protocol) == ThreadableWebSocketChannel::ConnectStatus::KO)
+            peer->didReceiveMessageError();
     });
 }
 

@@ -116,6 +116,7 @@ MESSAGE_RECEIVERS = \
     NetworkRTCProvider \
     NetworkRTCSocket \
     NetworkResourceLoader \
+    NetworkSocketChannel \
     NetworkSocketStream \
     PlaybackSessionManager \
     PlaybackSessionManagerProxy \
@@ -182,6 +183,7 @@ MESSAGE_RECEIVERS = \
     WebSWContextManagerConnection \
     WebSWServerConnection \
     WebSWServerToContextConnection \
+    WebSocketChannel \
     WebSocketStream \
     WebUserContentController \
     WebUserContentControllerProxy \

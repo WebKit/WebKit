@@ -1,3 +1,118 @@
+2019-06-12  Youenn Fablet  <youenn@apple.com>
+
+        Use NSURLSession for WebSocket
+        https://bugs.webkit.org/show_bug.cgi?id=198568
+
+        Reviewed by Geoffrey Garen.
+
+        Implement socket channel provider on WebProcess level by sending IPC to NetworkProcess.
+        On NetworkProcess side, use NSURLSession API to implement the WebSocket functionality. 
+        This is a partial implementation:
+        - inspector integration is not working.
+        - some error cases are not well handled or are not producing the same error messages.
+        - some features are not implemented (extensions, subprotocols, handshake authentication challenge, cookie handling...).
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::createSocketChannel):
+        (WebKit::NetworkConnectionToWebProcess::removeSocketChannel):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::createWebSocketTask):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::removeWebSocketTask):
+        (WebKit::NetworkSession::addWebSocketTask):
+        * NetworkProcess/NetworkSocketChannel.cpp: Added.
+        (WebKit::NetworkSocketChannel::create):
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel):
+        (WebKit::NetworkSocketChannel::~NetworkSocketChannel):
+        (WebKit::NetworkSocketChannel::sendString):
+        (WebKit::NetworkSocketChannel::sendData):
+        (WebKit::NetworkSocketChannel::finishClosingIfPossible):
+        (WebKit::NetworkSocketChannel::close):
+        (WebKit::NetworkSocketChannel::didConnect):
+        (WebKit::NetworkSocketChannel::didReceiveText):
+        (WebKit::NetworkSocketChannel::didReceiveBinaryData):
+        (WebKit::NetworkSocketChannel::didClose):
+        (WebKit::NetworkSocketChannel::messageSenderConnection const):
+        * NetworkProcess/NetworkSocketChannel.h: Added.
+        * NetworkProcess/NetworkSocketChannel.messages.in: Added.
+        * NetworkProcess/NetworkSocketStream.messages.in:
+        * NetworkProcess/WebSocketTask.h: Added.
+        (WebKit::WebSocketTask::sendString):
+        (WebKit::WebSocketTask::sendData):
+        (WebKit::WebSocketTask::close):
+        (WebKit::WebSocketTask::cancel):
+        (WebKit::WebSocketTask::resume):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate existingWebSocketTask:]):
+        (-[WKNetworkSessionDelegate URLSession:webSocketTask:didOpenWithProtocol:]):
+        (-[WKNetworkSessionDelegate URLSession:webSocketTask:didCloseWithCode:reason:]):
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        (WebKit::NetworkSessionCocoa::addWebSocketTask):
+        (WebKit::NetworkSessionCocoa::removeWebSocketTask):
+        (WebKit::NetworkSessionCocoa::webSocketDataTaskForIdentifier):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h: Added.
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm: Added.
+        (WebKit::WebSocketTask::WebSocketTask):
+        (WebKit::WebSocketTask::~WebSocketTask):
+        (WebKit::WebSocketTask::readNextMessage):
+        (WebKit::WebSocketTask::cancel):
+        (WebKit::WebSocketTask::resume):
+        (WebKit::WebSocketTask::didConnect):
+        (WebKit::WebSocketTask::didClose):
+        (WebKit::WebSocketTask::sendString):
+        (WebKit::WebSocketTask::sendData):
+        (WebKit::WebSocketTask::close):
+        (WebKit::WebSocketTask::identifier const):
+        * Shared/WebPreferences.yaml:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/WebSocketChannel.cpp: Added.
+        (WebKit::WebSocketChannel::create):
+        (WebKit::WebSocketChannel::WebSocketChannel):
+        (WebKit::WebSocketChannel::~WebSocketChannel):
+        (WebKit::WebSocketChannel::messageSenderConnection const):
+        (WebKit::WebSocketChannel::messageSenderDestinationID const):
+        (WebKit::WebSocketChannel::subprotocol):
+        (WebKit::WebSocketChannel::extensions):
+        (WebKit::WebSocketChannel::connect):
+        (WebKit::WebSocketChannel::send):
+        (WebKit::WebSocketChannel::bufferedAmount const):
+        (WebKit::WebSocketChannel::close):
+        (WebKit::WebSocketChannel::fail):
+        (WebKit::WebSocketChannel::disconnect):
+        (WebKit::WebSocketChannel::didConnect):
+        (WebKit::WebSocketChannel::didReceiveText):
+        (WebKit::WebSocketChannel::didReceiveBinaryData):
+        (WebKit::WebSocketChannel::didClose):
+        (WebKit::WebSocketChannel::didFail):
+        (WebKit::WebSocketChannel::networkProcessCrashed):
+        * WebProcess/Network/WebSocketChannel.h: Added.
+        * WebProcess/Network/WebSocketChannel.messages.in: Added.
+        * WebProcess/Network/WebSocketChannelManager.cpp: Added.
+        (WebKit::WebSocketChannelManager::createWebSocketChannel):
+        (WebKit::WebSocketChannelManager::networkProcessCrashed):
+        (WebKit::WebSocketChannelManager::didReceiveMessage):
+        * WebProcess/Network/WebSocketChannelManager.h: Added.
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createWebSocketChannel):
+        * WebProcess/Network/WebSocketProvider.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        * WebProcess/Network/WebSocketStream.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::webSocketChannelManager):
+
 2019-06-12  Sihui Liu  <sihui_liu@apple.com>
 
         Add assertions to help debug crash at WebKit::HistoryEntryDataEncoder::operator<<

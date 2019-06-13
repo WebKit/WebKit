@@ -56,7 +56,7 @@ class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
 
-class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
+class WebSocketChannel final : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -68,19 +68,19 @@ public:
     bool send(const char* data, int length);
 
     // ThreadableWebSocketChannel functions.
-    void connect(const URL&, const String& protocol) override;
-    String subprotocol() override;
-    String extensions() override;
-    ThreadableWebSocketChannel::SendResult send(const String& message) override;
-    ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) override;
-    ThreadableWebSocketChannel::SendResult send(Blob&) override;
-    unsigned bufferedAmount() const override;
-    void close(int code, const String& reason) override; // Start closing handshake.
-    void fail(const String& reason) override;
-    void disconnect() override;
+    ConnectStatus connect(const URL&, const String& protocol) final;
+    String subprotocol() final;
+    String extensions() final;
+    ThreadableWebSocketChannel::SendResult send(const String& message) final;
+    ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
+    ThreadableWebSocketChannel::SendResult send(Blob&) final;
+    unsigned bufferedAmount() const final;
+    void close(int code, const String& reason) final; // Start closing handshake.
+    void fail(const String& reason) final;
+    void disconnect() final;
 
-    void suspend() override;
-    void resume() override;
+    void suspend() final;
+    void resume() final;
 
     // SocketStreamHandleClient functions.
     void didOpenSocketStream(SocketStreamHandle&) final;
@@ -124,7 +124,7 @@ public:
     using RefCounted<WebSocketChannel>::ref;
     using RefCounted<WebSocketChannel>::deref;
 
-    Document* document() { return m_document.get(); }
+    Document* document();
     
 protected:
     void refThreadableWebSocketChannel() override { ref(); }

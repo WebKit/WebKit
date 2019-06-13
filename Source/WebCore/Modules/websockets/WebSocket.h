@@ -128,6 +128,8 @@ private:
 
     size_t getFramingOverhead(size_t payloadSize);
 
+    void failAsynchronously();
+
     enum class BinaryType { Blob, ArrayBuffer };
 
     RefPtr<ThreadableWebSocketChannel> m_channel;

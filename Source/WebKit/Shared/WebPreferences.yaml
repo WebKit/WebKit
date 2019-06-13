@@ -1695,6 +1695,15 @@ LinkPreloadResponsiveImagesEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
+IsNSURLSessionWebSocketEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "NSURLSession WebSocket"
+  humanReadableDescription: "Use NSURLSession WebSocket API"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: HAVE(NSURLSESSION_WEBSOCKET)
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

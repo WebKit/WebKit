@@ -38,6 +38,7 @@
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebProcessCreationParameters.h"
 #include "WebSQLiteDatabaseTracker.h"
+#include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -266,6 +267,7 @@ public:
     WebAutomationSessionProxy* automationSessionProxy() { return m_automationSessionProxy.get(); }
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
+    WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
 
 #if PLATFORM(IOS_FAMILY)
     void accessibilityProcessSuspendedNotification(bool);
@@ -499,6 +501,7 @@ private:
     WebLoaderStrategy& m_webLoaderStrategy;
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
+    WebSocketChannelManager m_webSocketChannelManager;
 
     std::unique_ptr<LibWebRTCNetwork> m_libWebRTCNetwork;
 

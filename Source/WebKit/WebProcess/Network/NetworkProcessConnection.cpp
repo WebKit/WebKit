@@ -51,6 +51,8 @@
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
+#include "WebSocketChannel.h"
+#include "WebSocketChannelMessages.h"
 #include "WebSocketStream.h"
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
@@ -86,6 +88,10 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::WebSocketStream::messageReceiverName()) {
         if (auto* stream = WebSocketStream::streamWithIdentifier(decoder.destinationID()))
             stream->didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebSocketChannel::messageReceiverName()) {
+        WebProcess::singleton().webSocketChannelManager().didReceiveMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {

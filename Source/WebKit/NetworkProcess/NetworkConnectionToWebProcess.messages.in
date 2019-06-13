@@ -52,6 +52,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
     CreateSocketStream(URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
+    CreateSocketChannel(PAL::SessionID sessionID, WebCore::ResourceRequest request, String protocol, uint64_t identifier)
 
     EnsureLegacyPrivateBrowsingSession()
 

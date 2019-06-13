@@ -365,6 +365,11 @@ public:
 
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    bool isNSURLSessionWebSocketEnabled() const { return m_isNSURLSessionWebSocketEnabled; }
+    void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { m_isNSURLSessionWebSocketEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -549,6 +554,10 @@ private:
     bool m_interruptAudioOnPageVisibilityChangeEnabled { false };
 
     bool m_linkPreloadResponsiveImagesEnabled { false };
+
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    bool m_isNSURLSessionWebSocketEnabled { false };
+#endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

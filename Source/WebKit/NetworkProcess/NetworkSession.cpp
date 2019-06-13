@@ -36,6 +36,8 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
+#include "WebSocketTask.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceRequest.h>
@@ -202,6 +204,11 @@ void NetworkSession::removeKeptAliveLoad(NetworkResourceLoader& loader)
     ASSERT(m_sessionID == loader.sessionID());
     ASSERT(m_keptAliveLoads.contains(loader));
     m_keptAliveLoads.remove(loader);
+}
+
+std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol)
+{
+    return nullptr;
 }
 
 } // namespace WebKit

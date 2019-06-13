@@ -26,6 +26,7 @@
 #pragma once
 
 #include "QuickLookDocumentData.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/PreviewLoaderClient.h>
 #include <wtf/text/WTFString.h>
 

@@ -27,6 +27,7 @@
 #include "SocketProvider.h"
 
 #include "SocketStreamHandleImpl.h"
+#include "ThreadableWebSocketChannel.h"
 
 namespace WebCore {
     
@@ -34,5 +35,10 @@ Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url,
 {
     return SocketStreamHandleImpl::create(url, client, sessionID, credentialPartition, { }, provider);
 }
-    
+
+RefPtr<ThreadableWebSocketChannel> SocketProvider::createWebSocketChannel(Document&, WebSocketChannelClient&)
+{
+    return nullptr;
+}
+
 }
