@@ -126,8 +126,13 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 - (void)togglePlayback:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (self.delegate)
-        self.delegate->togglePlayState();
+    if (!self.delegate)
+        return;
+
+    if (self.delegate->isPlaying())
+        self.delegate->pause();
+    else
+        self.delegate->play();
 }
 
 - (void)togglePlaybackEvenWhenInBackground:(id)sender
