@@ -1,3 +1,13 @@
+2019-06-13  Youenn Fablet  <youenn@apple.com>
+
+        Update service worker test and expectation after revision 246363
+        https://bugs.webkit.org/show_bug.cgi?id=198808
+
+        Reviewed by Geoffrey Garen.
+
+        * TestExpectations:
+        Skip timing out test in Debug
+
 2019-06-13  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations after r246397.
