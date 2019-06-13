@@ -1,3 +1,14 @@
+2019-06-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [High Sierra / Mojave Debug WK2] Layout Test media/video-restricted-invisible-autoplay-allowed-when-visible.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=190885
+        <rdar://problem/45590590>
+
+        Reviewed by Youenn Fablet.
+
+        * media/video-restricted-invisible-autoplay-allowed-when-visible.html: Increase the amount of
+         time it takes for the test to fail so it isn't flaky on slow machines.
+
 2019-06-12  Daniel Bates  <dabates@apple.com>
 
         [iOS] Adjust tests platform/ipad/fast/forms/{select-form-run-twice, unfocus-inside-fixed-hittest}.html following r243808
