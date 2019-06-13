@@ -1,3 +1,19 @@
+2019-06-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] ANGLE Extension directive location incorrectly enforced for webgl 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=198811
+
+        Reviewed by Dean Jackson.
+
+        Apply ANGLE change from https://chromium-review.googlesource.com/c/angle/angle/+/1648661 to
+        prevent enforcing ESSL late extension rule on WebGL 1.0 shaders.
+
+        * src/compiler/preprocessor/DiagnosticsBase.cpp:
+        (angle::pp::Diagnostics::message):
+        * src/compiler/preprocessor/DiagnosticsBase.h:
+        * src/compiler/preprocessor/DirectiveParser.cpp:
+        (angle::pp::DirectiveParser::parseExtension):
+
 2019-05-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use target oriented design for bmalloc

@@ -676,8 +676,16 @@ void DirectiveParser::parseExtension(Token *token)
         }
         else
         {
-            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
-                                 token->location, token->text);
+            if (mSettings.shaderSpec == SH_WEBGL_SPEC)
+            {
+                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
+                                     token->location, token->text);
+            }
+            else
+            {
+                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
+                                     token->location, token->text);
+            }
         }
     }
     if (valid)

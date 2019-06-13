@@ -1,3 +1,15 @@
+2019-06-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] ANGLE Extension directive location incorrectly enforced for webgl 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=198811
+
+        Reviewed by Dean Jackson.
+
+        ANGLE was updated so that this case should not be an error.
+
+        * webgl/webgl-extension-directive-location-no-error-expected.txt: Added.
+        * webgl/webgl-extension-directive-location-no-error.html: Added.
+
 2019-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [cairo][SVG] If clipPath has multiple elements, clip-path doesn't work with transform
