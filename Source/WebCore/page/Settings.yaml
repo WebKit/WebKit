@@ -586,6 +586,9 @@ visualViewportEnabled:
 visualViewportAPIEnabled:
   initial: false
 
+syntheticEditingCommandsEnabled:
+  initial: true
+
 CSSOMViewScrollingAPIEnabled:
   initial: false
 

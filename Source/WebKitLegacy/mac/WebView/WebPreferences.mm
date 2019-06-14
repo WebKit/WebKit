@@ -643,6 +643,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitWebAnimationsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitPointerEventsEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitSyntheticEditingCommandsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitVisualViewportAPIEnabledPreferenceKey,
@@ -3152,6 +3153,16 @@ static NSString *classIBCreatorID = nil;
 }
 
 - (void)setPointerEventsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitPointerEventsEnabledPreferenceKey];
+}
+
+- (BOOL)syntheticEditingCommandsEnabled
+{
+    return [self _boolValueForKey:WebKitPointerEventsEnabledPreferenceKey];
+}
+
+- (void)setSyntheticEditingCommandsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitPointerEventsEnabledPreferenceKey];
 }

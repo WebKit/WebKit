@@ -1,3 +1,17 @@
+2019-06-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Move Synthetic Editing Commands to behind an experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=198842
+        <rdar://problem/50594700>
+
+        Reviewed by Simon Fraser.
+
+        Add a feature flag to gate synthetic editing commands.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-06-13  Megan Gardner  <megan_gardner@apple.com>
 
         Fix selection hang in Mail

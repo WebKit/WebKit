@@ -573,6 +573,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setPointerEventsEnabled:(BOOL)flag;
 - (BOOL)pointerEventsEnabled;
 
+- (void)setSyntheticEditingCommandsEnabled:(BOOL)flag;
+- (BOOL)syntheticEditingCommandsEnabled;
+
 - (void)setFetchAPIKeepAliveEnabled:(BOOL)flag;
 - (BOOL)fetchAPIKeepAliveEnabled;
 

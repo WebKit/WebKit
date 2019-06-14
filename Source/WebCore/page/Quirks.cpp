@@ -242,16 +242,6 @@ static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAre
 #endif
 }
 
-static bool shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreasForHost(const StringView& host)
-{
-#if PLATFORM(IOS_FAMILY)
-    return equalLettersIgnoringASCIICase(host, "docs.google.com");
-#else
-    UNUSED_PARAM(host);
-    return false;
-#endif
-}
-
 bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
 {
     if (m_document->settings().shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
@@ -268,14 +258,6 @@ bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
         return true;
 
     return false;
-}
-
-bool Quirks::shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreas() const
-{
-    if (!needsQuirks())
-        return false;
-
-    return shouldEmulateEditingButtonsAndGesturesInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
 bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const

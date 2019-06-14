@@ -1254,6 +1254,13 @@ PointerEventsEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
+SyntheticEditingCommandsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Synthetic Editing Commands"
+  humanReadableDescription: "Enable Synthetic Editing Commands"
+  category: experimental
+
 CSSOMViewScrollingAPIEnabled:
   type: bool
   defaultValue: true
