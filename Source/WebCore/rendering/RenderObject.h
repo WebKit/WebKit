@@ -668,6 +668,7 @@ public:
         UseEdgeInclusiveIntersection = 1 << 0,
         ApplyCompositedClips = 1 << 1,
         ApplyCompositedContainerScrolls  = 1 << 2,
+        ApplyContainerClip = 1 << 3,
     };
     struct VisibleRectContext {
         VisibleRectContext(bool hasPositionFixedDescendant = false, bool dirtyRectIsFlipped = false, OptionSet<VisibleRectContextOption> options = { })

@@ -986,7 +986,7 @@ bool RenderObject::shouldApplyCompositedContainerScrollsForRepaint()
 
 RenderObject::VisibleRectContext RenderObject::visibleRectContextForRepaint()
 {
-    VisibleRectContext context;
+    VisibleRectContext context(false, false, { VisibleRectContextOption::ApplyContainerClip });
     if (shouldApplyCompositedContainerScrollsForRepaint())
         context.m_options.add(VisibleRectContextOption::ApplyCompositedContainerScrolls);
     return context;

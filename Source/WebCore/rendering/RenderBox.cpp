@@ -993,7 +993,8 @@ bool RenderBox::applyCachedClipAndScrollPosition(LayoutRect& rect, const RenderL
         rect.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
 
     // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
-    if (!context.m_options.contains(VisibleRectContextOption::ApplyCompositedClips) && usesCompositedScrolling()) {
+    if ((!context.m_options.contains(VisibleRectContextOption::ApplyCompositedClips) && usesCompositedScrolling())
+        || (!context.m_options.contains(VisibleRectContextOption::ApplyContainerClip) && this == container)) {
         flipForWritingMode(rect);
         return true;
     }

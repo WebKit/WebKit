@@ -1,3 +1,27 @@
+2019-06-14  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserver rootMargin detection fails when `root` is an element
+        https://bugs.webkit.org/show_bug.cgi?id=198784
+
+        Reviewed by Simon Fraser.
+
+        When computing a target's bounds in root space, we were applying the root's
+        clip rect (if any), and then intersecting with the root rect expanded by the
+        root margin. This meant that if a target did not intersect the non-expanded root
+        rect, we would get an empty intersection even if the target did intersect the
+        expanded root rect. Fix this by not applying the root's clip rect when computing
+        a target's bounds in root space. Add a new VisibleRectContextOption::ApplyContainerClip
+        that determines whether RenderObject::computeVisibleRectInContainer should apply
+        the container's clip.
+
+        Test: imported/w3c/web-platform-tests/intersection-observer/root-margin-root-element.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::applyCachedClipAndScrollPosition const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::visibleRectContextForRepaint):
+        * rendering/RenderObject.h:
+
 2019-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [cairo] Entering text into forms on github.com creates a trapezoid artifact
