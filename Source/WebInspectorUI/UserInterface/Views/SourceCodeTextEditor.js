@@ -165,8 +165,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     close()
     {
-        super.close();
-
         if (this._supportsDebugging) {
             WI.Breakpoint.removeEventListener(null, null, this);
             WI.debuggerManager.removeEventListener(null, null, this);

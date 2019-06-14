@@ -127,8 +127,6 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         WI.debuggerManager.removeEventListener(null, null, this);
         WI.settings.showJavaScriptTypeInformation.removeEventListener(null, null, this);
         WI.settings.enableControlFlowProfiler.removeEventListener(null, null, this);
-
-        this._textEditor.close();
     }
 
     contentAvailable(content, base64Encoded)

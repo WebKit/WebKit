@@ -33,35 +33,10 @@ WI.TextEditor = class TextEditor extends WI.View
 
         this._codeMirror = WI.CodeMirrorEditor.create(this.element, {
             readOnly: true,
-            indentWithTabs: WI.settings.indentWithTabs.value,
-            indentUnit: WI.settings.indentUnit.value,
-            tabSize: WI.settings.tabSize.value,
             lineNumbers: true,
-            lineWrapping: WI.settings.enableLineWrapping.value,
             matchBrackets: true,
             autoCloseBrackets: true,
-            showWhitespaceCharacters: WI.settings.showWhitespaceCharacters.value,
             styleSelectedText: true,
-        });
-
-        WI.settings.indentWithTabs.addEventListener(WI.Setting.Event.Changed, (event) => {
-            this._codeMirror.setOption("indentWithTabs", WI.settings.indentWithTabs.value);
-        });
-
-        WI.settings.indentUnit.addEventListener(WI.Setting.Event.Changed, (event) => {
-            this._codeMirror.setOption("indentUnit", WI.settings.indentUnit.value);
-        });
-
-        WI.settings.tabSize.addEventListener(WI.Setting.Event.Changed, (event) => {
-            this._codeMirror.setOption("tabSize", WI.settings.tabSize.value);
-        });
-
-        WI.settings.enableLineWrapping.addEventListener(WI.Setting.Event.Changed, (event) => {
-            this._codeMirror.setOption("lineWrapping", WI.settings.enableLineWrapping.value);
-        });
-
-        WI.settings.showWhitespaceCharacters.addEventListener(WI.Setting.Event.Changed, (event) => {
-            this._codeMirror.setOption("showWhitespaceCharacters", WI.settings.showWhitespaceCharacters.value);
         });
 
         this._codeMirror.on("focus", this._editorFocused.bind(this));
@@ -585,15 +560,6 @@ WI.TextEditor = class TextEditor extends WI.View
     hidden()
     {
         this._visible = false;
-    }
-
-    close()
-    {
-        WI.settings.indentWithTabs.removeEventListener(null, null, this);
-        WI.settings.indentUnit.removeEventListener(null, null, this);
-        WI.settings.tabSize.removeEventListener(null, null, this);
-        WI.settings.enableLineWrapping.removeEventListener(null, null, this);
-        WI.settings.showWhitespaceCharacters.removeEventListener(null, null, this);
     }
 
     setBreakpointInfoForLineAndColumn(lineNumber, columnNumber, breakpointInfo)

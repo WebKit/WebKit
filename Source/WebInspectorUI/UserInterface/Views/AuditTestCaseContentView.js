@@ -217,7 +217,6 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
                         mode: "css",
                         readOnly: true,
                         lineWrapping: true,
-                        showWhitespaceCharacters: WI.settings.showWhitespaceCharacters.value,
                         styleSelectedText: true,
                     });
                     codeMirror.setValue(domNode);

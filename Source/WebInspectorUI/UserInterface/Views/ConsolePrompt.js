@@ -40,8 +40,6 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
         this._codeMirror = WI.CodeMirrorEditor.create(this.element, {
             lineWrapping: true,
             mode: {name: mimeType, globalVars: true},
-            indentWithTabs: true,
-            indentUnit: 4,
             matchBrackets: true
         });
 

@@ -1,5 +1,46 @@
 2019-06-13  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Settings: indent type and size settings aren't respected everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=198804
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WI.CodeMirrorEditor.create):
+        When creating a `CodeMirror` instance, default to using the global `Setting`s as the options.
+        If an override is specified in `options`, it will take precedence and the `CodeMirror` will
+        ignore any changes to the `Setting` as well.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor):
+        (WI.TextEditor.prototype.close): Deleted.
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.layout):
+        * UserInterface/Views/BreakpointActionView.js:
+        (WI.BreakpointActionView.prototype._updateBody):
+        * UserInterface/Views/ConsolePrompt.js:
+        (WI.ConsolePrompt):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel.prototype._addWatchExpressionButtonClicked):
+        Remove overrides that aren't necessary for `CodeMirror` to fit in the container element:
+         - `showWhitespaceCharacters`
+         - `indentWithTabs`
+         - `indentUnit`
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.close):
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView.prototype.closed): Deleted.
+        * UserInterface/Views/TextContentView.js:
+        (WI.TextContentView.prototype.closed): Deleted.
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.closed):
+        Delete the logic for removing event listeners from global `Setting`, as it didn't work
+        anyways, since none of the event listeners were added using a `thisObject`.
+
+2019-06-13  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Settings: sticky header disappears when over scrolling
         https://bugs.webkit.org/show_bug.cgi?id=198833
 

@@ -99,14 +99,6 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
         super.hidden();
     }
 
-    closed()
-    {
-        this._vertexEditor.close();
-        this._fragmentEditor.close();
-
-        super.closed();
-    }
-
     get supportsSave()
     {
         return true;

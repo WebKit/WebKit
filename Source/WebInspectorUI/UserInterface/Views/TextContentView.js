@@ -92,13 +92,6 @@ WI.TextContentView = class TextContentView extends WI.ContentView
         this._textEditor.hidden();
     }
 
-    closed()
-    {
-        super.closed();
-
-        this._textEditor.close();
-    }
-
     get supportsSave()
     {
         return true;

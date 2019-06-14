@@ -364,8 +364,6 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         this._codeMirror = WI.CodeMirrorEditor.create(editorElement, {
             lineWrapping: true,
             mode: "text/javascript",
-            indentWithTabs: true,
-            indentUnit: 4,
             matchBrackets: true,
             value: "",
         });
