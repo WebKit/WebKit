@@ -1,3 +1,15 @@
+2019-06-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] NSFileWrapper associated with _WKAttachment
+        https://bugs.webkit.org/show_bug.cgi?id=198871
+        <rdar://problem/51760625>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment dealloc]):
+        Ensure we destruct the API::Object associated with this so RetainPtrs can release.
+
 2019-06-14  Tim Horton  <timothy_horton@apple.com>
 
         WebKit's NSAttributedString.h is not included in the WebKit.h umbrella header

@@ -102,6 +102,13 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
 @implementation _WKAttachment
 
+- (void)dealloc
+{
+    _attachment->~Attachment();
+
+    [super dealloc];
+}
+
 - (API::Object&)_apiObject
 {
     return *_attachment;
