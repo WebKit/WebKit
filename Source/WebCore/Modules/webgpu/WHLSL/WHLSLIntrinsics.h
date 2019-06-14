@@ -231,7 +231,7 @@ private:
     bool addVector(AST::NativeTypeDeclaration&);
     bool addMatrix(AST::NativeTypeDeclaration&);
     bool addFullTexture(AST::NativeTypeDeclaration&, AST::TypeReference&);
-    bool addDepthTexture(AST::NativeTypeDeclaration&, AST::TypeReference&);
+    void addDepthTexture(AST::NativeTypeDeclaration&, AST::TypeReference&);
     void addTexture(AST::NativeTypeDeclaration&);
 
     HashSet<const AST::NativeTypeDeclaration*> m_textureSet;

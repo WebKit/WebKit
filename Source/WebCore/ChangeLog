@@ -1,3 +1,52 @@
+2019-06-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Remove unnecessary ASSERT()s and clean up visitor lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=198706
+
+        Reviewed by Dean Jackson, Saam Barati, and Robin Morisset.
+
+        Some minor refactoring.
+
+        If the code is going to unconditionally downcast<Foo>(bar), there's no need
+        to guard that with an ASSERT(is<Foo>(bar)) because the downcast() call will
+        do that automatically.
+
+        No new tests because there is no behavior change.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h:
+        (WebCore::WHLSL::AST::ConstantExpression::visit):
+        (WebCore::WHLSL::AST::ConstantExpression::visit const):
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledOutputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::constantExpressionString):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::find):
+        (WebCore::WHLSL::Metal::TypeNamer::createNameNode):
+        (WebCore::WHLSL::Metal::TypeNamer::insert):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::argumentTypeForAndOverload):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp:
+        (WebCore::WHLSL::inferTypesForTypeArguments):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::addFullTexture):
+        (WebCore::WHLSL::Intrinsics::addDepthTexture):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::modify):
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+
 2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up compute

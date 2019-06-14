@@ -306,7 +306,6 @@ static Optional<ModifyResult> modify(AST::PropertyAccessExpression& propertyAcce
         if (iterator->base().typeAnnotation().leftAddressSpace())
             break;
         ASSERT(!iterator->base().typeAnnotation().isRightValue());
-        ASSERT(is<AST::PropertyAccessExpression>(iterator->base()));
         iterator = &downcast<AST::PropertyAccessExpression>(iterator->base());
     }
     auto leftExpression = iterator->takeBase();
@@ -519,7 +518,6 @@ void PropertyResolver::visit(AST::AssignmentExpression& assignmentExpression)
         return;
     }
     ASSERT(!assignmentExpression.left().typeAnnotation().isRightValue());
-    ASSERT(is<AST::PropertyAccessExpression>(assignmentExpression.left()));
 
     auto type = assignmentExpression.right().resolvedType().clone();
 

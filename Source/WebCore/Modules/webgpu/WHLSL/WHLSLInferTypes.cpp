@@ -188,7 +188,6 @@ bool inferTypesForTypeArguments(AST::NamedType& possibleType, AST::TypeArguments
         return typeArguments.isEmpty();
     }
 
-    ASSERT(is<AST::NativeTypeDeclaration>(possibleType));
     auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(possibleType);
     if (nativeTypeDeclaration.typeArguments().size() != typeArguments.size())
         return false;

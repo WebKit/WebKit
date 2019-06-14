@@ -134,7 +134,6 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
         auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto& parameterType = nativeFunctionDeclaration.parameters()[0]->type()->unifyNode();
-        ASSERT(is<AST::UnnamedType>(parameterType));
         auto& unnamedParameterType = downcast<AST::UnnamedType>(parameterType);
         if (is<AST::ArrayType>(unnamedParameterType)) {
             auto& arrayParameterType = downcast<AST::ArrayType>(unnamedParameterType);
@@ -351,13 +350,11 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
     if (nativeFunctionDeclaration.name().startsWith("Interlocked"_str)) {
         if (nativeFunctionDeclaration.name() == "InterlockedCompareExchange") {
             ASSERT(nativeFunctionDeclaration.parameters().size() == 4);
-            ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0]->type()));
             auto& firstArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0]->type());
             auto firstArgumentAddressSpace = firstArgumentPointer.addressSpace();
             auto firstArgumentPointee = typeNamer.mangledNameForType(firstArgumentPointer.elementType());
             auto secondArgument = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
             auto thirdArgument = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[2]->type());
-            ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[3]->type()));
             auto& fourthArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[3]->type());
             auto fourthArgumentAddressSpace = fourthArgumentPointer.addressSpace();
             auto fourthArgumentPointee = typeNamer.mangledNameForType(fourthArgumentPointer.elementType());
@@ -369,12 +366,10 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         }
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 3);
-        ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0]->type()));
         auto& firstArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0]->type());
         auto firstArgumentAddressSpace = firstArgumentPointer.addressSpace();
         auto firstArgumentPointee = typeNamer.mangledNameForType(firstArgumentPointer.elementType());
         auto secondArgument = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
-        ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[2]->type()));
         auto& thirdArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[2]->type());
         auto thirdArgumentAddressSpace = thirdArgumentPointer.addressSpace();
         auto thirdArgumentPointee = typeNamer.mangledNameForType(thirdArgumentPointer.elementType());

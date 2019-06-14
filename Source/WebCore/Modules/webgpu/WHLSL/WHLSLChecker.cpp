@@ -656,14 +656,12 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
     auto enumerationMembers = enumerationDefinition.enumerationMembers();
 
     auto matchAndCommitMember = [&](AST::EnumerationMember& member) -> bool {
-        bool success = false;
-        member.value()->visit(WTF::makeVisitor([&](AST::Expression& value) {
+        return member.value()->visit(WTF::makeVisitor([&](AST::Expression& value) -> bool {
             auto valueInfo = recurseAndGetInfo(value);
             if (!valueInfo)
-                return;
-            success = static_cast<bool>(matchAndCommit(valueInfo->resolvingType, *baseType));
+                return false;
+            return static_cast<bool>(matchAndCommit(valueInfo->resolvingType, *baseType));
         }));
-        return success;
     };
 
     for (auto& member : enumerationMembers) {
@@ -679,13 +677,13 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
     int64_t nextValue = 0;
     for (auto& member : enumerationMembers) {
         if (member.get().value()) {
-            int64_t value;
-            member.get().value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
-                value = integerLiteral.valueForSelectedType();
-            }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
-                value = unsignedIntegerLiteral.valueForSelectedType();
-            }, [&](auto&) {
+            auto value = member.get().value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> int64_t {
+                return integerLiteral.valueForSelectedType();
+            }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> int64_t {
+                return unsignedIntegerLiteral.valueForSelectedType();
+            }, [&](auto&) -> int64_t {
                 ASSERT_NOT_REACHED();
+                return 0;
             }));
             nextValue = baseType->successor()(value);
         } else {
@@ -706,14 +704,14 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
     }
 
     auto getValue = [&](AST::EnumerationMember& member) -> int64_t {
-        int64_t value;
         ASSERT(member.value());
-        member.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
-            value = integerLiteral.value();
-        }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
-            value = unsignedIntegerLiteral.value();
-        }, [&](auto&) {
+        auto value = member.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> int64_t {
+            return integerLiteral.value();
+        }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> int64_t {
+            return unsignedIntegerLiteral.value();
+        }, [&](auto&) -> int64_t {
             ASSERT_NOT_REACHED();
+            return 0;
         }));
         return value;
     };
@@ -977,7 +975,6 @@ static Optional<UniqueRef<AST::UnnamedType>> argumentTypeForAndOverload(AST::Unn
         return { makeUniqueRef<AST::PointerType>(Lexer::Token(namedType.origin()), addressSpace, AST::TypeReference::wrap(Lexer::Token(namedType.origin()), namedType)) };
     }
 
-    ASSERT(is<AST::UnnamedType>(unifyNode));
     auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
 
     if (is<AST::ArrayReferenceType>(unnamedType))
@@ -1305,20 +1302,19 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
             hasDefault = true;
             continue;
         }
-        bool success;
-        switchCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
-            success = static_cast<bool>(matchAndCommit(*valueType, integerLiteral.type()));
-        }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
-            success = static_cast<bool>(matchAndCommit(*valueType, unsignedIntegerLiteral.type()));
-        }, [&](AST::FloatLiteral& floatLiteral) {
-            success = static_cast<bool>(matchAndCommit(*valueType, floatLiteral.type()));
-        }, [&](AST::NullLiteral& nullLiteral) {
-            success = static_cast<bool>(matchAndCommit(*valueType, nullLiteral.type()));
-        }, [&](AST::BooleanLiteral&) {
-            success = matches(*valueType, m_intrinsics.boolType());
-        }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) {
+        auto success = switchCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> bool {
+            return static_cast<bool>(matchAndCommit(*valueType, integerLiteral.type()));
+        }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> bool {
+            return static_cast<bool>(matchAndCommit(*valueType, unsignedIntegerLiteral.type()));
+        }, [&](AST::FloatLiteral& floatLiteral) -> bool {
+            return static_cast<bool>(matchAndCommit(*valueType, floatLiteral.type()));
+        }, [&](AST::NullLiteral& nullLiteral) -> bool {
+            return static_cast<bool>(matchAndCommit(*valueType, nullLiteral.type()));
+        }, [&](AST::BooleanLiteral&) -> bool {
+            return matches(*valueType, m_intrinsics.boolType());
+        }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) -> bool {
             ASSERT(enumerationMemberLiteral.enumerationDefinition());
-            success = matches(*valueType, *enumerationMemberLiteral.enumerationDefinition());
+            return matches(*valueType, *enumerationMemberLiteral.enumerationDefinition());
         }));
         if (!success) {
             setError();
@@ -1339,31 +1335,37 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
                 return;
             }
 
-            bool success = true;
-            firstCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& firstIntegerLiteral) {
-                secondCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& secondIntegerLiteral) {
-                    success = firstIntegerLiteral.value() != secondIntegerLiteral.value();
-                }, [&](AST::UnsignedIntegerLiteral& secondUnsignedIntegerLiteral) {
-                    success = static_cast<int64_t>(firstIntegerLiteral.value()) != static_cast<int64_t>(secondUnsignedIntegerLiteral.value());
-                }, [](auto&) {
+            auto success = firstCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& firstIntegerLiteral) -> bool {
+                return secondCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& secondIntegerLiteral) -> bool {
+                    return firstIntegerLiteral.value() != secondIntegerLiteral.value();
+                }, [&](AST::UnsignedIntegerLiteral& secondUnsignedIntegerLiteral) -> bool {
+                    return static_cast<int64_t>(firstIntegerLiteral.value()) != static_cast<int64_t>(secondUnsignedIntegerLiteral.value());
+                }, [](auto&) -> bool {
+                    return true;
                 }));
-            }, [&](AST::UnsignedIntegerLiteral& firstUnsignedIntegerLiteral) {
-                secondCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& secondIntegerLiteral) {
-                    success = static_cast<int64_t>(firstUnsignedIntegerLiteral.value()) != static_cast<int64_t>(secondIntegerLiteral.value());
-                }, [&](AST::UnsignedIntegerLiteral& secondUnsignedIntegerLiteral) {
-                    success = firstUnsignedIntegerLiteral.value() != secondUnsignedIntegerLiteral.value();
-                }, [](auto&) {
+            }, [&](AST::UnsignedIntegerLiteral& firstUnsignedIntegerLiteral) -> bool {
+                return secondCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& secondIntegerLiteral) -> bool {
+                    return static_cast<int64_t>(firstUnsignedIntegerLiteral.value()) != static_cast<int64_t>(secondIntegerLiteral.value());
+                }, [&](AST::UnsignedIntegerLiteral& secondUnsignedIntegerLiteral) -> bool {
+                    return firstUnsignedIntegerLiteral.value() != secondUnsignedIntegerLiteral.value();
+                }, [](auto&) -> bool {
+                    return true;
                 }));
-            }, [&](AST::EnumerationMemberLiteral& firstEnumerationMemberLiteral) {
-                secondCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral&) {
-                }, [&](AST::EnumerationMemberLiteral& secondEnumerationMemberLiteral) {
+            }, [&](AST::EnumerationMemberLiteral& firstEnumerationMemberLiteral) -> bool {
+                return secondCase.value()->visit(WTF::makeVisitor([&](AST::EnumerationMemberLiteral& secondEnumerationMemberLiteral) -> bool {
                     ASSERT(firstEnumerationMemberLiteral.enumerationMember());
                     ASSERT(secondEnumerationMemberLiteral.enumerationMember());
-                    success = firstEnumerationMemberLiteral.enumerationMember() != secondEnumerationMemberLiteral.enumerationMember();
-                }, [](auto&) {
+                    return firstEnumerationMemberLiteral.enumerationMember() != secondEnumerationMemberLiteral.enumerationMember();
+                }, [](auto&) -> bool {
+                    return true;
                 }));
-            }, [](auto&) {
+            }, [](auto&) -> bool {
+                return true;
             }));
+            if (!success) {
+                setError();
+                return;
+            }
         }
     }
 
@@ -1372,13 +1374,13 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
             HashSet<int64_t> values;
             bool zeroValueExists;
             for (auto& switchCase : switchStatement.switchCases()) {
-                int64_t value;
-                switchCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
-                    value = integerLiteral.valueForSelectedType();
-                }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
-                    value = unsignedIntegerLiteral.valueForSelectedType();
-                }, [](auto&) {
+                auto value = switchCase.value()->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> int64_t {
+                    return integerLiteral.valueForSelectedType();
+                }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> int64_t {
+                    return unsignedIntegerLiteral.valueForSelectedType();
+                }, [](auto&) -> int64_t {
                     ASSERT_NOT_REACHED();
+                    return 0;
                 }));
                 if (!value)
                     zeroValueExists = true;
@@ -1405,7 +1407,6 @@ void Checker::visit(AST::SwitchStatement& switchStatement)
                 return;
             }
         } else {
-            ASSERT(is<AST::EnumerationDefinition>(*valueType));
             HashSet<AST::EnumerationMember*> values;
             for (auto& switchCase : switchStatement.switchCases()) {
                 switchCase.value()->visit(WTF::makeVisitor([&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) {

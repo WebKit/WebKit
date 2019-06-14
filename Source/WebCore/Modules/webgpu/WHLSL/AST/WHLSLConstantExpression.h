@@ -88,14 +88,14 @@ public:
         return WTF::get<IntegerLiteral>(m_variant);
     }
 
-    template<typename T> void visit(T&& t)
+    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<IntegerLiteral, UnsignedIntegerLiteral, FloatLiteral, NullLiteral, BooleanLiteral, EnumerationMemberLiteral>&>()))
     {
-        WTF::visit(WTFMove(t), m_variant);
+        return WTF::visit(visitor, m_variant);
     }
 
-    template<typename T> void visit(T&& t) const
+    template <typename Visitor> auto visit(const Visitor& visitor) const -> decltype(WTF::visit(visitor, std::declval<Variant<IntegerLiteral, UnsignedIntegerLiteral, FloatLiteral, NullLiteral, BooleanLiteral, EnumerationMemberLiteral>&>()))
     {
-        WTF::visit(WTFMove(t), m_variant);
+        return WTF::visit(visitor, m_variant);
     }
 
     ConstantExpression clone() const

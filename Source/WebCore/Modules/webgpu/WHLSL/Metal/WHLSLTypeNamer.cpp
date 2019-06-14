@@ -201,7 +201,6 @@ static BaseTypeNameNode& find(AST::UnnamedType& unnamedType, Vector<UniqueRef<Ba
             return find(downcast<AST::PointerType>(unnamedType).elementType(), types).children();
         if (is<AST::ArrayReferenceType>(unnamedType))
             return find(downcast<AST::ArrayReferenceType>(unnamedType).elementType(), types).children();
-        ASSERT(is<AST::ArrayType>(unnamedType));
         return find(downcast<AST::ArrayType>(unnamedType).type(), types).children();
     })();
     auto iterator = findInVector(unnamedType, vectorToSearch);
@@ -306,7 +305,6 @@ UniqueRef<BaseTypeNameNode> TypeNamer::createNameNode(AST::UnnamedType& unnamedT
         auto& arrayReferenceType = downcast<AST::ArrayReferenceType>(unnamedType);
         return makeUniqueRef<ArrayReferenceTypeNameNode>(parent, generateNextTypeName(), arrayReferenceType.addressSpace());
     }
-    ASSERT(is<AST::ArrayType>(unnamedType));
     auto& arrayType = downcast<AST::ArrayType>(unnamedType);
     return makeUniqueRef<ArrayTypeNameNode>(parent, generateNextTypeName(), arrayType.numElements());
 }
@@ -327,7 +325,6 @@ size_t TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTyp
         vectorToInsertInto = &item->children();
         parent = &item;
     } else {
-        ASSERT(is<AST::ArrayType>(unnamedType));
         auto& item = types[insert(downcast<AST::ArrayType>(unnamedType).type(), types)];
         vectorToInsertInto = &item->children();
         parent = &item;
@@ -399,7 +396,6 @@ void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, Ha
         stringBuilder.append("    uint length;\n");
         stringBuilder.append("};\n");
     } else {
-        ASSERT(is<ArrayTypeNameNode>(baseTypeNameNode));
         auto& arrayType = downcast<ArrayTypeNameNode>(baseTypeNameNode);
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.append(makeString("typedef Array<", arrayType.parent()->mangledName(), ", ", arrayType.numElements(), "> ", arrayType.mangledName(), ";\n"));
@@ -418,7 +414,6 @@ void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::
     if (is<AST::EnumerationDefinition>(namedType)) {
         auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(namedType);
         auto& baseType = enumerationDefinition.type().unifyNode();
-        ASSERT(is<AST::NamedType>(baseType));
         stringBuilder.append(makeString("enum class ", mangledNameForType(enumerationDefinition), " : ", mangledNameForType(downcast<AST::NamedType>(baseType)), " {\n"));
         for (auto& enumerationMember : enumerationDefinition.enumerationMembers())
             stringBuilder.append(makeString("    ", mangledNameForEnumerationMember(enumerationMember), ",\n"));
@@ -432,7 +427,6 @@ void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::
             stringBuilder.append(makeString("    ", mangledNameForType(structureElement.type()), ' ', mangledNameForStructureElement(structureElement), ";\n"));
         stringBuilder.append("};\n");
     } else {
-        ASSERT(is<AST::TypeDefinition>(namedType));
         auto& typeDefinition = downcast<AST::TypeDefinition>(namedType);
         stringBuilder.append(makeString("typedef ", mangledNameForType(typeDefinition.type()), ' ', mangledNameForType(typeDefinition), ";\n"));
     }

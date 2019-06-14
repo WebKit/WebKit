@@ -347,11 +347,7 @@ bool Intrinsics::addMatrix(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 
 bool Intrinsics::addFullTexture(AST::NativeTypeDeclaration& nativeTypeDeclaration, AST::TypeReference& innerType)
 {
-    unsigned textureTypeIndex = WTF_ARRAY_LENGTH(m_textureTypeNames);
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_textureTypeNames); ++i) {
-        if (nativeTypeDeclaration.name() == m_textureTypeNames[i])
-            textureTypeIndex = i;
-    }
+    auto textureTypeIndex = std::find(m_textureTypeNames, m_textureTypeNames + WTF_ARRAY_LENGTH(m_textureTypeNames), nativeTypeDeclaration.name()) - m_textureTypeNames;
     if (textureTypeIndex == WTF_ARRAY_LENGTH(m_textureTypeNames))
         return false;
 
@@ -377,9 +373,9 @@ bool Intrinsics::addFullTexture(AST::NativeTypeDeclaration& nativeTypeDeclaratio
     return true;
 }
 
-bool Intrinsics::addDepthTexture(AST::NativeTypeDeclaration& nativeTypeDeclaration, AST::TypeReference& innerType)
+void Intrinsics::addDepthTexture(AST::NativeTypeDeclaration& nativeTypeDeclaration, AST::TypeReference& innerType)
 {
-    AST::NativeTypeDeclaration** texture;
+    AST::NativeTypeDeclaration** texture = nullptr;
     if (nativeTypeDeclaration.name() == "TextureDepth2D")
         texture = m_textureDepth2D;
     else if (nativeTypeDeclaration.name() == "RWTextureDepth2D")
@@ -388,19 +384,14 @@ bool Intrinsics::addDepthTexture(AST::NativeTypeDeclaration& nativeTypeDeclarati
         texture = m_textureDepth2DArray;
     else if (nativeTypeDeclaration.name() == "RWTextureDepth2DArray")
         texture = m_rwTextureDepth2DArray;
-    else if (nativeTypeDeclaration.name() == "TextureDepthCube")
+    else {
+        ASSERT(nativeTypeDeclaration.name() == "TextureDepthCube");
         texture = m_textureDepthCube;
-    else
-        ASSERT_NOT_REACHED();
-    unsigned innerTypeIndex = WTF_ARRAY_LENGTH(m_depthTextureInnerTypes);
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_depthTextureInnerTypes); ++i) {
-        if (innerType.name() == m_depthTextureInnerTypes[i])
-            innerTypeIndex = i;
     }
+    auto innerTypeIndex = std::find(m_depthTextureInnerTypes, m_depthTextureInnerTypes + WTF_ARRAY_LENGTH(m_depthTextureInnerTypes), innerType.name()) - m_depthTextureInnerTypes;
     ASSERT(innerTypeIndex != WTF_ARRAY_LENGTH(m_depthTextureInnerTypes));
     nativeTypeDeclaration.setIsTexture();
     texture[innerTypeIndex] = &nativeTypeDeclaration;
-    return true;
 }
 
 void Intrinsics::addTexture(AST::NativeTypeDeclaration& nativeTypeDeclaration)
@@ -413,8 +404,8 @@ void Intrinsics::addTexture(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         m_textureSet.add(&nativeTypeDeclaration);
         return;
     }
-    if (addDepthTexture(nativeTypeDeclaration, innerType))
-        m_textureSet.add(&nativeTypeDeclaration);
+    addDepthTexture(nativeTypeDeclaration, innerType);
+    m_textureSet.add(&nativeTypeDeclaration);
 }
 
 void Intrinsics::add(AST::NativeTypeDeclaration& nativeTypeDeclaration)

@@ -148,7 +148,6 @@ String EntryPointScaffolding::resourceHelperTypes()
             if (iterator == m_resourceMap.end())
                 continue;
             auto& unnamedType = *m_entryPointItems.inputs[iterator->value].unnamedType;
-            ASSERT(is<AST::ReferenceType>(unnamedType));
             auto& referenceType = downcast<AST::ReferenceType>(unnamedType);
             auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
             auto addressSpace = toString(referenceType.addressSpace());
@@ -277,10 +276,7 @@ String EntryPointScaffolding::mangledOutputPath(Vector<String>& path)
 
     AST::StructureDefinition* structureDefinition = nullptr;
     auto& unifyNode = m_functionDefinition.type().unifyNode();
-    ASSERT(is<AST::NamedType>(unifyNode));
-    auto& namedType = downcast<AST::NamedType>(unifyNode);
-    ASSERT(is<AST::StructureDefinition>(namedType));
-    structureDefinition = &downcast<AST::StructureDefinition>(namedType);
+    structureDefinition = &downcast<AST::StructureDefinition>(downcast<AST::NamedType>(unifyNode));
     for (auto& component : path) {
         ASSERT(structureDefinition);
         auto* next = structureDefinition->find(component);
@@ -317,9 +313,7 @@ String EntryPointScaffolding::unpackResourcesAndNamedBuiltIns()
                 auto lengthTemporaryName = m_namedBindGroups[i].namedBindings[j].lengthInformation->temporaryName;
 
                 auto& unnamedType = *m_entryPointItems.inputs[iterator->value].unnamedType;
-                ASSERT(is<AST::ReferenceType>(unnamedType));
-                auto& referenceType = downcast<AST::ReferenceType>(unnamedType);
-                auto mangledTypeName = m_typeNamer.mangledNameForType(referenceType.elementType());
+                auto mangledTypeName = m_typeNamer.mangledNameForType(downcast<AST::ReferenceType>(unnamedType).elementType());
 
                 stringBuilder.append(makeString("size_t ", lengthTemporaryName, " = ", variableName, '.', lengthElementName, ".x;\n"));
                 stringBuilder.append(makeString(lengthTemporaryName, " = ", lengthTemporaryName, " << 32;\n"));

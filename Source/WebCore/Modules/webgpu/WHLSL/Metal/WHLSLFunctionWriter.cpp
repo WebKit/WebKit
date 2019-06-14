@@ -397,7 +397,6 @@ void FunctionDefinitionWriter::visit(AST::FloatLiteral& floatLiteral)
 void FunctionDefinitionWriter::visit(AST::NullLiteral& nullLiteral)
 {
     auto& unifyNode = nullLiteral.resolvedType().unifyNode();
-    ASSERT(is<AST::UnnamedType>(unifyNode));
     auto& unnamedType = downcast<AST::UnnamedType>(unifyNode);
     bool isArrayReferenceType = is<AST::ArrayReferenceType>(unnamedType);
 
@@ -620,23 +619,21 @@ void FunctionDefinitionWriter::visit(AST::VariableReference& variableReference)
 
 String FunctionDefinitionWriter::constantExpressionString(AST::ConstantExpression& constantExpression)
 {
-    String result;
-    constantExpression.visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
-        result = makeString("", integerLiteral.value());
-    }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {
-        result = makeString("", unsignedIntegerLiteral.value());
-    }, [&](AST::FloatLiteral& floatLiteral) {
-        result = makeString("", floatLiteral.value());
-    }, [&](AST::NullLiteral&) {
-        result = "nullptr"_str;
-    }, [&](AST::BooleanLiteral& booleanLiteral) {
-        result = booleanLiteral.value() ? "true"_str : "false"_str;
-    }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) {
+    return constantExpression.visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) -> String {
+        return makeString("", integerLiteral.value());
+    }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) -> String {
+        return makeString("", unsignedIntegerLiteral.value());
+    }, [&](AST::FloatLiteral& floatLiteral) -> String {
+        return makeString("", floatLiteral.value());
+    }, [&](AST::NullLiteral&) -> String {
+        return "nullptr"_str;
+    }, [&](AST::BooleanLiteral& booleanLiteral) -> String {
+        return booleanLiteral.value() ? "true"_str : "false"_str;
+    }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) -> String {
         ASSERT(enumerationMemberLiteral.enumerationDefinition());
         ASSERT(enumerationMemberLiteral.enumerationDefinition());
-        result = makeString(m_typeNamer.mangledNameForType(*enumerationMemberLiteral.enumerationDefinition()), '.', m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()));
+        return makeString(m_typeNamer.mangledNameForType(*enumerationMemberLiteral.enumerationDefinition()), '.', m_typeNamer.mangledNameForEnumerationMember(*enumerationMemberLiteral.enumerationMember()));
     }));
-    return result;
 }
 
 class RenderFunctionDefinitionWriter : public FunctionDefinitionWriter {

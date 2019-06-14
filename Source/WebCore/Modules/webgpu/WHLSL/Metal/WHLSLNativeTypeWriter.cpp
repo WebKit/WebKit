@@ -71,9 +71,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
         auto& typeReference = WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
         auto& unifyNode = typeReference->unifyNode();
-        ASSERT(is<AST::NamedType>(unifyNode));
         auto& namedType = downcast<AST::NamedType>(unifyNode);
-        ASSERT(is<AST::NativeTypeDeclaration>(namedType));
         auto& parameterType = downcast<AST::NativeTypeDeclaration>(namedType);
         auto prefix = ([&]() -> String {
             if (parameterType.name() == "bool")
@@ -116,9 +114,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
         ASSERT(WTF::holds_alternative<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]));
         auto& typeReference = WTF::get<UniqueRef<AST::TypeReference>>(nativeTypeDeclaration.typeArguments()[0]);
         auto& unifyNode = typeReference->unifyNode();
-        ASSERT(is<AST::NamedType>(unifyNode));
         auto& namedType = downcast<AST::NamedType>(unifyNode);
-        ASSERT(is<AST::NativeTypeDeclaration>(namedType));
         auto& parameterType = downcast<AST::NativeTypeDeclaration>(namedType);
         auto prefix = ([&]() -> String {
             if (parameterType.name() == "half")
