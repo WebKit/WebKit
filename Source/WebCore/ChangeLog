@@ -1,3 +1,29 @@
+2019-06-14  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(244439): platform/mac/media/encrypted-media/fps-* tests are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=198612
+        <rdar://problem/51078978>
+
+        Reviewed by Eric Carlson.
+
+        There are two implementations of a 'cenc' initialiation data factory; an ASSERT fires when
+        the second one is added to the registry. Unify them.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsCenc):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes):
+        (WebCore::CDMPrivateFairPlayStreaming::fairPlaySystemID):
+        (WebCore::validInitDataTypes):
+        (WebCore::CDMFactory::platformRegisterFactories):
+        (WebCore::validFairPlayStreamingSchemes): Deleted.
+        (WebCore::CDMPrivateFairPlayStreaming::cencName): Deleted.
+        (WebCore::fairPlaySystemID): Deleted.
+        (WebCore::extractSchemeAndKeyIdFromCenc): Deleted.
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsCenc): Deleted.
+        (WebCore::CDMPrivateFairPlayStreaming::sanitizeCenc): Deleted.
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+
 2019-06-14  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Follow up to r246438. This removes a debug assert until

@@ -36,6 +36,11 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+#include "CDMFairPlayStreaming.h"
+#include "ISOFairPlayStreamingPsshBox.h"
+#endif
+
 
 namespace WebCore {
 
@@ -128,6 +133,23 @@ static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&
         ISOProtectionSystemSpecificHeaderBox psshBox;
         if (!psshBox.read(view, offset))
             return WTF::nullopt;
+
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+        if (psshBox.systemID() == CDMPrivateFairPlayStreaming::fairPlaySystemID()) {
+            ISOFairPlayStreamingPsshBox fpsPssh;
+            offset -= psshBox.size();
+            if (!fpsPssh.read(view, offset))
+                return WTF::nullopt;
+
+            FourCC scheme = fpsPssh.initDataBox().info().scheme();
+            if (CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes().contains(scheme)) {
+                for (auto request : fpsPssh.initDataBox().requests()) {
+                    auto& keyID = request.requestInfo().keyID();
+                    keyIDs.append(SharedBuffer::create(keyID.data(), keyID.size()));
+                }
+            }
+        }
+#endif
 
         for (auto& value : psshBox.keyIDs())
             keyIDs.append(SharedBuffer::create(WTFMove(value)));

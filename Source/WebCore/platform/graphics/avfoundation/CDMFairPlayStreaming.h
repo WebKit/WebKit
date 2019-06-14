@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+struct FourCC;
+
 class CDMFactoryFairPlayStreaming final : public CDMFactory {
 public:
     static CDMFactoryFairPlayStreaming& singleton();
@@ -75,9 +77,8 @@ public:
     static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
-    static const AtomicString& cencName();
-    static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&);
-    static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
+    static const Vector<FourCC>& validFairPlayStreamingSchemes();
+    static const Vector<uint8_t>& fairPlaySystemID();
 };
 
 }
