@@ -1,3 +1,37 @@
+2019-06-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Split up fast/events/ios/key-events-meta-alt-combinations.html and add more tests
+        https://bugs.webkit.org/show_bug.cgi?id=198834
+        <rdar://problem/50103348>
+
+        Reviewed by Brent Fulgham.
+
+        The test fast/events/ios/key-events-meta-alt-combinations.html frequently times out. Let's try
+        to break up this test into multiple files. Also add more modifier combination tests and group
+        all these combination tests under a new direcdtory: fast/events/ios/key-events-comprehensive.
+
+        * fast/events/ios/key-events-comprehensive/key-events-control-expected.txt: Renamed from LayoutTests/fast/events/ios/key-events-control-expected.txt.
+        * fast/events/ios/key-events-comprehensive/key-events-control-option-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-control-option.html: Copied from LayoutTests/fast/events/ios/key-events-control.html.
+        * fast/events/ios/key-events-comprehensive/key-events-control-shift-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-control-shift.html: Copied from LayoutTests/fast/events/ios/key-events-control.html.
+        * fast/events/ios/key-events-comprehensive/key-events-control.html: Renamed from LayoutTests/fast/events/ios/key-events-control.html.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-control-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-control.html: Copied from LayoutTests/fast/events/ios/key-events-meta.html.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-expected.txt: Renamed from LayoutTests/fast/events/ios/key-events-meta-expected.txt.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-option-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-option.html: Renamed from LayoutTests/fast/events/ios/key-events-meta-alt-combinations.html.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-shift-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-meta-shift.html: Copied from LayoutTests/fast/events/ios/key-events-meta.html.
+        * fast/events/ios/key-events-comprehensive/key-events-meta.html: Renamed from LayoutTests/fast/events/ios/key-events-meta.html.
+        * fast/events/ios/key-events-comprehensive/key-events-option-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-option-shift-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-option-shift.html: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-option.html: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-shift-expected.txt: Added.
+        * fast/events/ios/key-events-comprehensive/key-events-shift.html: Added.
+        * fast/events/ios/key-events-meta-alt-combinations-expected.txt: Removed.
+
 2019-06-14  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] button property is -1 for pointerdown and pointerup

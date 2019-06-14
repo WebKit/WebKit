@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/ui-helper.js"></script>
-<script src="../resources/compute-subsets.js"></script>
-<script src="resources/key-tester.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../resources/compute-subsets.js"></script>
+<script src="../resources/key-tester.js"></script>
 <script>
-const modiferKeySubsetsToTest = computeSubsets(["metaKey"]);
+const modiferKeySubsetsToTest = [["metaKey"]];
 for (const k of keysExcludingDeadAndSkippedKeys) {
     for (const modifiers of modiferKeySubsetsToTest)
         tests.push(new KeyCommand(k, modifiers));
