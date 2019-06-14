@@ -758,7 +758,7 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
             domainsToBlock.append(resourceStatistic.registrableDomain);
     }
 
-    if (domainsToBlock.isEmpty()) {
+    if (domainsToBlock.isEmpty() && !debugModeEnabled()) {
         completionHandler();
         return;
     }

@@ -100,11 +100,19 @@ void NetworkSession::invalidateAndCancel()
 {
     for (auto* task : m_dataTaskSet)
         task->invalidateAndCancel();
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->invalidateAndCancel();
+#endif
+#if !ASSERT_DISABLED
+    m_isInvalidated = true;
+#endif
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 {
+    ASSERT(!m_isInvalidated);
     if (!enable) {
         m_resourceLoadStatistics = nullptr;
         return;

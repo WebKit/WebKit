@@ -1,3 +1,22 @@
+2019-06-14  Youenn Fablet  <youenn@apple.com>
+
+        WebResourceLoadStatisticsStore should not use its network session if invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=198814
+
+        Reviewed by Geoffrey Garen.
+
+        Tell WebResourceLoadStatisticsStore that its network session is invalidated.
+        WebResourceLoadStatisticsStore will then clear its reference to the network session.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        Added for test purposes to trigger further cookie processing.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::invalidateAndCancel):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::invalidateAndCancel):
+
 2019-06-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] NSFileWrapper associated with _WKAttachment

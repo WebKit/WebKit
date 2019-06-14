@@ -1021,6 +1021,11 @@ NetworkSession* WebResourceLoadStatisticsStore::networkSession()
     return m_networkSession.get();
 }
 
+void WebResourceLoadStatisticsStore::invalidateAndCancel()
+{
+    m_networkSession = nullptr;
+}
+
 void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domainsToRemoveWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

@@ -127,6 +127,9 @@ protected:
     PrefetchCache m_prefetchCache;
 
     Ref<StorageManager> m_storageManager;
+#if !ASSERT_DISABLED
+    bool m_isInvalidated { false };
+#endif
 };
 
 } // namespace WebKit

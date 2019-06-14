@@ -1,5 +1,15 @@
 2019-06-14  Youenn Fablet  <youenn@apple.com>
 
+        WebResourceLoadStatisticsStore should not use its network session if invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=198814
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
+2019-06-14  Youenn Fablet  <youenn@apple.com>
+
         import-w3c-tests should respect WEBKIT_OUTPUTDIR
         https://bugs.webkit.org/show_bug.cgi?id=198682
         <rdar://problem/51536931>
