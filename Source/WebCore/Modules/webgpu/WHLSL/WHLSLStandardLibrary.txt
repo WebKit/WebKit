@@ -439,6 +439,9 @@ native uint operator+(uint, uint);
 native bool operator<(int, int);
 native bool operator<(uint, uint);
 native bool operator<(float, float);
+native bool operator==(float, float);
+native bool operator==(int, int);
+native bool operator==(thread int*, thread int*);
 native float operator*(float, float);
 
 native bool operator.x(bool2);

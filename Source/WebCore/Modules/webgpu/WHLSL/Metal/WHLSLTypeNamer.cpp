@@ -393,7 +393,7 @@ void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, Ha
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.append(makeString("struct ", arrayReferenceType.mangledName(), "{ \n"));
         stringBuilder.append(makeString("    ", toString(arrayReferenceType.addressSpace()), " ", arrayReferenceType.parent()->mangledName(), "* pointer;\n"));
-        stringBuilder.append("    uint length;\n");
+        stringBuilder.append("    uint32_t length;\n");
         stringBuilder.append("};\n");
     } else {
         auto& arrayType = downcast<ArrayTypeNameNode>(baseTypeNameNode);

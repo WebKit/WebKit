@@ -1,3 +1,76 @@
+2019-06-14  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Implement out-of-bounds and nullptr behavior
+        https://bugs.webkit.org/show_bug.cgi?id=198600
+        <rdar://problem/51668853>
+
+        Reviewed by Robin Morisset.
+
+        The behavior we're implementing is:
+        - OOB writes are ignored.
+        - OOB reads return zero.
+        - Writes to null are ignored.
+        - Reads from null return zero.
+        - &*x == x, including &*null == null.
+        
+        We implement this like so:
+        - The value stack in FunctionWriter turns into a stack of pairs: rvalues and lvalues.
+          rvalues are represented the same as before. Lvalues are always pointers.
+        - Anything that produces an lvalue must push a pointer to the stack. Not
+          all things produce lvalues, so that entry in the stack may be empty.
+          However, all things that produce lvalues also produce rvalues. So, "*x = 42" works,
+          and so does "foo(*x)". Nodes that produce lvalues are responsible for also producing
+          an rvalue, which should be the value as if the lvalue was dereferenced at that point
+          in program execution. So the "*x" in "thread int* x = null; *x" produces the int zero
+          for its rvalue, and null for its lvalue.
+        - Dereference just works, as dereference produces both an lvalue and rvalue. Dereference
+          node's child must also be an lvalue. So we just forward that value along on
+          the stack. For the rvalue, if we try to dereference nullptr, we just fill in
+          zero bytes instead. Otherwise, the rvalue is the result of dereferencing the
+          non-null pointer.
+        - Assignment expressions check if the incoming lvalue is null. If it is, it
+          skips the assignment.
+        - operator&[] returns nullptr on an OOB access. Then, based on the above
+          behavior, we get the desired OOB reads return zero, and OOB writes are
+          ignored.
+        - MakePointerExpression just takes the last lvalue off the stack (which must
+          be a pointer) and returns it as an rvalue.
+        - VariableReference will push both the variable value and a pointer to the variable
+          onto the stack.
+
+        This patch also fixes a few bugs where we weren't giving certain AST nodes the
+        proper address space values.
+
+        This patch also removes code to generate native functions for operators
+        "operator[]" and "operator[]=" as we should never be generating these
+        ourselves. We should only be generating the "operator&[]" ander.
+
+        Tests: webgpu/whlsl-null-dereference.html
+               webgpu/whlsl-oob-access.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendRightValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::appendLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::takeLastLeftValue):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::emitLoop):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp:
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        (WebCore::WHLSL::PreserveLifetimes::assignVariableIntoStruct):
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        (WebCore::WHLSL::PropertyResolver::visit):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt:
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::trySetFunctions):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetFunctions):
+
 2019-06-14  Jer Noble  <jer.noble@apple.com>
 
         CRASH(nullptr) in WebCore::jsAudioContextCurrentTime()

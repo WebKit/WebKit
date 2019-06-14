@@ -1,3 +1,16 @@
+2019-06-14  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Implement out-of-bounds and nullptr behavior
+        https://bugs.webkit.org/show_bug.cgi?id=198600
+        <rdar://problem/51668853>
+
+        Reviewed by Robin Morisset.
+
+        * webgpu/whlsl-null-dereference-expected.txt: Added.
+        * webgpu/whlsl-null-dereference.html: Added.
+        * webgpu/whlsl-oob-access-expected.txt: Added.
+        * webgpu/whlsl-oob-access.html: Added.
+
 2019-06-14  Youenn Fablet  <youenn@apple.com>
 
         Cloning a MediaStreamTrack does not clone the logger

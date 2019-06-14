@@ -110,7 +110,7 @@ public:
 
         auto rhs = makeUniqueRef<AST::VariableReference>(AST::VariableReference::wrap(variable));
         rhs->setType(variable.type()->clone());
-        rhs->setTypeAnnotation(AST::RightValue());
+        rhs->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
 
         auto assignment = makeUniqueRef<AST::AssignmentExpression>(variable.origin(), WTFMove(lhs), WTFMove(rhs));
         assignment->setType(variable.type()->clone());
@@ -136,7 +136,7 @@ public:
 
             auto makePointerExpression = makeUniqueRef<AST::MakePointerExpression>(functionDefinition.origin(), WTFMove(structVariableReference));
             makePointerExpression->setType(m_pointerToStructType->clone());
-            makePointerExpression->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread });
+            makePointerExpression->setTypeAnnotation(AST::RightValue());
 
             auto pointerDeclaration = makeUniqueRef<AST::VariableDeclaration>(functionDefinition.origin(), AST::Qualifiers(),
                 m_pointerToStructType->clone(), "wrapper"_s, WTF::nullopt, Optional<UniqueRef<AST::Expression>>(WTFMove(makePointerExpression)));

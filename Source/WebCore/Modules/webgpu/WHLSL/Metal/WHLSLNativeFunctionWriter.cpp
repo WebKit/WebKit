@@ -81,7 +81,7 @@ static String atomicName(String input)
         return "fetch_xor"_str;
 }
 
-String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclaration, String& outputFunctionName, Intrinsics& intrinsics, TypeNamer& typeNamer)
+String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclaration, String& outputFunctionName, Intrinsics& intrinsics, TypeNamer& typeNamer, const char* memsetZeroFunctionName)
 {
     StringBuilder stringBuilder;
     if (nativeFunctionDeclaration.isCast()) {
@@ -89,8 +89,7 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         if (!nativeFunctionDeclaration.parameters().size()) {
             stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, "() {\n"));
             stringBuilder.append(makeString("    ", metalReturnName, " x;\n"));
-            stringBuilder.append("    thread char* ptr = static_cast<thread char*>(static_cast<thread void*>(&x));\n");
-            stringBuilder.append(makeString("    for (size_t i = 0; i < sizeof(", metalReturnName, "); ++i) ptr[i] = 0;\n"));
+            stringBuilder.append(makeString("    ", memsetZeroFunctionName, "(x);\n"));
             stringBuilder.append("    return x;\n");
             stringBuilder.append("}\n");
             return stringBuilder.toString();
@@ -214,38 +213,14 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         return stringBuilder.toString();
     }
 
-    if (nativeFunctionDeclaration.name() == "operator[]") {
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
-        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
-        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
-        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i) {\n"));
-        stringBuilder.append(makeString("    return m[i];\n"));
-        stringBuilder.append("}\n");
-        return stringBuilder.toString();
-    }
-
     if (nativeFunctionDeclaration.name() == "operator&[]") {
         ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
         auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
         auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
         auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        auto fieldName = nativeFunctionDeclaration.name().substring("operator&[]."_str.length());
         stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"));
-        stringBuilder.append(makeString("    return &(v.pointer[n]);\n"));
-        stringBuilder.append("}\n");
-        return stringBuilder.toString();
-    }
-
-    if (nativeFunctionDeclaration.name() == "operator[]=") {
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 3);
-        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0]->type());
-        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1]->type());
-        auto metalParameter3Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[2]->type());
-        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"));
-        stringBuilder.append(makeString("    m[i] = v;\n"));
-        stringBuilder.append(makeString("    return m;\n"));
+        stringBuilder.append("    if (n < v.length) return &(v.pointer[n]);\n");
+        stringBuilder.append("    return nullptr;\n");
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }

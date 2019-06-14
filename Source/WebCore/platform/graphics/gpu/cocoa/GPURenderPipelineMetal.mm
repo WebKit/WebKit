@@ -416,6 +416,10 @@ static bool trySetFunctions(const char* const functionName, const GPUPipelineSta
         vertexLibrary = adoptNS([device.platformDevice() newLibraryWithSource:whlslCompileResult->metalSource options:nil error:&error]);
         END_BLOCK_OBJC_EXCEPTIONS;
 
+#ifndef NDEBUG
+        if (!vertexLibrary)
+            NSLog(@"%@", error);
+#endif
         ASSERT(vertexLibrary);
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Once we zero-fill variables, there should be no warnings, so we should be able to ASSERT(!error) here.
 

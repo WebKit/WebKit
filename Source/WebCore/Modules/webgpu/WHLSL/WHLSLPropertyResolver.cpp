@@ -685,7 +685,11 @@ void PropertyResolver::visit(AST::ReadModifyWriteExpression& readModifyWriteExpr
             expressions.append(WTFMove(assignmentExpression));
         }
 
-        return {{ WTFMove(expressions), readModifyWriteExpression.newVariableReference() }};
+        auto variableReference = readModifyWriteExpression.newVariableReference();
+        variableReference->setType(readModifyWriteExpression.leftValue().resolvedType().clone());
+        variableReference->setTypeAnnotation(AST::LeftValue { AST::AddressSpace::Thread }); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198169 Is this right?
+
+        return {{ WTFMove(expressions),  WTFMove(variableReference) }};
     });
 
     if (!modifyResult) {
