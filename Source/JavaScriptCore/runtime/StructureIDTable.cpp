@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,19 +31,77 @@
 
 namespace JSC {
 
+#if USE(JSVALUE64)
+
 StructureIDTable::StructureIDTable()
-    : m_firstFreeOffset(0)
-    , m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
-    , m_size(0)
+    : m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
+    , m_size(1)
     , m_capacity(s_initialSize)
 {
     // We pre-allocate the first offset so that the null Structure
     // can still be represented as the StructureID '0'.
-    allocateID(0);
+    table()[0].encodedStructureBits = 0;
+
+    makeFreeListFromRange(1, m_capacity - 1);
+}
+
+void StructureIDTable::makeFreeListFromRange(uint32_t first, uint32_t last)
+{
+    ASSERT(!m_firstFreeOffset);
+    ASSERT(!m_lastFreeOffset);
+
+    // Put all the new IDs on the free list sequentially.
+    uint32_t head = first;
+    uint32_t tail = last;
+    for (uint32_t i = first; i < last; ++i)
+        table()[i].offset = i + 1;
+    table()[last].offset = 0;
+
+    // Randomize the free list.
+    uint32_t size = last - first + 1;
+    uint32_t maxIterations = (size * 2) / 3;
+    for (uint32_t count = 0; count < maxIterations; ++count) {
+        // Move a random pick either to the head or the tail of the free list.
+        uint32_t random = m_weakRandom.getUint32();
+        uint32_t nodeBefore = first + (random % size);
+        uint32_t pick = table()[nodeBefore].offset;
+        if (pick) {
+            uint32_t nodeAfter = table()[pick].offset;
+            table()[nodeBefore].offset = nodeAfter;
+            if ((random & 1) || !nodeAfter) {
+                // Move to the head.
+                table()[pick].offset = head;
+                head = pick;
+                if (!nodeAfter)
+                    tail = nodeBefore;
+            } else {
+                // Move to the tail.
+                table()[pick].offset = 0;
+                table()[tail].offset = pick;
+                tail = pick;
+            }
+        }
+    }
+
+    // Cut list in half and swap halves.
+    uint32_t cut = first + (m_weakRandom.getUint32() % size);
+    uint32_t afterCut = table()[cut].offset;
+    if (afterCut) {
+        table()[tail].offset = head;
+        tail = cut;
+        head = afterCut;
+        table()[cut].offset = 0;
+    }
+
+    m_firstFreeOffset = head;
+    m_lastFreeOffset = tail;
 }
 
 void StructureIDTable::resize(size_t newCapacity)
 {
+    if (newCapacity > s_maximumNumberOfStructures)
+        newCapacity = s_maximumNumberOfStructures;
+
     // Create the new table.
     auto newTable = makeUniqueArray<StructureOrOffset>(newCapacity);
 
@@ -61,6 +119,8 @@ void StructureIDTable::resize(size_t newCapacity)
 
     // Update the capacity.
     m_capacity = newCapacity;
+
+    makeFreeListFromRange(m_size, m_capacity - 1);
 }
 
 void StructureIDTable::flushOldTables()
@@ -70,52 +130,62 @@ void StructureIDTable::flushOldTables()
 
 StructureID StructureIDTable::allocateID(Structure* structure)
 {
-#if USE(JSVALUE64)
-    if (!m_firstFreeOffset) {
-        RELEASE_ASSERT(m_capacity <= UINT_MAX);
-        if (m_size == m_capacity)
-            resize(m_capacity * 2);
+    if (UNLIKELY(!m_firstFreeOffset)) {
+        RELEASE_ASSERT(m_capacity <= s_maximumNumberOfStructures);
+        ASSERT(m_size == m_capacity);
+        resize(m_capacity * 2);
         ASSERT(m_size < m_capacity);
-
-        StructureOrOffset newEntry;
-        newEntry.structure = structure;
-
-        if (m_size == s_unusedID) {
-            m_size++;
-            return allocateID(structure);
-        }
-
-        StructureID result = m_size;
-        table()[result] = newEntry;
-        m_size++;
-        ASSERT(!isNuked(result));
-        return result;
+        RELEASE_ASSERT(m_firstFreeOffset);
     }
 
-    ASSERT(m_firstFreeOffset != s_unusedID);
+    // entropyBits must not be zero. This ensures that if a corrupted
+    // structureID is encountered (with incorrect entropyBits), the decoded
+    // structure pointer for that ID will be always be a bad pointer with
+    // high bits set.
+    constexpr uint32_t entropyBitsMask = (1 << s_numberOfEntropyBits) - 1;
+    uint32_t entropyBits = m_weakRandom.getUint32() & entropyBitsMask;
+    if (UNLIKELY(!entropyBits)) {
+        constexpr uint32_t numberOfValuesToPickFrom = entropyBitsMask;
+        entropyBits = (m_weakRandom.getUint32() % numberOfValuesToPickFrom) + 1;
+    }
 
-    StructureID result = m_firstFreeOffset;
+    uint32_t structureIndex = m_firstFreeOffset;
     m_firstFreeOffset = table()[m_firstFreeOffset].offset;
-    table()[result].structure = structure;
+    if (!m_firstFreeOffset)
+        m_lastFreeOffset = 0;
+
+    StructureID result = (structureIndex << s_numberOfEntropyBits) | entropyBits;
+    table()[structureIndex].encodedStructureBits = encode(structure, result);
+    m_size++;
     ASSERT(!isNuked(result));
     return result;
-#else
-    ASSERT(!isNuked(structure));
-    return structure;
-#endif
 }
 
 void StructureIDTable::deallocateID(Structure* structure, StructureID structureID)
 {
-#if USE(JSVALUE64)
     ASSERT(structureID != s_unusedID);
-    RELEASE_ASSERT(table()[structureID].structure == structure);
-    table()[structureID].offset = m_firstFreeOffset;
-    m_firstFreeOffset = structureID;
-#else
-    UNUSED_PARAM(structure);
-    UNUSED_PARAM(structureID);
-#endif
+    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
+    ASSERT(structureIndex && structureIndex < s_maximumNumberOfStructures);
+    RELEASE_ASSERT(table()[structureIndex].encodedStructureBits == encode(structure, structureID));
+    m_size--;
+    if (!m_firstFreeOffset) {
+        table()[structureIndex].offset = 0;
+        m_firstFreeOffset = structureIndex;
+        m_lastFreeOffset = structureIndex;
+        return;
+    }
+
+    bool insertAtHead = m_weakRandom.getUint32() & 1;
+    if (insertAtHead) {
+        table()[structureIndex].offset = m_firstFreeOffset;
+        m_firstFreeOffset = structureIndex;
+    } else {
+        table()[structureIndex].offset = 0;
+        table()[m_lastFreeOffset].offset = structureIndex;
+        m_lastFreeOffset = structureIndex;
+    }
 }
+
+#endif // USE(JSVALUE64)
 
 } // namespace JSC
