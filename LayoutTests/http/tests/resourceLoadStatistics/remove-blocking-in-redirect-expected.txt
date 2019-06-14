@@ -11,43 +11,41 @@ TEST COMPLETE
 --------
 Frame: '<!--frame1-->'
 --------
-Set cookie.
-
+Should receive first-party cookie for localhost.
+Did not receive cookie named 'firstPartyCookieIP'.
+Received cookie named 'firstPartyCookieLocalhost'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie: firstPartyCookieLocalhost=localhost
 
 --------
 Frame: '<!--frame2-->'
 --------
-Should receive first-party cookie.
-Received cookie named 'firstPartyCookie'.
-Did not receive cookie named 'partitionedCookie'.
-Client-side document.cookie: firstPartyCookie=value
+Redirect case 1, should receive first-party cookie for 127.0.0.1.
+Received cookie named 'firstPartyCookieIP'.
+Did not receive cookie named 'firstPartyCookieLocalhost'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie: firstPartyCookieIP=127.0.0.1
 
 --------
 Frame: '<!--frame3-->'
 --------
-Redirect case 1, should receive first-party cookie for 127.0.0.1.
-Received cookie named 'firstPartyCookie'.
-Did not receive cookie named 'partitionedCookie'.
-Client-side document.cookie: firstPartyCookie=127.0.0.1
+Try to set third-party cookie for localhost in blocked mode.
+
 
 --------
 Frame: '<!--frame4-->'
 --------
-Try to set third-party cookie in blocked mode.
-
+Should receive no cookie.
+Did not receive cookie named 'firstPartyCookieIP'.
+Did not receive cookie named 'firstPartyCookieLocalhost'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie:
 
 --------
 Frame: '<!--frame5-->'
 --------
-Should receive no cookie.
-Did not receive cookie named 'firstPartyCookie'.
-Did not receive cookie named 'partitionedCookie'.
-Client-side document.cookie:
-
---------
-Frame: '<!--frame6-->'
---------
 Redirect case 2, should receive first-party cookie for 127.0.0.1.
-Received cookie named 'firstPartyCookie'.
-Did not receive cookie named 'partitionedCookie'.
-Client-side document.cookie: firstPartyCookie=127.0.0.1
+Received cookie named 'firstPartyCookieIP'.
+Did not receive cookie named 'firstPartyCookieLocalhost'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie: firstPartyCookieIP=127.0.0.1
