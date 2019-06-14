@@ -92,16 +92,11 @@ void GPUComputePassEncoder::dispatch(unsigned x, unsigned y, unsigned z)
         return;
     }
 
-    auto pipelineState = m_pipeline->platformComputePipeline();
-    ASSERT(pipelineState);
+    ASSERT(m_pipeline->platformComputePipeline());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    auto w = pipelineState.threadExecutionWidth;
-    auto h = pipelineState.maxTotalThreadsPerThreadgroup / w;
-
-    // FIXME: This should be gleaned from the shader if not using MSL. For now, use the docs' example calculation.
-    auto threadsPerThreadgroup = MTLSizeMake(w, h, 1);
+    auto threadsPerThreadgroup = MTLSizeMake(m_pipeline->computeDimensions().width, m_pipeline->computeDimensions().height, m_pipeline->computeDimensions().depth);
 
     auto threadgroupsPerGrid = MTLSizeMake(x, y, z);
 

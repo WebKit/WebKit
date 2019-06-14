@@ -1,3 +1,87 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Hook up compute
+        https://bugs.webkit.org/show_bug.cgi?id=198644
+
+        Reviewed by Saam Barati.
+
+        This patch hooks up compute shaders in exactly the same way that vertex and fragment shaders
+        are hooked up. I've modified the two patchs (compute and rendering) to be almost exactly the
+        same code.
+
+        This patch also adds support for the WHLSL compiler to determine what the numthreads()
+        attribute in the shader says so that it can be hooked up to Metal's threads-per-threadgroup
+        argument in the dispatch call. There is some logic to make sure that there aren't two
+        numthreads() attributes on the same compute shader.
+
+        It also adds a little bit of type renaming. For built-in variables, sometimes Metal's type
+        doesn't always match WHLSL's (and HLSL's type). For example, in WHLSL and HLSL,        SV_DispatchThreadID variables have to be a float3, but in Metal, they are a uint3.
+        Therefore, I've added a little bit of code during each entry point's pack and unpack stages
+        to handle this type conversion.
+
+        Test: webgpu/whlsl-compute.html
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::internalTypeForSemantic): Determine which Metal type corresponds to
+        each built-in variable.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::builtInsSignature): Perform the type
+        conversion.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns): Ditto.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::VertexEntryPointScaffolding): Ditto.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::helperTypes): Ditto.
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::pack): Ditto.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::FragmentEntryPointScaffolding): Ditto.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::helperTypes): Ditto.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::pack): Ditto.
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::signature): Ditto.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp: Added. Add a pass to determine whether
+        or not any entry point has duplicate numthreads() attribute, and to determine what the
+        appropriate numthreads() values should be for the current entry point.
+        (WebCore::WHLSL::ComputeDimensionsVisitor::ComputeDimensionsVisitor):
+        (WebCore::WHLSL::ComputeDimensionsVisitor::computeDimensions const):
+        (WebCore::WHLSL::computeDimensions):
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLPrepare.h.
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp:
+        (WebCore::WHLSL::gatherEntryPointItems): Compute shaders don't need to have a semantic for their return type.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepare): Run the computeDimensions() pass.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp: In a left-value propertyAccessExpression,
+        the index expression can be a right-value. Treat it as such.
+        (WebCore::WHLSL::LeftValueSimplifier::finishVisiting):
+        (WebCore::WHLSL::LeftValueSimplifier::visit):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt: We need support for multiplication (for a
+        test) and float3 for SV_DispatchThreadID.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUComputePipeline.h: Associate a compute dimensions with a particular
+        compute pipeline. This is how Metal knows what values to use for a dispatch.
+        (WebCore::GPUComputePipeline::computeDimensions const):
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm: Use the saved compute dimensions.
+        (WebCore::GPUComputePassEncoder::dispatch):
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm: Make the code match GPURenderPipelineMetal.
+        (WebCore::trySetMetalFunctions):
+        (WebCore::trySetFunctions):
+        (WebCore::convertComputePipelineDescriptor):
+        (WebCore::tryCreateMTLComputePipelineState):
+        (WebCore::GPUComputePipeline::tryCreate):
+        (WebCore::GPUComputePipeline::GPUComputePipeline):
+        (WebCore::tryCreateMtlComputeFunction): Deleted.
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.cpp: Added. Moved shared helper
+        functions to a file where they can be accessed by multiple places.
+        (WebCore::convertShaderStageFlags):
+        (WebCore::convertBindingType):
+        (WebCore::convertLayout):
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLPrepare.h.
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Delete the functions that were moved to GPUPipelineMetalConvertLayout.
+        (WebCore::trySetFunctions):
+        (WebCore::tryCreateMtlRenderPipelineState):
+        (WebCore::convertShaderStageFlags): Deleted.
+        (WebCore::convertBindingType): Deleted.
+        (WebCore::convertLayout): Deleted.
+
 2019-06-13  Jer Noble  <jer.noble@apple.com>
 
         AVKit play button bypasses MediaElementSession playbackPermitted() checks.

@@ -1,3 +1,17 @@
+2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Hook up compute
+        https://bugs.webkit.org/show_bug.cgi?id=198644
+
+        Reviewed by Saam Barati.
+
+        This doesn't thoroughly test compute, but it's at least enough to unblock the WHLSL testing effort.
+
+        * webgpu/compute-squares-expected.txt: Deleted. Covered by webgpu/whlsl-compute.html.
+        * webgpu/compute-squares.html: Deleted. Ditto.
+        * webgpu/whlsl-compute-expected.txt: Added.
+        * webgpu/whlsl-compute.html: Added.
+
 2019-06-13  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] LayoutTest/fast/content-observation/click-event-suppression-on-content-change.html is failing
