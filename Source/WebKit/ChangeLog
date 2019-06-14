@@ -1,3 +1,23 @@
+2019-06-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Disable AppSSO for web processes and plugin processes
+        https://bugs.webkit.org/show_bug.cgi?id=198843
+        <rdar://problem/51642920>
+
+        Reviewed by Sam Weinig.
+
+        This patch moves the disabling of AppSSO from AuxiliaryProcess to PluginProcess
+        and WebProcess such that NetworkingProcess will not be affected.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2019-06-14  Megan Gardner  <megan_gardner@apple.com>
 
         Move Synthetic Editing Commands to behind an experimental feature flag

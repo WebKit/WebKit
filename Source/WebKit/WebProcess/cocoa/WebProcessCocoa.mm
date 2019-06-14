@@ -67,6 +67,7 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -454,6 +455,10 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 
 #if USE(OS_STATE)
     registerWithStateDumper();
+#endif
+
+#if HAVE(LOAD_OPTIMIZER)
+    [NSURLSession _disableAppSSO];
 #endif
 }
 

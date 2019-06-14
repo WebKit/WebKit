@@ -47,6 +47,7 @@
 #import <mach/mach_vm.h>
 #import <mach/vm_statistics.h>
 #import <objc/runtime.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
@@ -403,6 +404,9 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     // Disable Dark Mode in the plugin process to avoid rendering issues.
     [NSApp setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+#endif
+#if HAVE(LOAD_OPTIMIZER)
+    [NSURLSession _disableAppSSO];
 #endif
 }
 
