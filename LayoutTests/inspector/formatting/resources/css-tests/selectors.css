@@ -2,4 +2,11 @@
 a{}
 
 /* COMPLEX SELECTOR */
+div div>div#id.foo.bar:hover .something>.child~.sibling+.sibling:after{color:red;}
+div   div   >   div#id.foo.bar:hover   .something   >   .child   ~   .sibling   +   .sibling:after   {   color   :   red   ;   }
 div div>div#id.foo.bar:hover .something>.child~.sibling+.sibling::after{color:red;}
+div   div   >   div#id.foo.bar:hover   .something   >   .child   ~   .sibling   +   .sibling::after   {   color   :   red   ;   }
+div div>div#id.foo.bar:hover .something>.child~.sibling+:matches(.sibling):after{color:red;}
+div   div   >   div#id.foo.bar:hover   .something   >   .child   ~   .sibling   +   :matches(.sibling):after   {   color   :   red   ;   }
+div div>div#id.foo.bar:hover .something>.child~.sibling+:matches(.sibling)::after{color:red;}
+div   div   >   div#id.foo.bar:hover   .something   >   .child   ~   .sibling   +   :matches(.sibling)::after   {   color   :   red   ;   }

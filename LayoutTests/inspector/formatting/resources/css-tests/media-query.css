@@ -3,4 +3,23 @@
 
 /* MEDIA QUERY */
 @media screen and(max-device-width:480px){html{-webkit-text-size-adjust:none;}}
+@media   screen   and   (   max-device-width   :   480px   )   {   html   {   -webkit-text-size-adjust   :   none   ;   }   }
 @media not((screen)and(print)),(print){body{color:red}}
+@media   not   (   (   screen   )   and   (   print   )   )   ,   (   print   )   {   body   {   color   :   red   }   }
+
+/* font-face */
+@font-face {
+    font-family: "MyWebFont";
+    src: url("myfont.woff2") format("woff2"),
+         url("myfont.woff") format("woff");
+}
+
+/* page */
+@page :first{margin:1in;}
+@page   :first   {   margin   :   1in   ;   }
+
+/* supports */
+@supports(display:flex){.module{display:flex;}}
+@supports   (   display   :   flex   )   {   .module   {   display   :   flex   ;   }   }
+@supports(-webkit-backdrop-filter:blur(10px)){.home header{-webkit-backdrop-filter:blur(10px);}}
+@supports   (   -webkit-backdrop-filter   :   blur   (   10px   )   )   {   .home   header   {   -webkit-backdrop-filter   :   blur   (   10px   )   ;   }   }

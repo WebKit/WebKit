@@ -74,9 +74,24 @@ CSSFormatter = class CSSFormatter
         const addSpaceAfter = new Set([`,`, `+`, `*`, `~`, `>`, `)`, `:`]);
 
         const removeSpaceBefore = new Set([`,`, `(`, `)`, `}`, `:`, `;`]);
-        const removeSpaceAfter = new Set([`(`, `{`, `}`, `!`, `;`]);
+        const removeSpaceAfter = new Set([`(`, `{`, `}`, `,`, `!`, `;`]);
+
+        const inAtRuleRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+/;
+        const inAtRuleBeforeParenthesisRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+$/;
+        const inAtRuleAfterParenthesisRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+[^("':]*\([^"':]*:/;
+        const inAtSupportsRuleRegExp = /^\s*@[a-zA-Z][-a-zA-Z]+[^"':]*:/;
+
+        const lineStartCouldBePropertyRegExp = /^\s+[-_a-zA-Z][-_a-zA-Z0-9]*/;
+
+        const lastTokenWasOpenParenthesisRegExp = /\(\s*$/;
+
+        let depth = 0;
 
         for (let i = 0; i < this._sourceText.length; ++i) {
+            let c = this._sourceText[i];
+
+            let testCurrentLine = (regExp) => regExp.test(this._builder.currentLine);
+
             let inSelector = () => {
                 let nextOpenBrace = this._sourceText.indexOf(`{`, i);
                 if (nextOpenBrace !== -1) {
@@ -100,14 +115,16 @@ CSSFormatter = class CSSFormatter
                     }
                 }
 
-                if (!/^\s+[-_a-zA-Z][-_a-zA-Z0-9]*/.test(this._builder.currentLine))
-                    return true;
+                if (testCurrentLine(lineStartCouldBePropertyRegExp))
+                    return false;
 
-                return false;
+                return true;
             };
 
-            let inMediaQuery = () => {
-                return /^\s*@media/.test(this._builder.currentLine);
+            let inProperty = () => {
+                if (!depth)
+                    return false;
+                return !testCurrentLine(inAtRuleRegExp) && !inSelector();
             };
 
             let formatBefore = () => {
@@ -117,28 +134,80 @@ CSSFormatter = class CSSFormatter
                 if (dedentBefore.has(c))
                     this._builder.dedent();
 
-                if (!this._builder.lastNewlineAppendWasMultiple && newlineBefore.has(c))
+                if (!this._builder.lastTokenWasNewline && newlineBefore.has(c))
                     this._builder.appendNewline();
 
                 if (!this._builder.lastTokenWasWhitespace && addSpaceBefore.has(c)) {
-                    if (c !== `(` || inMediaQuery())
+                    let shouldAddSpaceBefore = () => {
+                        if (c === `(`) {
+                            if (testCurrentLine(inAtSupportsRuleRegExp))
+                                return false;
+                            if (!testCurrentLine(inAtRuleRegExp))
+                                return false;
+                        }
+                        return true;
+                    };
+                    if (shouldAddSpaceBefore())
                         this._builder.appendSpace();
                 }
 
-                if (this._builder.lastTokenWasWhitespace && removeSpaceBefore.has(c)) {
-                    if ((c !== `:` || !inSelector()) && (c !== `(` || !inMediaQuery() || this._sourceText[i - 1] === `(`))
-                        this._builder.removeLastWhitespace();
+                while (this._builder.lastTokenWasWhitespace && removeSpaceBefore.has(c)) {
+                    let shouldRemoveSpaceBefore = () => {
+                        if (c === `:`) {
+                            if (!testCurrentLine(this._builder.currentLine.includes(`(`) ? inAtRuleRegExp : inAtRuleBeforeParenthesisRegExp)) {
+                                if (!inProperty())
+                                    return false;
+                            }
+                        }
+                        if (c === `(`) {
+                            if (!testCurrentLine(lastTokenWasOpenParenthesisRegExp)) {
+                                if (testCurrentLine(inAtRuleRegExp) && !testCurrentLine(inAtRuleAfterParenthesisRegExp))
+                                    return false;
+                            }
+                        }
+                        return true;
+                    };
+                    if (!shouldRemoveSpaceBefore())
+                        break;
+                    this._builder.removeLastWhitespace();
                 }
             };
 
             let formatAfter = () => {
-                if (this._builder.lastTokenWasWhitespace && removeSpaceAfter.has(c)) {
-                    if (c !== `(` || inMediaQuery())
-                        this._builder.removeLastWhitespace();
+                while (this._builder.lastTokenWasWhitespace && removeSpaceAfter.has(c)) {
+                    let shouldRemoveSpaceAfter = () => {
+                        if (c === `(`) {
+                            if (!testCurrentLine(lastTokenWasOpenParenthesisRegExp)) {
+                                if (!testCurrentLine(inAtRuleRegExp)) {
+                                    if (!inProperty())
+                                        return false;
+                                }
+                            }
+                        }
+                        return true;
+                    };
+                    if (!shouldRemoveSpaceAfter())
+                        break;
+                    this._builder.removeLastWhitespace();
                 }
 
                 if (!this._builder.lastTokenWasWhitespace && addSpaceAfter.has(c)) {
-                    if (c !== `:` || !inSelector())
+                    let shouldAddSpaceAfter = () => {
+                        if (c === `:`) {
+                            if (!testCurrentLine(this._builder.currentLine.includes(`(`) ? inAtRuleRegExp : inAtRuleBeforeParenthesisRegExp)) {
+                                if (!inProperty())
+                                    return false;
+                            }
+                        }
+                        if (c === `)`) {
+                            if (!testCurrentLine(inAtRuleRegExp)) {
+                                if (!inProperty())
+                                    return false;
+                            }
+                        }
+                        return true;
+                    };
+                    if (shouldAddSpaceAfter())
                         this._builder.appendSpace();
                 }
 
@@ -152,8 +221,6 @@ CSSFormatter = class CSSFormatter
                         this._builder.appendNewline();
                 }
             };
-
-            let c = this._sourceText[i];
 
             let specialSequenceEnd = null;
             if (quoteTypes.has(c))
@@ -182,12 +249,21 @@ CSSFormatter = class CSSFormatter
 
             if (/\s/.test(c)) {
                 if (c === `\n` && !this._builder.lastTokenWasNewline) {
-                    this._builder.removeLastWhitespace();
-                    this._builder.appendNewline();
-                } else if (!this._builder.lastTokenWasWhitespace && !removeSpaceAfter.has(this._sourceText[i - 1]))
+                    while (this._builder.lastTokenWasWhitespace)
+                        this._builder.removeLastWhitespace();
+                    if (!removeSpaceAfter.has(this._builder.lastToken))
+                        this._builder.appendNewline();
+                    else
+                        this._builder.appendSpace();
+                } else if (!this._builder.lastTokenWasWhitespace && !removeSpaceAfter.has(this._builder.lastToken))
                     this._builder.appendSpace();
                 continue;
             }
+
+            if (c === `{`)
+                ++depth;
+            else if (c === `}`)
+                --depth;
 
             formatBefore();
             this._builder.appendToken(c, i);
