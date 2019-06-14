@@ -1,3 +1,34 @@
+2019-06-14  Jer Noble  <jer.noble@apple.com>
+
+        CRASH(nullptr) in WebCore::jsAudioContextCurrentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=198859
+        <rdar://problem/27986991>
+
+        Reviewed by Eric Carlson.
+
+        AudioContext's m_destinationNode can become null during iframe teardown,
+        but can AudioContext methods can still be called by JavaScript. Add null-checks
+        to all (remaing) unprotected dereferences of m_destinationNode.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::uninitialize):
+        (WebCore::AudioContext::createBufferSource):
+        (WebCore::AudioContext::createScriptProcessor):
+        (WebCore::AudioContext::createBiquadFilter):
+        (WebCore::AudioContext::createPanner):
+        (WebCore::AudioContext::createConvolver):
+        (WebCore::AudioContext::createDynamicsCompressor):
+        (WebCore::AudioContext::createAnalyser):
+        (WebCore::AudioContext::createGain):
+        (WebCore::AudioContext::createDelay):
+        (WebCore::AudioContext::createChannelSplitter):
+        (WebCore::AudioContext::createChannelMerger):
+        (WebCore::AudioContext::createOscillator):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::currentSampleFrame const):
+        (WebCore::AudioContext::currentTime const):
+        (WebCore::AudioContext::sampleRate const):
+
 2019-06-14  Youenn Fablet  <youenn@apple.com>
 
         Cloning a MediaStreamTrack does not clone the logger

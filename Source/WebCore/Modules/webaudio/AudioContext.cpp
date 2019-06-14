@@ -267,7 +267,8 @@ void AudioContext::uninitialize()
         return;
 
     // This stops the audio thread and all audio rendering.
-    m_destinationNode->uninitialize();
+    if (m_destinationNode)
+        m_destinationNode->uninitialize();
 
     // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
     m_isAudioThreadFinished = true;
@@ -441,7 +442,7 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioContext::createBufferSource()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    Ref<AudioBufferSourceNode> node = AudioBufferSourceNode::create(*this, m_destinationNode->sampleRate());
+    Ref<AudioBufferSourceNode> node = AudioBufferSourceNode::create(*this, sampleRate());
 
     // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
     // When this happens, AudioScheduledSourceNode::finish() calls AudioContext::notifyNodeFinishedProcessing().
@@ -577,7 +578,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> AudioContext::createScriptProcessor(size_t
     if (numberOfOutputChannels > maxNumberOfChannels())
         return Exception { NotSupportedError };
 
-    auto node = ScriptProcessorNode::create(*this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
+    auto node = ScriptProcessorNode::create(*this, sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
 
     refNode(node); // context keeps reference until we stop making javascript rendering callbacks
     return node;
@@ -593,7 +594,7 @@ ExceptionOr<Ref<BiquadFilterNode>> AudioContext::createBiquadFilter()
 
     lazyInitialize();
 
-    return BiquadFilterNode::create(*this, m_destinationNode->sampleRate());
+    return BiquadFilterNode::create(*this, sampleRate());
 }
 
 ExceptionOr<Ref<WaveShaperNode>> AudioContext::createWaveShaper()
@@ -617,7 +618,7 @@ ExceptionOr<Ref<PannerNode>> AudioContext::createPanner()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return PannerNode::create(*this, m_destinationNode->sampleRate());
+    return PannerNode::create(*this, sampleRate());
 }
 
 ExceptionOr<Ref<ConvolverNode>> AudioContext::createConvolver()
@@ -629,7 +630,7 @@ ExceptionOr<Ref<ConvolverNode>> AudioContext::createConvolver()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return ConvolverNode::create(*this, m_destinationNode->sampleRate());
+    return ConvolverNode::create(*this, sampleRate());
 }
 
 ExceptionOr<Ref<DynamicsCompressorNode>> AudioContext::createDynamicsCompressor()
@@ -641,7 +642,7 @@ ExceptionOr<Ref<DynamicsCompressorNode>> AudioContext::createDynamicsCompressor(
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return DynamicsCompressorNode::create(*this, m_destinationNode->sampleRate());
+    return DynamicsCompressorNode::create(*this, sampleRate());
 }
 
 ExceptionOr<Ref<AnalyserNode>> AudioContext::createAnalyser()
@@ -653,7 +654,7 @@ ExceptionOr<Ref<AnalyserNode>> AudioContext::createAnalyser()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return AnalyserNode::create(*this, m_destinationNode->sampleRate());
+    return AnalyserNode::create(*this, sampleRate());
 }
 
 ExceptionOr<Ref<GainNode>> AudioContext::createGain()
@@ -665,7 +666,7 @@ ExceptionOr<Ref<GainNode>> AudioContext::createGain()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return GainNode::create(*this, m_destinationNode->sampleRate());
+    return GainNode::create(*this, sampleRate());
 }
 
 ExceptionOr<Ref<DelayNode>> AudioContext::createDelay(double maxDelayTime)
@@ -677,7 +678,7 @@ ExceptionOr<Ref<DelayNode>> AudioContext::createDelay(double maxDelayTime)
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return DelayNode::create(*this, m_destinationNode->sampleRate(), maxDelayTime);
+    return DelayNode::create(*this, sampleRate(), maxDelayTime);
 }
 
 ExceptionOr<Ref<ChannelSplitterNode>> AudioContext::createChannelSplitter(size_t numberOfOutputs)
@@ -689,7 +690,7 @@ ExceptionOr<Ref<ChannelSplitterNode>> AudioContext::createChannelSplitter(size_t
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    auto node = ChannelSplitterNode::create(*this, m_destinationNode->sampleRate(), numberOfOutputs);
+    auto node = ChannelSplitterNode::create(*this, sampleRate(), numberOfOutputs);
     if (!node)
         return Exception { IndexSizeError };
     return node.releaseNonNull();
@@ -704,7 +705,7 @@ ExceptionOr<Ref<ChannelMergerNode>> AudioContext::createChannelMerger(size_t num
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    auto node = ChannelMergerNode::create(*this, m_destinationNode->sampleRate(), numberOfInputs);
+    auto node = ChannelMergerNode::create(*this, sampleRate(), numberOfInputs);
     if (!node)
         return Exception { IndexSizeError };
     return node.releaseNonNull();
@@ -720,7 +721,7 @@ ExceptionOr<Ref<OscillatorNode>> AudioContext::createOscillator()
 
     lazyInitialize();
 
-    Ref<OscillatorNode> node = OscillatorNode::create(*this, m_destinationNode->sampleRate());
+    Ref<OscillatorNode> node = OscillatorNode::create(*this, sampleRate());
 
     // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
     // When this happens, AudioScheduledSourceNode::finish() calls AudioContext::notifyNodeFinishedProcessing().
