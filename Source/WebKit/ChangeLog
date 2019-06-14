@@ -1,3 +1,14 @@
+2019-06-14  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit's NSAttributedString.h is not included in the WebKit.h umbrella header
+        https://bugs.webkit.org/show_bug.cgi?id=198869
+        <rdar://problem/51754437>
+
+        Reviewed by Timothy Hatcher.
+
+        * Shared/API/Cocoa/WebKit.h:
+        Make the new API available to modularized clients and folks who just import WebKit.h
+
 2019-06-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Disable AppSSO for web processes and plugin processes

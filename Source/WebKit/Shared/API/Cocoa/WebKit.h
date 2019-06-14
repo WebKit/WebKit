@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/NSAttributedString.h>
 #import <WebKit/WKBackForwardList.h>
 #import <WebKit/WKBackForwardListItem.h>
 #import <WebKit/WKContentRuleList.h>
