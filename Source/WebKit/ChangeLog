@@ -1,3 +1,16 @@
+2019-06-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix selection hang in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=198845
+        <rdar://problem/51388180>
+
+        Reviewed by Tim Horton.
+
+        SelectionDidChange requires a selectionWillChange in order to keep things in line.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectionChanged]):
+
 2019-06-13  Tim Horton  <timothy_horton@apple.com>
 
         No content shows up for WKWebView while locked even with _canShowWhileLocked is YES
