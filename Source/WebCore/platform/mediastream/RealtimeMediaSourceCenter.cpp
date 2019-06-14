@@ -63,7 +63,7 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;
 
-void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, String&& hashSalt, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest& request)
+void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, NewMediaStreamHandler&& completionHandler, String&& hashSalt, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest& request)
 {
     Vector<Ref<RealtimeMediaSource>> audioSources;
     Vector<Ref<RealtimeMediaSource>> videoSources;
@@ -102,7 +102,7 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
         }
     }
 
-    completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
+    completionHandler(MediaStreamPrivate::create(WTFMove(logger), audioSources, videoSources));
 }
 
 Vector<CaptureDevice> RealtimeMediaSourceCenter::getMediaStreamDevices()

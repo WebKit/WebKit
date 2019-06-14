@@ -44,20 +44,28 @@
 
 namespace WebCore {
 
-Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<RealtimeMediaSource>&& source)
+Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source)
 {
-    return create(WTFMove(source), createCanonicalUUIDString());
+    return create(WTFMove(logger), WTFMove(source), createCanonicalUUIDString());
 }
 
-Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<RealtimeMediaSource>&& source, String&& id)
+Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id)
 {
-    return adoptRef(*new MediaStreamTrackPrivate(WTFMove(source), WTFMove(id)));
+    return adoptRef(*new MediaStreamTrackPrivate(WTFMove(logger), WTFMove(source), WTFMove(id)));
 }
 
-MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&& source, String&& id)
+MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id)
     : m_source(WTFMove(source))
     , m_id(WTFMove(id))
+    , m_logger(WTFMove(logger))
+#if !RELEASE_LOG_DISABLED
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
 {
+    UNUSED_PARAM(logger);
+#if !RELEASE_LOG_DISABLED
+    m_source->setLogger(m_logger.copyRef(), m_logIdentifier);
+#endif
     m_source->addObserver(*this);
 }
 
@@ -147,7 +155,8 @@ void MediaStreamTrackPrivate::endTrack()
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
 {
-    auto clonedMediaStreamTrackPrivate = create(m_source.copyRef());
+    auto clonedMediaStreamTrackPrivate = create(m_logger.copyRef(), m_source.copyRef());
+
     clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
     clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
     clonedMediaStreamTrackPrivate->m_contentHint = this->m_contentHint;
@@ -279,14 +288,6 @@ void MediaStreamTrackPrivate::updateReadyState()
 }
 
 #if !RELEASE_LOG_DISABLED
-void MediaStreamTrackPrivate::setLogger(const Logger& newLogger, const void* newLogIdentifier)
-{
-    m_logger = &newLogger;
-    m_logIdentifier = newLogIdentifier;
-    ALWAYS_LOG(LOGIDENTIFIER);
-    m_source->setLogger(newLogger, newLogIdentifier);
-}
-
 WTFLogChannel& MediaStreamTrackPrivate::logChannel() const
 {
     return LogWebRTC;

@@ -354,7 +354,8 @@ MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStrea
 {
     auto label = fromStdString(rtcStream.id());
     auto mediaStream = m_remoteStreamsById.ensure(label, [label, this]() mutable {
-        return MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), MediaStreamPrivate::create({ }, WTFMove(label)));
+        auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());
+        return MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, WTFMove(label)));
     });
     return *mediaStream.iterator->value;
 }

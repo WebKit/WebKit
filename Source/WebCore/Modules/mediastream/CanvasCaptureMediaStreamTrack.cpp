@@ -42,8 +42,13 @@ Ref<CanvasCaptureMediaStreamTrack> CanvasCaptureMediaStreamTrack::create(ScriptE
     return adoptRef(*new CanvasCaptureMediaStreamTrack(context, WTFMove(canvas), WTFMove(source)));
 }
 
+static inline Ref<const Logger> loggerFromContext(ScriptExecutionContext& context)
+{
+    return downcast<Document>(context).logger();
+}
+
 CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(ScriptExecutionContext& context, Ref<HTMLCanvasElement>&& canvas, Ref<CanvasCaptureMediaStreamTrack::Source>&& source)
-    : MediaStreamTrack(context, MediaStreamTrackPrivate::create(source.copyRef()))
+    : MediaStreamTrack(context, MediaStreamTrackPrivate::create(loggerFromContext(context), source.copyRef()))
     , m_canvas(WTFMove(canvas))
 {
 }

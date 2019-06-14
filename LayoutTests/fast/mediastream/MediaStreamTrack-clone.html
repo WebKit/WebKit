@@ -7,6 +7,7 @@
             var mediaStream;
             var videoTrack;
             var videoTrack2;
+            var videoTrack3;
             var audioTrack;
 
             function gotStream(stream) {
@@ -39,6 +40,9 @@
 
                 videoTrack.stop();
                 shouldNotBe('videoTrack.readyState', 'videoTrack2.readyState');
+
+                videoTrack3 = videoTrack.clone();
+                shouldBe('videoTrack.readyState', 'videoTrack3.readyState');
 
                 finishJSTest();
             }

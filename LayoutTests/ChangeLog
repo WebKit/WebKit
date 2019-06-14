@@ -1,3 +1,13 @@
+2019-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Cloning a MediaStreamTrack does not clone the logger
+        https://bugs.webkit.org/show_bug.cgi?id=198844
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStreamTrack-clone-expected.txt:
+        * fast/mediastream/MediaStreamTrack-clone.html:
+
 2019-06-14  Shawn Roberts  <sroberts@apple.com>
 
         webgpu/compute-squares.html test was deleted in https://trac.webkit.org/changeset/246427

@@ -73,9 +73,9 @@ public:
         virtual void didRemoveTrack(MediaStreamTrackPrivate&) { }
     };
 
-    static Ref<MediaStreamPrivate> create(Ref<RealtimeMediaSource>&&);
-    static Ref<MediaStreamPrivate> create(const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources);
-    static Ref<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector& tracks, String&& id = createCanonicalUUIDString()) { return adoptRef(*new MediaStreamPrivate(tracks, WTFMove(id))); }
+    static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
+    static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources);
+    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id = createCanonicalUUIDString()) { return adoptRef(*new MediaStreamPrivate(WTFMove(logger), tracks, WTFMove(id))); }
 
     virtual ~MediaStreamPrivate();
 
@@ -111,11 +111,12 @@ public:
     void monitorOrientation(OrientationNotifier&);
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*);
+    const Logger& logger() const final { return m_logger; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
 #endif
 
 private:
-    MediaStreamPrivate(const MediaStreamTrackPrivateVector&, String&&);
+    MediaStreamPrivate(Ref<const Logger>&&, const MediaStreamTrackPrivateVector&, String&&);
 
     // MediaStreamTrackPrivate::Observer
     void trackStarted(MediaStreamTrackPrivate&) override;
@@ -131,13 +132,8 @@ private:
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const final { return "MediaStreamPrivate"; }
     WTFLogChannel& logChannel() const final;
-
-    RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
 #endif
 
     HashSet<Observer*> m_observers;
@@ -145,6 +141,10 @@ private:
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
     HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;
     bool m_isActive { false };
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 typedef Vector<RefPtr<MediaStreamPrivate>> MediaStreamPrivateVector;

@@ -64,8 +64,8 @@ public:
         virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) { };
     };
 
-    static Ref<MediaStreamTrackPrivate> create(Ref<RealtimeMediaSource>&&);
-    static Ref<MediaStreamTrackPrivate> create(Ref<RealtimeMediaSource>&&, String&& id);
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id);
 
     virtual ~MediaStreamTrackPrivate();
 
@@ -117,13 +117,12 @@ public:
     void setIdForTesting(String&& id) { m_id = WTFMove(id); }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*);
-    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return m_logIdentifier; }
 #endif
-    
+
 private:
-    MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&&, String&& id);
+    MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id);
 
     // RealtimeMediaSourceObserver
     void sourceStarted() final;
@@ -141,9 +140,6 @@ private:
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamTrackPrivate"; }
     WTFLogChannel& logChannel() const final;
-
-    RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
 #endif
 
     mutable RecursiveLock m_observersLock;
@@ -157,6 +153,10 @@ private:
     bool m_haveProducedData { false };
     HintValue m_contentHint { HintValue::Empty };
     RefPtr<WebAudioSourceProvider> m_audioSourceProvider;
+    Ref<const Logger> m_logger;
+#if !RELEASE_LOG_DISABLED
+    const void* m_logIdentifier;
+#endif
 };
 
 typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;

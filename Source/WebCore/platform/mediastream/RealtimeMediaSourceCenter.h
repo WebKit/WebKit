@@ -59,12 +59,12 @@ public:
 
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
 
-    using ValidConstraintsHandler = WTF::Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs, String&&)>;
-    using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
+    using ValidConstraintsHandler = Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs, String&&)>;
+    using InvalidConstraintsHandler = Function<void(const String& invalidConstraint)>;
     WEBCORE_EXPORT void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
 
-    using NewMediaStreamHandler = WTF::Function<void(RefPtr<MediaStreamPrivate>&&)>;
-    void createMediaStream(NewMediaStreamHandler&&, String&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
+    using NewMediaStreamHandler = Function<void(RefPtr<MediaStreamPrivate>&&)>;
+    void createMediaStream(Ref<const Logger>&&, NewMediaStreamHandler&&, String&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT Vector<CaptureDevice> getMediaStreamDevices();
 

@@ -125,8 +125,8 @@ protected:
     MediaStream(ScriptExecutionContext&, Ref<MediaStreamPrivate>&&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    const Logger& logger() const final { return m_private->logger(); }
+    const void* logIdentifier() const final { return m_private->logIdentifier(); }
     WTFLogChannel& logChannel() const final;
     const char* logClassName() const final { return "MediaStream"; }
 #endif
@@ -186,11 +186,6 @@ private:
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
     MediaProducer::MediaStateFlags m_state { MediaProducer::IsNotPlaying };
-
-#if !RELEASE_LOG_DISABLED
-    Ref<Logger> m_logger;
-    const void* m_logIdentifier;
-#endif
 
     bool m_isActive { false };
     bool m_isProducingData { false };

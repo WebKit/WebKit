@@ -45,28 +45,34 @@
 
 namespace WebCore {
 
-Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<RealtimeMediaSource>&& source)
+Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source)
 {
-    return MediaStreamPrivate::create(MediaStreamTrackPrivateVector::from(MediaStreamTrackPrivate::create(WTFMove(source))));
+    auto loggerCopy = logger.copyRef();
+    return MediaStreamPrivate::create(WTFMove(logger), MediaStreamTrackPrivateVector::from(MediaStreamTrackPrivate::create(WTFMove(loggerCopy), WTFMove(source))));
 }
 
-Ref<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources)
+Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources)
 {
     MediaStreamTrackPrivateVector tracks;
     tracks.reserveInitialCapacity(audioSources.size() + videoSources.size());
 
     for (auto& source : audioSources)
-        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(source.copyRef()));
+        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(logger.copyRef(), source.copyRef()));
 
     for (auto& source : videoSources)
-        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(source.copyRef()));
+        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(logger.copyRef(), source.copyRef()));
 
-    return MediaStreamPrivate::create(tracks);
+    return MediaStreamPrivate::create(WTFMove(logger), tracks);
 }
 
-MediaStreamPrivate::MediaStreamPrivate(const MediaStreamTrackPrivateVector& tracks, String&& id)
+MediaStreamPrivate::MediaStreamPrivate(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id)
     : m_id(WTFMove(id))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(WTFMove(logger))
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
 {
+    UNUSED_PARAM(logger);
     ASSERT(!m_id.isEmpty());
 
     for (auto& track : tracks) {
@@ -345,13 +351,6 @@ void MediaStreamPrivate::monitorOrientation(OrientationNotifier& notifier)
 }
 
 #if !RELEASE_LOG_DISABLED
-void MediaStreamPrivate::setLogger(const Logger& newLogger, const void* newLogIdentifier)
-{
-    m_logger = &newLogger;
-    m_logIdentifier = newLogIdentifier;
-    ALWAYS_LOG(LOGIDENTIFIER);
-}
-
 WTFLogChannel& MediaStreamPrivate::logChannel() const
 {
     return LogWebRTC;

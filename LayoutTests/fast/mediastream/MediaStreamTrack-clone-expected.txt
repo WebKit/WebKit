@@ -20,6 +20,7 @@ PASS videoTrack.onunmute is not videoTrack2.onunmute
 PASS videoTrack.onended is not videoTrack2.onended
 PASS videoTrack.onoverconstrained is not videoTrack2.onoverconstrained
 PASS videoTrack.readyState is not videoTrack2.readyState
+PASS videoTrack.readyState is videoTrack3.readyState
 PASS successfullyParsed is true
 
 TEST COMPLETE

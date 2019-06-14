@@ -269,9 +269,10 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
 
 Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiverForSource(Ref<RealtimeMediaSource>&& source, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
 {
-    String trackID = source->persistentID();
-    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(WTFMove(source), WTFMove(trackID));
-    auto remoteTrack = MediaStreamTrack::create(*m_peerConnection.scriptExecutionContext(), WTFMove(remoteTrackPrivate));
+    auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
+    auto trackID = source->persistentID();
+    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(document.logger(), WTFMove(source), WTFMove(trackID));
+    auto remoteTrack = MediaStreamTrack::create(document, WTFMove(remoteTrackPrivate));
 
     return RTCRtpReceiver::create(*this, WTFMove(remoteTrack), WTFMove(backend));
 }

@@ -48,9 +48,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStream);
 
+static inline Ref<const Logger> loggerFromContext(ScriptExecutionContext& context)
+{
+    return downcast<Document>(context).logger();
+}
+
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
-    return MediaStream::create(context, MediaStreamPrivate::create({ }));
+    return MediaStream::create(context, MediaStreamPrivate::create(loggerFromContext(context), { }));
 }
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, MediaStream& stream)
@@ -79,20 +84,11 @@ static inline MediaStreamTrackPrivateVector createTrackPrivateVector(const Media
 
 MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
     : ActiveDOMObject(&context)
-    , m_private(MediaStreamPrivate::create(createTrackPrivateVector(tracks)))
+    , m_private(MediaStreamPrivate::create(document()->logger(), createTrackPrivateVector(tracks)))
     , m_mediaSession(PlatformMediaSession::create(*this))
-#if !RELEASE_LOG_DISABLED
-    , m_logger(document()->logger())
-    , m_logIdentifier(uniqueLogIdentifier())
-#endif
 {
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
-
-#if !RELEASE_LOG_DISABLED
-    ALWAYS_LOG(LOGIDENTIFIER);
-    m_private->setLogger(logger(), logIdentifier());
-#endif
 
     for (auto& track : tracks) {
         track->addObserver(*this);
@@ -109,15 +105,9 @@ MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate
     : ActiveDOMObject(&context)
     , m_private(WTFMove(streamPrivate))
     , m_mediaSession(PlatformMediaSession::create(*this))
-#if !RELEASE_LOG_DISABLED
-    , m_logger(document()->logger())
-    , m_logIdentifier(uniqueLogIdentifier())
-#endif
 {
-#if !RELEASE_LOG_DISABLED
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_private->setLogger(logger(), logIdentifier());
-#endif
+
     setIsActive(m_private->active());
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);

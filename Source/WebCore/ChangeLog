@@ -1,3 +1,55 @@
+2019-06-14  Youenn Fablet  <youenn@apple.com>
+
+        Cloning a MediaStreamTrack does not clone the logger
+        https://bugs.webkit.org/show_bug.cgi?id=198844
+
+        Reviewed by Eric Carlson.
+
+        Make MediaStream and MediaStreamTrack rely on their private versions for logging.
+        Move from a RefPtr version to a Ref so as to forbid nullptr crashes.
+        Make sure that RealtimeIncomingAudioSource and RealtimeIncomingVideoSource check for their logger before logging.
+        Covered by existing tests and updated test.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::loggerFromContext):
+        (WebCore::CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::loggerFromContext):
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::mediaStreamFromRTCStream):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::createReceiverForSource):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::create):
+        (WebCore::MediaStreamPrivate::MediaStreamPrivate):
+        (WebCore::MediaStreamPrivate::setLogger): Deleted.
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::create):
+        (WebCore::MediaStreamTrackPrivate::MediaStreamTrackPrivate):
+        (WebCore::MediaStreamTrackPrivate::clone):
+        (WebCore::MediaStreamTrackPrivate::setLogger): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::createMediaStream):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferPool):
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame):
+        (WebCore::RealtimeIncomingVideoSourceCocoa::OnFrame):
+
 2019-06-14  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserver rootMargin detection fails when `root` is an element

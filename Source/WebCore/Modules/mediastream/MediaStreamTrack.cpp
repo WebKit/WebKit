@@ -58,19 +58,12 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
-#if !RELEASE_LOG_DISABLED
-    , m_logger(document()->logger())
-    , m_logIdentifier(uniqueLogIdentifier())
-#endif
     , m_taskQueue(context)
     , m_isCaptureTrack(m_private->isCaptureTrack())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     suspendIfNeeded();
 
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
     m_private->addObserver(*this);
 
     if (auto document = this->document()) {

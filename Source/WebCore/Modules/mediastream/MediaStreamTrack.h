@@ -151,8 +151,8 @@ public:
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    const Logger& logger() const final { return m_private->logger(); }
+    const void* logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
 protected:
@@ -189,9 +189,6 @@ private:
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamTrack"; }
     WTFLogChannel& logChannel() const final;
-    
-    Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
 #endif
 
     Vector<Observer*> m_observers;

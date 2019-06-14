@@ -88,7 +88,7 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
 
 #if !RELEASE_LOG_DISABLED
     if (!(++m_chunksReceived % 200))
-        ALWAYS_LOG(LOGIDENTIFIER, "chunk ", m_chunksReceived);
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "chunk ", m_chunksReceived);
 #endif
 
     audioSamplesAvailable(mediaTime, audioBufferList, CAAudioStreamDescription(newDescription), numberOfFrames);
