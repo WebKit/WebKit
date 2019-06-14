@@ -535,8 +535,12 @@ macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scrat
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_poisonedVM[scratch], scratch
     unpoison(_g_CodeBlockPoison, scratch, scratch2)
+    move structureIDThenStructure, scratch2
+    rshifti NumberOfStructureIDEntropyBits, scratch2
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
-    loadp [scratch, structureIDThenStructure, PtrSize], structureIDThenStructure
+    loadp [scratch, scratch2, PtrSize], scratch2
+    lshiftp StructureEntropyBitsShift, structureIDThenStructure
+    xorp scratch2, structureIDThenStructure
 end
 
 macro loadStructureWithScratch(cell, structure, scratch, scratch2)
@@ -1175,7 +1179,7 @@ llintOpWithReturn(op_is_undefined, OpIsUndefined, macro (size, get, dispatch, re
     move ValueFalse, t1
     return(t1)
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t3, t1, t5)
+    loadStructureWithScratch(t0, t3, t1, t2)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     cpeq Structure::m_globalObject[t3], t1, t0
