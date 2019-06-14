@@ -1251,6 +1251,14 @@ void endTransparencyLayer(PlatformContextCairo& platformContext)
     cairo_paint_with_alpha(cr, platformContext.layers().takeLast());
 }
 
+static void doClipWithAntialias(cairo_t* cr, cairo_antialias_t antialias)
+{
+    auto savedAntialiasRule = cairo_get_antialias(cr);
+    cairo_set_antialias(cr, antialias);
+    cairo_clip(cr);
+    cairo_set_antialias(cr, savedAntialiasRule);
+}
+
 void clip(PlatformContextCairo& platformContext, const FloatRect& rect)
 {
     cairo_t* cr = platformContext.cr();
@@ -1262,11 +1270,8 @@ void clip(PlatformContextCairo& platformContext, const FloatRect& rect)
     // edge fringe artifacts may occur at the layer edges
     // when a transformation is applied to the GraphicsContext
     // while drawing the transformed layer.
-    cairo_antialias_t savedAntialiasRule = cairo_get_antialias(cr);
-    cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-    cairo_clip(cr);
+    doClipWithAntialias(cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_fill_rule(cr, savedFillRule);
-    cairo_set_antialias(cr, savedAntialiasRule);
 
     if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
         graphicsContextPrivate->clip(rect);
@@ -1281,7 +1286,7 @@ void clipOut(PlatformContextCairo& platformContext, const FloatRect& rect)
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-    cairo_clip(cr);
+    doClipWithAntialias(cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
@@ -1295,7 +1300,8 @@ void clipOut(PlatformContextCairo& platformContext, const Path& path)
 
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-    cairo_clip(cr);
+    // Enforce default antialias when clipping paths, since they can contain curves.
+    doClipWithAntialias(cr, CAIRO_ANTIALIAS_DEFAULT);
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
@@ -1308,7 +1314,8 @@ void clipPath(PlatformContextCairo& platformContext, const Path& path, WindRule 
 
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, clipRule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    cairo_clip(cr);
+    // Enforce default antialias when clipping paths, since they can contain curves.
+    doClipWithAntialias(cr, CAIRO_ANTIALIAS_DEFAULT);
     cairo_set_fill_rule(cr, savedFillRule);
 
     if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())

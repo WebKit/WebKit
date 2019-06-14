@@ -1,3 +1,21 @@
+2019-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [cairo] Entering text into forms on github.com creates a trapezoid artifact
+        https://bugs.webkit.org/show_bug.cgi?id=126124
+
+        Reviewed by Michael Catanzaro.
+
+        Mixing antialiasing modes in the same clip is not actually supported by cairo. In the case of rectangle clips we
+        are already ignoring the current antialiasing to not do any antialiasing. We could do the opposite for clips
+        receiving a path, we want to enforce antialiasing in that case since the paths might contain curves. Doing that
+        we ensure all calls to clip with a path use the same antialiasing, which is the case of the github bug.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::doClipWithAntialias): Helper to call cairo_clip() with the given antialising mode.
+        (WebCore::Cairo::clip): Use doClipWithAntialias().
+        (WebCore::Cairo::clipOut): Ditto.
+        (WebCore::Cairo::clipPath): Ditto.
+
 2019-06-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Remove unnecessary ASSERT()s and clean up visitor lambdas
