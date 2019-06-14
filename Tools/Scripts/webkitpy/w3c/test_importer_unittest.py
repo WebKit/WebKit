@@ -25,6 +25,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import os
 import unittest
 
 from webkitpy.common.host_mock import MockHost
@@ -208,6 +209,22 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html'))
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html'))
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/test-to-skip.html'))
+
+    def test_checkout_directory(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild2/w3c-tests/web-platform-tests/existing-test.html': '',
+            '/mock-checkout/WebKitBuild2/w3c-tests/csswg-tests/test.html': '1',
+        }
+
+        FAKE_FILES.update(FAKE_REPOSITORY)
+
+        os.environ['WEBKIT_OUTPUTDIR'] = '/mock-checkout/WebKitBuild2'
+        try:
+            fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        finally:
+            del os.environ['WEBKIT_OUTPUTDIR']
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test.html'))
 
     def test_clean_directory_option(self):
         FAKE_FILES = {

@@ -101,13 +101,13 @@ def is_file_exportable(path):
 
 
 class WPTPaths:
-    CHECKOUT_DIRECTORY = ["WebKitBuild", "w3c-tests"]
+    CHECKOUT_DIRECTORY = ["w3c-tests"]
     WPT_CHECKOUT_PATH = CHECKOUT_DIRECTORY + ["web-platform-tests"]
 
     @staticmethod
     def checkout_directory(finder):
-        return finder.path_from_webkit_base(*WPTPaths.CHECKOUT_DIRECTORY)
+        return finder.path_from_webkit_outputdir(*WPTPaths.CHECKOUT_DIRECTORY)
 
     @staticmethod
     def wpt_checkout_path(finder):
-        return finder.path_from_webkit_base(*WPTPaths.WPT_CHECKOUT_PATH)
+        return finder.path_from_webkit_outputdir(*WPTPaths.WPT_CHECKOUT_PATH)

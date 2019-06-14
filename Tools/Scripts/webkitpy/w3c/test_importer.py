@@ -79,7 +79,7 @@ import mimetypes
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.w3c.common import WPT_GH_URL
+from webkitpy.w3c.common import WPT_GH_URL, WPTPaths
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
@@ -169,7 +169,7 @@ class TestImporter(object):
         self.tests_w3c_relative_path = self.filesystem.join('imported', 'w3c')
         self.layout_tests_path = webkit_finder.path_from_webkit_base('LayoutTests')
         self.layout_tests_w3c_path = self.filesystem.join(self.layout_tests_path, self.tests_w3c_relative_path)
-        self.tests_download_path = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests')
+        self.tests_download_path = WPTPaths.checkout_directory(webkit_finder)
 
         self._test_downloader = None
 

@@ -1,3 +1,25 @@
+2019-06-14  Youenn Fablet  <youenn@apple.com>
+
+        import-w3c-tests should respect WEBKIT_OUTPUTDIR
+        https://bugs.webkit.org/show_bug.cgi?id=198682
+        <rdar://problem/51536931>
+
+        Reviewed by Jonathan Bedard.
+
+        Check for WEBKIT_OUTPUTDIR environment variable to compute the w3c-tests folder.
+        Made some refactoring to also teach WPTPaths users about WEBKIT_OUTPUTDIR.
+
+        * Scripts/webkitpy/common/webkit_finder.py:
+        (WebKitFinder.path_from_webkit_outputdir):
+        * Scripts/webkitpy/w3c/common.py:
+        (WPTPaths):
+        (WPTPaths.checkout_directory):
+        (WPTPaths.wpt_checkout_path):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (test_checkout_directory):
+
 2019-06-13  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r246103) [ Mojave+ WK1 ] Layout Test scrollbars/scrollbar-iframe-click-does-not-blur-content.html is timing out
