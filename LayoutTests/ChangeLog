@@ -1,3 +1,15 @@
+2019-06-13  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r246103) [ Mojave+ WK1 ] Layout Test scrollbars/scrollbar-iframe-click-does-not-blur-content.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=198800
+        <rdar://problem/51679634>
+
+        Reviewed by Tim Horton.
+
+        This test now passes reliably on WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-06-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up compute

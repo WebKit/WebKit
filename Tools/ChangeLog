@@ -1,3 +1,20 @@
+2019-06-13  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r246103) [ Mojave+ WK1 ] Layout Test scrollbars/scrollbar-iframe-click-does-not-blur-content.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=198800
+        <rdar://problem/51679634>
+
+        Reviewed by Tim Horton.
+
+        We didn't detect an NSScroller in a sub-frame due to WebHTMLView's implementation of -[NSView hitTest:]. We now use a private method
+        which lets us use the default implementation and correctly returns an NSScroller in a sub-frame.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (eventPressedMouseButtonsSwizzlerForViewAndEvent):
+        (-[EventSendingController mouseDown:withModifiers:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+
 2019-06-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WebKitTestRunner] pixel image dump outputs blank images

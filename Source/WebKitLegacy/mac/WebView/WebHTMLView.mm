@@ -846,7 +846,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
 - (DOMRange *)_selectedRange;
 #if PLATFORM(MAC)
-- (NSView *)_hitViewForEvent:(NSEvent *)event;
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
 #endif
 - (DOMRange *)_documentRange;
@@ -1336,16 +1335,6 @@ static NSControlStateValue kit(TriState state)
 }
 
 #if PLATFORM(MAC)
-
-- (NSView *)_hitViewForEvent:(NSEvent *)event
-{
-    // Usually, we hack AK's hitTest method to catch all events at the topmost WebHTMLView.  
-    // Callers of this method, however, want to query the deepest view instead.
-    forceNSViewHitTest = YES;
-    NSView *hitView = [(NSView *)[[self window] contentView] hitTest:[event locationInWindow]];
-    forceNSViewHitTest = NO;    
-    return hitView;
-}
 
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString
 {
@@ -2567,6 +2556,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (id)accessibilityRootElement
 {
     return [[self _frame] accessibilityRoot];
+}
+
+#endif
+
+#if PLATFORM(MAC)
+
+- (NSView *)_hitViewForEvent:(NSEvent *)event
+{
+    // Usually, we hack AK's hitTest method to catch all events at the topmost WebHTMLView.
+    // Callers of this method, however, want to query the deepest view instead.
+    forceNSViewHitTest = YES;
+    NSView *hitView = [(NSView *)[[self window] contentView] hitTest:[event locationInWindow]];
+    forceNSViewHitTest = NO;
+    return hitView;
 }
 
 #endif

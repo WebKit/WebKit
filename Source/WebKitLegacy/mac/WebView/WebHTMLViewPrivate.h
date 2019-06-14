@@ -147,4 +147,8 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (id)accessibilityRootElement;
 #endif
 
+#if !TARGET_OS_IPHONE
+- (NSView *)_hitViewForEvent:(NSEvent *)event;
+#endif
+
 @end

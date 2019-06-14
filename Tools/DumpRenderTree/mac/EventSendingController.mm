@@ -47,6 +47,7 @@
 #if !PLATFORM(IOS_FAMILY)
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
 #import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <objc/runtime.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
@@ -563,6 +564,13 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 }
 
 #if !PLATFORM(IOS_FAMILY)
+static std::unique_ptr<ClassMethodSwizzler> eventPressedMouseButtonsSwizzlerForViewAndEvent(NSView* view, NSEvent* event)
+{
+    if ([view isKindOfClass:[WebHTMLView class]])
+        view = [(WebHTMLView *)view _hitViewForEvent:event];
+    return ![view isKindOfClass:[NSScroller class]] ? std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
+}
+
 static NSUInteger swizzledEventPressedMouseButtons()
 {
     return mouseButtonsCurrentlyDown;
@@ -600,7 +608,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 #endif
         {
 #if !PLATFORM(IOS_FAMILY)
-            auto eventPressedMouseButtonsSwizzler = ![subView isKindOfClass:[NSScroller class]] ? std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
+            auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event);
 #endif
             [subView mouseDown:event];
         }
@@ -696,7 +704,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 #endif
     {
 #if !PLATFORM(IOS_FAMILY)
-        auto eventPressedMouseButtonsSwizzler = ![targetView isKindOfClass:[NSScroller class]] ? std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
+        auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(targetView, event);
 #endif
         [targetView mouseUp:event];
     }
@@ -786,14 +794,14 @@ static NSUInteger swizzledEventPressedMouseButtons()
                 [[mainFrame webView] draggingUpdated:draggingInfo];
             } else {
 #if !PLATFORM(IOS_FAMILY)
-                auto eventPressedMouseButtonsSwizzler = ![subView isKindOfClass:[NSScroller class]] ? std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
+                auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event);
 #endif
                 [subView mouseDragged:event];
             }
 #endif
         } else {
 #if !PLATFORM(IOS_FAMILY)
-            auto eventPressedMouseButtonsSwizzler = ![subView isKindOfClass:[NSScroller class]] ? std::make_unique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons)) : NULL;
+            auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event);
 #endif
             [subView mouseMoved:event];
         }
