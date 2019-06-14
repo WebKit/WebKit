@@ -1672,7 +1672,7 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(const Instruction*, PatchableJump& 
     load32(Address(base, JSArrayBufferView::offsetOfLength()), scratch2);
     slowCases.append(branch32(AboveOrEqual, property, scratch2));
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
-    cageConditionally(Gigacage::Primitive, scratch, scratch2);
+    cageConditionally(Gigacage::Primitive, scratch, scratch2, scratch2);
 
     switch (elementSize(type)) {
     case 1:
@@ -1736,7 +1736,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(const Instruction*, PatchableJump
     load32(Address(base, JSArrayBufferView::offsetOfLength()), scratch2);
     slowCases.append(branch32(AboveOrEqual, property, scratch2));
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
-    cageConditionally(Gigacage::Primitive, scratch, scratch2);
+    cageConditionally(Gigacage::Primitive, scratch, scratch2, scratch2);
     
     switch (elementSize(type)) {
     case 4:
@@ -1801,7 +1801,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Op bytecode, PatchableJump& badType
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
-    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2);
+    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2, lateScratch2);
     
     if (isClamped(type)) {
         ASSERT(elementSize(type) == 1);
@@ -1890,7 +1890,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Op bytecode, PatchableJump& badTy
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
-    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2);
+    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2, lateScratch2);
     
     switch (elementSize(type)) {
     case 4:

@@ -2873,7 +2873,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
                 TrustedImm32(WastefulTypedArray));
 
             JITCompiler::Jump hasNullVector;
-#if !GIGACAGE_ENABLED && CPU(ARM64E)
+#if CPU(ARM64E)
             {
                 GPRReg scratch = m_jit.scratchRegister();
                 DisallowMacroScratchRegisterUsage disallowScratch(m_jit);
@@ -2882,7 +2882,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
                 m_jit.removeArrayPtrTag(scratch);
                 hasNullVector = m_jit.branchTestPtr(MacroAssembler::Zero, scratch);
             }
-#else // !GIGACAGE_ENABLED && CPU(ARM64E)
+#else // CPU(ARM64E)
             hasNullVector = m_jit.branchTestPtr(
                 MacroAssembler::Zero,
                 MacroAssembler::Address(base, JSArrayBufferView::offsetOfVector()));
@@ -6760,6 +6760,13 @@ void SpeculativeJIT::compileConstantStoragePointer(Node* node)
 
 void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
 {
+#if CPU(ARM64E)
+    m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
+#else
+    UNUSED_PARAM(baseReg);
+    UNUSED_PARAM(storageReg);
+#endif
+
 #if GIGACAGE_ENABLED
     UNUSED_PARAM(baseReg);
     if (!Gigacage::shouldBeEnabled())
@@ -6772,12 +6779,7 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
             return;
     }
     
-    m_jit.cage(Gigacage::Primitive, storageReg);
-#elif CPU(ARM64E)
-    m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
-#else
-    UNUSED_PARAM(baseReg);
-    UNUSED_PARAM(storageReg);
+    m_jit.cageWithoutUntagging(Gigacage::Primitive, storageReg);
 #endif
 }
 
@@ -6841,7 +6843,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     JITCompiler::Jump nullVector = m_jit.branchTestPtr(JITCompiler::Zero, vectorGPR);
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
-    m_jit.cage(Gigacage::JSValue, dataGPR);
+    m_jit.cageWithoutUntagging(Gigacage::JSValue, dataGPR);
 
     cageTypedArrayStorage(baseGPR, vectorGPR);
 
@@ -9845,7 +9847,7 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
         MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesFour));
     m_jit.branchTest32(MacroAssembler::NonZero, scratchGPR).linkTo(loop, &m_jit);
     done.link(&m_jit);
-#if !GIGACAGE_ENABLED && CPU(ARM64E)
+#if CPU(ARM64E)
     // sizeGPR is still boxed as a number and there is no 32-bit variant of the PAC instructions.
     m_jit.zeroExtend32ToPtr(sizeGPR, scratchGPR);
     m_jit.tagArrayPtr(scratchGPR, storageGPR);

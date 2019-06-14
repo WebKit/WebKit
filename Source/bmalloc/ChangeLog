@@ -1,3 +1,12 @@
+2019-06-14  Keith Miller  <keith_miller@apple.com>
+
+        Restore PAC based cage.
+        https://bugs.webkit.org/show_bug.cgi?id=198872
+
+        Rubber-stamped by Saam Barati.
+
+        * bmalloc/Gigacage.h:
+
 2019-06-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r246322.

@@ -1554,43 +1554,74 @@ public:
         storeFence();
         ok.link(this);
     }
-    
-    void cage(Gigacage::Kind kind, GPRReg storage)
+
+    void cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)
     {
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
             return;
-        
+
+#if CPU(ARM64E)
+        RegisterID tempReg = InvalidGPRReg;
+        if (kind == Gigacage::Primitive) {
+            tempReg = getCachedMemoryTempRegisterIDAndInvalidate();
+            move(storage, tempReg);
+            // Flip the registers since bitFieldInsert only inserts into the low bits.
+            std::swap(storage, tempReg);
+        }
+#endif
         andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
         addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
+#if CPU(ARM64E)
+        if (kind == Gigacage::Primitive)
+            bitFieldInsert64(storage, 0, 64 - numberOfPACBits, tempReg);
+#endif
+
 #else
         UNUSED_PARAM(kind);
         UNUSED_PARAM(storage);
 #endif
     }
-    
-    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg scratchOrLength)
+
+    // length may be the same register as scratch.
+    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch)
     {
+#if CPU(ARM64E)
+        if (kind == Gigacage::Primitive)
+            untagArrayPtr(length, storage);
+#else
+        UNUSED_PARAM(kind);
+        UNUSED_PARAM(storage);
+        UNUSED_PARAM(length);
+#endif
+
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
             return;
         
         if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageDisabled())
-            return cage(kind, storage);
-        
-        loadPtr(&Gigacage::basePtr(kind), scratchOrLength);
-        Jump done = branchTestPtr(Zero, scratchOrLength);
-        andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
-        addPtr(scratchOrLength, storage);
-        done.link(this);
-#elif CPU(ARM64E)
-        if (kind == Gigacage::Primitive)
-            untagArrayPtr(scratchOrLength, storage);
+            cageWithoutUntagging(kind, storage);
+        else {
+            loadPtr(&Gigacage::basePtr(kind), scratch);
+            Jump done = branchTestPtr(Zero, scratch);
+#if CPU(ARM64E)
+            auto tempReg = getCachedMemoryTempRegisterIDAndInvalidate();
+            move(storage, tempReg);
+            andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
+            addPtr(scratch, tempReg);
+            bitFieldInsert64(tempReg, 0, 64 - numberOfPACBits, storage);
 #else
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(storage);
-        UNUSED_PARAM(scratchOrLength);
+            andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
+            addPtr(scratch, storage);
 #endif
+            done.link(this);
+
+
+        }
+#else
+        UNUSED_PARAM(scratch);
+#endif
+
     }
 
     void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)

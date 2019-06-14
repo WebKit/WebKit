@@ -126,6 +126,8 @@ class RegisterID
           arm64GPRName('x5', kind)
         when 't6'
           arm64GPRName('x6', kind)
+        when 't7'
+          arm64GPRName('x7', kind)
         when 'cfr'
             arm64GPRName('x29', kind)
         when 'csr0'
@@ -1019,6 +1021,8 @@ class Instruction
             $asm.puts "smaddl #{operands[2].arm64Operand(:quad)}, #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, xzr"
         when "memfence"
             $asm.puts "dmb sy"
+        when "bfiq"
+            $asm.puts "bfi #{operands[3].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[1].value}, #{operands[2].value}"
         when "pcrtoaddr"
             $asm.puts "adr #{operands[1].arm64Operand(:quad)}, #{operands[0].value}"
         when "nopCortexA53Fix835769"

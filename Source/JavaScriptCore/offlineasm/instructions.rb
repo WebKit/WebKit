@@ -273,6 +273,7 @@ ARM_INSTRUCTIONS =
 
 ARM64_INSTRUCTIONS =
     [
+     "bfiq", # Bit field insert <source reg> <last bit written> <width immediate> <dest reg>
      "pcrtoaddr",   # Address from PC relative offset - adr instruction
      "nopFixCortexA53Err835769", # nop on Cortex-A53 (nothing otherwise)
      "globaladdr"

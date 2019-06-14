@@ -491,15 +491,14 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restor
 
         patchpoint->append(instance, ValueRep::SomeRegister);
         patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            RELEASE_ASSERT(!Gigacage::isEnabled(Gigacage::Primitive) || !isARM64());
-            AllowMacroScratchRegisterUsageIf allowScratch(jit, !isARM64());
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
             GPRReg scratchOrSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs->sizeRegister;
 
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemorySize()), pinnedRegs->sizeRegister);
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), baseMemory);
 
-            jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
+            jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs->sizeRegister, scratchOrSize);
         });
     }
 }
@@ -1401,7 +1400,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
 
-            jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize);
+            jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs.sizeRegister, scratchOrSize);
         });
         doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
