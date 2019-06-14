@@ -1,0 +1,3 @@
+
+PASS Testing that the "button" and "buttons" properties report the expected values. 
+

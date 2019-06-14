@@ -69,7 +69,9 @@ class EventTracker
             y: event.clientY,
             pressure: event.pressure,
             isPrimary: event.isPrimary,
-            isTrusted: event.isTrusted
+            isTrusted: event.isTrusted,
+            button: event.button,
+            buttons: event.buttons
         });
     }
 

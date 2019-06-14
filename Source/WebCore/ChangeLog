@@ -1,3 +1,18 @@
+2019-06-14  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] button property is -1 for pointerdown and pointerup
+        https://bugs.webkit.org/show_bug.cgi?id=198868
+        <rdar://problem/51758109>
+
+        Reviewed by Dean Jackson.
+
+        A value of -1 for "button", which means there was no change of pressed button since the last event, should only ever be used for "pointermove" events.
+
+        Test: pointerevents/mouse/pointer-button-and-buttons.html
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::pointerEventForMouseEvent):
+
 2019-06-14  Megan Gardner  <megan_gardner@apple.com>
 
         Move Synthetic Editing Commands to behind an experimental feature flag

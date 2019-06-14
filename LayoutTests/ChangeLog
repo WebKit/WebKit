@@ -1,3 +1,16 @@
+2019-06-14  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] button property is -1 for pointerdown and pointerup
+        https://bugs.webkit.org/show_bug.cgi?id=198868
+        <rdar://problem/51758109>
+
+        Reviewed by Dean Jackson.
+
+        * pointerevents/mouse/pointer-button-and-buttons-expected.txt: Added.
+        * pointerevents/mouse/pointer-button-and-buttons.html: Added.
+        * pointerevents/utils.js:
+        (prototype._handlePointerEvent):
+
 2019-06-14  John Wilander  <wilander@apple.com>
 
         Move http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html off of testRunner.setAlwaysAcceptCookies()
