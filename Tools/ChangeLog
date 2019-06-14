@@ -1,3 +1,17 @@
+2019-06-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WebKitTestRunner] pixel image dump outputs blank images
+        https://bugs.webkit.org/show_bug.cgi?id=198820
+
+        Reviewed by Ross Kirsling.
+
+        WebView window paints nothing because it is moved out of the
+        screen. Send WM_PRINT with memory DC instead of WM_PAINT as well
+        as DumpRenderTree does.
+
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage): Send WM_PRINT instead of BitBlt.
+
 2019-06-13  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible for validate-committer-lists to dump a mailmap file
