@@ -33,8 +33,6 @@
 		0F5BF1731F23C5710029D91D /* BExport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1721F23C5710029D91D /* BExport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F74B93E1F89713E00B935D3 /* CryptoRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F74B93C1F89713E00B935D3 /* CryptoRandom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F74B93F1F89713E00B935D3 /* CryptoRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */; };
-		0F7EB7F21F95285300F1ABCB /* testbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EB7F11F95285300F1ABCB /* testbmalloc.cpp */; };
-		0F7EB7FA1F95414C00F1ABCB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
 		0F7EB8231F9541B000F1ABCB /* EligibilityResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7EB7FC1F9541AD00F1ABCB /* EligibilityResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7EB8241F9541B000F1ABCB /* IsoHeapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7EB7FD1F9541AD00F1ABCB /* IsoHeapImplInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7EB8251F9541B000F1ABCB /* DeferredTriggerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7EB7FE1F9541AD00F1ABCB /* DeferredTriggerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -143,13 +141,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0F7EB7F71F95412900F1ABCB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 145F6837179DC45F00D65598 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 14F271BD18EA3963008C152F;
-			remoteInfo = bmalloc;
-		};
 		0F7EB8551F95505400F1ABCB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 145F6837179DC45F00D65598 /* Project object */;
@@ -166,18 +157,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		0F7EB7ED1F95285300F1ABCB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		0F26A7A42054830D0090A141 /* PerProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerProcess.cpp; path = bmalloc/PerProcess.cpp; sourceTree = "<group>"; };
 		0F5167731FAD6852008236A8 /* bmalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bmalloc.cpp; path = bmalloc/bmalloc.cpp; sourceTree = "<group>"; };
@@ -191,8 +170,6 @@
 		0F5BF1721F23C5710029D91D /* BExport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BExport.h; path = bmalloc/BExport.h; sourceTree = "<group>"; };
 		0F74B93C1F89713E00B935D3 /* CryptoRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoRandom.h; path = bmalloc/CryptoRandom.h; sourceTree = "<group>"; };
 		0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoRandom.cpp; path = bmalloc/CryptoRandom.cpp; sourceTree = "<group>"; };
-		0F7EB7EF1F95285300F1ABCB /* testbmalloc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testbmalloc; sourceTree = BUILT_PRODUCTS_DIR; };
-		0F7EB7F11F95285300F1ABCB /* testbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testbmalloc.cpp; sourceTree = "<group>"; };
 		0F7EB7FC1F9541AD00F1ABCB /* EligibilityResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EligibilityResult.h; path = bmalloc/EligibilityResult.h; sourceTree = SOURCE_ROOT; };
 		0F7EB7FD1F9541AD00F1ABCB /* IsoHeapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoHeapImplInlines.h; path = bmalloc/IsoHeapImplInlines.h; sourceTree = SOURCE_ROOT; };
 		0F7EB7FE1F9541AD00F1ABCB /* DeferredTriggerInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredTriggerInlines.h; path = bmalloc/DeferredTriggerInlines.h; sourceTree = SOURCE_ROOT; };
@@ -306,14 +283,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0F7EB7EC1F95285300F1ABCB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0F7EB7FA1F95414C00F1ABCB /* libbmalloc.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		14CC394118EA8743004AFE34 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -333,14 +302,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0F7EB7F01F95285300F1ABCB /* test */ = {
-			isa = PBXGroup;
-			children = (
-				0F7EB7F11F95285300F1ABCB /* testbmalloc.cpp */,
-			);
-			path = test;
-			sourceTree = "<group>";
-		};
 		0F7EB7F91F95414C00F1ABCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -421,14 +382,12 @@
 				0F7EB7FB1F95416900F1ABCB /* iso */,
 				145F6840179DC45F00D65598 /* Products */,
 				14D9DB4F17F2868900EAAB79 /* stdlib */,
-				0F7EB7F01F95285300F1ABCB /* test */,
 			);
 			sourceTree = "<group>";
 		};
 		145F6840179DC45F00D65598 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0F7EB7EF1F95285300F1ABCB /* testbmalloc */,
 				14F271BE18EA3963008C152F /* libbmalloc.a */,
 				14CC394418EA8743004AFE34 /* libmbmalloc.dylib */,
 			);
@@ -665,24 +624,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0F7EB7EE1F95285300F1ABCB /* testbmalloc */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0F7EB7F61F95285300F1ABCB /* Build configuration list for PBXNativeTarget "testbmalloc" */;
-			buildPhases = (
-				0F7EB7EB1F95285300F1ABCB /* Sources */,
-				0F7EB7EC1F95285300F1ABCB /* Frameworks */,
-				0F7EB7ED1F95285300F1ABCB /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0F7EB7F81F95412900F1ABCB /* PBXTargetDependency */,
-			);
-			name = testbmalloc;
-			productName = testbmalloc;
-			productReference = 0F7EB7EF1F95285300F1ABCB /* testbmalloc */;
-			productType = "com.apple.product-type.tool";
-		};
 		14CC394318EA8743004AFE34 /* mbmalloc */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14CC394518EA8743004AFE34 /* Build configuration list for PBXNativeTarget "mbmalloc" */;
@@ -727,10 +668,6 @@
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
-					0F7EB7EE1F95285300F1ABCB = {
-						CreatedOnToolsVersion = 9.0;
-						ProvisioningStyle = Manual;
-					};
 					0F7EB8501F95504B00F1ABCB = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
@@ -752,20 +689,11 @@
 				0F7EB8501F95504B00F1ABCB /* All */,
 				14F271BD18EA3963008C152F /* bmalloc */,
 				14CC394318EA8743004AFE34 /* mbmalloc */,
-				0F7EB7EE1F95285300F1ABCB /* testbmalloc */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0F7EB7EB1F95285300F1ABCB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0F7EB7F21F95285300F1ABCB /* testbmalloc.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		14CC394018EA8743004AFE34 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -812,11 +740,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0F7EB7F81F95412900F1ABCB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 14F271BD18EA3963008C152F /* bmalloc */;
-			targetProxy = 0F7EB7F71F95412900F1ABCB /* PBXContainerItemProxy */;
-		};
 		0F7EB8561F95505400F1ABCB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 14F271BD18EA3963008C152F /* bmalloc */;
@@ -830,30 +753,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0F7EB7F31F95285300F1ABCB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		0F7EB7F41F95285300F1ABCB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		0F7EB7F51F95285300F1ABCB /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14B650C518F39F4800751968 /* Base.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
-		};
 		0F7EB8521F95504B00F1ABCB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -948,16 +847,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0F7EB7F61F95285300F1ABCB /* Build configuration list for PBXNativeTarget "testbmalloc" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0F7EB7F31F95285300F1ABCB /* Debug */,
-				0F7EB7F41F95285300F1ABCB /* Release */,
-				0F7EB7F51F95285300F1ABCB /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		0F7EB8511F95504B00F1ABCB /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
