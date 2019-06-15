@@ -484,7 +484,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
 
     if (!left && !width && right) {
         // #1
-        width = shrinkToFitWidth(layoutState, layoutBox, usedValues);
+        // Calculate the available width by solving for 'width' after setting 'left' (in case 1) to 0
+        left = LayoutUnit { 0 };
+        auto availableWidth = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+        width = shrinkToFitWidth(layoutState, layoutBox, UsedHorizontalValues { availableWidth, usedValues.width, usedValues.margin });
         left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight  + borderRight + usedHorizontalMargin.end + *right);
     } else if (!left && !right && width) {
         // #2
@@ -498,7 +501,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         }
     } else if (!width && !right && left) {
         // #3
-        width = shrinkToFitWidth(layoutState, layoutBox, usedValues);
+        // Calculate the available width by solving for 'width' after setting 'right' (in case 3) to 0
+        right = LayoutUnit { 0 };
+        auto availableWidth = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+        width = shrinkToFitWidth(layoutState, layoutBox, UsedHorizontalValues { availableWidth, usedValues.width, usedValues.margin });
         right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
     } else if (!left && width && right) {
         // #4
