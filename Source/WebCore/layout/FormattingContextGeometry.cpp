@@ -466,25 +466,17 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         } else if (!computedHorizontalMargin.start) {
             usedHorizontalMargin.end = *computedHorizontalMargin.end;
             usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
-            // Overconstrained? Ignore right (left).
-            if (usedHorizontalMargin.start < 0) {
-                if (isLeftToRightDirection)
-                    usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
-                else
-                    usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
-            }
         } else if (!computedHorizontalMargin.end) {
             usedHorizontalMargin.start = *computedHorizontalMargin.start;
             usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + *right);
-            // Overconstrained? Ignore right (left).
-            if (usedHorizontalMargin.end < 0) {
-                if (isLeftToRightDirection)
-                    usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight);
-                else
-                    usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + *right);
-            }
-        } else
+        } else {
             usedHorizontalMargin = { *computedHorizontalMargin.start, *computedHorizontalMargin.end };
+            // Overconstrained? Ignore right (left).
+            if (isLeftToRightDirection)
+                right = containingBlockWidth - (usedHorizontalMargin.start + *left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
+            else
+                left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+        }
     } else {
         // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
         usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
