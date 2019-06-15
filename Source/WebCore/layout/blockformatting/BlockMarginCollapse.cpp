@@ -451,7 +451,7 @@ static PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMarg
         computedValues.negative = a.negative ? a.negative : b.negative;
 
     if (a.isNonZero() && b.isNonZero())
-        computedValues.isQuirk = a.isQuirk && b.isQuirk;
+        computedValues.isQuirk = a.isQuirk || b.isQuirk;
     else if (a.isNonZero())
         computedValues.isQuirk = a.isQuirk;
     else
