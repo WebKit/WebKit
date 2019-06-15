@@ -384,12 +384,13 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Layout
     if (hasPaddingBefore(layoutBox) || hasPaddingAfter(layoutBox))
         return false;
 
-    // FIXME: Check for computed 0 height.
-    if (!layoutBox.style().height().isAuto())
+    auto& style = layoutBox.style();
+    auto computedHeightValueIsZero = style.height().isFixed() && !style.height().value();
+    if (!(style.height().isAuto() || computedHeightValueIsZero))
         return false;
 
     // FIXME: Check for computed 0 height.
-    if (!layoutBox.style().minHeight().isAuto())
+    if (!style.minHeight().isAuto())
         return false;
 
     // FIXME: Block replaced boxes clearly don't collapse through their margins, but I couldn't find it in the spec yet (and no, it's not a quirk).
