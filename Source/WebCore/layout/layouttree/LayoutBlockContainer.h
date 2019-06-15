@@ -42,7 +42,7 @@ public:
     BlockContainer(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = BlockContainerFlag);
 
     bool establishesInlineFormattingContext() const final;
-
+    bool establishesInlineFormattingContextOnly() const final;
 };
 
 }

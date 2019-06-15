@@ -165,6 +165,30 @@ void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutState << " root: " << &root());
 }
 
+static LayoutUnit mapHorizontalPositionToAncestor(const LayoutState& layoutState, LayoutUnit horizontalPosition, const Container& containingBlock, const Container& ancestor)
+{
+    // "horizontalPosition" is in the coordinate system of the "containingBlock". -> map from containingBlock to ancestor.
+    if (&containingBlock == &ancestor)
+        return horizontalPosition;
+    ASSERT(containingBlock.isDescendantOf(ancestor));
+    for (auto* container = &containingBlock; container && container != &ancestor; container = container->containingBlock())
+        horizontalPosition += layoutState.displayBoxForLayoutBox(*container).left();
+    return horizontalPosition;
+}
+
+// FIXME: turn these into templates.
+LayoutUnit FormattingContext::mapLeftToAncestor(const LayoutState& layoutState, const Box& layoutBox, const Container& ancestor)
+{
+    ASSERT(layoutBox.containingBlock());
+    return mapHorizontalPositionToAncestor(layoutState, layoutState.displayBoxForLayoutBox(layoutBox).left(), *layoutBox.containingBlock(), ancestor);
+}
+
+LayoutUnit FormattingContext::mapRightToAncestor(const LayoutState& layoutState, const Box& layoutBox, const Container& ancestor)
+{
+    ASSERT(layoutBox.containingBlock());
+    return mapHorizontalPositionToAncestor(layoutState, layoutState.displayBoxForLayoutBox(layoutBox).right(), *layoutBox.containingBlock(), ancestor);
+}
+
 Display::Box FormattingContext::mapBoxToAncestor(const LayoutState& layoutState, const Box& layoutBox, const Container& ancestor)
 {
     ASSERT(layoutBox.isDescendantOf(ancestor));
@@ -196,7 +220,7 @@ LayoutUnit FormattingContext::mapTopToAncestor(const LayoutState& layoutState, c
     return top;
 }
 
-Point FormattingContext::mapCoordinateToAncestor(const LayoutState& layoutState, Point position, const Container& containingBlock, const Container& ancestor)
+Point FormattingContext::mapPointToAncestor(const LayoutState& layoutState, Point position, const Container& containingBlock, const Container& ancestor)
 {
     auto mappedPosition = position;
     auto* container = &containingBlock;

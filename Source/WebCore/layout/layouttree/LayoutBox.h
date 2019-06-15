@@ -78,6 +78,7 @@ public:
     bool establishesBlockFormattingContext() const;
     bool establishesBlockFormattingContextOnly() const;
     virtual bool establishesInlineFormattingContext() const { return false; }
+    virtual bool establishesInlineFormattingContextOnly() const { return false; }
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
     bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
@@ -91,6 +92,7 @@ public:
     bool isLeftFloatingPositioned() const;
     bool isRightFloatingPositioned() const;
     bool hasFloatClear() const;
+    bool isFloatAvoider() const;
 
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 

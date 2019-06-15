@@ -55,9 +55,11 @@ private:
     void layoutFormattingContextRoot(FloatingContext&, const Box&) const;
     void placeInFlowPositionedChildren(const Box&) const;
 
-    void computeWidthAndMargin(const Box&) const;
+    void computeWidthAndMargin(const Box&, Optional<LayoutUnit> usedAvailableWidth = { }) const;
     void computeHeightAndMargin(const Box&) const;
 
+    void computeStaticHorizontalPosition(const Box&) const;
+    void computeStaticVerticalPosition(const FloatingContext&, const Box&) const;
     void computeStaticPosition(const FloatingContext&, const Box&) const;
     void computeFloatingPosition(const FloatingContext&, const Box&) const;
     void computePositionToAvoidFloats(const FloatingContext&, const Box&) const;
@@ -77,6 +79,8 @@ private:
         static WidthAndMargin inFlowWidthAndMargin(const LayoutState&, const Box&, UsedHorizontalValues);
 
         static Point staticPosition(const LayoutState&, const Box&);
+        static LayoutUnit staticVerticalPosition(const LayoutState&, const Box&);
+        static LayoutUnit staticHorizontalPosition(const LayoutState&, const Box&);
 
         static bool intrinsicWidthConstraintsNeedChildrenWidth(const Box&);
         static IntrinsicWidthConstraints intrinsicWidthConstraints(const LayoutState&, const Box&);
@@ -131,6 +135,7 @@ private:
     void setEstimatedMarginBefore(const Box&, const EstimatedMarginBefore&) const;
     void removeEstimatedMarginBefore(const Box& layoutBox) const { m_estimatedMarginBeforeList.remove(&layoutBox); }
     bool hasEstimatedMarginBefore(const Box&) const;
+    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&) const;
 #ifndef NDEBUG
     EstimatedMarginBefore estimatedMarginBefore(const Box& layoutBox) const { return m_estimatedMarginBeforeList.get(&layoutBox); }
     bool hasPrecomputedMarginBefore(const Box&) const;

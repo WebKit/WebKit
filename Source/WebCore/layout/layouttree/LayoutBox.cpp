@@ -134,6 +134,11 @@ bool Box::hasFloatClear() const
     return m_style.clear() != Clear::None;
 }
 
+bool Box::isFloatAvoider() const
+{
+    return establishesBlockFormattingContext() || isFloatingPositioned();
+}
+
 const Container* Box::containingBlock() const
 {
     // The containing block in which the root element lives is a rectangle called the initial containing block.

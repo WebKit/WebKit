@@ -121,7 +121,7 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
     auto adjustedPosition = Point { 0, verticalPosition };
 
     if (coordinateMappingIsRequired)
-        adjustedPosition = FormattingContext::mapCoordinateToAncestor(m_layoutState, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
+        adjustedPosition = FormattingContext::mapPointToAncestor(m_layoutState, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
 
     Constraints constraints;
     for (int index = m_floats.size() - 1; index >= 0; --index) {

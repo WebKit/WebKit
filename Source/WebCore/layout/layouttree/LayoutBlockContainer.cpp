@@ -53,6 +53,11 @@ bool BlockContainer::establishesInlineFormattingContext() const
     return false;
 }
 
+bool BlockContainer::establishesInlineFormattingContextOnly() const
+{
+    return establishesInlineFormattingContext() && !establishesBlockFormattingContext();
+}
+
 }
 }
 

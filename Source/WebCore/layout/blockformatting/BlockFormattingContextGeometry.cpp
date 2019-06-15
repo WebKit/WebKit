@@ -222,25 +222,29 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(co
     return { *usedValues.width, nonReplacedWidthAndMargin.usedMargin, nonReplacedWidthAndMargin.computedMargin };
 }
 
-Point BlockFormattingContext::Geometry::staticPosition(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const LayoutState& layoutState, const Box& layoutBox)
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
-    // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
-
-    LayoutUnit top;
-    auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock());
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
-        top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginAfter();
-    } else
-        top = containingBlockDisplayBox.contentBoxTop();
+        return previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginAfter();
+    }
+    return layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxTop();
+}
 
-    auto left = containingBlockDisplayBox.contentBoxLeft() + layoutState.displayBoxForLayoutBox(layoutBox).marginStart();
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
-    return { left, top };
+LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const LayoutState& layoutState, const Box& layoutBox)
+{
+    // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
+    // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
+    return layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxLeft() + layoutState.displayBoxForLayoutBox(layoutBox).marginStart();
+}
+
+Point BlockFormattingContext::Geometry::staticPosition(const LayoutState& layoutState, const Box& layoutBox)
+{
+    return { staticHorizontalPosition(layoutState, layoutBox), staticVerticalPosition(layoutState, layoutBox) };
 }
 
 HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)

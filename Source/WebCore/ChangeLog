@@ -1,3 +1,48 @@
+2019-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Fix available width for non-floating positioned float avoiders.
+        https://bugs.webkit.org/show_bug.cgi?id=198886
+        <rdar://problem/51773643>
+
+        Reviewed by Antti Koivisto.
+
+        Normally the available width for an in-flow block level box is the width of the containing block's content box.
+        However a non-floating positioned float avoider box might be constrained by existing floats.
+        The idea here is that we pre-compute(estimate) the vertical position and check the current floating context for
+        left and right floats. These floats contrain the available width and this computed value should be used instead of the containing block's
+        content box's width whe calculating the used width for width: auto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::mapHorizontalPositionToAncestor):
+        (WebCore::Layout::FormattingContext::mapLeftToAncestor):
+        (WebCore::Layout::FormattingContext::mapRightToAncestor):
+        (WebCore::Layout::FormattingContext::mapPointToAncestor):
+        (WebCore::Layout::FormattingContext::mapCoordinateToAncestor): Deleted.
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFormattingRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const):
+        * layout/layouttree/LayoutBlockContainer.cpp:
+        (WebCore::Layout::BlockContainer::establishesInlineFormattingContextOnly const):
+        * layout/layouttree/LayoutBlockContainer.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isFloatAvoider const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::establishesInlineFormattingContextOnly const):
+
 2019-06-15  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] Stop accessing GdkEvent fields when possible
