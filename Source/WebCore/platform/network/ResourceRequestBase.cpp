@@ -357,6 +357,15 @@ void ResourceRequestBase::clearHTTPContentType()
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::clearPurpose()
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove(HTTPHeaderName::Purpose);
+
+    m_platformRequestUpdated = false;
+}
+
 String ResourceRequestBase::httpReferrer() const
 {
     return httpHeaderField(HTTPHeaderName::Referer);

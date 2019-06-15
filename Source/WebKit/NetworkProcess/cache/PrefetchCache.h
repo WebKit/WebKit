@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
@@ -46,15 +47,18 @@ public:
 
     struct Entry {
         Entry(WebCore::ResourceResponse&&, RefPtr<WebCore::SharedBuffer>&&);
+        Entry(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 
         Ref<WebCore::SharedBuffer> releaseBuffer() { return buffer.releaseNonNull(); }
 
         WebCore::ResourceResponse response;
         RefPtr<WebCore::SharedBuffer> buffer;
+        WebCore::ResourceRequest redirectRequest;
     };
 
     std::unique_ptr<Entry> take(const URL&);
     void store(const URL&, WebCore::ResourceResponse&&, RefPtr<WebCore::SharedBuffer>&&);
+    void storeRedirect(const URL&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 
 private:
     void clearExpiredEntries();

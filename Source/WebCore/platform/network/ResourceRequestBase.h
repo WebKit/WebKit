@@ -140,6 +140,8 @@ public:
 
     void clearHTTPAcceptEncoding();
 
+    WEBCORE_EXPORT void clearPurpose();
+
     const Vector<String>& responseContentDispositionEncodingFallbackArray() const { return m_responseContentDispositionEncodingFallbackArray; }
     WEBCORE_EXPORT void setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2 = String(), const String& encoding3 = String());
 

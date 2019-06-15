@@ -164,7 +164,7 @@ private:
 #endif
 
     void continueWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, Optional<WebCore::AdClickAttribution::Conversion>&&);
-    void didFinishWithRedirectResponse(WebCore::ResourceResponse&&);
+    void didFinishWithRedirectResponse(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
     // ContentSecurityPolicyClient

@@ -4416,6 +4416,8 @@ webkit.org/b/197310 fast/harness/render-tree-as-text-options.html [ Failure ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
 
+webkit.org/b/197371 http/wpt/prefetch/link-prefetch-main-resource-redirect.html [ Skip ]
+
 webkit.org/b/198112 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 
 webkit.org/b/198679 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
