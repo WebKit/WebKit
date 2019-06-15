@@ -89,5 +89,3 @@ webkit.org/b/192501 animations/play-state-in-shorthand.html [ Pass Failure ]
 webkit.org/b/182849 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm [ Pass Failure ]
 
 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Slow ]
-
-webkit.org/b/198185 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Skip ]

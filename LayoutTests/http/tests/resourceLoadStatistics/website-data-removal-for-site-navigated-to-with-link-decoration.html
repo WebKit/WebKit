@@ -75,35 +75,95 @@
         }
     }
 
+    const maxIntervals = 20;
+
+    let intervalCounterIDB;
+    let checkIDBCallback;
+    let checkIDBIntervalID;
+    let semaphoreIDBCheck = false;
     function checkIDBDataStoreExists(isAfterDeletion, callback) {
-        let request = indexedDB.open(dbName);
-        request.onerror = function() {
-            addOutput("Couldn't open indexedDB.");
-            finishTest();
-        };
-        request.onupgradeneeded = function () {
-            addOutput((isAfterDeletion ? "After" : "Before") + " deletion: IDB entry does not exist.");
-            callback();
-        };
-        request.onsuccess = function() {
-            addOutput((isAfterDeletion ? "After" : "Before") + " deletion: IDB entry does exist.");
-            callback();
-        };
+        let request;
+        intervalCounterIDB = 0;
+        checkIDBCallback = callback;
+        if (!isAfterDeletion) {
+            // Check until there is a IDB.
+            checkIDBIntervalID = setInterval(function() {
+                if (semaphoreIDBCheck)
+                    return;
+                semaphoreIDBCheck = true;
+
+                if (++intervalCounterIDB >= maxIntervals) {
+                    clearInterval(checkIDBIntervalID);
+                    addOutput("Before deletion: IDB entry does not exist.");
+                    semaphoreIDBCheck = false;
+                    checkIDBCallback();
+                } else {
+                    request = indexedDB.open(dbName);
+                    request.onerror = function () {
+                        clearInterval(checkIDBIntervalID);
+                        addOutput("Couldn't open indexedDB.");
+                        semaphoreIDBCheck = false;
+                        finishTest();
+                    };
+                    request.onupgradeneeded = function () {
+                        // Let the next interval check again.
+                        semaphoreIDBCheck = false;
+                    };
+                    request.onsuccess = function () {
+                        clearInterval(checkIDBIntervalID);
+                        addOutput("Before deletion: IDB entry does exist.");
+                        semaphoreIDBCheck = false;
+                        checkIDBCallback();
+                    };
+                }
+            }, 200);
+        } else {
+            // Check until there is no IDB.
+            checkIDBIntervalID = setInterval(function () {
+                if (semaphoreIDBCheck)
+                    return;
+                semaphoreIDBCheck = true;
+
+                if (++intervalCounterIDB >= maxIntervals) {
+                    clearInterval(checkIDBIntervalID);
+                    addOutput("Before deletion: IDB entry does not exist.");
+                    semaphoreIDBCheck = false;
+                    checkIDBCallback();
+                } else {
+                    request = indexedDB.open(dbName);
+                    request.onerror = function () {
+                        clearInterval(checkIDBIntervalID);
+                        addOutput("Couldn't open indexedDB.");
+                        semaphoreIDBCheck = false;
+                        finishTest();
+                    };
+                    request.onupgradeneeded = function () {
+                        clearInterval(checkIDBIntervalID);
+                        addOutput("After deletion: IDB entry does not exist.");
+                        semaphoreIDBCheck = false;
+                        checkIDBCallback();
+                    };
+                    request.onsuccess = function () {
+                        // Let the next interval check again.
+                        semaphoreIDBCheck = false;
+                    };
+                }
+            }, 200);
+        }
     }
 
-    const maxIntervals = 20;
-    let intervalCounter;
+    let intervalCounterLocalStorage;
     let checkLocalStorageCallback;
     let checkLocalStorageIntervalID;
     const localStorageName = "test";
     const localStorageValue = "value";
     function checkLocalStorageExists(isAfterDeletion, callback) {
-        intervalCounter = 0;
+        intervalCounterLocalStorage = 0;
         checkLocalStorageCallback = callback;
         if (!isAfterDeletion) {
             // Check until there is LocalStorage.
             checkLocalStorageIntervalID = setInterval(function() {
-                if (++intervalCounter === maxIntervals) {
+                if (++intervalCounterLocalStorage >= maxIntervals) {
                     clearInterval(checkLocalStorageIntervalID);
                     checkLocalStorageCallback();
                 } else if (testRunner.isStatisticsHasLocalStorage(destinationOrigin)) {
@@ -116,7 +176,7 @@
         } else {
             // Check until there is no LocalStorage.
             checkLocalStorageIntervalID = setInterval(function() {
-                if (++intervalCounter === maxIntervals) {
+                if (++intervalCounterLocalStorage >= maxIntervals) {
                     clearInterval(checkLocalStorageIntervalID);
                     checkLocalStorageCallback();
                 } else if (!testRunner.isStatisticsHasLocalStorage(destinationOrigin)) {

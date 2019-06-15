@@ -1,3 +1,18 @@
+2019-06-14  John Wilander  <wilander@apple.com>
+
+        Repeatedly check for IDB removal to address flakiness in http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html
+        https://bugs.webkit.org/show_bug.cgi?id=198185
+        <rdar://problem/51074251>
+
+        Unreviewed test gardening.
+
+        There's an asynchronosity in the removal of IDB entries so this test case
+        needs to check repeatedly until the removal has happened.
+
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+        * platform/ios-simulator-wk2/TestExpectations:
+            Removed skip.
+
 2019-06-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Split up fast/events/ios/key-events-meta-alt-combinations.html and add more tests
