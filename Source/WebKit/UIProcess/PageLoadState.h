@@ -125,6 +125,8 @@ public:
     bool isCommitted() const { return m_committedState.state == State::Committed; }
     bool isFinished() const { return m_committedState.state == State::Finished; }
 
+    bool hasUncommittedLoad() const;
+
     const String& provisionalURL() const { return m_committedState.provisionalURL; }
     const String& url() const { return m_committedState.url; }
     const String& unreachableURL() const { return m_committedState.unreachableURL; }

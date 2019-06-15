@@ -172,6 +172,11 @@ bool PageLoadState::isLoading() const
     return isLoading(m_committedState);
 }
 
+bool PageLoadState::hasUncommittedLoad() const
+{
+    return isLoading(m_uncommittedState);
+}
+
 String PageLoadState::activeURL(const Data& data)
 {
     // If there is a currently pending URL, it is the active URL,

@@ -1,3 +1,33 @@
+2019-06-14  Devin Rousso  <drousso@apple.com>
+
+        waitForNavigationToComplete may be called before WebPageProxy knows it's loading
+        https://bugs.webkit.org/show_bug.cgi?id=198741
+        <rdar://problem/31164316>
+
+        Reviewed by Joseph Pecoraro.
+
+        There's a potential race in `WebAutomationSession::waitForNavigationToCompleteOnPage` when
+        querying for the `WebPageProxy`'s loading state (via `PageLoadingState::isLoading`), in that
+        a pending load may be committed _after_ the `WebAutomationSession` checks it's value. This
+        makes the automation session think that it isn't loading, so it will continue running
+        commands, which can lead to a JavaScript error ("Callback was not called before the unload
+        event") as any injected scripts will be cleared by the impending navigation, leaving the
+        script evaluation callbacks "dangling".
+
+        Expose more information from `PageLoadState` about whether it thinks there _may_ be a
+        navigation currently happening, which the `WebAutomationSession` can use to delay commands.
+
+        In the best case, no navigations are "missed".
+
+        In the worst case, the automation session will wait `pageLoadTimeout` before continuing.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnPage):
+
+        * UIProcess/PageLoadState.h:
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::hasUncommittedLoad const): Added.
+
 2019-06-14  Youenn Fablet  <youenn@apple.com>
 
         WebProcessPool::clearWebProcessHasUploads cannot assume its given processIdentifier is valid
