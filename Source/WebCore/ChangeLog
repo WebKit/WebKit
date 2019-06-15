@@ -1,5 +1,24 @@
 2019-06-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Convert both the absolutely and statically positioned out-of-flow block level boxes positions relative to the containing block's padding box
+        https://bugs.webkit.org/show_bug.cgi?id=198878
+        <rdar://problem/51772882>
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures that while we compute the vertical/horizontal geometry for an out-of-flow block level box,
+        the static and the absolute positioned values are in the same coordinate system (relative to the containing block's padding box).
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::staticVerticalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::staticHorizontalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+
+2019-06-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for vertical-align: top and bottom
         https://bugs.webkit.org/show_bug.cgi?id=198697
         <rdar://problem/51556188>
