@@ -43,11 +43,6 @@ class NetworkResourceLoadMap {
 public:
     typedef HashMap<ResourceLoadIdentifier, Ref<NetworkResourceLoader>> MapType;
 
-    NetworkResourceLoadMap(NetworkConnectionToWebProcess& connection)
-        : m_connectionToWebProcess(connection)
-    {
-    }
-
     bool isEmpty() const { return m_loaders.isEmpty(); }
     bool contains(ResourceLoadIdentifier identifier) const { return m_loaders.contains(identifier); }
     MapType::iterator begin() { return m_loaders.begin(); }
@@ -59,9 +54,7 @@ public:
     RefPtr<NetworkResourceLoader> take(ResourceLoadIdentifier);
 
 private:
-    NetworkConnectionToWebProcess& m_connectionToWebProcess;
     MapType m_loaders;
-    HashSet<NetworkResourceLoader*> m_loadersWithUploads;
 };
 
 } // namespace WebKit

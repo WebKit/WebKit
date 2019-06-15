@@ -26,22 +26,12 @@
 #include "config.h"
 #include "NetworkResourceLoadMap.h"
 
-#include "NetworkConnectionToWebProcess.h"
-
 namespace WebKit {
 
 NetworkResourceLoadMap::MapType::AddResult NetworkResourceLoadMap::add(ResourceLoadIdentifier identifier, Ref<NetworkResourceLoader>&& loader)
 {
-    auto result = m_loaders.add(identifier, WTFMove(loader));
-    ASSERT(result.isNewEntry);
-        
-    if (result.iterator->value->originalRequest().hasUpload()) {
-        if (m_loadersWithUploads.isEmpty())
-            m_connectionToWebProcess.setConnectionHasUploads();
-        m_loadersWithUploads.add(result.iterator->value.ptr());
-    }
-
-    return result;
+    ASSERT(!m_loaders.contains(identifier));
+    return m_loaders.add(identifier, WTFMove(loader));
 }
 
 bool NetworkResourceLoadMap::remove(ResourceLoadIdentifier identifier)
@@ -54,13 +44,6 @@ RefPtr<NetworkResourceLoader> NetworkResourceLoadMap::take(ResourceLoadIdentifie
     auto loader = m_loaders.take(identifier);
     if (!loader)
         return nullptr;
-
-    if ((*loader)->originalRequest().hasUpload()) {
-        m_loadersWithUploads.remove(loader->ptr());
-        if (m_loadersWithUploads.isEmpty())
-            m_connectionToWebProcess.clearConnectionHasUploads();
-    }
-
     return WTFMove(*loader);
 }
 

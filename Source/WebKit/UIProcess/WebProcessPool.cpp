@@ -2531,8 +2531,12 @@ void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessi
 
 void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
 {
+    ASSERT(processID);
     auto* process = WebProcessProxy::processForIdentifier(processID);
     ASSERT(process);
+
+    if (!process)
+        return;
 
     RELEASE_LOG(ProcessSuspension, "Web process pid %u now has uploads in progress", (unsigned)process->processIdentifier());
 
@@ -2553,8 +2557,11 @@ void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
 
 void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
 {
+    ASSERT(processID);
     auto result = m_processesWithUploads.take(processID);
-    ASSERT_UNUSED(result, result);
+    ASSERT(result);
+    if (!result)
+        return;
 
     auto* process = WebProcessProxy::processForIdentifier(processID);
     ASSERT_UNUSED(process, process);

@@ -1,5 +1,44 @@
 2019-06-14  Youenn Fablet  <youenn@apple.com>
 
+        WebProcessPool::clearWebProcessHasUploads cannot assume its given processIdentifier is valid
+        https://bugs.webkit.org/show_bug.cgi?id=198865
+        <rdar://problem/51618878>
+
+        Reviewed by Brady Eidson.
+
+        NetworkProcess currently instructs UIProcess whether a given WebProcess is doing upload.
+        There is no guarantee though that the WebProcessProxy is still there when the IPC is arriving at UIProcess.
+        Instead, let WebProcess handles its upload state and notify WebProcessPool about its state.
+        Make sure WebProcessProxy unregisters itself in case of crash.
+        In case of NetworkProcess crash, WebProcesses will see all their uploads fail
+        and will notify automatically UIProcess to update their state.
+
+        Since the processID given to WebProcessPool is coming from IPC, we cannot not trust it.
+        Add early return in case of not finding a WebProcessProxy for WebProcessPool clear/set methods.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadMap.cpp:
+        (WebKit::NetworkResourceLoadMap::add):
+        (WebKit::NetworkResourceLoadMap::take):
+        * NetworkProcess/NetworkResourceLoadMap.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setWebProcessHasUploads):
+        (WebKit::WebProcessPool::clearWebProcessHasUploads):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
+2019-06-14  Youenn Fablet  <youenn@apple.com>
+
         WebResourceLoadStatisticsStore should not use its network session if invalidated
         https://bugs.webkit.org/show_bug.cgi?id=198814
 

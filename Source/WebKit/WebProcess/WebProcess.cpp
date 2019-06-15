@@ -1246,7 +1246,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
             CRASH();
 
         m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
-        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::SetWebProcessIdentifier(Process::identifier()), 0);
 
         // To recover web storage, network process needs to know active webpages to prepare session storage.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=198051.

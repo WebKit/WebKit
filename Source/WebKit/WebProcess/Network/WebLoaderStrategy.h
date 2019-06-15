@@ -122,6 +122,7 @@ private:
     HashMap<unsigned long, PreconnectCompletionHandler> m_preconnectCompletionHandlers;
     Vector<Function<void(bool)>> m_onlineStateChangeListeners;
     bool m_isOnLine { true };
+    HashSet<WebResourceLoader*> m_loadersWithUploads;
 };
 
 } // namespace WebKit

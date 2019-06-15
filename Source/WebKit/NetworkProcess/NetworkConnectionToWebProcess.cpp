@@ -83,7 +83,6 @@ Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(Network
 NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& networkProcess, IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
     , m_networkProcess(networkProcess)
-    , m_networkResourceLoaders(*this)
 #if ENABLE(WEB_RTC)
     , m_mdnsRegister(*this)
 #endif
@@ -898,25 +897,6 @@ void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID s
     completionHandler(WTFMove(serverConnectionIdentifier));
 }
 #endif
-
-void NetworkConnectionToWebProcess::setWebProcessIdentifier(ProcessIdentifier webProcessIdentifier)
-{
-    m_webProcessIdentifier = webProcessIdentifier;
-}
-
-void NetworkConnectionToWebProcess::setConnectionHasUploads()
-{
-    ASSERT(!m_connectionHasUploads);
-    m_connectionHasUploads = true;
-    m_networkProcess->parentProcessConnection()->send(Messages::WebProcessPool::SetWebProcessHasUploads(m_webProcessIdentifier), 0);
-}
-
-void NetworkConnectionToWebProcess::clearConnectionHasUploads()
-{
-    ASSERT(m_connectionHasUploads);
-    m_connectionHasUploads = false;
-    m_networkProcess->parentProcessConnection()->send(Messages::WebProcessPool::ClearWebProcessHasUploads(m_webProcessIdentifier), 0);
-}
 
 void NetworkConnectionToWebProcess::webPageWasAdded(PAL::SessionID sessionID, PageIdentifier pageID, WebCore::PageIdentifier oldPageID)
 {

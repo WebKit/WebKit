@@ -142,10 +142,6 @@ public:
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(const URL&);
     Vector<RefPtr<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
 
-    void setWebProcessIdentifier(WebCore::ProcessIdentifier);
-    void setConnectionHasUploads();
-    void clearConnectionHasUploads();
-
     void webPageWasAdded(PAL::SessionID, WebCore::PageIdentifier, WebCore::PageIdentifier oldPageID);
     void webPageWasRemoved(PAL::SessionID, WebCore::PageIdentifier);
     void webProcessSessionChanged(PAL::SessionID newSessionID, const Vector<WebCore::PageIdentifier>& pages);
@@ -318,9 +314,6 @@ private:
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
-
-    WebCore::ProcessIdentifier m_webProcessIdentifier;
-    bool m_connectionHasUploads { false };
 };
 
 } // namespace WebKit

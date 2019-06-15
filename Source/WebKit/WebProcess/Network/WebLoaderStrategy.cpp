@@ -41,6 +41,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebProcessPoolMessages.h"
 #include "WebResourceLoader.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebURLSchemeHandlerProxy.h"
@@ -357,7 +358,14 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         return;
     }
 
-    m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader, trackingParameters));
+    auto loader = WebResourceLoader::create(resourceLoader, trackingParameters);
+    if (resourceLoader.originalRequest().hasUpload()) {
+        if (m_loadersWithUploads.isEmpty())
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessPool::SetWebProcessHasUploads(Process::identifier()), 0);
+        m_loadersWithUploads.add(loader.ptr());
+    }
+
+    m_webResourceLoaders.set(identifier, WTFMove(loader));
 }
 
 void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader& resourceLoader)
@@ -422,6 +430,9 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
         return;
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
+
+    if (m_loadersWithUploads.remove(loader.get()) && m_loadersWithUploads.isEmpty())
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessPool::ClearWebProcessHasUploads { Process::identifier() }, 0);
 
     // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
     // but there's no point in doing so anymore.
@@ -554,6 +565,10 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
 
     HangDetectionDisabler hangDetectionDisabler;
 
+    bool shouldNotifyOfUpload = request.hasUpload() && m_loadersWithUploads.isEmpty();
+    if (shouldNotifyOfUpload)
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessPool::SetWebProcessHasUploads { Process::identifier() }, 0);
+
     if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         RELEASE_LOG_ERROR_IF_ALLOWED(sessionID, "loadResourceSynchronously: failed sending synchronous network process message (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %lu)", pageID.toUInt64(), frameID, resourceLoadIdentifier);
         if (auto* page = webPage ? webPage->corePage() : nullptr)
@@ -561,6 +576,9 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
         response = ResourceResponse();
         error = internalError(request.url());
     }
+
+    if (shouldNotifyOfUpload)
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessPool::ClearWebProcessHasUploads { Process::identifier() }, 0);
 }
 
 void WebLoaderStrategy::pageLoadCompleted(PageIdentifier webPageID)
