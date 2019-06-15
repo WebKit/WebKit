@@ -1,3 +1,23 @@
+2019-06-15  Ludovico de Nittis  <ludovico.denittis@collabora.com>
+
+        [GTK] Stop accessing GdkEvent fields when possible
+        https://bugs.webkit.org/show_bug.cgi?id=198829
+
+        Reviewed by Michael Catanzaro.
+
+        Direct access to GdkEvent structs is no longer possible in GTK 4.
+
+        No behaviour changes.
+
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::eventTypeForGdkKeyEvent):
+        (WebCore::modifiersForGdkKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/gtk/PlatformMouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2019-06-15  Rob Buis  <rbuis@igalia.com>
 
         Add tests for prefetch redirects
