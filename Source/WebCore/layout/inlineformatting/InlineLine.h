@@ -51,8 +51,8 @@ public:
             Run(const InlineItem&, const Display::Rect&, TextContext, bool isCollapsed, bool canBeExtended);
 
             const InlineItem& inlineItem;
-            // Relative to the baseline.
             Display::Rect logicalRect;
+            LayoutUnit baseline;
             Optional<TextContext> textContext;
             bool isCollapsed { false };
             bool canBeExtended { false };
@@ -61,7 +61,7 @@ public:
         const Runs& runs() const { return m_runs; }
         bool isEmpty() const { return m_runs.isEmpty(); }
         // Not in painting sense though.
-        bool isVisuallyEmpty() const;
+        bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
 
         LayoutUnit logicalTop() const { return m_logicalRect.top(); }
         LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
@@ -76,11 +76,13 @@ public:
 
         void setLogicalRect(const Display::Rect& logicalRect) { m_logicalRect = logicalRect; }
         void setBaseline(LineBox::Baseline baseline) { m_baseline = baseline; }
+        void setIsVisuallyEmpty(bool isVisuallyEmpty) { m_isVisuallyEmpty = isVisuallyEmpty; }
         Runs& runs() { return m_runs; }
 
         Display::Rect m_logicalRect;
         LineBox::Baseline m_baseline;
         Runs m_runs;
+        bool m_isVisuallyEmpty { true };
     };
     std::unique_ptr<Content> close();
 
@@ -91,7 +93,7 @@ public:
     void appendInlineContainerEnd(const InlineItem&, LayoutUnit logicalWidth);
     void appendHardLineBreak(const InlineItem&);
 
-    bool hasContent() const { return !m_content->isVisuallyEmpty(); }
+    bool hasContent() const { return !isVisuallyEmpty(); }
 
     LayoutUnit trailingTrimmableWidth() const;
 
@@ -121,6 +123,7 @@ private:
 
     void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);
     LayoutUnit inlineItemHeight(const InlineItem&) const;
+    bool isVisuallyEmpty() const;
 
     const LayoutState& m_layoutState;
     std::unique_ptr<Content> m_content;

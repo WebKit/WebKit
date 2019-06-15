@@ -1,3 +1,28 @@
+2019-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for vertical-align: top and bottom
+        https://bugs.webkit.org/show_bug.cgi?id=198697
+        <rdar://problem/51556188>
+
+        Reviewed by Antti Koivisto.
+
+        Use the layout box's vertical alignment to adjust line baseline and height and set the run's logical top when the line is being closed.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendHardLineBreak):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::inlineItemHeight const):
+        (WebCore::Layout::Line::Content::isVisuallyEmpty const): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Content::isVisuallyEmpty const):
+        (WebCore::Layout::Line::Content::setIsVisuallyEmpty):
+        (WebCore::Layout::Line::hasContent const):
+
 2019-06-14  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] button property is -1 for pointerdown and pointerup
