@@ -3413,3 +3413,6 @@ imported/w3c/web-platform-tests/websockets/Secure-Send-unpaired-surrogates.any.w
 
 # iOS only
 fast/dom/linkify-phone-numbers.html [ ImageOnlyFailure ]
+
+# FIXME: Should be fixed by: https://bugs.webkit.org/show_bug.cgi?id=198890
+webgpu/whlsl-oob-access.html [ Pass Failure ]
