@@ -158,6 +158,9 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSi
         return false;
 
     auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
+    if (previousInFlowSibling.isAnonymous())
+        return false;
+
     // Margins between a floated box and any other box do not collapse.
     if (layoutBox.isFloatingPositioned() || previousInFlowSibling.isFloatingPositioned())
         return false;

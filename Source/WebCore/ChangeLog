@@ -1,5 +1,16 @@
 2019-06-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC[MarginCollapsing] Anonymous boxes never collapse their margins with siblings.
+        https://bugs.webkit.org/show_bug.cgi?id=198884
+        <rdar://problem/51773509>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter):
+
+2019-06-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][MarginCollapsing] Add check for computed height value in MarginCollapse::marginsCollapseThrough
         https://bugs.webkit.org/show_bug.cgi?id=198883
         <rdar://problem/51773395>
