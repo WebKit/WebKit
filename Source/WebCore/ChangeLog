@@ -1,5 +1,19 @@
 2019-06-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][MarginCollapsing] Remove redundant checks in MarginCollapse::marginBefore/AfterCollapsesWith*
+        https://bugs.webkit.org/show_bug.cgi?id=198882
+        <rdar://problem/51773334>
+
+        Reviewed by Antti Koivisto.
+
+        In-flow child can neither be floating nor out-of-flow positioned.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter):
+
+2019-06-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][MarginCollapsing] Collapsed through margin values preserve quirk state.
         https://bugs.webkit.org/show_bug.cgi?id=198885
         <rdar://problem/51773568>

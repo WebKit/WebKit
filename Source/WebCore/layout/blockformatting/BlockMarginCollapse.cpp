@@ -212,14 +212,6 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlo
     if (hasClearance(layoutState, firstInFlowChild))
         return false;
 
-    // Margins between a floated box and any other box do not collapse.
-    if (firstInFlowChild.isFloatingPositioned())
-        return false;
-
-    // Margins of absolutely positioned boxes do not collapse.
-    if (firstInFlowChild.isOutOfFlowPositioned())
-        return false;
-
     // Margins of inline-block boxes do not collapse.
     if (firstInFlowChild.isInlineBlockBox())
         return false;
@@ -348,14 +340,6 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowC
     auto computedMinHeight = layoutBox.style().logicalMinHeight();
     if (!computedMinHeight.isAuto() && computedMinHeight.value()
         && (marginAfterCollapsesWithParentMarginBefore(layoutState, lastInFlowChild) || hasClearance(layoutState, lastInFlowChild)))
-        return false;
-
-    // Margins between a floated box and any other box do not collapse.
-    if (lastInFlowChild.isFloatingPositioned())
-        return false;
-
-    // Margins of absolutely positioned boxes do not collapse.
-    if (lastInFlowChild.isOutOfFlowPositioned())
         return false;
 
     // Margins of inline-block boxes do not collapse.
