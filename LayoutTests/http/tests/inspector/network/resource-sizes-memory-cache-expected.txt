@@ -6,13 +6,13 @@ Test for Resource size values (transfer size, decoded size, header size, request
 PASS: statusCode should be 304.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(memory-cache).
-PASS: estimatedNetworkEncodedSize should be exactly 0 bytes.
+size: 27
+requestBodyTransferSize: 0
+responseBodyTransferSize: 0
+estimatedNetworkEncodedSize: 0
+networkEncodedSize: 0
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-PASS: size should be exactly 27 bytes.
-PASS: networkEncodedSize should be exactly 0 bytes.
 PASS: networkTotalTransferSize should be >= (encoded body size + headers).
-PASS: requestBodyTransferSize should be exactly 0 bytes.
-PASS: responseBodyTransferSize should be exactly 0 bytes.
 PASS: requestHeadersTransferSize should be non-empty.
 PASS: responseHeadersTransferSize should be non-empty.
 

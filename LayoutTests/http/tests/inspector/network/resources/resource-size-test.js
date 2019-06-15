@@ -29,7 +29,7 @@ TestPage.registerInitializer(function() {
     //   - requestBodyTransferSize, responseBodyTransferSize: exact body transfer sizes
     //   - size: exact decoded body size whether or not there was anything transferred
     //   - extraChecks: extra checks to perform
-    window.addResourceSizeTest = function(suite, {name, description, debug, url, statusCode, compressed, responseSource, headers, requestBodyTransferSize, responseBodyTransferSize, size, resourceLoader, extraChecks}) {
+    window.addResourceSizeTest = function(suite, {name, description, debug, url, statusCode, compressed, responseSource, headers, resourceLoader, extraChecks}) {
         suite.addTestCase({
             name, description,
             test(resolve, reject) {
@@ -41,7 +41,10 @@ TestPage.registerInitializer(function() {
                     promise = Promise.all([
                         WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
                         WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
-                    ]).then(([resourceWasAddedEvent, loadCompleteEvent]) => {
+                        WI.Resource.awaitEvent(WI.Resource.Event.MetricsDidChange),
+                        WI.Resource.awaitEvent(WI.Resource.Event.SizeDidChange),
+                        WI.Resource.awaitEvent(WI.Resource.Event.TransferSizeDidChange),
+                    ]).then(([resourceWasAddedEvent]) => {
                         return resourceWasAddedEvent.data.resource;
                     });
                 }
@@ -56,31 +59,23 @@ TestPage.registerInitializer(function() {
                         InspectorTest.log("----");
                         InspectorTest.log("resource.requestHeadersTransferSize: " + resource.requestHeadersTransferSize);
                         InspectorTest.log("resource.responseHeadersTransferSize: " + resource.responseHeadersTransferSize);
-                        InspectorTest.log("resource.requestBodyTransferSize: " + resource.requestBodyTransferSize);
-                        InspectorTest.log("resource.responseBodyTransferSize: " + resource.responseBodyTransferSize);
                         InspectorTest.log("resource.cachedResponseBodySize: " + resource.cachedResponseBodySize);
-                        InspectorTest.log("----");
-                        InspectorTest.log("resource.size: " + resource.size);
-                        InspectorTest.log("resource.networkEncodedSize: " + resource.networkEncodedSize);
                         InspectorTest.log("resource.networkDecodedSize: " + resource.networkDecodedSize);
-                        InspectorTest.log("resource.networkTotalTransferSize: " + resource.networkTotalTransferSize);
-                        InspectorTest.log("resource.estimatedNetworkEncodedSize: " + resource.estimatedNetworkEncodedSize);
                         InspectorTest.log("resource.estimatedTotalTransferSize: " + resource.estimatedTotalTransferSize);
+                        InspectorTest.log("resource.networkTotalTransferSize: " + resource.networkTotalTransferSize);
                         InspectorTest.log("----");
                     }
 
-                    // Calculated values. Try to be graceful, if the size is expected to be zero but is non-zero don't log the actual value.
-                    InspectorTest.gracefulExpectEquals(resource.estimatedNetworkEncodedSize, responseBodyTransferSize, "estimatedNetworkEncodedSize", `estimatedNetworkEncodedSize should be exactly ${responseBodyTransferSize} bytes.`);
-                    InspectorTest.expectGreaterThanOrEqual(resource.estimatedTotalTransferSize, responseBodyTransferSize + (headers ? minimumHeadersSize : 0), `estimatedTotalTransferSize should be >= (encoded body size + headers).`);
+                    InspectorTest.log("size: " + resource.size);
 
-                    // Exact decoded size should always be available.
-                    InspectorTest.gracefulExpectEquals(resource.size, size, "size", `size should be exactly ${size} bytes.`);
+                    InspectorTest.log("requestBodyTransferSize: " + resource.requestBodyTransferSize);
+                    InspectorTest.log("responseBodyTransferSize: " + resource.responseBodyTransferSize);
 
-                    // Exact transfer sizes if available.
-                    InspectorTest.expectEqual(resource.networkEncodedSize, responseBodyTransferSize, `networkEncodedSize should be exactly ${responseBodyTransferSize} bytes.`);
-                    InspectorTest.expectGreaterThanOrEqual(resource.networkTotalTransferSize, responseBodyTransferSize + (headers ? minimumHeadersSize : 0), `networkTotalTransferSize should be >= (encoded body size + headers).`);
-                    InspectorTest.expectEqual(resource.requestBodyTransferSize, requestBodyTransferSize, `requestBodyTransferSize should be exactly ${requestBodyTransferSize} bytes.`);
-                    InspectorTest.expectEqual(resource.responseBodyTransferSize, responseBodyTransferSize, `responseBodyTransferSize should be exactly ${responseBodyTransferSize} bytes.`);
+                    InspectorTest.log("estimatedNetworkEncodedSize: " + resource.estimatedNetworkEncodedSize);
+                    InspectorTest.log("networkEncodedSize: " + resource.networkEncodedSize);
+
+                    InspectorTest.expectGreaterThanOrEqual(resource.estimatedTotalTransferSize, (resource.responseBodyTransferSize || 0) + (headers ? minimumHeadersSize : 0), `estimatedTotalTransferSize should be >= (encoded body size + headers).`);
+                    InspectorTest.expectGreaterThanOrEqual(resource.networkTotalTransferSize, (resource.responseBodyTransferSize || 0) + (headers ? minimumHeadersSize : 0), `networkTotalTransferSize should be >= (encoded body size + headers).`);
 
                     // Exact header sizes if available. May vary between implementations so we check if empty / non-empty.
                     if (headers) {

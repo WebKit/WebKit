@@ -1,3 +1,29 @@
+2019-06-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rework http/tests/inspector/network/resource-sizes-network.html to print the actual values so other platforms don't FAIL
+        https://bugs.webkit.org/show_bug.cgi?id=198877
+        <rdar://problem/50381370>
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/inspector/network/resources/resource-size-test.js:
+        (TestPage.registerInitializer.window.addResourceSizeTest):
+
+        * http/tests/inspector/network/resource-sizes-disk-cache.html:
+        * http/tests/inspector/network/resource-sizes-disk-cache-expected.txt:
+
+        * http/tests/inspector/network/resource-sizes-memory-cache.html:
+        * http/tests/inspector/network/resource-sizes-memory-cache-expected.txt:
+        * platform/gtk/http/tests/inspector/network/resource-sizes-memory-cache-expected.txt:
+        * platform/mac/http/tests/inspector/network/resource-sizes-memory-cache-expected.txt:
+        * platform/mac-sierra/http/tests/inspector/network/resource-sizes-memory-cache-expected.txt:
+
+        * http/tests/inspector/network/resource-sizes-network.html:
+        * http/tests/inspector/network/resource-sizes-network-expected.txt:
+        * platform/gtk/http/tests/inspector/network/resource-sizes-network-expected.txt:
+        * platform/mac/http/tests/inspector/network/resource-sizes-network-expected.txt:
+        * platform/mac-sierra/http/tests/inspector/network/resource-sizes-network-expected.txt:
+
 2019-06-14  John Wilander  <wilander@apple.com>
 
         Repeatedly check for IDB removal to address flakiness in http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html

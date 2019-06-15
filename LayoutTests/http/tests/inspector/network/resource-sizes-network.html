@@ -37,22 +37,16 @@ function test()
         compressed: false,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 0,
-        responseBodyTransferSize: 2955,
-        size: 2955,
     });
 
     addResourceSizeTest(suite, {
-        name: "Resource.Size.Network.text",
+        name: "Resource.Size.Network.text.empty",
         description: "Sizes of an empty text resource",
         url: "resources/empty.txt?" + Math.random(),
         statusCode: 200,
         compressed: false,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 0,
-        responseBodyTransferSize: 0,
-        size: 0,
     });
 
     addResourceSizeTest(suite, {
@@ -63,9 +57,6 @@ function test()
         compressed: true,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 0,
-        responseBodyTransferSize: 1229,
-        size: 2955,
     });
 
     addResourceSizeTest(suite, {
@@ -76,9 +67,6 @@ function test()
         compressed: true,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 0,
-        responseBodyTransferSize: 1229,
-        size: 2955,
     });
 
     addResourceSizeTest(suite, {
@@ -89,9 +77,6 @@ function test()
         compressed: false,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 0,
-        responseBodyTransferSize: 12940,
-        size: 12940,
     });
 
     addResourceSizeTest(suite, {
@@ -102,9 +87,6 @@ function test()
         compressed: false,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 0,
-        responseBodyTransferSize: 512,
-        size: 512,
     });
 
     addResourceSizeTest(suite, {
@@ -114,9 +96,6 @@ function test()
         compressed: false,
         responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
-        requestBodyTransferSize: 1027,
-        responseBodyTransferSize: 28,
-        size: 28,
         resourceLoader() {
             InspectorTest.evaluateInPage(`triggerNetworkLoadWithRequestData()`);
             return Promise.all([
