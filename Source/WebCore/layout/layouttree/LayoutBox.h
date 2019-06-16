@@ -101,6 +101,7 @@ public:
     const Container& initialContainingBlock() const;
 
     bool isDescendantOf(const Container&) const;
+    bool isContainingBlockDescendantOf(const Container&) const;
 
     bool isAnonymous() const { return !m_elementAttributes; }
 

@@ -121,7 +121,7 @@ inline bool FloatingState::FloatItem::isDescendantOfFormattingRoot(const Box& fo
     ASSERT(formattingContextRoot.establishesFormattingContext());
     if (!is<Container>(formattingContextRoot))
         return false;
-    return m_layoutBox->isDescendantOf(downcast<Container>(formattingContextRoot));
+    return m_layoutBox->isContainingBlockDescendantOf(downcast<Container>(formattingContextRoot));
 }
 
 }

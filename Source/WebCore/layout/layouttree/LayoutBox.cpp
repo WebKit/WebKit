@@ -197,10 +197,19 @@ const Container& Box::initialContainingBlock() const
     return *parent;
 }
 
-bool Box::isDescendantOf(const Container& container) const
+bool Box::isDescendantOf(const Container& ancestorCandidate) const
+{
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor == &ancestorCandidate)
+            return true;
+    }
+    return false;
+}
+
+bool Box::isContainingBlockDescendantOf(const Container& ancestorCandidate) const
 { 
     for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-        if (ancestor == &container)
+        if (ancestor == &ancestorCandidate)
             return true;
     }
     return false;

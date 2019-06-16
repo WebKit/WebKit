@@ -1,5 +1,28 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add Layout::Box::isContainingBlockDescendantOf
+        https://bugs.webkit.org/show_bug.cgi?id=198888
+        <rdar://problem/51776466>
+
+        Reviewed by Antti Koivisto.
+
+        Box::isDescendantOf indicates simple ancestor - descendant relationship, while
+        isContainingBlockDescendantOf checks the containing block chain.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::mapHorizontalPositionToAncestor):
+        (WebCore::Layout::FormattingContext::mapBoxToAncestor):
+        (WebCore::Layout::FormattingContext::mapTopToAncestor):
+        (WebCore::Layout::FormattingContext::mapPointToAncestor):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::isDescendantOfFormattingRoot const):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isDescendantOf const):
+        (WebCore::Layout::Box::isContainingBlockDescendantOf const):
+        * layout/layouttree/LayoutBox.h:
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Remove Line::Content::isVisuallyEmpty
         https://bugs.webkit.org/show_bug.cgi?id=198892
         <rdar://problem/51780345>
