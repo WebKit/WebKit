@@ -918,10 +918,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (!m_backfaceVisibility)
         ts << indent << "(backfaceVisibility " << (m_backfaceVisibility ? "visible" : "hidden") << ")\n";
 
-    if (behavior & LayerTreeAsTextDebug) {
+    if (behavior & LayerTreeAsTextDebug)
         ts << indent << "(primary-layer-id " << primaryLayerID() << ")\n";
-        ts << indent << "(client " << static_cast<void*>(m_client) << ")\n";
-    }
 
     if (m_backgroundColor.isValid() && client().shouldDumpPropertyForLayer(this, "backgroundColor", behavior))
         ts << indent << "(backgroundColor " << m_backgroundColor.nameForRenderTreeAsText() << ")\n";
@@ -999,29 +997,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
         ts << indent << ")\n";
     }
 
-    if (behavior & LayerTreeAsTextIncludePaintingPhases && paintingPhase()) {
-        ts << indent << "(paintingPhases\n";
-        TextStream::IndentScope indentScope(ts);
-        if (paintingPhase().contains(GraphicsLayerPaintingPhase::Background))
-            ts << indent << "GraphicsLayerPaintBackground\n";
-
-        if (paintingPhase().contains(GraphicsLayerPaintingPhase::Foreground))
-            ts << indent << "GraphicsLayerPaintForeground\n";
-
-        if (paintingPhase().contains(GraphicsLayerPaintingPhase::Mask))
-            ts << indent << "GraphicsLayerPaintMask\n";
-
-        if (paintingPhase().contains(GraphicsLayerPaintingPhase::ChildClippingMask))
-            ts << indent << "GraphicsLayerPaintChildClippingMask\n";
-
-        if (paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
-            ts << indent << "GraphicsLayerPaintOverflowContents\n";
-
-        if (paintingPhase().contains(GraphicsLayerPaintingPhase::CompositedScroll))
-            ts << indent << "GraphicsLayerPaintCompositedScroll\n";
-
-        ts << indent << ")\n";
-    }
+    if (behavior & LayerTreeAsTextIncludePaintingPhases && paintingPhase())
+        ts << indent << "(paintingPhases " << paintingPhase() << ")\n";
 
     dumpAdditionalProperties(ts, behavior);
     
@@ -1051,7 +1028,22 @@ TextStream& operator<<(TextStream& ts, const Vector<GraphicsLayer::PlatformLayer
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const WebCore::GraphicsLayer::CustomAppearance& customAppearance)
+TextStream& operator<<(TextStream& ts, GraphicsLayerPaintingPhase phase)
+{
+    switch (phase) {
+    case GraphicsLayerPaintingPhase::Background: ts << "background"; break;
+    case GraphicsLayerPaintingPhase::Foreground: ts << "foreground"; break;
+    case GraphicsLayerPaintingPhase::Mask: ts << "mask"; break;
+    case GraphicsLayerPaintingPhase::ClipPath: ts << "clip-path"; break;
+    case GraphicsLayerPaintingPhase::OverflowContents: ts << "overflow-contents"; break;
+    case GraphicsLayerPaintingPhase::CompositedScroll: ts << "composited-scroll"; break;
+    case GraphicsLayerPaintingPhase::ChildClippingMask: ts << "child-clipping-mask"; break;
+    }
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const GraphicsLayer::CustomAppearance& customAppearance)
 {
     switch (customAppearance) {
     case GraphicsLayer::CustomAppearance::None: ts << "none"; break;

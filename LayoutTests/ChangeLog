@@ -1,3 +1,16 @@
+2019-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Make layerTreeAsText() output a bit less verbose
+        https://bugs.webkit.org/show_bug.cgi?id=198870
+
+        Reviewed by Tim Horton.
+
+        * compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases-expected.txt:
+        * platform/gtk/compositing/overflow/composited-scrolling-paint-phases-expected.txt:
+        * platform/ios-wk2/compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases-expected.txt:
+        * platform/mac-wk1/compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases-expected.txt:
+        * platform/mac/compositing/overflow/composited-scrolling-paint-phases-expected.txt: Removed.
+
 2019-06-15  Rob Buis  <rbuis@igalia.com>
 
         Add tests for prefetch redirects

@@ -3726,10 +3726,9 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
 
         textStream << indent << "(in window " << tiledBacking()->isInWindow() << ")\n";
     }
-    
+
     if (m_layer->wantsDeepColorBackingStore())
         textStream << indent << "(deep color 1)\n";
-
 
     if (behavior & LayerTreeAsTextIncludeContentLayers) {
         dumpInnerLayer(textStream, "structural layer", m_structuralLayer.get(), behavior);
@@ -3742,8 +3741,8 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
     }
 
     if (behavior & LayerTreeAsTextDebug) {
-        textStream << indent << "(accelerates drawing " << m_acceleratesDrawing << ")\n";
-        textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
+        if (m_usesDisplayListDrawing)
+            textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
     }
 }
 

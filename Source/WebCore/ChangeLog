@@ -1,3 +1,21 @@
+2019-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Make layerTreeAsText() output a bit less verbose
+        https://bugs.webkit.org/show_bug.cgi?id=198870
+
+        Reviewed by Tim Horton.
+
+        "accelerates drawing" was getting dumped twice for debug dumps.
+        Only dump the non-default state for "uses display-list drawing".
+        Use the new OptionSet<> dumping for GraphicsLayerPaintingPhases.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+
 2019-06-15  Youenn Fablet  <youenn@apple.com>
 
         Make MediaStream constructor take a Document instead of a ScriptExecutionContext

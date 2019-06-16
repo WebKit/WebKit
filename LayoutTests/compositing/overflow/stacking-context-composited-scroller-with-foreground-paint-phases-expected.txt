@@ -2,27 +2,18 @@ Scrolled contents
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
-  (paintingPhases
-    GraphicsLayerPaintBackground
-    GraphicsLayerPaintForeground
-    )
+  (paintingPhases [background, foreground])
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (paintingPhases
-        GraphicsLayerPaintBackground
-        GraphicsLayerPaintForeground
-        )
+      (paintingPhases [background, foreground])
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 322.00 322.00)
           (drawsContent 1)
-          (paintingPhases
-            GraphicsLayerPaintBackground
-            GraphicsLayerPaintCompositedScroll
-            )
+          (paintingPhases [background, composited-scroll])
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
@@ -34,28 +25,19 @@ Scrolled contents
                   (anchor 0.00 0.00)
                   (bounds 305.00 1020.00)
                   (drawsContent 1)
-                  (paintingPhases
-                    GraphicsLayerPaintOverflowContents
-                    GraphicsLayerPaintCompositedScroll
-                    )
+                  (paintingPhases [overflow-contents, composited-scroll])
                   (children 2
                     (GraphicsLayer
                       (position 30.00 50.00)
                       (bounds 100.00 100.00)
                       (contentsOpaque 1)
-                      (paintingPhases
-                        GraphicsLayerPaintBackground
-                        GraphicsLayerPaintForeground
-                        )
+                      (paintingPhases [background, foreground])
                     )
                     (GraphicsLayer
                       (offsetFromRenderer width=1 height=1)
                       (bounds 305.00 1020.00)
                       (drawsContent 1)
-                      (paintingPhases
-                        GraphicsLayerPaintForeground
-                        GraphicsLayerPaintOverflowContents
-                        )
+                      (paintingPhases [foreground, overflow-contents])
                     )
                   )
                 )
