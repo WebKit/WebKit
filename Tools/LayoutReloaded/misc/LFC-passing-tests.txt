@@ -329,7 +329,6 @@ fast/borders/different-color-borders.html
 fast/borders/dotted-border-on-subpixel-position.html
 fast/borders/double-1px-border-assert.html
 fast/borders/empty-drawrect-assert-after-pixelsnap.html
-fast/borders/empty-outline-border-assert.html
 fast/borders/hidpi-3x-input-hairline-border.html
 fast/borders/hidpi-border-clipping-right-after-move.html
 fast/borders/hidpi-border-painting-groove.html
@@ -349,7 +348,6 @@ fast/borders/outline-offset-overflow.html
 fast/borders/webkit-border-radius.html
 fast/borders/wrong-border-color-when-radius-is-present.html
 fast/inline/absolute-positioned-block-in-centred-block.html
-fast/inline/absolute-positioned-inline-in-centred-block.html
 fast/inline/anonymous-block-with-empty-inline.html
 fast/inline/continuation-positioned-reparenting.html
 fast/inline/fixed-pos-moves-with-abspos-inline-parent.html
@@ -874,6 +872,5 @@ css2.1/20110323/outline-color-001.htm
 css2.1/20110323/outline-color-applies-to-008.htm
 css2.1/20110323/overflow-applies-to-009.htm
 css2.1/20110323/overflow-applies-to-012.htm
-css2.1/20110323/vertical-align-boxes-001.htm
 css2.1/20110323/width-non-replaced-inline-001.htm
 css2.1/20110323/width-replaced-element-001.htm

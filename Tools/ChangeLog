@@ -1,3 +1,15 @@
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Unreviewed test gardening.
+
+        Unsupported alignments.
+
+        fast/inline/absolute-positioned-inline-in-centred-block.html -align: center
+        fast/borders/empty-outline-border-assert.html -vertical-align: super
+        css2.1/20110323/vertical-align-boxes-001.htm - vertical-align: middle
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-06-15  Youenn Fablet  <youenn@apple.com>
 
         WPT test importer WTR option reader should not throw if the file is not proper UTF-8
