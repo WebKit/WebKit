@@ -314,8 +314,8 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
 
     if (lineContent.isEmpty()) {
         // Spec tells us to create a zero height, empty line box.
-        auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , 0 };
-        m_formattingState.addLineBox({ lineBox, lineContent.baseline(), lineContent.baselineOffset() });
+        auto lineBoxRect = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , 0 };
+        m_formattingState.addLineBox({ lineBoxRect, lineContent.baseline(), lineContent.baselineOffset() });
         return;
     }
 
@@ -325,7 +325,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
     // A line box is always tall enough for all of the boxes it contains.
 
     // Ignore the initial strut.
-    auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0, lineContent.logicalHeight()};
+    auto lineBoxRect = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0, lineContent.logicalHeight()};
     // Create final display runs.
     auto& lineRuns = lineContent.runs();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -350,7 +350,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
             if (layoutBox.isInFlowPositioned())
                 topLeft += Geometry::inFlowPositionedPositionOffset(layoutState(), layoutBox);
             displayBox.setTopLeft(topLeft);
-            lineBox.expandHorizontally(logicalRect.width());
+            lineBoxRect.expandHorizontally(logicalRect.width());
             m_formattingState.addInlineRun(std::make_unique<Display::Run>(logicalRect));
             continue;
         }
@@ -358,7 +358,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         // Inline level container start (<span>)
         if (inlineItem.isContainerStart()) {
             displayBox.setTopLeft(logicalRect.topLeft());
-            lineBox.expandHorizontally(logicalRect.width());
+            lineBoxRect.expandHorizontally(logicalRect.width());
             continue;
         }
 
@@ -374,7 +374,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
             // FIXME fix it for multiline.
             displayBox.setContentBoxWidth(contentBoxWidth);
             displayBox.setContentBoxHeight(logicalRect.height());
-            lineBox.expandHorizontally(logicalRect.width());
+            lineBoxRect.expandHorizontally(logicalRect.width());
             continue;
         }
 
@@ -391,7 +391,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
                 lastDisplayRun->expandHorizontally(logicalRect.width());
                 lastDisplayRun->textContext()->expand(lineRun->textContext->length);
             }
-            lineBox.expandHorizontally(logicalRect.width());
+            lineBoxRect.expandHorizontally(logicalRect.width());
         }
         // FIXME take content breaking into account when part of the layout box is on the previous line.
         auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->inlineItem.layoutBox() != &layoutBox;
@@ -406,7 +406,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         }
     }
     // FIXME linebox needs to be ajusted after content alignment.
-    m_formattingState.addLineBox({ lineBox, lineContent.baseline(), lineContent.baselineOffset() });
+    m_formattingState.addLineBox({ lineBoxRect, lineContent.baseline(), lineContent.baselineOffset() });
     alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint - lineContent.logicalWidth());
 }
 
