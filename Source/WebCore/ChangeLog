@@ -1,5 +1,25 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Remove Line::Content::isVisuallyEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=198892
+        <rdar://problem/51780345>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of setting the isVisuallyEmpty flag, reset the line height to 0. 
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Content::isEmpty const):
+        (WebCore::Layout::Line::Content::setBaseline):
+        (WebCore::Layout::Line::Content::isVisuallyEmpty const): Deleted.
+        (WebCore::Layout::Line::Content::setIsVisuallyEmpty): Deleted.
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add limited quirks mode to LayoutState.
         https://bugs.webkit.org/show_bug.cgi?id=198881
         <rdar://problem/51773229>

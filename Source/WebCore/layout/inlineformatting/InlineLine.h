@@ -60,8 +60,6 @@ public:
         using Runs = Vector<std::unique_ptr<Run>>;
         const Runs& runs() const { return m_runs; }
         bool isEmpty() const { return m_runs.isEmpty(); }
-        // Not in painting sense though.
-        bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
 
         LayoutUnit logicalTop() const { return m_logicalRect.top(); }
         LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
@@ -76,13 +74,11 @@ public:
 
         void setLogicalRect(const Display::Rect& logicalRect) { m_logicalRect = logicalRect; }
         void setBaseline(LineBox::Baseline baseline) { m_baseline = baseline; }
-        void setIsVisuallyEmpty(bool isVisuallyEmpty) { m_isVisuallyEmpty = isVisuallyEmpty; }
         Runs& runs() { return m_runs; }
 
         Display::Rect m_logicalRect;
         LineBox::Baseline m_baseline;
         Runs m_runs;
-        bool m_isVisuallyEmpty { true };
     };
     std::unique_ptr<Content> close();
 

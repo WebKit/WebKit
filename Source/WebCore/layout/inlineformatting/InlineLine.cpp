@@ -86,6 +86,11 @@ std::unique_ptr<Line::Content> Line::close()
 {
     removeTrailingTrimmableContent();
     if (!m_skipVerticalAligment) {
+        if (isVisuallyEmpty()) {
+            m_baseline = { };
+            m_contentLogicalHeight = { };
+        }
+
         for (auto& run : m_content->runs()) {
             LayoutUnit logicalTop;
             auto& inlineItem = run->inlineItem;
@@ -121,7 +126,6 @@ std::unique_ptr<Line::Content> Line::close()
             run->logicalRect.setTop(logicalTop);
         }
     }
-    m_content->setIsVisuallyEmpty(isVisuallyEmpty());
     m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
     m_content->setBaseline(m_baseline);
     return WTFMove(m_content);

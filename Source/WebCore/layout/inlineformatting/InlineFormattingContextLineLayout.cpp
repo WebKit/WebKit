@@ -311,7 +311,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
     // A line box is always tall enough for all of the boxes it contains.
 
     // Ignore the initial strut.
-    auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0, !lineContent.isVisuallyEmpty() ? lineContent.logicalHeight() : LayoutUnit { } };
+    auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0, lineContent.logicalHeight()};
     // Create final display runs.
     auto& lineRuns = lineContent.runs();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -393,8 +393,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
     }
     // FIXME linebox needs to be ajusted after content alignment.
     m_formattingState.addLineBox({ lineBox, lineContent.baseline() });
-    if (!lineContent.isVisuallyEmpty())
-        alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint - lineContent.logicalWidth());
+    alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint - lineContent.logicalWidth());
 }
 
 static Optional<LayoutUnit> horizontalAdjustmentForAlignment(TextAlignMode align, LayoutUnit remainingWidth)
