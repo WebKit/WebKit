@@ -1,3 +1,33 @@
+2019-06-15  Youenn Fablet  <youenn@apple.com>
+
+        Make MediaStream constructor take a Document instead of a ScriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=198873
+
+        Reviewed by Darin Adler.
+
+        Update MediaStream constructors and call site to take a Document&.
+        Make the same for creation of CanvasCaptureMediaStreamTrack.
+        No observable change of behavior.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::create):
+        (WebCore::CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack):
+        (WebCore::loggerFromContext): Deleted.
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::clone):
+        (WebCore::loggerFromContext): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::captureStream):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+
 2019-06-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Fix available width for non-floating positioned float avoiders.

@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
+class Document;
 class HTMLCanvasElement;
 class Image;
-class ScriptExecutionContext;
 
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
     WTF_MAKE_ISO_ALLOCATED(CanvasCaptureMediaStreamTrack);
 public:
-    static Ref<CanvasCaptureMediaStreamTrack> create(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Optional<double>&& frameRequestRate);
+    static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, Optional<double>&& frameRequestRate);
 
     HTMLCanvasElement& canvas() { return m_canvas.get(); }
     void requestFrame() { static_cast<Source&>(source()).requestFrame(); }
@@ -82,8 +82,8 @@ private:
         RefPtr<Image> m_currentImage;
     };
 
-    CanvasCaptureMediaStreamTrack(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Ref<Source>&&);
-    CanvasCaptureMediaStreamTrack(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Ref<MediaStreamTrackPrivate>&&);
+    CanvasCaptureMediaStreamTrack(Document&, Ref<HTMLCanvasElement>&&, Ref<Source>&&);
+    CanvasCaptureMediaStreamTrack(Document&, Ref<HTMLCanvasElement>&&, Ref<MediaStreamTrackPrivate>&&);
 
     bool isCanvas() const final { return true; }
 

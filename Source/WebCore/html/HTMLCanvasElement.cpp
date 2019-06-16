@@ -785,18 +785,18 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 #endif
 }
 
-ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionContext& context, Optional<double>&& frameRequestRate)
+ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(Document& document, Optional<double>&& frameRequestRate)
 {
     if (!originClean())
         return Exception(SecurityError, "Canvas is tainted"_s);
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logCanvasRead(document());
+        ResourceLoadObserver::shared().logCanvasRead(this->document());
 
     if (frameRequestRate && frameRequestRate.value() < 0)
         return Exception(NotSupportedError, "frameRequestRate is negative"_s);
 
-    auto track = CanvasCaptureMediaStreamTrack::create(context, *this, WTFMove(frameRequestRate));
-    auto stream =  MediaStream::create(context);
+    auto track = CanvasCaptureMediaStreamTrack::create(document, *this, WTFMove(frameRequestRate));
+    auto stream =  MediaStream::create(document);
     stream->addTrack(track);
     return stream;
 }

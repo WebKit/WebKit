@@ -121,7 +121,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> toMediaSample();
-    ExceptionOr<Ref<MediaStream>> captureStream(ScriptExecutionContext&, Optional<double>&& frameRequestRate);
+    ExceptionOr<Ref<MediaStream>> captureStream(Document&, Optional<double>&& frameRequestRate);
 #endif
 
     ImageBuffer* buffer() const;

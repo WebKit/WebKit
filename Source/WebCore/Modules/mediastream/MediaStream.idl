@@ -28,7 +28,7 @@
     Constructor,
     Constructor(MediaStream stream),
     Constructor(sequence<MediaStreamTrack> tracks),
-    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorCallWith=Document,
     ExportToWrappedFunction,
     PrivateIdentifier,
     PublicIdentifier

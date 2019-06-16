@@ -50,5 +50,5 @@ typedef (
     [MayThrowException] DOMString toDataURL(optional DOMString type, optional any quality);
     [CallWith=ScriptExecutionContext, MayThrowException] void toBlob(BlobCallback callback, optional DOMString type, optional any quality);
 
-    [Conditional=MEDIA_STREAM, CallWith=ScriptExecutionContext, MayThrowException, NewObject] MediaStream captureStream(optional double frameRequestRate);
+    [Conditional=MEDIA_STREAM, CallWith=Document, MayThrowException, NewObject] MediaStream captureStream(optional double frameRequestRate);
 };

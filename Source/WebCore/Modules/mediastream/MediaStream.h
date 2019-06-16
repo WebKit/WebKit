@@ -68,10 +68,10 @@ public:
         virtual void didAddOrRemoveTrack() = 0;
     };
 
-    static Ref<MediaStream> create(ScriptExecutionContext&);
-    static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream&);
-    static Ref<MediaStream> create(ScriptExecutionContext&, const MediaStreamTrackVector&);
-    static Ref<MediaStream> create(ScriptExecutionContext&, Ref<MediaStreamPrivate>&&);
+    static Ref<MediaStream> create(Document&);
+    static Ref<MediaStream> create(Document&, MediaStream&);
+    static Ref<MediaStream> create(Document&, const MediaStreamTrackVector&);
+    static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&);
     virtual ~MediaStream();
 
     String id() const { return m_private->id(); }
@@ -121,8 +121,8 @@ public:
     WEBCORE_EXPORT bool internalRemoveTrack(const String&, StreamModifier);
 
 protected:
-    MediaStream(ScriptExecutionContext&, const MediaStreamTrackVector&);
-    MediaStream(ScriptExecutionContext&, Ref<MediaStreamPrivate>&&);
+    MediaStream(Document&, const MediaStreamTrackVector&);
+    MediaStream(Document&, Ref<MediaStreamPrivate>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
