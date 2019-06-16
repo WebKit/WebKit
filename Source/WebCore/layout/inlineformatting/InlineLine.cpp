@@ -177,7 +177,7 @@ void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit l
     logicalRect.setWidth(logicalWidth);
 
     if (!m_skipVerticalAligment) {
-        auto logicalHeight = inlineItemHeight(inlineItem);
+        auto logicalHeight = inlineItemContentHeight(inlineItem);
         adjustBaselineAndLineHeight(inlineItem, logicalHeight);
         logicalRect.setHeight(logicalHeight);
     }
@@ -224,7 +224,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     logicalRect.setLeft(contentLogicalRight());
     logicalRect.setWidth(logicalWidth);
     if (!m_skipVerticalAligment)
-        logicalRect.setHeight(inlineItemHeight(inlineItem));
+        logicalRect.setHeight(inlineItemContentHeight(inlineItem));
 
     auto textContext = Content::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
     auto lineItem = std::make_unique<Content::Run>(inlineItem, logicalRect, textContext, isCompletelyCollapsed, canBeExtended);
@@ -244,9 +244,8 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
     logicalRect.setLeft(contentLogicalRight() + horizontalMargin.start);
     logicalRect.setWidth(logicalWidth);
     if (!m_skipVerticalAligment) {
-        auto logicalHeight = inlineItemHeight(inlineItem);
-        adjustBaselineAndLineHeight(inlineItem, logicalHeight);
-        logicalRect.setHeight(logicalHeight);
+        adjustBaselineAndLineHeight(inlineItem, displayBox.marginBoxHeight());
+        logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
     m_content->runs().append(std::make_unique<Content::Run>(inlineItem, logicalRect, Content::Run::TextContext { }, false, false));
@@ -320,7 +319,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
     }
 }
 
-LayoutUnit Line::inlineItemHeight(const InlineItem& inlineItem) const
+LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const
 {
     ASSERT(!m_skipVerticalAligment);
     auto& fontMetrics = inlineItem.style().fontMetrics();
@@ -332,16 +331,16 @@ LayoutUnit Line::inlineItemHeight(const InlineItem& inlineItem) const
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
 
     if (layoutBox.isFloatingPositioned())
-        return displayBox.marginBox().height();
+        return displayBox.borderBoxHeight();
 
     if (layoutBox.isReplaced())
-        return displayBox.height();
+        return displayBox.borderBoxHeight();
 
     if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
         return fontMetrics.height() + displayBox.verticalBorder() + displayBox.verticalPadding().valueOr(0);
 
     // Non-replaced inline box (e.g. inline-block)
-    return displayBox.marginBox().height();
+    return displayBox.borderBoxHeight();
 }
 
 LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)

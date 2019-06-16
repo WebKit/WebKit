@@ -1,3 +1,24 @@
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use the borderBox rect consistently to size the inline box.
+        https://bugs.webkit.org/show_bug.cgi?id=198899
+
+        Reviewed by Antti Koivisto.
+        <rdar://problem/51781969>
+
+        Use the margin box height (when applicable) to adjust the line height and use the borderBox rect (or font size) height to size the inline box.
+
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::borderBoxHeight const):
+        (WebCore::Display::Box::marginBoxHeight const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+        (WebCore::Layout::Line::inlineItemHeight const): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+
 2019-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Make layerTreeAsText() output a bit less verbose

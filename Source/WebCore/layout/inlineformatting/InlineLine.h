@@ -122,7 +122,7 @@ private:
     void removeTrailingTrimmableContent();
 
     void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);
-    LayoutUnit inlineItemHeight(const InlineItem&) const;
+    LayoutUnit inlineItemContentHeight(const InlineItem&) const;
     bool isVisuallyEmpty() const;
 
     const LayoutState& m_layoutState;
