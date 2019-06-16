@@ -119,9 +119,12 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
     // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
     auto coordinateMappingIsRequired = &root() != &formattingContextRoot;
     auto adjustedPosition = Point { 0, verticalPosition };
+    LayoutSize adjustingDelta;
 
-    if (coordinateMappingIsRequired)
+    if (coordinateMappingIsRequired) {
         adjustedPosition = FormattingContext::mapPointToAncestor(m_layoutState, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
+        adjustingDelta = { adjustedPosition.x, adjustedPosition.y - verticalPosition };
+    }
 
     Constraints constraints;
     for (int index = m_floats.size() - 1; index >= 0; --index) {
@@ -138,9 +141,9 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
             continue;
 
         if (floatItem.isLeftPositioned())
-            constraints.left = PositionInContextRoot { rect.right() };
+            constraints.left = PointInContextRoot { rect.right(), rect.bottom() };
         else
-            constraints.right = PositionInContextRoot { rect.left() };
+            constraints.right = PointInContextRoot { rect.left(), rect.bottom() };
 
         if (constraints.left && constraints.right)
             break;
@@ -148,12 +151,11 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
 
     if (coordinateMappingIsRequired) {
         if (constraints.left)
-            constraints.left = PositionInContextRoot { *constraints.left - adjustedPosition.x };
+            constraints.left->move(-adjustingDelta);
 
         if (constraints.right)
-            constraints.right = PositionInContextRoot { *constraints.right - adjustedPosition.x };
+            constraints.right->move(-adjustingDelta);
     }
-
     return constraints;
 }
 

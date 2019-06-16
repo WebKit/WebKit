@@ -60,8 +60,8 @@ public:
     Optional<PositionInContextRoot> bottom(const Box& formattingContextRoot) const;
 
     struct Constraints {
-        Optional<PositionInContextRoot> left;
-        Optional<PositionInContextRoot> right;
+        Optional<PointInContextRoot> left;
+        Optional<PointInContextRoot> right;
     };
     Constraints constraints(PositionInContextRoot verticalPosition, const Box& formattingContextRoot) const;
 

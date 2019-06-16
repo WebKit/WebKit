@@ -59,6 +59,7 @@ struct Point {
     Point() = default;
     Point(LayoutUnit, LayoutUnit);
     Point(LayoutPoint);
+    void move(LayoutSize);
     void moveBy(LayoutPoint);
     operator LayoutPoint() const { return { x, y }; }
 };
@@ -77,6 +78,12 @@ inline Point::Point(LayoutUnit x, LayoutUnit y)
     : x(x)
     , y(y)
 {
+}
+
+inline void Point::move(LayoutSize offset)
+{
+    x += offset.width();
+    y += offset.height();
 }
 
 inline void Point::moveBy(LayoutPoint offset)

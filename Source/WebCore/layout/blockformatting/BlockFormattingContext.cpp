@@ -148,8 +148,10 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     auto containingBlockContentBoxRight = containingBlockRight - containingBlockDisplayBox.borderRight() + containingBlockDisplayBox.paddingRight().valueOr(0);
 
     // Shrink the available space if the floats are actually intruding at this vertical position.
-    availableWidth -= (std::max<LayoutUnit>(0, constraints.left.valueOr(PositionInContextRoot { 0 }) - containingBlockContentBoxLeft)
-        + std::max<LayoutUnit>(0, containingBlockContentBoxRight - constraints.right.valueOr(PositionInContextRoot { containingBlockContentBoxRight })));
+    if (constraints.left)
+        availableWidth -= std::max<LayoutUnit>(0, constraints.left->x - containingBlockContentBoxLeft);
+    if (constraints.right)
+        availableWidth -= std::max<LayoutUnit>(0, containingBlockContentBoxRight - constraints.right->x);
     return availableWidth;
 }
 

@@ -230,23 +230,23 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
         auto lineLogicalLeft = lineHorizontalConstraint.logicalTopLeft.x();
         auto floatConstraints = m_floatingState.constraints({ lineLogicalTop }, m_formattingRoot);
         // Check if these constraints actually put limitation on the line.
-        if (floatConstraints.left && *floatConstraints.left <= formattingRootDisplayBox.contentBoxLeft())
+        if (floatConstraints.left && floatConstraints.left->x <= formattingRootDisplayBox.contentBoxLeft())
             floatConstraints.left = { };
 
-        if (floatConstraints.right && *floatConstraints.right >= formattingRootDisplayBox.contentBoxRight())
+        if (floatConstraints.right && floatConstraints.right->x >= formattingRootDisplayBox.contentBoxRight())
             floatConstraints.right = { };
 
         if (floatConstraints.left && floatConstraints.right) {
-            ASSERT(*floatConstraints.left < *floatConstraints.right);
-            availableWidth = *floatConstraints.right - *floatConstraints.left;
-            lineLogicalLeft = *floatConstraints.left;
+            ASSERT(floatConstraints.left->x < floatConstraints.right->x);
+            availableWidth = floatConstraints.right->x - floatConstraints.left->x;
+            lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.left) {
-            ASSERT(*floatConstraints.left > lineLogicalLeft);
-            availableWidth -= (*floatConstraints.left - lineLogicalLeft);
-            lineLogicalLeft = *floatConstraints.left;
+            ASSERT(floatConstraints.left->x > lineLogicalLeft);
+            availableWidth -= (floatConstraints.left->x - lineLogicalLeft);
+            lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.right) {
-            ASSERT(*floatConstraints.right > lineLogicalLeft);
-            availableWidth = *floatConstraints.right - lineLogicalLeft;
+            ASSERT(floatConstraints.right->x > lineLogicalLeft);
+            availableWidth = floatConstraints.right->x - lineLogicalLeft;
         }
         lineHorizontalConstraint.availableLogicalWidth = availableWidth;
         lineHorizontalConstraint.logicalTopLeft.setX(lineLogicalLeft);
