@@ -37,9 +37,8 @@ public:
     struct Baseline {
         LayoutUnit ascent;
         LayoutUnit descent;
-        LayoutUnit offset; // baseline offset from line logical top. Note that offset does not necessarily equal to ascent.
     };
-    LineBox(Display::Rect, const Baseline&);
+    LineBox(Display::Rect, const Baseline&, LayoutUnit baselineOffset);
     
     LayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
 
@@ -52,15 +51,33 @@ public:
     LayoutUnit logicalHeight() const { return m_rect.height(); }
 
     Baseline baseline() const { return m_baseline; }
+    // Baseline offset from line logical top. Note that offset does not necessarily equal to ascent.
+    //
+    // ------------------- line logical top
+    //             ^
+    //             |
+    //   ^         | baseline offset
+    //   |         |
+    //   | ascent  |
+    //   |         |
+    //   v         v
+    //   ----------------- baseline
+    //   ^
+    //   | descent
+    //   v
+    // ------------------- line logical bottom
+    LayoutUnit baselineOffset() const { return m_baselineOffset; }
 
 private:
     Display::Rect m_rect;
     Baseline m_baseline;
+    LayoutUnit m_baselineOffset;
 };
 
-inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline)
+inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline, LayoutUnit baselineOffset)
     : m_rect(rect)
     , m_baseline(baseline)
+    , m_baselineOffset(baselineOffset)
 {
 }
 

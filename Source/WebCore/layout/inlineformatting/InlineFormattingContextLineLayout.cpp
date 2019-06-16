@@ -130,7 +130,7 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
     std::unique_ptr<Line> line;
     if (lineInput.skipVerticalAligment == LineInput::SkipVerticalAligment::No) {
         auto mimimumLineHeight = m_formattingRoot.style().computedLineHeight();
-        auto initialBaselineOffset = Line::halfLeadingMetrics(m_formattingRoot.style().fontMetrics(), mimimumLineHeight).offset;
+        auto initialBaselineOffset = Line::halfLeadingMetrics(m_formattingRoot.style().fontMetrics(), mimimumLineHeight).ascent;
         line = std::make_unique<Line>(layoutState(), lineInput.horizontalConstraint.logicalTopLeft, lineInput.horizontalConstraint.availableLogicalWidth, mimimumLineHeight, initialBaselineOffset);
     } else
         line = std::make_unique<Line>(layoutState(), lineInput.horizontalConstraint.logicalTopLeft.x(), lineInput.horizontalConstraint.availableLogicalWidth);
@@ -315,7 +315,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
     if (lineContent.isEmpty()) {
         // Spec tells us to create a zero height, empty line box.
         auto lineBox = Display::Rect { lineContent.logicalTop(), lineContent.logicalLeft(), 0 , 0 };
-        m_formattingState.addLineBox({ lineBox, lineContent.baseline() });
+        m_formattingState.addLineBox({ lineBox, lineContent.baseline(), lineContent.baselineOffset() });
         return;
     }
 
@@ -406,7 +406,7 @@ void InlineFormattingContext::LineLayout::createDisplayRuns(const Line::Content&
         }
     }
     // FIXME linebox needs to be ajusted after content alignment.
-    m_formattingState.addLineBox({ lineBox, lineContent.baseline() });
+    m_formattingState.addLineBox({ lineBox, lineContent.baseline(), lineContent.baselineOffset() });
     alignRuns(m_formattingRoot.style().textAlign(), previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint - lineContent.logicalWidth());
 }
 

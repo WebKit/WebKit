@@ -1,5 +1,32 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Decouple baseline ascent/descent and baseline offset.
+        https://bugs.webkit.org/show_bug.cgi?id=198901
+        <rdar://problem/51782393>
+
+        Reviewed by Antti Koivisto.
+
+        Baseline offset is the baseline's distance from the line's logical top -and it is not necessarily the same as the baseline's ascent.
+        It's easier to track the baseline and its top separately since certain properties only change one or the other.
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::placeInlineItems const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::halfLeadingMetrics):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Content::baselineOffset const):
+        (WebCore::Layout::Line::Content::setBaselineOffset):
+        (WebCore::Layout::Line::baselineOffset const):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::baselineOffset const):
+        (WebCore::Layout::LineBox::LineBox):
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Intruding float may prevent adding any inline box
         https://bugs.webkit.org/show_bug.cgi?id=198891
         <rdar://problem/51779956>

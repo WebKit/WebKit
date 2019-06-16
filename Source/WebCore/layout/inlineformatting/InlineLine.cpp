@@ -57,7 +57,7 @@ Line::Line(const LayoutState& layoutState, const LayoutPoint& topLeft, LayoutUni
     : m_layoutState(layoutState)
     , m_content(std::make_unique<Line::Content>())
     , m_logicalTopLeft(topLeft)
-    , m_baseline({ baselineOffset, minimumHeight - baselineOffset, { } })
+    , m_baseline({ baselineOffset, minimumHeight - baselineOffset })
     , m_contentLogicalHeight(minimumHeight)
     , m_lineLogicalWidth(availableWidth)
 {
@@ -97,6 +97,7 @@ std::unique_ptr<Line::Content> Line::close()
     if (!m_skipVerticalAligment) {
         if (isVisuallyEmpty()) {
             m_baseline = { };
+            m_baselineTop = { };
             m_contentLogicalHeight = { };
         }
 
@@ -149,6 +150,7 @@ std::unique_ptr<Line::Content> Line::close()
     }
     m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
     m_content->setBaseline(m_baseline);
+    m_content->setBaselineOffset(baselineOffset());
     return WTFMove(m_content);
 }
 
@@ -336,7 +338,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
         break;
     case VerticalAlign::Bottom:
         if (m_contentLogicalHeight < runHeight) {
-            m_baseline.offset = m_baseline.offset + (runHeight - m_contentLogicalHeight);
+            m_baselineTop += runHeight - m_contentLogicalHeight;
             m_contentLogicalHeight = runHeight;
         }
         break;
@@ -379,7 +381,7 @@ LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, Layou
     // Inline tree is all integer based.
     auto adjustedAscent = std::max((ascent + leading / 2).floor(), 0);
     auto adjustedDescent = std::max((descent + leading / 2).ceil(), 0);
-    return { adjustedAscent, adjustedDescent, adjustedAscent };
+    return { adjustedAscent, adjustedDescent };
 }
 
 }

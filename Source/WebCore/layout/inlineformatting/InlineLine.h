@@ -68,16 +68,19 @@ public:
         LayoutUnit logicalWidth() const { return m_logicalRect.width(); }
         LayoutUnit logicalHeight() const { return m_logicalRect.height(); }
         LineBox::Baseline baseline() const { return m_baseline; }
+        LayoutUnit baselineOffset() const { return m_baselineOffset; }
 
     private:
         friend class Line;
 
         void setLogicalRect(const Display::Rect& logicalRect) { m_logicalRect = logicalRect; }
         void setBaseline(LineBox::Baseline baseline) { m_baseline = baseline; }
+        void setBaselineOffset(LayoutUnit baselineOffset) { m_baselineOffset = baselineOffset; }
         Runs& runs() { return m_runs; }
 
         Display::Rect m_logicalRect;
         LineBox::Baseline m_baseline;
+        LayoutUnit m_baselineOffset;
         Runs m_runs;
     };
     std::unique_ptr<Content> close();
@@ -112,7 +115,7 @@ private:
 
     LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     LayoutUnit baselineAlignedContentHeight() const { return m_baseline.ascent + m_baseline.descent; }
-    LayoutUnit baselineOffset() const { return m_baseline.offset; }
+    LayoutUnit baselineOffset() const { return m_baseline.ascent + m_baselineTop; }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void removeTrailingTrimmableContent();
@@ -129,6 +132,8 @@ private:
     LayoutUnit m_contentLogicalWidth;
 
     LineBox::Baseline m_baseline;
+    LayoutUnit m_baselineTop;
+
     LayoutUnit m_contentLogicalHeight;
     LayoutUnit m_lineLogicalWidth;
     bool m_skipVerticalAligment { false };
