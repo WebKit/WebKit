@@ -79,6 +79,7 @@ private:
             SkipVerticalAligment skipVerticalAligment;
             unsigned firstInlineItemIndex { 0 };
             const InlineItems& inlineItems;
+            Optional<LayoutUnit> floatMinimumLogicalBottom;
         };
         LineContent placeInlineItems(const LineInput&) const;
         void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;

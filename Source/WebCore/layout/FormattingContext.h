@@ -62,7 +62,8 @@ public:
     static LayoutUnit mapTopToAncestor(const LayoutState&, const Box&, const Container& ancestor);
     static LayoutUnit mapLeftToAncestor(const LayoutState&, const Box&, const Container& ancestor);
     static LayoutUnit mapRightToAncestor(const LayoutState&, const Box&, const Container& ancestor);
-    static Point mapPointToAncestor(const LayoutState&, Point, const Container& containingBlock, const Container& ancestor);
+    static Point mapPointToAncestor(const LayoutState&, Point, const Container& from, const Container& to);
+    static Point mapPointToDescendent(const LayoutState&, Point, const Container& from, const Container& to);
 
 protected:
     using LayoutQueue = Vector<const Box*>;

@@ -1,5 +1,27 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Intruding float may prevent adding any inline box
+        https://bugs.webkit.org/show_bug.cgi?id=198891
+        <rdar://problem/51779956>
+
+        Reviewed by Antti Koivisto.
+
+        Take the intruding left/right float pair and find the vertical position where the next line might go
+        if these floats prevent us from adding even one inline box to the current line.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::mapPointToAncestor):
+        (WebCore::Layout::FormattingContext::mapPointToDescendent):
+        * layout/FormattingContext.h:
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::Point::max):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::placeInlineItems const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::layout const):
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floats] Add bottom value to FloatingState::Constraints
         https://bugs.webkit.org/show_bug.cgi?id=198889
         <rdar://problem/51776730>

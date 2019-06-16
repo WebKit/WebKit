@@ -59,6 +59,8 @@ struct Point {
     Point() = default;
     Point(LayoutUnit, LayoutUnit);
     Point(LayoutPoint);
+    static Point max() { return { LayoutUnit::max(), LayoutUnit::max() }; }
+
     void move(LayoutSize);
     void moveBy(LayoutPoint);
     operator LayoutPoint() const { return { x, y }; }

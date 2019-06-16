@@ -161,10 +161,11 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         uncommittedContent.reset();
     };
 
+    auto lineHasFloatBox = lineInput.floatMinimumLogicalBottom.hasValue();
     auto closeLine = [&] {
-        // This might change at some point.
-        ASSERT(committedInlineItemCount);
-        return LineContent { lineInput.firstInlineItemIndex + (committedInlineItemCount - 1), WTFMove(floats), line->close() };
+        ASSERT(committedInlineItemCount || lineHasFloatBox);
+        auto lastCommittedIndex = committedInlineItemCount ? Optional<unsigned> { lineInput.firstInlineItemIndex + (committedInlineItemCount - 1) } : WTF::nullopt;
+        return LineContent { lastCommittedIndex, WTFMove(floats), line->close() };
     };
     LineBreaker lineBreaker;
     // Iterate through the inline content and place the inline boxes on the current line.
@@ -175,7 +176,8 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
         auto itemLogicalWidth = inlineItemWidth(layoutState(), *inlineItem, currentLogicalRight);
 
         // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
-        auto breakingContext = lineBreaker.breakingContext(*inlineItem, itemLogicalWidth, { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), !line->hasContent() });
+        auto lineIsConsideredEmpty = !line->hasContent() && !lineHasFloatBox;
+        auto breakingContext = lineBreaker.breakingContext(*inlineItem, itemLogicalWidth, { availableWidth, currentLogicalRight, line->trailingTrimmableWidth(), lineIsConsideredEmpty });
         if (breakingContext.isAtBreakingOpportunity)
             commitPendingContent();
 
@@ -200,6 +202,7 @@ InlineFormattingContext::LineLayout::LineContent InlineFormattingContext::LineLa
             floatBox.isLeftFloatingPositioned() ? line->moveLogicalLeft(floatBoxWidth) : line->moveLogicalRight(floatBoxWidth);
             floats.append(makeWeakPtr(*inlineItem));
             ++committedInlineItemCount;
+            lineHasFloatBox = true;
             continue;
         }
 
@@ -222,12 +225,12 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
     auto lineLogicalTop = formattingRootDisplayBox.contentBoxTop();
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
 
-    auto applyFloatConstraint = [&](auto& lineHorizontalConstraint) {
+    auto applyFloatConstraint = [&](auto& lineInput) {
         // Check for intruding floats and adjust logical left/available width for this line accordingly.
         if (m_floatingState.isEmpty())
             return;
-        auto availableWidth = lineHorizontalConstraint.availableLogicalWidth;
-        auto lineLogicalLeft = lineHorizontalConstraint.logicalTopLeft.x();
+        auto availableWidth = lineInput.horizontalConstraint.availableLogicalWidth;
+        auto lineLogicalLeft = lineInput.horizontalConstraint.logicalTopLeft.x();
         auto floatConstraints = m_floatingState.constraints({ lineLogicalTop }, m_formattingRoot);
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && floatConstraints.left->x <= formattingRootDisplayBox.contentBoxLeft())
@@ -236,33 +239,44 @@ void InlineFormattingContext::LineLayout::layout(LayoutUnit widthConstraint) con
         if (floatConstraints.right && floatConstraints.right->x >= formattingRootDisplayBox.contentBoxRight())
             floatConstraints.right = { };
 
+        // Set the minimum float bottom value as a hint for the next line if needed.
+        static auto inifitePoint = PointInContextRoot::max();
+        auto floatMinimumLogicalBottom = std::min(floatConstraints.left.valueOr(inifitePoint).y, floatConstraints.right.valueOr(inifitePoint).y);
+        if (floatMinimumLogicalBottom != inifitePoint.y)
+            lineInput.floatMinimumLogicalBottom = floatMinimumLogicalBottom;
+
         if (floatConstraints.left && floatConstraints.right) {
-            ASSERT(floatConstraints.left->x < floatConstraints.right->x);
+            ASSERT(floatConstraints.left->x <= floatConstraints.right->x);
             availableWidth = floatConstraints.right->x - floatConstraints.left->x;
             lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.left) {
-            ASSERT(floatConstraints.left->x > lineLogicalLeft);
+            ASSERT(floatConstraints.left->x >= lineLogicalLeft);
             availableWidth -= (floatConstraints.left->x - lineLogicalLeft);
             lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.right) {
-            ASSERT(floatConstraints.right->x > lineLogicalLeft);
+            ASSERT(floatConstraints.right->x >= lineLogicalLeft);
             availableWidth = floatConstraints.right->x - lineLogicalLeft;
         }
-        lineHorizontalConstraint.availableLogicalWidth = availableWidth;
-        lineHorizontalConstraint.logicalTopLeft.setX(lineLogicalLeft);
+        lineInput.horizontalConstraint.availableLogicalWidth = availableWidth;
+        lineInput.horizontalConstraint.logicalTopLeft.setX(lineLogicalLeft);
     };
 
     auto& inlineItems = m_formattingState.inlineItems();
     unsigned currentInlineItemIndex = 0;
     while (currentInlineItemIndex < inlineItems.size()) {
         auto lineInput = LineInput { { lineLogicalLeft, lineLogicalTop }, widthConstraint, LineInput::SkipVerticalAligment::No, currentInlineItemIndex, inlineItems };
-        applyFloatConstraint(lineInput.horizontalConstraint);
+        applyFloatConstraint(lineInput);
         auto lineContent = placeInlineItems(lineInput);
         createDisplayRuns(*lineContent.runs, lineContent.floats, widthConstraint);
-        // We should always put at least one run on the line atm. This might change later on though.
-        ASSERT(lineContent.lastInlineItemIndex);
-        currentInlineItemIndex = *lineContent.lastInlineItemIndex + 1;
-        lineLogicalTop = lineContent.runs->logicalBottom();
+        if (!lineContent.lastInlineItemIndex) {
+            // Floats prevented us putting any content on the line.
+            ASSERT(lineInput.floatMinimumLogicalBottom);
+            ASSERT(lineContent.runs->isEmpty());
+            lineLogicalTop = *lineInput.floatMinimumLogicalBottom;
+        } else {
+            currentInlineItemIndex = *lineContent.lastInlineItemIndex + 1;
+            lineLogicalTop = lineContent.runs->logicalBottom();
+        }
     }
 }
 

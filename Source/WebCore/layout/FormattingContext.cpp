@@ -211,15 +211,26 @@ LayoutUnit FormattingContext::mapTopToAncestor(const LayoutState& layoutState, c
     return top;
 }
 
-Point FormattingContext::mapPointToAncestor(const LayoutState& layoutState, Point position, const Container& containingBlock, const Container& ancestor)
+Point FormattingContext::mapPointToAncestor(const LayoutState& layoutState, Point position, const Container& from, const Container& to)
 {
-    if (&containingBlock == &ancestor)
+    if (&from == &to)
         return position;
-    ASSERT(containingBlock.isContainingBlockDescendantOf(ancestor));
+    ASSERT(from.isContainingBlockDescendantOf(to));
     auto mappedPosition = position;
-    for (auto* container = &containingBlock; container && container != &ancestor; container = container->containingBlock())
+    for (auto* container = &from; container && container != &to; container = container->containingBlock())
         mappedPosition.moveBy(layoutState.displayBoxForLayoutBox(*container).topLeft());
     return mappedPosition;
+}
+
+Point FormattingContext::mapPointToDescendent(const LayoutState& layoutState, Point point, const Container& from, const Container& to)
+{
+    // "point" is in the coordinate system of the "from" container.
+    if (&from == &to)
+        return point;
+    ASSERT(to.isContainingBlockDescendantOf(from));
+    for (auto* container = &to; container && container != &from; container = container->containingBlock())
+        point.moveBy(-layoutState.displayBoxForLayoutBox(*container).topLeft());
+    return point;
 }
 
 #ifndef NDEBUG
