@@ -365,7 +365,12 @@ class TestImporter(object):
             return ''
 
         options_prefix = '<!-- webkit-test-runner'
-        contents = self.filesystem.read_text_file(path).split('\n')
+        contents = ''
+        try:
+            contents = self.filesystem.read_text_file(path).split('\n')
+        except:
+            _log.info('unable to read %s as a text file' % path)
+
         if not len(contents):
             return ''
         first_line = contents[0]

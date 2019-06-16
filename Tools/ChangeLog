@@ -1,3 +1,14 @@
+2019-06-15  Youenn Fablet  <youenn@apple.com>
+
+        WPT test importer WTR option reader should not throw if the file is not proper UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=198780
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter._webkit_test_runner_options):
+        In case the test file cannot be read as text, consider that there is no WTR option.
+
 2019-06-14  Youenn Fablet  <youenn@apple.com>
 
         WebResourceLoadStatisticsStore should not use its network session if invalidated
