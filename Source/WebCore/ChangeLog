@@ -1,5 +1,24 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add limited quirks mode to LayoutState.
+        https://bugs.webkit.org/show_bug.cgi?id=198881
+        <rdar://problem/51773229>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for introducing limited quirks mode to inline layout.
+
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::setQuirksMode):
+        (WebCore::Layout::LayoutState::inQuirksMode const):
+        (WebCore::Layout::LayoutState::inLimitedQuirksMode const):
+        (WebCore::Layout::LayoutState::inNoQuirksMode const):
+        (WebCore::Layout::LayoutState::setInQuirksMode): Deleted.
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Completely collapsed runs should not go to the trimmable run list.
         https://bugs.webkit.org/show_bug.cgi?id=198900
         <rdar://problem/51782156>
