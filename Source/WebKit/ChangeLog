@@ -1,3 +1,14 @@
+2019-06-15  Youenn Fablet  <youenn@apple.com>
+
+        WebProcessPool::clearWebProcessHasUploads cannot assume its given processIdentifier is valid
+        https://bugs.webkit.org/show_bug.cgi?id=198865
+
+        Unreviewed.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::clearWebProcessHasUploads):
+        Remove wrong debug assertion in case of WebProcessProxy destruction.
+
 2019-06-15  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] Stop accessing GdkEvent fields when possible

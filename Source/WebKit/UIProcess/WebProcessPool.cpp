@@ -2559,7 +2559,6 @@ void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
 {
     ASSERT(processID);
     auto result = m_processesWithUploads.take(processID);
-    ASSERT(result);
     if (!result)
         return;
 
