@@ -76,6 +76,15 @@ bool Line::isVisuallyEmpty() const
         }
         if (run->inlineItem.isContainerEnd())
             continue;
+        if (run->inlineItem.layoutBox().establishesFormattingContext()) {
+            ASSERT(run->inlineItem.layoutBox().isInlineBlockBox());
+            auto& displayBox = m_layoutState.displayBoxForLayoutBox(run->inlineItem.layoutBox());
+            if (!displayBox.width())
+                continue;
+            if (m_skipVerticalAligment || displayBox.height())
+                return false;
+            continue;
+        }
         if (!run->isCollapsed)
             return false;
     }

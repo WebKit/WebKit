@@ -1,5 +1,18 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Line::isVisuallyEmpty should check inline-block boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=198894
+        <rdar://problem/51780886>
+
+        Reviewed by Antti Koivisto.
+
+        Non-zero width/height inline-block boxes make the line visually non-empty.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add Layout::Box::isContainingBlockDescendantOf
         https://bugs.webkit.org/show_bug.cgi?id=198888
         <rdar://problem/51776466>
