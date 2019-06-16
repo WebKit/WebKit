@@ -1,5 +1,21 @@
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Ignore descent when in limited/full quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=198893
+        <rdar://problem/51780634>
+
+        Reviewed by Antti Koivisto.
+
+        In limited/full quirks mode, line's descent should be ignored when computing the final line height when
+        1. the line has baseline aligned content only and
+        2. these baseline aligned boxes don't have descent.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+
+2019-06-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Line::isVisuallyEmpty should check inline-block boxes.
         https://bugs.webkit.org/show_bug.cgi?id=198894
         <rdar://problem/51780886>
