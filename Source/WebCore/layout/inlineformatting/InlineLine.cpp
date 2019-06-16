@@ -159,8 +159,10 @@ void Line::moveLogicalRight(LayoutUnit delta)
 LayoutUnit Line::trailingTrimmableWidth() const
 {
     LayoutUnit trimmableWidth;
-    for (auto* trimmableRun : m_trimmableContent)
+    for (auto* trimmableRun : m_trimmableContent) {
+        ASSERT(!trimmableRun->isCollapsed);
         trimmableWidth += trimmableRun->logicalRect.width();
+    }
     return trimmableWidth;
 }
 
@@ -228,7 +230,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 
     auto textContext = Content::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
     auto lineItem = std::make_unique<Content::Run>(inlineItem, logicalRect, textContext, isCompletelyCollapsed, canBeExtended);
-    if (isTrimmable)
+    if (isTrimmable && !isCompletelyCollapsed)
         m_trimmableContent.add(lineItem.get());
 
     m_content->runs().append(WTFMove(lineItem));
