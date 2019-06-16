@@ -1,3 +1,22 @@
+2019-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Grown region of WasmTable should be initialized with null
+        https://bugs.webkit.org/show_bug.cgi?id=198903
+
+        Reviewed by Saam Barati.
+
+        Grown region of Wasmtable is now empty. We should initialize it with null.
+        We also rename Wasm::Table::visitChildren to Wasm::Table::visitAggregate to
+        align to the naming convention.
+
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::visitAggregate):
+        (JSC::Wasm::Table::visitChildren): Deleted.
+        * wasm/WasmTable.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::visitChildren):
+
 2019-06-14  Keith Miller  <keith_miller@apple.com>
 
         Restore PAC based cage.

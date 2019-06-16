@@ -80,7 +80,7 @@ void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-    thisObject->table()->visitChildren(visitor);
+    thisObject->table()->visitAggregate(visitor);
 }
 
 bool JSWebAssemblyTable::grow(uint32_t delta)

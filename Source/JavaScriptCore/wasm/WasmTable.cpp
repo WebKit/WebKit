@@ -100,7 +100,7 @@ Optional<uint32_t> Table::grow(uint32_t delta)
     if (!isValidLength(newLength))
         return WTF::nullopt;
 
-    auto checkedGrow = [&] (auto& container) {
+    auto checkedGrow = [&] (auto& container, auto initializer) {
         if (newLengthChecked.unsafeGet() > allocatedLength(m_length)) {
             Checked reallocSizeChecked = allocatedLength(newLengthChecked.unsafeGet());
             reallocSizeChecked *= sizeof(*container.get());
@@ -110,19 +110,21 @@ Optional<uint32_t> Table::grow(uint32_t delta)
             // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
             container.realloc(reallocSize);
         }
-        for (uint32_t i = m_length; i < allocatedLength(newLength); ++i)
+        for (uint32_t i = m_length; i < allocatedLength(newLength); ++i) {
             new (&container.get()[i]) std::remove_reference_t<decltype(*container.get())>();
+            initializer(container.get()[i]);
+        }
         return true;
     };
 
     if (auto* funcRefTable = asFuncrefTable()) {
-        if (!checkedGrow(funcRefTable->m_importableFunctions))
+        if (!checkedGrow(funcRefTable->m_importableFunctions, [] (auto&) { }))
             return WTF::nullopt;
-        if (!checkedGrow(funcRefTable->m_instances))
+        if (!checkedGrow(funcRefTable->m_instances, [] (auto&) { }))
             return WTF::nullopt;
     }
 
-    if (!checkedGrow(m_jsValues))
+    if (!checkedGrow(m_jsValues, [] (WriteBarrier<Unknown>& slot) { slot.setStartingValue(jsNull()); }))
         return WTF::nullopt;
 
     setLength(newLength);
@@ -157,7 +159,7 @@ JSValue Table::get(uint32_t index) const
     return m_jsValues.get()[index & m_mask].get();
 }
 
-void Table::visitChildren(SlotVisitor& visitor)
+void Table::visitAggregate(SlotVisitor& visitor)
 {
     RELEASE_ASSERT(m_owner);
     auto locker = holdLock(m_owner->cellLock());

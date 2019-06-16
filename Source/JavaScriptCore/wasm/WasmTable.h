@@ -76,7 +76,7 @@ public:
 
     Optional<uint32_t> grow(uint32_t delta);
 
-    void visitChildren(SlotVisitor&);
+    void visitAggregate(SlotVisitor&);
 
 protected:
     Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType = TableElementType::Anyref);
