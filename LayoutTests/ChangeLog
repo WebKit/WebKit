@@ -1,3 +1,9 @@
+2019-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add missing test result after r246471. EWS didn't show any failure when it was missing.
+
+        * compositing/overflow/composited-scrolling-paint-phases-expected.txt: Added.
+
 2019-06-16  Darin Adler  <darin@apple.com>
 
         Convert some uses of fixed width and fixed precision floating point formatting to use shortest instead
