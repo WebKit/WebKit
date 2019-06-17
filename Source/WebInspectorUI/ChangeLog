@@ -1,3 +1,25 @@
+2019-06-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: the Inspector Style Sheet is missing when grouped by path
+        https://bugs.webkit.org/show_bug.cgi?id=198860
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype.get styleSheets):
+        (WI.CSSManager.prototype.inspectorStyleSheetsForFrame):
+        (WI.CSSManager.prototype.preferredInspectorStyleSheetForFrame):
+        (WI.CSSManager.prototype._inspectorStyleSheetsForFrame): Deleted.
+        Expose a way to fetch all inspector stylesheets for a given frame.
+        Make sure to associate inspector stylesheets with their frame.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._addResourcesRecursivelyForFrame):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCSSStyleSheetAdded):
+        Add paths for inspector stylesheet creation/fetching when grouping by path.
+        Sort inspector stylesheets as the first item of an origin/frame when grouping by path.
+
 2019-06-17  Jamal Nasser  <jamaln@mail.com>
 
         Web Inspector: Go To Line dialog is white when in Dark Mode

@@ -179,7 +179,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     get styleSheets()
     {
-        return [...this._styleSheetIdentifierMap.values()];
+        return Array.from(this._styleSheetIdentifierMap.values());
     }
 
     get defaultAppearance()
@@ -299,9 +299,14 @@ WI.CSSManager = class CSSManager extends WI.Object
         return styles;
     }
 
+    inspectorStyleSheetsForFrame(frame)
+    {
+        return this.styleSheets.filter((styleSheet) => styleSheet.isInspectorStyleSheet() && styleSheet.parentFrame === frame);
+    }
+
     preferredInspectorStyleSheetForFrame(frame, callback, doNotCreateIfMissing)
     {
-        var inspectorStyleSheets = this._inspectorStyleSheetsForFrame(frame);
+        var inspectorStyleSheets = this.inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
             if (styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol]) {
                 callback(styleSheet);
@@ -314,7 +319,9 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         if (CSSAgent.createStyleSheet) {
             CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
+                const url = null;
                 let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
+                styleSheet.updateInfo(url, frame, styleSheet.origin, styleSheet.isInlineStyleTag(), styleSheet.startLineNumber, styleSheet.startColumnNumber);
                 styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
                 callback(styleSheet);
             });
@@ -489,18 +496,6 @@ WI.CSSManager = class CSSManager extends WI.Object
     }
 
     // Private
-
-    _inspectorStyleSheetsForFrame(frame)
-    {
-        let styleSheets = [];
-
-        for (let styleSheet of this.styleSheets) {
-            if (styleSheet.isInspectorStyleSheet() && styleSheet.parentFrame === frame)
-                styleSheets.push(styleSheet);
-        }
-
-        return styleSheets;
-    }
 
     _nodePseudoClassesDidChange(event)
     {

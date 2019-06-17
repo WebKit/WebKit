@@ -574,6 +574,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     _compareTreeElements(a, b)
     {
         const rankFunctions = [
+            (treeElement) => treeElement instanceof WI.CSSStyleSheetTreeElement && treeElement.representedObject.isInspectorStyleSheet(),
             (treeElement) => treeElement === this._mainFrameTreeElement,
             (treeElement) => treeElement instanceof WI.FrameTreeElement,
             (treeElement) => {
@@ -589,12 +590,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
         let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b));
-        if (aRank >= 0 && bRank >= 0) {
-            if (aRank < bRank)
-                return -1;
-            if (bRank < aRank)
-                return 1;
-        }
+        if ((aRank >= 0 && bRank < 0) || aRank < bRank)
+            return -1;
+        if ((bRank >= 0 && aRank < 0) || bRank < aRank)
+            return 1;
 
         return a.mainTitle.extendedLocaleCompare(b.mainTitle) || a.subtitle.extendedLocaleCompare(b.subtitle);
     }
@@ -739,6 +738,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         for (let childFrame of frame.childFrameCollection)
             this._addResourcesRecursivelyForFrame(childFrame);
+
+        if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {
+            for (let styleSheet of WI.cssManager.inspectorStyleSheetsForFrame(frame))
+                this._addResource(styleSheet);
+        }
     }
 
     _addScript(script)
@@ -1922,11 +1926,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (!styleSheet.isInspectorStyleSheet())
             return;
 
-        let frameTreeElement = this.treeElementForRepresentedObject(styleSheet.parentFrame);
-        if (!frameTreeElement)
-            return;
+        if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Type) {
+            let frameTreeElement = this.treeElementForRepresentedObject(styleSheet.parentFrame);
+            if (frameTreeElement) {
+                frameTreeElement.addRepresentedObjectToNewChildQueue(styleSheet);
+                return;
+            }
+        }
 
-        frameTreeElement.addRepresentedObjectToNewChildQueue(styleSheet);
+        this._addResource(styleSheet);
     }
 
     _handleTargetAdded(event)
