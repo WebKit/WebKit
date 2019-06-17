@@ -1875,6 +1875,8 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         processPool->setResourceLoadStatisticsEnabled(false);
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(false));
     }
+
+    m_resourceLoadStatisticsEnabled = false;
 #else
     UNUSED_PARAM(enabled);
 #endif

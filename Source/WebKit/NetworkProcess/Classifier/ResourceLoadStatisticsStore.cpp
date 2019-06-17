@@ -246,6 +246,8 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         pruneStatisticsIfNeeded();
         syncStorageIfNeeded();
 
+        logTestingEvent("Storage Synced"_s);
+
         if (!m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
             return;
 

@@ -1,3 +1,36 @@
+2019-06-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Ensure ITP state is relayed to Network Process on restart
+        https://bugs.webkit.org/show_bug.cgi?id=198797
+        <rdar://problem/51646944>
+
+        Reviewed by Youenn Fablet.
+
+        Now that the ITP state is maintained in the Network Process, we have to make sure that we update
+        that process with current ITP state if the Network Process crashes and is relaunched. This wasn't a
+        problem in earlier releases because we tracked all ITP state in the UIProcess.
+
+        This patch does the following:
+        1. Add a new method to WKWebsiteDataStore to allow us to trigger statistics processing, which has the
+           side effect of syncing ITP state persistently so that it will be available after bouncing the process.
+        2. Adds a new test that sets a tracking domain, bounces the process, and confirms the state is still
+           consistent.
+
+        Tested by TestWebKitAPI.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _clearPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _processStatisticsAndDataRecords:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::setResourceLoadStatisticsEnabled):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+
 2019-06-17  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK] Stop accessing GdkEvent fields when possible

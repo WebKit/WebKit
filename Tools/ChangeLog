@@ -1,3 +1,16 @@
+2019-06-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Ensure ITP state is relayed to Network Process on restart
+        https://bugs.webkit.org/show_bug.cgi?id=198797
+        <rdar://problem/51646944>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (cleanupITPDatabase): Added.
+        (TEST:EnableDisableITP): Update to use cleanup method.
+        (TEST:NetworkProcessRestart): Added.
+
 2019-06-17  Aakash Jain  <aakash_jain@apple.com>
 
         New EWS can't process patches larger than 640kb
