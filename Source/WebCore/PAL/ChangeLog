@@ -1,3 +1,20 @@
+2019-06-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Move SOAuthorization from WebKitAdditions to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=198874
+        <rdar://problem/47573431>
+
+        Reviewed by Brent Fulgham.
+
+        This patch moves AppSSOSoftLink from WebKitAdditions to WebKit, and introduces
+        AuthKitSPI.h.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AppSSOSoftLink.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * pal/cocoa/AppSSOSoftLink.mm: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * pal/spi/cf/CFNetworkSPI.h:
+        * pal/spi/cocoa/AuthKitSPI.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+
 2019-06-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Disable AppSSO for web processes and plugin processes

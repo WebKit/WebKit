@@ -69,8 +69,9 @@ public:
 
     Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
 
-#if HAVE(LOAD_OPTIMIZER)
-APINAVIGATIONACTION_LOADOPTIMIZER_ADDITIONS_1
+#if HAVE(APP_SSO)
+    bool shouldPerformSOAuthorization() { return m_shouldPerformSOAuthorization; }
+    void unsetShouldPerformSOAuthorization() { m_shouldPerformSOAuthorization = false; }
 #endif
 
 private:
@@ -100,8 +101,8 @@ private:
     WTF::URL m_originalURL;
 
     bool m_shouldOpenAppLinks;
-#if HAVE(LOAD_OPTIMIZER)
-APINAVIGATIONACTION_LOADOPTIMIZER_ADDITIONS_2
+#if HAVE(APP_SSO)
+    bool m_shouldPerformSOAuthorization { true };
 #endif
 
     RefPtr<UserInitiatedAction> m_userInitiatedAction;

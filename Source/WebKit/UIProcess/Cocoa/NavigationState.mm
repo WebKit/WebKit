@@ -40,6 +40,7 @@
 #import "Logging.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
+#import "SOAuthorizationCoordinator.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKFrameInfoInternal.h"
@@ -79,10 +80,6 @@
 
 #if HAVE(APP_LINKS)
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NavigationStateAdditions.mm>
 #endif
 
 #if USE(QUICK_LOOK)
@@ -474,12 +471,18 @@ bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy
 }
 #endif
 
-#if !USE(APPLE_INTERNAL_SDK)
-static void tryOptimizingLoad(Ref<API::NavigationAction>&&, WebPageProxy&, Function<void(bool)>&& completionHandler)
+static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Function<void(bool)>&& completionHandler)
 {
+#if HAVE(APP_SSO)
+    if (!navigationAction->shouldPerformSOAuthorization()) {
+        completionHandler(false);
+        return;
+    }
+    page.websiteDataStore().soAuthorizationCoordinator().tryAuthorize(WTFMove(navigationAction), page, WTFMove(completionHandler));
+#else
     completionHandler(false);
-}
 #endif
+}
 
 static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, WTF::Function<void(bool)>&& completionHandler)
 {
@@ -489,7 +492,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
         auto* localCompletionHandler = new WTF::Function<void (bool)>([navigationAction = WTFMove(navigationAction), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
             ASSERT(RunLoop::isMain());
             if (!success && weakPage) {
-                tryOptimizingLoad(WTFMove(navigationAction), *weakPage, WTFMove(completionHandler));
+                trySOAuthorization(WTFMove(navigationAction), *weakPage, WTFMove(completionHandler));
                 return;
             }
             completionHandler(success);
@@ -504,7 +507,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
     }
 #endif
 
-    tryOptimizingLoad(WTFMove(navigationAction), page, WTFMove(completionHandler));
+    trySOAuthorization(WTFMove(navigationAction), page, WTFMove(completionHandler));
 }
 
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
@@ -618,7 +621,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             localListener->download();
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-            tryOptimizingLoad(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
+            trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
                 if (optimizedLoad) {
                     localListener->ignore();
                     return;

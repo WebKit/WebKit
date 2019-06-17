@@ -56,10 +56,6 @@
 #include <WebCore/CurlProxySettings.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebsiteDataStoreAdditions.h>
-#endif
-
 namespace API {
 class HTTPCookieStore;
 }
@@ -74,6 +70,7 @@ namespace WebKit {
 class AuthenticatorManager;
 class SecKeyProxyStore;
 class DeviceIdHashSaltStorage;
+class SOAuthorizationCoordinator;
 class WebPageProxy;
 class WebProcessPool;
 class WebResourceLoadStatisticsStore;
@@ -255,8 +252,8 @@ public:
     WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
 #endif
 
-#if HAVE(LOAD_OPTIMIZER)
-WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_1
+#if HAVE(APP_SSO)
+    SOAuthorizationCoordinator& soAuthorizationCoordinator() { return m_soAuthorizationCoordinator.get(); }
 #endif
 
 private:
@@ -336,6 +333,10 @@ private:
     UniqueRef<WebsiteDataStoreClient> m_client;
 
     RefPtr<API::HTTPCookieStore> m_cookieStore;
+
+#if HAVE(APP_SSO)
+    UniqueRef<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
+#endif
 };
 
 }

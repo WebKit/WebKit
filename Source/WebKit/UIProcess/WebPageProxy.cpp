@@ -245,6 +245,10 @@
 #include "EditableImageController.h"
 #endif
 
+#if HAVE(APP_SSO)
+#include "SOAuthorizationCoordinator.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -4730,8 +4734,9 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
         auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), WTF::nullopt, WTFMove(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
 
-#if HAVE(LOAD_OPTIMIZER)
-WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_3
+#if HAVE(APP_SSO)
+        if (m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision || m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision)
+            navigationAction->unsetShouldPerformSOAuthorization();
 #endif
 
         m_navigationClient->decidePolicyForNavigationAction(*this, WTFMove(navigationAction), WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
@@ -4739,8 +4744,8 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_3
 
     m_shouldSuppressAppLinksInNextNavigationPolicyDecision = false;
 
-#if HAVE(LOAD_OPTIMIZER)
-WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_4
+#if HAVE(APP_SSO)
+    m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = false;
 #endif
 }
 
@@ -5029,10 +5034,10 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
 using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
 using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;
-static void tryOptimizingLoad(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
-#if HAVE(LOAD_OPTIMIZER)
-WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_6
+#if HAVE(APP_SSO)
+    page.websiteDataStore().soAuthorizationCoordinator().tryAuthorize(WTFMove(navigationAction), page, WTFMove(newPageCallback), WTFMove(uiClientCallback));
 #else
     ASSERT_UNUSED(page, page.pageID());
     uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
@@ -5056,8 +5061,8 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
 
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL({ }, mainFrameURL), request.url());
 
-#if HAVE(LOAD_OPTIMIZER)
-WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_5
+#if HAVE(APP_SSO)
+        newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
 #endif
     };
 
@@ -5065,7 +5070,7 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_5
     bool shouldOpenAppLinks = !hostsAreEqual(originatingFrameInfo->request().url(), request.url());
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, WTF::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
-    tryOptimizingLoad(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = makeRef(*this), windowFeatures = WTFMove(windowFeatures)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
+    trySOAuthorization(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = makeRef(*this), windowFeatures = WTFMove(windowFeatures)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
         m_uiClient->createNewPage(*this, WTFMove(windowFeatures), WTFMove(navigationAction), WTFMove(completionHandler));
     });
 }

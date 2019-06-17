@@ -23,8 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#pragma once
 
-#if HAVE(LOAD_OPTIMIZER)
-#import <WebKitAdditions/TestLoadOptimizerAdditions.mm>
+#import <pal/cocoa/AppSSOSoftLink.h>
+#import <wtf/RefCounted.h>
+
+#if HAVE(APP_SSO)
+
+namespace WebKit {
+class SOAuthorizationSession;
+class WebPageProxy;
+}
+
+@interface WKSOAuthorizationDelegate : NSObject <SOAuthorizationDelegate> {
+@package
+RefPtr<WebKit::SOAuthorizationSession> _session;
+}
+
+- (void)setSession:(RefPtr<WebKit::SOAuthorizationSession>&&)session;
+
+@end
+
 #endif

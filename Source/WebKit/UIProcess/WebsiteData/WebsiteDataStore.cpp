@@ -66,6 +66,10 @@
 #include "SecKeyProxyStore.h"
 #endif
 
+#if HAVE(APP_SSO)
+#include "SOAuthorizationCoordinator.h"
+#endif
+
 namespace WebKit {
 
 static bool allowsWebsiteDataRecordsForAllOrigins;
@@ -103,10 +107,10 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
-{
-#if HAVE(LOAD_OPTIMIZER)
-WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_2
+#if HAVE(APP_SSO)
+    , m_soAuthorizationCoordinator(makeUniqueRef<SOAuthorizationCoordinator>())
 #endif
+{
     WTF::setProcessPrivileges(allPrivileges());
     maybeRegisterWithSessionIDMap();
     platformInitialize();
@@ -124,10 +128,10 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
-{
-#if HAVE(LOAD_OPTIMIZER)
-WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_2
+#if HAVE(APP_SSO)
+    , m_soAuthorizationCoordinator(makeUniqueRef<SOAuthorizationCoordinator>())
 #endif
+{
     maybeRegisterWithSessionIDMap();
     platformInitialize();
 

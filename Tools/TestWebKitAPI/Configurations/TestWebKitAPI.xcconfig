@@ -28,7 +28,14 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZN7testing4Test16TearDownTestCaseEv -Wl,-unexported_symbol -Wl,__ZN7testing4Test13SetUpTestCaseEv
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(OTHER_LDFLAGS_PLATFORM);
+WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_AUTHKIT_LDFLAGS_iphoneos = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
+WK_AUTHKIT_LDFLAGS_iphonesimulator = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
+WK_AUTHKIT_LDFLAGS_IOS_SINCE_13 = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_macosx = $(WK_AUTHKIT_LDFLAGS$(WK_MACOS_1015));
+WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
+
+OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.

@@ -1059,6 +1059,14 @@
 		57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC5214F18300016B847 /* MockLocalConnection.h */; };
 		57DCEDCB214F4E420016B847 /* MockAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC9214F4E420016B847 /* MockAuthenticatorManager.h */; };
 		57EB2E3A21E1983E00B89CDF /* U2fHidAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EB2E3821E1983E00B89CDF /* U2fHidAuthenticator.h */; };
+		57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */; };
+		57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */; };
+		57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */; };
+		57FD318322B35162008D0E8B /* SOAuthorizationCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317222B35148008D0E8B /* SOAuthorizationCoordinator.h */; };
+		57FD318422B35165008D0E8B /* SOAuthorizationNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */; };
+		57FD318522B35169008D0E8B /* SOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317C22B3514A008D0E8B /* SOAuthorizationSession.h */; };
+		57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317D22B3514A008D0E8B /* SubFrameSOAuthorizationSession.h */; };
+		57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */; };
 		587743A621C30BBE00AE9084 /* HTTPSUpgradeList.db in Resources */ = {isa = PBXBuildFile; fileRef = 587743A421C30AD800AE9084 /* HTTPSUpgradeList.db */; };
 		58E977DF21C49A00005D92A6 /* NetworkHTTPSUpgradeChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 58E977DD21C49A00005D92A6 /* NetworkHTTPSUpgradeChecker.h */; };
 		5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */; };
@@ -3499,6 +3507,22 @@
 		57DCEDCD214F51680016B847 /* MockAuthenticatorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockAuthenticatorManager.cpp; sourceTree = "<group>"; };
 		57EB2E3821E1983E00B89CDF /* U2fHidAuthenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = U2fHidAuthenticator.h; sourceTree = "<group>"; };
 		57EB2E3921E1983E00B89CDF /* U2fHidAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fHidAuthenticator.cpp; sourceTree = "<group>"; };
+		57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopUpSOAuthorizationSession.h; sourceTree = "<group>"; };
+		57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSOAuthorizationDelegate.h; sourceTree = "<group>"; };
+		57FD317222B35148008D0E8B /* SOAuthorizationCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationCoordinator.h; sourceTree = "<group>"; };
+		57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationNSURLExtras.h; sourceTree = "<group>"; };
+		57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedirectSOAuthorizationSession.h; sourceTree = "<group>"; };
+		57FD317522B35149008D0E8B /* PopUpSOAuthorizationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PopUpSOAuthorizationSession.mm; sourceTree = "<group>"; };
+		57FD317622B35149008D0E8B /* SOAuthorizationNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SOAuthorizationNSURLExtras.mm; sourceTree = "<group>"; };
+		57FD317722B35149008D0E8B /* SubFrameSOAuthorizationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SubFrameSOAuthorizationSession.mm; sourceTree = "<group>"; };
+		57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationSOAuthorizationSession.h; sourceTree = "<group>"; };
+		57FD317922B35149008D0E8B /* SOAuthorizationCoordinator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SOAuthorizationCoordinator.mm; sourceTree = "<group>"; };
+		57FD317A22B3514A008D0E8B /* RedirectSOAuthorizationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RedirectSOAuthorizationSession.mm; sourceTree = "<group>"; };
+		57FD317B22B3514A008D0E8B /* NavigationSOAuthorizationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationSOAuthorizationSession.mm; sourceTree = "<group>"; };
+		57FD317C22B3514A008D0E8B /* SOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationSession.h; sourceTree = "<group>"; };
+		57FD317D22B3514A008D0E8B /* SubFrameSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubFrameSOAuthorizationSession.h; sourceTree = "<group>"; };
+		57FD317E22B3514A008D0E8B /* WKSOAuthorizationDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSOAuthorizationDelegate.mm; sourceTree = "<group>"; };
+		57FD317F22B3514A008D0E8B /* SOAuthorizationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SOAuthorizationSession.mm; sourceTree = "<group>"; };
 		587743A421C30AD800AE9084 /* HTTPSUpgradeList.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = HTTPSUpgradeList.db; path = DerivedSources/WebKit2/HTTPSUpgradeList.db; sourceTree = BUILT_PRODUCTS_DIR; };
 		58E977DC21C499FE005D92A6 /* NetworkHTTPSUpgradeChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkHTTPSUpgradeChecker.cpp; sourceTree = "<group>"; };
 		58E977DD21C49A00005D92A6 /* NetworkHTTPSUpgradeChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkHTTPSUpgradeChecker.h; sourceTree = "<group>"; };
@@ -5444,6 +5468,7 @@
 		1ABC3DF21899E415004F0626 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				57FD316B22B3367E008D0E8B /* SOAuthorization */,
 				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
 				99C81D561C20DFBE005C4C82 /* AutomationClient.mm */,
 				990D28B71C6539A000986977 /* AutomationSessionClient.h */,
@@ -7002,6 +7027,29 @@
 				57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */,
 			);
 			path = Mock;
+			sourceTree = "<group>";
+		};
+		57FD316B22B3367E008D0E8B /* SOAuthorization */ = {
+			isa = PBXGroup;
+			children = (
+				57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */,
+				57FD317B22B3514A008D0E8B /* NavigationSOAuthorizationSession.mm */,
+				57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */,
+				57FD317522B35149008D0E8B /* PopUpSOAuthorizationSession.mm */,
+				57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */,
+				57FD317A22B3514A008D0E8B /* RedirectSOAuthorizationSession.mm */,
+				57FD317222B35148008D0E8B /* SOAuthorizationCoordinator.h */,
+				57FD317922B35149008D0E8B /* SOAuthorizationCoordinator.mm */,
+				57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */,
+				57FD317622B35149008D0E8B /* SOAuthorizationNSURLExtras.mm */,
+				57FD317C22B3514A008D0E8B /* SOAuthorizationSession.h */,
+				57FD317F22B3514A008D0E8B /* SOAuthorizationSession.mm */,
+				57FD317D22B3514A008D0E8B /* SubFrameSOAuthorizationSession.h */,
+				57FD317722B35149008D0E8B /* SubFrameSOAuthorizationSession.mm */,
+				57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */,
+				57FD317E22B3514A008D0E8B /* WKSOAuthorizationDelegate.mm */,
+			);
+			path = SOAuthorization;
 			sourceTree = "<group>";
 		};
 		5C1426F11C23F81700D41183 /* Downloads */ = {
@@ -9398,6 +9446,7 @@
 				2D50366B1BCDE17900E20BB3 /* NativeWebGestureEvent.h in Headers */,
 				263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */,
 				1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */,
+				57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */,
 				1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */,
 				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
@@ -9515,6 +9564,7 @@
 				1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */,
 				7CD622781739D863005BD7FF /* PluginSandboxProfile.h in Headers */,
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
+				57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */,
 				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
@@ -9526,6 +9576,7 @@
 				83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */,
 				A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */,
 				A118A9EF1907AD6F00F7C92B /* QuickLookDocumentData.h in Headers */,
+				57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */,
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,
@@ -9588,6 +9639,9 @@
 				995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */,
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
+				57FD318322B35162008D0E8B /* SOAuthorizationCoordinator.h in Headers */,
+				57FD318422B35165008D0E8B /* SOAuthorizationNSURLExtras.h in Headers */,
+				57FD318522B35169008D0E8B /* SOAuthorizationSession.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
 				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
@@ -9598,6 +9652,7 @@
 				1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */,
 				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
+				57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */,
 				4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */,
 				3157135F2040A9B20084F9CF /* SystemPreviewController.h in Headers */,
 				CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */,
@@ -10156,6 +10211,7 @@
 				1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */,
 				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
 				93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */,
+				57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */,
 				7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */,
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,

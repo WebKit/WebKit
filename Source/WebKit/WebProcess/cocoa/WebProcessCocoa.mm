@@ -457,7 +457,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     registerWithStateDumper();
 #endif
 
-#if HAVE(LOAD_OPTIMIZER)
+#if HAVE(APP_SSO)
     [NSURLSession _disableAppSSO];
 #endif
 }

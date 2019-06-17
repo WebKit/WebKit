@@ -942,8 +942,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
 
-#if HAVE(LOAD_OPTIMIZER)
-    NETWORKSESSIONCOCOA_LOADOPTIMIZER_ADDITIONS
+#if HAVE(APP_SSO)
+    configuration._preventsAppSSO = true;
 #endif
 
 #if USE(CFNETWORK_AUTO_ADDED_HTTP_HEADER_SUPPRESSION)

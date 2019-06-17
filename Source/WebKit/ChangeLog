@@ -1,3 +1,114 @@
+2019-06-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Move SOAuthorization from WebKitAdditions to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=198874
+        <rdar://problem/47573431>
+
+        Reviewed by Brent Fulgham.
+
+        This patch basically moves everything from existing WebKitAdditions to WebKit.
+        It also replaces the LoadOptimizer nonsense with the actual SOAuthorization API.
+
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * SourcesCocoa.txt:
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::trySOAuthorization):
+        (WebKit::tryInterceptNavigation):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::tryOptimizingLoad): Deleted.
+        * UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.h: Added.
+        (WebKit::NavigationSOAuthorizationSession::callback):
+        * UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        (WebKit::NavigationSOAuthorizationSession::NavigationSOAuthorizationSession):
+        (WebKit::NavigationSOAuthorizationSession::~NavigationSOAuthorizationSession):
+        (WebKit::NavigationSOAuthorizationSession::shouldStartInternal):
+        (WebKit::NavigationSOAuthorizationSession::webViewDidMoveToWindow):
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.h: Added.
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm: Added.
+        (-[WKSOSecretDelegate initWithSession:]):
+        (-[WKSOSecretDelegate webViewDidClose:]):
+        (-[WKSOSecretDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WKSOSecretDelegate webView:didFinishNavigation:]):
+        (WebKit::PopUpSOAuthorizationSession::PopUpSOAuthorizationSession):
+        (WebKit::PopUpSOAuthorizationSession::~PopUpSOAuthorizationSession):
+        (WebKit::PopUpSOAuthorizationSession::shouldStartInternal):
+        (WebKit::PopUpSOAuthorizationSession::fallBackToWebPathInternal):
+        (WebKit::PopUpSOAuthorizationSession::abortInternal):
+        (WebKit::PopUpSOAuthorizationSession::completeInternal):
+        (WebKit::PopUpSOAuthorizationSession::close):
+        (WebKit::PopUpSOAuthorizationSession::initSecretWebView):
+        * UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.mm: Added.
+        (WebKit::RedirectSOAuthorizationSession::RedirectSOAuthorizationSession):
+        (WebKit::RedirectSOAuthorizationSession::fallBackToWebPathInternal):
+        (WebKit::RedirectSOAuthorizationSession::abortInternal):
+        (WebKit::RedirectSOAuthorizationSession::completeInternal):
+        (WebKit::RedirectSOAuthorizationSession::beforeStart):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm: Added.
+        (WebKit::SOAuthorizationCoordinator::SOAuthorizationCoordinator):
+        (WebKit::SOAuthorizationCoordinator::canAuthorize const):
+        (WebKit::SOAuthorizationCoordinator::tryAuthorize):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.mm: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        (+[NSURL _web_canPerformAuthorizationWithURL:]):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.h: Added.
+        (WebKit::SOAuthorizationSession::page const):
+        (WebKit::SOAuthorizationSession::state const):
+        (WebKit::SOAuthorizationSession::setState):
+        (WebKit::SOAuthorizationSession::navigationAction):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm: Added.
+        (WebKit::SOAuthorizationSession::SOAuthorizationSession):
+        (WebKit::SOAuthorizationSession::~SOAuthorizationSession):
+        (WebKit::SOAuthorizationSession::releaseNavigationAction):
+        (WebKit::SOAuthorizationSession::becomeCompleted):
+        (WebKit::SOAuthorizationSession::shouldStart):
+        (WebKit::SOAuthorizationSession::start):
+        (WebKit::SOAuthorizationSession::fallBackToWebPath):
+        (WebKit::SOAuthorizationSession::abort):
+        (WebKit::SOAuthorizationSession::complete):
+        (WebKit::SOAuthorizationSession::presentViewController):
+        (WebKit::SOAuthorizationSession::dismissViewController):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.h: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm: Added.
+        (WebKit::SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession):
+        (WebKit::SubFrameSOAuthorizationSession::fallBackToWebPathInternal):
+        (WebKit::SubFrameSOAuthorizationSession::abortInternal):
+        (WebKit::SubFrameSOAuthorizationSession::completeInternal):
+        (WebKit::SubFrameSOAuthorizationSession::beforeStart):
+        (WebKit::SubFrameSOAuthorizationSession::loadDataToFrame):
+        (WebKit::SubFrameSOAuthorizationSession::postDidCancelMessageToParent):
+        * UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.h: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm.
+        * UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm: Added.
+        (-[WKSOAuthorizationDelegate authorization:presentViewController:withCompletion:]):
+        (-[WKSOAuthorizationDelegate authorizationDidNotHandle:]):
+        (-[WKSOAuthorizationDelegate authorizationDidCancel:]):
+        (-[WKSOAuthorizationDelegate authorizationDidComplete:]):
+        (-[WKSOAuthorizationDelegate authorization:didCompleteWithHTTPAuthorizationHeaders:]):
+        (-[WKSOAuthorizationDelegate authorization:didCompleteWithHTTPResponse:httpBody:]):
+        (-[WKSOAuthorizationDelegate authorization:didCompleteWithError:]):
+        (-[WKSOAuthorizationDelegate setSession:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::trySOAuthorization):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::tryOptimizingLoad): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setShouldSuppressSOAuthorizationInAllNavigationPolicyDecision):
+        (WebKit::WebPageProxy::setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::soAuthorizationCoordinator):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2019-06-17  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

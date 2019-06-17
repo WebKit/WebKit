@@ -141,10 +141,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyAdditions.h>
-#endif
-
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -1549,8 +1545,9 @@ public:
     void removeObserver(WebViewDidMoveToWindowObserver&);
     void webViewDidMoveToWindow();
 
-#if HAVE(LOAD_OPTIMIZER)
-WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_1
+#if HAVE(APP_SSO)
+    void setShouldSuppressSOAuthorizationInAllNavigationPolicyDecision() { m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision = true; }
+    void setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision() { m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true; }
 #endif
 
     Logger& logger();
@@ -2288,8 +2285,9 @@ private:
     WebCore::ResourceRequest m_decidePolicyForResponseRequest;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
 
-#if HAVE(LOAD_OPTIMIZER)
-WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
+#if HAVE(APP_SSO)
+    bool m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision { false };
+    bool m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision { false };
 #endif
 
     Deque<NativeWebMouseEvent> m_mouseEventQueue;

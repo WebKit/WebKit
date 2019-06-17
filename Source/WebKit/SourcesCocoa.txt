@@ -328,6 +328,15 @@ UIProcess/Automation/ios/WebAutomationSessionIOS.mm
 
 UIProcess/Automation/mac/WebAutomationSessionMac.mm
 
+UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm
+UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm
+UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.mm
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.mm
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm
+UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm
+UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm
+
 UIProcess/Cocoa/AutomationClient.mm
 UIProcess/Cocoa/AutomationSessionClient.mm
 UIProcess/Cocoa/DiagnosticLoggingClient.mm
