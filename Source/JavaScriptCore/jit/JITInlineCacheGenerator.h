@@ -35,10 +35,9 @@
 
 namespace JSC {
 
+class CallSiteIndex;
 class CodeBlock;
 class StructureStubInfo;
-
-struct CallSiteIndex;
 
 enum class AccessType : int8_t;
 

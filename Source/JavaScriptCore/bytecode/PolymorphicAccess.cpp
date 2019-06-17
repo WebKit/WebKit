@@ -163,6 +163,14 @@ CallSiteIndex AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal
     return m_callSiteIndex;
 }
 
+DisposableCallSiteIndex AccessGenerationState::callSiteIndexForExceptionHandling()
+{
+    RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+    RELEASE_ASSERT(m_needsToRestoreRegistersIfException);
+    RELEASE_ASSERT(m_calculatedCallSiteIndex);
+    return DisposableCallSiteIndex::fromCallSiteIndex(m_callSiteIndex);
+}
+
 const HandlerInfo& AccessGenerationState::originalExceptionHandler()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling)
@@ -539,7 +547,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     failure.append(jit.jump());
 
     CodeBlock* codeBlockThatOwnsExceptionHandlers = nullptr;
-    CallSiteIndex callSiteIndexForExceptionHandling;
+    DisposableCallSiteIndex callSiteIndexForExceptionHandling;
     if (state.needsToRestoreRegistersIfException() && hasJSGetterSetterCall) {
         // Emit the exception handler.
         // Note that this code is only reachable when doing genericUnwind from a pure JS getter/setter .
@@ -561,7 +569,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit.jump();
 
         HandlerInfo oldHandler = state.originalExceptionHandler();
-        CallSiteIndex newExceptionHandlingCallSite = state.callSiteIndexForExceptionHandling();
+        DisposableCallSiteIndex newExceptionHandlingCallSite = state.callSiteIndexForExceptionHandling();
         jit.addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(jumpToOSRExitExceptionHandler, oldHandler.nativeCode);

@@ -83,7 +83,9 @@ public:
     CallSiteIndex addCodeOrigin(CodeOrigin);
     CallSiteIndex addUniqueCallSiteIndex(CodeOrigin);
     CallSiteIndex lastCallSite() const;
-    void removeCallSiteIndex(CallSiteIndex);
+
+    DisposableCallSiteIndex addDisposableCallSiteIndex(CodeOrigin);
+    void removeDisposableCallSiteIndex(DisposableCallSiteIndex);
     
     void shrinkToFit();
     

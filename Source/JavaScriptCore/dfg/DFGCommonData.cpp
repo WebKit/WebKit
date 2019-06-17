@@ -61,9 +61,6 @@ CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)
 
 CallSiteIndex CommonData::addUniqueCallSiteIndex(CodeOrigin codeOrigin)
 {
-    if (callSiteIndexFreeList.size())
-        return CallSiteIndex(callSiteIndexFreeList.takeAny());
-
     codeOrigins.append(codeOrigin);
     unsigned index = codeOrigins.size() - 1;
     ASSERT(codeOrigins[index] == codeOrigin);
@@ -76,10 +73,26 @@ CallSiteIndex CommonData::lastCallSite() const
     return CallSiteIndex(codeOrigins.size() - 1);
 }
 
-void CommonData::removeCallSiteIndex(CallSiteIndex callSite)
+DisposableCallSiteIndex CommonData::addDisposableCallSiteIndex(CodeOrigin codeOrigin)
+{
+    if (callSiteIndexFreeList.size()) {
+        unsigned index = callSiteIndexFreeList.takeAny();
+        codeOrigins[index] = codeOrigin;
+        return DisposableCallSiteIndex(index);
+    }
+
+    codeOrigins.append(codeOrigin);
+    unsigned index = codeOrigins.size() - 1;
+    ASSERT(codeOrigins[index] == codeOrigin);
+    return DisposableCallSiteIndex(index);
+}
+
+
+void CommonData::removeDisposableCallSiteIndex(DisposableCallSiteIndex callSite)
 {
     RELEASE_ASSERT(callSite.bits() < codeOrigins.size());
     callSiteIndexFreeList.add(callSite.bits());
+    codeOrigins[callSite.bits()] = CodeOrigin();
 }
 
 void CommonData::shrinkToFit()

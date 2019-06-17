@@ -1725,20 +1725,20 @@ HandlerInfo* CodeBlock::handlerForIndex(unsigned index, RequiredHandler required
     return HandlerInfo::handlerForIndex(m_rareData->m_exceptionHandlers, index, requiredHandler);
 }
 
-CallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite)
+DisposableCallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite)
 {
 #if ENABLE(DFG_JIT)
     RELEASE_ASSERT(JITCode::isOptimizingJIT(jitType()));
     RELEASE_ASSERT(canGetCodeOrigin(originalCallSite));
     ASSERT(!!handlerForIndex(originalCallSite.bits()));
     CodeOrigin originalOrigin = codeOrigin(originalCallSite);
-    return m_jitCode->dfgCommon()->addUniqueCallSiteIndex(originalOrigin);
+    return m_jitCode->dfgCommon()->addDisposableCallSiteIndex(originalOrigin);
 #else
     // We never create new on-the-fly exception handling
     // call sites outside the DFG/FTL inline caches.
     UNUSED_PARAM(originalCallSite);
     RELEASE_ASSERT_NOT_REACHED();
-    return CallSiteIndex(0u);
+    return DisposableCallSiteIndex(0u);
 #endif
 }
 
@@ -1808,7 +1808,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow(const OpCatch
     }
 }
 
-void CodeBlock::removeExceptionHandlerForCallSite(CallSiteIndex callSiteIndex)
+void CodeBlock::removeExceptionHandlerForCallSite(DisposableCallSiteIndex callSiteIndex)
 {
     RELEASE_ASSERT(m_rareData);
     Vector<HandlerInfo>& exceptionHandlers = m_rareData->m_exceptionHandlers;

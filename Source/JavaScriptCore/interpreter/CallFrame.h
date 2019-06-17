@@ -43,11 +43,9 @@ namespace JSC  {
 
     typedef ExecState CallFrame;
 
-    struct CallSiteIndex {
-        CallSiteIndex()
-            : m_bits(UINT_MAX)
-        {
-        }
+    class CallSiteIndex {
+    public:
+        CallSiteIndex() = default;
         
         explicit CallSiteIndex(uint32_t bits)
             : m_bits(bits)
@@ -64,7 +62,22 @@ namespace JSC  {
         inline uint32_t bits() const { return m_bits; }
 
     private:
-        uint32_t m_bits;
+        uint32_t m_bits { UINT_MAX };
+    };
+
+    class DisposableCallSiteIndex : public CallSiteIndex {
+    public:
+        DisposableCallSiteIndex() = default;
+
+        explicit DisposableCallSiteIndex(uint32_t bits)
+            : CallSiteIndex(bits)
+        {
+        }
+
+        static DisposableCallSiteIndex fromCallSiteIndex(CallSiteIndex callSiteIndex)
+        {
+            return DisposableCallSiteIndex(callSiteIndex.bits());
+        }
     };
 
     // arm64_32 expects caller frame and return pc to use 8 bytes 
