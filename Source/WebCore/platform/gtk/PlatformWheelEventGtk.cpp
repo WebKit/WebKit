@@ -42,34 +42,26 @@ namespace WebCore {
 PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 {
     static const float delta = 1;
-    GdkModifierType state;
 
     m_type = PlatformEvent::Wheel;
     m_timestamp = wallTimeForEvent(event);
-    gdk_event_get_state(reinterpret_cast<GdkEvent*>(event), &state);
 
-    if (state & GDK_SHIFT_MASK)
+    if (event->state & GDK_SHIFT_MASK)
         m_modifiers.add(Modifier::ShiftKey);
-    if (state & GDK_CONTROL_MASK)
+    if (event->state & GDK_CONTROL_MASK)
         m_modifiers.add(Modifier::ControlKey);
-    if (state & GDK_MOD1_MASK)
+    if (event->state & GDK_MOD1_MASK)
         m_modifiers.add(Modifier::AltKey);
-    if (state & GDK_META_MASK)
+    if (event->state & GDK_META_MASK)
         m_modifiers.add(Modifier::MetaKey);
-    if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
+    if (PlatformKeyboardEvent::modifiersContainCapsLock(event->state))
         m_modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
     m_deltaX = 0;
     m_deltaY = 0;
-    GdkScrollDirection direction;
-#ifndef GTK_API_VERSION_2
-    gdk_event_get_scroll_direction(reinterpret_cast<GdkEvent*>(event), &direction);
-#else
-    direction = event->direction;
-#endif
 
     // Docs say an upwards scroll (away from the user) has a positive delta
-    switch (direction) {
+    switch (event->direction) {
         case GDK_SCROLL_UP:
             m_deltaY = delta;
             break;
@@ -98,11 +90,11 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 #if ENABLE(ASYNC_SCROLLING)
 #ifndef GTK_API_VERSION_2
 #if GTK_CHECK_VERSION(3, 20, 0)
-    m_phase = gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event)) ?
+    m_phase = event->is_stop ?
         PlatformWheelEventPhaseEnded :
         PlatformWheelEventPhaseChanged;
 #else
-    m_phase = direction == GDK_SCROLL_SMOOTH && !m_deltaX && !m_deltaY ?
+    m_phase = event->direction == GDK_SCROLL_SMOOTH && !m_deltaX && !m_deltaY ?
         PlatformWheelEventPhaseEnded :
         PlatformWheelEventPhaseChanged;
 #endif
@@ -111,12 +103,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 #endif // GTK_API_VERSION_2
 #endif // ENABLE(ASYNC_SCROLLING)
 
-    gdouble x, y, rootX, rootY;
-    gdk_event_get_coords(reinterpret_cast<GdkEvent*>(event), &x, &y);
-    gdk_event_get_root_coords(reinterpret_cast<GdkEvent*>(event), &rootX, &rootY);
-
-    m_position = IntPoint(static_cast<int>(x), static_cast<int>(y));
-    m_globalPosition = IntPoint(static_cast<int>(rootX), static_cast<int>(rootY));
+    m_position = IntPoint(static_cast<int>(event->x), static_cast<int>(event->y));
+    m_globalPosition = IntPoint(static_cast<int>(event->x_root), static_cast<int>(event->y_root));
     m_granularity = ScrollByPixelWheelEvent;
     m_directionInvertedFromDevice = false;
 

@@ -46,9 +46,7 @@ static void webkitScriptDialogImplClose(WebKitScriptDialogImpl* dialog)
 
 static gboolean webkitScriptDialogImplKeyPressEvent(GtkWidget* widget, GdkEventKey* keyEvent)
 {
-    guint keyval;
-    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(keyEvent), &keyval);
-    if (keyval == GDK_KEY_Escape) {
+    if (keyEvent->keyval == GDK_KEY_Escape) {
         webkitScriptDialogImplClose(WEBKIT_SCRIPT_DIALOG_IMPL(widget));
         return GDK_EVENT_STOP;
     }

@@ -1,3 +1,15 @@
+2019-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r246467.
+
+        It broke scrolling with mouse wheel
+
+        Reverted changeset:
+
+        "[GTK] Stop accessing GdkEvent fields when possible"
+        https://bugs.webkit.org/show_bug.cgi?id=198829
+        https://trac.webkit.org/changeset/246467
+
 2019-06-16  Darin Adler  <darin@apple.com>
 
         Convert some uses of fixed width and fixed precision floating point formatting to use shortest instead

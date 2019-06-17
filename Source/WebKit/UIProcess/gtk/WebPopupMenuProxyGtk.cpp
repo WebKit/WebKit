@@ -95,15 +95,11 @@ void WebPopupMenuProxyGtk::treeViewRowActivatedCallback(GtkTreeView*, GtkTreePat
 
 gboolean WebPopupMenuProxyGtk::treeViewButtonReleaseEventCallback(GtkWidget* treeView, GdkEventButton* event, WebPopupMenuProxyGtk* popupMenu)
 {
-    guint button;
-    gdk_event_get_button(reinterpret_cast<GdkEvent*>(event), &button);
-    if (button != GDK_BUTTON_PRIMARY)
+    if (event->button != GDK_BUTTON_PRIMARY)
         return FALSE;
 
-    double x, y;
-    gdk_event_get_coords(reinterpret_cast<GdkEvent*>(event), &x, &y);
     GUniqueOutPtr<GtkTreePath> path;
-    if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeView), x, y, &path.outPtr(), nullptr, nullptr, nullptr))
+    if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeView), event->x, event->y, &path.outPtr(), nullptr, nullptr, nullptr))
         return FALSE;
 
     return popupMenu->activateItemAtPath(path.get());
@@ -123,9 +119,7 @@ gboolean WebPopupMenuProxyGtk::keyPressEventCallback(GtkWidget* widget, GdkEvent
     if (!popupMenu->m_device)
         return FALSE;
 
-    guint keyval;
-    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
-    if (keyval == GDK_KEY_Escape) {
+    if (event->keyval == GDK_KEY_Escape) {
         popupMenu->hidePopupMenu();
         return TRUE;
     }
@@ -376,22 +370,19 @@ void WebPopupMenuProxyGtk::cancelTracking()
 
 Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* event)
 {
-    guint keyval;
-    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
-    gunichar keychar = gdk_keyval_to_unicode(keyval);
+    gunichar keychar = gdk_keyval_to_unicode(event->keyval);
     if (!g_unichar_isprint(keychar))
         return WTF::nullopt;
 
-    uint32_t time = gdk_event_get_time(reinterpret_cast<GdkEvent*>(event));
-    if (time < m_previousKeyEventTime)
+    if (event->time < m_previousKeyEventTime)
         return WTF::nullopt;
 
     static const uint32_t typeaheadTimeoutMs = 1000;
-    if (time - m_previousKeyEventTime > typeaheadTimeoutMs) {
+    if (event->time - m_previousKeyEventTime > typeaheadTimeoutMs) {
         if (m_currentSearchString)
             g_string_truncate(m_currentSearchString, 0);
     }
-    m_previousKeyEventTime = time;
+    m_previousKeyEventTime = event->time;
 
     if (!m_currentSearchString)
         m_currentSearchString = g_string_new(nullptr);

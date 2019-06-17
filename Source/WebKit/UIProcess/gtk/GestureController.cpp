@@ -53,11 +53,7 @@ bool GestureController::handleEvent(GdkEvent* event)
     m_swipeGesture.handleEvent(event);
     m_zoomGesture.handleEvent(event);
     m_longpressGesture.handleEvent(event);
-#if GTK_CHECK_VERSION(3, 10, 0)
-    touchEnd = (gdk_event_get_event_type(event) == GDK_TOUCH_END) || (gdk_event_get_event_type(event) == GDK_TOUCH_CANCEL);
-#else
     touchEnd = (event->type == GDK_TOUCH_END) || (event->type == GDK_TOUCH_CANCEL);
-#endif
     return touchEnd ? wasProcessingGestures : isProcessingGestures();
 }
 

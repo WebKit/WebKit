@@ -118,27 +118,19 @@ public:
             eventTime = (timeValue.tv_sec * 1000) + (timeValue.tv_usec / 1000);
         }
 
-        GdkEventType type;
-        guint button;
-        double x, y;
-        gdk_event_get_coords(event, &x, &y);
-        gdk_event_get_button(event, &button);
-#if GTK_CHECK_VERSION(3, 10, 0)
-        type = gdk_event_get_event_type(event);
-#else
-        type = event->type;
-#endif
-        if ((type == GDK_2BUTTON_PRESS || type == GDK_3BUTTON_PRESS)
-            || ((std::abs(x - previousClickPoint.x()) < doubleClickDistance)
-                && (std::abs(y - previousClickPoint.y()) < doubleClickDistance)
+        if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
+            || ((std::abs(event->button.x - previousClickPoint.x()) < doubleClickDistance)
+                && (std::abs(event->button.y - previousClickPoint.y()) < doubleClickDistance)
                 && (eventTime - previousClickTime < static_cast<unsigned>(doubleClickTime))
-                && (button == previousClickButton)))
+                && (event->button.button == previousClickButton)))
             currentClickCount++;
         else
             currentClickCount = 1;
 
+        double x, y;
+        gdk_event_get_coords(event, &x, &y);
         previousClickPoint = IntPoint(x, y);
-        previousClickButton = button;
+        previousClickButton = event->button.button;
         previousClickTime = eventTime;
 
         return currentClickCount;
@@ -747,13 +739,8 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
-    GdkModifierType state;
-    guint keyval;
-    gdk_event_get_state(reinterpret_cast<GdkEvent*>(keyEvent), &state);
-    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(keyEvent), &keyval);
-
 #if ENABLE(DEVELOPER_MODE) && OS(LINUX)
-    if ((state & GDK_CONTROL_MASK) && (state & GDK_SHIFT_MASK) && keyval == GDK_KEY_G) {
+    if ((keyEvent->state & GDK_CONTROL_MASK) && (keyEvent->state & GDK_SHIFT_MASK) && keyEvent->keyval == GDK_KEY_G) {
         auto& preferences = priv->pageProxy->preferences();
         preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
         priv->shouldForwardNextKeyEvent = FALSE;
@@ -766,7 +753,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
 
 #if ENABLE(FULLSCREEN_API)
     if (priv->fullScreenModeActive) {
-        switch (keyval) {
+        switch (keyEvent->keyval) {
         case GDK_KEY_Escape:
         case GDK_KEY_f:
         case GDK_KEY_F:
@@ -822,12 +809,8 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
     ASSERT(!priv->dialog);
 
     int clickCount = 0;
-#if GTK_CHECK_VERSION(3, 10, 0)
-    GdkEventType eventType = gdk_event_get_event_type(event);
-#else
-    GdkEventType eventType = event->type;
-#endif
-    switch (eventType) {
+
+    switch (event->type) {
     case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
     case GDK_3BUTTON_PRESS: {
@@ -842,10 +825,8 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
 
         priv->inputMethodFilter.notifyMouseButtonPress();
 
-        guint button;
-        gdk_event_get_button(event, &button);
         // If it's a right click event save it as a possible context menu event.
-        if (button == GDK_BUTTON_SECONDARY)
+        if (event->button.button == GDK_BUTTON_SECONDARY)
             priv->contextMenuEvent.reset(gdk_event_copy(event));
 
         clickCount = priv->clickCounter.currentClickCountForGdkButtonEvent(event);
@@ -994,12 +975,10 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
     // because those coordinates are inside the web view.
     GtkAllocation allocation;
     gtk_widget_get_allocation(widget, &allocation);
-    double xEvent, yEvent;
-    gdk_event_get_coords(reinterpret_cast<GdkEvent*>(crossingEvent), &xEvent, &yEvent);
     double width = allocation.width;
     double height = allocation.height;
-    double x = xEvent;
-    double y = yEvent;
+    double x = crossingEvent->x;
+    double y = crossingEvent->y;
     if (x < 0 && x > -1)
         x = -1;
     else if (x >= width && x < width + 1)
@@ -1011,7 +990,7 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
 
     GdkEvent* event = reinterpret_cast<GdkEvent*>(crossingEvent);
     GUniquePtr<GdkEvent> copiedEvent;
-    if (x != xEvent || y != yEvent) {
+    if (x != crossingEvent->x || y != crossingEvent->y) {
         copiedEvent.reset(gdk_event_copy(event));
         copiedEvent->crossing.x = x;
         copiedEvent->crossing.y = y;
@@ -1057,12 +1036,7 @@ static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(co
 static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Vector<WebPlatformTouchPoint>& touchPoints)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-#if GTK_CHECK_VERSION(3, 10, 0)
-    GdkEventType type = gdk_event_get_event_type(event);
-#else
-    GdkEventType type = event->type;
-#endif
-    bool touchEnd = (type == GDK_TOUCH_END) || (type == GDK_TOUCH_CANCEL);
+    bool touchEnd = (event->type == GDK_TOUCH_END) || (event->type == GDK_TOUCH_CANCEL);
     touchPoints.reserveInitialCapacity(touchEnd ? priv->touchEvents.size() + 1 : priv->touchEvents.size());
 
     for (const auto& it : priv->touchEvents)
@@ -1084,12 +1058,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     GdkEvent* touchEvent = reinterpret_cast<GdkEvent*>(event);
     uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
 
-#if GTK_CHECK_VERSION(3, 10, 0)
-    GdkEventType type = gdk_event_get_event_type(touchEvent);
-#else
-    GdkEventType type = touchEvent->type
-#endif
-    switch (type) {
+    switch (touchEvent->type) {
     case GDK_TOUCH_BEGIN: {
         ASSERT(!priv->touchEvents.contains(sequence));
         GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
@@ -1208,9 +1177,7 @@ private:
 
     void swipe(GdkEventTouch* event, const FloatPoint& velocity) final
     {
-        double x, y;
-        gdk_event_get_coords(reinterpret_cast<GdkEvent*>(event), &x, &y);
-        GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, FloatPoint::narrowPrecision(x, y), velocity, true);
+        GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, FloatPoint::narrowPrecision(event->x, event->y), velocity, true);
         webkitWebViewBaseHandleWheelEvent(m_webView, scrollEvent.get(), WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseBegan);
     }
 
@@ -1311,13 +1278,9 @@ static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext*
 static gboolean webkitWebViewBaseEvent(GtkWidget* widget, GdkEvent* event)
 {
 #if HAVE(GTK_GESTURES)
-#if GTK_CHECK_VERSION(3, 10, 0)
-    if (gdk_event_get_event_type(event) == GDK_TOUCHPAD_PINCH)
-#else
     if (event->type == GDK_TOUCHPAD_PINCH)
-#endif // GTK_CHECK_VERSION(3, 10, 0)
         webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(widget)).handleEvent(event);
-#endif // HAVE(GTK_GESTURES)
+#endif
 
     return GDK_EVENT_PROPAGATE;
 }
