@@ -33,10 +33,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/URL.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/APINavigationActionAdditions.h>
-#endif
-
 namespace API {
 
 class NavigationAction final : public ObjectImpl<Object::Type::NavigationAction> {
