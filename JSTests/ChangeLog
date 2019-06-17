@@ -1,3 +1,12 @@
+2019-06-17  Justin Michaud  <justin_michaud@apple.com>
+
+        Validate that table element type is funcref if using an element section
+        https://bugs.webkit.org/show_bug.cgi?id=198910
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/references/anyref_table.js:
+
 2019-06-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce DisposableCallSiteIndex to enforce type-safety

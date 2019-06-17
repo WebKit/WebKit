@@ -379,6 +379,7 @@ auto SectionParser::parseElement() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
         WASM_PARSER_FAIL_IF(tableIndex >= m_info->tableCount(), "Element section for Table ", tableIndex, " exceeds available Table ", m_info->tableCount());
+        WASM_PARSER_FAIL_IF(m_info->tableInformation.type() != TableElementType::Funcref, "Table ", tableIndex, " must have type 'anyfunc' to have an element section");
         Type initExprType;
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
         WASM_PARSER_FAIL_IF(initExprType != I32, "Element init_expr must produce an i32");
