@@ -1,4 +1,22 @@
 ================
+WebKitGTK 2.25.2
+================
+
+What's new in WebKitGTK+ 2.25.2?
+
+  - Enable process switch on cross site navigation.
+  - Use libwpe with fdo backend to implement accelerated compositing under wayland.
+  - Fix rendering artifacts in youtube volume button.
+  - Fix trapezoid artifact in github comment box.
+  - Ensure web extensions directory is readable when sandbox is enabled.
+  - Fix the executable name of WebDriver process, renamed by mistake in 2.25.1.
+  - Enable hyperlink auditing setting by default.
+  - Remove the option to build without using the redirected XComposite window.
+  - Fix HLS streams being slow to start.
+  - Make accessibility work when sandbox is enabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.25.1
 ================
 

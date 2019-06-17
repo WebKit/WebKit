@@ -1,5 +1,11 @@
 2019-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.25.2 release
+
+        * gtk/NEWS: Add release notes for 2.25.2.
+
+2019-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed, rolling out r246467.
 
         It broke scrolling with mouse wheel
