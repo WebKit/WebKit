@@ -1,5 +1,17 @@
 2019-06-17  Alex Christensen  <achristensen@webkit.org>
 
+        Add null check in WebFrameLoaderClient::assignIdentifierToInitialRequest
+        https://bugs.webkit.org/show_bug.cgi?id=198926
+        <rdar://problem/50079713>
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        WebKitLegacy's version already checks null for the corresponding call.
+
+2019-06-17  Alex Christensen  <achristensen@webkit.org>
+
         Fix internal build after r246514
         https://bugs.webkit.org/show_bug.cgi?id=198874
 
