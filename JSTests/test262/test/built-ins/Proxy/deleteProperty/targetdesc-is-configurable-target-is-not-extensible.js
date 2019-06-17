@@ -12,7 +12,7 @@ info: |
     13. Let extensibleTarget be ? IsExtensible(target).
     14. If extensibleTarget is false, throw a TypeError exception.
     ...
-features: [Proxy, Reflect]
+features: [Proxy, Reflect, proxy-missing-checks]
 ---*/
 
 var trapCalls = 0;

@@ -19,11 +19,11 @@ info: |
       LeftHandSideExpression++
       LeftHandSideExpression--
 
-    It is an early Reference Error if AssignmentTargetType of LeftHandSideExpression is invalid.
+    It is an early Syntax Error if AssignmentTargetType of LeftHandSideExpression is invalid or strict.
 flags: [module]
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 features: [import.meta]
 ---*/
 

@@ -16,7 +16,7 @@ info: |
             i. If Desc has a [[Writable]] field and Desc.[[Writable]] is
             false, throw a TypeError exception.
     ...
-features: [Proxy, Reflect]
+features: [Proxy, Reflect, proxy-missing-checks]
 ---*/
 
 var trapCalls = 0;

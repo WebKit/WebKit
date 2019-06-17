@@ -2,25 +2,24 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-assignment-operators-static-semantics-early-errors
-es6id: 12.14.1
 description: Applied to new.target
 info: |
   AssignmentExpression : LeftHandSideExpression = AssignmentExpression
 
-  - It is an early Reference Error if LeftHandSideExpression is neither an
-    ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget of
-    LeftHandSideExpression is false.
+  - It is an early Syntax Error if LeftHandSideExpression is neither an
+    ObjectLiteral nor an ArrayLiteral and AssignmentTargetType of
+    LeftHandSideExpression is invalid or strict.
 
-  12.3.1.5 Static Semantics: IsValidSimpleAssignmentTarget
+  12.3.1.6 Static Semantics: AssignmentTargetType
 
   NewTarget:
 
   new.target
 
-  1. Return false.
+  1. Return invalid.
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 features: [new.target]
 ---*/
 

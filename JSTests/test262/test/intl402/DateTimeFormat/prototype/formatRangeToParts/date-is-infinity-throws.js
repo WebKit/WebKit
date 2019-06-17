@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: |
+description: >
   Throws a RangeError if date arg is cast to an Infinity value
-info: >
+info: |
   Intl.DateTimeFormat.prototype.formatRangeToParts ( startDate , endDate )
 
   1. Let dtf be this value.

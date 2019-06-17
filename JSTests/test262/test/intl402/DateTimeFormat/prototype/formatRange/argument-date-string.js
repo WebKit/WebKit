@@ -3,9 +3,9 @@
 
 /*---
 esid: sec-partitiondatetimerangepattern
-description: |
+description: >
   The Date constructor is not called to convert the input value.
-info: >
+info: |
   Intl.DateTimeFormat.prototype.formatRange ( startDate , endDate )
 
   5. Let x be ? ToNumber(startDate).

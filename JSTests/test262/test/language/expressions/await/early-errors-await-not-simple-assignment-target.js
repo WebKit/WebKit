@@ -8,7 +8,7 @@ description: >
   await is not a simple assignment target and cannot be assigned to.
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

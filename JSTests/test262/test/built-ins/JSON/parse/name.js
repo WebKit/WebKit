@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-json.parse
 es6id: 24.3.1
 description: >
   JSON.parse.name is "parse".
@@ -19,8 +20,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(JSON.parse.name, "parse");
-
-verifyNotEnumerable(JSON.parse, "name");
-verifyNotWritable(JSON.parse, "name");
-verifyConfigurable(JSON.parse, "name");
+verifyProperty(JSON.parse, 'name', {
+  value: 'parse',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

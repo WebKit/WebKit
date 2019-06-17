@@ -4,7 +4,7 @@
 /*---
 esid: sec-partitiondatetimerangepattern
 description: Basic tests for the en-US output of formatRange()
-info: >
+info: |
   Intl.DateTimeFormat.prototype.formatRange ( startDate , endDate )
 
   8. Return ? FormatDateTimeRange(dtf, x, y).

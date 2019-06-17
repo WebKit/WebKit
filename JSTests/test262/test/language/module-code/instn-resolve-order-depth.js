@@ -5,7 +5,7 @@ description: Module dependencies are resolved following a depth-first strategy
 esid: sec-moduledeclarationinstantiation
 negative:
   phase: resolution
-  type: ReferenceError
+  type: SyntaxError
 flags: [module]
 ---*/
 

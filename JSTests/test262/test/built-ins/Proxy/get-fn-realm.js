@@ -6,24 +6,22 @@ es6id: 7.3.22
 description: >
     The realm of a proxy exotic object is the realm of its target function
 info: |
+    7.3.22 GetFunctionRealm ( obj )
+
     [...]
     2. If obj has a [[Realm]] internal slot, then
-       a, Return obj's [[Realm]] internal slot.
-    3. If obj is a Bound Function exotic object, then
-       [...]
+       a. Return obj.[[Realm]].
+    [...]
     4. If obj is a Proxy exotic object, then
-       a. If the value of the [[ProxyHandler]] internal slot of obj is null,
-          throw a TypeError exception.
-       b. Let proxyTarget be the value of obj's [[ProxyTarget]] internal slot.
+       a. If obj.[[ProxyHandler]] is null, throw a TypeError exception.
+       b. Let proxyTarget be obj.[[ProxyTarget]].
        c. Return ? GetFunctionRealm(proxyTarget).
 features: [cross-realm, Proxy]
 ---*/
 
 var other = $262.createRealm().global;
 var C = new other.Function();
-// Ensure that the proxy does not report a `prototype` property
-var P = new Proxy(C, {
-  get: function() {}
-});
+C.prototype = null;
+var P = new Proxy(C, {});
 
 assert.sameValue(Object.getPrototypeOf(new P()), other.Object.prototype);

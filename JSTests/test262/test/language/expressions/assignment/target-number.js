@@ -3,19 +3,18 @@
 
 /*---
 esid: sec-assignment-operators-static-semantics-early-errors
-es5id: 11.13.1-1-1
 description: >
-    simple assignment throws ReferenceError if LeftHandSide is not a
+    simple assignment throws SyntaxError if LeftHandSide is not a
     reference (number)
 info: |
     AssignmentExpression : LeftHandSideExpression = AssignmentExpression
 
-    It is an early Reference Error if LeftHandSideExpression is neither an
-    ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget of
-    LeftHandSideExpression is false.
+    It is an early Syntax Error if LeftHandSideExpression is neither an
+    ObjectLiteral nor an ArrayLiteral and AssignmentTargetType of
+    LeftHandSideExpression is invalid or strict.
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

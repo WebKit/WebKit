@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-string.prototype.valueof
 es6id: 21.1.3.26
 description: >
   String.prototype.valueOf.name is "valueOf".
@@ -19,8 +20,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.valueOf.name, "valueOf");
-
-verifyNotEnumerable(String.prototype.valueOf, "name");
-verifyNotWritable(String.prototype.valueOf, "name");
-verifyConfigurable(String.prototype.valueOf, "name");
+verifyProperty(String.prototype.valueOf, 'name', {
+  value: 'valueOf',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

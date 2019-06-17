@@ -31,7 +31,7 @@ info: |
         { ExportsList , }
 negative:
   phase: resolution
-  type: ReferenceError
+  type: SyntaxError
 flags: [module]
 ---*/
 

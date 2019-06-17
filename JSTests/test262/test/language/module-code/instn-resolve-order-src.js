@@ -5,7 +5,7 @@ description: Modules dependencies are resolved in source text order
 esid: sec-moduledeclarationinstantiation
 negative:
   phase: resolution
-  type: ReferenceError
+  type: SyntaxError
 flags: [module]
 ---*/
 

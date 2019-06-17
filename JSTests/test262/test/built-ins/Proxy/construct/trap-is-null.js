@@ -21,24 +21,31 @@ info: |
     ...
     3. If func is either undefined or null, return undefined.
     ...
-features: [new.target, Proxy, Reflect, Reflect.construct]
+features: [Proxy, Reflect, Reflect.construct]
 ---*/
 
 var calls = 0;
+var _NewTarget;
 
-function NewTarget() {}
-
-function Target(a, b) {
-  assert.sameValue(new.target, NewTarget);
-  calls += 1;
-  return {
-    sum: a + b
-  };
-}
+var Target = new Proxy(function() {
+  throw new Test262Error('target should not be called');
+}, {
+  construct: function(_Target, args, NewTarget) {
+    calls += 1;
+    _NewTarget = NewTarget;
+    return {
+      sum: args[0] + args[1]
+    };
+  }
+})
 
 var P = new Proxy(Target, {
   construct: null
 });
+
+var NewTarget = function() {};
 var obj = Reflect.construct(P, [3, 4], NewTarget);
-assert.sameValue(obj.sum, 7, "`construct` trap is `null`");
-assert.sameValue(calls, 1, "target is called once");
+
+assert.sameValue(calls, 1, "construct is null: [[Construct]] is invoked once");
+assert.sameValue(_NewTarget, NewTarget, "construct is null: NewTarget is passed to [[Construct]]");
+assert.sameValue(obj.sum, 7, "construct is null: result of [[Construct]] is returned");

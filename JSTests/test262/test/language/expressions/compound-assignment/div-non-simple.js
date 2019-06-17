@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-assignment-operators-static-semantics-early-errors
 info: |
-    It is an early Reference Error if IsValidSimpleAssignmentTarget of
-    LeftHandSideExpression is false.
-es6id: 12.14.1
+    It is an early Syntax Error if AssignmentTargetType of
+    LeftHandSideExpression is invalid or strict.
 description: Compound division assignment with non-simple target
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

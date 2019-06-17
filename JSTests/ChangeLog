@@ -1,3 +1,16 @@
+2019-06-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update test262 tests (2019.06.13)
+        https://bugs.webkit.org/show_bug.cgi?id=198821
+
+        Reviewed by Konstantin Tokarev.
+
+        * test262/expectations.yaml:
+        * test262/harness/:
+        * test262/latest-changes-summary.txt:
+        * test262/test/:
+        * test262/test262-Revision.txt:
+
 2019-06-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Grown region of WasmTable should be initialized with null

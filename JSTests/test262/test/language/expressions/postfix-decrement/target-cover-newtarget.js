@@ -1,27 +1,26 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: sec-postfix-expressions-static-semantics-early-errors
-es6id: 12.4.1
+esid: sec-update-expressions-static-semantics-early-errors
 description: Applied to a "covered" new.target
 info: |
-  PostfixExpression :
+  UpdateExpression :
     LeftHandSideExpression ++
     LeftHandSideExpression --
 
-  - It is an early Reference Error if IsValidSimpleAssignmentTarget of
-    LeftHandSideExpression is false.
+  - It is an early Syntax Error if AssignmentTargetType of
+    LeftHandSideExpression is invalid or strict.
 
-  12.3.1.5 Static Semantics: IsValidSimpleAssignmentTarget
+  12.3.1.6 Static Semantics: AssignmentTargetType
 
   NewTarget:
 
   new.target
 
-  1. Return false.
+  1. Return invalid.
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 features: [new.target]
 ---*/
 

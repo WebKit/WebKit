@@ -3,9 +3,9 @@
 
 /*---
 esid: sec-partitiondatetimerangepattern
-description: |
+description: >
   TimeClip applies ToInteger on its input value.
-info: >
+info: |
   Intl.DateTimeFormat.prototype.formatRangeToParts ( startDate , endDate )
 
   5. Let x be ? ToNumber(startDate).

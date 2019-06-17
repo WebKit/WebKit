@@ -15,7 +15,7 @@ info: |
         false, then
             i. If targetDesc.[[Writable]] is true, throw a TypeError exception.
     ...
-features: [Proxy]
+features: [Proxy, proxy-missing-checks]
 ---*/
 
 var trapCalls = 0;

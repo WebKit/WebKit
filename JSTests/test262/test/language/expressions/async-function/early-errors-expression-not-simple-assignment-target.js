@@ -8,7 +8,7 @@ description: >
   Async function expressions are not a simple assignment target.
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

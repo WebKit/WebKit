@@ -870,6 +870,18 @@ test/built-ins/Date/proto-from-ctor-realm-zero.js:
 test/built-ins/Date/prototype/toDateString/negative-year.js:
   default: 'Test262Error: Date.prototype.toDateString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
   strict mode: 'Test262Error: Date.prototype.toDateString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
+test/built-ins/Date/prototype/toJSON/invoke-result.js:
+  default: 'TypeError: toISOString did not return a primitive value'
+  strict mode: 'TypeError: toISOString did not return a primitive value'
+test/built-ins/Date/prototype/toJSON/to-object.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Date/prototype/toJSON/to-primitive-symbol.js:
+  default: 'TypeError: toISOString did not return a primitive value'
+  strict mode: 'TypeError: toISOString did not return a primitive value'
+test/built-ins/Date/prototype/toJSON/to-primitive-value-of.js:
+  default: 'TypeError: toISOString did not return a primitive value'
+  strict mode: 'TypeError: toISOString did not return a primitive value'
 test/built-ins/Date/prototype/toString/negative-year.js:
   default: 'Test262Error: Date.prototype.toString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
   strict mode: 'Test262Error: Date.prototype.toString serializes year -1 to "-0001" Expected SameValue(Â«-001Â», Â«-0001Â») to be true'
@@ -1080,6 +1092,9 @@ test/built-ins/Object/proto-from-ctor.js:
 test/built-ins/Object/prototype/toString/proxy-function.js:
   default: 'Test262Error: function proxy Expected SameValue(Â«[object Object]Â», Â«[object Function]Â») to be true'
   strict mode: 'Test262Error: function proxy Expected SameValue(Â«[object Object]Â», Â«[object Function]Â») to be true'
+test/built-ins/Object/subclass-object-arg.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«1Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«1Â») to be true'
 test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
@@ -1107,6 +1122,9 @@ test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
 test/built-ins/Promise/allSettled/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Promise/get-prototype-abrupt-executor-not-callable.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
@@ -1128,18 +1146,39 @@ test/built-ins/Promise/resolve-function-nonconstructor.js:
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(Â«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(Â«function Array() {'
+test/built-ins/Proxy/apply/null-handler-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
 test/built-ins/Proxy/apply/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
 test/built-ins/Proxy/construct/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(Â«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(Â«function Array() {'
+test/built-ins/Proxy/construct/null-handler-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/construct/return-not-object-throws-boolean-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/construct/return-not-object-throws-null-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/construct/return-not-object-throws-number-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/construct/return-not-object-throws-string-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/construct/return-not-object-throws-symbol-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
+  default: 'Test262Error: Expected a TypeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
-test/built-ins/Proxy/construct/trap-is-undefined-proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/built-ins/Proxy/create-handler-is-revoked-proxy.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1386,6 +1425,9 @@ test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Elymaic.js:
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Grantha.js:
   default: 'Test262Error: `\p{Script_Extensions=Grantha}` should match U+011FD3 (`ð¿`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Grantha}` should match U+011FD3 (`ð¿`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Han.js:
+  default: 'Test262Error: `\p{Script_Extensions=Han}` should match U+0032FF (`ã¿`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Han}` should match U+0032FF (`ã¿`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Hiragana.js:
   default: 'Test262Error: `\p{Script_Extensions=Hiragana}` should match U+01B150 (`ð`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Hiragana}` should match U+01B150 (`ð`)'
@@ -1793,9 +1835,57 @@ test/intl402/Collator/prototype/compare/compare-function-name.js:
 test/intl402/Collator/usage-de.js:
   default: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
   strict mode: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
+test/intl402/DateTimeFormat/constructor-options-dayPeriod-invalid.js:
+  default: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-dayPeriod-valid.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«longÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«longÂ») to be true'
+test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-invalid.js:
+  default: 'Test262Error: new Intl.DateTimeFormat("en", { fractionalSecondDigits: "LONG" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { fractionalSecondDigits: "LONG" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-valid.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«0Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«0Â») to be true'
+test/intl402/DateTimeFormat/constructor-options-order-dayPeriod.js:
+  default: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. undefined'
+test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
+  default: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. undefined'
+test/intl402/DateTimeFormat/constructor-options-order-quarter.js:
+  default: 'Test262Error: Expected [year, month, year, month] and [year, quarter, month, year, quarter, month] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [year, month, year, month] and [year, quarter, month, year, quarter, month] to have the same contents. undefined'
+test/intl402/DateTimeFormat/constructor-options-quarter-invalid.js:
+  default: 'Test262Error: new Intl.DateTimeFormat("en", { quarter: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { quarter: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-quarter-valid.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«longÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«longÂ») to be true'
+test/intl402/DateTimeFormat/constructor-options-throwing-getters-dayPeriod.js:
+  default: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-throwing-getters-fractionalSecondDigits.js:
+  default: 'Test262Error: Exception from fractionalSecondDigits getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Exception from fractionalSecondDigits getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-throwing-getters-quarter.js:
+  default: 'Test262Error: Exception from quarter getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Exception from quarter getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/numbering-system-calendar-options.js:
+  default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
+  strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. undefined'
+test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. undefined'
+test/intl402/DateTimeFormat/prototype/resolvedOptions/order-quarter.js:
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, year, month, day] and [locale, calendar, numberingSystem, timeZone, year, quarter, month, day] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, year, month, day] and [locale, calendar, numberingSystem, timeZone, year, quarter, month, day] to have the same contents. undefined'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
   default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
   strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
@@ -1805,12 +1895,18 @@ test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(Â«aar-x-privateÂ», Â«aa-x-privateÂ») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(Â«aar-x-privateÂ», Â«aa-x-privateÂ») to be true'
+test/intl402/NumberFormat/numbering-system-options.js:
+  default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
+  strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
 test/intl402/NumberFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
 test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
   default: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
   strict mode: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
+test/intl402/NumberFormat/prototype/resolvedOptions/order.js:
+  default: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] and [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] and [locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping] to have the same contents. undefined'
 test/intl402/supportedLocalesOf-returned-array-elements-are-not-frozen.js:
   default: 'Test262Error: Property 0 of object returned by SupportedLocales is not writable. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Collator.)'
   strict mode: 'Test262Error: Property 0 of object returned by SupportedLocales is not writable. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Collator.)'
@@ -1824,9 +1920,6 @@ test/language/arguments-object/mapped/nonconfigurable-nonwritable-descriptors-se
   default: 'Test262Error: Expected obj[0] to have configurable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonwritable-descriptors-set-by-param.js:
   default: 'Test262Error: Expected obj[0] to have configurable:false.'
-test/language/asi/S7.9_A5.7_T1.js:
-  default: 'SyntaxError: The prefix-increment operator requires a reference expression.'
-  strict mode: 'SyntaxError: The prefix-increment operator requires a reference expression.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js:
@@ -2077,42 +2170,12 @@ test/language/expressions/assignment/fn-name-lhs-cover.js:
 test/language/expressions/assignment/fn-name-lhs-member.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/language/expressions/assignment/non-simple-target.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/assignment/target-boolean.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/assignment/target-cover-newtarget.js:
-  default: "SyntaxError: new.target can't be the left hand side of an assignment expression."
-  strict mode: "SyntaxError: new.target can't be the left hand side of an assignment expression."
-test/language/expressions/assignment/target-cover-yieldexpr.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/assignment/target-newtarget.js:
-  default: "SyntaxError: new.target can't be the left hand side of an assignment expression."
-  strict mode: "SyntaxError: new.target can't be the left hand side of an assignment expression."
-test/language/expressions/assignment/target-null.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/assignment/target-number.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/assignment/target-string.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
 test/language/expressions/async-arrow-function/await-as-param-ident-nested-arrow-parameter-position.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/async-arrow-function/await-as-param-nested-arrow-body-position.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-function/early-errors-expression-not-simple-assignment-target.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/await/early-errors-await-not-simple-assignment-target.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -2317,93 +2380,9 @@ test/language/expressions/compound-assignment/S11.13.2_A7.8_T4.js:
 test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/compound-assignment/add-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/btws-and-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/btws-or-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/btws-xor-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/div-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/left-shift-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/mod-div-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/mult-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/right-shift-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/subtract-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/compound-assignment/u-right-shift-non-simple.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
 test/language/expressions/conditional/in-branch-1.js:
   default: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
   strict mode: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-1-update-expression.js:
-  default: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-10-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-11-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-12-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-13-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-14-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-15-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-16-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-17-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-2-update-expression.js:
-  default: 'SyntaxError: Postfix -- operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Postfix -- operator applied to value that is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-3-update-expression.js:
-  default: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-4-update-expression.js:
-  default: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-5-lhs-equals-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-6-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-7-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-8-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-9-lhs-assignment-operator-assignment-expression.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
 test/language/expressions/function/name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -2431,14 +2410,10 @@ test/language/expressions/generators/scope-param-rest-elem-var-close.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/import.meta/import-meta-is-an-ordinary-object.js:
   module: 'SyntaxError: Cannot use new with import.'
-test/language/expressions/import.meta/syntax/invalid-assignment-target-assignment-expr.js:
-  module: "SyntaxError: import.meta can't be the left hand side of an assignment expression."
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-in-loop.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-of-loop.js:
   module: 'Test262: This statement should not be evaluated.'
-test/language/expressions/import.meta/syntax/invalid-assignment-target-update-expr.js:
-  module: "SyntaxError: import.meta can't come before a postfix operator."
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
@@ -2491,15 +2466,6 @@ test/language/expressions/postfix-decrement/S11.3.2_A5_T5.js:
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/postfix-decrement/target-cover-newtarget.js:
-  default: "SyntaxError: new.target can't come before a postfix operator."
-  strict mode: "SyntaxError: new.target can't come before a postfix operator."
-test/language/expressions/postfix-decrement/target-cover-yieldexpr.js:
-  default: 'SyntaxError: Postfix -- operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Postfix -- operator applied to value that is not a reference.'
-test/language/expressions/postfix-decrement/target-newtarget.js:
-  default: "SyntaxError: new.target can't come before a postfix operator."
-  strict mode: "SyntaxError: new.target can't come before a postfix operator."
 test/language/expressions/postfix-increment/S11.3.1_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-increment/S11.3.1_A5_T2.js:
@@ -2514,15 +2480,6 @@ test/language/expressions/postfix-increment/S11.3.1_A5_T5.js:
 test/language/expressions/postfix-increment/S11.3.1_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/postfix-increment/target-cover-newtarget.js:
-  default: "SyntaxError: new.target can't come before a postfix operator."
-  strict mode: "SyntaxError: new.target can't come before a postfix operator."
-test/language/expressions/postfix-increment/target-cover-yieldexpr.js:
-  default: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-test/language/expressions/postfix-increment/target-newtarget.js:
-  default: "SyntaxError: new.target can't come before a postfix operator."
-  strict mode: "SyntaxError: new.target can't come before a postfix operator."
 test/language/expressions/prefix-decrement/S11.4.5_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-decrement/S11.4.5_A5_T2.js:
@@ -2537,15 +2494,6 @@ test/language/expressions/prefix-decrement/S11.4.5_A5_T5.js:
 test/language/expressions/prefix-decrement/S11.4.5_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/prefix-decrement/target-cover-newtarget.js:
-  default: "SyntaxError: new.target can't come after a prefix operator."
-  strict mode: "SyntaxError: new.target can't come after a prefix operator."
-test/language/expressions/prefix-decrement/target-cover-yieldexpr.js:
-  default: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-test/language/expressions/prefix-decrement/target-newtarget.js:
-  default: "SyntaxError: new.target can't come after a prefix operator."
-  strict mode: "SyntaxError: new.target can't come after a prefix operator."
 test/language/expressions/prefix-increment/S11.4.4_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-increment/S11.4.4_A5_T2.js:
@@ -2560,21 +2508,9 @@ test/language/expressions/prefix-increment/S11.4.4_A5_T5.js:
 test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/prefix-increment/target-cover-newtarget.js:
-  default: "SyntaxError: new.target can't come after a prefix operator."
-  strict mode: "SyntaxError: new.target can't come after a prefix operator."
-test/language/expressions/prefix-increment/target-cover-yieldexpr.js:
-  default: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-  strict mode: 'SyntaxError: Prefix -- operator applied to value that is not a reference.'
-test/language/expressions/prefix-increment/target-newtarget.js:
-  default: "SyntaxError: new.target can't come after a prefix operator."
-  strict mode: "SyntaxError: new.target can't come after a prefix operator."
 test/language/expressions/super/call-proto-not-ctor.js:
   default: 'Test262Error: did not perform ArgumentsListEvaluation Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: did not perform ArgumentsListEvaluation Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/language/expressions/this/S11.1.1_A1.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(Â«falseÂ», Â«undefinedÂ») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(Â«falseÂ», Â«undefinedÂ») to be true'
@@ -2705,16 +2641,6 @@ test/language/module-code/eval-self-once.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/instn-once.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/instn-resolve-empty-export.js:
-  module: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-test/language/module-code/instn-resolve-empty-import.js:
-  module: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-test/language/module-code/instn-resolve-err-reference.js:
-  module: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
-test/language/module-code/instn-resolve-order-depth.js:
-  module: "SyntaxError: 'break' is only valid inside a switch or loop statement."
-test/language/module-code/instn-resolve-order-src.js:
-  module: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
 test/language/module-code/instn-star-as-props-dflt-skip.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/instn-star-props-nrml.js:
@@ -2733,8 +2659,6 @@ test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
   module: 'Test262: This statement should not be evaluated.'
-test/language/module-code/parse-err-reference.js:
-  module: 'SyntaxError: Postfix ++ operator applied to value that is not a reference.'
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
@@ -3107,18 +3031,6 @@ test/language/statements/while/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/with/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/types/boolean/S8.3_A2.1.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/types/boolean/S8.3_A2.2.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/types/reference/S8.7.2_A1_T1.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
-test/language/types/reference/S8.7.2_A1_T2.js:
-  default: 'SyntaxError: Left side of assignment is not a reference.'
-  strict mode: 'SyntaxError: Left side of assignment is not a reference.'
 test/language/types/reference/put-value-prop-base-primitive-realm.js:
   default: 'Test262Error: number Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: number Expected SameValue(Â«0Â», Â«1Â») to be true'

@@ -3,9 +3,9 @@
 
 /*---
 esid: sec-partitiondatetimerangepattern
-description: |
+description: >
   TimeClip is applied when calling Intl.DateTimeFormat.prototype.formatRangeToParts.
-info: >
+info: |
   PartitionDateTimeRangePattern ( dateTimeFormat, x, y )
 
   1. Let x be TimeClip(x).

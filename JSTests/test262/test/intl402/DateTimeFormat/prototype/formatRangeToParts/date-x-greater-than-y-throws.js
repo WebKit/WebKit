@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: |
+description: >
   Throws a RangeError if date x is greater than y.
-info: >
+info: |
   Intl.DateTimeFormat.prototype.formatRangeToParts ( startDate , endDate )
 
   1. Let dtf be this value.

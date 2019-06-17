@@ -1,6 +1,7 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
+esid: sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget
 es6id: 9.5.14
 description: >
     Throws a TypeError if trap result is not an Object: undefined
@@ -11,13 +12,10 @@ info: |
 features: [Proxy]
 ---*/
 
-function Target() {
-  this.attr = "done";
-};
-var P = new Proxy(Target, {
-  construct: function() {
-    return undefined;
-  }
+var P = new Proxy(function() {
+  throw new Test262Error('target should not be called');
+}, {
+  construct: function() {}
 });
 
 assert.throws(TypeError, function() {

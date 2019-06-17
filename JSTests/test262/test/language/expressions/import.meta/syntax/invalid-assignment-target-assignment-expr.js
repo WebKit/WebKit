@@ -17,12 +17,12 @@ info: |
 
     AssignmentExpression : LeftHandSideExpression = AssignmentExpression
 
-    It is an early Reference Error if LeftHandSideExpression is neither an ObjectLiteral nor an
-    ArrayLiteral and AssignmentTargetType of LeftHandSideExpression is invalid.
+    It is an early Syntax Error if LeftHandSideExpression is neither an ObjectLiteral nor an
+    ArrayLiteral and AssignmentTargetType of LeftHandSideExpression is invalid or strict.
 flags: [module]
 negative:
   phase: parse
-  type: ReferenceError
+  type: SyntaxError
 features: [import.meta]
 ---*/
 
