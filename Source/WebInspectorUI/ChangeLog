@@ -1,5 +1,34 @@
 2019-06-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Settings: split the General panel into sub panels so it's less crowded
+        https://bugs.webkit.org/show_bug.cgi?id=198803
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype.initialLayout):
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        Many of the settings in General only affect a specific part of Web Inspector, and therefore
+        aren't really "general".
+
+        (WI.SettingsTabContentView.prototype._createElementsSettingsView): Added.
+         - Element Selection
+         - CSS Changes
+
+        (WI.SettingsTabContentView.prototype._createSourcesSettingsView): Added.
+         - Debugger
+         - Source Maps
+
+        (WI.SettingsTabContentView.prototype._createConsoleSettingsView): Added.
+         - Traces (renamed from "Console")
+         - WebRTC Logging
+         - Media Logging
+         - MSE Logging
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-06-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: the Inspector Style Sheet is missing when grouped by path
         https://bugs.webkit.org/show_bug.cgi?id=198860
 

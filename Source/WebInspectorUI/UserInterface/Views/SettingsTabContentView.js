@@ -162,6 +162,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         this.addSubview(this._navigationBar);
 
         this._createGeneralSettingsView();
+        this._createElementsSettingsView();
+        this._createSourcesSettingsView();
+        this._createConsoleSettingsView();
         this._createExperimentalSettingsView();
 
         WI.notifications.addEventListener(WI.Notification.DebugUIEnabledDidChange, this._updateDebugSettingsViewVisibility, this);
@@ -177,7 +180,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let generalSettingsView = new WI.SettingsView("general", WI.UIString("General"));
 
         const indentValues = [WI.UIString("Tabs"), WI.UIString("Spaces")];
-
         let indentEditor = generalSettingsView.addGroupWithCustomSetting(WI.UIString("Prefer indent using:"), WI.SettingEditor.Type.Select, {values: indentValues});
         indentEditor.value = indentValues[WI.settings.indentWithTabs.value ? 0 : 1];
         indentEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => {
@@ -206,27 +208,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         generalSettingsView.addSeparator();
 
-        generalSettingsView.addSetting(WI.UIString("Debugger:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
-        generalSettingsView.addSetting(WI.UIString("Source maps:"), WI.settings.sourceMapsEnabled, WI.UIString("Enable source maps"));
-        generalSettingsView.addSetting(WI.UIString("Console:"), WI.settings.consoleAutoExpandTrace, WI.UIString("Auto-expand Traces"));
-
-        generalSettingsView.addSeparator();
-
         let searchGroup = generalSettingsView.addGroup(WI.UIString("Search:", "Search: @ Settings", "Settings tab label for search related settings"));
         searchGroup.addSetting(WI.settings.searchCaseSensitive, WI.UIString("Case Sensitive", "Case Sensitive @ Settings", "Settings tab checkbox label for whether searches should be case sensitive."));
         searchGroup.addSetting(WI.settings.searchRegularExpression, WI.UIString("Regular Expression", "Regular Expression @ Settings", "Settings tab checkbox label for whether searches should be treated as regular expressions."));
 
         generalSettingsView.addSeparator();
-
-        generalSettingsView.addSetting(WI.UIString("CSS Changes:"), WI.settings.cssChangesPerNode, WI.UIString("Show only for selected node"));
-
-        generalSettingsView.addSeparator();
-
-        if (InspectorBackend.domains.DOM && InspectorBackend.domains.DOM.setInspectModeEnabled && InspectorBackend.domains.DOM.setInspectModeEnabled.supports("showRulers")) {
-            generalSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
-
-            generalSettingsView.addSeparator();
-        }
 
         const zoomLevels = [0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
         const zoomValues = zoomLevels.map((level) => [level, Number.percentageString(level, 0)]);
@@ -236,7 +222,49 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         zoomEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => { WI.setZoomFactor(zoomEditor.value); });
         WI.settings.zoomFactor.addEventListener(WI.Setting.Event.Changed, () => { zoomEditor.value = WI.getZoomFactor().maxDecimals(2); });
 
+        this.addSettingsView(generalSettingsView);
+    }
+
+    _createElementsSettingsView()
+    {
+        if (!InspectorBackend.domains.DOM)
+            return;
+
+        let elementsSettingsView = new WI.SettingsView("elements", WI.UIString("Elements"));
+
+        if (InspectorBackend.domains.DOM.setInspectModeEnabled && InspectorBackend.domains.DOM.setInspectModeEnabled.supports("showRulers")) {
+            elementsSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
+
+            elementsSettingsView.addSeparator();
+        }
+
+        elementsSettingsView.addSetting(WI.UIString("CSS Changes:"), WI.settings.cssChangesPerNode, WI.UIString("Show only for selected node"));
+
+        this.addSettingsView(elementsSettingsView);
+    }
+
+    _createSourcesSettingsView()
+    {
+        let sourcesSettingsView = new WI.SettingsView("sources", WI.UIString("Sources"));
+
+        sourcesSettingsView.addSetting(WI.UIString("Debugger:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
+
+        sourcesSettingsView.addSeparator();
+
+        sourcesSettingsView.addSetting(WI.UIString("Source Maps:"), WI.settings.sourceMapsEnabled, WI.UIString("Enable source maps"));
+
+        this.addSettingsView(sourcesSettingsView);
+    }
+
+    _createConsoleSettingsView()
+    {
+        let consoleSettingsView = new WI.SettingsView("console", WI.UIString("Console"));
+
+        consoleSettingsView.addSetting(WI.UIString("Traces:"), WI.settings.consoleAutoExpandTrace, WI.UIString("Auto-expand"));
+
         if (WI.ConsoleManager.supportsLogChannels()) {
+            consoleSettingsView.addSeparator();
+
             const logLevels = [
                 [WI.LoggingChannel.Level.Off, WI.UIString("Off")],
                 [WI.LoggingChannel.Level.Basic, WI.UIString("Basic")],
@@ -250,7 +278,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
             let channels = WI.consoleManager.customLoggingChannels;
             for (let channel of channels) {
-                let logEditor = generalSettingsView.addGroupWithCustomSetting(editorLabels[channel.source], WI.SettingEditor.Type.Select, {values: logLevels});
+                let logEditor = consoleSettingsView.addGroupWithCustomSetting(editorLabels[channel.source], WI.SettingEditor.Type.Select, {values: logLevels});
                 logEditor.value = channel.level;
                 logEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => {
                     for (let target of WI.targets)
@@ -259,7 +287,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             }
         }
 
-        this.addSettingsView(generalSettingsView);
+        this.addSettingsView(consoleSettingsView);
     }
 
     _createExperimentalSettingsView()
