@@ -679,14 +679,9 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
     ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC.get(), damageRect.x(), damageRect.y(), SRCCOPY);
 }
 
-int PopupMenuWin::scrollSize(ScrollbarOrientation orientation) const
+ScrollPosition PopupMenuWin::scrollPosition() const
 {
-    return ((orientation == VerticalScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
-}
-
-int PopupMenuWin::scrollOffset(ScrollbarOrientation) const
-{
-    return m_scrollOffset;
+    return { 0, m_scrollOffset };
 }
 
 void PopupMenuWin::setScrollOffset(const IntPoint& offset)
@@ -892,9 +887,9 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     focusLast();
                     break;
                 case VK_PRIOR:
-                    if (focusedIndex() != scrollOffset()) {
+                    if (focusedIndex() != m_scrollOffset) {
                         // Set the selection to the first visible item
-                        int firstVisibleItem = scrollOffset();
+                        int firstVisibleItem = m_scrollOffset;
                         up(focusedIndex() - firstVisibleItem);
                     } else {
                         // The first visible item is selected, so move the selection back one page
@@ -902,7 +897,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     }
                     break;
                 case VK_NEXT: {
-                    int lastVisibleItem = scrollOffset() + visibleItems() - 1;
+                    int lastVisibleItem = m_scrollOffset + visibleItems() - 1;
                     if (focusedIndex() != lastVisibleItem) {
                         // Set the selection to the last visible item
                         down(lastVisibleItem - focusedIndex());

@@ -58,9 +58,8 @@ private:
     WebCore::Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
     // ScrollableArea
-    int scrollSize(WebCore::ScrollbarOrientation) const override;
+    WebCore::ScrollPosition scrollPosition() const override;
     void setScrollOffset(const WebCore::IntPoint&) override;
-    int scrollOffset(WebCore::ScrollbarOrientation) const override { return m_scrollOffset; }
 
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override { }

@@ -441,9 +441,9 @@ void WebPopupMenuProxyWin::invalidateItem(int index)
     ::InvalidateRect(m_popup, &r, TRUE);
 }
 
-int WebPopupMenuProxyWin::scrollSize(ScrollbarOrientation orientation) const
+ScrollPosition WebPopupMenuProxyWin::scrollPosition() const
 {
-    return ((orientation == VerticalScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
+    return { 0, m_scrollOffset };
 }
 
 void WebPopupMenuProxyWin::setScrollOffset(const IntPoint& offset)
@@ -554,9 +554,9 @@ LRESULT WebPopupMenuProxyWin::onKeyDown(HWND hWnd, UINT message, WPARAM wParam, 
         focusLast();
         break;
     case VK_PRIOR:
-        if (focusedIndex() != scrollOffset(VerticalScrollbar)) {
+        if (focusedIndex() != m_scrollOffset) {
             // Set the selection to the first visible item
-            int firstVisibleItem = scrollOffset(VerticalScrollbar);
+            int firstVisibleItem = m_scrollOffset;
             up(focusedIndex() - firstVisibleItem);
         } else {
             // The first visible item is selected, so move the selection back one page
@@ -564,7 +564,7 @@ LRESULT WebPopupMenuProxyWin::onKeyDown(HWND hWnd, UINT message, WPARAM wParam, 
         }
         break;
     case VK_NEXT: {
-        int lastVisibleItem = scrollOffset(VerticalScrollbar) + visibleItems() - 1;
+        int lastVisibleItem = m_scrollOffset + visibleItems() - 1;
         if (focusedIndex() != lastVisibleItem) {
             // Set the selection to the last visible item
             down(lastVisibleItem - focusedIndex());
@@ -920,7 +920,6 @@ void WebPopupMenuProxyWin::focusLast()
         }
     }
 }
-
 
 void WebPopupMenuProxyWin::incrementWheelDelta(int delta)
 {

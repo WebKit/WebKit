@@ -69,8 +69,6 @@ public:
     using Widget::weakPtrFactory;
 
     // ScrollableArea functions.
-    int scrollSize(ScrollbarOrientation) const final;
-    int scrollOffset(ScrollbarOrientation) const final;
     WEBCORE_EXPORT void setScrollOffset(const ScrollOffset&) final;
     bool isScrollCornerVisible() const final;
     void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;

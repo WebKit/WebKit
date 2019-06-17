@@ -202,10 +202,8 @@ private:
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) final;
     void invalidateScrollCornerRect(const WebCore::IntRect&) final;
     WebCore::IntPoint lastKnownMousePosition() const final { return m_lastMousePositionInPluginCoordinates; }
-    int scrollSize(WebCore::ScrollbarOrientation) const final;
     bool isActive() const final;
     bool isScrollCornerVisible() const final { return false; }
-    int scrollOffset(WebCore::ScrollbarOrientation) const final;
     WebCore::ScrollPosition scrollPosition() const final;
     WebCore::ScrollPosition minimumScrollPosition() const final;
     WebCore::ScrollPosition maximumScrollPosition() const final;

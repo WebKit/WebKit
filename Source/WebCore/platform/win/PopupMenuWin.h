@@ -77,8 +77,6 @@ private:
     void setWasClicked(bool b = true) { m_wasClicked = b; }
     bool wasClicked() const { return m_wasClicked; }
 
-    int scrollOffset() const { return m_scrollOffset; }
-
     bool scrollToRevealSelection();
 
     void incrementWheelDelta(int delta);
@@ -89,8 +87,7 @@ private:
     void setScrollbarCapturingMouse(bool b) { m_scrollbarCapturingMouse = b; }
 
     // ScrollableArea
-    int scrollSize(ScrollbarOrientation) const override;
-    int scrollOffset(ScrollbarOrientation) const override;
+    ScrollPosition scrollPosition() const override;
     void setScrollOffset(const IntPoint&) override;
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
     void invalidateScrollCornerRect(const IntRect&) override { }

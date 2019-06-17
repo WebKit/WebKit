@@ -253,10 +253,8 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
     m_scrolledViewExposedRect = m_viewExposedRect;
 
 #if !PLATFORM(IOS_FAMILY)
-    if (m_viewExposedRect) {
-        ScrollOffset scrollOffset = frameView->scrollOffsetFromPosition(frameView->scrollPosition());
-        m_scrolledViewExposedRect.value().moveBy(scrollOffset);
-    }
+    if (m_viewExposedRect)
+        m_scrolledViewExposedRect.value().moveBy(frameView->scrollOffset());
 #endif
 
     frameView->setViewExposedRect(m_scrolledViewExposedRect);

@@ -378,19 +378,6 @@ ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin(
     return scrollPosition() - IntSize(0, headerHeight());
 }
 
-int ScrollView::scrollSize(ScrollbarOrientation orientation) const
-{
-    // If no scrollbars are present, it does not indicate content is not be scrollable.
-    if (!m_horizontalScrollbar && !m_verticalScrollbar && !prohibitsScrolling()) {
-        IntSize scrollSize = m_contentsSize - visibleContentRect(LegacyIOSDocumentVisibleRect).size();
-        scrollSize.clampNegativeToZero();
-        return orientation == HorizontalScrollbar ? scrollSize.width() : scrollSize.height();
-    }
-
-    Scrollbar* scrollbar = ((orientation == HorizontalScrollbar) ? m_horizontalScrollbar : m_verticalScrollbar).get();
-    return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
-}
-
 void ScrollView::notifyPageThatContentAreaWillPaint() const
 {
 }
@@ -474,19 +461,6 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
     updateCompositingLayersAfterScrolling();
 }
 
-int ScrollView::scrollOffset(ScrollbarOrientation orientation) const
-{
-    ScrollOffset offset = scrollOffsetFromPosition(scrollPosition());
-
-    if (orientation == HorizontalScrollbar)
-        return offset.x();
-
-    if (orientation == VerticalScrollbar)
-        return offset.y();
-
-    return 0;
-}
-
 void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
@@ -528,7 +502,7 @@ IntSize ScrollView::overhangAmount() const
     IntSize stretch;
 
     // FIXME: use maximumScrollOffset()
-    ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollPosition());
+    ScrollOffset scrollOffset = this->scrollOffset();
     if (scrollOffset.y() < 0)
         stretch.setHeight(scrollOffset.y());
     else if (totalContentsSize().height() && scrollOffset.y() > totalContentsSize().height() - visibleHeight())

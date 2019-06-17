@@ -2898,26 +2898,9 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     // FIXME (Radar 4118564): We should also autoscroll the window as necessary to keep the point under the cursor in view.
 }
 
-int RenderLayer::scrollSize(ScrollbarOrientation orientation) const
-{
-    Scrollbar* scrollbar = ((orientation == HorizontalScrollbar) ? m_hBar : m_vBar).get();
-    return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
-}
-
 void RenderLayer::setScrollOffset(const ScrollOffset& offset)
 {
     scrollTo(scrollPositionFromOffset(offset));
-}
-
-int RenderLayer::scrollOffset(ScrollbarOrientation orientation) const
-{
-    if (orientation == HorizontalScrollbar)
-        return scrollOffset().x();
-
-    if (orientation == VerticalScrollbar)
-        return scrollOffset().y();
-
-    return 0;
 }
 
 ScrollingNodeID RenderLayer::scrollingNodeID() const

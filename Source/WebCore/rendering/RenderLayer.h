@@ -442,8 +442,6 @@ public:
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
 
-    ScrollOffset scrollOffset() const { return scrollOffsetFromPosition(m_scrollPosition); }
-
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
     // "absoluteRect" is in scaled document coordinates.
@@ -1073,8 +1071,6 @@ private:
 
     bool shouldBeSelfPaintingLayer() const;
 
-    int scrollOffset(ScrollbarOrientation) const override;
-    
     // ScrollableArea interface
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
     void invalidateScrollCornerRect(const IntRect&) override;
@@ -1085,7 +1081,6 @@ private:
     IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const override;
     IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const override;
     IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
-    int scrollSize(ScrollbarOrientation) const override;
     void setScrollOffset(const ScrollOffset&) override;
     ScrollingNodeID scrollingNodeID() const override;
 

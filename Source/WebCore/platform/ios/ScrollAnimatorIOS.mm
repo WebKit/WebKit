@@ -103,8 +103,9 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         determineScrollableAreaForTouchSequence(touchDelta);
 
     if (!m_committedToScrollAxis) {
-        bool horizontallyScrollable = m_scrollableArea.scrollSize(HorizontalScrollbar);
-        bool verticallyScrollable = m_scrollableArea.scrollSize(VerticalScrollbar);
+        auto scrollSize = m_scrollableArea.maximumScrollPosition() - m_scrollableArea.minimumScrollPosition();
+        bool horizontallyScrollable = scrollSize.width();
+        bool verticallyScrollable = scrollSize.height();
 
         if (!horizontallyScrollable && !verticallyScrollable)
             return false;

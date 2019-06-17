@@ -48,6 +48,18 @@ typedef IntPoint ScrollPosition;
 // scrollOffset() is the value used by scrollbars (min is 0,0), and should never have negative components.
 typedef IntPoint ScrollOffset;
 
+
+inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
+{
+    switch (orientation) {
+    case HorizontalScrollbar: return offset.x();
+    case VerticalScrollbar: return offset.y();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+
 class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
 public:
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
@@ -157,8 +169,6 @@ public:
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
 
     virtual bool isActive() const = 0;
-    virtual int scrollSize(ScrollbarOrientation) const = 0;
-    virtual int scrollOffset(ScrollbarOrientation) const = 0;
     WEBCORE_EXPORT virtual void invalidateScrollbar(Scrollbar&, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
     virtual IntRect scrollCornerRect() const = 0;
@@ -196,7 +206,7 @@ public:
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }
 
-    virtual ScrollPosition scrollPosition() const;
+    virtual ScrollPosition scrollPosition() const = 0;
     virtual ScrollPosition minimumScrollPosition() const;
     virtual ScrollPosition maximumScrollPosition() const;
 
@@ -204,6 +214,8 @@ public:
     {
         return position.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     }
+
+    WEBCORE_EXPORT ScrollOffset scrollOffset() const;
 
     ScrollOffset maximumScrollOffset() const;
 
@@ -298,18 +310,14 @@ public:
     virtual bool scheduleAnimation() { return false; }
     void serviceScrollAnimations();
 
-#if PLATFORM(IOS_FAMILY)
-    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollOffset(HorizontalScrollbar) <= 0; }
-    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollOffset(HorizontalScrollbar) >= maximumScrollOffset().x(); }
-    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollOffset(VerticalScrollbar) <= 0; }
-    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollOffset(VerticalScrollbar) >= maximumScrollOffset().y(); }
+    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollOffset().x() <= 0; }
+    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollOffset().x() >= maximumScrollOffset().x(); }
+    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollOffset().y() <= 0; }
+    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollOffset().y() >= maximumScrollOffset().y(); }
 
     bool isPinnedInBothDirections(const IntSize&) const; 
     bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const; 
     bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
-#endif
-
-    virtual TiledBacking* tiledBacking() const { return nullptr; }
 
     // True if scrolling happens by moving compositing layers.
     virtual bool usesCompositedScrolling() const { return false; }

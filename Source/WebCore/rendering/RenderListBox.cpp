@@ -645,14 +645,9 @@ void RenderListBox::valueChanged(unsigned listIndex)
     selectElement().dispatchFormControlChangeEvent();
 }
 
-int RenderListBox::scrollSize(ScrollbarOrientation orientation) const
+ScrollPosition RenderListBox::scrollPosition() const
 {
-    return ((orientation == VerticalScrollbar) && m_vBar) ? (m_vBar->totalSize() - m_vBar->visibleSize()) : 0;
-}
-
-int RenderListBox::scrollOffset(ScrollbarOrientation) const
-{
-    return m_indexOffset;
+    return { 0, m_indexOffset };
 }
 
 ScrollPosition RenderListBox::minimumScrollPosition() const

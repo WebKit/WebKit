@@ -1,3 +1,65 @@
+2019-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement ScrollableArea::scrollOffset()
+        https://bugs.webkit.org/show_bug.cgi?id=198895
+
+        Reviewed by Antti Koivisto.
+
+        Remove from ScrollableArea the following:
+            virtual int scrollSize(ScrollbarOrientation) const = 0;
+            virtual int scrollOffset(ScrollbarOrientation) const = 0;
+        and instead implement ScrollOffset scrollOffset() const.
+
+        Also make scrollPosition() pure virtual, avoiding the reverse dependency where
+        this base class implementation got values from scrollbars.
+        
+        scrollSize(ScrollbarOrientation) was only used by ScrollAnimatorIOS and we can
+        do the same computation via min/max scroll positions.
+        
+        RenderListBox and PopupMenuWin need implementations of scrollPosition().
+        
+        Remove some PLATFORM(IOS_FAMILY) #ifdefs from ScrollableArea for code that compiles
+        on all platforms.
+
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::overhangAmount const):
+        (WebCore::ScrollView::scrollSize const): Deleted.
+        (WebCore::ScrollView::scrollOffset const): Deleted.
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::isPinnedVerticallyInDirection const):
+        (WebCore::ScrollableArea::scrollOffset const):
+        (WebCore::ScrollableArea::scrollPosition const): Deleted.
+        * platform/ScrollableArea.h:
+        (WebCore::offsetForOrientation):
+        (WebCore::ScrollableArea::isHorizontalScrollerPinnedToMinimumPosition const):
+        (WebCore::ScrollableArea::isHorizontalScrollerPinnedToMaximumPosition const):
+        (WebCore::ScrollableArea::isVerticalScrollerPinnedToMinimumPosition const):
+        (WebCore::ScrollableArea::isVerticalScrollerPinnedToMaximumPosition const):
+        (WebCore::ScrollableArea::tiledBacking const): Deleted.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::offsetDidChange):
+        * platform/ios/ScrollAnimatorIOS.mm:
+        (WebCore::ScrollAnimatorIOS::handleTouchEvent):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::scrollPosition const):
+        (WebCore::PopupMenuWin::wndProc):
+        (WebCore::PopupMenuWin::scrollSize const): Deleted.
+        (WebCore::PopupMenuWin::scrollOffset const): Deleted.
+        * platform/win/PopupMenuWin.h:
+        (WebCore::PopupMenuWin::scrollOffset const): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollSize const): Deleted.
+        (WebCore::RenderLayer::scrollOffset const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollPosition const):
+        (WebCore::RenderListBox::scrollSize const): Deleted.
+        (WebCore::RenderListBox::scrollOffset const): Deleted.
+        * rendering/RenderListBox.h:
+
 2019-06-16  Zalan Bujtas  <zalan@apple.com>
 
         Address Sam's post-landing review of r246234.
